@@ -1,4 +1,4 @@
-package pl.allegro.tech.selfservice.newservicesingle.config
+package pl.allegro.experiments.chi.chiserver.config
 
 import com.netflix.hystrix.contrib.javanica.aop.aspectj.HystrixCommandAspect
 import com.netflix.hystrix.contrib.metrics.eventstream.HystrixMetricsStreamServlet
@@ -8,7 +8,7 @@ import org.springframework.boot.web.servlet.ServletRegistrationBean
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import pl.allegro.tech.common.andamio.request.hystrix.RequestAwareHystrixConcurrencyStrategy
-import pl.allegro.tech.selfservice.newservicesingle.logger
+import pl.allegro.experiments.chi.chiserver.logger
 import javax.annotation.PostConstruct
 
 @Configuration

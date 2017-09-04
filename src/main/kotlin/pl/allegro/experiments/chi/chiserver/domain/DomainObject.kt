@@ -1,4 +1,4 @@
-package pl.allegro.tech.selfservice.newservicesingle.domain
+package pl.allegro.experiments.chi.chiserver.domain
 
 import javax.validation.constraints.NotNull
 

@@ -1,12 +1,12 @@
-package pl.allegro.tech.selfservice.newservicesingle.api
+package pl.allegro.experiments.chi.chiserver.api
 
 import com.netflix.hystrix.contrib.javanica.annotation.HystrixCommand
 import org.springframework.http.MediaType.APPLICATION_JSON_VALUE
 import org.springframework.web.bind.annotation.*
 import pl.allegro.tech.common.andamio.endpoint.PublicEndpoint
-import pl.allegro.tech.selfservice.newservicesingle.domain.DomainConfiguration
-import pl.allegro.tech.selfservice.newservicesingle.domain.DomainObject
-import pl.allegro.tech.selfservice.newservicesingle.logger
+import pl.allegro.experiments.chi.chiserver.domain.DomainConfiguration
+import pl.allegro.experiments.chi.chiserver.domain.DomainObject
+import pl.allegro.experiments.chi.chiserver.logger
 import javax.validation.Valid
 
 @RestController

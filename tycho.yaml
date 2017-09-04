@@ -1,6 +1,6 @@
 ---
-name: newservicesingle
-group: pl.allegro.tech.selfservice
+name: chi-server
+group: pl.allegro.experiments.chi
 
 version_scheme:
   type: external

@@ -1,5 +1,5 @@
 application:
-    name: newservicesingle
+    name: chi-server
 
 spring:
     cloud:

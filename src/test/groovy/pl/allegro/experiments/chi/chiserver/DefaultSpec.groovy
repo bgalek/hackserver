@@ -1,4 +1,4 @@
-package pl.allegro.tech.selfservice.newservicesingle
+package pl.allegro.experiments.chi.chiserver
 
 import spock.lang.Specification
 

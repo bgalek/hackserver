@@ -38,7 +38,7 @@ scmVersion {
 
 sourceCompatibility = 1.8
 
-project.group = 'pl.allegro.tech.selfservice'
+project.group = 'pl.allegro.experiments.chi'
 project.version = scmVersion.version
 
 repositories {
@@ -70,7 +70,7 @@ dependencies {
     integration group: 'com.jayway.jsonpath', name: 'json-path', version: '2.4.0'
 }
 
-mainClassName = 'pl.allegro.tech.selfservice.newservicesingle.AppRunner'
+mainClassName = 'pl.allegro.experiments.chi.chiserver.AppRunner'
 
 test {
     testLogging {

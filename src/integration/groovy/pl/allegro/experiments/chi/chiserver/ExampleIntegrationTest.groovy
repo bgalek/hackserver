@@ -1,8 +1,8 @@
-package pl.allegro.tech.selfservice.newservicesingle
+package pl.allegro.experiments.chi.chiserver
 
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.web.client.RestTemplate
-import pl.allegro.tech.selfservice.newservicesingle.domain.DomainObject
+import pl.allegro.experiments.chi.chiserver.domain.DomainObject
 
 class ExampleIntegrationTest extends BaseIntegrationTest {
 

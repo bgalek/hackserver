@@ -1,4 +1,4 @@
-package pl.allegro.tech.selfservice.newservicesingle
+package pl.allegro.experiments.chi.chiserver
 
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.boot.test.context.SpringBootTest

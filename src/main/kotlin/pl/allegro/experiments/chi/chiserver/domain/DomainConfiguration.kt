@@ -1,4 +1,4 @@
-package pl.allegro.tech.selfservice.newservicesingle.domain
+package pl.allegro.experiments.chi.chiserver.domain
 
 import org.springframework.boot.context.properties.ConfigurationProperties
 

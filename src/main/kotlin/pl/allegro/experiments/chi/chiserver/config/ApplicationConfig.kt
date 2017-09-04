@@ -1,4 +1,4 @@
-package pl.allegro.tech.selfservice.newservicesingle.config
+package pl.allegro.experiments.chi.chiserver.config
 
 import com.fasterxml.jackson.module.afterburner.AfterburnerModule
 import com.fasterxml.jackson.module.kotlin.KotlinModule
@@ -8,7 +8,7 @@ import org.springframework.context.annotation.Configuration
 import org.springframework.web.client.RestTemplate
 import pl.allegro.tech.common.andamio.errors.jackson.ErrorsModule
 import pl.allegro.tech.common.andamio.spring.client.RestTemplateFactory
-import pl.allegro.tech.selfservice.newservicesingle.domain.DomainConfiguration
+import pl.allegro.experiments.chi.chiserver.domain.DomainConfiguration
 
 @Configuration
 @EnableConfigurationProperties(DomainConfiguration::class)
