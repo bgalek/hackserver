@@ -1,0 +1,12 @@
+application:
+    name: newservicesingle
+
+spring:
+    cloud:
+        config:
+            enabled: true
+            configurationServiceUri: https://configuration.qxlint:8443/
+
+client:
+    ssl:
+        enabled: true

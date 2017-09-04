@@ -1,0 +1,14 @@
+discovery:
+  register: false
+  enabled: false
+
+metadata:
+  cloud:
+    skipReading: true
+
+metrics:
+  graphite:
+    enabled: false
+
+domain.properties:
+  value: 'pong!'

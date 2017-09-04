@@ -1,0 +1,12 @@
+discovery:
+  enabled: true
+  type: consul
+
+metadata:
+  cloud:
+    skipReading: true
+
+metrics:
+  graphite:
+    enabled: true
+    host: skystats.qxlint

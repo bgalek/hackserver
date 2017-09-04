@@ -1,0 +1,18 @@
+<configuration>
+
+    <appender name="LOGSTASH" class="pl.allegro.tech.bootstrap.log.appender.LogstashAppender">
+        <host>json.entry.logger.qxlint</host>
+        <port>515</port>
+    </appender>
+
+    <appender name="LOGSTASH_ASYNC" class="ch.qos.logback.classic.AsyncAppender">
+        <queueSize>50000</queueSize>
+        <discardingThreshold>0</discardingThreshold>
+        <appender-ref ref="LOGSTASH" />
+    </appender>
+
+    <root level="INFO">
+        <appender-ref ref="LOGSTASH_ASYNC"/>
+    </root>
+
+</configuration>

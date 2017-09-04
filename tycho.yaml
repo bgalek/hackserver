@@ -1,0 +1,108 @@
+---
+name: newservicesingle
+group: pl.allegro.tech.selfservice
+
+version_scheme:
+  type: external
+
+build:
+  - command: ./gradlew distZip
+
+package: "build/distributions/{{ name }}-{{ version }}.zip"
+
+publish:
+  - artifactory:
+      host: artifactory.allegrogroup.com
+      user: "{{ TYCHO_ENV['bamboo_artifactory_username'] }}"
+      pass: "{{ TYCHO_ENV['bamboo_artifactory_password'] }}"
+
+vars:
+  health_check: &HEALTH_CHECK
+    protocol: "HTTP"
+    path: "/status/info"
+    gracePeriodSeconds: 60
+    intervalSeconds: 5
+    portIndex: 0
+    timeoutSeconds: 10
+    maxConsecutiveFailures: 3
+
+  timeouts: &TIMEOUTS
+    get_instances_urls_timeout: 180
+
+  labels: &LABELS
+    default-monitoring: tag
+
+  test_resources: &TEST_RESOURCES
+    cpus: 0.2
+    mem: 512
+    env_vars:
+      JAVA_OPTS: "-Xmx480m
+                  -XX:+UseConcMarkSweepGC -XX:+CMSIncrementalMode
+                  -XX:+PrintTenuringDistribution -XX:+PrintGC -XX:+PrintGCDetails -XX:+PrintGCTimeStamps
+                  -Xloggc:gc.log -XX:+UseGCLogFileRotation -XX:NumberOfGCLogFiles=1 -XX:GCLogFileSize=50M
+                  -Dcom.sun.management.jmxremote -Dcom.sun.management.jmxremote.port=$PORT1 -Dcom.sun.management.jmxremote.local.only=false
+                  -Dcom.sun.management.jmxremote.authenticate=false -Dcom.sun.management.jmxremote.ssl=false -Djava.rmi.server.hostname=$MESOS_HOSTNAME"
+
+  prod_resources: &PROD_RESOURCES
+    cpus: 1.0
+    mem: 1024
+    env_vars:
+      JAVA_OPTS: "-Xmx800m
+                  -XX:+UseConcMarkSweepGC -XX:+CMSIncrementalMode
+                  -XX:+PrintTenuringDistribution -XX:+PrintGC -XX:+PrintGCDetails -XX:+PrintGCTimeStamps
+                  -Xloggc:gc.log -XX:+UseGCLogFileRotation -XX:NumberOfGCLogFiles=1 -XX:GCLogFileSize=50M"
+
+deploy:
+  dev:
+    - marathon:
+        command: "{{ name }}-{{ version }}/bin/{{ name }} -e dev -p $PORT0"
+        port_count: 2
+        url: http://marathon-dev.qxlint/
+        user: _tech_newservice
+        pass: "{{ TYCHO_ENV['bamboo_marathon_dev_password'] }}"
+        labels:
+          consul: "{{ name }}"
+          public: tag
+          hystrix-dashboard: tag
+          << : *LABELS
+        instances: 1
+        << : *TEST_RESOURCES
+        health_check:
+          << : *HEALTH_CHECK
+        timeouts:
+          << : *TIMEOUTS
+
+  test:
+    - marathon:
+        command: "{{ name }}-{{ version }}/bin/{{ name }} -e test -p $PORT0"
+        port_count: 2
+        url: http://marathon-test.qxlint/
+        user: marathon
+        pass: "{{ TYCHO_ENV['bamboo_marathon_test_password'] }}"
+        labels:
+          consul: "{{ name }}"
+          public: tag
+          hystrix-dashboard: tag
+          << : *LABELS
+        instances: 1
+        << : *TEST_RESOURCES
+        health_check:
+          << : *HEALTH_CHECK
+        timeouts:
+          << : *TIMEOUTS
+
+  prod:
+    - marathon:
+        command: "{{ name }}-{{ version }}/bin/{{ name }} -e prod -p $PORT0"
+        url: http://marathon.qxlint/
+        user: pd_prod
+        pass: "{{ TYCHO_ENV['bamboo_marathon_prod_password'] }}"
+        labels:
+          consul: "{{ name }}"
+          << : *LABELS
+        instances: 1
+        << : *PROD_RESOURCES
+        health_check:
+          << : *HEALTH_CHECK
+        timeouts:
+          << : *TIMEOUTS

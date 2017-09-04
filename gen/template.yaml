@@ -1,0 +1,12 @@
+script: "gen/template.groovy"
+filesToRemove:
+  - "gen"
+description: "Kotlin - Single module, Spring Boot app, hystrix & consul enabled"
+enabled: true
+enabledCloningConfigRepository: true
+vaasAvailable: true
+propertiesLocation:
+  test: "src/main/resources/application-test.yml"
+  prod: "src/main/resources/application-prod.yml"
+group: EXAMPLE
+consulEnabled: true
