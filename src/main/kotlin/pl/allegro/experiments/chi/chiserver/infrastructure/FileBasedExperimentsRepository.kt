@@ -1,6 +1,5 @@
 package pl.allegro.experiments.chi.chiserver.infrastructure
 
-import com.google.common.base.Charsets
 import org.springframework.http.HttpEntity
 import org.springframework.http.HttpHeaders
 import org.springframework.http.HttpMethod
@@ -8,7 +7,6 @@ import org.springframework.web.client.RestTemplate
 import pl.allegro.experiments.chi.chiserver.domain.Experiment
 import pl.allegro.experiments.chi.chiserver.domain.ExperimentsRepository
 import pl.allegro.experiments.chi.chiserver.logger
-import java.io.IOException
 
 class FileBasedExperimentsRepository(val jsonUrl: String, val restTemplate: RestTemplate) : ExperimentsRepository {
     companion object {
@@ -16,31 +14,10 @@ class FileBasedExperimentsRepository(val jsonUrl: String, val restTemplate: Rest
     }
 
     internal val jsonConverter = JsonConverter()
-    internal val dataLoader: () -> String
-
-    init {
-        if (jsonUrl.toLowerCase().startsWith("http")) {
-            dataLoader = { loadFromHttp(jsonUrl) }
-        } else {
-            dataLoader = { loadFromResource(jsonUrl) }
-        }
-    }
 
     override fun getAllExperiments(): List<Experiment> {
-        val content = dataLoader.invoke()
+        val content = loadFromHttp(jsonUrl)
         return jsonConverter.fromJSON(content);
-    }
-
-    private fun loadFromResource(jsonResourcePath: String): String {
-        FileBasedExperimentsRepository.logger.debug("loading data from file: $jsonUrl ...")
-
-        try {
-            return this.javaClass.getResource(jsonResourcePath).readText(Charsets.UTF_8)
-        } catch (e: IOException) {
-            val message = "IOException: " + e.message + " while getting resource: " + jsonResourcePath
-            logger.error(message)
-            throw RuntimeException(message, e)
-        }
     }
 
     private fun loadFromHttp(jsonUrl: String): String {

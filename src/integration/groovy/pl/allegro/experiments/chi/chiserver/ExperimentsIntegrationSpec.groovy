@@ -3,7 +3,7 @@ package pl.allegro.experiments.chi.chiserver
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.web.client.RestTemplate
 
-class ExperimentsleIntegrationTest extends BaseIntegrationTest {
+class ExperimentsIntegrationSpec extends BaseIntegrationSpec {
 
     @Autowired
     RestTemplate restTemplate

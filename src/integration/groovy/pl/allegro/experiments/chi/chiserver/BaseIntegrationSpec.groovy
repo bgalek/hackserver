@@ -16,7 +16,7 @@ import static pl.allegro.tech.common.andamio.spring.client.ClientConnectionConfi
         properties = "application.environment=integration",
         webEnvironment=SpringBootTest.WebEnvironment.RANDOM_PORT)
 @ContextConfiguration
-class BaseIntegrationTest extends Specification {
+class BaseIntegrationSpec extends Specification {
 
     @Value('${local.server.port}')
     protected int port
