@@ -36,4 +36,9 @@ class ApplicationConfig {
     fun inMemoryExperimentsRepository(fileBasedExperimentsRepository: FileBasedExperimentsRepository) : InMemoryExperimentsRepository {
         return InMemoryExperimentsRepository(emptyList())
     }
+
+    @Bean
+    fun experimentsRepository(inMemoryExperimentsRepository: InMemoryExperimentsRepository) : ExperimentsRepository {
+        return inMemoryExperimentsRepository
+    }
 }

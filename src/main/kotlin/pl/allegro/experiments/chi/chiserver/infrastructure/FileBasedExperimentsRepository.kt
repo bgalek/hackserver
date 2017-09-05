@@ -8,7 +8,7 @@ import pl.allegro.experiments.chi.chiserver.domain.Experiment
 import pl.allegro.experiments.chi.chiserver.domain.ExperimentsRepository
 import pl.allegro.experiments.chi.chiserver.logger
 
-class FileBasedExperimentsRepository(val jsonUrl: String, val restTemplate: RestTemplate) : ExperimentsRepository {
+class FileBasedExperimentsRepository(var fileUrl: String, val restTemplate: RestTemplate) : ExperimentsRepository {
     companion object {
         private val logger by logger()
     }
@@ -16,7 +16,7 @@ class FileBasedExperimentsRepository(val jsonUrl: String, val restTemplate: Rest
     internal val jsonConverter = JsonConverter()
 
     override fun getAllExperiments(): List<Experiment> {
-        val content = loadFromHttp(jsonUrl)
+        val content = loadFromHttp(fileUrl)
         return jsonConverter.fromJSON(content);
     }
 
