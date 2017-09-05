@@ -8,6 +8,7 @@ import org.springframework.context.annotation.Configuration
 import org.springframework.web.client.RestTemplate
 import pl.allegro.experiments.chi.chiserver.domain.ExperimentsRepository
 import pl.allegro.experiments.chi.chiserver.infrastructure.FileBasedExperimentsRepository
+import pl.allegro.experiments.chi.chiserver.infrastructure.InMemoryExperimentsRepository
 import pl.allegro.tech.common.andamio.errors.jackson.ErrorsModule
 import pl.allegro.tech.common.andamio.spring.client.RestTemplateFactory
 
@@ -27,7 +28,12 @@ class ApplicationConfig {
     fun afterburnerModule() = AfterburnerModule()
 
     @Bean
-    fun experimentsRepository(restTemplate: RestTemplate, @Value("\${chi.experiments.file}") jsonUrl: String): ExperimentsRepository {
+    fun fileBasedExperimentsRepository(restTemplate: RestTemplate, @Value("\${chi.experiments.file}") jsonUrl: String): FileBasedExperimentsRepository {
         return FileBasedExperimentsRepository(jsonUrl, restTemplate)
+    }
+
+    @Bean
+    fun inMemoryExperimentsRepository(fileBasedExperimentsRepository: FileBasedExperimentsRepository) : InMemoryExperimentsRepository {
+        return InMemoryExperimentsRepository(emptyList())
     }
 }

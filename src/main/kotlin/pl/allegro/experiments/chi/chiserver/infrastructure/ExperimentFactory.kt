@@ -10,7 +10,6 @@ import java.lang.reflect.Type
 import java.time.ZonedDateTime
 import java.time.format.DateTimeFormatter
 
-
 object ExperimentFactory {
 
     class ExperimentDeserializer : JsonDeserializer<Experiment> {
@@ -67,7 +66,7 @@ object ExperimentFactory {
             val id = json.get("name").asString
             val from = json.get("from").asInt
             val to = json.get("to").asInt
-            return HashRangeExperimentVariant(id, PercentageRange(from, to))
+            return HashRangeExperimentVariant(id, from, to)
         }
     }
 

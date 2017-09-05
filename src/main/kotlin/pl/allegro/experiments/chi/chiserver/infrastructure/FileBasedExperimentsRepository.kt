@@ -51,5 +51,4 @@ class FileBasedExperimentsRepository(val jsonUrl: String, val restTemplate: Rest
         val entity = HttpEntity<String>(headers)
         return restTemplate.exchange(jsonUrl, HttpMethod.GET, entity, String::class.java).body
     }
-
 }

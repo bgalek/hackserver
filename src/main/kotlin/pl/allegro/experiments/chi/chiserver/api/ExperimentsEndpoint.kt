@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
 import pl.allegro.experiments.chi.chiserver.domain.Experiment
 import pl.allegro.experiments.chi.chiserver.domain.ExperimentsRepository
+import pl.allegro.experiments.chi.chiserver.infrastructure.InMemoryExperimentsRepository
 import pl.allegro.experiments.chi.chiserver.logger
 import pl.allegro.tech.common.andamio.endpoint.PublicEndpoint
 
@@ -20,7 +21,7 @@ class ExperimentsEndpoint {
     }
 
     @Autowired
-    lateinit var experimentsRepository: ExperimentsRepository
+    lateinit var experimentsRepository: InMemoryExperimentsRepository
 
     @PublicEndpoint
     @GetMapping("")

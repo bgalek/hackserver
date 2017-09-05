@@ -1,4 +1,4 @@
 package pl.allegro.experiments.chi.chiserver.domain
 
 
-open class ExperimentVariant(name: String)
+open class ExperimentVariant(val name: String, val type: String)

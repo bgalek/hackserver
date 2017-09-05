@@ -4,8 +4,17 @@ import pl.allegro.experiments.chi.chiserver.domain.Experiment
 import pl.allegro.experiments.chi.chiserver.domain.ExperimentsRepository
 
 
-class InMemoryExperimentsRepository: ExperimentsRepository {
+class InMemoryExperimentsRepository(var experiments: List<Experiment>) : ExperimentsRepository {
+
+    init {
+        experiments = emptyList()
+    }
+
     override fun getAllExperiments(): List<Experiment> {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        return experiments
+    }
+
+    fun updateExperiments(experiments: List<Experiment>) {
+        this.experiments = experiments;
     }
 }
