@@ -3,3 +3,7 @@ application:
 
 hystrix:
   streamUrl: /hystrix.stream
+
+chi:
+  experiments:
+    file: "http://assets-chi.qxlint/chi-server/experiments.json"

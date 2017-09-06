@@ -1,0 +1,67 @@
+[
+  {
+    "id": "new_SG",
+    "variants": [
+      {
+        "type": "CMUID_REGEXP",
+        "name": "base",
+        "regexp": "^base$"
+      },
+      {
+        "type": "INTERNAL",
+        "name": "new_internal"
+      },
+      {
+        "type": "CMUID_REGEXP",
+        "name": "new",
+        "regexp": ".*5[0-3]$"
+      },
+      {
+        "type": "CMUID_REGEXP",
+        "name": "new_header",
+        "regexp": ".*5[4-7]$"
+      },
+      {
+        "type": "CMUID_REGEXP",
+        "name": "base",
+        "regexp": ".*(58|59|60|61)$"
+      }
+    ]
+  },
+  {
+    "id": "test_dev",
+    "variants": [
+      {
+        "type": "HASH",
+        "name": "v1",
+        "from": 0,
+        "to": 49
+      },
+      {
+        "type": "HASH",
+        "name": "v2",
+        "from": 50,
+        "to": 99
+      }
+    ]
+  },
+  {
+    "id": "test_aa",
+    "variants": [
+      {
+        "type": "CMUID_REGEXP",
+        "name": "vA",
+        "regexp": ".*a$"
+      },
+      {
+        "type": "CMUID_REGEXP",
+        "name": "vB",
+        "regexp": ".*b$"
+      },
+      {
+        "type": "INTERNAL",
+        "name": "base"
+      }
+    ]
+  }
+]

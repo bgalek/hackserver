@@ -1,0 +1,60 @@
+[
+  {
+    "id":"test_dev",
+    "variants": [
+      {
+        "type": "HASH",
+        "name": "v1",
+        "from": 0,
+        "to": 50
+      },
+      {
+        "type": "HASH",
+        "name": "v2",
+        "from": 50,
+        "to": 100
+      }
+    ]
+  },
+  {
+    "id":"another_one",
+    "variants": [
+      {
+        "type": "HASH",
+        "name": "v1",
+        "from": 0,
+        "to": 50
+      }
+    ]
+  },
+  {
+    "id":"cmuid_regexp",
+    "variants": [
+      {
+        "type":"CMUID_REGEXP",
+        "name": "v1",
+        "regexp": ".*[0-3]$"
+      }
+    ]
+  },
+  {
+    "id":"internal_exp",
+    "variants": [
+      {
+        "type":"INTERNAL",
+        "name": "internal"
+      }
+    ]
+  },
+  {
+    "id":"timed_internal_exp",
+    "activeFrom": "2017-11-03T10:15:30+02:00",
+    "activeTo": "2017-12-03T10:15:30+02:00",
+    "variants": [
+      {
+        "type":"INTERNAL",
+        "name": "internal"
+      }
+    ]
+  }
+]

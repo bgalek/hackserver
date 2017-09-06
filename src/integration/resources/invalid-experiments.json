@@ -1,0 +1,13 @@
+[
+  {
+      "id":"test_dev",
+      "type":"SIMPLE",
+      "variants": [
+        {
+          "name": "v2",
+          "from": 0,
+          "to": 101
+        }
+      ]
+  }
+]

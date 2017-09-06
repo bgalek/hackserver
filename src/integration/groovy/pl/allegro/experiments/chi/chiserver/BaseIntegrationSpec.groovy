@@ -1,6 +1,7 @@
 package pl.allegro.experiments.chi.chiserver
 
 import org.springframework.beans.factory.annotation.Value
+import org.springframework.boot.autoconfigure.integration.IntegrationAutoConfiguration
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
@@ -12,11 +13,11 @@ import spock.lang.Specification
 
 import static pl.allegro.tech.common.andamio.spring.client.ClientConnectionConfig.clientConnectionConfig
 
-@SpringBootTest(classes = [AppRunner, RestTemplateConfig],
+@SpringBootTest(classes = [AppRunner, RestTemplateConfig, IntegrationConfig],
         properties = "application.environment=integration",
         webEnvironment=SpringBootTest.WebEnvironment.RANDOM_PORT)
 @ContextConfiguration
-class BaseIntegrationTest extends Specification {
+class BaseIntegrationSpec extends Specification {
 
     @Value('${local.server.port}')
     protected int port
