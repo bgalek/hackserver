@@ -73,15 +73,6 @@ integrationTest {
     }
 }
 
-publishing {
-    publications {
-        mavenJava(MavenPublication) {
-            artifact provisioningPackage
-            artifact distZip, { classifier = "deploy" }
-        }
-    }
-}
-
 axionPublishing {
     repositories {
         allegro {
