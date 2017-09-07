@@ -32,7 +32,7 @@ vars:
   labels: &LABELS
     default-monitoring: tag
 
- test_resources: &TEST_RESOURCES
+  test_resources: &TEST_RESOURCES
     cpus: 0.2
     mem: 1024
     env_vars:
