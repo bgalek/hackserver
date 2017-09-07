@@ -1,7 +1,3 @@
 discovery:
   enabled: true
   type: consul
-
-metrics:
-  graphite:
-    enabled: false

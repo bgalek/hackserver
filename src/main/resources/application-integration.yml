@@ -1,12 +1,4 @@
-discovery:
-  register: false
-  enabled: false
-
-metadata:
-  cloud:
-    skipReading: true
-
-metrics:
-  graphite:
-    enabled: false
+chi:
+  experiments:
+    file: ""
 

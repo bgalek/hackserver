@@ -32,25 +32,21 @@ vars:
   labels: &LABELS
     default-monitoring: tag
 
-  test_resources: &TEST_RESOURCES
+ test_resources: &TEST_RESOURCES
     cpus: 0.2
-    mem: 512
+    mem: 1024
     env_vars:
-      JAVA_OPTS: "-Xmx480m
-                  -XX:+UseConcMarkSweepGC -XX:+CMSIncrementalMode
-                  -XX:+PrintTenuringDistribution -XX:+PrintGC -XX:+PrintGCDetails -XX:+PrintGCTimeStamps
-                  -Xloggc:gc.log -XX:+UseGCLogFileRotation -XX:NumberOfGCLogFiles=1 -XX:GCLogFileSize=50M
+      JAVA_OPTS: "-Xmx700m -Xms700m -XX:MetaspaceSize=100m -XX:NewRatio=1
+                  -XX:+PrintTenuringDistribution -XX:+PrintGC -XX:+PrintGCDetails -XX:+PrintGCTimeStamps -XX:+PrintGCApplicationStoppedTime -Xloggc:gc.log -XX:+UseGCLogFileRotation -XX:NumberOfGCLogFiles=1 -XX:GCLogFileSize=100M
                   -Dcom.sun.management.jmxremote -Dcom.sun.management.jmxremote.port=$PORT1 -Dcom.sun.management.jmxremote.local.only=false
                   -Dcom.sun.management.jmxremote.authenticate=false -Dcom.sun.management.jmxremote.ssl=false -Djava.rmi.server.hostname=$MESOS_HOSTNAME"
 
   prod_resources: &PROD_RESOURCES
-    cpus: 1.0
+    cpus: 1
     mem: 1024
     env_vars:
-      JAVA_OPTS: "-Xmx800m
-                  -XX:+UseConcMarkSweepGC -XX:+CMSIncrementalMode
-                  -XX:+PrintTenuringDistribution -XX:+PrintGC -XX:+PrintGCDetails -XX:+PrintGCTimeStamps
-                  -Xloggc:gc.log -XX:+UseGCLogFileRotation -XX:NumberOfGCLogFiles=1 -XX:GCLogFileSize=50M"
+      JAVA_OPTS: "-Xmx700m -Xms700m -XX:MetaspaceSize=100m -XX:NewRatio=1
+                  -XX:+PrintTenuringDistribution -XX:+PrintGC -XX:+PrintGCDetails -XX:+PrintGCTimeStamps -XX:+PrintGCApplicationStoppedTime -Xloggc:gc.log -XX:+UseGCLogFileRotation -XX:NumberOfGCLogFiles=1 -XX:GCLogFileSize=100M"
 
 deploy:
   dev:

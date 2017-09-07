@@ -1,10 +1,1 @@
-discovery:
-  enabled: false
 
-metadata:
-  cloud:
-    skipReading: true
-
-metrics:
-  graphite:
-    enabled: false

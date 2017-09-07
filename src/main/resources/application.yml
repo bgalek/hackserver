@@ -1,8 +1,16 @@
 application:
   name: chi-server
 
-hystrix:
-  streamUrl: /hystrix.stream
+discovery:
+  enabled: false
+
+metadata:
+  cloud:
+    skipReading: true
+
+metrics:
+  graphite:
+    enabled: false
 
 chi:
   experiments:
