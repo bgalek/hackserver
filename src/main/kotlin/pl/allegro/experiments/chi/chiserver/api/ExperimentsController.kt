@@ -9,11 +9,12 @@ import org.springframework.web.bind.annotation.RestController
 import pl.allegro.experiments.chi.chiserver.logger
 import pl.allegro.experiments.chi.persistence.FileBasedExperimentsRepository
 import pl.allegro.tech.common.andamio.endpoint.PublicEndpoint
+import pl.allegro.tech.common.andamio.metrics.MeteredEndpoint
 
 
 @RestController
 @RequestMapping(value = "/api/experiments", produces = arrayOf(APPLICATION_JSON_VALUE, APPLICATION_JSON_UTF8_VALUE))
-class ExperimentsEndpoint {
+class ExperimentsController {
 
     companion object {
         private val logger by logger()
@@ -23,9 +24,10 @@ class ExperimentsEndpoint {
     lateinit var experimentsRepository: FileBasedExperimentsRepository
 
     @PublicEndpoint
+    @MeteredEndpoint
     @GetMapping("")
     fun activeExperiments() : String {
-        ExperimentsEndpoint.logger.info("Active experiments request received")
+        ExperimentsController.logger.info("Active experiments request received")
 
         return experimentsRepository.allAsJSON
     }
