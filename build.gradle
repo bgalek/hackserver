@@ -44,8 +44,9 @@ repositories {
 }
 
 dependencies {
+    compile 'org.springframework:spring-web:4.3.10.RELEASE'
     compile group: 'pl.allegro.tech.common', name: 'spring-boot-starter-andamio', version: '1.9.0'
-    compile group: 'pl.allegro.experiments.chi', name: 'chi-core', version: '0.2.4'
+    compile group: 'pl.allegro.experiments.chi', name: 'chi-core', version: '0.4.0'
 
     compile group: 'org.jetbrains.kotlin', name: 'kotlin-stdlib', version: kotlin_version
     compile group: 'com.fasterxml.jackson.module', name: 'jackson-module-kotlin', version: '2.9.0'

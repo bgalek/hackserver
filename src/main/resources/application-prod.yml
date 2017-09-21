@@ -10,3 +10,7 @@ metrics:
   graphite:
     enabled: true
     host: skystats.qxlint
+
+chi:
+  experiments:
+    file: "http://assets-chi.qxlint/chi-server/experiments.json"

@@ -14,4 +14,4 @@ metrics:
 
 chi:
   experiments:
-    file: "http://assets-chi.qxlint/chi-server/experiments.json"
+    file: "http://assets-chi.qxlint/chi-server/experiments-test.json"
