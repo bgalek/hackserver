@@ -1,0 +1,226 @@
+
+<html>
+
+<head>
+    <style>
+        body {
+            font-family: sans-serif;
+        }
+
+        h1 {
+            font-weight: 400;
+        }
+
+        h1 span {
+            font-family: serif;
+        }
+
+        h2,
+        h3 {
+            font-weight: 400;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 1200px;
+            /* margin: 0 auto; */
+            display: flex;
+            flex-wrap: wrap;
+        }
+
+        .container section {
+            flex: 1 1 400px;
+            min-width: 320px;
+        }
+
+        input[type="button"] {
+            font-size: 1.25em;
+            cursor: pointer;
+        }
+
+        section form {
+            border: 1px solid #ccc;
+            background-color: #eee;
+            display: inline-block;
+            padding: 1em .3em;
+        }
+
+        section h5 {
+            margin: .6em 0;
+        }
+
+        section a {
+            font-size: .7em;
+        }
+
+        .submit {
+            clear: both;
+            width: 100%;
+            text-align: right;
+            padding: .6em 0 1em;
+        }
+    </style>
+</head>
+
+<body>
+<h1><span>&chi;</span>Box Experiment Setter</h1>
+
+<h2>Usage</h2>
+<div class="container">
+    <section id="force-variant">
+        <h3>Force a specific page variant in this session</h3>
+        <form onKeyUp="eventHandler('change', 'forceVariant')">
+            <input name="variant" placeholder="Variant name" required>
+            <select name="expireDays" id="" onChange="eventHandler('change', 'forceVariant')">
+                <option value="" disabled selected>Choose expire time</option>
+                <option value="">For this browser session only</option>
+                <option value="1">1 day</option>
+                <option value="3">3 days</option>
+                <option value="7">7 days</option>
+                <option value="14">14 days</option>
+                <option value="30">30 days</option>
+            </select>
+            <br>
+            <div class="submit">
+                <input type="button" value="Set variant Cookie!" onClick="eventHandler('submit', 'forceVariant')">
+            </div>
+            <h5>URL for sharing:</h5>
+            <input name="redirectUrl" placeholder="Optional redirect page eg. https://allegro.pl" size="50">
+        </form>
+        <br>
+        <a id="forceVariantUrl"></a>
+    </section>
+    <section id="disable-experiments">
+        <h3>Disable page experiments in this session</h3>
+        <form onKeyUp="eventHandler('change', 'disableExperiments')">
+            <select name="expireDays" id="" onChange="eventHandler('change', 'disableExperiments')">
+                <option value="" disabled selected>Choose expire time</option>
+                <option value="">For this browser session only</option>
+                <option value="1">1 day</option>
+                <option value="3">3 days</option>
+                <option value="7">7 days</option>
+                <option value="14">14 days</option>
+                <option value="30">30 days</option>
+            </select>
+            <br>
+            <div class="submit">
+                <input type="button" value="Set opt-out Cookie!" onClick="eventHandler('submit', 'disableExperiments')">
+            </div>
+            <h5>URL for sharing:</h5>
+            <input name="redirectUrl" placeholder="Optional redirect page eg. https://allegro.pl" size="50">
+        </form>
+        <br>
+        <a id="disableExperimentsUrl"></a>
+    </section>
+</div>
+
+
+
+<h2>Action log</h2>
+<code><pre id="action"></pre></code>
+<script>
+    function log(msg) {
+        console.log(msg);
+        var e = document.getElementById("action");
+        e.innerText += "â  " + msg + '\n';
+    }
+
+    function setChiCookie(content, expireDays) {
+        var expires = "";
+        if (expireDays) {
+            var d = new Date();
+            d.setTime(d.getTime() + (expireDays * 24 * 60 * 60 * 1000));
+            expires = " expires=" + d.toUTCString() + ";";
+        }
+        document.cookie = "chi=" + content + ";" + expires + " path=/;";
+    }
+
+    function forceVariant(variant, expireDays) {
+        var expireLabel = expireDays ? " for " + expireDays + "days" : "";
+        log('Forcing page variant {' + variant + '} for ' + window.location.hostname + expireLabel + ' ...');
+        var chiCookie = '{"forcePageVariant":"' + variant + '"}';
+        setChiCookie(chiCookie, expireDays);
+    }
+
+    function disableExperiments(expireDays) {
+        var expireLabel = expireDays ? " for " + expireDays + "days" : "";
+        log('Disabling page experiments for ' + window.location.hostname + expireLabel + ' ...');
+        var chiCookie = '{"disablePageExperiment":true}';
+        setChiCookie(chiCookie, expireDays);
+    }
+
+    function performRedirect(redirect) {
+        log('Redirecting to ' + redirect + ' ...');
+        window.location.href = redirect;
+    }
+
+    function performUrlAction() {
+        var urlParams = new URLSearchParams(window.location.search);
+
+        var forcePageVariant = urlParams.get('forcePageVariant');
+        var disablePageExperiment = urlParams.get('disablePageExperiment');
+        var redirect = urlParams.get('redirect');
+        var expireDays = urlParams.get('expireDays');
+
+        if (forcePageVariant) {
+            forceVariant(forcePageVariant, expireDays);
+        } else if (disablePageExperiment === 'true' || disablePageExperiment === '') {
+            disableExperiments(expireDays);
+        }
+
+        if (redirect) {
+            performRedirect(redirect);
+        }
+    }
+
+    function getUrlForAction(action, options) {
+        var url = "http://allegro.pl/chi/cookie-baker.html?"
+
+        if (action === 'forceVariant' && options.variant) {
+            url += 'forcePageVariant=' + options.variant + '&';
+        } else if (action === 'disableExperiments') {
+            url += 'disablePageExperiment&';
+        }
+
+        if (options.expireDays) {
+            url += 'expireDays=' + options.expireDays + '&';
+        }
+
+        if (options.redirect) {
+            url += 'redirect=' + options.redirect + '&';
+        }
+
+        return url;
+    }
+
+    function eventHandler(event, action) {
+        var selector = action === 'forceVariant'
+            ? '#force-variant form'
+            : '#disable-experiments form';
+        var form = document.querySelector(selector);
+        var redirect = form.querySelector('[name="redirectUrl"]').value;
+        var expireDays = form.querySelector('[name="expireDays"]').value;
+        var variant = action === 'forceVariant' && form.querySelector('[name="variant"]').value;
+        var urlBox = action === 'forceVariant'
+            ? document.getElementById('forceVariantUrl')
+            : document.getElementById('disableExperimentsUrl');
+
+        if (event === 'change') {
+            urlBox.innerText = urlBox.href = getUrlForAction(action, {
+                variant: variant,
+                expireDays: expireDays,
+                redirect: redirect
+            });
+        } else if (event === 'submit') {
+            (action === 'forceVariant') && forceVariant(variant, expireDays);
+            (action === 'disableExperiments') && disableExperiments(expireDays);
+        }
+    }
+
+    performUrlAction();
+</script>
+
+
+</body>
+
+</html>
