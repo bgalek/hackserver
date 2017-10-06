@@ -18,8 +18,7 @@ class ExperimentsIntegrationSpec extends BaseIntegrationSpec {
     @Shared
     public WireMockRule wireMock = new WireMockRule(0)
 
-    @Autowired
-    RestTemplate restTemplate
+    RestTemplate restTemplate = new RestTemplate()
 
     @Autowired
     FileBasedExperimentsRepository fileBasedExperimentsRepository
@@ -51,32 +50,30 @@ class ExperimentsIntegrationSpec extends BaseIntegrationSpec {
 
     def "should return list of experiment in version 1"() {
         given:
-            fileBasedExperimentsRepository.changeJsonUrl("http://localhost:${wireMock.port()}/experiments/v1")
-            fileBasedExperimentsRepository.secureRefresh()
+        fileBasedExperimentsRepository.changeJsonUrl("http://localhost:${wireMock.port()}/experiments")
+        fileBasedExperimentsRepository.secureRefresh()
 
         when:
-            def response = restTemplate.getForEntity(localUrl('/api/experiments/v1'), List)
+        def response = restTemplate.getForEntity(localUrl('/api/experiments/v1'), List)
 
         then:
-            response.statusCode.value() == 200
-            response.body.size() == 5
+        response.statusCode.value() == 200
+        response.body.size() == 5
 
         and:
-            response.body.contains(internalExperiment())
-            response.body.contains(cmuidRegexpExperiment())
-            response.body.contains(hashVariantExperiment())
-            response.body.contains(sampleExperiment())
-            response.body.contains(timeboundExperiment())
+        response.body.contains(internalExperiment())
+        response.body.contains(cmuidRegexpExperiment())
+        response.body.contains(hashVariantExperiment())
+        response.body.contains(sampleExperiment())
+        response.body.contains(timeboundExperiment())
     }
 
     def "should return last valid list when file is corrupted"() {
         given:
         fileBasedExperimentsRepository.changeJsonUrl("http://localhost:${wireMock.port()}/experiments")
         fileBasedExperimentsRepository.secureRefresh()
-
-        fileBasedExperimentsRepository.secureRefresh()
         fileBasedExperimentsRepository.changeJsonUrl("http://localhost:${wireMock.port()}//invalid-experiments")
-
+        fileBasedExperimentsRepository.secureRefresh()
         when:
         def response = restTemplate.getForEntity(localUrl('/api/experiments'), List)
 
