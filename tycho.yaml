@@ -58,8 +58,6 @@ deploy:
         pass: "{{ TYCHO_ENV['bamboo_marathon_dev_password'] }}"
         labels:
           consul: "{{ name }}"
-          public: tag
-          hystrix-dashboard: tag
           << : *LABELS
         instances: 1
         << : *TEST_RESOURCES
@@ -77,8 +75,6 @@ deploy:
         pass: "{{ TYCHO_ENV['bamboo_marathon_test_password'] }}"
         labels:
           consul: "{{ name }}"
-          public: tag
-          hystrix-dashboard: tag
           << : *LABELS
         instances: 1
         << : *TEST_RESOURCES

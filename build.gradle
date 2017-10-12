@@ -1,5 +1,10 @@
 buildscript {
-    ext.kotlin_version = '1.1.4'
+
+    ext {
+        versions = [
+                kotlin: '1.1.51',
+        ]
+    }
 
     repositories {
         maven { url 'https://artifactory.allegrogroup.com/artifactory/group-maven/' }
@@ -7,10 +12,10 @@ buildscript {
     }
 
     dependencies {
-        classpath group: 'pl.allegro.tech.build', name: 'axion-gradle-plugin', version: '1.2.1'
-        classpath group: 'pl.allegro.tech.phoenix', name: 'phoenix-provisioning-plugin', version: '1.0.12'
-        classpath group: 'org.jetbrains.kotlin', name: 'kotlin-gradle-plugin', version: kotlin_version
-        classpath group: 'org.jetbrains.kotlin', name: 'kotlin-allopen', version: kotlin_version
+        classpath group: 'pl.allegro.tech.build', name: 'axion-gradle-plugin', version: "1.2.2"
+        classpath group: 'pl.allegro.tech.phoenix', name: 'phoenix-provisioning-plugin', version: "1.0.12"
+        classpath group: 'org.jetbrains.kotlin', name: 'kotlin-gradle-plugin', version: "$versions.kotlin"
+        classpath group: 'org.jetbrains.kotlin', name: 'kotlin-allopen', version: "$versions.kotlin"
     }
 }
 
@@ -18,7 +23,7 @@ plugins {
     id 'groovy'
     id 'application'
     id 'maven-publish'
-    id 'pl.allegro.tech.build.axion-release' version '1.7.1'
+    id 'pl.allegro.tech.build.axion-release' version '1.7.2'
 }
 
 apply plugin: 'axion'
@@ -45,11 +50,10 @@ repositories {
 
 dependencies {
     compile 'org.springframework:spring-web:4.3.10.RELEASE'
-    compile group: 'pl.allegro.tech.common', name: 'spring-boot-starter-andamio', version: '1.9.0'
-    compile group: 'pl.allegro.experiments.chi', name: 'chi-core', version: '0.4.0'
-
-    compile group: 'org.jetbrains.kotlin', name: 'kotlin-stdlib', version: kotlin_version
-    compile group: 'com.fasterxml.jackson.module', name: 'jackson-module-kotlin', version: '2.9.0'
+    compile group: 'pl.allegro.tech.common', name: 'spring-boot-starter-andamio', version: '1.9.3'
+    compile group: 'pl.allegro.experiments.chi', name: 'chi-core', version: '0.5.0'
+    compile group: 'org.jetbrains.kotlin', name: 'kotlin-stdlib', version: "$versions.kotlin"
+    compile group: 'com.fasterxml.jackson.module', name: 'jackson-module-kotlin', version: '2.9.1'
 
     testCompile group: 'org.spockframework', name: 'spock-core', version: '1.1-groovy-2.4'
     testCompile group: 'com.github.tomakehurst', name: 'wiremock', version: '1.58'

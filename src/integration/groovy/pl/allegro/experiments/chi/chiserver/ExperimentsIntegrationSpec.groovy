@@ -18,8 +18,7 @@ class ExperimentsIntegrationSpec extends BaseIntegrationSpec {
     @Shared
     public WireMockRule wireMock = new WireMockRule(0)
 
-    @Autowired
-    RestTemplate restTemplate
+    RestTemplate restTemplate = new RestTemplate()
 
     @Autowired
     FileBasedExperimentsRepository fileBasedExperimentsRepository
@@ -40,16 +39,41 @@ class ExperimentsIntegrationSpec extends BaseIntegrationSpec {
         then:
         response.statusCode.value() == 200
         response.body.size() == 5
+
+        and:
+        response.body.contains(internalExperiment())
+        response.body.contains(cmuidRegexpExperiment())
+        response.body.contains(hashVariantExperiment())
+        response.body.contains(sampleExperiment())
+        response.body.contains(timeboundExperiment())
+    }
+
+    def "should return list of experiment in version 1"() {
+        given:
+        fileBasedExperimentsRepository.changeJsonUrl("http://localhost:${wireMock.port()}/experiments")
+        fileBasedExperimentsRepository.secureRefresh()
+
+        when:
+        def response = restTemplate.getForEntity(localUrl('/api/experiments/v1'), List)
+
+        then:
+        response.statusCode.value() == 200
+        response.body.size() == 5
+
+        and:
+        response.body.contains(internalExperiment())
+        response.body.contains(cmuidRegexpExperiment())
+        response.body.contains(hashVariantExperiment())
+        response.body.contains(sampleExperiment())
+        response.body.contains(timeboundExperiment())
     }
 
     def "should return last valid list when file is corrupted"() {
         given:
         fileBasedExperimentsRepository.changeJsonUrl("http://localhost:${wireMock.port()}/experiments")
         fileBasedExperimentsRepository.secureRefresh()
-
-        fileBasedExperimentsRepository.secureRefresh()
         fileBasedExperimentsRepository.changeJsonUrl("http://localhost:${wireMock.port()}//invalid-experiments")
-
+        fileBasedExperimentsRepository.secureRefresh()
         when:
         def response = restTemplate.getForEntity(localUrl('/api/experiments'), List)
 
@@ -63,5 +87,48 @@ class ExperimentsIntegrationSpec extends BaseIntegrationSpec {
                 .willReturn(aResponse()
                 .withStatus(200)
                 .withBody(json)))
+    }
+
+    Map internalExperiment() {
+        [ id: 'internal_exp',
+          variants: [
+                  [ name: 'internal', predicates: [[type: 'INTERNAL']] ]
+          ]
+        ]
+    }
+
+    Map cmuidRegexpExperiment() {
+        [ id: 'cmuid_regexp',
+          variants: [
+                  [ name: 'v1', predicates: [[type: 'CMUID_REGEXP', regexp: '.*[0-3]$']] ]
+          ]
+        ]
+    }
+
+    Map hashVariantExperiment() {
+        [ id: 'test_dev',
+          variants: [
+                  [ name: 'v1', predicates: [[type: 'HASH', from: 0, to: 50]] ],
+                  [ name: 'v2', predicates: [[type: 'HASH', from: 50, to: 100]] ]
+          ]
+        ]
+    }
+
+    Map sampleExperiment() {
+        [id: 'another_one',
+         variants: [
+                 [ name: 'v1', predicates: [[type: 'HASH', from: 0, to: 50]] ]
+         ]
+        ]
+    }
+
+    Map timeboundExperiment() {
+        [ id:'timed_internal_exp',
+          activeFrom: '2017-11-03T10:15:30+02:00',
+          activeTo: '2017-12-03T10:15:30+02:00',
+          variants: [
+                  [ name: 'internal', predicates: [[ type:'INTERNAL' ]] ]
+          ]
+        ]
     }
 }
