@@ -4,11 +4,14 @@ import com.codahale.metrics.Gauge
 import com.codahale.metrics.MetricRegistry
 import com.fasterxml.jackson.module.kotlin.KotlinModule
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.beans.factory.annotation.Value
+import org.springframework.boot.context.properties.ConfigurationProperties
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.web.client.RestTemplate
 import pl.allegro.experiments.chi.chiserver.api.v1.JsonConverter
+import pl.allegro.experiments.chi.chiserver.infrastructure.ClientConnectionProperties
 import pl.allegro.experiments.chi.chiserver.infrastructure.HttpContentLoader
 import pl.allegro.experiments.chi.core.ExperimentsRepository
 import pl.allegro.experiments.chi.persistence.FileBasedExperimentsRepository
@@ -26,8 +29,12 @@ class ApplicationConfig {
     lateinit var experimentsRepository: ExperimentsRepository
 
     @Bean
-    fun restTemplate(factory: RestTemplateFactory): RestTemplate =
-            factory.usingApacheHttp().create() //TODO: should create named connection pool
+    fun restTemplate(
+            factory: RestTemplateFactory,
+            @Qualifier("chiExperimentsClient") clientConnectionProperties: ClientConnectionProperties): RestTemplate {
+        val connectionConfig = clientConnectionProperties.toConfig()
+        return factory.usingApacheHttp().create(connectionConfig)
+    }
 
     @Bean
     fun errorsModule(): ErrorsModule = ErrorsModule.module()
@@ -50,4 +57,8 @@ class ApplicationConfig {
         val gauge = Gauge<Int> { experimentsRepository.all.size }
         metricRegistry.register("experiments.count", gauge)
     }
+
+    @Bean
+    @ConfigurationProperties(prefix = "chi.experiments.connection")
+    fun chiExperimentsClient(): ClientConnectionProperties = ClientConnectionProperties()
 }

@@ -12,7 +12,8 @@ import pl.allegro.tech.common.andamio.metrics.MeteredEndpoint
 
 @RestController
 @RequestMapping(value = "/api/experiments", produces = arrayOf(APPLICATION_JSON_VALUE, APPLICATION_JSON_UTF8_VALUE))
-class ExperimentsController(val experimentsRepository: FileBasedExperimentsRepository, val jsonConverter: JsonConverter) {
+class ExperimentsController(private val experimentsRepository: FileBasedExperimentsRepository,
+                            private val jsonConverter: JsonConverter) {
 
     companion object {
         private val logger by logger()

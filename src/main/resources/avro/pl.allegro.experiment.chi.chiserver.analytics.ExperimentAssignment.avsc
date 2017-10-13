@@ -1,0 +1,84 @@
+{
+    "type": "record",
+    "name": "ExperimentAssignment",
+    "namespace": "pl.allegro.experiments.chi.assignments",
+    "doc": "An event published, when user is assigned to the experiment's variant",
+    "fields": [
+        {
+            "name": "__metadata",
+            "type": [
+                "null",
+                {
+                    "type": "map",
+                    "values": "string"
+                }
+            ],
+            "doc": "Field internally used by Hermes to propagate metadata.",
+            "default": null
+        },
+        {
+            "name": "userId",
+            "type": [
+                "null",
+                "string"
+            ],
+            "doc": "id of logged user",
+            "default": "null"
+        },
+        {
+            "name": "userCmId",
+            "type": [
+                "null",
+                "string"
+            ],
+            "doc": "_cmuid cookie value",
+            "default": "null"
+        },
+        {
+            "name": "experimentId",
+            "type": "string",
+            "doc": "experimentId"
+        },
+        {
+            "name": "variantName",
+            "type": "string",
+            "doc": "experiment variant name"
+        },
+        {
+            "name": "internal",
+            "type": [
+                "null",
+                "boolean"
+            ],
+            "doc": "internal user flag",
+            "default": "null"
+        },
+        {
+            "name": "confirmed",
+            "type": [
+                "null",
+                "boolean"
+            ],
+            "doc": "experiment assignment confirmation flag",
+            "default": "null"
+        },
+        {
+            "name": "deviceClass",
+            "type": [
+                "null",
+                "string"
+            ],
+            "doc": "device class as in https://github.com/nielsbasjes/yauaa",
+            "default": "null"
+        },
+        {
+            "name": "assignmentDate",
+            "type": [
+                "null",
+                "long"
+            ],
+            "doc": "Date of experiment assingment",
+            "default": "null"
+        }
+    ]
+}

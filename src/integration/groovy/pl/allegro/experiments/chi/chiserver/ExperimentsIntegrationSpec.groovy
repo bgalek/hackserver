@@ -1,22 +1,14 @@
 package pl.allegro.experiments.chi.chiserver
 
-import com.github.tomakehurst.wiremock.junit.WireMockRule
-import org.junit.ClassRule
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.web.client.RestTemplate
 import pl.allegro.experiments.chi.persistence.FileBasedExperimentsRepository
-import spock.lang.Shared
 
 import static com.github.tomakehurst.wiremock.client.WireMock.aResponse
 import static com.github.tomakehurst.wiremock.client.WireMock.get
-import static com.github.tomakehurst.wiremock.client.WireMock.stubFor
 import static com.github.tomakehurst.wiremock.client.WireMock.urlEqualTo
 
 class ExperimentsIntegrationSpec extends BaseIntegrationSpec {
-
-    @ClassRule
-    @Shared
-    public WireMockRule wireMock = new WireMockRule(0)
 
     RestTemplate restTemplate = new RestTemplate()
 
@@ -24,13 +16,17 @@ class ExperimentsIntegrationSpec extends BaseIntegrationSpec {
     FileBasedExperimentsRepository fileBasedExperimentsRepository
 
     def setup() {
-        teachWireMockJson("/experiments",  this.getClass().getResource('/some-experiments.json' ).text)
-        teachWireMockJson("/invalid-experiments",  this.getClass().getResource('/invalid-experiments.json' ).text)
+        teachWireMockJson("/experiments", getResourceAsString('/some-experiments.json'))
+        teachWireMockJson("/invalid-experiments",  getResourceAsString('/invalid-experiments.json' ))
+    }
+
+    private String getResourceAsString(String resourceName) {
+        this.getClass().getResource(resourceName).text
     }
 
     def "should return list of experiments loaded from the backing HTTP resource"() {
         given:
-        fileBasedExperimentsRepository.changeJsonUrl("http://localhost:${wireMock.port()}/experiments")
+        fileBasedExperimentsRepository.changeJsonUrl("http://localhost:${wireMockServer.port()}/experiments")
         fileBasedExperimentsRepository.secureRefresh()
 
         when:
@@ -50,7 +46,7 @@ class ExperimentsIntegrationSpec extends BaseIntegrationSpec {
 
     def "should return list of experiment in version 1"() {
         given:
-        fileBasedExperimentsRepository.changeJsonUrl("http://localhost:${wireMock.port()}/experiments")
+        fileBasedExperimentsRepository.changeJsonUrl("http://localhost:${wireMockServer.port()}/experiments")
         fileBasedExperimentsRepository.secureRefresh()
 
         when:
@@ -70,9 +66,9 @@ class ExperimentsIntegrationSpec extends BaseIntegrationSpec {
 
     def "should return last valid list when file is corrupted"() {
         given:
-        fileBasedExperimentsRepository.changeJsonUrl("http://localhost:${wireMock.port()}/experiments")
+        fileBasedExperimentsRepository.changeJsonUrl("http://localhost:${wireMockServer.port()}/experiments")
         fileBasedExperimentsRepository.secureRefresh()
-        fileBasedExperimentsRepository.changeJsonUrl("http://localhost:${wireMock.port()}//invalid-experiments")
+        fileBasedExperimentsRepository.changeJsonUrl("http://localhost:${wireMockServer.port()}invalid-experiments")
         fileBasedExperimentsRepository.secureRefresh()
         when:
         def response = restTemplate.getForEntity(localUrl('/api/experiments'), List)
@@ -83,7 +79,7 @@ class ExperimentsIntegrationSpec extends BaseIntegrationSpec {
     }
 
     void teachWireMockJson(String path, String json) {
-        stubFor(get(urlEqualTo(path))
+        wireMockServer.stubFor(get(urlEqualTo(path))
                 .willReturn(aResponse()
                 .withStatus(200)
                 .withBody(json)))

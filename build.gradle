@@ -3,6 +3,7 @@ buildscript {
     ext {
         versions = [
                 kotlin: '1.1.51',
+                jackson: '2.9.1'
         ]
     }
 
@@ -49,19 +50,27 @@ repositories {
 }
 
 dependencies {
-    compile 'org.springframework:spring-web:4.3.10.RELEASE'
-    compile group: 'pl.allegro.tech.common', name: 'spring-boot-starter-andamio', version: '1.9.3'
-    compile group: 'pl.allegro.experiments.chi', name: 'chi-core', version: '0.5.0'
+    compile group: 'com.fasterxml.jackson.dataformat', name: 'jackson-dataformat-avro', version: "$versions.jackson"
+    compile group: 'com.fasterxml.jackson.module', name: 'jackson-module-kotlin', version: "$versions.jackson"
+    compile group: 'com.fasterxml.jackson.datatype', name: 'jackson-datatype-jdk8', version: "$versions.jackson"
+    compile group: 'com.fasterxml.jackson.datatype', name: 'jackson-datatype-jsr310', version: "$versions.jackson"
+    compile group: 'com.fasterxml.jackson.module', name: 'jackson-module-afterburner', version: "$versions.jackson"
+    compile group: 'com.fasterxml.jackson.module', name: 'jackson-module-kotlin', version: "$versions.jackson"
+    compile group: 'com.fasterxml.jackson.module', name: 'jackson-module-parameter-names', version: "$versions.jackson"
     compile group: 'org.jetbrains.kotlin', name: 'kotlin-stdlib', version: "$versions.kotlin"
-    compile group: 'com.fasterxml.jackson.module', name: 'jackson-module-kotlin', version: '2.9.1'
+    compile group: 'org.springframework', name: 'spring-web', version: '4.3.10.RELEASE'
+    compile group: 'pl.allegro.experiments.chi', name: 'chi-core', version: '0.5.0'
+    compile group: 'pl.allegro.tech.common', name: 'spring-boot-starter-andamio', version: '1.9.3'
+    compile group: 'pl.allegro.tech.common', name: 'spring-boot-starter-andamio-avro', version: '0.5.1'
+    compile group: 'pl.allegro.tech.hermes', name: 'spring-boot-starter-hermes', version: '1.2.1'
 
+    testCompile group: 'com.github.tomakehurst', name: 'wiremock', version: '2.1.11'
     testCompile group: 'org.spockframework', name: 'spock-core', version: '1.1-groovy-2.4'
-    testCompile group: 'com.github.tomakehurst', name: 'wiremock', version: '1.58'
 
+    integration group: 'com.jayway.jsonpath', name: 'json-path', version: '2.4.0'
     integration group: 'org.spockframework', name: 'spock-spring', version: '1.1-groovy-2.4'
     integration group: 'org.springframework', name: 'spring-test', version: '4.3.10.RELEASE'
     integration group: 'org.springframework.boot', name: 'spring-boot-starter-test', version: '1.5.2.RELEASE'
-    integration group: 'com.jayway.jsonpath', name: 'json-path', version: '2.4.0'
 }
 
 mainClassName = 'pl.allegro.experiments.chi.chiserver.AppRunner'

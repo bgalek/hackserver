@@ -15,3 +15,24 @@ metrics:
 chi:
   experiments:
     file: "http://assets-chi.qxlint/chi-server/experiments-test.json"
+  connection:
+    name: assets-chi
+
+hermes:
+  url: service://hermes
+  client.name: hermes
+
+analytics.hermes:
+  topic: pl.allegro.experiments.chi.assignments
+  schemaVersion: 1
+
+avro:
+  enabled: true
+  serializer: jackson
+  schema:
+    applicationSchemaProvider: classpath
+    mapping:
+      - className: pl.allegro.experiments.chi.chiserver.analytics.ExperimentAssignment
+        schemaVersion: 1
+        schemaLocation: /avro/pl.allegro.experiment.chi.chiserver.analytics.ExperimentAssignment.avsc
+
