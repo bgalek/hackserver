@@ -11,7 +11,7 @@ import org.springframework.context.annotation.Configuration
 import org.springframework.web.client.RestTemplate
 import pl.allegro.experiments.chi.chiserver.experiments.v1.JsonConverter
 import pl.allegro.experiments.chi.chiserver.infrastructure.ClientConnectionProperties
-import pl.allegro.experiments.chi.chiserver.infrastructure.HttpContentLoader
+import pl.allegro.experiments.chi.chiserver.experiments.infrastructure.HttpContentLoader
 import pl.allegro.experiments.chi.core.ExperimentsRepository
 import pl.allegro.experiments.chi.persistence.FileBasedExperimentsRepository
 import pl.allegro.tech.common.andamio.spring.client.RestTemplateFactory

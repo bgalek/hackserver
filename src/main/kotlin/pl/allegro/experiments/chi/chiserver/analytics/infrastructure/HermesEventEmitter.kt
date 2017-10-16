@@ -1,21 +1,23 @@
-package pl.allegro.experiments.chi.chiserver.analytics
+package pl.allegro.experiments.chi.chiserver.analytics.infrastructure
 
+import pl.allegro.experiments.chi.chiserver.analytics.EventEmitter
+import pl.allegro.experiments.chi.chiserver.analytics.ExperimentAssignment
 import pl.allegro.tech.common.andamio.spring.avro.AvroConverter
 import pl.allegro.tech.hermes.client.HermesClient
 import java.util.concurrent.CompletableFuture
 
 class HermesEventEmitter(private val hermesClient: HermesClient,
                          private val avroConverter: AvroConverter,
-                         private val hermesTopicProperties: HermesTopicProperties) {
+                         private val hermesTopicProperties: HermesTopicProperties): EventEmitter {
 
     //TODO: return something better than CompletableFuture<Boolean>
-    fun emit(experimentAssignment: ExperimentAssignment): CompletableFuture<Boolean> {
+    override fun emit(experimentAssignment: ExperimentAssignment): CompletableFuture<Boolean> {
         val serializedData = serialize(experimentAssignment)
         return hermesClient.publishAvro(hermesTopicProperties.topic, hermesTopicProperties.schemaVersion, serializedData)
                 .thenApply { hermesResponse -> hermesResponse.isSuccess }
     }
 
-    private fun  serialize(experimentAssignment: ExperimentAssignment) =
+    private fun serialize(experimentAssignment: ExperimentAssignment) =
         avroConverter.toAvro(experimentAssignment)
                 .data()
 }

@@ -6,8 +6,10 @@ import com.github.tomakehurst.wiremock.matching.UrlPattern
 import org.springframework.beans.factory.annotation.Autowired
 import pl.allegro.experiments.chi.chiserver.BaseIntegrationSpec
 import pl.allegro.experiments.chi.chiserver.WireMockTestConfig
+import pl.allegro.experiments.chi.chiserver.analytics.infrastructure.HermesEventEmitter
+import pl.allegro.experiments.chi.chiserver.analytics.infrastructure.HermesTopicProperties
 
-import java.time.Instant
+import java.time.ZonedDateTime
 
 import static com.github.tomakehurst.wiremock.client.WireMock.aResponse
 import static com.github.tomakehurst.wiremock.client.WireMock.post
@@ -77,7 +79,7 @@ class HermesEventEmitterSpec extends BaseIntegrationSpec {
                 true,
                 true,
                 "iphone",
-                Instant.now()
+                ZonedDateTime.now()
         )
     }
 
@@ -90,7 +92,7 @@ class HermesEventEmitterSpec extends BaseIntegrationSpec {
                 null,
                 null,
                 null,
-                Instant.now()
+                ZonedDateTime.now()
         )
     }
 }

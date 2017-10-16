@@ -1,4 +1,4 @@
-package pl.allegro.experiments.chi.chiserver.analytics
+package pl.allegro.experiments.chi.chiserver.analytics.infrastructure
 
 import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.boot.context.properties.ConfigurationProperties
@@ -13,7 +13,7 @@ import pl.allegro.tech.hermes.client.restTemplate.RestTemplateHermesSender
 
 @Configuration
 @EnableConfigurationProperties(HermesTopicProperties::class)
-class AnalyticsConfig {
+class HermesConfig {
 
     @Bean
     fun asyncRestTemplate(

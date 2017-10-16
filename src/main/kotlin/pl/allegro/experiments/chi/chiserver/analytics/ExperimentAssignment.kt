@@ -1,6 +1,6 @@
 package pl.allegro.experiments.chi.chiserver.analytics
 
-import java.time.Instant
+import java.time.ZonedDateTime
 
 data class ExperimentAssignment(
         val userId: String?,
@@ -10,5 +10,5 @@ data class ExperimentAssignment(
         val internal: Boolean?,
         val confirmed: Boolean?,
         val deviceClass: String?,
-        val assignmentDate: Instant
+        val assignmentDate: ZonedDateTime
 )

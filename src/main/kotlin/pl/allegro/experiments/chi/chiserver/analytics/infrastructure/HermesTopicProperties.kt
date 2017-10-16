@@ -1,4 +1,4 @@
-package pl.allegro.experiments.chi.chiserver.analytics
+package pl.allegro.experiments.chi.chiserver.analytics.infrastructure
 
 import org.springframework.boot.context.properties.ConfigurationProperties
 

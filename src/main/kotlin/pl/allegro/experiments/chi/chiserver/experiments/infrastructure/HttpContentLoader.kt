@@ -1,4 +1,4 @@
-package pl.allegro.experiments.chi.chiserver.infrastructure
+package pl.allegro.experiments.chi.chiserver.experiments.infrastructure
 
 import org.springframework.http.HttpEntity
 import org.springframework.http.HttpHeaders
@@ -6,7 +6,7 @@ import org.springframework.http.HttpMethod
 import org.springframework.web.client.RestTemplate
 import pl.allegro.experiments.chi.chiserver.logger
 
-class HttpContentLoader(val restTemplate: RestTemplate) {
+class HttpContentLoader(private val restTemplate: RestTemplate) {
     companion object {
         private val logger by logger()
     }

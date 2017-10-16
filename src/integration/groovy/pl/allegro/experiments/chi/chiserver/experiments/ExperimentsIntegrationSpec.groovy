@@ -27,7 +27,7 @@ class ExperimentsIntegrationSpec extends BaseIntegrationSpec {
 
     def "should return list of experiments loaded from the backing HTTP resource"() {
         given:
-        fileBasedExperimentsRepository.changeJsonUrl("http://localhost:${wireMockServer.port()}/experiments")
+        fileBasedExperimentsRepository.changeJsonUrl(resourceUrl('/experiments'))
         fileBasedExperimentsRepository.secureRefresh()
 
         when:
@@ -47,7 +47,7 @@ class ExperimentsIntegrationSpec extends BaseIntegrationSpec {
 
     def "should return list of experiment in version 1"() {
         given:
-        fileBasedExperimentsRepository.changeJsonUrl("http://localhost:${wireMockServer.port()}/experiments")
+        fileBasedExperimentsRepository.changeJsonUrl(resourceUrl('/experiments'))
         fileBasedExperimentsRepository.secureRefresh()
 
         when:
@@ -67,9 +67,9 @@ class ExperimentsIntegrationSpec extends BaseIntegrationSpec {
 
     def "should return last valid list when file is corrupted"() {
         given:
-        fileBasedExperimentsRepository.changeJsonUrl("http://localhost:${wireMockServer.port()}/experiments")
+        fileBasedExperimentsRepository.changeJsonUrl(resourceUrl('/experiments'))
         fileBasedExperimentsRepository.secureRefresh()
-        fileBasedExperimentsRepository.changeJsonUrl("http://localhost:${wireMockServer.port()}/invalid-experiments")
+        fileBasedExperimentsRepository.changeJsonUrl(resourceUrl('/invalid-experiments'))
         fileBasedExperimentsRepository.secureRefresh()
         when:
         def response = restTemplate.getForEntity(localUrl('/api/experiments'), List)
@@ -84,6 +84,10 @@ class ExperimentsIntegrationSpec extends BaseIntegrationSpec {
                 .willReturn(aResponse()
                 .withStatus(200)
                 .withBody(json)))
+    }
+
+    private String resourceUrl(String endpoint) {
+        return "http://localhost:${wireMockServer.port()}$endpoint"
     }
 
     Map internalExperiment() {
