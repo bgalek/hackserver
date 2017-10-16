@@ -1,4 +1,4 @@
-package pl.allegro.experiments.chi.chiserver.api.v1
+package pl.allegro.experiments.chi.chiserver.experiments.v1
 
 import com.google.gson.JsonElement
 import com.google.gson.JsonObject

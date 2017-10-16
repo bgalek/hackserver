@@ -1,7 +1,8 @@
-package pl.allegro.experiments.chi.chiserver
+package pl.allegro.experiments.chi.chiserver.experiments
 
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.web.client.RestTemplate
+import pl.allegro.experiments.chi.chiserver.BaseIntegrationSpec
 import pl.allegro.experiments.chi.persistence.FileBasedExperimentsRepository
 
 import static com.github.tomakehurst.wiremock.client.WireMock.aResponse
@@ -68,7 +69,7 @@ class ExperimentsIntegrationSpec extends BaseIntegrationSpec {
         given:
         fileBasedExperimentsRepository.changeJsonUrl("http://localhost:${wireMockServer.port()}/experiments")
         fileBasedExperimentsRepository.secureRefresh()
-        fileBasedExperimentsRepository.changeJsonUrl("http://localhost:${wireMockServer.port()}invalid-experiments")
+        fileBasedExperimentsRepository.changeJsonUrl("http://localhost:${wireMockServer.port()}/invalid-experiments")
         fileBasedExperimentsRepository.secureRefresh()
         when:
         def response = restTemplate.getForEntity(localUrl('/api/experiments'), List)
