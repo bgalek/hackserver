@@ -15,12 +15,21 @@ metrics:
 chi:
   experiments:
     file: "http://assets-chi.qxlint/chi-server/experiments-test.json"
-  connection:
+  client:
+    maxConnections: 200
+    maxConnectionsPerRoute: 10
+    connectionTimeout: 200
+    socketTimeout: 300
     name: assets-chi
 
 hermes:
   url: service://hermes
-  client.name: hermes
+  client:
+    maxConnections: 200
+    maxConnectionsPerRoute: 10
+    connectionTimeout: 200
+    socketTimeout: 300
+    name: hermes
 
 analytics.hermes:
   topic: pl.allegro.experiments.chi.assignments

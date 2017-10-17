@@ -4,6 +4,6 @@ import org.springframework.boot.context.properties.ConfigurationProperties
 
 @ConfigurationProperties(prefix = "analytics.hermes")
 data class HermesTopicProperties(
-        val topic: String = "pl.allegro.experiments.chi.assignments",
-        val schemaVersion: Int = 1
+        var topic: String = "pl.allegro.experiments.chi.assignments",
+        var schemaVersion: Int = 1
 )

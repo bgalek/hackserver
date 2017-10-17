@@ -23,7 +23,6 @@ class ExperimentsController(private val experimentsRepository: FileBasedExperime
     @GetMapping(path = arrayOf("/v1", ""))
     fun activeExperiments() : String {
         ExperimentsController.logger.info("Active experiments request received")
-
         return jsonConverter.toJSON(experimentsRepository.all)
     }
 }

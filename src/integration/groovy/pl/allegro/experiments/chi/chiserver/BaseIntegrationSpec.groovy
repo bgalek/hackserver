@@ -1,7 +1,7 @@
 package pl.allegro.experiments.chi.chiserver
 
 import com.github.tomakehurst.wiremock.WireMockServer
-import groovy.transform.TypeChecked
+import groovy.transform.CompileStatic
 import org.junit.After
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
@@ -18,7 +18,7 @@ import spock.lang.Specification
         properties = "application.environment=integration",
         webEnvironment=SpringBootTest.WebEnvironment.RANDOM_PORT)
 @ContextConfiguration
-@TypeChecked
+@CompileStatic
 abstract class BaseIntegrationSpec extends Specification {
     @Autowired
     WireMockServer wireMockServer

@@ -39,7 +39,6 @@ class ObjectMapperConfig {
         }
     }
 
-
     private fun applyCommonConfiguration(objectMapper: ObjectMapper) {
         objectMapper.apply {
             registerModule(Jdk8Module())

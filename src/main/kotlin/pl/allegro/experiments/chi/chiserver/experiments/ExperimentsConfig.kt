@@ -51,6 +51,6 @@ class ExperimentsConfig {
     }
 
     @Bean
-    @ConfigurationProperties(prefix = "chi.experiments.connection")
+    @ConfigurationProperties(prefix = "chi.client")
     fun chiExperimentsClient(): ClientConnectionProperties = ClientConnectionProperties()
 }
