@@ -9,7 +9,7 @@ import pl.allegro.experiments.chi.chiserver.WireMockTestConfig
 import pl.allegro.experiments.chi.chiserver.analytics.infrastructure.HermesEventEmitter
 import pl.allegro.experiments.chi.chiserver.analytics.infrastructure.HermesTopicProperties
 
-import java.time.ZonedDateTime
+import java.time.Instant
 
 import static com.github.tomakehurst.wiremock.client.WireMock.aResponse
 import static com.github.tomakehurst.wiremock.client.WireMock.post
@@ -70,8 +70,8 @@ class HermesEventEmitterSpec extends BaseIntegrationSpec {
         return WireMockTestConfig.HERMES_PATH + '/topics/' + hermesTopicProperties.topic
     }
 
-    private static ExperimentAssignment sampleExperimentAssignment() {
-        return new ExperimentAssignment(
+    private static ExperimentAssignmentEvent sampleExperimentAssignment() {
+        return new ExperimentAssignmentEvent(
                 'userId',
                 'userCmId',
                 'experimentId',
@@ -79,20 +79,20 @@ class HermesEventEmitterSpec extends BaseIntegrationSpec {
                 true,
                 true,
                 "iphone",
-                ZonedDateTime.now()
+                Instant.now()
         )
     }
 
-    private static ExperimentAssignment emptyExperimentAssignment() {
-        return new ExperimentAssignment(
+    private static ExperimentAssignmentEvent emptyExperimentAssignment() {
+        return new ExperimentAssignmentEvent(
                 null,
                 null,
                 'experimentId',
                 'variantName',
                 null,
+                true,
                 null,
-                null,
-                ZonedDateTime.now()
+                Instant.now()
         )
     }
 }

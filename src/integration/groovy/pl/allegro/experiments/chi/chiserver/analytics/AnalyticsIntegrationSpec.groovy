@@ -6,7 +6,7 @@ import org.springframework.http.HttpMethod
 import org.springframework.web.client.RestTemplate
 import pl.allegro.experiments.chi.chiserver.BaseIntegrationSpec
 
-import java.time.ZonedDateTime
+import java.time.Instant
 
 class AnalyticsIntegrationSpec extends BaseIntegrationSpec {
 
@@ -17,22 +17,22 @@ class AnalyticsIntegrationSpec extends BaseIntegrationSpec {
 
     def "should emit experiment assignments"() {
         given:
-            List<ExperimentAssignment> experimentAssignments = [
+            List<ExperimentAssignmentDto> experimentAssignments = [
                 sampleExperimentAssignment('user-1', 'variant-a'),
                 sampleExperimentAssignment('user-2', 'variant-b')
             ]
 
         when:
-            restTemplate.exchange(localUrl('/api/analytics'), HttpMethod.POST, new HttpEntity(experimentAssignments), Void.class)
+            restTemplate.exchange(localUrl('/api/analytics'), HttpMethod.POST, new HttpEntity(new ExperimentAssignmentsDto(experimentAssignments)), Void.class)
 
         then:
-            inMemoryEventEmitter.assertEventEmitted(experimentAssignments[0])
-            inMemoryEventEmitter.assertEventEmitted(experimentAssignments[1])
+            inMemoryEventEmitter.assertEventEmitted(experimentAssignments[0].toEvent())
+            inMemoryEventEmitter.assertEventEmitted(experimentAssignments[1].toEvent())
     }
 
 
-    ExperimentAssignment sampleExperimentAssignment(String userId, String variantName) {
-        return new ExperimentAssignment(
+    ExperimentAssignmentDto sampleExperimentAssignment(String userId, String variantName) {
+        return new ExperimentAssignmentDto(
                 userId,
                 null,
                 'experimentId',
@@ -40,6 +40,6 @@ class AnalyticsIntegrationSpec extends BaseIntegrationSpec {
                 false,
                 true,
                 'iphone',
-                ZonedDateTime.now())
+                Instant.now())
     }
 }

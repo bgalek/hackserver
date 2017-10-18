@@ -14,3 +14,7 @@ metrics:
 chi:
   experiments:
     file: "http://assets-chi.qxlint/chi-server/experiments-prod.json"
+
+# Remove when we are sure we want to fire it up on prod. Topics are hard to remove once live on prod
+hermes:
+  url: http://hermes-publish-test.qxlint

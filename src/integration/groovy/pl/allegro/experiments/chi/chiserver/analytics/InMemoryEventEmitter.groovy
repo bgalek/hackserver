@@ -7,15 +7,15 @@ import java.util.concurrent.CompletableFuture
 @CompileStatic
 class InMemoryEventEmitter implements EventEmitter {
 
-    private final List<ExperimentAssignment> experimentAssignments = []
+    private final List<ExperimentAssignmentEvent> experimentAssignments = []
 
     @Override
-    CompletableFuture<Boolean> emit(ExperimentAssignment experimentAssignment) {
+    CompletableFuture<Boolean> emit(ExperimentAssignmentEvent experimentAssignment) {
         experimentAssignments.add(experimentAssignment)
         return CompletableFuture.completedFuture(true)
     }
 
-    boolean assertEventEmitted(ExperimentAssignment experimentAssignment) {
+    boolean assertEventEmitted(ExperimentAssignmentEvent experimentAssignment) {
         return experimentAssignments.find { experimentAssignment } != null
     }
 }
