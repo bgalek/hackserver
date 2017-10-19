@@ -1,7 +1,7 @@
-package pl.allegro.experiments.chi.chiserver.analytics.infrastructure
+package pl.allegro.experiments.chi.chiserver.assignments.infrastructure
 
-import pl.allegro.experiments.chi.chiserver.analytics.EventEmitter
-import pl.allegro.experiments.chi.chiserver.analytics.ExperimentAssignmentEvent
+import pl.allegro.experiments.chi.chiserver.assignments.EventEmitter
+import pl.allegro.experiments.chi.chiserver.assignments.ExperimentAssignmentEvent
 import pl.allegro.tech.common.andamio.spring.avro.AvroConverter
 import pl.allegro.tech.hermes.client.HermesClient
 import java.util.concurrent.CompletableFuture

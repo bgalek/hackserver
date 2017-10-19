@@ -23,7 +23,7 @@ hermes:
   client:
     name: hermes
 
-analytics.hermes:
+assignments.hermes:
   topic: pl.allegro.experiments.chi.assignments
   schemaVersion: 1
 
@@ -33,6 +33,6 @@ avro:
   schema:
     applicationSchemaProvider: classpath
     mapping:
-      - className: pl.allegro.experiments.chi.chiserver.analytics.ExperimentAssignmentEvent
+      - className: pl.allegro.experiments.chi.chiserver.assignments.ExperimentAssignmentEvent
         schemaVersion: 1
-        schemaLocation: /avro/pl.allegro.experiment.chi.chiserver.analytics.ExperimentAssignmentEvent.avsc
+        schemaLocation: /avro/pl.allegro.experiment.chi.chiserver.assignments.ExperimentAssignmentEvent.avsc

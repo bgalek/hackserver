@@ -1,4 +1,4 @@
-package pl.allegro.experiments.chi.chiserver.analytics.infrastructure
+package pl.allegro.experiments.chi.chiserver.assignments.infrastructure
 
 import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.boot.context.properties.ConfigurationProperties

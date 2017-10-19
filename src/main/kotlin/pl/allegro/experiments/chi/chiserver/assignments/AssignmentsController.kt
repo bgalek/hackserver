@@ -1,4 +1,4 @@
-package pl.allegro.experiments.chi.chiserver.analytics
+package pl.allegro.experiments.chi.chiserver.assignments
 
 import org.springframework.http.MediaType
 import org.springframework.web.bind.annotation.PostMapping
@@ -8,8 +8,8 @@ import org.springframework.web.bind.annotation.RestController
 import pl.allegro.experiments.chi.chiserver.logger
 
 @RestController
-@RequestMapping(value = "/api/analytics", produces = arrayOf(MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_JSON_UTF8_VALUE))
-class AnalyticsController(private val eventEmitter: EventEmitter) {
+@RequestMapping(value = "/api/assignments", produces = arrayOf(MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_JSON_UTF8_VALUE))
+class AssignmentsController(private val eventEmitter: EventEmitter) {
 
     companion object {
         private val logger by logger()
@@ -17,7 +17,7 @@ class AnalyticsController(private val eventEmitter: EventEmitter) {
 
     @PostMapping
     fun assignToExperiments(@RequestBody experimentAssignments: ExperimentAssignmentsDto): Unit {
-        AnalyticsController.logger.info("analytics")
+        AssignmentsController.logger.info("analytics")
         experimentAssignments.experimentAssignmentDtos
                 .forEach { experimentAssignment -> eventEmitter.emit(experimentAssignment.toEvent()) }
     }

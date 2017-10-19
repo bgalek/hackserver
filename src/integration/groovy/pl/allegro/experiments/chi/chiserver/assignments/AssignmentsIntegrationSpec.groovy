@@ -1,4 +1,4 @@
-package pl.allegro.experiments.chi.chiserver.analytics
+package pl.allegro.experiments.chi.chiserver.assignments
 
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.HttpEntity
@@ -8,7 +8,7 @@ import pl.allegro.experiments.chi.chiserver.BaseIntegrationSpec
 
 import java.time.Instant
 
-class AnalyticsIntegrationSpec extends BaseIntegrationSpec {
+class AssignmentsIntegrationSpec extends BaseIntegrationSpec {
 
     @Autowired
     InMemoryEventEmitter inMemoryEventEmitter
@@ -23,7 +23,7 @@ class AnalyticsIntegrationSpec extends BaseIntegrationSpec {
             ]
 
         when:
-            restTemplate.exchange(localUrl('/api/analytics'), HttpMethod.POST, new HttpEntity(new ExperimentAssignmentsDto(experimentAssignments)), Void.class)
+            restTemplate.exchange(localUrl('/api/assignments'), HttpMethod.POST, new HttpEntity(new ExperimentAssignmentsDto(experimentAssignments)), Void.class)
 
         then:
             inMemoryEventEmitter.assertEventEmitted(experimentAssignments[0].toEvent())

@@ -1,4 +1,4 @@
-package pl.allegro.experiments.chi.chiserver.analytics
+package pl.allegro.experiments.chi.chiserver.assignments
 
 import com.github.tomakehurst.wiremock.http.RequestMethod
 import com.github.tomakehurst.wiremock.matching.EqualToPattern
@@ -6,8 +6,8 @@ import com.github.tomakehurst.wiremock.matching.UrlPattern
 import org.springframework.beans.factory.annotation.Autowired
 import pl.allegro.experiments.chi.chiserver.BaseIntegrationSpec
 import pl.allegro.experiments.chi.chiserver.WireMockTestConfig
-import pl.allegro.experiments.chi.chiserver.analytics.infrastructure.HermesEventEmitter
-import pl.allegro.experiments.chi.chiserver.analytics.infrastructure.HermesTopicProperties
+import pl.allegro.experiments.chi.chiserver.assignments.infrastructure.HermesEventEmitter
+import pl.allegro.experiments.chi.chiserver.assignments.infrastructure.HermesTopicProperties
 
 import java.time.Instant
 
