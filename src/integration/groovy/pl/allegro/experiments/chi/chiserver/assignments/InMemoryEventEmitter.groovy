@@ -10,9 +10,9 @@ class InMemoryEventEmitter implements EventEmitter {
     private final List<ExperimentAssignmentEvent> experimentAssignments = []
 
     @Override
-    CompletableFuture<Boolean> emit(ExperimentAssignmentEvent experimentAssignment) {
+    CompletableFuture<Object> emit(ExperimentAssignmentEvent experimentAssignment) {
         experimentAssignments.add(experimentAssignment)
-        return CompletableFuture.completedFuture(true)
+        return CompletableFuture.completedFuture(null)
     }
 
     boolean assertEventEmitted(ExperimentAssignmentEvent experimentAssignment) {

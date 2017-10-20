@@ -18,14 +18,9 @@ chi:
   client:
     name: assets-chi
 
-hermes:
-  url: service://hermes
-  client:
-    name: hermes
 
-assignments.hermes:
-  topic: pl.allegro.experiments.chi.assignments
-  schemaVersion: 1
+assignments.kafka:
+  topic: pl.allegro.experiments.chi.assignments_avro
 
 avro:
   enabled: true
@@ -36,3 +31,16 @@ avro:
       - className: pl.allegro.experiments.chi.chiserver.assignments.ExperimentAssignmentEvent
         schemaVersion: 1
         schemaLocation: /avro/pl.allegro.experiment.chi.chiserver.assignments.ExperimentAssignmentEvent.avsc
+#TODO fill that with kafka brokers
+spring:
+  kafka:
+    bootstrap-servers:
+
+hermes:
+  url: service://hermes
+  client:
+    name: hermes
+
+assignments.hermes:
+  topic: pl.allegro.experiments.chi.assignments
+  schemaVersion: 1
