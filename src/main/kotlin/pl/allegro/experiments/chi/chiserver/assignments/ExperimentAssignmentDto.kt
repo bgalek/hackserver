@@ -12,8 +12,8 @@ data class ExperimentAssignmentDto(
         val deviceClass: String?,
         val assignmentDate: Instant
 ) {
-    fun toEvent(): ExperimentAssignmentEvent =
-            ExperimentAssignmentEvent(
+    fun toEvent(): ExperimentAssignment =
+            ExperimentAssignment(
                     userId,
                     userCmId,
                     experimentId,

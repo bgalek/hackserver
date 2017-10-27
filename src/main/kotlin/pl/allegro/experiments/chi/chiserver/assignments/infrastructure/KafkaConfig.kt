@@ -1,6 +1,7 @@
 package pl.allegro.experiments.chi.chiserver.assignments.infrastructure
 
 import org.apache.kafka.clients.producer.ProducerConfig
+import org.apache.kafka.common.serialization.ByteArraySerializer
 import org.apache.kafka.common.serialization.BytesSerializer
 import org.apache.kafka.common.serialization.StringSerializer
 import org.springframework.beans.factory.annotation.Value
@@ -21,15 +22,16 @@ class KafkaConfig {
             KafkaEventEmitter(kafkaTemplate, avroConverter, topic)
 
     @Bean
-    fun kafkaTemplate(): KafkaTemplate<String, ByteArray> =
-            KafkaTemplate<String, ByteArray>(producerFactory())
+    fun kafkaTemplate(@Value("\${assignments.kafka.bootstrap-servers}") bootstrapServers: String): KafkaTemplate<String, ByteArray> =
+            KafkaTemplate<String, ByteArray>(producerFactory(bootstrapServers))
 
-    private fun producerFactory(): ProducerFactory<String, ByteArray> =
-            DefaultKafkaProducerFactory<String, ByteArray>(config())
+    private fun producerFactory(bootstrapServers: String): ProducerFactory<String, ByteArray> =
+            DefaultKafkaProducerFactory<String, ByteArray>(config(bootstrapServers))
 
-    private fun config() =
+    private fun config(bootstrapServers: String) =
             mapOf(
                     ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG to StringSerializer::class.java,
-                    ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG to BytesSerializer::class.java
+                    ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG to ByteArraySerializer::class.java,
+                    ProducerConfig.BOOTSTRAP_SERVERS_CONFIG to bootstrapServers
             )
 }

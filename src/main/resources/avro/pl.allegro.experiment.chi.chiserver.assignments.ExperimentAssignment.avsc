@@ -1,21 +1,9 @@
 {
     "type": "record",
-    "name": "ExperimentAssignmentEvent",
+    "name": "ExperimentAssignment",
     "namespace": "pl.allegro.experiments.chi.assignments",
     "doc": "An event published, when user is assigned to the experiment's variant",
     "fields": [
-        {
-            "name": "__metadata",
-            "type": [
-                "null",
-                {
-                    "type": "map",
-                    "values": "string"
-                }
-            ],
-            "doc": "Field internally used by Hermes to propagate metadata.",
-            "default": null
-        },
         {
             "name": "userId",
             "type": [
@@ -23,7 +11,7 @@
                 "string"
             ],
             "doc": "id of logged user",
-            "default": "null"
+            "default": null
         },
         {
             "name": "userCmId",
@@ -32,7 +20,7 @@
                 "string"
             ],
             "doc": "_cmuid cookie value",
-            "default": "null"
+            "default": null
         },
         {
             "name": "experimentId",
@@ -51,7 +39,7 @@
                 "boolean"
             ],
             "doc": "internal user flag",
-            "default": "null"
+            "default": null
         },
         {
             "name": "confirmed",
@@ -65,7 +53,7 @@
                 "string"
             ],
             "doc": "device class as in https://github.com/nielsbasjes/yauaa",
-            "default": "null"
+            "default": null
         },
         {
             "name": "assignmentDate",
@@ -74,7 +62,7 @@
                 "long"
             ],
             "doc": "Date of experiment assingment",
-            "default": "null"
+            "default": null
         }
     ]
 }

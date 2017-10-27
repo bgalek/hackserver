@@ -20,27 +20,17 @@ chi:
 
 
 assignments.kafka:
-  topic: pl.allegro.experiments.chi.assignments_avro
+  bootstrap-servers: kasiatestdc4-cbroker1.kasia-test.pl-kra-3.dc4.local:9092,kasiatestdc4-cbroker2.kasia-test.pl-kra-3.dc4.local:9092,kasiatestdc4-cbroker3.kasia-test.pl-kra-3.dc4.local:9092,kasiatestdc4-cbroker4.kasia-test.pl-kra-3.dc4.local:9092
+  topic: pl.allegro.experiments.chi.assignments.ExperimentAssignment_avro
 
 avro:
   enabled: true
   serializer: jackson
   schema:
     applicationSchemaProvider: classpath
+    registry.location: http://schema-registry-test.allegrogroup.com
     mapping:
-      - className: pl.allegro.experiments.chi.chiserver.assignments.ExperimentAssignmentEvent
+      - className: pl.allegro.experiments.chi.chiserver.assignments.ExperimentAssignment
         schemaVersion: 1
-        schemaLocation: /avro/pl.allegro.experiment.chi.chiserver.assignments.ExperimentAssignmentEvent.avsc
-#TODO fill that with kafka brokers
-spring:
-  kafka:
-    bootstrap-servers:
-
-hermes:
-  url: service://hermes
-  client:
-    name: hermes
-
-assignments.hermes:
-  topic: pl.allegro.experiments.chi.assignments
-  schemaVersion: 1
+        schemaLocation: /avro/pl.allegro.experiment.chi.chiserver.assignments.ExperimentAssignment.avsc
+        remoteSchemaSubject: pl.allegro.experiments.chi.assignments.ExperimentAssignment

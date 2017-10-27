@@ -5,17 +5,17 @@ import groovy.transform.CompileStatic
 import java.util.concurrent.CompletableFuture
 
 @CompileStatic
-class InMemoryEventEmitter implements EventEmitter {
+class InMemoryEventEmitter implements ExperimentAssignmentRepository {
 
-    private final List<ExperimentAssignmentEvent> experimentAssignments = []
+    private final List<ExperimentAssignment> experimentAssignments = []
 
     @Override
-    CompletableFuture<Object> emit(ExperimentAssignmentEvent experimentAssignment) {
+    CompletableFuture<Object> save(ExperimentAssignment experimentAssignment) {
         experimentAssignments.add(experimentAssignment)
         return CompletableFuture.completedFuture(null)
     }
 
-    boolean assertEventEmitted(ExperimentAssignmentEvent experimentAssignment) {
+    boolean assertEventEmitted(ExperimentAssignment experimentAssignment) {
         return experimentAssignments.find { experimentAssignment } != null
     }
 }

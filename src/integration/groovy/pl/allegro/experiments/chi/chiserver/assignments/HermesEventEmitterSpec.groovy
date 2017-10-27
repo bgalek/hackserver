@@ -29,7 +29,7 @@ class HermesEventEmitterSpec extends BaseIntegrationSpec {
             hermesAcceptsPostRequests()
 
         when:
-            hermesEventEmitter.emit(sampleExperimentAssignment()).get()
+            hermesEventEmitter.save(sampleExperimentAssignment()).get()
 
         then:
             verifyHermesWasHit()
@@ -40,7 +40,7 @@ class HermesEventEmitterSpec extends BaseIntegrationSpec {
             hermesAcceptsPostRequests()
 
         when:
-            hermesEventEmitter.emit(emptyExperimentAssignment()).get()
+            hermesEventEmitter.save(emptyExperimentAssignment()).get()
 
         then:
             verifyHermesWasHit()
@@ -70,8 +70,8 @@ class HermesEventEmitterSpec extends BaseIntegrationSpec {
         return WireMockTestConfig.HERMES_PATH + '/topics/' + hermesTopicProperties.topic
     }
 
-    private static ExperimentAssignmentEvent sampleExperimentAssignment() {
-        return new ExperimentAssignmentEvent(
+    private static ExperimentAssignment sampleExperimentAssignment() {
+        return new ExperimentAssignment(
                 'userId',
                 'userCmId',
                 'experimentId',
@@ -83,8 +83,8 @@ class HermesEventEmitterSpec extends BaseIntegrationSpec {
         )
     }
 
-    private static ExperimentAssignmentEvent emptyExperimentAssignment() {
-        return new ExperimentAssignmentEvent(
+    private static ExperimentAssignment emptyExperimentAssignment() {
+        return new ExperimentAssignment(
                 null,
                 null,
                 'experimentId',
