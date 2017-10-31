@@ -15,7 +15,7 @@ class InMemoryExperimentAssignmentRepository implements ExperimentAssignmentRepo
         experimentAssignments.add(experimentAssignment)
     }
 
-    boolean assertEventEmitted(ExperimentAssignment experimentAssignment) {
+    boolean assertAssignmentSaved(ExperimentAssignment experimentAssignment) {
         return experimentAssignments.find { experimentAssignment } != null
     }
 }

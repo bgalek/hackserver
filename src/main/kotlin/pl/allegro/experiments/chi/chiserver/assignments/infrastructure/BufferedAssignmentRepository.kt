@@ -32,18 +32,16 @@ class BufferedAssignmentRepository(
         val start = System.nanoTime()
         val assignments = buffer.flush()
         logger.info("Flushing ${assignments.size} assignments from buffer")
-        var savedCounter: Long = 0
         var failedCounter: Long = 0
         assignments.stream().forEach { assignment ->
             try {
                 repository.save(assignment)
-                savedCounter++
             } catch (e: CouldNotSendMessageToKafkaError) {
                 logger.warning("Saving assignment failed, $e")
                 failedCounter++
             }
         }
-        metricReporter.reportSaved(savedCounter)
+        metricReporter.reportSaved(assignments.size - failedCounter)
         metricReporter.reportFailed(failedCounter)
         val duration = TimeUnit.NANOSECONDS.toMillis(System.nanoTime() - start)
         logger.info("Flushed ${assignments.size}, took $duration ms")

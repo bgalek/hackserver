@@ -13,11 +13,11 @@ import java.time.Instant
 class AssignmentsIntegrationSpec extends BaseIntegrationSpec {
 
     @Autowired
-    InMemoryExperimentAssignmentRepository inMemoryEventEmitter
+    InMemoryExperimentAssignmentRepository inMemoryAssignmentRepository
 
     RestTemplate restTemplate = new RestTemplate()
 
-    def "should emit experiment assignments"() {
+    def "should save experiment assignments"() {
         given:
         List<ExperimentAssignmentDto> experimentAssignments = [
                 sampleExperimentAssignment('user-1', 'variant-a'),
@@ -28,8 +28,8 @@ class AssignmentsIntegrationSpec extends BaseIntegrationSpec {
         restTemplate.exchange(localUrl('/api/assignments'), HttpMethod.POST, new HttpEntity(new ExperimentAssignmentsDto(experimentAssignments)), Void.class)
 
         then:
-        inMemoryEventEmitter.assertEventEmitted(experimentAssignments[0].toEvent())
-        inMemoryEventEmitter.assertEventEmitted(experimentAssignments[1].toEvent())
+        inMemoryAssignmentRepository.assertAssignmentSaved(experimentAssignments[0].toEvent())
+        inMemoryAssignmentRepository.assertAssignmentSaved(experimentAssignments[1].toEvent())
     }
 
     def "should throw error when argument is missing"() {
