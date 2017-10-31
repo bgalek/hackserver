@@ -91,7 +91,7 @@ class KafkaAssignmentRepositorySpec extends BaseIntegrationSpec {
         return new KafkaAssignmentRepository(kafkaTemplate, avroConverter, FAKE_TOPIC, 100)
     }
 
-    private SendResult<String, byte[]> fakeSendResult(ExperimentAssignment experimentAssignmentAs) {
+    private SendResult<String, byte[]> fakeSendResult(Assignment experimentAssignmentAs) {
         return new SendResult<String, byte[]>(
                 new ProducerRecord<String, byte[]>(FAKE_TOPIC, avroConverter.toAvro(experimentAssignmentAs).data()),
                 new RecordMetadata(new TopicPartition(FAKE_TOPIC, 10),
@@ -99,8 +99,8 @@ class KafkaAssignmentRepositorySpec extends BaseIntegrationSpec {
         )
     }
 
-    private static ExperimentAssignment sampleExperimentAssignment() {
-        return new ExperimentAssignment(
+    private static Assignment sampleExperimentAssignment() {
+        return new Assignment(
                 'userId',
                 'userCmId',
                 'experimentId',
@@ -112,8 +112,8 @@ class KafkaAssignmentRepositorySpec extends BaseIntegrationSpec {
         )
     }
 
-    private static ExperimentAssignment emptyExperimentAssignment() {
-        return new ExperimentAssignment(
+    private static Assignment emptyExperimentAssignment() {
+        return new Assignment(
                 null,
                 null,
                 'experimentId',

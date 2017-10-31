@@ -23,7 +23,7 @@ assignments:
   kafka:
     bootstrap-servers-dc4: kasiatestdc4-cbroker1.kasia-test.pl-kra-3.dc4.local:9092,kasiatestdc4-cbroker2.kasia-test.pl-kra-3.dc4.local:9092,kasiatestdc4-cbroker3.kasia-test.pl-kra-3.dc4.local:9092,kasiatestdc4-cbroker4.kasia-test.pl-kra-3.dc4.local:9092
     bootstrap-servers-dc5: kasiatestdc4-cbroker1.kasia-test.pl-kra-3.dc4.local:9092,kasiatestdc4-cbroker2.kasia-test.pl-kra-3.dc4.local:9092,kasiatestdc4-cbroker3.kasia-test.pl-kra-3.dc4.local:9092,kasiatestdc4-cbroker4.kasia-test.pl-kra-3.dc4.local:9092
-    topic: pl.allegro.experiments.chi.assignments.ExperimentAssignment_avro
+    topic: pl.allegro.experiments.chi.assignments.Assignment_avro
     send-timeout: 100
   buffer-size: 100
   flush-period: 500
@@ -36,7 +36,7 @@ avro:
     applicationSchemaProvider: classpath
     registry.location: http://schema-registry-test.allegrogroup.com
     mapping:
-      - className: pl.allegro.experiments.chi.chiserver.assignments.ExperimentAssignment
+      - className: pl.allegro.experiments.chi.chiserver.assignments.Assignment
         schemaVersion: 1
-        schemaLocation: /avro/pl.allegro.experiment.chi.chiserver.assignments.ExperimentAssignment.avsc
-        remoteSchemaSubject: pl.allegro.experiments.chi.assignments.ExperimentAssignment
+        schemaLocation: /avro/pl.allegro.experiment.chi.chiserver.assignments.Assignment.avsc
+        remoteSchemaSubject: pl.allegro.experiments.chi.assignments.Assignment

@@ -7,12 +7,12 @@ import org.springframework.web.bind.annotation.*
 @RestController
 @RequestMapping(value = "/api/assignments", produces = arrayOf(MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_JSON_UTF8_VALUE))
 class AssignmentsController(
-        private val experimentAssignmentRepository: ExperimentAssignmentRepository) {
+        private val assignmentRepository: AssignmentRepository) {
 
     @PostMapping
     @ResponseStatus(value = HttpStatus.ACCEPTED)
-    fun assignToExperiments(@RequestBody experimentAssignments: ExperimentAssignmentsDto) {
-        experimentAssignments.experimentAssignmentDtos
-                .forEach { experimentAssignment -> experimentAssignmentRepository.save(experimentAssignment.toEvent()) }
+    fun assignToExperiments(@RequestBody assignments: AssignmentsDto) {
+        assignments.assignmentDtos
+                .forEach { experimentAssignment -> assignmentRepository.save(experimentAssignment.toEvent()) }
     }
 }

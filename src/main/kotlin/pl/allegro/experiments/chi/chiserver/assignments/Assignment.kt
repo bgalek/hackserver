@@ -2,7 +2,7 @@ package pl.allegro.experiments.chi.chiserver.assignments
 
 import java.time.Instant
 
-data class ExperimentAssignment(
+data class Assignment(
         val userId: String?,
         val userCmId: String?,
         val experimentId: String,

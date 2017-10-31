@@ -1,12 +1,12 @@
 package pl.allegro.experiments.chi.chiserver.assignments.infrastructure
 
-import pl.allegro.experiments.chi.chiserver.assignments.ExperimentAssignment
+import pl.allegro.experiments.chi.chiserver.assignments.Assignment
 import java.util.*
 import java.util.concurrent.ConcurrentLinkedQueue
 
 class AssignmentBuffer(private val maxSize: Int) {
 
-    private val queue: ConcurrentLinkedQueue<ExperimentAssignment> = ConcurrentLinkedQueue()
+    private val queue: ConcurrentLinkedQueue<Assignment> = ConcurrentLinkedQueue()
 
     fun isFull(): Boolean {
         synchronized(this) {
@@ -20,19 +20,19 @@ class AssignmentBuffer(private val maxSize: Int) {
         }
     }
 
-    fun add(experimentAssignment: ExperimentAssignment) {
+    fun add(assignment: Assignment) {
         synchronized(this) {
             if (queue.size >= maxSize) {
                 throw BufferMaxSizeExceededError("Max size exceeded")
             }
 
-            queue.add(experimentAssignment)
+            queue.add(assignment)
         }
     }
 
-    fun flush(): List<ExperimentAssignment> {
+    fun flush(): List<Assignment> {
         synchronized(this) {
-            val result: MutableList<ExperimentAssignment> = LinkedList()
+            val result: MutableList<Assignment> = LinkedList()
             while (!queue.isEmpty()) {
                 result.add(queue.poll())
             }

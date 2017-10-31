@@ -2,7 +2,7 @@ package pl.allegro.experiments.chi.chiserver.assignments
 
 import java.time.Instant
 
-data class ExperimentAssignmentDto(
+data class AssignmentDto(
         val userId: String?,
         val userCmId: String?,
         val experimentId: String,
@@ -12,8 +12,8 @@ data class ExperimentAssignmentDto(
         val deviceClass: String?,
         val assignmentDate: Instant
 ) {
-    fun toEvent(): ExperimentAssignment =
-            ExperimentAssignment(
+    fun toEvent(): Assignment =
+            Assignment(
                     userId,
                     userCmId,
                     experimentId,
