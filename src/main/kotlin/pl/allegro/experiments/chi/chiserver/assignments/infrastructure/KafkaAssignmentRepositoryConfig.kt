@@ -2,7 +2,6 @@ package pl.allegro.experiments.chi.chiserver.assignments.infrastructure
 
 import org.apache.kafka.clients.producer.ProducerConfig
 import org.apache.kafka.common.serialization.ByteArraySerializer
-import org.apache.kafka.common.serialization.BytesSerializer
 import org.apache.kafka.common.serialization.StringSerializer
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.context.annotation.Bean
@@ -10,20 +9,30 @@ import org.springframework.context.annotation.Configuration
 import org.springframework.kafka.core.DefaultKafkaProducerFactory
 import org.springframework.kafka.core.KafkaTemplate
 import org.springframework.kafka.core.ProducerFactory
+import pl.allegro.tech.common.andamio.server.cloud.CloudMetadata
 import pl.allegro.tech.common.andamio.spring.avro.AvroConverter
 
 @Configuration
-class KafkaConfig {
+class KafkaAssignmentRepositoryConfig {
 
     @Bean
-    fun kafkaEventEmitter(kafkaTemplate: KafkaTemplate<String, ByteArray>,
-                          avroConverter: AvroConverter,
-                          @Value("\${assignments.kafka.topic}") topic: String) =
-            KafkaEventEmitter(kafkaTemplate, avroConverter, topic)
+    fun kafkaExperimentAssignmentRepository(kafkaTemplate: KafkaTemplate<String, ByteArray>,
+                                            avroConverter: AvroConverter,
+                                            @Value("\${assignments.kafka.topic}") topic: String) =
+            KafkaAssignmentRepository(kafkaTemplate, avroConverter, topic)
 
     @Bean
-    fun kafkaTemplate(@Value("\${assignments.kafka.bootstrap-servers}") bootstrapServers: String): KafkaTemplate<String, ByteArray> =
-            KafkaTemplate<String, ByteArray>(producerFactory(bootstrapServers))
+    fun kafkaTemplate(
+            @Value("\${assignments.kafka.bootstrap-servers-dc4}") bootstrapServersDc4: String,
+            @Value("\${assignments.kafka.bootstrap-servers-dc5}") bootstrapServersDc5: String,
+            cloudMetadata: CloudMetadata
+    ): KafkaTemplate<String, ByteArray> {
+        if (cloudMetadata.datacenter == "dc5") { // test and dev is deployed only on dc4
+            return KafkaTemplate<String, ByteArray>(producerFactory(bootstrapServersDc5))
+        } else { // dc4 or local
+            return KafkaTemplate<String, ByteArray>(producerFactory(bootstrapServersDc4))
+        }
+    }
 
     private fun producerFactory(bootstrapServers: String): ProducerFactory<String, ByteArray> =
             DefaultKafkaProducerFactory<String, ByteArray>(config(bootstrapServers))
