@@ -12,7 +12,7 @@ import spock.lang.Specification
 @SpringBootTest(
         classes = [
                 AppRunner,
-                HermesTestConfig,
+                KafkaTestConfig,
                 WireMockTestConfig
         ],
         properties = "application.environment=integration",

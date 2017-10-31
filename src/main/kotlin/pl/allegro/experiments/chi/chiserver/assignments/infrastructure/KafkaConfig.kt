@@ -13,13 +13,7 @@ import pl.allegro.tech.common.andamio.server.cloud.CloudMetadata
 import pl.allegro.tech.common.andamio.spring.avro.AvroConverter
 
 @Configuration
-class KafkaAssignmentRepositoryConfig {
-
-    @Bean
-    fun kafkaExperimentAssignmentRepository(kafkaTemplate: KafkaTemplate<String, ByteArray>,
-                                            avroConverter: AvroConverter,
-                                            @Value("\${assignments.kafka.topic}") topic: String) =
-            KafkaAssignmentRepository(kafkaTemplate, avroConverter, topic)
+class KafkaConfig {
 
     @Bean
     fun kafkaTemplate(
