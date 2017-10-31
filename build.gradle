@@ -50,6 +50,9 @@ repositories {
 }
 
 dependencies {
+    compile 'org.springframework:spring-web:4.3.10.RELEASE'
+    compile group: 'pl.allegro.tech.common', name: 'spring-boot-starter-andamio', version: '1.9.3'
+    compile group: 'pl.allegro.experiments.chi', name: 'chi-core', version: '0.5.1'
     compile group: 'com.fasterxml.jackson.dataformat', name: 'jackson-dataformat-avro', version: "$versions.jackson"
     compile group: 'com.fasterxml.jackson.module', name: 'jackson-module-kotlin', version: "$versions.jackson"
     compile group: 'com.fasterxml.jackson.datatype', name: 'jackson-datatype-jdk8', version: "$versions.jackson"
