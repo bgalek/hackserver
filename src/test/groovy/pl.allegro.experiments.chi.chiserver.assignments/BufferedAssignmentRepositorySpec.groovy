@@ -1,23 +1,26 @@
 package pl.allegro.experiments.chi.chiserver.assignments
 
-import org.springframework.beans.factory.annotation.Autowired
-import pl.allegro.experiments.chi.chiserver.BaseIntegrationSpec
+import com.codahale.metrics.MetricRegistry
 import pl.allegro.experiments.chi.chiserver.assignments.infrastructure.AssignmentBuffer
 import pl.allegro.experiments.chi.chiserver.assignments.infrastructure.BufferedAssignmentRepository
+import pl.allegro.experiments.chi.chiserver.assignments.infrastructure.InMemoryExperimentAssignmentRepository
+import pl.allegro.experiments.chi.chiserver.assignments.infrastructure.MetricReporter
+import spock.lang.Specification
 
 import java.time.Instant
 
-class BufferedAssignmentRepositorySpec extends BaseIntegrationSpec {
+class BufferedAssignmentRepositorySpec extends Specification {
 
-    @Autowired
-    BufferedAssignmentRepository bufferedAssignmentRepository
+    InMemoryExperimentAssignmentRepository repository = new InMemoryExperimentAssignmentRepository()
 
-    @Autowired
-    AssignmentBuffer buffer
+    AssignmentBuffer buffer = new AssignmentBuffer(3)
 
-    @Autowired
-    InMemoryExperimentAssignmentRepository repository
+    BufferedAssignmentRepository bufferedAssignmentRepository = new BufferedAssignmentRepository(new MetricReporter(new MetricRegistry()), buffer, repository)
 
+    def cleanup() {
+        buffer.flush()
+        repository.experimentAssignments.clear()
+    }
 
     def "should add assignment to buffer when saving"() {
         given: "sample assignment"
@@ -45,7 +48,7 @@ class BufferedAssignmentRepositorySpec extends BaseIntegrationSpec {
     }
 
     def "should drop assignments when buffer is overloaded and saving"() {
-        given: "buffer is full"
+        given: "there is buffered repository with full buffer"
         (1..buffer.maxSize).forEach {bufferedAssignmentRepository.save(sampleAssignment())}
 
         when: "we try to save assignment"

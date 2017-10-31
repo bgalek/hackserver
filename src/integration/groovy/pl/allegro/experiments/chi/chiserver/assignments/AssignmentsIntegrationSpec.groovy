@@ -7,6 +7,7 @@ import org.springframework.http.HttpMethod
 import org.springframework.web.client.HttpClientErrorException
 import org.springframework.web.client.RestTemplate
 import pl.allegro.experiments.chi.chiserver.BaseIntegrationSpec
+import pl.allegro.experiments.chi.chiserver.assignments.infrastructure.InMemoryExperimentAssignmentRepository
 
 import java.time.Instant
 

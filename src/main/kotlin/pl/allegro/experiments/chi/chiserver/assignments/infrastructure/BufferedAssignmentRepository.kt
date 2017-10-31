@@ -32,6 +32,14 @@ class BufferedAssignmentRepository(
         val start = System.nanoTime()
         val assignments = buffer.flush()
         logger.info("Flushing ${assignments.size} assignments from buffer")
+        val failedCounter = saveFromBuffer(assignments)
+        metricReporter.reportSaved(assignments.size - failedCounter)
+        metricReporter.reportFailed(failedCounter)
+        val duration = TimeUnit.NANOSECONDS.toMillis(System.nanoTime() - start)
+        logger.info("Flushed ${assignments.size}, took $duration ms")
+    }
+
+    private fun saveFromBuffer(assignments: List<ExperimentAssignment>): Long {
         var failedCounter: Long = 0
         assignments.stream().forEach { assignment ->
             try {
@@ -41,10 +49,6 @@ class BufferedAssignmentRepository(
                 failedCounter++
             }
         }
-        metricReporter.reportSaved(assignments.size - failedCounter)
-        metricReporter.reportFailed(failedCounter)
-        val duration = TimeUnit.NANOSECONDS.toMillis(System.nanoTime() - start)
-        logger.info("Flushed ${assignments.size}, took $duration ms")
-
+        return failedCounter
     }
 }
