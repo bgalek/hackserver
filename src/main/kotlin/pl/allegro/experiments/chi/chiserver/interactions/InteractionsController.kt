@@ -11,8 +11,7 @@ class InteractionsController(
 
     @PostMapping(path = arrayOf("/v1", ""))
     @ResponseStatus(value = HttpStatus.ACCEPTED)
-    fun assignToExperiments(@RequestBody interactions: InteractionsDto) {
-        interactions.interactionDtos
-                .forEach { interaction -> interactionRepository.save(interaction.toInteraction()) }
+    fun assignToExperiments(@RequestBody interactions: List<InteractionDto>) {
+        interactions.forEach { interaction -> interactionRepository.save(interaction.toInteraction()) }
     }
 }

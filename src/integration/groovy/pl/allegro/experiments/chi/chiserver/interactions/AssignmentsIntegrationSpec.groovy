@@ -26,7 +26,7 @@ class AssignmentsIntegrationSpec extends BaseIntegrationSpec {
         ]
 
         when:
-        restTemplate.exchange(localUrl('/api/interactions/v1/'), HttpMethod.POST, new HttpEntity(new InteractionsDto(interactions)), Void.class)
+        restTemplate.exchange(localUrl('/api/interactions/v1/'), HttpMethod.POST, new HttpEntity(interactions), Void.class)
 
         then:
         inMemoryInteractionRepository.assertInteractionSaved(interactions[0].toInteraction())
