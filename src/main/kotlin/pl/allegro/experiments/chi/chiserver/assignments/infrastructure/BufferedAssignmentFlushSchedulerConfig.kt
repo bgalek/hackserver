@@ -1,16 +1,15 @@
 package pl.allegro.experiments.chi.chiserver.assignments.infrastructure
 
-import org.springframework.boot.context.properties.EnableConfigurationProperties
+import org.springframework.beans.factory.annotation.Value
 import org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler
 import org.springframework.scheduling.support.PeriodicTrigger
 import org.springframework.stereotype.Component
 import javax.annotation.PostConstruct
 
 @Component
-@EnableConfigurationProperties(BufferedAssignmentFlushSchedulerProperties::class)
-class BufferedAssignmentFlushScheduler(
+class BufferedAssignmentFlushSchedulerConfig(
         private val repository: BufferedAssignmentRepository,
-        private val properties: BufferedAssignmentFlushSchedulerProperties) {
+        @Value("\${assignments.flush-period}") private val flushPeriod: Long) {
 
     private val scheduler: ThreadPoolTaskScheduler = ThreadPoolTaskScheduler()
 
@@ -21,6 +20,6 @@ class BufferedAssignmentFlushScheduler(
     @PostConstruct
     fun init() {
         this.scheduler.initialize()
-        this.scheduler.schedule(Runnable { repository.flush() }, PeriodicTrigger(properties.flushPeriod))
+        this.scheduler.schedule(Runnable { repository.flush() }, PeriodicTrigger(flushPeriod))
     }
 }

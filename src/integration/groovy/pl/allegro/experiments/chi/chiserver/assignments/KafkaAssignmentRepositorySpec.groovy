@@ -17,13 +17,13 @@ import java.time.Instant
 
 class KafkaAssignmentRepositorySpec extends BaseIntegrationSpec {
 
-    private static final String FAKE_TOPIC = "fakeTopic"
+    String FAKE_TOPIC = "fakeTopic"
 
     @Autowired
     AvroConverter avroConverter
 
     def 'should send event to kafka when saving experiment assignment'() {
-        given: "there is kafka repository"
+        given:
         KafkaOperations fakeKafkaTemplate = Mock()
         KafkaAssignmentRepository kafkaExperimentAssignmentRepository = createKafkaExperimentAssignmentRepository(fakeKafkaTemplate)
 
@@ -31,15 +31,15 @@ class KafkaAssignmentRepositorySpec extends BaseIntegrationSpec {
         ListenableFuture expectedSendResult = new SettableListenableFuture<SendResult<String, byte[]>>()
         expectedSendResult.set(fakeSendResult(sampleExperimentAssignment()))
 
-        when: 'we save assignment'
+        when:
         kafkaExperimentAssignmentRepository.save(sampleExperimentAssignment())
 
-        then: 'event is sent to kafka'
+        then:
         1 * fakeKafkaTemplate.send(FAKE_TOPIC, _) >> expectedSendResult
     }
 
     def 'should send experiment assignment with empty values'() {
-        given: "there is kafka repository"
+        given:
         KafkaOperations fakeKafkaTemplate = Mock()
         KafkaAssignmentRepository kafkaExperimentAssignmentRepository = createKafkaExperimentAssignmentRepository(fakeKafkaTemplate)
 
@@ -47,15 +47,15 @@ class KafkaAssignmentRepositorySpec extends BaseIntegrationSpec {
         ListenableFuture expectedSendResult = new SettableListenableFuture<SendResult<String, byte[]>>()
         expectedSendResult.set(fakeSendResult(emptyExperimentAssignment()))
 
-        when: 'we save assignment with empty values'
+        when:
         kafkaExperimentAssignmentRepository.save(emptyExperimentAssignment())
 
-        then: 'event is sent to kafka'
+        then:
         1 * fakeKafkaTemplate.send(FAKE_TOPIC, _) >> expectedSendResult
     }
 
     def 'should throw error when something goes wrong'() {
-        given: "there is kafka repository"
+        given:
         KafkaOperations fakeKafkaTemplate = Mock()
         KafkaAssignmentRepository kafkaExperimentAssignmentRepository = createKafkaExperimentAssignmentRepository(fakeKafkaTemplate)
 
@@ -67,12 +67,12 @@ class KafkaAssignmentRepositorySpec extends BaseIntegrationSpec {
         when: 'something goes wrong'
         kafkaExperimentAssignmentRepository.save(sampleExperimentAssignment())
 
-        then: 'we get error'
+        then:
         thrown(CouldNotSendMessageToKafkaError)
     }
 
     def 'should throw error when sending reach timeout'() {
-        given: "there is kafka repository"
+        given:
         KafkaOperations fakeKafkaTemplate = Mock()
         KafkaAssignmentRepository kafkaExperimentAssignmentRepository = createKafkaExperimentAssignmentRepository(fakeKafkaTemplate)
 
@@ -83,15 +83,15 @@ class KafkaAssignmentRepositorySpec extends BaseIntegrationSpec {
         when: 'saving take to much time'
         kafkaExperimentAssignmentRepository.save(sampleExperimentAssignment())
 
-        then: 'we get error'
+        then:
         thrown(CouldNotSendMessageToKafkaError)
     }
 
-    private KafkaAssignmentRepository createKafkaExperimentAssignmentRepository(KafkaOperations kafkaTemplate) {
+    KafkaAssignmentRepository createKafkaExperimentAssignmentRepository(KafkaOperations kafkaTemplate) {
         new KafkaAssignmentRepository(kafkaTemplate, avroConverter, FAKE_TOPIC, 100)
     }
 
-    private SendResult<String, byte[]> fakeSendResult(Assignment experimentAssignmentAs) {
+    SendResult<String, byte[]> fakeSendResult(Assignment experimentAssignmentAs) {
         new SendResult<String, byte[]>(
                 new ProducerRecord<String, byte[]>(FAKE_TOPIC, avroConverter.toAvro(experimentAssignmentAs).data()),
                 new RecordMetadata(new TopicPartition(FAKE_TOPIC, 10),
@@ -99,7 +99,7 @@ class KafkaAssignmentRepositorySpec extends BaseIntegrationSpec {
         )
     }
 
-    private static Assignment sampleExperimentAssignment() {
+    Assignment sampleExperimentAssignment() {
         new Assignment(
                 'userId',
                 'userCmId',

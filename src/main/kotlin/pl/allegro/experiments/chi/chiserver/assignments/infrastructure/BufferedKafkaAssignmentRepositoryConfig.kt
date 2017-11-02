@@ -29,7 +29,9 @@ class BufferedKafkaAssignmentRepositoryConfig {
     }
 
     @Bean
-    fun buffer(@Value("\${assignments.buffer-size}") size: Int): AssignmentBuffer {
-        return AssignmentBuffer(size)
+    fun buffer(
+            @Value("\${assignments.buffer-size}") size: Int,
+            metricRegistry: MetricRegistry): AssignmentBuffer {
+        return AssignmentBuffer(size, metricRegistry)
     }
 }

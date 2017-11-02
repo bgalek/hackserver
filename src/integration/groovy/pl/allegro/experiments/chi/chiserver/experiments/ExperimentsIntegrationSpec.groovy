@@ -21,7 +21,7 @@ class ExperimentsIntegrationSpec extends BaseIntegrationSpec {
         teachWireMockJson("/invalid-experiments",  getResourceAsString('/invalid-experiments.json' ))
     }
 
-    private String getResourceAsString(String resourceName) {
+    String getResourceAsString(String resourceName) {
         this.getClass().getResource(resourceName).text
     }
 
@@ -86,7 +86,7 @@ class ExperimentsIntegrationSpec extends BaseIntegrationSpec {
                 .withBody(json)))
     }
 
-    private String resourceUrl(String endpoint) {
+    String resourceUrl(String endpoint) {
         "http://localhost:${wireMockServer.port()}$endpoint"
     }
 

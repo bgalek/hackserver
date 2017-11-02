@@ -7,37 +7,27 @@ import java.util.concurrent.TimeUnit
 import java.util.logging.Logger
 
 class BufferedAssignmentRepository(
-        metricRegistry: MetricRegistry,
+        private val metricRegistry: MetricRegistry,
         private val buffer: AssignmentBuffer,
         private val repository: AssignmentRepository): AssignmentRepository {
 
-    private val metricReporter: MetricReporter = MetricReporter(metricRegistry)
-
     companion object {
+        private val SAVED_METRIC_NAME = "chi.server.experiments.assignments.kafka.saved"
+        private val FAILED_METRIC_NAME = "chi.server.experiments.assignments.kafka.failed"
         private val logger = Logger.getLogger(BufferedAssignmentRepository::class.java.name)
     }
 
     override fun save(assignment: Assignment) {
-        if (buffer.isFull()) {
-            val lostAssignments = buffer.flush()
-            metricReporter.reportDropped((lostAssignments.size.toLong()))
-            logger.warning("Buffer overloaded. Flushing buffer. Lost ${lostAssignments.size} assignments")
-        }
-
         buffer.add(assignment)
     }
 
     fun flush() {
-        if (buffer.isEmpty()) {
-            return // nothing to save
-        }
-
         val start = System.nanoTime()
         val assignments = buffer.flush()
         logger.info("Flushing ${assignments.size} assignments from buffer")
         val failedCounter = saveFromBuffer(assignments)
-        metricReporter.reportSaved(assignments.size - failedCounter)
-        metricReporter.reportFailed(failedCounter)
+        reportSaved(assignments.size - failedCounter)
+        reportFailed(failedCounter)
         val duration = TimeUnit.NANOSECONDS.toMillis(System.nanoTime() - start)
         logger.info("Flushed ${assignments.size}, took $duration ms")
     }
@@ -55,23 +45,11 @@ class BufferedAssignmentRepository(
         return failedCounter
     }
 
-    private class MetricReporter(private val metricRegistry: MetricRegistry) {
-        companion object {
-            private val SAVED_METRIC_NAME = "chi.server.experiments.assignments.kafka.saved"
-            private val FAILED_METRIC_NAME = "chi.server.experiments.assignments.kafka.failed"
-            private val DROPPED_METRIC_NAME = "chi.server.experiments.assignments.kafka.dropped"
-        }
+    fun reportSaved(savedCount: Long) {
+        metricRegistry.counter(SAVED_METRIC_NAME).inc(savedCount)
+    }
 
-        fun reportSaved(savedCount: Long) {
-            metricRegistry.counter(SAVED_METRIC_NAME).inc(savedCount)
-        }
-
-        fun reportFailed(failedCount: Long) {
-            metricRegistry.counter(FAILED_METRIC_NAME).inc(failedCount)
-        }
-
-        fun reportDropped(droppedCount: Long) {
-            metricRegistry.counter(DROPPED_METRIC_NAME).inc(droppedCount)
-        }
+    fun reportFailed(failedCount: Long) {
+        metricRegistry.counter(FAILED_METRIC_NAME).inc(failedCount)
     }
 }

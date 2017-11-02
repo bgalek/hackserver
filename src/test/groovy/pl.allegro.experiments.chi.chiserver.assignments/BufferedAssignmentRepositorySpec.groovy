@@ -11,54 +11,47 @@ import java.time.Instant
 class BufferedAssignmentRepositorySpec extends Specification {
 
     InMemoryAssignmentRepository repository = new InMemoryAssignmentRepository()
-
-    AssignmentBuffer buffer = new AssignmentBuffer(3)
-
-    BufferedAssignmentRepository bufferedAssignmentRepository = new BufferedAssignmentRepository(new MetricRegistry(), buffer, repository)
+    MetricRegistry metrics = new MetricRegistry()
+    int bufferMaxSize = 3
+    AssignmentBuffer buffer = new AssignmentBuffer(bufferMaxSize, metrics)
+    BufferedAssignmentRepository bufferedAssignmentRepository = new BufferedAssignmentRepository(metrics, buffer, repository)
 
     def cleanup() {
         buffer.flush()
         repository.assignments.clear()
     }
 
-    def "should add assignment to buffer when saving"() {
-        given: "sample assignment"
+    def "should save all assignments from buffer when flushing"() {
+        given:
         def assignment = sampleAssignment()
 
-        when: "we save assignment"
+        when:
         bufferedAssignmentRepository.save(assignment)
 
         then: "assignment is added to buffer"
-        buffer.flush() as Set == [assignment] as Set
-    }
+        repository.assignments.isEmpty()
 
-    def "should save all assignments from buffer when flushing"() {
-        given: "sample assignment"
-        def assignment = sampleAssignment()
-
-        and: "saved in buffer"
-        bufferedAssignmentRepository.save(assignment)
-
-        when: "we call flush"
+        when:
         bufferedAssignmentRepository.flush()
 
-        then: "assignment is saved in repo"
+        then:
         repository.assertAssignmentSaved(assignment)
     }
 
     def "should drop assignments when buffer is overloaded and saving"() {
         given: "there is buffered repository with full buffer"
-        (1..buffer.maxSize).forEach {bufferedAssignmentRepository.save(sampleAssignment())}
+        bufferMaxSize.times { bufferedAssignmentRepository.save(sampleAssignment()) }
 
         when: "we try to save assignment"
         def newAssignment = sampleAssignment()
         bufferedAssignmentRepository.save(newAssignment)
 
-        then: "buffer is flushed"
-        buffer.flush() as Set == [newAssignment] as Set
+        then: "buffered assignments are dropped"
+        bufferedAssignmentRepository.flush()
+        repository.assignments as Set == [newAssignment] as Set
     }
 
-    private static Assignment sampleAssignment() {
+    Assignment sampleAssignment() {
         new Assignment("userId123", "cmid123", "experimentId123",
                 "variant134", false, true, "iphone", Instant.now())
     }
