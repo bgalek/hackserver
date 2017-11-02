@@ -20,7 +20,7 @@ class KafkaConfig {
             @Value("\${interactions.kafka.bootstrap-servers-dc5}") bootstrapServersDc5: String,
             cloudMetadata: CloudMetadata
     ): KafkaTemplate<String, ByteArray> {
-        if (cloudMetadata.datacenter == "dc5") { // test and dev is deployed only on dc4
+        if (cloudMetadata.datacenter == "dc5") {
             return KafkaTemplate<String, ByteArray>(producerFactory(bootstrapServersDc5))
         } else { // dc4 or local
             return KafkaTemplate<String, ByteArray>(producerFactory(bootstrapServersDc4))
