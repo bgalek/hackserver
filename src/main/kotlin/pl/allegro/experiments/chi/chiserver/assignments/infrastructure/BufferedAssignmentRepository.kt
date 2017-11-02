@@ -45,11 +45,11 @@ class BufferedAssignmentRepository(
         return failedCounter
     }
 
-    fun reportSaved(savedCount: Long) {
+    private fun reportSaved(savedCount: Long) {
         metricRegistry.counter(SAVED_METRIC_NAME).inc(savedCount)
     }
 
-    fun reportFailed(failedCount: Long) {
+    private fun reportFailed(failedCount: Long) {
         metricRegistry.counter(FAILED_METRIC_NAME).inc(failedCount)
     }
 }

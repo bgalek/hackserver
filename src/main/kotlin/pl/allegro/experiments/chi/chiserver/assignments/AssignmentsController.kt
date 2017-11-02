@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.*
 class AssignmentsController(
         private val assignmentRepository: AssignmentRepository) {
 
-    @PostMapping
+    @PostMapping(path = arrayOf("/v1", ""))
     @ResponseStatus(value = HttpStatus.ACCEPTED)
     fun assignToExperiments(@RequestBody assignments: AssignmentsDto) {
         assignments.assignmentDtos

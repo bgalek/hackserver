@@ -26,7 +26,7 @@ class AssignmentsIntegrationSpec extends BaseIntegrationSpec {
         ]
 
         when:
-        restTemplate.exchange(localUrl('/api/assignments'), HttpMethod.POST, new HttpEntity(new AssignmentsDto(experimentAssignments)), Void.class)
+        restTemplate.exchange(localUrl('/api/assignments/v1/'), HttpMethod.POST, new HttpEntity(new AssignmentsDto(experimentAssignments)), Void.class)
 
         then:
         inMemoryAssignmentRepository.assertAssignmentSaved(experimentAssignments[0].toEvent())
@@ -50,7 +50,7 @@ class AssignmentsIntegrationSpec extends BaseIntegrationSpec {
         ])
 
         when:
-        restTemplate.exchange(localUrl('/api/assignments'), HttpMethod.POST, new HttpEntity<String>(data), Void.class)
+        restTemplate.exchange(localUrl('/api/assignments/v1/'), HttpMethod.POST, new HttpEntity<String>(data), Void.class)
 
         then:
         thrown(HttpClientErrorException)
@@ -74,7 +74,7 @@ class AssignmentsIntegrationSpec extends BaseIntegrationSpec {
         ])
 
         when:
-        restTemplate.exchange(localUrl('/api/assignments'), HttpMethod.POST, new HttpEntity<String>(data), Void.class)
+        restTemplate.exchange(localUrl('/api/assignments/v1/'), HttpMethod.POST, new HttpEntity<String>(data), Void.class)
 
         then:
         thrown(HttpClientErrorException)

@@ -17,12 +17,8 @@ class ExperimentsIntegrationSpec extends BaseIntegrationSpec {
     FileBasedExperimentsRepository fileBasedExperimentsRepository
 
     def setup() {
-        teachWireMockJson("/experiments", getResourceAsString('/some-experiments.json'))
-        teachWireMockJson("/invalid-experiments",  getResourceAsString('/invalid-experiments.json' ))
-    }
-
-    String getResourceAsString(String resourceName) {
-        this.getClass().getResource(resourceName).text
+        teachWireMockJson("/experiments", '/some-experiments.json')
+        teachWireMockJson("/invalid-experiments",'/invalid-experiments.json')
     }
 
     def "should return list of experiments loaded from the backing HTTP resource"() {
@@ -79,11 +75,16 @@ class ExperimentsIntegrationSpec extends BaseIntegrationSpec {
         response.body.size() == 5
     }
 
-    void teachWireMockJson(String path, String json) {
+    void teachWireMockJson(String path, String jsonPath) {
+        String json = getResourceAsString(jsonPath)
         wireMockServer.stubFor(get(urlEqualTo(path))
                 .willReturn(aResponse()
                 .withStatus(200)
                 .withBody(json)))
+    }
+
+    String getResourceAsString(String resourceName) {
+        this.getClass().getResource(resourceName).text
     }
 
     String resourceUrl(String endpoint) {

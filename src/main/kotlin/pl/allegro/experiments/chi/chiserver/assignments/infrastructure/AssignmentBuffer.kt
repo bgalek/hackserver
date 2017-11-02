@@ -37,9 +37,7 @@ class AssignmentBuffer(
     }
 
     private fun isFull(): Boolean {
-        synchronized(this) {
-            return queue.size >= maxSize
-        }
+        return queue.size >= maxSize
     }
 
     private fun reportDropped(droppedCount: Long) {
