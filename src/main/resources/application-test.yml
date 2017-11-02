@@ -13,5 +13,3 @@ metrics:
 
 assignments:
   repository: kafka
-  buffer-size: 10000
-  flush-period: 500
