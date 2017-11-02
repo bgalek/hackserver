@@ -10,7 +10,6 @@ import org.springframework.kafka.core.DefaultKafkaProducerFactory
 import org.springframework.kafka.core.KafkaTemplate
 import org.springframework.kafka.core.ProducerFactory
 import pl.allegro.tech.common.andamio.server.cloud.CloudMetadata
-import pl.allegro.tech.common.andamio.spring.avro.AvroConverter
 
 @Configuration
 class KafkaConfig {

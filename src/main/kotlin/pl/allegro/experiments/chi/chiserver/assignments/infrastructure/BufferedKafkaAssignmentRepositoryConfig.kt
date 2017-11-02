@@ -1,5 +1,6 @@
 package pl.allegro.experiments.chi.chiserver.assignments.infrastructure
 
+import com.codahale.metrics.MetricRegistry
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
@@ -13,7 +14,7 @@ class BufferedKafkaAssignmentRepositoryConfig {
     @Bean
     fun bufferedKafkaAssignmentRepository(
             buffer: AssignmentBuffer,
-            metricReporter: MetricReporter,
+            metricRegistry: MetricRegistry,
 
             kafkaTemplate: KafkaTemplate<String, ByteArray>,
             avroConverter: AvroConverter,
@@ -24,7 +25,7 @@ class BufferedKafkaAssignmentRepositoryConfig {
     ): BufferedAssignmentRepository {
         val repo: AssignmentRepository = if (repositoryType == "kafka") KafkaAssignmentRepository(kafkaTemplate, avroConverter, topic, sendTimeout)
                 else LoggerAssignmentRepository()
-        return BufferedAssignmentRepository(metricReporter, buffer, repo)
+        return BufferedAssignmentRepository(metricRegistry, buffer, repo)
     }
 
     @Bean
