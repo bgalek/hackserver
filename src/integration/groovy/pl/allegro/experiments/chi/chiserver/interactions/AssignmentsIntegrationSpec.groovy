@@ -36,16 +36,15 @@ class AssignmentsIntegrationSpec extends BaseIntegrationSpec {
     def "should throw error when argument is missing"() {
         given:
         String data = JsonOutput.toJson([
-                "interactionDtos": [
-                        [
-                                "userId": "123",
-                                "userCmId": "123",
-                                "experimentId": "q234",
-                                "variantName": "123",
-                                "internal": true,
-                                "deviceClass": "iphone"
-                        ]
+                [
+                        "userId"      : "123",
+                        "userCmId"    : "123",
+                        "experimentId": "q234",
+                        "variantName" : "123",
+                        "internal"    : true,
+                        "deviceClass" : "iphone"
                 ]
+
         ])
 
         when:
@@ -58,17 +57,17 @@ class AssignmentsIntegrationSpec extends BaseIntegrationSpec {
     def "should throw error when required argument is null"() {
         given:
         String data = JsonOutput.toJson([
-                "interactionDtos": [
-                        [
-                                "userId": null,
-                                "userCmId": null,
-                                "experimentId": null,
-                                "variantName": null,
-                                "internal": null,
-                                "deviceClass": null,
-                                "interactionDate": null
-                        ]
+
+                [
+                        "userId"         : null,
+                        "userCmId"       : null,
+                        "experimentId"   : null,
+                        "variantName"    : null,
+                        "internal"       : null,
+                        "deviceClass"    : null,
+                        "interactionDate": null
                 ]
+
         ])
 
         when:
