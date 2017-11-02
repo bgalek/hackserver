@@ -20,14 +20,14 @@ chi:
 
 
 assignments:
+  repository: local
+  buffer-size: 10000
+  flush-period: 500
   kafka:
     bootstrap-servers-dc4: kasiatestdc4-cbroker1.kasia-test.pl-kra-3.dc4.local:9092,kasiatestdc4-cbroker2.kasia-test.pl-kra-3.dc4.local:9092,kasiatestdc4-cbroker3.kasia-test.pl-kra-3.dc4.local:9092,kasiatestdc4-cbroker4.kasia-test.pl-kra-3.dc4.local:9092
     bootstrap-servers-dc5: kasiatestdc4-cbroker1.kasia-test.pl-kra-3.dc4.local:9092,kasiatestdc4-cbroker2.kasia-test.pl-kra-3.dc4.local:9092,kasiatestdc4-cbroker3.kasia-test.pl-kra-3.dc4.local:9092,kasiatestdc4-cbroker4.kasia-test.pl-kra-3.dc4.local:9092
     topic: pl.allegro.experiments.chi.assignments.Assignment_avro
     send-timeout: 100
-  buffer-size: 100
-  flush-period: 500
-
 
 avro:
   enabled: true

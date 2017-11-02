@@ -1,14 +1,17 @@
 package pl.allegro.experiments.chi.chiserver.assignments.infrastructure
 
+import com.codahale.metrics.MetricRegistry
 import pl.allegro.experiments.chi.chiserver.assignments.Assignment
 import pl.allegro.experiments.chi.chiserver.assignments.AssignmentRepository
 import java.util.concurrent.TimeUnit
 import java.util.logging.Logger
 
 class BufferedAssignmentRepository(
-        private val metricReporter: MetricReporter,
+        metricRegistry: MetricRegistry,
         private val buffer: AssignmentBuffer,
         private val repository: AssignmentRepository): AssignmentRepository {
+
+    private val metricReporter: MetricReporter = MetricReporter(metricRegistry)
 
     companion object {
         private val logger = Logger.getLogger(BufferedAssignmentRepository::class.java.name)
@@ -50,5 +53,25 @@ class BufferedAssignmentRepository(
             }
         }
         return failedCounter
+    }
+
+    private class MetricReporter(private val metricRegistry: MetricRegistry) {
+        companion object {
+            private val SAVED_METRIC_NAME = "chi.server.experiments.assignments.kafka.saved"
+            private val FAILED_METRIC_NAME = "chi.server.experiments.assignments.kafka.failed"
+            private val DROPPED_METRIC_NAME = "chi.server.experiments.assignments.kafka.dropped"
+        }
+
+        fun reportSaved(savedCount: Long) {
+            metricRegistry.counter(SAVED_METRIC_NAME).inc(savedCount)
+        }
+
+        fun reportFailed(failedCount: Long) {
+            metricRegistry.counter(FAILED_METRIC_NAME).inc(failedCount)
+        }
+
+        fun reportDropped(droppedCount: Long) {
+            metricRegistry.counter(DROPPED_METRIC_NAME).inc(droppedCount)
+        }
     }
 }

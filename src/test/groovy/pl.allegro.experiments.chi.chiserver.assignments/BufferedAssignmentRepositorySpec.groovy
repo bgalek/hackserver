@@ -4,7 +4,6 @@ import com.codahale.metrics.MetricRegistry
 import pl.allegro.experiments.chi.chiserver.assignments.infrastructure.AssignmentBuffer
 import pl.allegro.experiments.chi.chiserver.assignments.infrastructure.BufferedAssignmentRepository
 import pl.allegro.experiments.chi.chiserver.assignments.infrastructure.InMemoryAssignmentRepository
-import pl.allegro.experiments.chi.chiserver.assignments.infrastructure.MetricReporter
 import spock.lang.Specification
 
 import java.time.Instant
@@ -15,7 +14,7 @@ class BufferedAssignmentRepositorySpec extends Specification {
 
     AssignmentBuffer buffer = new AssignmentBuffer(3)
 
-    BufferedAssignmentRepository bufferedAssignmentRepository = new BufferedAssignmentRepository(new MetricReporter(new MetricRegistry()), buffer, repository)
+    BufferedAssignmentRepository bufferedAssignmentRepository = new BufferedAssignmentRepository(new MetricRegistry(), buffer, repository)
 
     def cleanup() {
         buffer.flush()
@@ -60,7 +59,7 @@ class BufferedAssignmentRepositorySpec extends Specification {
     }
 
     private static Assignment sampleAssignment() {
-        return new Assignment("userId123", "cmid123", "experimentId123",
+        new Assignment("userId123", "cmid123", "experimentId123",
                 "variant134", false, true, "iphone", Instant.now())
     }
 }

@@ -87,7 +87,7 @@ class ExperimentsIntegrationSpec extends BaseIntegrationSpec {
     }
 
     private String resourceUrl(String endpoint) {
-        return "http://localhost:${wireMockServer.port()}$endpoint"
+        "http://localhost:${wireMockServer.port()}$endpoint"
     }
 
     Map internalExperiment() {

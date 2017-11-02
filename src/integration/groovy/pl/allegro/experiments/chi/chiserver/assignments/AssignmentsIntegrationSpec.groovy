@@ -81,7 +81,7 @@ class AssignmentsIntegrationSpec extends BaseIntegrationSpec {
     }
 
     AssignmentDto sampleExperimentAssignment(String userId, String variantName) {
-        return new AssignmentDto(
+        new AssignmentDto(
                 userId,
                 null,
                 'experimentId',

@@ -10,3 +10,6 @@ metrics:
   graphite:
     enabled: true
     host: skystats-test.qxlint
+
+assignments:
+  repository: kafka

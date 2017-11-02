@@ -1,3 +1,6 @@
 discovery:
   enabled: true
   type: consul
+
+assignments:
+  repository: kafka

@@ -1,6 +1,5 @@
 package pl.allegro.experiments.chi.chiserver.assignments.infrastructure
 
-import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler
 import org.springframework.scheduling.support.PeriodicTrigger
