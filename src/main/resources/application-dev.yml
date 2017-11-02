@@ -2,5 +2,5 @@ discovery:
   enabled: true
   type: consul
 
-assignments:
+interactions:
   repository: kafka

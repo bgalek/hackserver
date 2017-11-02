@@ -1,4 +1,4 @@
-package pl.allegro.experiments.chi.chiserver.assignments.infrastructure
+package pl.allegro.experiments.chi.chiserver.interactions.infrastructure
 
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler
@@ -7,9 +7,9 @@ import org.springframework.stereotype.Component
 import javax.annotation.PostConstruct
 
 @Component
-class BufferedAssignmentFlushSchedulerConfig(
-        private val repository: BufferedAssignmentRepository,
-        @Value("\${assignments.flush-period}") private val flushPeriod: Long) {
+class BufferedInteractionFlushSchedulerConfig(
+        private val repository: BufferedInteractionRepository,
+        @Value("\${interactions.flush-period}") private val flushPeriod: Long) {
 
     private val scheduler: ThreadPoolTaskScheduler = ThreadPoolTaskScheduler()
 

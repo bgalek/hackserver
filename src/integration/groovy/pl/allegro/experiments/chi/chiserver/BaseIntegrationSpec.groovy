@@ -11,7 +11,7 @@ import spock.lang.Specification
 @SpringBootTest(
         classes = [
                 AppRunner,
-                AssignmentsIntegrationTestConfig,
+                InteractionsIntegrationTestConfig,
                 WireMockTestConfig
         ],
         properties = "application.environment=integration",

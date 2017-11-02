@@ -1,34 +1,34 @@
-package pl.allegro.experiments.chi.chiserver.assignments.infrastructure
+package pl.allegro.experiments.chi.chiserver.interactions.infrastructure
 
 import com.codahale.metrics.MetricRegistry
-import pl.allegro.experiments.chi.chiserver.assignments.Assignment
+import pl.allegro.experiments.chi.chiserver.interactions.Interaction
 import java.util.*
 import java.util.concurrent.ConcurrentLinkedQueue
 import java.util.logging.Logger
 
-class AssignmentBuffer(
+class InteractionBuffer(
         private val maxSize: Int,
         private val metricRegistry: MetricRegistry) {
 
-    private val queue: ConcurrentLinkedQueue<Assignment> = ConcurrentLinkedQueue()
+    private val queue: ConcurrentLinkedQueue<Interaction> = ConcurrentLinkedQueue()
 
     companion object {
-        private val DROPPED_METRIC_NAME = "chi.server.experiments.assignments.kafka.dropped"
-        private val logger = Logger.getLogger(AssignmentBuffer::class.java.name)
+        private val DROPPED_METRIC_NAME = "chi.server.experiments.interactions.kafka.dropped"
+        private val logger = Logger.getLogger(InteractionBuffer::class.java.name)
     }
 
-    fun add(assignment: Assignment) {
+    fun add(interaction: Interaction) {
         if (isFull()) {
             val dropped = flush()
             reportDropped(dropped.size.toLong())
-            logger.warning("Buffer overloaded. Flushing buffer. Lost ${dropped.size} assignments")
+            logger.warning("Buffer overloaded. Flushing buffer. Lost ${dropped.size} interactions")
         }
-        queue.add(assignment)
+        queue.add(interaction)
     }
 
-    fun flush(): List<Assignment> {
+    fun flush(): List<Interaction> {
         synchronized(this) {
-            val result: MutableList<Assignment> = LinkedList()
+            val result: MutableList<Interaction> = LinkedList()
             while (!queue.isEmpty() && result.size <= maxSize) {
                 result.add(queue.poll())
             }

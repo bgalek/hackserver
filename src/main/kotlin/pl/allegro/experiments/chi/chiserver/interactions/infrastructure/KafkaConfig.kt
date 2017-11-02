@@ -1,4 +1,4 @@
-package pl.allegro.experiments.chi.chiserver.assignments.infrastructure
+package pl.allegro.experiments.chi.chiserver.interactions.infrastructure
 
 import org.apache.kafka.clients.producer.ProducerConfig
 import org.apache.kafka.common.serialization.ByteArraySerializer
@@ -16,8 +16,8 @@ class KafkaConfig {
 
     @Bean
     fun kafkaTemplate(
-            @Value("\${assignments.kafka.bootstrap-servers-dc4}") bootstrapServersDc4: String,
-            @Value("\${assignments.kafka.bootstrap-servers-dc5}") bootstrapServersDc5: String,
+            @Value("\${interactions.kafka.bootstrap-servers-dc4}") bootstrapServersDc4: String,
+            @Value("\${interactions.kafka.bootstrap-servers-dc5}") bootstrapServersDc5: String,
             cloudMetadata: CloudMetadata
     ): KafkaTemplate<String, ByteArray> {
         if (cloudMetadata.datacenter == "dc5") { // test and dev is deployed only on dc4

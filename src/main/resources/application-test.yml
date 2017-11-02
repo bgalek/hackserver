@@ -11,5 +11,5 @@ metrics:
     enabled: true
     host: skystats-test.qxlint
 
-assignments:
+interactions:
   repository: kafka

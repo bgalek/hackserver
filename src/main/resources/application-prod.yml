@@ -15,5 +15,5 @@ chi:
   experiments:
     file: "http://assets-chi.qxlint/chi-server/experiments-prod.json"
 
-assignments:
+interactions:
   repository: kafka

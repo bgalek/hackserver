@@ -1,4 +1,4 @@
-package pl.allegro.experiments.chi.chiserver.assignments
+package pl.allegro.experiments.chi.chiserver.interactions
 
 import groovy.json.JsonOutput
 import org.springframework.beans.factory.annotation.Autowired
@@ -7,50 +7,49 @@ import org.springframework.http.HttpMethod
 import org.springframework.web.client.HttpClientErrorException
 import org.springframework.web.client.RestTemplate
 import pl.allegro.experiments.chi.chiserver.BaseIntegrationSpec
-import pl.allegro.experiments.chi.chiserver.assignments.infrastructure.InMemoryAssignmentRepository
+import pl.allegro.experiments.chi.chiserver.interactions.infrastructure.InMemoryInteractionRepository
 
 import java.time.Instant
 
 class AssignmentsIntegrationSpec extends BaseIntegrationSpec {
 
     @Autowired
-    InMemoryAssignmentRepository inMemoryAssignmentRepository
+    InMemoryInteractionRepository inMemoryInteractionRepository
 
     RestTemplate restTemplate = new RestTemplate()
 
-    def "should save experiment assignments"() {
+    def "should save interactions"() {
         given:
-        List<AssignmentDto> experimentAssignments = [
-                sampleExperimentAssignment('user-1', 'variant-a'),
-                sampleExperimentAssignment('user-2', 'variant-b')
+        List<InteractionDto> interactions = [
+                sampleInteraction('user-1', 'variant-a'),
+                sampleInteraction('user-2', 'variant-b')
         ]
 
         when:
-        restTemplate.exchange(localUrl('/api/assignments/v1/'), HttpMethod.POST, new HttpEntity(new AssignmentsDto(experimentAssignments)), Void.class)
+        restTemplate.exchange(localUrl('/api/interactions/v1/'), HttpMethod.POST, new HttpEntity(new InteractionsDto(interactions)), Void.class)
 
         then:
-        inMemoryAssignmentRepository.assertAssignmentSaved(experimentAssignments[0].toEvent())
-        inMemoryAssignmentRepository.assertAssignmentSaved(experimentAssignments[1].toEvent())
+        inMemoryInteractionRepository.assertInteractionSaved(interactions[0].toInteraction())
+        inMemoryInteractionRepository.assertInteractionSaved(interactions[1].toInteraction())
     }
 
     def "should throw error when argument is missing"() {
         given:
         String data = JsonOutput.toJson([
-                "assignmentDtos": [
+                "interactionDtos": [
                         [
                                 "userId": "123",
                                 "userCmId": "123",
                                 "experimentId": "q234",
                                 "variantName": "123",
                                 "internal": true,
-                                "confirmed": true,
                                 "deviceClass": "iphone"
                         ]
                 ]
         ])
 
         when:
-        restTemplate.exchange(localUrl('/api/assignments/v1/'), HttpMethod.POST, new HttpEntity<String>(data), Void.class)
+        restTemplate.exchange(localUrl('/api/interactions/v1/'), HttpMethod.POST, new HttpEntity<String>(data), Void.class)
 
         then:
         thrown(HttpClientErrorException)
@@ -59,34 +58,32 @@ class AssignmentsIntegrationSpec extends BaseIntegrationSpec {
     def "should throw error when required argument is null"() {
         given:
         String data = JsonOutput.toJson([
-                "assignmentDtos": [
+                "interactionDtos": [
                         [
                                 "userId": null,
                                 "userCmId": null,
                                 "experimentId": null,
                                 "variantName": null,
                                 "internal": null,
-                                "confirmed": null,
                                 "deviceClass": null,
-                                "assignmentData": null
+                                "interactionDate": null
                         ]
                 ]
         ])
 
         when:
-        restTemplate.exchange(localUrl('/api/assignments/v1/'), HttpMethod.POST, new HttpEntity<String>(data), Void.class)
+        restTemplate.exchange(localUrl('/api/interactions/v1/'), HttpMethod.POST, new HttpEntity<String>(data), Void.class)
 
         then:
         thrown(HttpClientErrorException)
     }
 
-    AssignmentDto sampleExperimentAssignment(String userId, String variantName) {
-        new AssignmentDto(
+    InteractionDto sampleInteraction(String userId, String variantName) {
+        new InteractionDto(
                 userId,
                 null,
                 'experimentId',
                 variantName,
-                false,
                 true,
                 'iphone',
                 Instant.now())

@@ -1,7 +1,7 @@
 {
     "type": "record",
-    "name": "ExperimentAssignment",
-    "namespace": "pl.allegro.experiments.chi.assignments",
+    "name": "Interaction",
+    "namespace": "pl.allegro.experiments.chi.interactions",
     "doc": "An event published, when user is assigned to the experiment's variant",
     "fields": [
         {
@@ -42,11 +42,6 @@
             "default": null
         },
         {
-            "name": "confirmed",
-            "type": "boolean",
-            "doc": "experiment assignment confirmation flag"
-        },
-        {
             "name": "deviceClass",
             "type": [
                 "null",
@@ -56,12 +51,12 @@
             "default": null
         },
         {
-            "name": "assignmentDate",
+            "name": "interactionDate",
             "type": [
                 "null",
                 "long"
             ],
-            "doc": "Date of experiment assingment",
+            "doc": "Date of interaction",
             "default": null
         }
     ]

@@ -1,4 +1,4 @@
-package pl.allegro.experiments.chi.chiserver.assignments.infrastructure
+package pl.allegro.experiments.chi.chiserver.interactions.infrastructure
 
 import org.springframework.util.concurrent.ListenableFutureCallback
 import java.util.concurrent.CompletableFuture

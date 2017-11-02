@@ -1,4 +1,4 @@
-package pl.allegro.experiments.chi.chiserver.assignments
+package pl.allegro.experiments.chi.chiserver.interactions
 
 import org.apache.kafka.clients.producer.ProducerRecord
 import org.apache.kafka.clients.producer.RecordMetadata
@@ -9,46 +9,46 @@ import org.springframework.kafka.support.SendResult
 import org.springframework.util.concurrent.ListenableFuture
 import org.springframework.util.concurrent.SettableListenableFuture
 import pl.allegro.experiments.chi.chiserver.BaseIntegrationSpec
-import pl.allegro.experiments.chi.chiserver.assignments.infrastructure.CouldNotSendMessageToKafkaError
-import pl.allegro.experiments.chi.chiserver.assignments.infrastructure.KafkaAssignmentRepository
+import pl.allegro.experiments.chi.chiserver.interactions.infrastructure.CouldNotSendMessageToKafkaError
+import pl.allegro.experiments.chi.chiserver.interactions.infrastructure.KafkaInteractionRepository
 import pl.allegro.tech.common.andamio.spring.avro.AvroConverter
 
 import java.time.Instant
 
-class KafkaAssignmentRepositorySpec extends BaseIntegrationSpec {
+class KafkaInteractionRepositorySpec extends BaseIntegrationSpec {
 
     String FAKE_TOPIC = "fakeTopic"
 
     @Autowired
     AvroConverter avroConverter
 
-    def 'should send event to kafka when saving experiment assignment'() {
+    def 'should send event to kafka when saving interaction'() {
         given:
         KafkaOperations fakeKafkaTemplate = Mock()
-        KafkaAssignmentRepository kafkaExperimentAssignmentRepository = createKafkaExperimentAssignmentRepository(fakeKafkaTemplate)
+        KafkaInteractionRepository kafkaInteractionRepository = createKafkaInteractionRepository(fakeKafkaTemplate)
 
         and:
         ListenableFuture expectedSendResult = new SettableListenableFuture<SendResult<String, byte[]>>()
-        expectedSendResult.set(fakeSendResult(sampleExperimentAssignment()))
+        expectedSendResult.set(fakeSendResult(sampleInteraction()))
 
         when:
-        kafkaExperimentAssignmentRepository.save(sampleExperimentAssignment())
+        kafkaInteractionRepository.save(sampleInteraction())
 
         then:
         1 * fakeKafkaTemplate.send(FAKE_TOPIC, _) >> expectedSendResult
     }
 
-    def 'should send experiment assignment with empty values'() {
+    def 'should send interaction with empty values'() {
         given:
         KafkaOperations fakeKafkaTemplate = Mock()
-        KafkaAssignmentRepository kafkaExperimentAssignmentRepository = createKafkaExperimentAssignmentRepository(fakeKafkaTemplate)
+        KafkaInteractionRepository kafkaInteractionRepository = createKafkaInteractionRepository(fakeKafkaTemplate)
 
         and:
         ListenableFuture expectedSendResult = new SettableListenableFuture<SendResult<String, byte[]>>()
-        expectedSendResult.set(fakeSendResult(emptyExperimentAssignment()))
+        expectedSendResult.set(fakeSendResult(emptyInteraction()))
 
         when:
-        kafkaExperimentAssignmentRepository.save(emptyExperimentAssignment())
+        kafkaInteractionRepository.save(emptyInteraction())
 
         then:
         1 * fakeKafkaTemplate.send(FAKE_TOPIC, _) >> expectedSendResult
@@ -57,7 +57,7 @@ class KafkaAssignmentRepositorySpec extends BaseIntegrationSpec {
     def 'should throw error when something goes wrong'() {
         given:
         KafkaOperations fakeKafkaTemplate = Mock()
-        KafkaAssignmentRepository kafkaExperimentAssignmentRepository = createKafkaExperimentAssignmentRepository(fakeKafkaTemplate)
+        KafkaInteractionRepository kafkaInteractionRepository = createKafkaInteractionRepository(fakeKafkaTemplate)
 
         and:
         ListenableFuture expectedSendResult = new SettableListenableFuture<SendResult<String, byte[]>>()
@@ -65,7 +65,7 @@ class KafkaAssignmentRepositorySpec extends BaseIntegrationSpec {
         fakeKafkaTemplate.send(FAKE_TOPIC, _) >> expectedSendResult
 
         when: 'something goes wrong'
-        kafkaExperimentAssignmentRepository.save(sampleExperimentAssignment())
+        kafkaInteractionRepository.save(sampleInteraction())
 
         then:
         thrown(CouldNotSendMessageToKafkaError)
@@ -74,52 +74,50 @@ class KafkaAssignmentRepositorySpec extends BaseIntegrationSpec {
     def 'should throw error when sending reach timeout'() {
         given:
         KafkaOperations fakeKafkaTemplate = Mock()
-        KafkaAssignmentRepository kafkaExperimentAssignmentRepository = createKafkaExperimentAssignmentRepository(fakeKafkaTemplate)
+        KafkaInteractionRepository kafkaInteractionRepository = createKafkaInteractionRepository(fakeKafkaTemplate)
 
         and:
         ListenableFuture expectedSendResult = new SettableListenableFuture<SendResult<String, byte[]>>()
         fakeKafkaTemplate.send(FAKE_TOPIC, _) >> expectedSendResult
 
         when: 'saving take to much time'
-        kafkaExperimentAssignmentRepository.save(sampleExperimentAssignment())
+        kafkaInteractionRepository.save(sampleInteraction())
 
         then:
         thrown(CouldNotSendMessageToKafkaError)
     }
 
-    KafkaAssignmentRepository createKafkaExperimentAssignmentRepository(KafkaOperations kafkaTemplate) {
-        new KafkaAssignmentRepository(kafkaTemplate, avroConverter, FAKE_TOPIC, 100)
+    KafkaInteractionRepository createKafkaInteractionRepository(KafkaOperations kafkaTemplate) {
+        new KafkaInteractionRepository(kafkaTemplate, avroConverter, FAKE_TOPIC, 100)
     }
 
-    SendResult<String, byte[]> fakeSendResult(Assignment experimentAssignmentAs) {
+    SendResult<String, byte[]> fakeSendResult(Interaction interaction) {
         new SendResult<String, byte[]>(
-                new ProducerRecord<String, byte[]>(FAKE_TOPIC, avroConverter.toAvro(experimentAssignmentAs).data()),
+                new ProducerRecord<String, byte[]>(FAKE_TOPIC, avroConverter.toAvro(interaction).data()),
                 new RecordMetadata(new TopicPartition(FAKE_TOPIC, 10),
                         1, 1, 1, 1, 1, 1)
         )
     }
 
-    Assignment sampleExperimentAssignment() {
-        new Assignment(
+    Interaction sampleInteraction() {
+        new Interaction(
                 'userId',
                 'userCmId',
                 'experimentId',
                 'variantName',
-                true,
                 true,
                 "iphone",
                 Instant.now()
         )
     }
 
-    private static Assignment emptyExperimentAssignment() {
-        new Assignment(
+    private static Interaction emptyInteraction() {
+        new Interaction(
                 null,
                 null,
                 'experimentId',
                 'variantName',
                 null,
-                true,
                 null,
                 Instant.now()
         )

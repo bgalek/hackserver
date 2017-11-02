@@ -1,21 +1,21 @@
-package pl.allegro.experiments.chi.chiserver.assignments.infrastructure
+package pl.allegro.experiments.chi.chiserver.interactions.infrastructure
 
 import org.springframework.kafka.core.KafkaOperations
 import org.springframework.kafka.support.SendResult
-import pl.allegro.experiments.chi.chiserver.assignments.AssignmentRepository
-import pl.allegro.experiments.chi.chiserver.assignments.Assignment
+import pl.allegro.experiments.chi.chiserver.interactions.InteractionRepository
+import pl.allegro.experiments.chi.chiserver.interactions.Interaction
 import pl.allegro.tech.common.andamio.spring.avro.AvroConverter
 import java.util.concurrent.CompletableFuture
 import java.util.concurrent.TimeUnit
 
-class KafkaAssignmentRepository(
+class KafkaInteractionRepository(
         private val kafkaTemplate: KafkaOperations<String, ByteArray>,
         private val avroConverter: AvroConverter,
         private val kafkaTopic: String,
-        private val sendTimeout: Long): AssignmentRepository {
+        private val sendTimeout: Long): InteractionRepository {
 
-    override fun save(assignment: Assignment) {
-        val data: ByteArray = serialize(assignment)
+    override fun save(interaction: Interaction) {
+        val data: ByteArray = serialize(interaction)
         val future = CompletableFuture<SendResult<String, ByteArray>>()
         val listenableFuture = kafkaTemplate.send(kafkaTopic, data)
         listenableFuture.addCallback(ToCompletableFutureCallback<SendResult<String, ByteArray>>(future))
@@ -24,11 +24,11 @@ class KafkaAssignmentRepository(
                 throw it
             }.get(sendTimeout, TimeUnit.MILLISECONDS)
         } catch (e: Exception) {
-            throw CouldNotSendMessageToKafkaError("Could not send assignment to kafka, $e")
+            throw CouldNotSendMessageToKafkaError("Could not send interaction to kafka, $e")
         }
     }
 
-    private fun serialize(assignment: Assignment): ByteArray =
-            avroConverter.toAvro(assignment)
+    private fun serialize(interaction: Interaction): ByteArray =
+            avroConverter.toAvro(interaction)
                     .data()
 }
