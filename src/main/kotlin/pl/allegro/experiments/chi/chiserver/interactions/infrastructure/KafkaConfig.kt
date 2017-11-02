@@ -22,7 +22,7 @@ class KafkaConfig {
     ): KafkaTemplate<String, ByteArray> {
         if (cloudMetadata.datacenter == "dc5") {
             return KafkaTemplate<String, ByteArray>(producerFactory(bootstrapServersDc5))
-        } else { // dc4 or local
+        } else { // dc4 or localhost
             return KafkaTemplate<String, ByteArray>(producerFactory(bootstrapServersDc4))
         }
     }
