@@ -1,3 +1,8 @@
 discovery:
   enabled: true
   type: consul
+
+assignments:
+  repository: kafka
+  buffer-size: 10000
+  flush-period: 500

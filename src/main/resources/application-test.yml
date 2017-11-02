@@ -10,3 +10,8 @@ metrics:
   graphite:
     enabled: true
     host: skystats-test.qxlint
+
+assignments:
+  repository: kafka
+  buffer-size: 10000
+  flush-period: 500
