@@ -1,4 +1,4 @@
-package pl.allegro.experiments.chi.chiserver
+package pl.allegro.experiments.chi.chiserver.interactions
 
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration

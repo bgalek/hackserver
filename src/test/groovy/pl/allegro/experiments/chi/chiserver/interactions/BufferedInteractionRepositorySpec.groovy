@@ -35,18 +35,18 @@ class BufferedInteractionRepositorySpec extends Specification {
         bufferedInteractionRepository.flush()
 
         then:
-        repository.assertInteractionSaved(interaction)
+        repository.interactionSaved(interaction)
     }
 
     def "should drop interactions when buffer is overloaded and saving"() {
-        given: "there is buffered repository with full buffer"
+        given:
         bufferMaxSize.times { bufferedInteractionRepository.save(sampleInteraction()) }
-
-        when: "we try to save interaction"
         def newInteraction = sampleInteraction()
+
+        when:
         bufferedInteractionRepository.save(newInteraction)
 
-        then: "buffered interactions are dropped"
+        then:
         bufferedInteractionRepository.flush()
         repository.interactions as Set == [newInteraction] as Set
     }

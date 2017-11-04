@@ -3,7 +3,6 @@ package pl.allegro.experiments.chi.chiserver.interactions.infrastructure
 import com.codahale.metrics.MetricRegistry
 import pl.allegro.experiments.chi.chiserver.interactions.Interaction
 import pl.allegro.experiments.chi.chiserver.interactions.InteractionRepository
-import java.util.concurrent.TimeUnit
 import java.util.logging.Logger
 
 class BufferedInteractionRepository(
@@ -22,34 +21,38 @@ class BufferedInteractionRepository(
     }
 
     fun flush() {
-        val start = System.nanoTime()
         val interactions = buffer.flush()
-        logger.info("Flushing ${interactions.size} interactions from buffer")
-        val failedCounter = saveFromBuffer(interactions)
-        reportSaved(interactions.size - failedCounter)
-        reportFailed(failedCounter)
-        val duration = TimeUnit.NANOSECONDS.toMillis(System.nanoTime() - start)
-        logger.info("Flushed ${interactions.size}, took $duration ms")
+        saveToRepository(interactions).report()
     }
 
-    private fun saveFromBuffer(interactions: List<Interaction>): Long {
+    private fun saveToRepository(interactions: List<Interaction>): SaveSummary {
         var failedCounter: Long = 0
         interactions.stream().forEach { assignment ->
             try {
                 repository.save(assignment)
-            } catch (e: CouldNotSendMessageToKafkaError) {
+            } catch (e: KafkaException) {
                 logger.warning("Saving interaction failed, $e")
                 failedCounter++
             }
         }
-        return failedCounter
+        return SaveSummary(failedCounter, interactions.size - failedCounter)
     }
 
-    private fun reportSaved(savedCount: Long) {
-        metricRegistry.counter(SAVED_METRIC_NAME).inc(savedCount)
-    }
+    private inner class SaveSummary(
+            private val numberOfFailures: Long,
+            private val numberOfSuccessfullySaved: Long) {
 
-    private fun reportFailed(failedCount: Long) {
-        metricRegistry.counter(FAILED_METRIC_NAME).inc(failedCount)
+        fun report() {
+            reportSaved(numberOfSuccessfullySaved)
+            reportFailed(numberOfFailures)
+        }
+
+        private fun reportSaved(savedCount: Long) {
+            metricRegistry.counter(SAVED_METRIC_NAME).inc(savedCount)
+        }
+
+        private fun reportFailed(failedCount: Long) {
+            metricRegistry.counter(FAILED_METRIC_NAME).inc(failedCount)
+        }
     }
 }

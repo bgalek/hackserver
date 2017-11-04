@@ -1,15 +1,23 @@
 package pl.allegro.experiments.chi.chiserver.experiments
 
+import com.github.tomakehurst.wiremock.junit.WireMockRule
+import org.junit.ClassRule
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.web.client.RestTemplate
 import pl.allegro.experiments.chi.chiserver.BaseIntegrationSpec
 import pl.allegro.experiments.chi.persistence.FileBasedExperimentsRepository
+import spock.lang.Shared
 
 import static com.github.tomakehurst.wiremock.client.WireMock.aResponse
 import static com.github.tomakehurst.wiremock.client.WireMock.get
+import static com.github.tomakehurst.wiremock.client.WireMock.stubFor
 import static com.github.tomakehurst.wiremock.client.WireMock.urlEqualTo
 
 class ExperimentsIntegrationSpec extends BaseIntegrationSpec {
+
+    @ClassRule
+    @Shared
+    public WireMockRule wireMock = new WireMockRule(port)
 
     RestTemplate restTemplate = new RestTemplate()
 
@@ -67,6 +75,7 @@ class ExperimentsIntegrationSpec extends BaseIntegrationSpec {
         fileBasedExperimentsRepository.secureRefresh()
         fileBasedExperimentsRepository.changeJsonUrl(resourceUrl('/invalid-experiments'))
         fileBasedExperimentsRepository.secureRefresh()
+
         when:
         def response = restTemplate.getForEntity(localUrl('/api/experiments'), List)
 
@@ -77,7 +86,7 @@ class ExperimentsIntegrationSpec extends BaseIntegrationSpec {
 
     void teachWireMockJson(String path, String jsonPath) {
         String json = getResourceAsString(jsonPath)
-        wireMockServer.stubFor(get(urlEqualTo(path))
+        stubFor(get(urlEqualTo(path))
                 .willReturn(aResponse()
                 .withStatus(200)
                 .withBody(json)))
@@ -88,7 +97,7 @@ class ExperimentsIntegrationSpec extends BaseIntegrationSpec {
     }
 
     String resourceUrl(String endpoint) {
-        "http://localhost:${wireMockServer.port()}$endpoint"
+        "http://localhost:${wireMock.port()}$endpoint"
     }
 
     Map internalExperiment() {

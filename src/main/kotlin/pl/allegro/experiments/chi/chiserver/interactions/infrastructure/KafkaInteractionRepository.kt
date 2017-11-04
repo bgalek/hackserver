@@ -24,7 +24,7 @@ class KafkaInteractionRepository(
                 throw it
             }.get(sendTimeout, TimeUnit.MILLISECONDS)
         } catch (e: Exception) {
-            throw CouldNotSendMessageToKafkaError("Could not send interaction to kafka, $e")
+            throw KafkaException("Could not send interaction to kafka, $e")
         }
     }
 

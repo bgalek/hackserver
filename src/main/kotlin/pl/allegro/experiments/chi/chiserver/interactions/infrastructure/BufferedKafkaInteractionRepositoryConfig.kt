@@ -2,17 +2,19 @@ package pl.allegro.experiments.chi.chiserver.interactions.infrastructure
 
 import com.codahale.metrics.MetricRegistry
 import org.springframework.beans.factory.annotation.Value
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.kafka.core.KafkaTemplate
-import pl.allegro.experiments.chi.chiserver.interactions.InteractionRepository
 import pl.allegro.tech.common.andamio.spring.avro.AvroConverter
 
 @Configuration
 class BufferedKafkaInteractionRepositoryConfig {
 
-    @Bean
-    fun bufferedKafkaAssignmentRepository(
+    @Bean("bufferedKafkaInteractionRepository")
+    @ConditionalOnProperty(name = arrayOf("interactions.repository"), havingValue = "kafka")
+    fun bufferedKafkaInteractionRepository(
             buffer: InteractionBuffer,
             metricRegistry: MetricRegistry,
 
@@ -23,9 +25,15 @@ class BufferedKafkaInteractionRepositoryConfig {
             @Value("\${interactions.repository}") repositoryType: String
 
     ): BufferedInteractionRepository {
-        val repo: InteractionRepository = if (repositoryType == "kafka") KafkaInteractionRepository(kafkaTemplate, avroConverter, topic, sendTimeout)
-                else LoggerInteractionRepository()
-        return BufferedInteractionRepository(metricRegistry, buffer, repo)
+        return BufferedInteractionRepository(metricRegistry, buffer, KafkaInteractionRepository(kafkaTemplate, avroConverter, topic, sendTimeout))
+    }
+
+    @Bean
+    @ConditionalOnMissingBean(name = arrayOf("bufferedKafkaInteractionRepository"))
+    fun loggerInteractionRepository(
+            buffer: InteractionBuffer,
+            metricRegistry: MetricRegistry): BufferedInteractionRepository {
+        return BufferedInteractionRepository(metricRegistry, buffer, LoggerInteractionRepository())
     }
 
     @Bean

@@ -4,6 +4,7 @@ import org.apache.kafka.clients.producer.ProducerConfig
 import org.apache.kafka.common.serialization.ByteArraySerializer
 import org.apache.kafka.common.serialization.StringSerializer
 import org.springframework.beans.factory.annotation.Value
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.kafka.core.DefaultKafkaProducerFactory
@@ -15,6 +16,7 @@ import pl.allegro.tech.common.andamio.server.cloud.CloudMetadata
 class KafkaConfig {
 
     @Bean
+    @ConditionalOnProperty(name = arrayOf("interactions.repository"), havingValue = "kafka")
     fun kafkaTemplate(
             @Value("\${interactions.kafka.bootstrap-servers-dc4}") bootstrapServersDc4: String,
             @Value("\${interactions.kafka.bootstrap-servers-dc5}") bootstrapServersDc5: String,
