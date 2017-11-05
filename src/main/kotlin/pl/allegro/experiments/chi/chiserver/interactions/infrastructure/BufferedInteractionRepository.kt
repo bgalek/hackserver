@@ -30,7 +30,7 @@ class BufferedInteractionRepository(
         interactions.stream().forEach { assignment ->
             try {
                 repository.save(assignment)
-            } catch (e: KafkaException) {
+            } catch (e: Exception) {
                 logger.warning("Saving interaction failed, $e")
                 failedCounter++
             }

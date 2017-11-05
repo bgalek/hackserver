@@ -16,16 +16,8 @@ class KafkaInteractionRepository(
 
     override fun save(interaction: Interaction) {
         val data: ByteArray = serialize(interaction)
-        val future = CompletableFuture<SendResult<String, ByteArray>>()
         val listenableFuture = kafkaTemplate.send(kafkaTopic, data)
-        listenableFuture.addCallback(ToCompletableFutureCallback<SendResult<String, ByteArray>>(future))
-        try {
-            future.exceptionally {
-                throw it
-            }.get(sendTimeout, TimeUnit.MILLISECONDS)
-        } catch (e: Exception) {
-            throw KafkaException("Could not send interaction to kafka, $e")
-        }
+        listenableFuture.get(sendTimeout, TimeUnit.MILLISECONDS)
     }
 
     private fun serialize(interaction: Interaction): ByteArray =

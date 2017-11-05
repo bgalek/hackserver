@@ -54,46 +54,37 @@ class InteractionsIntegrationSpec extends BaseIntegrationSpec {
         inMemoryInteractionRepository.interactionSaved(interactions[1])
     }
 
-    def "should return 400 when argument is missing"() {
-        given:
-        String data = JsonOutput.toJson([
-                [
-                        "userId"      : "123",
-                        "userCmId"    : "123",
-                        "experimentId": "q234",
-                        "variantName" : "123",
-                        "internal"    : true,
-                        "deviceClass" : "iphone"
-                ]
-        ])
-
-        when:
-        restTemplate.exchange(localUrl('/api/interactions/v1/'),
-                HttpMethod.POST, httpJsonEntity(data), Void.class)
-
-        then:
-        thrown(HttpClientErrorException)
-    }
-
-    def "should return 400 when required argument is null"() {
-        given:
-        String data = JsonOutput.toJson([
-                [
-                        "userId"         : null,
-                        "userCmId"       : null,
-                        "experimentId"   : null,
-                        "variantName"    : null,
-                        "internal"       : null,
-                        "deviceClass"    : null,
-                        "interactionDate": null
-                ]
-        ])
-
+    def "should return 400 when post body is invalid"() {
         when:
         restTemplate.exchange(localUrl('/api/interactions/v1/'), HttpMethod.POST, httpJsonEntity(data), Void.class)
 
         then:
         thrown(HttpClientErrorException)
+
+        where:
+        data << [
+                JsonOutput.toJson([
+                        [
+                                "userId"         : null,
+                                "userCmId"       : null,
+                                "experimentId"   : null,
+                                "variantName"    : null,
+                                "internal"       : null,
+                                "deviceClass"    : null,
+                                "interactionDate": null
+                        ]
+                ]),
+                JsonOutput.toJson([
+                        [
+                                "userId"      : "123",
+                                "userCmId"    : "123",
+                                "experimentId": "q234",
+                                "variantName" : "123",
+                                "internal"    : true,
+                                "deviceClass" : "iphone"
+                        ]
+                ])
+        ]
     }
 
     HttpHeaders headers() {
