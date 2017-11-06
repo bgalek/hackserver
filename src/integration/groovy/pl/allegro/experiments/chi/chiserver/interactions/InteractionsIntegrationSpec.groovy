@@ -10,6 +10,7 @@ import org.springframework.web.client.HttpClientErrorException
 import org.springframework.web.client.RestTemplate
 import pl.allegro.experiments.chi.chiserver.BaseIntegrationSpec
 import pl.allegro.experiments.chi.chiserver.interactions.infrastructure.InMemoryInteractionRepository
+import spock.lang.Unroll
 
 class InteractionsIntegrationSpec extends BaseIntegrationSpec {
 
@@ -54,7 +55,8 @@ class InteractionsIntegrationSpec extends BaseIntegrationSpec {
         inMemoryInteractionRepository.interactionSaved(interactions[1])
     }
 
-    def "should return 400 when post body is invalid"() {
+    @Unroll
+    def "should return 400 when #error"() {
         when:
         restTemplate.exchange(localUrl('/api/interactions/v1/'), HttpMethod.POST, httpJsonEntity(data), Void.class)
 
@@ -85,6 +87,8 @@ class InteractionsIntegrationSpec extends BaseIntegrationSpec {
                         ]
                 ])
         ]
+        error << ["required field is null", "required field is missing"]
+
     }
 
     HttpHeaders headers() {
