@@ -3,6 +3,7 @@ package pl.allegro.experiments.chi.chiserver.interactions.infrastructure
 import com.codahale.metrics.MetricRegistry
 import pl.allegro.experiments.chi.chiserver.interactions.Interaction
 import pl.allegro.experiments.chi.chiserver.interactions.InteractionRepository
+import java.util.concurrent.TimeUnit
 import java.util.logging.Logger
 
 class BufferedInteractionRepository(
@@ -13,6 +14,7 @@ class BufferedInteractionRepository(
     companion object {
         private val SAVED_METRIC_NAME = "chi.server.experiments.interactions.kafka.saved"
         private val FAILED_METRIC_NAME = "chi.server.experiments.interactions.kafka.failed"
+        private val FLUSH_METRIC_NAME = "chi.server.experiments.interactions.kafka.flush"
         private val logger = Logger.getLogger(BufferedInteractionRepository::class.java.name)
     }
 
@@ -22,39 +24,41 @@ class BufferedInteractionRepository(
 
     fun flush() {
         val interactions = buffer.flush()
-        saveToRepository(interactions).report()
+        saveToRepository(interactions)
     }
 
-    private fun saveToRepository(interactions: List<Interaction>): SaveSummary {
-        val timer = metricRegistry.timer(SAVED_METRIC_NAME).time()
-        var failedCounter: Long = 0
+    private fun saveToRepository(interactions: List<Interaction>) {
+        val summary = SaveSummary()
+
         interactions.stream().forEach { assignment ->
             try {
                 repository.save(assignment)
+                summary.reportSuccess()
             } catch (e: Exception) {
-                logger.warning("Saving interaction failed, $e")
-                failedCounter++
+                summary.reportFailure(e)
             }
         }
-        timer.close()
-        return SaveSummary(failedCounter, interactions.size - failedCounter)
+        summary.reportAll()
     }
 
     private inner class SaveSummary(
-            private val numberOfFailures: Long,
-            private val numberOfSuccessfullySaved: Long) {
+            private var numberOfFailures: Long = 0,
+            private var numberOfSuccessfullySaved: Long = 0) {
+        private val start = System.currentTimeMillis()
 
-        fun report() {
-            reportSaved(numberOfSuccessfullySaved)
-            reportFailed(numberOfFailures)
+        fun reportAll() {
+            metricRegistry.meter(SAVED_METRIC_NAME).mark(numberOfSuccessfullySaved)
+            metricRegistry.meter(FAILED_METRIC_NAME).mark(numberOfFailures)
+            metricRegistry.timer(FLUSH_METRIC_NAME).update(start - System.currentTimeMillis(), TimeUnit.MILLISECONDS)
         }
 
-        private fun reportSaved(savedCount: Long) {
-            metricRegistry.meter(SAVED_METRIC_NAME).mark(savedCount)
+        fun reportSuccess() {
+            numberOfSuccessfullySaved++
         }
 
-        private fun reportFailed(failedCount: Long) {
-            metricRegistry.meter(FAILED_METRIC_NAME).mark(failedCount)
+        fun reportFailure(e : Exception) {
+            logger.warning("Saving interaction failed, $e")
+            numberOfSuccessfullySaved++
         }
     }
 }
