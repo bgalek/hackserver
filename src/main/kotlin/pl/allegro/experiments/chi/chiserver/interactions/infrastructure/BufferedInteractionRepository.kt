@@ -26,6 +26,7 @@ class BufferedInteractionRepository(
     }
 
     private fun saveToRepository(interactions: List<Interaction>): SaveSummary {
+        val timer = metricRegistry.timer(SAVED_METRIC_NAME).time()
         var failedCounter: Long = 0
         interactions.stream().forEach { assignment ->
             try {
@@ -35,6 +36,7 @@ class BufferedInteractionRepository(
                 failedCounter++
             }
         }
+        timer.close()
         return SaveSummary(failedCounter, interactions.size - failedCounter)
     }
 
@@ -48,11 +50,11 @@ class BufferedInteractionRepository(
         }
 
         private fun reportSaved(savedCount: Long) {
-            metricRegistry.counter(SAVED_METRIC_NAME).inc(savedCount)
+            metricRegistry.meter(SAVED_METRIC_NAME).mark(savedCount)
         }
 
         private fun reportFailed(failedCount: Long) {
-            metricRegistry.counter(FAILED_METRIC_NAME).inc(failedCount)
+            metricRegistry.meter(FAILED_METRIC_NAME).mark(failedCount)
         }
     }
 }

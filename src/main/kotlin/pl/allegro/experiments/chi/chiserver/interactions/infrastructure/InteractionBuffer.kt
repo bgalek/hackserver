@@ -1,6 +1,7 @@
 package pl.allegro.experiments.chi.chiserver.interactions.infrastructure
 
 import com.codahale.metrics.MetricRegistry
+import com.codahale.metrics.annotation.Metered
 import pl.allegro.experiments.chi.chiserver.interactions.Interaction
 import java.util.*
 import java.util.concurrent.ConcurrentLinkedQueue
