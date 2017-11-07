@@ -65,6 +65,8 @@ deploy:
           << : *HEALTH_CHECK
         timeouts:
           << : *TIMEOUTS
+        constraints:
+          - ["dc", "LIKE", "dc4"]
 
   test:
     - marathon:
@@ -82,6 +84,8 @@ deploy:
           << : *HEALTH_CHECK
         timeouts:
           << : *TIMEOUTS
+        constraints:
+          - ["dc", "LIKE", "dc4"]
 
   prod:
     - marathon:
