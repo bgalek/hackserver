@@ -12,12 +12,12 @@ class InteractionTypeAdapter: JsonDeserializer<Interaction> {
             context: JsonDeserializationContext?): Interaction {
         val jsonObj = json.asJsonObject
         return Interaction(
-                if (jsonObj.get("userId").isJsonNull) null else jsonObj.get("userId").asString,
-                if (jsonObj.get("userCmId").isJsonNull) null else jsonObj.get("userCmId").asString,
+                if (jsonObj.get("userId") == null || jsonObj.get("userId").isJsonNull) null else jsonObj.get("userId").asString,
+                if (jsonObj.get("userCmId") == null || jsonObj.get("userCmId").isJsonNull) null else jsonObj.get("userCmId").asString,
                 jsonObj.get("experimentId").asString,
                 jsonObj.get("variantName").asString,
-                if (jsonObj.get("internal").isJsonNull) null else jsonObj.get("internal").asBoolean,
-                if (jsonObj.get("deviceClass").isJsonNull) null else jsonObj.get("deviceClass").asString,
+                if (jsonObj.get("internal") == null || jsonObj.get("internal").isJsonNull) null else jsonObj.get("internal").asBoolean,
+                if (jsonObj.get("deviceClass") == null || jsonObj.get("deviceClass").isJsonNull) null else jsonObj.get("deviceClass").asString,
                 Instant.parse(jsonObj.get("interactionDate").asString)
         )
     }

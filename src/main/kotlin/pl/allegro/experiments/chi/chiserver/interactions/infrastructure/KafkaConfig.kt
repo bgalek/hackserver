@@ -28,9 +28,8 @@ class KafkaConfig {
     fun kafkaInteractionRepository(
             kafkaTemplate: KafkaTemplate<String, ByteArray>,
             avroConverter: AvroConverter,
-            @Value("\${interactions.kafka.topic}") kafkaTopic: String,
-            @Value("\${interactions.kafka.send-timeout}") sendTimeout: Long): InteractionRepository {
-        return KafkaInteractionRepository(kafkaTemplate, avroConverter, kafkaTopic, sendTimeout)
+            @Value("\${interactions.kafka.topic}") kafkaTopic: String): InteractionRepository {
+        return KafkaInteractionRepository(kafkaTemplate, avroConverter, kafkaTopic)
     }
 
     @Bean
@@ -39,8 +38,8 @@ class KafkaConfig {
             @Value("\${interactions.kafka.bootstrap-servers-dc4}") bootstrapServersDc4: String,
             @Value("\${interactions.kafka.bootstrap-servers-dc5}") bootstrapServersDc5: String,
             cloudMetadata: CloudMetadata,
-            @Value("\${interactions.kafka.batch-size") batchSize: Int,
-            @Value("\${interactions.kafka.linger-ms") lingerMs: Int
+            @Value("\${interactions.kafka.batch-size}") batchSize: Int,
+            @Value("\${interactions.kafka.linger-ms}") lingerMs: Int
             ): KafkaTemplate<String, ByteArray> {
         if (cloudMetadata.datacenter == "dc5") {
             return KafkaTemplate<String, ByteArray>(producerFactory(bootstrapServersDc5, batchSize, lingerMs))

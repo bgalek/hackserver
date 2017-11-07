@@ -41,6 +41,11 @@ class InteractionsIntegrationSpec extends BaseIntegrationSpec {
                         "internal"       : null,
                         "deviceClass"    : null,
                         "interactionDate": "1970-01-01T00:00:00Z"
+                ],
+                [
+                        "experimentId"   : "anotherExperimentId",
+                        "variantName"    : "variant",
+                        "interactionDate": "1970-01-01T00:00:00Z"
                 ]
         ])
 
@@ -53,6 +58,7 @@ class InteractionsIntegrationSpec extends BaseIntegrationSpec {
         def interactions = interactionConverter.fromJson(interactionsJson)
         inMemoryInteractionRepository.interactionSaved(interactions[0])
         inMemoryInteractionRepository.interactionSaved(interactions[1])
+        inMemoryInteractionRepository.interactionSaved(interactions[2])
     }
 
     @Unroll

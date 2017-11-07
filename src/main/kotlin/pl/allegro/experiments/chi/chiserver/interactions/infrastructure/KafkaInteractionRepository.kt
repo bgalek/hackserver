@@ -11,13 +11,11 @@ import java.util.concurrent.TimeUnit
 class KafkaInteractionRepository(
         private val kafkaTemplate: KafkaOperations<String, ByteArray>,
         private val avroConverter: AvroConverter,
-        private val kafkaTopic: String,
-        private val sendTimeout: Long): InteractionRepository {
+        private val kafkaTopic: String): InteractionRepository {
 
     override fun save(interaction: Interaction) {
         val data: ByteArray = serialize(interaction)
-        val listenableFuture = kafkaTemplate.send(kafkaTopic, data)
-        listenableFuture.get(sendTimeout, TimeUnit.MILLISECONDS)
+        kafkaTemplate.send(kafkaTopic, data)
     }
 
     private fun serialize(interaction: Interaction): ByteArray =
