@@ -115,7 +115,7 @@ class KafkaInteractionRepositoryIntegrationSpec extends BaseIntegrationSpec {
     }
 
     def receiveInteraction() {
-        ConsumerRecord<String, byte[]> interactionRecord = records.poll(100, TimeUnit.MILLISECONDS)
+        ConsumerRecord<String, byte[]> interactionRecord = records.poll(1000, TimeUnit.MILLISECONDS)
         byte[] interactionAsBytes = interactionRecord.value()
         (Interaction) avroConverter.fromAvro(
                 interactionAsBytes,
