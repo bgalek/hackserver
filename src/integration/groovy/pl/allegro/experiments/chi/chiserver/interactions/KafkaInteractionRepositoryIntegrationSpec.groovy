@@ -22,7 +22,8 @@ import java.util.concurrent.TimeUnit
 
 class KafkaInteractionRepositoryIntegrationSpec extends BaseIntegrationSpec {
 
-    private static String SENDER_TOPIC = "sender.t"
+    @Shared
+    String TOPIC = "topic.t"
 
     @Shared
     String brokers
@@ -32,7 +33,7 @@ class KafkaInteractionRepositoryIntegrationSpec extends BaseIntegrationSpec {
     BlockingQueue<ConsumerRecord<String, byte[]>> records
 
     @Shared
-    KafkaEmbedded embeddedKafka = new KafkaEmbedded(1, true, SENDER_TOPIC)
+    KafkaEmbedded embeddedKafka = new KafkaEmbedded(1, true, TOPIC)
 
     @Shared
     InteractionRepository interactionRepository
@@ -55,7 +56,7 @@ class KafkaInteractionRepositoryIntegrationSpec extends BaseIntegrationSpec {
         DefaultKafkaConsumerFactory<String, byte[]> consumerFactory =
                 new DefaultKafkaConsumerFactory<String, byte[]>(consumerProperties)
 
-        ContainerProperties containerProperties = new ContainerProperties(SENDER_TOPIC)
+        ContainerProperties containerProperties = new ContainerProperties(TOPIC)
 
         container = new KafkaMessageListenerContainer<>(consumerFactory, containerProperties)
 
@@ -131,7 +132,7 @@ class KafkaInteractionRepositoryIntegrationSpec extends BaseIntegrationSpec {
                 1,
                 10
         )
-        kafkaConfig.kafkaInteractionRepository(kafkaTemplate, avroConverter, SENDER_TOPIC)
+        kafkaConfig.kafkaInteractionRepository(kafkaTemplate, avroConverter, TOPIC)
     }
 
     Interaction sampleInteraction() {
