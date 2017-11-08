@@ -10,6 +10,7 @@ import org.springframework.web.client.HttpClientErrorException
 import org.springframework.web.client.RestTemplate
 import pl.allegro.experiments.chi.chiserver.BaseIntegrationSpec
 import pl.allegro.experiments.chi.chiserver.interactions.infrastructure.InMemoryInteractionRepository
+import pl.allegro.experiments.chi.chiserver.interactions.v1.InteractionConverter
 import spock.lang.Unroll
 
 class InteractionsIntegrationSpec extends BaseIntegrationSpec {

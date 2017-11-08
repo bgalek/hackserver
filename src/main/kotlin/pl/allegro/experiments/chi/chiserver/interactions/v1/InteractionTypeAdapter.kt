@@ -1,6 +1,7 @@
-package pl.allegro.experiments.chi.chiserver.interactions
+package pl.allegro.experiments.chi.chiserver.interactions.v1
 
 import com.google.gson.*
+import pl.allegro.experiments.chi.chiserver.interactions.Interaction
 import java.lang.reflect.Type
 import java.time.Instant
 

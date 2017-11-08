@@ -23,6 +23,7 @@ class ObjectMapperConfig {
         applyCommonConfiguration(objectMapper)
         objectMapper.apply {
             disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS)
+            disable(DeserializationFeature.READ_DATE_TIMESTAMPS_AS_NANOSECONDS)
             registerModule(ErrorsModule.module()).setVisibility(PropertyAccessor.FIELD, JsonAutoDetect.Visibility.PUBLIC_ONLY)
             disable(DeserializationFeature.FAIL_ON_IGNORED_PROPERTIES)
             disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES)
@@ -35,6 +36,7 @@ class ObjectMapperConfig {
         avroMapper.apply {
             enable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS)
             disable(SerializationFeature.WRITE_DATE_TIMESTAMPS_AS_NANOSECONDS)
+            disable(DeserializationFeature.READ_DATE_TIMESTAMPS_AS_NANOSECONDS)
         }
     }
 
