@@ -25,7 +25,7 @@ class InteractionsController(
         logger.info("Save interactions request received")
         val interactions = InteractionConverter().fromJson(interactionsAsJson)
 
-        metricRegistry.meter(RECEIVED_INTERACTIONS).mark()
+        metricRegistry.meter(RECEIVED_INTERACTIONS).mark(interactions.size.toLong())
         interactions.forEach { interaction ->
             interactionRepository.save(interaction)
         }
