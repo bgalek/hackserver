@@ -35,8 +35,8 @@ class InteractionsController(
     }
 
     @ExceptionHandler(InvalidFormatException::class)
-    fun invalidBody(): ResponseEntity<Unit> {
-        logger.warn("Save interactions request was invalid")
+    fun invalidBody(e: InvalidFormatException): ResponseEntity<Unit> {
+        logger.warn("Save interactions request was invalid", e)
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null)
     }
 }
