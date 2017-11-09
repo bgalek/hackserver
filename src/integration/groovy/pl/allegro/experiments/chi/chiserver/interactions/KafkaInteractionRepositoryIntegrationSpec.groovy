@@ -1,5 +1,6 @@
 package pl.allegro.experiments.chi.chiserver.interactions
 
+import com.codahale.metrics.MetricRegistry
 import org.apache.kafka.clients.consumer.ConsumerRecord
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.kafka.core.DefaultKafkaConsumerFactory
@@ -130,7 +131,8 @@ class KafkaInteractionRepositoryIntegrationSpec extends BaseIntegrationSpec {
                 brokerString,
                 cloudMetadata,
                 1,
-                10
+                10,
+                new MetricRegistry()
         )
         kafkaConfig.kafkaInteractionRepository(kafkaTemplate, avroConverter, TOPIC)
     }
