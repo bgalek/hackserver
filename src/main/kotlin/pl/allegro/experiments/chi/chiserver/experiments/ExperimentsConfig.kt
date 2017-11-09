@@ -17,6 +17,7 @@ import javax.annotation.PostConstruct
 
 @Configuration
 class ExperimentsConfig {
+    private val EXPERIMENTS_COUNT_METRIC = "experiments.count";
 
     @Autowired
     lateinit var metricRegistry: MetricRegistry
@@ -48,6 +49,6 @@ class ExperimentsConfig {
     @PostConstruct
     fun configureMetrics() {
         val gauge = Gauge<Int> { experimentsRepository.all.size }
-        metricRegistry.register("experiments.count", gauge)
+        metricRegistry.register(EXPERIMENTS_COUNT_METRIC, gauge)
     }
 }
