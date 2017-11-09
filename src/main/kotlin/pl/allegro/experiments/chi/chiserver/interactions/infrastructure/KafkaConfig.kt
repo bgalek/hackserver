@@ -63,6 +63,7 @@ class KafkaConfig {
                     ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG to ByteArraySerializer::class.java,
                     ProducerConfig.BOOTSTRAP_SERVERS_CONFIG to bootstrapServers,
                     ProducerConfig.BATCH_SIZE_CONFIG to batchSize,
-                    ProducerConfig.LINGER_MS_CONFIG to lingerMs
+                    ProducerConfig.LINGER_MS_CONFIG to lingerMs,
+                    ProducerConfig.ACKS_CONFIG to 1
             )
 }
