@@ -1,6 +1,9 @@
 package pl.allegro.experiments.chi.chiserver.interactions.infrastructure
 
+import com.codahale.metrics.Gauge
+import com.codahale.metrics.MetricRegistry
 import org.apache.kafka.clients.producer.ProducerConfig
+import org.apache.kafka.common.MetricName
 import org.apache.kafka.common.serialization.ByteArraySerializer
 import org.apache.kafka.common.serialization.StringSerializer
 import org.springframework.beans.factory.annotation.Value
@@ -13,9 +16,11 @@ import org.springframework.kafka.core.ProducerFactory
 import pl.allegro.experiments.chi.chiserver.interactions.InteractionRepository
 import pl.allegro.tech.common.andamio.server.cloud.CloudMetadata
 import pl.allegro.tech.common.andamio.spring.avro.AvroConverter
+import java.util.*
 
 @Configuration
 class KafkaConfig {
+    private val metricsList = listOf("request-rate", "record-send-rate", "request-latency-avg", "record-error-rate")
 
     @Bean
     @ConditionalOnProperty(name = arrayOf("interactions.repository"), havingValue = "local")
@@ -39,13 +44,32 @@ class KafkaConfig {
             @Value("\${interactions.kafka.bootstrap-servers-dc5}") bootstrapServersDc5: String,
             cloudMetadata: CloudMetadata,
             @Value("\${interactions.kafka.batch-size}") batchSize: Int,
-            @Value("\${interactions.kafka.linger-ms}") lingerMs: Int
+            @Value("\${interactions.kafka.linger-ms}") lingerMs: Int,
+            metricRegistry : MetricRegistry
             ): KafkaTemplate<String, ByteArray> {
-        if (cloudMetadata.datacenter == "dc5") {
-            return KafkaTemplate<String, ByteArray>(producerFactory(bootstrapServersDc5, batchSize, lingerMs))
+
+        val bootstrapServer = if (cloudMetadata.datacenter == "dc5") {
+            bootstrapServersDc5
         } else { // dc4 or localhost
-            return KafkaTemplate<String, ByteArray>(producerFactory(bootstrapServersDc4, batchSize, lingerMs))
+            bootstrapServersDc4
         }
+
+        val kafkaTemplate =  KafkaTemplate<String, ByteArray>(producerFactory(bootstrapServer, batchSize, lingerMs))
+
+        metricsList.forEach { metricName: String ->
+            metricRegistry.register("kafka." + metricName, Gauge<Double> {
+                getMetricValue(kafkaTemplate, metricName)
+            })
+        }
+
+        return kafkaTemplate
+    }
+
+    private fun getMetricValue(kafkaTemplate : KafkaTemplate<String, ByteArray>, metricName : String) : Double {
+        return kafkaTemplate.metrics().keys.stream()
+                .filter{it : MetricName -> it.name() == metricName && it.tags().size < 2}.findFirst()
+                .flatMap { it : MetricName -> Optional.ofNullable(kafkaTemplate.metrics()[it]?.value())}
+                .orElse(.0)
     }
 
     private fun producerFactory(
@@ -64,6 +88,6 @@ class KafkaConfig {
                     ProducerConfig.BOOTSTRAP_SERVERS_CONFIG to bootstrapServers,
                     ProducerConfig.BATCH_SIZE_CONFIG to batchSize,
                     ProducerConfig.LINGER_MS_CONFIG to lingerMs,
-                    ProducerConfig.ACKS_CONFIG to 1
+                    ProducerConfig.ACKS_CONFIG to "1"
             )
 }
