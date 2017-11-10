@@ -96,7 +96,7 @@ deploy:
         labels:
           consul: "{{ name }}"
           << : *LABELS
-        instances: 1
+        instances: 2
         << : *PROD_RESOURCES
         health_check:
           << : *HEALTH_CHECK
