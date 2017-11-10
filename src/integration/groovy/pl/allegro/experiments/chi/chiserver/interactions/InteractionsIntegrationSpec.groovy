@@ -35,15 +35,6 @@ class InteractionsIntegrationSpec extends BaseIntegrationSpec {
                         "appId"          : "a"
                 ],
                 [
-                        "userId"         : null,
-                        "userCmId"       : null,
-                        "experimentId"   : "anotherExperimentId",
-                        "variantName"    : "variant",
-                        "internal"       : null,
-                        "deviceClass"    : null,
-                        "interactionDate": "1970-01-01T00:00:00Z"
-                ],
-                [
                         "experimentId"   : "anotherExperimentId",
                         "variantName"    : "variant",
                         "interactionDate": "1970-01-01T00:00:00Z"
