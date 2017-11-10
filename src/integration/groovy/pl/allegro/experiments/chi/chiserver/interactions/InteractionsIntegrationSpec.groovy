@@ -50,7 +50,6 @@ class InteractionsIntegrationSpec extends BaseIntegrationSpec {
         def interactions = interactionConverter.fromJson(interactionsJson)
         inMemoryInteractionRepository.interactionSaved(interactions[0])
         inMemoryInteractionRepository.interactionSaved(interactions[1])
-        inMemoryInteractionRepository.interactionSaved(interactions[2])
     }
 
     @Unroll
