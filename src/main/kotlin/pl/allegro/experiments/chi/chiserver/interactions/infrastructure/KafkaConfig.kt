@@ -46,7 +46,7 @@ class KafkaConfig {
             @Value("\${interactions.kafka.batch-size}") batchSize: Int,
             @Value("\${interactions.kafka.linger-ms}") lingerMs: Int,
             metricRegistry : MetricRegistry
-            ): KafkaTemplate<String, ByteArray> {
+    ): KafkaTemplate<String, ByteArray> {
 
         val bootstrapServer = if (cloudMetadata.datacenter == "dc5") {
             bootstrapServersDc5
@@ -67,8 +67,8 @@ class KafkaConfig {
 
     private fun getMetricValue(kafkaTemplate : KafkaTemplate<String, ByteArray>, metricName : String) : Double {
         return kafkaTemplate.metrics().keys.stream()
-                .filter{it : MetricName -> it.name() == metricName && it.tags().size < 2}.findFirst()
-                .flatMap { it : MetricName -> Optional.ofNullable(kafkaTemplate.metrics()[it]?.value())}
+                .filter {it.name() == metricName && it.tags().size < 2}.findFirst()
+                .flatMap {Optional.ofNullable(kafkaTemplate.metrics()[it]?.value())}
                 .orElse(.0)
     }
 

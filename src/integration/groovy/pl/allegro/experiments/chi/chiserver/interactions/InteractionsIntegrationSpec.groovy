@@ -10,7 +10,6 @@ import org.springframework.web.client.HttpClientErrorException
 import org.springframework.web.client.RestTemplate
 import pl.allegro.experiments.chi.chiserver.BaseIntegrationSpec
 import pl.allegro.experiments.chi.chiserver.interactions.infrastructure.InMemoryInteractionRepository
-import pl.allegro.experiments.chi.chiserver.interactions.v1.InteractionConverter
 import spock.lang.Unroll
 
 class InteractionsIntegrationSpec extends BaseIntegrationSpec {
@@ -18,7 +17,7 @@ class InteractionsIntegrationSpec extends BaseIntegrationSpec {
     @Autowired
     InMemoryInteractionRepository inMemoryInteractionRepository
 
-    InteractionConverter interactionConverter = new InteractionConverter()
+    InteractionsConverter interactionConverter = new InteractionsConverter()
 
     RestTemplate restTemplate = new RestTemplate()
 
@@ -32,7 +31,8 @@ class InteractionsIntegrationSpec extends BaseIntegrationSpec {
                         "variantName"    : "someVariantName",
                         "internal"       : true,
                         "deviceClass"    : "iphone",
-                        "interactionDate": "1970-01-01T00:00:00Z"
+                        "interactionDate": "1970-01-01T00:00:00Z",
+                        "appId"          : "a"
                 ],
                 [
                         "userId"         : null,

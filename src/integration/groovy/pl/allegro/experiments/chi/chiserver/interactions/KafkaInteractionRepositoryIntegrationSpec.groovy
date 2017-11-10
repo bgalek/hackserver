@@ -1,6 +1,7 @@
 package pl.allegro.experiments.chi.chiserver.interactions
 
 import com.codahale.metrics.MetricRegistry
+import org.apache.commons.lang3.builder.EqualsBuilder
 import org.apache.kafka.clients.consumer.ConsumerRecord
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.kafka.core.DefaultKafkaConsumerFactory
@@ -51,24 +52,17 @@ class KafkaInteractionRepositoryIntegrationSpec extends BaseIntegrationSpec {
     }
 
     def setup() {
-        Map<String, Object> consumerProperties =
-                KafkaTestUtils.consumerProps("sender", "false", embeddedKafka)
+        Map consumerProperties = KafkaTestUtils.consumerProps("sender", "false", embeddedKafka)
 
-        DefaultKafkaConsumerFactory<String, byte[]> consumerFactory =
-                new DefaultKafkaConsumerFactory<String, byte[]>(consumerProperties)
+        def consumerFactory = new DefaultKafkaConsumerFactory(consumerProperties)
 
-        ContainerProperties containerProperties = new ContainerProperties(TOPIC)
+        def containerProperties = new ContainerProperties(TOPIC)
 
-        container = new KafkaMessageListenerContainer<>(consumerFactory, containerProperties)
+        container = new KafkaMessageListenerContainer(consumerFactory, containerProperties)
 
-        records = new LinkedBlockingQueue<>()
+        records = new LinkedBlockingQueue()
 
-        container.setupMessageListener(new MessageListener<String, byte[]>() {
-            @Override
-            void onMessage(ConsumerRecord<String, byte[]> record) {
-                records.add(record)
-            }
-        });
+        container.setupMessageListener({record -> records.add(record)} as MessageListener)
 
         container.start()
         interactionRepository = kafkaInteractionRepository(brokers)
@@ -90,7 +84,8 @@ class KafkaInteractionRepositoryIntegrationSpec extends BaseIntegrationSpec {
         byte[] interactionAsBytes = avroConverter.toAvro(interaction).data()
 
         then:
-        ((Interaction) avroConverter.fromAvro(interactionAsBytes, 1, Interaction.class)) == interaction
+        equalsIgnoringAppId( avroConverter.fromAvro(interactionAsBytes, 1, Interaction),
+                             interaction )
     }
 
     def "should save interaction"() {
@@ -99,9 +94,10 @@ class KafkaInteractionRepositoryIntegrationSpec extends BaseIntegrationSpec {
 
         when:
         interactionRepository.save(interaction)
+        def received = receiveInteraction()
 
         then:
-        receiveInteraction() == interaction
+        equalsIgnoringAppId(received, interaction)
     }
 
     def "should not save interaction with null fields"() {
@@ -116,17 +112,17 @@ class KafkaInteractionRepositoryIntegrationSpec extends BaseIntegrationSpec {
     }
 
     def receiveInteraction() {
-        ConsumerRecord<String, byte[]> interactionRecord = records.poll(1000, TimeUnit.MILLISECONDS)
+        ConsumerRecord interactionRecord = records.poll(1000, TimeUnit.MILLISECONDS)
         byte[] interactionAsBytes = interactionRecord.value()
-        (Interaction) avroConverter.fromAvro(
+        avroConverter.fromAvro(
                 interactionAsBytes,
                 1,
-                Interaction.class)
+                Interaction)
     }
 
     InteractionRepository kafkaInteractionRepository(String brokerString) {
         KafkaConfig kafkaConfig = new KafkaConfig()
-        KafkaTemplate<String, byte[]> kafkaTemplate = kafkaConfig.kafkaTemplate(
+        KafkaTemplate kafkaTemplate = kafkaConfig.kafkaTemplate(
                 brokerString,
                 brokerString,
                 cloudMetadata,
@@ -145,7 +141,8 @@ class KafkaInteractionRepositoryIntegrationSpec extends BaseIntegrationSpec {
                 "variantName",
                 false,
                 "iphone",
-                Instant.EPOCH
+                Instant.EPOCH,
+                "app-id"
         )
     }
 
@@ -157,7 +154,12 @@ class KafkaInteractionRepositoryIntegrationSpec extends BaseIntegrationSpec {
                 "variantName",
                 null,
                 null,
-                Instant.EPOCH
+                Instant.EPOCH,
+                null
         )
+    }
+
+    boolean equalsIgnoringAppId(Interaction a, Interaction b) {
+        EqualsBuilder.reflectionEquals(a, b, ["appId"])
     }
 }

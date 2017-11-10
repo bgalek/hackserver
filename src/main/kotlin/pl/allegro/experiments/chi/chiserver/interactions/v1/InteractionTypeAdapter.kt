@@ -5,7 +5,6 @@ import pl.allegro.experiments.chi.chiserver.interactions.Interaction
 import java.lang.reflect.Type
 import java.time.Instant
 
-
 class InteractionTypeAdapter: JsonDeserializer<Interaction> {
     override fun deserialize(
             json: JsonElement,
@@ -19,7 +18,8 @@ class InteractionTypeAdapter: JsonDeserializer<Interaction> {
                 jsonObj.get("variantName").asString,
                 if (jsonObj.get("internal") == null || jsonObj.get("internal").isJsonNull) null else jsonObj.get("internal").asBoolean,
                 if (jsonObj.get("deviceClass") == null || jsonObj.get("deviceClass").isJsonNull) null else jsonObj.get("deviceClass").asString,
-                Instant.parse(jsonObj.get("interactionDate").asString)
+                Instant.parse(jsonObj.get("interactionDate").asString),
+                jsonObj.get("appId")?.asString
         )
     }
 }

@@ -1,5 +1,6 @@
 package pl.allegro.experiments.chi.chiserver.interactions
 
+import com.fasterxml.jackson.annotation.JsonIgnore
 import java.time.Instant
 
 data class Interaction(
@@ -9,5 +10,6 @@ data class Interaction(
         val variantName: String,
         val internal: Boolean?,
         val deviceClass: String?,
-        val interactionDate: Instant
+        val interactionDate: Instant,
+        @JsonIgnore val appId : String?
 )

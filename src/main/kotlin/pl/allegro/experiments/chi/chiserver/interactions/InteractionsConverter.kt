@@ -1,13 +1,14 @@
-package pl.allegro.experiments.chi.chiserver.interactions.v1
+package pl.allegro.experiments.chi.chiserver.interactions
 
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import com.google.gson.reflect.TypeToken
-import pl.allegro.experiments.chi.chiserver.interactions.Interaction
+import pl.allegro.experiments.chi.chiserver.interactions.v1.InteractionTypeAdapter
+import pl.allegro.experiments.chi.chiserver.interactions.v1.InvalidFormatException
 import java.util.ArrayList
 
-class InteractionConverter {
-    var gson: Gson = GsonBuilder()
+class InteractionsConverter {
+    val gson: Gson = GsonBuilder()
             .registerTypeAdapter(Interaction::class.java, InteractionTypeAdapter())
             .create()
 
@@ -15,7 +16,7 @@ class InteractionConverter {
         try {
             val listType = object : TypeToken<ArrayList<Interaction>>() {}.getType()
             return gson.fromJson(json, listType)
-        } catch (e: Exception) { // rozdrobnic?
+        } catch (e: Exception) {
             throw InvalidFormatException("Cant deserialize Interaction. Invalid format.")
         }
     }
