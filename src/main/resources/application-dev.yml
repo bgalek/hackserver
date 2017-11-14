@@ -1,3 +1,9 @@
 discovery:
   enabled: true
   type: consul
+
+metrics:
+  graphite:
+    enabled: true
+    host: skystats-dev.qxlint
+    port: 2003
