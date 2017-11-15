@@ -50,6 +50,8 @@ vars:
 
 deploy:
   dev:
+    - lbaas:
+        vip: "chi-server_chi-dev.allegrogroup.com_80"
     - marathon:
         command: "{{ name }}-{{ version }}/bin/{{ name }} -e dev -p $PORT0"
         port_count: 2
@@ -69,6 +71,8 @@ deploy:
           - ["dc", "LIKE", "dc4"]
 
   test:
+    - lbaas:
+        vip: "chi-server_chi-test.allegrogroup.com_80"
     - marathon:
         command: "{{ name }}-{{ version }}/bin/{{ name }} -e test -p $PORT0"
         port_count: 2
@@ -88,6 +92,8 @@ deploy:
           - ["dc", "LIKE", "dc4"]
 
   prod:
+    - lbaas:
+        vip: "chi-server_chi.allegrogroup.com_80"
     - marathon:
         command: "{{ name }}-{{ version }}/bin/{{ name }} -e prod -p $PORT0"
         url: http://marathon.qxlint/
