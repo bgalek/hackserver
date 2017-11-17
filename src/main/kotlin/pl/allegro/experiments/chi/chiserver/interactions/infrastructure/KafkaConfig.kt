@@ -20,7 +20,7 @@ import java.util.*
 
 @Configuration
 class KafkaConfig {
-    private val metricsList = listOf("request-rate", "record-send-rate", "request-latency-avg", "record-error-rate")
+    private val metricsList = listOf("request-rate", "record-send-rate", "request-latency-avg", "request-latency-max", "record-error-rate")
 
     @Bean
     @ConditionalOnProperty(name = arrayOf("interactions.repository"), havingValue = "local")
@@ -88,6 +88,8 @@ class KafkaConfig {
                     ProducerConfig.BOOTSTRAP_SERVERS_CONFIG to bootstrapServers,
                     ProducerConfig.BATCH_SIZE_CONFIG to batchSize,
                     ProducerConfig.LINGER_MS_CONFIG to lingerMs,
-                    ProducerConfig.ACKS_CONFIG to "1"
+                    ProducerConfig.ACKS_CONFIG to "1",
+                    ProducerConfig.RETRIES_CONFIG to "5",
+                    ProducerConfig.RETRY_BACKOFF_MS_CONFIG to "1000"
             )
 }

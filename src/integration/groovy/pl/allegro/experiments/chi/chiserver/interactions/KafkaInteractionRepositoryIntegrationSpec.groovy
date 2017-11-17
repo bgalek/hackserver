@@ -84,8 +84,7 @@ class KafkaInteractionRepositoryIntegrationSpec extends BaseIntegrationSpec {
         byte[] interactionAsBytes = avroConverter.toAvro(interaction).data()
 
         then:
-        equalsIgnoringAppId( avroConverter.fromAvro(interactionAsBytes, 1, Interaction),
-                             interaction )
+        equalsIgnoringAppId( avroConverter.fromAvro(interactionAsBytes, 1, Interaction), interaction )
     }
 
     def "should save interaction"() {
