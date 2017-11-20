@@ -1,11 +1,11 @@
 {
   "dependencies": {
-    "vue": "^2.4.2",
-    "vue-router": "^2.7.0",
-    "vuetify": "^0.17.0",
+    "axios": "^0.17.1",
+    "vue": "^2.5.6",
+    "vue-router": "^3.0.1",
+    "vuetify": "^0.17.1",
     "vuex": "^3.0.1",
-    "vuex-rest-api": "^2.4.1",
-    "axios": "^0.17.1"
+    "vuex-rest-api": "^2.4.1"
   },
   "devDependencies": {
     "babel-eslint": "^8.0.2",
