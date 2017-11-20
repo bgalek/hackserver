@@ -18,13 +18,13 @@ Local **chi-server** app nned to be running at http://localhost:8080 for interac
 
 ```bash
 # install dependencies
-yarn
+npm install yarn
 
 # serve with hot reload at localhost:4000
-poi
+node_modules/.bin/poi
 
 # build for production with minification
-poi build
+node_modules/.bin/poi build
 ```
 
 ### Used tools
