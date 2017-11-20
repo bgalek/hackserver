@@ -15,7 +15,7 @@
           </v-list-tile-content>
           <v-list-tile-action>
             <v-badge>
-              <v-chip small v-bind:color="variantColor(i)" v-for="(variant, i) in experiment.variants" :key="variant.name">
+              <v-chip small :color="variantColor(i)" v-for="(variant, i) in experiment.variants" :key="variant.name">
               {{ variant.name }}
               </v-chip>
               
@@ -36,7 +36,7 @@
     </v-alert>
 
     <p class="text-xs-center">
-      <v-progress-circular v-if="pending" indeterminate v-bind:size="70" v-bind:width="7" color="purple"></v-progress-circular>
+      <v-progress-circular v-if="pending" indeterminate :size="70" :width="7" color="purple"></v-progress-circular>
     </p>
   </v-flex></v-layout></v-container>
 </template>
