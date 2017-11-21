@@ -5,7 +5,8 @@
     "vue-router": "^3.0.1",
     "vuetify": "^0.17.1",
     "vuex": "^3.0.1",
-    "vuex-rest-api": "^2.4.1"
+    "vuex-rest-api": "^2.4.1",
+    "v-clipboard": "^1.0.4"
   },
   "devDependencies": {
     "babel-eslint": "^8.0.2",

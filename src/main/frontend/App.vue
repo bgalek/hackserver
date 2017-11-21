@@ -47,11 +47,10 @@
     data () {
       return {
         drawer: false,
-        drawerItems: [{
-          icon: 'bubble_chart',
-          title: 'Experiments',
-          path: '/experiments'
-        }]
+        drawerItems: [
+          { icon: 'bubble_chart', title: 'Experiments', path: '/experiments' },
+          { icon: 'visibility', title: 'Cookie Baker', path: '/cookie_baker' }
+        ]
       }
     }
   }
