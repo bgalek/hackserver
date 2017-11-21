@@ -23,6 +23,7 @@ buildscript {
 plugins {
     id 'groovy'
     id 'application'
+    id "com.moowork.node" version "1.2.0"
     id 'maven-publish'
     id 'pl.allegro.tech.build.axion-release' version '1.7.2'
 }
@@ -76,6 +77,29 @@ dependencies {
 }
 
 mainClassName = 'pl.allegro.experiments.chi.chiserver.AppRunner'
+
+node {
+    version = '8.9.1'
+    download = true
+}
+
+task frontendDeps(type: YarnTask) {
+    execOverrides { it.workingDir = './src/main/frontend' }
+    args = ['install']
+}
+task frontendBuild(type: NodeTask) {
+    dependsOn frontendDeps
+    script = file('./src/main/frontend/node_modules/poi/bin/main.js')
+    execOverrides { it.workingDir = './src/main/frontend'}
+    args = ['build']
+}
+
+processResources {
+    dependsOn frontendBuild
+    from ('public/') {
+        into 'public'
+    }
+}
 
 test {
     testLogging {
