@@ -19,4 +19,6 @@ class JsonConverter {
     }
 
     fun toJSON(experiments: List<Experiment>): String = gson.toJson(experiments)
+
+    fun toJSON(experiment: Experiment): String = gson.toJson(experiment)
 }

@@ -18,7 +18,7 @@
               <v-chip small :color="variantColor(i)" v-for="(variant, i) in experiment.variants" :key="variant.name">
               {{ variant.name }}
               </v-chip>
-              
+
               <v-tooltip left>
                 <v-btn flat icon color="indigo" slot="activator" @click="goToPivot(experiment.id)">
                     <v-icon>show_chart</v-icon>
@@ -44,6 +44,7 @@
 <script>
 import { mapState, mapActions } from 'vuex'
 import axios from 'axios'
+import { variantColor } from '../utils/variantColor'
 
 export default {
   mounted () {
@@ -57,21 +58,13 @@ export default {
   },
 
   computed: mapState({
-    experiments: state => state.experiments,
-    error: state => state.error.experiments,
-    pending: state => state.pending.experiments
+    experiments: state => state.experiments.experiments,
+    error: state => state.experiments.error.experiments,
+    pending: state => state.experiments.pending.experiments
   }),
 
   methods: {
     ...mapActions(['getExperiments']),
-
-    variantColor (i) {
-      let colors = ['orange', 'cyan', 'yellow', 'green', 'pink', 'blue', 'amber', 'lime']
-      if (i >= colors.length) {
-        return 'grey'
-      }
-      return colors[i]
-    },
 
     goToPivot (experimentId) {
       axios.post('http://pivot-nga-prod.allegrogroup.com/mkurl', {
@@ -105,6 +98,10 @@ export default {
       }).catch(error => {
         this.pivotError = error.message
       })
+    },
+
+    variantColor(i) {
+      return variantColor(i);
     }
   }
 }
