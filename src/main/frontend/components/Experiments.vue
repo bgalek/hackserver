@@ -15,7 +15,7 @@
           </v-list-tile-content>
           <v-list-tile-action>
             <v-badge>
-              <v-chip small :color="variantColor(i)" v-for="(variant, i) in experiment.variants" :key="variant.name">
+              <v-chip small :color="variantColor(i)" v-for="(variant, i) in experiment.variants" :key="variant.name" :disabled="true">
               {{ variant.name }}
               </v-chip>
 
