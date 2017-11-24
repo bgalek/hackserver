@@ -11,6 +11,11 @@
               <v-list-tile-content>
                 <v-list-tile-title v-html="variant.name"></v-list-tile-title>
               </v-list-tile-content>
+              <v-list-tile-action>
+                <v-btn @click="goToCookieBaker(experiment.id, variant.name)">
+                  Assign
+                </v-btn>
+              </v-list-tile-action>
             </v-list-tile>
           </v-list>
         </div>
@@ -30,6 +35,7 @@
 <script>
 import { mapState, mapActions } from 'vuex'
 import { variantColor } from '../utils/variantColor'
+import { cookieBakerHost } from '../utils/cookieBakerHost'
 
 export default {
   mounted () {
@@ -45,8 +51,15 @@ export default {
   methods: {
     ...mapActions(['getExperiment']),
 
-    variantColor(i) {
-      return variantColor(i);
+    variantColor (i) {
+      return variantColor(i)
+    },
+
+    goToCookieBaker (experimentId, variantName) {
+      let protocol = 'https://';
+      let host = cookieBakerHost();
+      let url = protocol + host + `/chi/cookie-baker.html?chi=${experimentId}!${variantName}&redirect=${protocol + host + '/'}`;
+      window.open(url, '_blank')
     }
   }
 }

@@ -49,6 +49,8 @@
 </template>
 
 <script>
+import { cookieBakerHost } from '../utils/cookieBakerHost'
+
 export default {
   data () {
     return {
@@ -71,15 +73,7 @@ export default {
 
   computed: {
     cookieBakerHost () {
-      let host = {
-        'chi.allegrogroup.com': 'allegro.pl'
-      }[window.location.hostname]
-
-      if (!host) {
-        return 'allegro.pl.allegrosandbox.pl'
-      }
-
-      return host
+      return cookieBakerHost()
     },
 
     sharingUrl () {

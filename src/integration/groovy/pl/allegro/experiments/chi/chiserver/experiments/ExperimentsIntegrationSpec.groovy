@@ -5,6 +5,7 @@ import org.junit.ClassRule
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.web.client.RestTemplate
 import pl.allegro.experiments.chi.chiserver.BaseIntegrationSpec
+import pl.allegro.experiments.chi.domain.Experiment
 import pl.allegro.experiments.chi.persistence.FileBasedExperimentsRepository
 import spock.lang.Shared
 
@@ -47,6 +48,22 @@ class ExperimentsIntegrationSpec extends BaseIntegrationSpec {
         response.body.contains(hashVariantExperiment())
         response.body.contains(sampleExperiment())
         response.body.contains(timeboundExperiment())
+    }
+
+    def "should return single of experiment loaded from the backing HTTP resource"() {
+        given:
+        fileBasedExperimentsRepository.changeJsonUrl(resourceUrl('/experiments'))
+        fileBasedExperimentsRepository.secureRefresh()
+
+        when:
+        def response = restTemplate.getForEntity(localUrl('/api/experiments/cmuid_regexp/v1'), Map)
+
+        then:
+        response.statusCode.value() == 200
+        response.body == [
+            id: 'cmuid_regexp',
+            variants: [ [ name: 'v1', predicates: [ [ type: 'CMUID_REGEXP', regexp: '.*[0-3]$'] ] ] ]
+        ]
     }
 
     def "should return list of experiment in version 1"() {

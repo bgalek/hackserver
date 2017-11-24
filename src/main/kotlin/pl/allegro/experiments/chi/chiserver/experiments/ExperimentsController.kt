@@ -1,7 +1,9 @@
 package pl.allegro.experiments.chi.chiserver.experiments
 
+import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType.APPLICATION_JSON_UTF8_VALUE
 import org.springframework.http.MediaType.APPLICATION_JSON_VALUE
+import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.RequestMapping
@@ -29,8 +31,11 @@ class ExperimentsController(private val experimentsRepository: FileBasedExperime
 
     @MeteredEndpoint
     @GetMapping(path = arrayOf("/{experimentId}/v1"))
-    fun getExperiment(@PathVariable experimentId: String) : String {
+    fun getExperiment(@PathVariable experimentId: String) : ResponseEntity<String> {
         ExperimentsController.logger.info("Single experiment request received")
-        return experimentsRepository.getExperiment(experimentId).map(jsonConverter::toJSON).orElse(null);
+        return experimentsRepository.getExperiment(experimentId)
+                .map(jsonConverter::toJSON)
+                .map { e -> ResponseEntity.ok(e) }
+                .orElse(ResponseEntity(HttpStatus.NOT_FOUND))
     }
 }

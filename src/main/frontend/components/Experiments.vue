@@ -8,7 +8,7 @@
 
     <div id="experiments" v-if="experiments.length">
       <v-list two-line>
-        <v-list-tile v-for="experiment in experiments" :key="experiment.id" @click="">
+        <v-list-tile v-for="experiment in experiments" :key="experiment.id" @click="goToExperiment(experiment.id)">
           <v-list-tile-content>
             <v-list-tile-title v-html="experiment.id"></v-list-tile-title>
             <v-list-tile-sub-title v-html="experiment.desc"></v-list-tile-sub-title>
@@ -66,6 +66,10 @@ export default {
   methods: {
     ...mapActions(['getExperiments']),
 
+    goToExperiment (experimentId) {
+      this.$router.push(`/experiments/${experimentId}`)
+    },
+
     goToPivot (experimentId) {
       axios.post('http://pivot-nga-prod.allegrogroup.com/mkurl', {
         domain: 'http://pivot-nga-prod.allegrogroup.com',
@@ -100,8 +104,8 @@ export default {
       })
     },
 
-    variantColor(i) {
-      return variantColor(i);
+    variantColor (i) {
+      return variantColor(i)
     }
   }
 }
