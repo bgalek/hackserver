@@ -5,7 +5,6 @@ import org.junit.ClassRule
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.web.client.RestTemplate
 import pl.allegro.experiments.chi.chiserver.BaseIntegrationSpec
-import pl.allegro.experiments.chi.domain.Experiment
 import pl.allegro.experiments.chi.persistence.FileBasedExperimentsRepository
 import spock.lang.Shared
 
@@ -56,7 +55,7 @@ class ExperimentsIntegrationSpec extends BaseIntegrationSpec {
         fileBasedExperimentsRepository.secureRefresh()
 
         when:
-        def response = restTemplate.getForEntity(localUrl('/api/experiments/cmuid_regexp/v1'), Map)
+        def response = restTemplate.getForEntity(localUrl('/api/admin/experiments/cmuid_regexp'), Map)
 
         then:
         response.statusCode.value() == 200

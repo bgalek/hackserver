@@ -8,5 +8,5 @@ export default new Vapi({
 }).get({
   action: 'getExperiment',
   property: 'experiment',
-  path: ({experimentId}) => `/experiments/${experimentId}/v1`
+  path: ({experimentId}) => `/admin/experiments/${experimentId}`
 }).getStore()

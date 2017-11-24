@@ -14,7 +14,7 @@ import pl.allegro.experiments.chi.persistence.FileBasedExperimentsRepository
 import pl.allegro.tech.common.andamio.metrics.MeteredEndpoint
 
 @RestController
-@RequestMapping(value = "/api/experiments", produces = arrayOf(APPLICATION_JSON_VALUE, APPLICATION_JSON_UTF8_VALUE))
+@RequestMapping(value = "/api", produces = arrayOf(APPLICATION_JSON_VALUE, APPLICATION_JSON_UTF8_VALUE))
 class ExperimentsController(private val experimentsRepository: FileBasedExperimentsRepository,
                             private val jsonConverter: JsonConverter) {
 
@@ -23,14 +23,14 @@ class ExperimentsController(private val experimentsRepository: FileBasedExperime
     }
 
     @MeteredEndpoint
-    @GetMapping(path = arrayOf("/v1", ""))
+    @GetMapping(path = arrayOf("/experiments/v1", "/experiments"))
     fun activeExperiments() : String {
         ExperimentsController.logger.info("Active experiments request received")
         return jsonConverter.toJSON(experimentsRepository.all)
     }
 
     @MeteredEndpoint
-    @GetMapping(path = arrayOf("/{experimentId}/v1"))
+    @GetMapping(path = arrayOf("/admin/experiments/{experimentId}"))
     fun getExperiment(@PathVariable experimentId: String) : ResponseEntity<String> {
         ExperimentsController.logger.info("Single experiment request received")
         return experimentsRepository.getExperiment(experimentId)
