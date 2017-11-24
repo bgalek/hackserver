@@ -56,9 +56,9 @@ export default {
     },
 
     goToCookieBaker (experimentId, variantName) {
-      let protocol = 'https://';
-      let host = cookieBakerHost();
-      let url = protocol + host + `/chi/cookie-baker.html?chi=${experimentId}!${variantName}&redirect=${protocol + host + '/'}`;
+      let protocol = 'https://'
+      let host = cookieBakerHost()
+      let url = protocol + host + `/chi/cookie-baker.html?chi=${experimentId}!${variantName}&redirect=${protocol + host + '/'}`
       window.open(url, '_blank')
     }
   }

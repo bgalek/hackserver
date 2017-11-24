@@ -9,5 +9,4 @@ export function cookieBakerHost () {
   }
 
   return host
-
 }
