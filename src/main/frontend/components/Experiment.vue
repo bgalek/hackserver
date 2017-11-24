@@ -7,7 +7,7 @@
         <h2>Variants</h2>
         <div id="variants" v-if="experiment.variants">
           <v-list two-line>
-            <v-list-tile v-for="(variant, i) in experiment.variants" :key="variant.name" @click="">
+            <v-list-tile v-for="(variant, i) in experiment.variants" :key="variant.name">
               <v-list-tile-content>
                 <v-list-tile-title v-html="variant.name"></v-list-tile-title>
               </v-list-tile-content>
