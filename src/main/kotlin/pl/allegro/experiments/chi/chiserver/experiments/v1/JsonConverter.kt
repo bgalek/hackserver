@@ -2,7 +2,7 @@ package pl.allegro.experiments.chi.chiserver.experiments.v1
 
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
-import pl.allegro.experiments.chi.domain.*
+import pl.allegro.experiments.chi.chiserver.domain.*
 
 class JsonConverter {
     var gson: Gson

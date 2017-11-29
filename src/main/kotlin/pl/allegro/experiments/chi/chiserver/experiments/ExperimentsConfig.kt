@@ -7,10 +7,10 @@ import org.springframework.beans.factory.annotation.Value
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.web.client.RestTemplate
+import pl.allegro.experiments.chi.chiserver.domain.ExperimentsRepository
 import pl.allegro.experiments.chi.chiserver.experiments.infrastructure.HttpContentLoader
 import pl.allegro.experiments.chi.chiserver.experiments.v1.JsonConverter
-import pl.allegro.experiments.chi.core.ExperimentsRepository
-import pl.allegro.experiments.chi.persistence.FileBasedExperimentsRepository
+import pl.allegro.experiments.chi.chiserver.infrastructure.FileBasedExperimentsRepository
 import pl.allegro.tech.common.andamio.spring.client.ClientConnectionConfig
 import pl.allegro.tech.common.andamio.spring.client.RestTemplateFactory
 import javax.annotation.PostConstruct

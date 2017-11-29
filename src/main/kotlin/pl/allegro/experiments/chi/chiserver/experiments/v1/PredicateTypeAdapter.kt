@@ -4,10 +4,10 @@ import com.google.gson.JsonElement
 import com.google.gson.JsonObject
 import com.google.gson.JsonSerializationContext
 import com.google.gson.JsonSerializer
-import pl.allegro.experiments.chi.domain.CmuidRegexpPredicate
-import pl.allegro.experiments.chi.domain.DeviceClassPredicate
-import pl.allegro.experiments.chi.domain.HashRangePredicate
-import pl.allegro.experiments.chi.domain.InternalPredicate
+import pl.allegro.experiments.chi.chiserver.domain.CmuidRegexpPredicate
+import pl.allegro.experiments.chi.chiserver.domain.DeviceClassPredicate
+import pl.allegro.experiments.chi.chiserver.domain.HashRangePredicate
+import pl.allegro.experiments.chi.chiserver.domain.InternalPredicate
 import java.lang.reflect.Type
 
 class HashRangePredicateSerializer : JsonSerializer<HashRangePredicate> {

@@ -1,14 +1,14 @@
 package pl.allegro.experiments.chi.chiserver.experiments.v1
 
-import com.google.gson.JsonElement
-import com.google.gson.JsonObject
-import com.google.gson.JsonSerializationContext
-import com.google.gson.JsonSerializer
-import pl.allegro.experiments.chi.domain.Experiment
+import com.google.gson.*
+import com.google.gson.reflect.TypeToken
+import pl.allegro.experiments.chi.chiserver.domain.Experiment
+import pl.allegro.experiments.chi.chiserver.domain.ExperimentVariant
 import java.lang.reflect.Type
+import java.time.ZonedDateTime
 import java.time.format.DateTimeFormatter
 
-class ExperimentTypeAdapter : JsonSerializer<Experiment> {
+class ExperimentTypeAdapter : JsonSerializer<Experiment>, JsonDeserializer<Experiment> {
 
     internal val formatter = DateTimeFormatter.ISO_DATE_TIME
 
@@ -29,4 +29,23 @@ class ExperimentTypeAdapter : JsonSerializer<Experiment> {
         return element
     }
 
+    @Throws(JsonParseException::class)
+    override fun deserialize(jsonElement: JsonElement, typeOfT: Type, context: JsonDeserializationContext): Experiment {
+        val json = jsonElement.asJsonObject
+
+        val id = json.get("id").asString
+        val activeFrom = dateTimeFromString(json.get("activeFrom"))
+        val activeTo = dateTimeFromString(json.get("activeTo"))
+
+        val variants = context.deserialize<List<ExperimentVariant>>(json.get("variants"), object : TypeToken<List<ExperimentVariant>>() {
+
+        }.type)
+        return Experiment(id, variants, activeFrom, activeTo)
+    }
+
+    private fun dateTimeFromString(dateTime: JsonElement?): ZonedDateTime? {
+        return if (dateTime == null) {
+            null
+        } else ZonedDateTime.parse(dateTime.asString, formatter)
+    }
 }

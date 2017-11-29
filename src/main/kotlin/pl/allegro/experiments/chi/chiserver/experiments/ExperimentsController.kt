@@ -9,9 +9,10 @@ import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
 import pl.allegro.experiments.chi.chiserver.experiments.v1.JsonConverter
+import pl.allegro.experiments.chi.chiserver.infrastructure.FileBasedExperimentsRepository
 import pl.allegro.experiments.chi.chiserver.logger
-import pl.allegro.experiments.chi.persistence.FileBasedExperimentsRepository
 import pl.allegro.tech.common.andamio.metrics.MeteredEndpoint
+import java.util.*
 
 @RestController
 @RequestMapping(value = "/api", produces = arrayOf(APPLICATION_JSON_VALUE, APPLICATION_JSON_UTF8_VALUE))
@@ -33,7 +34,7 @@ class ExperimentsController(private val experimentsRepository: FileBasedExperime
     @GetMapping(path = arrayOf("/admin/experiments/{experimentId}"))
     fun getExperiment(@PathVariable experimentId: String) : ResponseEntity<String> {
         ExperimentsController.logger.info("Single experiment request received")
-        return experimentsRepository.getExperiment(experimentId)
+        return Optional.ofNullable(experimentsRepository.getExperiment(experimentId))
                 .map(jsonConverter::toJSON)
                 .map { e -> ResponseEntity.ok(e) }
                 .orElse(ResponseEntity(HttpStatus.NOT_FOUND))
