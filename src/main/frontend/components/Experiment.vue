@@ -164,12 +164,12 @@
       },
 
       filterByDevice(device) {
-        this.mountExperimentStatistics()
         this.$router.push({
           name: 'experiment',
           params: {experimentId: this.$route.params.experimentId},
           query: {device: this.device}
         })
+        this.mountExperimentStatistics()
       },
 
       mountExperimentStatistics() {
