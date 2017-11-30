@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
-import pl.allegro.experiments.chi.chiserver.experiments.v1.JsonConverter
+import pl.allegro.experiments.chi.chiserver.infrastructure.JsonConverter
 import pl.allegro.experiments.chi.chiserver.logger
 import pl.allegro.experiments.chi.persistence.FileBasedExperimentsRepository
 import pl.allegro.tech.common.andamio.metrics.MeteredEndpoint

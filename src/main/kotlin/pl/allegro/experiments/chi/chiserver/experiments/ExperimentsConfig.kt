@@ -8,11 +8,8 @@ import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.web.client.RestTemplate
 import pl.allegro.experiments.chi.chiserver.experiments.infrastructure.HttpContentLoader
-import pl.allegro.experiments.chi.chiserver.experiments.v1.JsonConverter
 import pl.allegro.experiments.chi.core.ExperimentsRepository
 import pl.allegro.experiments.chi.persistence.FileBasedExperimentsRepository
-import pl.allegro.tech.common.andamio.spring.client.ClientConnectionConfig
-import pl.allegro.tech.common.andamio.spring.client.RestTemplateFactory
 import javax.annotation.PostConstruct
 
 @Configuration
@@ -24,20 +21,6 @@ class ExperimentsConfig {
 
     @Autowired
     lateinit var experimentsRepository: ExperimentsRepository
-
-    @Bean
-    fun restTemplate(factory: RestTemplateFactory): RestTemplate {
-        val connectionConfig = ClientConnectionConfig.clientConnectionConfig()
-                .withMaxConnections(1)
-                .withMaxConnectionsPerRoute(1)
-                .withSocketTimeout(300)
-                .withConnectionTimeout(300)
-                .build()
-        return factory.usingApacheHttp().create(connectionConfig)
-    }
-
-    @Bean
-    fun jsonConverter(): JsonConverter = JsonConverter()
 
     @Bean
     fun experimentsRepository(@Value("\${chi.experiments.file}") jsonUrl: String,
