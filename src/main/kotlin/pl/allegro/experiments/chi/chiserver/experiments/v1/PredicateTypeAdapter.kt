@@ -7,7 +7,6 @@ import com.google.gson.JsonSerializer
 import pl.allegro.experiments.chi.chiserver.domain.CmuidRegexpPredicate
 import pl.allegro.experiments.chi.chiserver.domain.DeviceClassPredicate
 import pl.allegro.experiments.chi.chiserver.domain.HashRangePredicate
-import pl.allegro.experiments.chi.chiserver.domain.InternalPredicate
 import java.lang.reflect.Type
 
 class HashRangePredicateSerializer : JsonSerializer<HashRangePredicate> {
