@@ -25,17 +25,49 @@
           <v-progress-circular v-if="pending" indeterminate :size="70" :width="7" color="purple"></v-progress-circular>
         </p>
 
-        <h2>Devices</h2>
-        <v-radio-group v-model="device" row>
-          <v-radio id="all" label="All" value="all"></v-radio>
-          <v-radio id="desktop" label="Desktop" value="desktop"></v-radio>
-          <v-radio id="smartphone" label="Smartphone" value="smartphone"></v-radio>
-          <v-radio id="tablet" label="Tablet" value="tablet"></v-radio>
-        </v-radio-group>
+        <h2>Results <small>(Duration: {{experimentStatistics.durationDays}} days)</small></h2>
+        <v-container fluid>
+          <v-layout row wrap>
+            <v-flex xs2 md2>
+              <v-card flat>
+                <v-card-text>
+                  <v-menu>
+                    <v-text-field
+                      slot="activator"
+                      label="From day:"
+                      v-model="pickedDate"
+                      prepend-icon="event"
+                      readonly
+                    ></v-text-field>
+                    <v-date-picker v-model="pickedDate" no-title scrollable actions>
+                      <template slot-scope="{ save, cancel }">
+                        <v-card-actions>
+                          <v-spacer></v-spacer>
+                          <v-btn flat color="primary" @click="cancel">Cancel</v-btn>
+                          <v-btn flat color="primary" @click="save">OK</v-btn>
+                        </v-card-actions>
+                      </template>
+                    </v-date-picker>
+                  </v-menu>
+                </v-card-text>
+              </v-card>
+            </v-flex>
+            <v-flex xs10 md10>
+              <v-card flat>
+                <v-card-text>
+                  <v-radio-group v-model="device" row>
+                    <v-radio flat id="all" label="All" value="all"></v-radio>
+                    <v-radio flat id="desktop" label="Desktop" value="desktop"></v-radio>
+                    <v-radio flat id="smartphone" label="Smartphone" value="smartphone"></v-radio>
+                    <v-radio flat id="tablet" label="Tablet" value="tablet"></v-radio>
+                  </v-radio-group>
+                </v-card-text>
+              </v-card>
+            </v-flex>
+          </v-layout>
+        </v-container>
 
-        <h2>Metrics</h2>
         <div v-if="experimentStatistics.metrics">
-          <h3>State from {{experimentStatistics.toDate}}({{experimentStatistics.durationDays}} days)</h3>
           <div v-for="(variantsMetricValue, metric) in experimentStatistics.metrics" :key="metric">
             <h3>{{metricNames[metric]}}</h3>
             <v-data-table
@@ -74,10 +106,9 @@
   import {mapState, mapActions} from 'vuex'
   import {variantColor} from '../utils/variantColor'
   import {cookieBakerHost} from '../utils/cookieBakerHost'
-  import VDivider from "vuetify/src/components/VDivider/VDivider";
 
   export default {
-    data() {
+    data () {
       return {
         headers: [
           {text: 'Variant'},
@@ -94,11 +125,9 @@
       }
     },
 
-    components: {VDivider},
-    mounted() {
+    mounted () {
       this.getExperiment({params: {experimentId: this.$route.params.experimentId}})
       this.mountExperimentStatistics()
-
     },
 
     computed: mapState({
@@ -108,15 +137,15 @@
       experimentStatistics: state => {
         let stats = state.experimentStatistics.experimentStatistics
         let mappedMetrics = {}
-        for (let metric_name in stats.metrics) {
-          if (stats.metrics.hasOwnProperty(metric_name)) {
+        for (let metricName in stats.metrics) {
+          if (stats.metrics.hasOwnProperty(metricName)) {
             let mappedVariants = []
-            for (let variant_name in stats.metrics[metric_name]) {
-              if (stats.metrics[metric_name].hasOwnProperty(variant_name)) {
-                let variant = stats.metrics[metric_name][variant_name]
-                if (variant_name !== 'base') {
+            for (let variantName in stats.metrics[metricName]) {
+              if (stats.metrics[metricName].hasOwnProperty(variantName)) {
+                let variant = stats.metrics[metricName][variantName]
+                if (variantName !== 'base') {
                   mappedVariants.push({
-                    variant: variant_name,
+                    variant: variantName,
                     value: variant.value,
                     diff: variant.diff,
                     count: variant.count,
@@ -124,46 +153,47 @@
                   })
                 } else {
                   mappedVariants.unshift({
-                    variant: variant_name,
+                    variant: variantName,
                     value: variant.value,
                     diff: variant.diff,
                     count: variant.count,
                     pValue: variant.pValue
                   })
                 }
-
               }
             }
-            mappedMetrics[metric_name] = mappedVariants
+            mappedMetrics[metricName] = mappedVariants
           }
         }
         return {
           id: stats.id,
-          durationDays: stats.duration / (3600 * 24 * 1000) ,
+          durationDays: stats.duration / (3600 * 24 * 1000),
           device: stats.device,
           toDate: stats.toDate,
           metrics: mappedMetrics
         }
       },
       experimentStatisticsError: state => state.experimentStatistics.error.experimentStatistics,
-      experimentStatisticsPending: state => state.experimentStatistics.pending.experimentStatistics
+      experimentStatisticsPending: state => state.experimentStatistics.pending.experimentStatistics,
+      allowedDates: state => [new Date()],
+      pickedDate: state => state.experimentStatistics.experimentStatistics.toDate
     }),
 
     methods: {
       ...mapActions(['getExperiment', 'getExperimentStatistics']),
 
-      variantColor(i) {
+      variantColor (i) {
         return variantColor(i)
       },
 
-      goToCookieBaker(experimentId, variantName) {
+      goToCookieBaker (experimentId, variantName) {
         let protocol = 'https://'
         let host = cookieBakerHost()
         let url = protocol + host + `/chi/cookie-baker.html?chi=${experimentId}!${variantName}&redirect=${protocol + host + '/'}`
         window.open(url, '_blank')
       },
 
-      filterByDevice(device) {
+      filterByDevice (device) {
         this.$router.push({
           name: 'experiment',
           params: {experimentId: this.$route.params.experimentId},
@@ -172,7 +202,7 @@
         this.mountExperimentStatistics()
       },
 
-      mountExperimentStatistics() {
+      mountExperimentStatistics () {
         if (this.$route.query.device) {
           this.getExperimentStatistics({
             params: {
@@ -191,7 +221,9 @@
     },
 
     watch: {
-      device: function(val) { this.filterByDevice(val)}
+      device: function (val) {
+        this.filterByDevice(val)
+      }
     }
   }
 </script>

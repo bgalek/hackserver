@@ -1,0 +1,126 @@
+function yesterday() {
+  return new Date((new Date()).setDate((new Date()).getDate() - 1))
+}
+
+const appState = {
+  state: {
+    metrics: ['txPerVisit', 'gmv'],
+    devices: ['desktop', 'smartphone', 'tablet', 'all'],
+    metricValueForDevice: {
+      'desktop': 0.1,
+      'smartphone': 0.2,
+      'tablet': 0.3,
+      'all': 0.4
+    },
+    experiments: {
+      metrum: {
+        id: 'metrum',
+        variants: [{name: 'metrum'}, {name: 'base'}],
+        durationDays: 10,
+        toDate: yesterday()
+      },
+      sgLite: {
+        id: 'sgLite',
+        variants: [{name: 'base'}, {name: 'lite'}, {name: 'superlite'}],
+        durationDays: 5,
+        toDate: yesterday()
+      },
+      header: {
+        id: 'header',
+        variants: [{name: 'base'}, {name: 'v1'}, {name: 'v2'}, {name: 'v3'}],
+        durationDays: 1,
+        toDate: yesterday()
+      }
+    }
+  },
+
+  getExperiments: function () {
+    return Object.values(this.state.experiments)
+  },
+
+  getExperiment: function (experimentId) {
+    return this.state.experiments[experimentId]
+  },
+
+  getExperimentDurationMillis: function(experimentId) {
+    return this.getExperiment(experimentId).durationDays * 24 * 3600 * 1000
+  },
+
+  getExperimentToDate: function(experimentId) {
+    let dt = this.getExperiment(experimentId).toDate
+    let year = dt.getFullYear()
+    let month = dt.getMonth()+1 < 10 ? `0${dt.getUTCMonth()+1}`: dt.getUTCMonth()+1
+    let day = dt.getDate() < 10 ? `0${dt.getUTCDate()}`: dt.getUTCDate()
+    return `${year}-${month}-${day}`
+  },
+
+  generateMetricsForExperiment: function(experimentId, pickedDevice) {
+    let result = {}
+    this.state.metrics.forEach((metricName) => {
+      result[metricName] = this.generateMetricForAllVariants(experimentId, pickedDevice)
+    })
+    return result
+  },
+
+  getExperimentVariantNames: function (experimentId) {
+    return this.getExperiment(experimentId).variants.map(e => {return e.name})
+  },
+
+  getMetricValueForDeviceAndDuration: function (device, durationDays) {
+    return {
+      value: this.state.metricValueForDevice[device],
+      pValue: this.state.metricValueForDevice[device],
+      diff: this.state.metricValueForDevice[device],
+      count: this.state.metricValueForDevice[device] * durationDays * 10000
+    }
+  },
+
+  generateMetricForAllVariants: function(experimentId, pickedDevice) {
+    let result = {}
+    this.getExperimentVariantNames(experimentId).forEach(variantName => {
+      result[variantName] = this.getMetricValueForDeviceAndDuration(pickedDevice, this.getExperiment(experimentId).durationDays)
+    })
+    return result
+  },
+
+  getStatistics: function (experimentId, device) {
+    // todo handle missing experiments
+    // todo handle missing devices
+    console.log(experimentId)
+    console.log(device)
+    return {
+      id: experimentId,
+      duration: this.getExperimentDurationMillis(experimentId),
+      toDate: this.getExperimentToDate(experimentId),
+      device: device,
+      metrics: this.generateMetricsForExperiment(experimentId, device)
+    }
+  }
+}
+
+module.exports = (options, req) => ({
+  devServer: {
+    before(app) {
+      app.get('/api/statistics/:experimentId', (req, res) => {
+        res.end(JSON.stringify(appState.getStatistics(req.params.experimentId, req.query.device)))
+      })
+
+      app.get('/api/experiments/v1', (req, res) => {
+        res.end(JSON.stringify(appState.getExperiments()))
+      })
+
+      app.get('/api/admin/experiments/:experimentId', (req, res) => {
+        res.end(JSON.stringify(appState.getExperiment(req.params.experimentId)))
+      })
+    }
+  },
+  entry: './index.js',
+  templateCompiler: true,
+  html: {
+    template: "index.html"
+  },
+  dist: "../../../public",
+  presets: [
+    "eslint"
+  ]
+})
