@@ -9,20 +9,14 @@ import java.util.concurrent.Executors
 import java.util.concurrent.TimeUnit
 import java.util.function.Consumer
 
-class FileBasedExperimentsRepository(jsonUrl: String, initialState: List<Experiment>, private val dataLoader: Function1<String, String>) : ExperimentsRepository {
+class FileBasedExperimentsRepository(private val jsonUrl: String, initialState: List<Experiment>, private val dataLoader: Function1<String, String>) : ExperimentsRepository {
 
     private val inMemoryRepository: InMemoryExperimentsRepository = InMemoryExperimentsRepository(initialState)
     private val jsonParser: JsonParser = JsonParser()
-    private var jsonUrl: String? = null
 
-    /**
-     * @param jsonUrl nullable
-     */
     constructor(jsonUrl: String, dataLoader: Function1<String, String>) : this(jsonUrl, emptyList<Experiment>(), dataLoader)
 
     init {
-        changeJsonUrl(jsonUrl)
-
         secureRefresh()
         setUpRefresher()
     }
@@ -44,12 +38,7 @@ class FileBasedExperimentsRepository(jsonUrl: String, initialState: List<Experim
     }
 
     private fun refresh() {
-        if (jsonUrl == null) {
-            logger.info("Can't load experiments file - jsonUrl is null")
-            return
-        }
-
-        val data = dataLoader.invoke(jsonUrl.orEmpty())
+        val data = dataLoader.invoke(jsonUrl)
         if (Strings.isNullOrEmpty(data)) {
             logger.error("refresh failed, dataLoader has returned empty String")
             return
@@ -82,9 +71,6 @@ class FileBasedExperimentsRepository(jsonUrl: String, initialState: List<Experim
     override val all: List<Experiment>
         get() = inMemoryRepository.all
 
-    fun changeJsonUrl(jsonUrl: String) {
-        this.jsonUrl = jsonUrl
-    }
 
     companion object {
         private val logger = LoggerFactory.getLogger(FileBasedExperimentsRepository::class.java)

@@ -7,10 +7,11 @@ import com.google.gson.JsonSerializer
 import pl.allegro.experiments.chi.chiserver.domain.CmuidRegexpPredicate
 import pl.allegro.experiments.chi.chiserver.domain.DeviceClassPredicate
 import pl.allegro.experiments.chi.chiserver.domain.HashRangePredicate
+import pl.allegro.experiments.chi.chiserver.domain.InternalPredicate
 import java.lang.reflect.Type
 
 class HashRangePredicateSerializer : JsonSerializer<HashRangePredicate> {
-    internal val HASH_TYPE = "HASH"
+    private val HASH_TYPE = "HASH"
 
     override fun serialize(src: HashRangePredicate, typeOfSrc: Type, context: JsonSerializationContext): JsonElement {
         val element = JsonObject()
@@ -23,7 +24,7 @@ class HashRangePredicateSerializer : JsonSerializer<HashRangePredicate> {
 }
 
 class CmuidRegexpPredicateSerializer : JsonSerializer<CmuidRegexpPredicate> {
-    internal val CMUID_REGEXP_TYPE = "CMUID_REGEXP"
+    private val CMUID_REGEXP_TYPE = "CMUID_REGEXP"
 
     override fun serialize(src: CmuidRegexpPredicate, typeOfSrc: Type, context: JsonSerializationContext): JsonElement {
         val element = JsonObject()
@@ -35,19 +36,19 @@ class CmuidRegexpPredicateSerializer : JsonSerializer<CmuidRegexpPredicate> {
 }
 
 class DeviceClassPredicateSerializer : JsonSerializer<DeviceClassPredicate> {
-    internal val DEVICE_CLASS_TYPE = "DEVICE_CLASS"
+    private val DEVICE_CLASS_TYPE = "DEVICE_CLASS"
 
     override fun serialize(src: DeviceClassPredicate, typeOfSrc: Type, context: JsonSerializationContext): JsonElement {
         val element = JsonObject()
 
         element.addProperty("type", DEVICE_CLASS_TYPE)
-        element.addProperty("device", src.device.toString())
+        element.addProperty("device", src.device)
         return element
     }
 }
 
 class InternalPredicateSerializer : JsonSerializer<InternalPredicate> {
-    internal val INTERNAL_TYPE = "INTERNAL"
+    private val INTERNAL_TYPE = "INTERNAL"
 
     override fun serialize(src: InternalPredicate, typeOfSrc: Type, context: JsonSerializationContext): JsonElement {
         val element = JsonObject()

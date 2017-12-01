@@ -1,6 +1,6 @@
 package pl.allegro.experiments.chi.chiserver.infrastructure
 
-
+import pl.allegro.experiments.chi.chiserver.domain.InternalPredicate
 import pl.allegro.experiments.chi.chiserver.experiments.infrastructure.ClasspathContentLoader
 import pl.allegro.experiments.chi.chiserver.utils.ExperimentFactory
 import spock.lang.Specification
