@@ -16,6 +16,11 @@ class FileBasedExperimentsRepository(private val jsonUrl: String, initialState: 
 
     constructor(jsonUrl: String, dataLoader: Function1<String, String>) : this(jsonUrl, emptyList<Experiment>(), dataLoader)
 
+    companion object {
+        private val logger = LoggerFactory.getLogger(FileBasedExperimentsRepository::class.java)
+        private val refreshRateInSeconds = 10
+    }
+
     init {
         secureRefresh()
         setUpRefresher()
@@ -27,7 +32,6 @@ class FileBasedExperimentsRepository(private val jsonUrl: String, initialState: 
         } catch (e: Exception) {
             logger.error("Error while loading experiments file.", e)
         }
-
     }
 
     private fun setUpRefresher() {
@@ -57,7 +61,6 @@ class FileBasedExperimentsRepository(private val jsonUrl: String, initialState: 
 
         val removedExperiments: Set<String> = currentExperimentsIds.minus(freshExperimentsIds)
 
-
         freshExperiments.forEach(Consumer<Experiment> { inMemoryRepository.save(it) })
         removedExperiments.forEach(Consumer<String> { inMemoryRepository.remove(it) })
 
@@ -70,11 +73,4 @@ class FileBasedExperimentsRepository(private val jsonUrl: String, initialState: 
 
     override val all: List<Experiment>
         get() = inMemoryRepository.all
-
-
-    companion object {
-        private val logger = LoggerFactory.getLogger(FileBasedExperimentsRepository::class.java)
-
-        private val refreshRateInSeconds = 10
-    }
 }

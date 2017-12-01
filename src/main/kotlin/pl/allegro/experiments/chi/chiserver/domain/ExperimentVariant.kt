@@ -6,11 +6,11 @@ import java.util.*
 
 class ExperimentVariant(val name: String, private val predicates: List<Predicate>) {
 
-    fun getPredicates(): List<Predicate> {
-        return Collections.unmodifiableList(predicates)
-    }
-
     init {
         Preconditions.checkArgument(!Strings.isNullOrEmpty(name), "empty name in ExperimentVariant")
+    }
+
+    fun getPredicates(): List<Predicate> {
+        return Collections.unmodifiableList(predicates)
     }
 }
