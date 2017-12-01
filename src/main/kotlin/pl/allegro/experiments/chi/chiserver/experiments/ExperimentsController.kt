@@ -10,12 +10,12 @@ import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
 import pl.allegro.experiments.chi.chiserver.infrastructure.JsonConverter
 import pl.allegro.experiments.chi.chiserver.logger
-import pl.allegro.experiments.chi.persistence.FileBasedExperimentsRepository
+import pl.allegro.experiments.chi.core.ExperimentsRepository
 import pl.allegro.tech.common.andamio.metrics.MeteredEndpoint
 
 @RestController
 @RequestMapping(value = "/api", produces = arrayOf(APPLICATION_JSON_VALUE, APPLICATION_JSON_UTF8_VALUE))
-class ExperimentsController(private val experimentsRepository: FileBasedExperimentsRepository,
+class ExperimentsController(private val experimentsRepository: ExperimentsRepository,
                             private val jsonConverter: JsonConverter) {
 
     companion object {
