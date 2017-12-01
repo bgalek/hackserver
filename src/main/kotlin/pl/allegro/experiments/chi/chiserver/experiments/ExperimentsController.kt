@@ -12,7 +12,6 @@ import pl.allegro.experiments.chi.chiserver.experiments.v1.JsonConverter
 import pl.allegro.experiments.chi.chiserver.infrastructure.FileBasedExperimentsRepository
 import pl.allegro.experiments.chi.chiserver.logger
 import pl.allegro.tech.common.andamio.metrics.MeteredEndpoint
-import java.util.*
 
 @RestController
 @RequestMapping(value = "/api", produces = arrayOf(APPLICATION_JSON_VALUE, APPLICATION_JSON_UTF8_VALUE))
@@ -34,9 +33,9 @@ class ExperimentsController(private val experimentsRepository: FileBasedExperime
     @GetMapping(path = arrayOf("/admin/experiments/{experimentId}"))
     fun getExperiment(@PathVariable experimentId: String) : ResponseEntity<String> {
         ExperimentsController.logger.info("Single experiment request received")
-        return Optional.ofNullable(experimentsRepository.getExperiment(experimentId))
-                .map(jsonConverter::toJSON)
-                .map { e -> ResponseEntity.ok(e) }
-                .orElse(ResponseEntity(HttpStatus.NOT_FOUND))
+        return experimentsRepository.getExperiment(experimentId)
+                ?.let { jsonConverter.toJSON(it) }
+                ?.let { ResponseEntity.ok(it) }
+                ?:(ResponseEntity(HttpStatus.NOT_FOUND))
     }
 }

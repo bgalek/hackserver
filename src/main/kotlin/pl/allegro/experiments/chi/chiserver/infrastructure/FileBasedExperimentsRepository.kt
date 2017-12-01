@@ -9,20 +9,18 @@ import java.util.concurrent.Executors
 import java.util.concurrent.TimeUnit
 import java.util.function.Consumer
 
-class FileBasedExperimentsRepository internal constructor(jsonUrl: String, initialState: List<Experiment>, private val dataLoader: Function1<String, String>) : ExperimentsRepository {
+class FileBasedExperimentsRepository(jsonUrl: String, initialState: List<Experiment>, private val dataLoader: Function1<String, String>) : ExperimentsRepository {
 
-    private val inMemoryRepository: InMemoryExperimentsRepository
-    private val jsonParser: JsonParser
+    private val inMemoryRepository: InMemoryExperimentsRepository = InMemoryExperimentsRepository(initialState)
+    private val jsonParser: JsonParser = JsonParser()
     private var jsonUrl: String? = null
 
     /**
      * @param jsonUrl nullable
      */
-    constructor(jsonUrl: String, dataLoader: Function1<String, String>) : this(jsonUrl, emptyList<Experiment>(), dataLoader) {}
+    constructor(jsonUrl: String, dataLoader: Function1<String, String>) : this(jsonUrl, emptyList<Experiment>(), dataLoader)
 
     init {
-        this.jsonParser = JsonParser()
-        this.inMemoryRepository = InMemoryExperimentsRepository(initialState)
         changeJsonUrl(jsonUrl)
 
         secureRefresh()
@@ -61,8 +59,7 @@ class FileBasedExperimentsRepository internal constructor(jsonUrl: String, initi
         try {
             freshExperiments = jsonParser.fromJSON(data).orEmpty()
         } catch (e: IllegalArgumentException) {
-            logger.error("refresh failed, malformed experiments definition in JSON : {}" +
-                    e.javaClass.name + " - " + e.message)
+            logger.error("refresh failed, malformed experiments definition in JSON : {}" + e.javaClass.name + " - " + e.message)
             return
         }
 

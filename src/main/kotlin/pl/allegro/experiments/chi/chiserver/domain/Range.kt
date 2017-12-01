@@ -7,7 +7,7 @@ import com.google.common.base.Preconditions
  * Represents range of numbers, right-open.
  * Left bound is inclusive, right bound is NOT inclusive.
  */
-abstract class Range<T : Number> internal constructor(val from: T, val to: T) {
+abstract class Range<T : Number>(val from: T, val to: T) {
 
     init {
         Preconditions.checkArgument(from.toDouble() >= 0, "Range.from < 0 in Range($from..$to)")

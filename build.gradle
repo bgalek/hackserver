@@ -8,7 +8,6 @@ buildscript {
     }
 
     repositories {
-        jcenter()
         maven { url 'https://artifactory.allegrogroup.com/artifactory/group-maven/' }
         mavenCentral()
     }
@@ -66,6 +65,7 @@ dependencies {
     compile 'com.github.slugify:slugify:2.1.12'
 
     testCompile group: 'com.github.tomakehurst', name: 'wiremock', version: '2.1.11'
+    testCompile group: 'org.spockframework', name: 'spock-core', version: '1.1-groovy-2.4'
 
     integration group: 'com.jayway.jsonpath', name: 'json-path', version: '2.4.0'
     integration group: 'org.spockframework', name: 'spock-spring', version: '1.1-groovy-2.4'

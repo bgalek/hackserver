@@ -37,9 +37,7 @@ class ExperimentTypeAdapter : JsonSerializer<Experiment>, JsonDeserializer<Exper
         val activeFrom = dateTimeFromString(json.get("activeFrom"))
         val activeTo = dateTimeFromString(json.get("activeTo"))
 
-        val variants = context.deserialize<List<ExperimentVariant>>(json.get("variants"), object : TypeToken<List<ExperimentVariant>>() {
-
-        }.type)
+        val variants = context.deserialize<List<ExperimentVariant>>(json.get("variants"), object : TypeToken<List<ExperimentVariant>>() {}.type)
         return Experiment(id, variants, activeFrom, activeTo)
     }
 
