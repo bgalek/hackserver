@@ -9,7 +9,7 @@ import java.util.concurrent.Executors
 import java.util.concurrent.TimeUnit
 import java.util.function.Consumer
 
-class FileBasedExperimentsRepository(private val jsonUrl: String, initialState: List<Experiment>, private val dataLoader: Function1<String, String>) : ExperimentsRepository {
+class FileBasedExperimentsRepository(private var jsonUrl: String, initialState: List<Experiment>, private val dataLoader: Function1<String, String>) : ExperimentsRepository {
 
     private val inMemoryRepository: InMemoryExperimentsRepository = InMemoryExperimentsRepository(initialState)
     private val jsonParser: JsonParser = JsonParser()
@@ -32,6 +32,10 @@ class FileBasedExperimentsRepository(private val jsonUrl: String, initialState: 
         } catch (e: Exception) {
             logger.error("Error while loading experiments file.", e)
         }
+    }
+
+    fun changeJsonUrl(jsonUrl: String) {
+        this.jsonUrl = jsonUrl
     }
 
     private fun setUpRefresher() {

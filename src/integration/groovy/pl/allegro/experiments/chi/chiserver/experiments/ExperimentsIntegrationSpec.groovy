@@ -39,7 +39,7 @@ class ExperimentsIntegrationSpec extends BaseIntegrationSpec {
 
         then:
         response.statusCode.value() == 200
-        response.body.size() == 5
+        response.body.size() == 6
 
         and:
         response.body.contains(internalExperiment())
@@ -75,7 +75,7 @@ class ExperimentsIntegrationSpec extends BaseIntegrationSpec {
 
         then:
         response.statusCode.value() == 200
-        response.body.size() == 5
+        response.body.size() == 6
 
         and:
         response.body.contains(internalExperiment())
@@ -97,7 +97,7 @@ class ExperimentsIntegrationSpec extends BaseIntegrationSpec {
 
         then:
         response.statusCode.value() == 200
-        response.body.size() == 5
+        response.body.size() == 6
     }
 
     void teachWireMockJson(String path, String jsonPath) {
@@ -152,7 +152,7 @@ class ExperimentsIntegrationSpec extends BaseIntegrationSpec {
     Map timeboundExperiment() {
         [ id:'timed_internal_exp',
           activeFrom: '2017-11-03T10:15:30+02:00',
-          activeTo: '2017-12-03T10:15:30+02:00',
+          activeTo: '2018-11-03T10:15:30+02:00',
           variants: [
                   [ name: 'internal', predicates: [[ type:'INTERNAL' ]] ]
           ]
