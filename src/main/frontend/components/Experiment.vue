@@ -38,7 +38,7 @@
                       v-model="pickedDate"
                       prepend-icon="event"
                     ></v-text-field>
-                    <v-date-picker v-model="pickedDate" no-title scrollable actions>
+                    <v-date-picker v-model="pickedDate" :allowed-dates="allowedDates" no-title scrollable actions>
                       <template slot-scope="{ save, cancel }">
                         <v-card-actions>
                           <v-spacer></v-spacer>
@@ -105,6 +105,14 @@
   import {mapState, mapActions} from 'vuex'
   import {variantColor} from '../utils/variantColor'
   import {cookieBakerHost} from '../utils/cookieBakerHost'
+  import experiment from "../store/experiment";
+
+  function dateToString (dt) {
+    let year = dt.getFullYear()
+    let month = dt.getMonth() + 1 < 10 ? `0${dt.getUTCMonth() + 1}` : dt.getUTCMonth() + 1
+    let day = dt.getDate() < 10 ? `0${dt.getUTCDate()}` : dt.getUTCDate()
+    return `${year}-${month}-${day}`
+  }
 
   export default {
     data () {
@@ -184,7 +192,19 @@
         }
       },
       experimentStatisticsError: state => state.experimentStatistics.error.experimentStatistics,
-      experimentStatisticsPending: state => state.experimentStatistics.pending.experimentStatistics
+      experimentStatisticsPending: state => state.experimentStatistics.pending.experimentStatistics,
+      allowedDates: state => {
+        let experiment = state.experiment.experiment
+        let result = []
+        let currentDate = experiment.activeFrom ? new Date(experiment.activeFrom) : new Date('2017-01-01')
+        let activeTo = experiment.activeTo ? new Date(experiment.activeTo) : new Date()
+
+        while (currentDate <= activeTo) {
+          result.push(dateToString(currentDate))
+          currentDate = new Date(currentDate.getTime() + 24 * 3600 * 1000)
+        }
+        return result
+      }
     }),
 
     methods: {
@@ -194,15 +214,8 @@
         return variantColor(i)
       },
 
-      dateToString (dt) {
-        let year = dt.getFullYear()
-        let month = dt.getMonth() + 1 < 10 ? `0${dt.getUTCMonth() + 1}` : dt.getUTCMonth() + 1
-        let day = dt.getDate() < 10 ? `0${dt.getUTCDate()}` : dt.getUTCDate()
-        return `${year}-${month}-${day}`
-      },
-
       yesterday () {
-        return this.dateToString(new Date((new Date()).setDate((new Date()).getDate() - 1)))
+        return dateToString(new Date((new Date()).getTime() - 24 * 3600 * 1000))
       },
 
       goToCookieBaker (experimentId, variantName) {
