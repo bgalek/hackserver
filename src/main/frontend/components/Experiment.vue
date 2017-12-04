@@ -105,7 +105,6 @@
   import {mapState, mapActions} from 'vuex'
   import {variantColor} from '../utils/variantColor'
   import {cookieBakerHost} from '../utils/cookieBakerHost'
-  import experiment from "../store/experiment";
 
   function dateToString (dt) {
     let year = dt.getFullYear()
