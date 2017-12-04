@@ -5,7 +5,13 @@ import com.google.common.base.Strings
 import com.google.common.collect.ImmutableList
 import java.time.ZonedDateTime
 
-class Experiment(val id: String, variants: List<ExperimentVariant>, val activeFrom: ZonedDateTime? = null, val activeTo: ZonedDateTime? = null) {
+class Experiment(val id: String,
+                 variants: List<ExperimentVariant>,
+                 val description: String?,
+                 val owner: String?,
+                 val reported: Boolean,
+                 val activeFrom: ZonedDateTime? = null,
+                 val activeTo: ZonedDateTime? = null) {
     val variants: List<ExperimentVariant>
 
     init {
@@ -17,5 +23,4 @@ class Experiment(val id: String, variants: List<ExperimentVariant>, val activeFr
     fun isActive(now: ZonedDateTime): Boolean {
         return (activeFrom == null || now.isAfter(activeFrom)) && (activeTo == null || now.isBefore(activeTo))
     }
-
 }

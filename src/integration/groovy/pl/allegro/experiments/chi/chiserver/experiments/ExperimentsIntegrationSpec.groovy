@@ -61,7 +61,10 @@ class ExperimentsIntegrationSpec extends BaseIntegrationSpec {
         response.statusCode.value() == 200
         response.body == [
             id: 'cmuid_regexp',
-            variants: [ [ name: 'v1', predicates: [ [ type: 'CMUID_REGEXP', regexp: '.*[0-3]$'] ] ] ]
+            variants: [ [ name: 'v1', predicates: [ [ type: 'CMUID_REGEXP', regexp: '.*[0-3]$'] ] ] ],
+            reported: true,
+            description: "Experiment description",
+            owner: "Experiment owner"
         ]
     }
 
@@ -120,7 +123,8 @@ class ExperimentsIntegrationSpec extends BaseIntegrationSpec {
         [ id: 'internal_exp',
           variants: [
                   [ name: 'internal', predicates: [[type: 'INTERNAL']] ]
-          ]
+          ],
+          reported: false
         ]
     }
 
@@ -128,7 +132,10 @@ class ExperimentsIntegrationSpec extends BaseIntegrationSpec {
         [ id: 'cmuid_regexp',
           variants: [
                   [ name: 'v1', predicates: [[type: 'CMUID_REGEXP', regexp: '.*[0-3]$']] ]
-          ]
+          ],
+          reported: true,
+          description: "Experiment description",
+          owner: "Experiment owner"
         ]
     }
 
@@ -137,7 +144,8 @@ class ExperimentsIntegrationSpec extends BaseIntegrationSpec {
           variants: [
                   [ name: 'v1', predicates: [[type: 'HASH', from: 0, to: 50]] ],
                   [ name: 'v2', predicates: [[type: 'HASH', from: 50, to: 100]] ]
-          ]
+          ],
+          reported: true
         ]
     }
 
@@ -145,7 +153,10 @@ class ExperimentsIntegrationSpec extends BaseIntegrationSpec {
         [id: 'another_one',
          variants: [
                  [ name: 'v1', predicates: [[type: 'HASH', from: 0, to: 50]] ]
-         ]
+         ],
+         reported: true,
+         description: "Another one",
+         owner: "Someone"
         ]
     }
 
@@ -155,7 +166,8 @@ class ExperimentsIntegrationSpec extends BaseIntegrationSpec {
           activeTo: '2018-11-03T10:15:30+02:00',
           variants: [
                   [ name: 'internal', predicates: [[ type:'INTERNAL' ]] ]
-          ]
+          ],
+          reported: true
         ]
     }
 }

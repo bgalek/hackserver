@@ -30,7 +30,10 @@
           }
         ]
       }
-    ]
+    ],
+    "reported": true,
+    "description": "Experiment description",
+    "owner": "Experiment owner"
   },
   {
     "id": "test_dev",
@@ -59,6 +62,8 @@
   },
   {
     "id": "another_one",
+    "description": "Another one",
+    "owner": "Someone",
     "variants": [
       {
         "name": "v1",
@@ -70,7 +75,8 @@
           }
         ]
       }
-    ]
+    ],
+    "reported": true
   },
   {
     "id": "timed_internal_exp",
@@ -98,6 +104,7 @@
           }
         ]
       }
-    ]
+    ],
+    "reported": false
   }
 ]

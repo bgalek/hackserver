@@ -24,6 +24,10 @@ class ExperimentTypeAdapter : JsonSerializer<Experiment>, JsonDeserializer<Exper
             element.addProperty("activeTo", src.activeTo.format(formatter))
         }
 
+
+        element.addProperty("description", src.description)
+        element.addProperty("owner", src.owner)
+        element.addProperty("reported", src.reported)
         element.add("variants", context.serialize(src.variants))
 
         return element
@@ -36,9 +40,11 @@ class ExperimentTypeAdapter : JsonSerializer<Experiment>, JsonDeserializer<Exper
         val id = json.get("id").asString
         val activeFrom = dateTimeFromString(json.get("activeFrom"))
         val activeTo = dateTimeFromString(json.get("activeTo"))
-
+        val description = optionalString(json.get("description"))
+        val owner = optionalString(json.get("owner"))
+        val reported = booleanWithDefaultTrue(json.get("reported"))
         val variants = context.deserialize<List<ExperimentVariant>>(json.get("variants"), object : TypeToken<List<ExperimentVariant>>() {}.type)
-        return Experiment(id, variants, activeFrom, activeTo)
+        return Experiment(id, variants, description, owner, reported, activeFrom, activeTo)
     }
 
     private fun dateTimeFromString(dateTime: JsonElement?): ZonedDateTime? {
@@ -46,4 +52,19 @@ class ExperimentTypeAdapter : JsonSerializer<Experiment>, JsonDeserializer<Exper
             null
         } else ZonedDateTime.parse(dateTime.asString, formatter)
     }
+
+    private fun optionalString(element: JsonElement?): String? {
+        if (element == null) {
+            return null;
+        }
+        return element.asString
+    }
+
+    private fun booleanWithDefaultTrue(element: JsonElement?) : Boolean {
+        if (element == null) {
+            return true;
+        }
+        return element.asBoolean
+    }
+
 }
