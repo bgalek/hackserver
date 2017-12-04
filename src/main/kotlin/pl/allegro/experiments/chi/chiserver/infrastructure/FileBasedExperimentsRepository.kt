@@ -1,12 +1,9 @@
 package pl.allegro.experiments.chi.chiserver.infrastructure
 
 import com.google.common.base.Strings
-import com.google.common.util.concurrent.ThreadFactoryBuilder
 import org.slf4j.LoggerFactory
 import pl.allegro.experiments.chi.chiserver.domain.Experiment
 import pl.allegro.experiments.chi.chiserver.domain.ExperimentsRepository
-import java.util.concurrent.Executors
-import java.util.concurrent.TimeUnit
 import java.util.function.Consumer
 
 class FileBasedExperimentsRepository(private var jsonUrl: String, initialState: List<Experiment>, private val dataLoader: Function1<String, String>) : ExperimentsRepository {
