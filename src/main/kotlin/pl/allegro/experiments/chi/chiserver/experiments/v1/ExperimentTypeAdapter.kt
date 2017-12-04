@@ -42,16 +42,8 @@ class ExperimentTypeAdapter : JsonSerializer<Experiment>, JsonDeserializer<Exper
         val activeTo = json.get("activeTo")?.let { ZonedDateTime.parse(it.asString, formatter) }
         val description = json.get("description")?.asString
         val owner = json.get("owner")?.asString
-        val reported = booleanWithDefaultTrue(json.get("reported"))
+        val reported = json.get("reported")?.asBoolean?:true
         val variants = context.deserialize<List<ExperimentVariant>>(json.get("variants"), object : TypeToken<List<ExperimentVariant>>() {}.type)
         return Experiment(id, variants, description, owner, reported, activeFrom, activeTo)
     }
-
-    private fun booleanWithDefaultTrue(element: JsonElement?) : Boolean {
-        if (element == null) {
-            return true;
-        }
-        return element.asBoolean
-    }
-
 }
