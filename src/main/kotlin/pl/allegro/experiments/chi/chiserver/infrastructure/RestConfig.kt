@@ -16,7 +16,8 @@ class RestConfig {
                 .withReadTimeoutMillis(300)
                 .withWriteTimeoutMillis(300)
                 .withConnectionTimeoutMillis(300)
-                .withKeepAliveDurationMillis(500) // TODO: needs LBaaS reference
+                // https://jira.allegrogroup.com/browse/SKYLAB-2072
+                .withKeepAliveDurationMillis(500)
                 .withRetryOnConnectionFailure(true)
                 .build()
         return factory.usingOkHttp().create(connectionConfig)
