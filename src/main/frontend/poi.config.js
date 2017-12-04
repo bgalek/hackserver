@@ -46,7 +46,6 @@ const appState = {
     // ---------B----C-A
     let experiment = this.getExperiment(experimentId)
     let durationMillis = experiment.durationDays * 24 * 3600 * 1000
-
     return experiment.durationDays * 24 * 3600 * 1000 - (experiment.toDate.getTime() - toDate.getTime())
   },
 
@@ -78,7 +77,7 @@ const appState = {
       value: this.state.metricValueForDevice[device],
       pValue: this.state.metricValueForDevice[device],
       diff: this.state.metricValueForDevice[device],
-      count: this.state.metricValueForDevice[device] * durationDays * 10000
+      count: Math.floor(this.state.metricValueForDevice[device] * durationDays * 10000)
     }
   },
 
@@ -94,7 +93,6 @@ const appState = {
     // todo handle missing experiments
     // todo handle missing devices
     let duration = this.getExperimentDurationMillis(experimentId, toDate)
-    console.log(toDate)
     return {
       id: experimentId,
       duration: duration,
@@ -111,7 +109,6 @@ module.exports = (options, req) => ({
     before(app) {
       app.get('/api/statistics/:experimentId', (req, res) => {
         let device = req.query.device ? req.query.device: 'all'
-        console.log(req.query.toDate)
         let toDate = req.query.toDate ? new Date(req.query.toDate): appState.getExperiment(req.params.experimentId).toDate
         res.end(JSON.stringify(appState.getStatistics(req.params.experimentId, device, toDate)))
       })
