@@ -18,12 +18,10 @@ class FileBasedExperimentsRepository(private var jsonUrl: String, initialState: 
 
     companion object {
         private val logger = LoggerFactory.getLogger(FileBasedExperimentsRepository::class.java)
-        private val refreshRateInSeconds = 10
     }
 
     init {
         secureRefresh()
-        setUpRefresher()
     }
 
     fun secureRefresh() {
@@ -36,13 +34,6 @@ class FileBasedExperimentsRepository(private var jsonUrl: String, initialState: 
 
     fun changeJsonUrl(jsonUrl: String) {
         this.jsonUrl = jsonUrl
-    }
-
-    private fun setUpRefresher() {
-        val namedThreadFactory = ThreadFactoryBuilder().setNameFormat("chi-core-refresher-%d").build()
-        val scheduledExecutorService = Executors.newSingleThreadScheduledExecutor(namedThreadFactory)
-
-        scheduledExecutorService.scheduleAtFixedRate({ this.secureRefresh() }, refreshRateInSeconds.toLong(), refreshRateInSeconds.toLong(), TimeUnit.SECONDS)
     }
 
     private fun refresh() {
