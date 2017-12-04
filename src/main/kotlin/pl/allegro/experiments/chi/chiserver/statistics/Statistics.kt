@@ -7,9 +7,9 @@ typealias ExperimentId = String
 typealias MetricName = String
 typealias VariantName = String
 
-data class Statistics(val value: Double, val diff: Double, val pValue: Double, val count: Int)
+data class VariantStatistics(val value: Double, val diff: Double, val pValue: Double, val count: Int)
 
-typealias Variants = Map<VariantName, Statistics>
+typealias Variants = Map<VariantName, VariantStatistics>
 
 data class ExperimentStatistics(
         val experimentId: ExperimentId,

@@ -1,11 +1,10 @@
-package pl.allegro.experiments.chi.chiserver.statistics.infrastructure
+package pl.allegro.experiments.chi.chiserver.infrastructure
 
 import com.github.salomonbrys.kotson.*
 import org.springframework.http.HttpEntity
 import org.springframework.http.HttpHeaders
 import org.springframework.http.MediaType
 import org.springframework.web.client.RestTemplate
-import pl.allegro.experiments.chi.chiserver.infrastructure.JsonConverter
 import pl.allegro.experiments.chi.chiserver.statistics.*
 import java.time.Duration
 import java.time.LocalDate
@@ -75,14 +74,14 @@ class DruidStatisticsRepository(val druidApiHost : String, val restTemplate: Res
         var duration = 0L
 
         val stats = jsonConverter.fromJson(result).asJsonArray
-        val metrics = stats.fold(mutableMapOf<MetricName, MutableMap<VariantName, Statistics>>(), { m, e ->
+        val metrics = stats.fold(mutableMapOf<MetricName, MutableMap<VariantName, VariantStatistics>>(), { m, e ->
             val metricName = e["event"]["metric"].string
             val variantName = e["event"]["experiment_variant"].string
             duration = maxOf(duration, e["event"]["sum_experiment_duration"].long)
 
-            val variants = m.getOrDefault(metricName, mutableMapOf<VariantName, Statistics>())
+            val variants = m.getOrDefault(metricName, mutableMapOf<VariantName, VariantStatistics>())
 
-            variants[variantName] = Statistics(
+            variants[variantName] = VariantStatistics(
                     value = e["event"]["sum_metric_value"].double,
                     diff = e["event"]["sum_metric_value_diff"].double,
                     pValue = e["event"]["sum_p_value"].double,
