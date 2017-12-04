@@ -126,7 +126,8 @@
           {text: 'Count'}
         ],
         metricNames: {
-          'txPerVisit': 'Transaction Per Visit',
+          'txVisit': 'Transaction Per Visit',
+          'tx_visit': 'Transaction Per Visit',
           'gmv': 'GMV'
         },
         device: device,
@@ -195,8 +196,8 @@
 
       dateToString (dt) {
         let year = dt.getFullYear()
-        let month = dt.getMonth()+1 < 10 ? `0${dt.getUTCMonth()+1}`: dt.getUTCMonth()+1
-        let day = dt.getDate() < 10 ? `0${dt.getUTCDate()}`: dt.getUTCDate()
+        let month = dt.getMonth() + 1 < 10 ? `0${dt.getUTCMonth() + 1}` : dt.getUTCMonth() + 1
+        let day = dt.getDate() < 10 ? `0${dt.getUTCDate()}` : dt.getUTCDate()
         return `${year}-${month}-${day}`
       },
 
@@ -220,7 +221,7 @@
         this.mountExperimentStatistics()
       },
 
-      filterByDate(date) {
+      filterByDate (date) {
         this.$router.push({
           name: 'experiment',
           params: {experimentId: this.$route.params.experimentId},
