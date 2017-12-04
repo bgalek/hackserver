@@ -38,26 +38,13 @@ class ExperimentTypeAdapter : JsonSerializer<Experiment>, JsonDeserializer<Exper
         val json = jsonElement.asJsonObject
 
         val id = json.get("id").asString
-        val activeFrom = dateTimeFromString(json.get("activeFrom"))
-        val activeTo = dateTimeFromString(json.get("activeTo"))
-        val description = optionalString(json.get("description"))
-        val owner = optionalString(json.get("owner"))
+        val activeFrom = json.get("activeFrom")?.let { ZonedDateTime.parse(it.asString, formatter) }
+        val activeTo = json.get("activeTo")?.let { ZonedDateTime.parse(it.asString, formatter) }
+        val description = json.get("description")?.asString
+        val owner = json.get("owner")?.asString
         val reported = booleanWithDefaultTrue(json.get("reported"))
         val variants = context.deserialize<List<ExperimentVariant>>(json.get("variants"), object : TypeToken<List<ExperimentVariant>>() {}.type)
         return Experiment(id, variants, description, owner, reported, activeFrom, activeTo)
-    }
-
-    private fun dateTimeFromString(dateTime: JsonElement?): ZonedDateTime? {
-        return if (dateTime == null) {
-            null
-        } else ZonedDateTime.parse(dateTime.asString, formatter)
-    }
-
-    private fun optionalString(element: JsonElement?): String? {
-        if (element == null) {
-            return null;
-        }
-        return element.asString
     }
 
     private fun booleanWithDefaultTrue(element: JsonElement?) : Boolean {
