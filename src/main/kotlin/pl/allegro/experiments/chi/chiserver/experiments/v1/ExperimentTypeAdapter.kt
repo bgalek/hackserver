@@ -10,7 +10,7 @@ import java.time.format.DateTimeFormatter
 
 class ExperimentTypeAdapter : JsonSerializer<Experiment>, JsonDeserializer<Experiment> {
 
-    internal val formatter = DateTimeFormatter.ISO_DATE_TIME
+    private val formatter = DateTimeFormatter.ISO_DATE_TIME
 
     override fun serialize(src: Experiment, typeOfSrc: Type, context: JsonSerializationContext): JsonElement {
         val element = JsonObject()
