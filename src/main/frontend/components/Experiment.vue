@@ -37,7 +37,6 @@
                       label="From day:"
                       v-model="pickedDate"
                       prepend-icon="event"
-                      readonly
                     ></v-text-field>
                     <v-date-picker v-model="pickedDate" no-title scrollable actions>
                       <template slot-scope="{ save, cancel }">
@@ -109,6 +108,15 @@
 
   export default {
     data () {
+      let device = 'all'
+      let pickedDate = this.yesterday()
+      if (this.$route.query.device) {
+        device = this.$route.query.device
+      }
+      if (this.$route.query.toDate) {
+        pickedDate = this.$route.query.toDate
+      }
+
       return {
         headers: [
           {text: 'Variant'},
@@ -121,7 +129,8 @@
           'txPerVisit': 'Transaction Per Visit',
           'gmv': 'GMV'
         },
-        device: 'all'
+        device: device,
+        pickedDate: pickedDate
       }
     },
 
@@ -167,16 +176,14 @@
         }
         return {
           id: stats.id,
-          durationDays: stats.duration / (3600 * 24 * 1000),
+          durationDays: Math.floor(stats.duration / (3600 * 24 * 1000)),
           device: stats.device,
           toDate: stats.toDate,
           metrics: mappedMetrics
         }
       },
       experimentStatisticsError: state => state.experimentStatistics.error.experimentStatistics,
-      experimentStatisticsPending: state => state.experimentStatistics.pending.experimentStatistics,
-      allowedDates: state => [new Date()],
-      pickedDate: state => state.experimentStatistics.experimentStatistics.toDate
+      experimentStatisticsPending: state => state.experimentStatistics.pending.experimentStatistics
     }),
 
     methods: {
@@ -184,6 +191,17 @@
 
       variantColor (i) {
         return variantColor(i)
+      },
+
+      dateToString (dt) {
+        let year = dt.getFullYear()
+        let month = dt.getMonth()+1 < 10 ? `0${dt.getUTCMonth()+1}`: dt.getUTCMonth()+1
+        let day = dt.getDate() < 10 ? `0${dt.getUTCDate()}`: dt.getUTCDate()
+        return `${year}-${month}-${day}`
+      },
+
+      yesterday () {
+        return this.dateToString(new Date((new Date()).setDate((new Date()).getDate() - 1)))
       },
 
       goToCookieBaker (experimentId, variantName) {
@@ -197,32 +215,43 @@
         this.$router.push({
           name: 'experiment',
           params: {experimentId: this.$route.params.experimentId},
-          query: {device: this.device}
+          query: {device: device, toDate: this.pickedDate}
+        })
+        this.mountExperimentStatistics()
+      },
+
+      filterByDate(date) {
+        this.$router.push({
+          name: 'experiment',
+          params: {experimentId: this.$route.params.experimentId},
+          query: {device: this.device, toDate: date}
         })
         this.mountExperimentStatistics()
       },
 
       mountExperimentStatistics () {
-        if (this.$route.query.device) {
-          this.getExperimentStatistics({
-            params: {
-              experimentId: this.$route.params.experimentId,
-              device: this.$route.query.device
-            }
-          })
-        } else {
-          this.getExperimentStatistics({
-            params: {
-              experimentId: this.$route.params.experimentId
-            }
-          })
+        let params = {
+          experimentId: this.$route.params.experimentId
         }
+        if (this.$route.query.device) {
+          params.device = this.$route.query.device
+        }
+        if (this.$route.query.toDate) {
+          params.toDate = this.$route.query.toDate
+        }
+        this.getExperimentStatistics({
+          params: params
+        })
       }
     },
 
     watch: {
-      device: function (val) {
-        this.filterByDevice(val)
+      device: function (device) {
+        this.filterByDevice(device)
+      },
+
+      pickedDate: function (date) {
+        this.filterByDate(date)
       }
     }
   }
