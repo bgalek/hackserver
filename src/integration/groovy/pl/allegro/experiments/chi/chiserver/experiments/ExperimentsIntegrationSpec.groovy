@@ -5,7 +5,7 @@ import org.junit.ClassRule
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.web.client.RestTemplate
 import pl.allegro.experiments.chi.chiserver.BaseIntegrationSpec
-import pl.allegro.experiments.chi.persistence.FileBasedExperimentsRepository
+import pl.allegro.experiments.chi.chiserver.infrastructure.FileBasedExperimentsRepository
 import spock.lang.Shared
 
 import static com.github.tomakehurst.wiremock.client.WireMock.aResponse
@@ -31,15 +31,15 @@ class ExperimentsIntegrationSpec extends BaseIntegrationSpec {
 
     def "should return list of experiments loaded from the backing HTTP resource"() {
         given:
-        fileBasedExperimentsRepository.changeJsonUrl(resourceUrl('/experiments'))
-        fileBasedExperimentsRepository.secureRefresh()
+        fileBasedExperimentsRepository.jsonUrl = resourceUrl('/experiments')
+        fileBasedExperimentsRepository.refresh()
 
         when:
         def response = restTemplate.getForEntity(localUrl('/api/experiments'), List)
 
         then:
         response.statusCode.value() == 200
-        response.body.size() == 5
+        response.body.size() == 6
 
         and:
         response.body.contains(internalExperiment())
@@ -51,8 +51,8 @@ class ExperimentsIntegrationSpec extends BaseIntegrationSpec {
 
     def "should return single of experiment loaded from the backing HTTP resource"() {
         given:
-        fileBasedExperimentsRepository.changeJsonUrl(resourceUrl('/experiments'))
-        fileBasedExperimentsRepository.secureRefresh()
+        fileBasedExperimentsRepository.jsonUrl = resourceUrl('/experiments')
+        fileBasedExperimentsRepository.refresh()
 
         when:
         def response = restTemplate.getForEntity(localUrl('/api/admin/experiments/cmuid_regexp'), Map)
@@ -61,21 +61,24 @@ class ExperimentsIntegrationSpec extends BaseIntegrationSpec {
         response.statusCode.value() == 200
         response.body == [
             id: 'cmuid_regexp',
-            variants: [ [ name: 'v1', predicates: [ [ type: 'CMUID_REGEXP', regexp: '.*[0-3]$'] ] ] ]
+            variants: [ [ name: 'v1', predicates: [ [ type: 'CMUID_REGEXP', regexp: '.*[0-3]$'] ] ] ],
+            reportingEnabled: true,
+            description: "Experiment description",
+            owner: "Experiment owner"
         ]
     }
 
     def "should return list of experiment in version 1"() {
         given:
-        fileBasedExperimentsRepository.changeJsonUrl(resourceUrl('/experiments'))
-        fileBasedExperimentsRepository.secureRefresh()
+        fileBasedExperimentsRepository.jsonUrl = resourceUrl('/experiments')
+        fileBasedExperimentsRepository.refresh()
 
         when:
         def response = restTemplate.getForEntity(localUrl('/api/experiments/v1'), List)
 
         then:
         response.statusCode.value() == 200
-        response.body.size() == 5
+        response.body.size() == 6
 
         and:
         response.body.contains(internalExperiment())
@@ -87,17 +90,17 @@ class ExperimentsIntegrationSpec extends BaseIntegrationSpec {
 
     def "should return last valid list when file is corrupted"() {
         given:
-        fileBasedExperimentsRepository.changeJsonUrl(resourceUrl('/experiments'))
-        fileBasedExperimentsRepository.secureRefresh()
-        fileBasedExperimentsRepository.changeJsonUrl(resourceUrl('/invalid-experiments'))
-        fileBasedExperimentsRepository.secureRefresh()
+        fileBasedExperimentsRepository.jsonUrl = resourceUrl('/experiments')
+        fileBasedExperimentsRepository.refresh()
+        fileBasedExperimentsRepository.jsonUrl = resourceUrl('/invalid-experiments')
+        fileBasedExperimentsRepository.refresh()
 
         when:
         def response = restTemplate.getForEntity(localUrl('/api/experiments'), List)
 
         then:
         response.statusCode.value() == 200
-        response.body.size() == 5
+        response.body.size() == 6
     }
 
     void teachWireMockJson(String path, String jsonPath) {
@@ -120,7 +123,8 @@ class ExperimentsIntegrationSpec extends BaseIntegrationSpec {
         [ id: 'internal_exp',
           variants: [
                   [ name: 'internal', predicates: [[type: 'INTERNAL']] ]
-          ]
+          ],
+          reportingEnabled: false
         ]
     }
 
@@ -128,7 +132,10 @@ class ExperimentsIntegrationSpec extends BaseIntegrationSpec {
         [ id: 'cmuid_regexp',
           variants: [
                   [ name: 'v1', predicates: [[type: 'CMUID_REGEXP', regexp: '.*[0-3]$']] ]
-          ]
+          ],
+          reportingEnabled: true,
+          description: "Experiment description",
+          owner: "Experiment owner"
         ]
     }
 
@@ -137,7 +144,8 @@ class ExperimentsIntegrationSpec extends BaseIntegrationSpec {
           variants: [
                   [ name: 'v1', predicates: [[type: 'HASH', from: 0, to: 50]] ],
                   [ name: 'v2', predicates: [[type: 'HASH', from: 50, to: 100]] ]
-          ]
+          ],
+          reportingEnabled: true
         ]
     }
 
@@ -145,17 +153,21 @@ class ExperimentsIntegrationSpec extends BaseIntegrationSpec {
         [id: 'another_one',
          variants: [
                  [ name: 'v1', predicates: [[type: 'HASH', from: 0, to: 50]] ]
-         ]
+         ],
+         reportingEnabled: true,
+         description: "Another one",
+         owner: "Someone"
         ]
     }
 
     Map timeboundExperiment() {
         [ id:'timed_internal_exp',
           activeFrom: '2017-11-03T10:15:30+02:00',
-          activeTo: '2017-12-03T10:15:30+02:00',
+          activeTo: '2018-11-03T10:15:30+02:00',
           variants: [
                   [ name: 'internal', predicates: [[ type:'INTERNAL' ]] ]
-          ]
+          ],
+          reportingEnabled: true
         ]
     }
 }

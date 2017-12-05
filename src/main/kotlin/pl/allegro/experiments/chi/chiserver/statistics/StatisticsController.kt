@@ -7,8 +7,8 @@ import org.springframework.http.MediaType.APPLICATION_JSON_UTF8_VALUE
 import org.springframework.http.MediaType.APPLICATION_JSON_VALUE
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
+import pl.allegro.experiments.chi.chiserver.domain.ExperimentsRepository
 import pl.allegro.experiments.chi.chiserver.infrastructure.JsonConverter
-import pl.allegro.experiments.chi.core.ExperimentsRepository
 import pl.allegro.tech.common.andamio.metrics.MeteredEndpoint
 import java.time.LocalDate
 import java.time.ZonedDateTime
@@ -16,8 +16,8 @@ import java.time.ZonedDateTime
 @RestController
 @RequestMapping(value = "/api", produces = arrayOf(APPLICATION_JSON_VALUE, APPLICATION_JSON_UTF8_VALUE))
 class StatisticsController(private val experimentsRepository: ExperimentsRepository,
-                 private val statisticsRepository: StatisticsRepository,
-                 private val jsonConverter: JsonConverter) {
+                           private val statisticsRepository: StatisticsRepository,
+                           private val jsonConverter: JsonConverter) {
 
     private val logger = LoggerFactory.getLogger(StatisticsController::class.java)
 
@@ -33,9 +33,9 @@ class StatisticsController(private val experimentsRepository: ExperimentsReposit
 
         logger.info("Experiment statistics request received")
         return experimentsRepository.getExperiment(experimentId)
-                .map { e -> statisticsRepository.experimentStatistics(e.id, toDate, device) }
-                .map { stats -> jsonConverter.toJson(stats) }
-                .map { json -> ResponseEntity.ok(json) }
-                .orElse(ResponseEntity(HttpStatus.NOT_FOUND))
+                ?.let { statisticsRepository.experimentStatistics(it.id, toDate, device) }
+                ?.let { jsonConverter.toJson(it) }
+                ?.let { ResponseEntity.ok(it) }
+                ?:(ResponseEntity(HttpStatus.NOT_FOUND))
     }
 }

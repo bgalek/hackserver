@@ -8,11 +8,11 @@ import com.google.gson.GsonBuilder
 import com.google.gson.JsonElement
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
+import pl.allegro.experiments.chi.chiserver.domain.*
 import pl.allegro.experiments.chi.chiserver.experiments.v1.*
 import pl.allegro.experiments.chi.chiserver.experiments.v1.ExperimentTypeAdapter
 import pl.allegro.experiments.chi.chiserver.experiments.v1.ExperimentVariantTypeAdapter
 import pl.allegro.experiments.chi.chiserver.statistics.ExperimentStatistics
-import pl.allegro.experiments.chi.domain.*
 import java.time.Duration
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
@@ -35,7 +35,7 @@ class JsonConverter {
                 .registerTypeAdapter(DeviceClassPredicate::class.java, DeviceClassPredicateSerializer())
                 .registerTypeAdapter(ExperimentVariant::class.java, ExperimentVariantTypeAdapter())
                 .registerTypeAdapter<LocalDate> {
-                    serialize { date -> DateTimeFormatter.ISO_LOCAL_DATE.format(date.src).toJson() }
+                    serialize { (src) -> DateTimeFormatter.ISO_LOCAL_DATE.format(src).toJson() }
                 }
                 .registerTypeAdapter<Duration> { serialize { d -> d.src.toMillis().toJson() } }
                 .create()
