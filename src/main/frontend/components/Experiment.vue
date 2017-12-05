@@ -4,23 +4,6 @@
       <v-flex offset-md1 md10 lg9 offset-xl2 xl8>
         <h1>Experiment: {{ $route.params.experimentId }}</h1>
 
-        <h2>Variants</h2>
-
-        <v-btn
-          v-for="(variant, i) in experiment.variants"
-          :color="variantColor(i)"
-          :key="variant.name"
-          @click="goToCookieBaker(experiment.id, variant.name)"
-          class="white--text"
-        >
-          {{ variant.name }}
-          <v-icon right>add</v-icon>
-        </v-btn>
-
-        <v-alert v-if="error" color="error" icon="warning" value="true">
-          Couldn't load experiment {{ $route.params.experimentId }} : {{ error.message }}
-        </v-alert>
-
         <p class="text-xs-center">
           <v-progress-circular v-if="pending" indeterminate :size="70" :width="7" color="purple"></v-progress-circular>
         </p>
@@ -95,6 +78,23 @@
         <p class="text-xs-center">
           <v-progress-circular v-if="experimentStatisticsPending" indeterminate :size="70" :width="7" color="purple"></v-progress-circular>
         </p>
+
+        <h2>Assignments</h2>
+
+        <v-btn
+          v-for="(variant, i) in experiment.variants"
+          :color="variantColor(i)"
+          :key="variant.name"
+          @click="goToCookieBaker(experiment.id, variant.name)"
+          class="white--text"
+        >
+          {{ variant.name }}
+          <v-icon right>edit</v-icon>
+        </v-btn>
+
+        <v-alert v-if="error" color="error" icon="warning" value="true">
+          Couldn't load experiment {{ $route.params.experimentId }} : {{ error.message }}
+        </v-alert>
 
       </v-flex>
     </v-layout>
