@@ -8,9 +8,9 @@ import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
+import pl.allegro.experiments.chi.chiserver.domain.ExperimentsRepository
 import pl.allegro.experiments.chi.chiserver.infrastructure.JsonConverter
 import pl.allegro.experiments.chi.chiserver.logger
-import pl.allegro.experiments.chi.core.ExperimentsRepository
 import pl.allegro.tech.common.andamio.metrics.MeteredEndpoint
 
 @RestController
@@ -34,8 +34,8 @@ class ExperimentsController(private val experimentsRepository: ExperimentsReposi
     fun getExperiment(@PathVariable experimentId: String) : ResponseEntity<String> {
         ExperimentsController.logger.info("Single experiment request received")
         return experimentsRepository.getExperiment(experimentId)
-                .map(jsonConverter::toJSON)
-                .map { e -> ResponseEntity.ok(e) }
-                .orElse(ResponseEntity(HttpStatus.NOT_FOUND))
+                ?.let { jsonConverter.toJSON(it) }
+                ?.let { ResponseEntity.ok(it) }
+                ?:(ResponseEntity(HttpStatus.NOT_FOUND))
     }
 }
