@@ -12,6 +12,7 @@
           <v-list-tile-content>
             <v-list-tile-title v-html="experiment.id"></v-list-tile-title>
             <v-list-tile-sub-title v-html="experiment.desc"></v-list-tile-sub-title>
+            <v-list-tile-sub-title v-html="experiment.activeFrom"></v-list-tile-sub-title>
           </v-list-tile-content>
           <v-list-tile-action>
             <v-badge>
@@ -62,7 +63,7 @@ export default {
       error: state => state.experiments.error.experiments,
       pending: state => state.experiments.pending.experiments
     }),
-    experiments(){
+    experiments () {
       return this.sortExperiments(this.$store.state.experiments.experiments)
     }
   },
@@ -111,18 +112,24 @@ export default {
     variantColor (i, variant) {
       if (this.isBase(variant)) {
         return variantColor(0)
-      }
-      else {
+      } else {
         return variantColor(i + 1)
       }
     },
 
-    sortExperiments(experiments) {
-      experiments.forEach(e => e.variants = this.sortVariants(e.variants))
+    sortExperiments (experiments) {
+      experiments.forEach(e => this.sortVariants(e.variants))
+
+      const sortingKey = function (experiment) {
+        return experiment.activeFrom ? experiment.activeFrom : '0' + experiment.id
+      }
+
+      experiments.sort((l, r) => sortingKey(r).localeCompare(sortingKey(l)))
+
       return experiments
     },
 
-    sortVariants(variants) {
+    sortVariants (variants) {
       variants.sort((l, r) => {
         if (this.isBase(l)) {
           return 1
@@ -132,10 +139,9 @@ export default {
         }
         return l.name.localeCompare(r.name)
       })
-      return variants
     },
 
-    isBase(variant) {
+    isBase (variant) {
       return variant.name === 'base'
     }
   }
