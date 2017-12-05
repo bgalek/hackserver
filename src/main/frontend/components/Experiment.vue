@@ -103,6 +103,7 @@
 
 <script>
   import {mapState, mapActions} from 'vuex'
+  import _ from 'lodash'
   import {variantColor} from '../utils/variantColor'
   import {cookieBakerHost} from '../utils/cookieBakerHost'
 
@@ -133,7 +134,6 @@
           {text: 'Count'}
         ],
         metricNames: {
-          'txVisit': 'Transaction Per Visit',
           'tx_visit': 'Transaction Per Visit',
           'gmv': 'GMV'
         },
@@ -154,34 +154,21 @@
       experimentStatistics: state => {
         let stats = state.experimentStatistics.experimentStatistics
         let mappedMetrics = {}
-        for (let metricName in stats.metrics) {
-          if (stats.metrics.hasOwnProperty(metricName)) {
-            let mappedVariants = []
-            for (let variantName in stats.metrics[metricName]) {
-              if (stats.metrics[metricName].hasOwnProperty(variantName)) {
-                let variant = stats.metrics[metricName][variantName]
-                if (variantName !== 'base') {
-                  mappedVariants.push({
-                    variant: variantName,
-                    value: variant.value,
-                    diff: variant.diff,
-                    count: variant.count,
-                    pValue: variant.pValue
-                  })
-                } else {
-                  mappedVariants.unshift({
-                    variant: variantName,
-                    value: variant.value,
-                    diff: variant.diff,
-                    count: variant.count,
-                    pValue: variant.pValue
-                  })
-                }
-              }
-            }
-            mappedMetrics[metricName] = mappedVariants
-          }
-        }
+
+        _.forIn(stats.metrics, (metricValuePerVariant, metricName) => {
+          let mappedVariants = []
+          _.forIn(metricValuePerVariant, (metricValue, variantName) => {
+            mappedVariants[(variantName !== 'base') ? 'push' : 'unshift']({
+              variant: variantName,
+              value: metricValue.value,
+              diff: metricValue.diff,
+              count: metricValue.count,
+              pValue: metricValue.pValue
+            })
+          })
+          mappedMetrics[metricName] = mappedVariants
+        })
+
         return {
           id: stats.id,
           durationDays: Math.floor(stats.duration / (3600 * 24 * 1000)),

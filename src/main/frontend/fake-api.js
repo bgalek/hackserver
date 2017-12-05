@@ -2,9 +2,9 @@ function yesterday() {
   return new Date((new Date()).setDate((new Date()).getDate() - 1))
 }
 
-module.exports = {
+const appState = {
   state: {
-    metrics: ['txVisit', 'gmv'],
+    metrics: ['tx_visit', 'gmv'],
     devices: ['desktop', 'smartphone', 'tablet', 'all'],
     metricValueForDevice: {
       'desktop': 0.1,
@@ -102,3 +102,5 @@ module.exports = {
     }
   }
 }
+
+module.exports.appState = appState

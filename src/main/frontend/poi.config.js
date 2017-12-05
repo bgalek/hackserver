@@ -1,5 +1,5 @@
-const {appState} = require('./fake-api')
-const FAKE_API = false
+const appState = require('./fake-api').appState
+const FAKE_API = true
 
 module.exports = (options, req) => ({
   devServer: {
