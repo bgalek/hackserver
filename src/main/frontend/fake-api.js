@@ -1,6 +1,4 @@
-function yesterday() {
-  return new Date((new Date()).setDate((new Date()).getDate() - 1))
-}
+const moment = require('moment')
 
 const appState = {
   state: {
@@ -17,19 +15,19 @@ const appState = {
         id: 'metrum',
         variants: [{name: 'metrum'}, {name: 'base'}],
         durationDays: 10,
-        toDate: yesterday()
+        toDate: moment().add(-1, 'day').toDate()
       },
       sgLite: {
         id: 'sgLite',
         variants: [{name: 'base'}, {name: 'lite'}, {name: 'superlite'}],
         durationDays: 5,
-        toDate: yesterday()
+        toDate: moment().add(-1, 'day').toDate()
       },
       header: {
         id: 'header',
         variants: [{name: 'base'}, {name: 'v1'}, {name: 'v2'}, {name: 'v3'}],
         durationDays: 1,
-        toDate: yesterday()
+        toDate: moment().add(-1, 'day').toDate()
       }
     }
   },

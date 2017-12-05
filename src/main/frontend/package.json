@@ -2,6 +2,7 @@
   "dependencies": {
     "axios": "^0.17.1",
     "lodash": "^4.17.4",
+    "moment": "^2.19.3",
     "v-clipboard": "^1.0.4",
     "vue": "^2.5.6",
     "vue-router": "^3.0.1",

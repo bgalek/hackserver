@@ -104,6 +104,7 @@
 <script>
   import {mapState, mapActions} from 'vuex'
   import _ from 'lodash'
+  import moment from 'moment'
   import {variantColor} from '../utils/variantColor'
   import {cookieBakerHost} from '../utils/cookieBakerHost'
 
@@ -201,7 +202,7 @@
       },
 
       yesterday () {
-        return dateToString(new Date((new Date()).getTime() - 24 * 3600 * 1000))
+        return dateToString(moment().add(-1, 'day').toDate())
       },
 
       goToCookieBaker (experimentId, variantName) {
