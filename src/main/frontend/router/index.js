@@ -9,7 +9,7 @@ Vue.use(Router)
 export default new Router({
   routes: [
     { path: '/experiments', component: Experiments },
-    { path: '/experiments/:experimentId', component: Experiment },
+    { path: '/experiments/:experimentId', component: Experiment, name: 'experiment' },
     { path: '/cookie_baker', component: CookieBaker },
     { path: '*', redirect: '/experiments' }
   ]
