@@ -4,10 +4,6 @@
       <v-flex offset-md1 md10 lg9 offset-xl2 xl8>
         <h1>Experiment: {{ $route.params.experimentId }}</h1>
 
-        <p class="text-xs-center">
-          <v-progress-circular v-if="pending" indeterminate :size="70" :width="7" color="purple"></v-progress-circular>
-        </p>
-
         <h2>Results <small>(Duration: {{experimentStatistics.durationDays}} days)</small></h2>
         <v-container fluid>
           <v-layout row wrap>
@@ -80,19 +76,7 @@
         </p>
 
         <h2>Assignments</h2>
-        <assignment-button
-          v-for="(variant, i) in experiment.variants"
-          :key="variant.name"
-          :color="variantColor(i)"
-          :variant-name="variant.name"
-          :experiment-id="experiment.id"
-        >
-
-        </assignment-button>
-
-        <v-alert v-if="error" color="error" icon="warning" value="true">
-          Couldn't load experiment {{ $route.params.experimentId }} : {{ error.message }}
-        </v-alert>
+        <assignment-panel :experiment-id="$route.params.experimentId"></assignment-panel>
 
       </v-flex>
     </v-layout>
@@ -102,17 +86,11 @@
 <script>
   import {mapState, mapActions} from 'vuex'
   import _ from 'lodash'
-  import moment from 'moment'
-  import {variantColor} from '../utils/variantColor'
-  import {cookieBakerHost} from '../utils/cookieBakerHost'
-  import AssignmentButton from './AssignmentButton.vue'
+  import Moment from 'moment'
+  import AssignmentPanel from './AssignmentPanel.vue'
+  import { extendMoment } from 'moment-range'
 
-  function dateToString (dt) {
-    let year = dt.getFullYear()
-    let month = dt.getMonth() + 1 < 10 ? `0${dt.getUTCMonth() + 1}` : dt.getUTCMonth() + 1
-    let day = dt.getDate() < 10 ? `0${dt.getUTCDate()}` : dt.getUTCDate()
-    return `${year}-${month}-${day}`
-  }
+  const moment = extendMoment(Moment)
 
   export default {
     data () {
@@ -138,19 +116,16 @@
           'gmv': 'GMV'
         },
         device: device,
-        pickedDate: pickedDate
+        pickedDate: pickedDate,
+        allowedDates: moment.range(new Date('2017-01-01'), new Date())
       }
     },
 
     mounted () {
-      this.getExperiment({params: {experimentId: this.$route.params.experimentId}})
       this.mountExperimentStatistics()
     },
 
     computed: mapState({
-      experiment: state => state.experiment.experiment,
-      error: state => state.experiment.error.experiment,
-      pending: state => state.experiment.pending.experiment,
       experimentStatistics: state => {
         let stats = state.experimentStatistics.experimentStatistics
         let mappedMetrics = {}
@@ -178,30 +153,14 @@
         }
       },
       experimentStatisticsError: state => state.experimentStatistics.error.experimentStatistics,
-      experimentStatisticsPending: state => state.experimentStatistics.pending.experimentStatistics,
-      allowedDates: state => {
-        let experiment = state.experiment.experiment
-        let result = []
-        let currentDate = experiment.activeFrom ? new Date(experiment.activeFrom) : new Date('2017-01-01')
-        let activeTo = experiment.activeTo ? new Date(experiment.activeTo) : new Date()
-
-        while (currentDate <= activeTo) {
-          result.push(dateToString(currentDate))
-          currentDate = new Date(currentDate.getTime() + 24 * 3600 * 1000)
-        }
-        return result
-      }
+      experimentStatisticsPending: state => state.experimentStatistics.pending.experimentStatistics
     }),
 
     methods: {
-      ...mapActions(['getExperiment', 'getExperimentStatistics']),
-
-      variantColor (i) {
-        return variantColor(i)
-      },
+      ...mapActions(['getExperimentStatistics']),
 
       yesterday () {
-        return dateToString(moment().add(-1, 'day').toDate())
+        return moment().add(-1, 'day').format('YYYY-MM-DD')
       },
 
       filterByDevice (device) {
@@ -239,17 +198,17 @@
     },
 
     watch: {
-      device: function (device) {
+      device (device) {
         this.filterByDevice(device)
       },
 
-      pickedDate: function (date) {
+      pickedDate (date) {
         this.filterByDate(date)
       }
     },
 
     components: {
-      AssignmentButton
+      AssignmentPanel
     }
   }
 </script>

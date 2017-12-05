@@ -10,6 +10,8 @@
 </template>
 
 <script>
+  import {cookieBakerHost} from '../utils/cookieBakerHost'
+
   export default {
     props: ['experimentId', 'variantName', 'color'],
 
