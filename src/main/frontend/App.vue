@@ -3,6 +3,8 @@
     <v-navigation-drawer
       fixed
       v-model="drawer"
+      disable-resize-watcher="True"
+      disable-route-watcher="True"
       app
     >
       <v-list>
