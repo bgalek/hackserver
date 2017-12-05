@@ -6,8 +6,8 @@ import org.springframework.beans.factory.annotation.Value
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.web.client.RestTemplate
-import pl.allegro.experiments.chi.chiserver.domain.ExperimentsRepository
 import pl.allegro.experiments.chi.chiserver.experiments.infrastructure.HttpContentLoader
+import pl.allegro.experiments.chi.chiserver.infrastructure.ExperimentRepositoryRefresher
 import pl.allegro.experiments.chi.chiserver.infrastructure.FileBasedExperimentsRepository
 
 @Configuration
@@ -17,7 +17,7 @@ class ExperimentsConfig {
     @Bean
     fun experimentsRepository(@Value("\${chi.experiments.file}") jsonUrl: String,
                               restTemplate: RestTemplate,
-                              metricRegistry: MetricRegistry): ExperimentsRepository {
+                              metricRegistry: MetricRegistry): FileBasedExperimentsRepository {
         val httpContentLoader = HttpContentLoader(restTemplate)
         val repo = FileBasedExperimentsRepository(jsonUrl, httpContentLoader::loadFromHttp)
 
@@ -25,5 +25,10 @@ class ExperimentsConfig {
         metricRegistry.register(EXPERIMENTS_COUNT_METRIC, gauge)
 
         return repo
+    }
+
+    @Bean
+    fun refresher(repository: FileBasedExperimentsRepository) : ExperimentRepositoryRefresher {
+        return ExperimentRepositoryRefresher(repository)
     }
 }
