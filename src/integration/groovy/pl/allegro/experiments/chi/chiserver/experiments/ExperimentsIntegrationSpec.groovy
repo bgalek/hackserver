@@ -32,7 +32,7 @@ class ExperimentsIntegrationSpec extends BaseIntegrationSpec {
     def "should return list of experiments loaded from the backing HTTP resource"() {
         given:
         fileBasedExperimentsRepository.jsonUrl = resourceUrl('/experiments')
-        fileBasedExperimentsRepository.secureRefresh()
+        fileBasedExperimentsRepository.refresh()
 
         when:
         def response = restTemplate.getForEntity(localUrl('/api/experiments'), List)
@@ -52,7 +52,7 @@ class ExperimentsIntegrationSpec extends BaseIntegrationSpec {
     def "should return single of experiment loaded from the backing HTTP resource"() {
         given:
         fileBasedExperimentsRepository.jsonUrl = resourceUrl('/experiments')
-        fileBasedExperimentsRepository.secureRefresh()
+        fileBasedExperimentsRepository.refresh()
 
         when:
         def response = restTemplate.getForEntity(localUrl('/api/admin/experiments/cmuid_regexp'), Map)
@@ -71,7 +71,7 @@ class ExperimentsIntegrationSpec extends BaseIntegrationSpec {
     def "should return list of experiment in version 1"() {
         given:
         fileBasedExperimentsRepository.jsonUrl = resourceUrl('/experiments')
-        fileBasedExperimentsRepository.secureRefresh()
+        fileBasedExperimentsRepository.refresh()
 
         when:
         def response = restTemplate.getForEntity(localUrl('/api/experiments/v1'), List)
@@ -91,9 +91,9 @@ class ExperimentsIntegrationSpec extends BaseIntegrationSpec {
     def "should return last valid list when file is corrupted"() {
         given:
         fileBasedExperimentsRepository.jsonUrl = resourceUrl('/experiments')
-        fileBasedExperimentsRepository.secureRefresh()
+        fileBasedExperimentsRepository.refresh()
         fileBasedExperimentsRepository.jsonUrl = resourceUrl('/invalid-experiments')
-        fileBasedExperimentsRepository.secureRefresh()
+        fileBasedExperimentsRepository.refresh()
 
         when:
         def response = restTemplate.getForEntity(localUrl('/api/experiments'), List)
