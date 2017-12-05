@@ -15,7 +15,7 @@
           </v-list-tile-content>
           <v-list-tile-action>
             <v-badge>
-              <v-chip small :color="variantColor(i)" v-for="(variant, i) in experiment.variants" :key="variant.name" :disabled="true">
+              <v-chip small :color="variantColor(i, variant)" v-for="(variant, i) in experiment.variants" :key="variant.name" :disabled="true">
               {{ variant.name }}
               </v-chip>
 
@@ -57,11 +57,15 @@ export default {
     }
   },
 
-  computed: mapState({
-    experiments: state => state.experiments.experiments,
-    error: state => state.experiments.error.experiments,
-    pending: state => state.experiments.pending.experiments
-  }),
+  computed: {
+    ...mapState({
+      error: state => state.experiments.error.experiments,
+      pending: state => state.experiments.pending.experiments
+    }),
+    experiments(){
+      return this.sortExperiments(this.$store.state.experiments.experiments)
+    }
+  },
 
   methods: {
     ...mapActions(['getExperiments']),
@@ -104,8 +108,35 @@ export default {
       })
     },
 
-    variantColor (i) {
-      return variantColor(i)
+    variantColor (i, variant) {
+      if (this.isBase(variant)) {
+        return variantColor(0)
+      }
+      else {
+        return variantColor(i + 1)
+      }
+    },
+
+    sortExperiments(experiments) {
+      experiments.forEach(e => e.variants = this.sortVariants(e.variants))
+      return experiments
+    },
+
+    sortVariants(variants) {
+      variants.sort((l, r) => {
+        if (this.isBase(l)) {
+          return 1
+        }
+        if (this.isBase(r)) {
+          return -1
+        }
+        return l.name.localeCompare(r.name)
+      })
+      return variants
+    },
+
+    isBase(variant) {
+      return variant.name === 'base'
     }
   }
 }
