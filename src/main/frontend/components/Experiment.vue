@@ -80,17 +80,15 @@
         </p>
 
         <h2>Assignments</h2>
-
-        <v-btn
+        <assignment-button
           v-for="(variant, i) in experiment.variants"
-          :color="variantColor(i)"
           :key="variant.name"
-          @click="goToCookieBaker(experiment.id, variant.name)"
-          class="white--text"
+          :color="variantColor(i)"
+          :variant-name="variant.name"
+          :experiment-id="experiment.id"
         >
-          {{ variant.name }}
-          <v-icon right>edit</v-icon>
-        </v-btn>
+
+        </assignment-button>
 
         <v-alert v-if="error" color="error" icon="warning" value="true">
           Couldn't load experiment {{ $route.params.experimentId }} : {{ error.message }}
@@ -107,6 +105,7 @@
   import moment from 'moment'
   import {variantColor} from '../utils/variantColor'
   import {cookieBakerHost} from '../utils/cookieBakerHost'
+  import AssignmentButton from './AssignmentButton.vue'
 
   function dateToString (dt) {
     let year = dt.getFullYear()
@@ -205,13 +204,6 @@
         return dateToString(moment().add(-1, 'day').toDate())
       },
 
-      goToCookieBaker (experimentId, variantName) {
-        let protocol = 'https://'
-        let host = cookieBakerHost()
-        let url = protocol + host + `/chi/cookie-baker.html?chi=${experimentId}!${variantName}&redirect=${protocol + host + '/'}`
-        window.open(url, '_blank')
-      },
-
       filterByDevice (device) {
         this.$router.push({
           name: 'experiment',
@@ -254,6 +246,10 @@
       pickedDate: function (date) {
         this.filterByDate(date)
       }
+    },
+
+    components: {
+      AssignmentButton
     }
   }
 </script>
