@@ -7,7 +7,7 @@ import pl.allegro.experiments.chi.chiserver.domain.ExperimentsRepository
 class InMemoryExperimentsRepository(experiments: Collection<Experiment>) : ExperimentsRepository {
     
     private val experiments: MutableMap<String, Experiment> = experiments
-            .associateBy( { it.id }, { it })
+            .associateBy { it.id }
             .toMutableMap()
 
     override fun getExperiment(id: String): Experiment? {

@@ -1,7 +1,7 @@
 package pl.allegro.experiments.chi.chiserver.infrastructure
 
 import pl.allegro.experiments.chi.chiserver.domain.InternalPredicate
-import pl.allegro.experiments.chi.chiserver.experiments.infrastructure.ClasspathContentLoader
+
 import pl.allegro.experiments.chi.chiserver.utils.ExperimentFactory
 import spock.lang.Specification
 
@@ -10,8 +10,7 @@ import java.time.ZonedDateTime
 
 class FileBasedExperimentsRepositorySpec extends Specification {
 
-    //TODO Is this desired behaviour?
-    def "should ignore all experiments file when experiment in old format exist"() {
+    def "should ignore all experiments in a file when some experiment is in wrong format"() {
         expect:
         newFileBasedExperimentsRepository('file-containing-some-legacy-experiments.json').all == []
     }

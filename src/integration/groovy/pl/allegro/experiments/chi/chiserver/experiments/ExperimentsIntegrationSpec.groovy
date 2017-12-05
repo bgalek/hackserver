@@ -31,7 +31,7 @@ class ExperimentsIntegrationSpec extends BaseIntegrationSpec {
 
     def "should return list of experiments loaded from the backing HTTP resource"() {
         given:
-        fileBasedExperimentsRepository.changeJsonUrl(resourceUrl('/experiments'))
+        fileBasedExperimentsRepository.jsonUrl = resourceUrl('/experiments')
         fileBasedExperimentsRepository.secureRefresh()
 
         when:
@@ -51,7 +51,7 @@ class ExperimentsIntegrationSpec extends BaseIntegrationSpec {
 
     def "should return single of experiment loaded from the backing HTTP resource"() {
         given:
-        fileBasedExperimentsRepository.changeJsonUrl(resourceUrl('/experiments'))
+        fileBasedExperimentsRepository.jsonUrl = resourceUrl('/experiments')
         fileBasedExperimentsRepository.secureRefresh()
 
         when:
@@ -62,7 +62,7 @@ class ExperimentsIntegrationSpec extends BaseIntegrationSpec {
         response.body == [
             id: 'cmuid_regexp',
             variants: [ [ name: 'v1', predicates: [ [ type: 'CMUID_REGEXP', regexp: '.*[0-3]$'] ] ] ],
-            reported: true,
+            reportingEnabled: true,
             description: "Experiment description",
             owner: "Experiment owner"
         ]
@@ -70,7 +70,7 @@ class ExperimentsIntegrationSpec extends BaseIntegrationSpec {
 
     def "should return list of experiment in version 1"() {
         given:
-        fileBasedExperimentsRepository.changeJsonUrl(resourceUrl('/experiments'))
+        fileBasedExperimentsRepository.jsonUrl = resourceUrl('/experiments')
         fileBasedExperimentsRepository.secureRefresh()
 
         when:
@@ -90,9 +90,9 @@ class ExperimentsIntegrationSpec extends BaseIntegrationSpec {
 
     def "should return last valid list when file is corrupted"() {
         given:
-        fileBasedExperimentsRepository.changeJsonUrl(resourceUrl('/experiments'))
+        fileBasedExperimentsRepository.jsonUrl = resourceUrl('/experiments')
         fileBasedExperimentsRepository.secureRefresh()
-        fileBasedExperimentsRepository.changeJsonUrl(resourceUrl('/invalid-experiments'))
+        fileBasedExperimentsRepository.jsonUrl = resourceUrl('/invalid-experiments')
         fileBasedExperimentsRepository.secureRefresh()
 
         when:
@@ -124,7 +124,7 @@ class ExperimentsIntegrationSpec extends BaseIntegrationSpec {
           variants: [
                   [ name: 'internal', predicates: [[type: 'INTERNAL']] ]
           ],
-          reported: false
+          reportingEnabled: false
         ]
     }
 
@@ -133,7 +133,7 @@ class ExperimentsIntegrationSpec extends BaseIntegrationSpec {
           variants: [
                   [ name: 'v1', predicates: [[type: 'CMUID_REGEXP', regexp: '.*[0-3]$']] ]
           ],
-          reported: true,
+          reportingEnabled: true,
           description: "Experiment description",
           owner: "Experiment owner"
         ]
@@ -145,7 +145,7 @@ class ExperimentsIntegrationSpec extends BaseIntegrationSpec {
                   [ name: 'v1', predicates: [[type: 'HASH', from: 0, to: 50]] ],
                   [ name: 'v2', predicates: [[type: 'HASH', from: 50, to: 100]] ]
           ],
-          reported: true
+          reportingEnabled: true
         ]
     }
 
@@ -154,7 +154,7 @@ class ExperimentsIntegrationSpec extends BaseIntegrationSpec {
          variants: [
                  [ name: 'v1', predicates: [[type: 'HASH', from: 0, to: 50]] ]
          ],
-         reported: true,
+         reportingEnabled: true,
          description: "Another one",
          owner: "Someone"
         ]
@@ -167,7 +167,7 @@ class ExperimentsIntegrationSpec extends BaseIntegrationSpec {
           variants: [
                   [ name: 'internal', predicates: [[ type:'INTERNAL' ]] ]
           ],
-          reported: true
+          reportingEnabled: true
         ]
     }
 }

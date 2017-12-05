@@ -8,7 +8,7 @@ class Experiment(val id: String,
                  val variants: List<ExperimentVariant>,
                  val description: String?,
                  val owner: String?,
-                 val reported: Boolean,
+                 val reportingEnabled: Boolean,
                  val activeFrom: ZonedDateTime? = null,
                  val activeTo: ZonedDateTime? = null) {
 

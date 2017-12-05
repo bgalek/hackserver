@@ -27,7 +27,7 @@ class ExperimentTypeAdapter : JsonSerializer<Experiment>, JsonDeserializer<Exper
 
         element.addProperty("description", src.description)
         element.addProperty("owner", src.owner)
-        element.addProperty("reported", src.reported)
+        element.addProperty("reportingEnabled", src.reportingEnabled)
         element.add("variants", context.serialize(src.variants))
 
         return element
@@ -42,7 +42,7 @@ class ExperimentTypeAdapter : JsonSerializer<Experiment>, JsonDeserializer<Exper
         val activeTo = json.get("activeTo")?.let { ZonedDateTime.parse(it.asString, formatter) }
         val description = json.get("description")?.asString
         val owner = json.get("owner")?.asString
-        val reported = json.get("reported")?.asBoolean?:true
+        val reported = json.get("reportingEnabled")?.asBoolean?:true
         val variants = context.deserialize<List<ExperimentVariant>>(json.get("variants"), object : TypeToken<List<ExperimentVariant>>() {}.type)
         return Experiment(id, variants, description, owner, reported, activeFrom, activeTo)
     }

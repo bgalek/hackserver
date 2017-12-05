@@ -31,7 +31,7 @@
         ]
       }
     ],
-    "reported": true,
+    "reportingEnabled": true,
     "description": "Experiment description",
     "owner": "Experiment owner"
   },
@@ -76,7 +76,7 @@
         ]
       }
     ],
-    "reported": true
+    "reportingEnabled": true
   },
   {
     "id": "timed_internal_exp",
@@ -105,6 +105,6 @@
         ]
       }
     ],
-    "reported": false
+    "reportingEnabled": false
   }
 ]

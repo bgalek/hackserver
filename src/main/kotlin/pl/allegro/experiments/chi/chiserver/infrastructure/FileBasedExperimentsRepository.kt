@@ -4,12 +4,13 @@ import com.google.common.base.Strings
 import org.slf4j.LoggerFactory
 import pl.allegro.experiments.chi.chiserver.domain.Experiment
 import pl.allegro.experiments.chi.chiserver.domain.ExperimentsRepository
-import java.util.function.Consumer
 
-class FileBasedExperimentsRepository(private var jsonUrl: String, initialState: List<Experiment>, private val dataLoader: Function1<String, String>) : ExperimentsRepository {
+class FileBasedExperimentsRepository(jsonUrl: String, initialState: List<Experiment>, private val dataLoader: Function1<String, String>) : ExperimentsRepository {
 
     private val inMemoryRepository: InMemoryExperimentsRepository = InMemoryExperimentsRepository(initialState)
     private val jsonParser: JsonParser = JsonParser()
+    private var jsonUrl: String = jsonUrl
+        set(jsonUrl) { field = jsonUrl }
 
     constructor(jsonUrl: String, dataLoader: Function1<String, String>) : this(jsonUrl, emptyList<Experiment>(), dataLoader)
 
@@ -29,10 +30,6 @@ class FileBasedExperimentsRepository(private var jsonUrl: String, initialState: 
         }
     }
 
-    fun changeJsonUrl(jsonUrl: String) {
-        this.jsonUrl = jsonUrl
-    }
-
     private fun refresh() {
         val data = dataLoader.invoke(jsonUrl)
         if (Strings.isNullOrEmpty(data)) {
@@ -48,13 +45,13 @@ class FileBasedExperimentsRepository(private var jsonUrl: String, initialState: 
             return
         }
 
-        val currentExperimentsIds: Set<String> = inMemoryRepository.experimentIds()
-        val freshExperimentsIds : Set<String> = freshExperiments.map { it -> it.id }.toSet()
+        val currentExperimentsIds = inMemoryRepository.experimentIds()
+        val freshExperimentsIds = freshExperiments.map { it.id }.toSet()
 
-        val removedExperiments: Set<String> = currentExperimentsIds.minus(freshExperimentsIds)
+        val removedExperiments = currentExperimentsIds.minus(freshExperimentsIds)
 
-        freshExperiments.forEach(Consumer<Experiment> { inMemoryRepository.save(it) })
-        removedExperiments.forEach(Consumer<String> { inMemoryRepository.remove(it) })
+        freshExperiments.forEach { inMemoryRepository.save(it) }
+        removedExperiments.forEach { inMemoryRepository.remove(it) }
 
         logger.debug("{} experiment(s) successfully loaded", freshExperiments.size)
     }
