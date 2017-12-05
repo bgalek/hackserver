@@ -5,33 +5,34 @@ import org.slf4j.LoggerFactory
 import pl.allegro.experiments.chi.chiserver.domain.Experiment
 import pl.allegro.experiments.chi.chiserver.domain.ExperimentsRepository
 
-class FileBasedExperimentsRepository(jsonUrl: String, initialState: List<Experiment>, private val dataLoader: Function1<String, String>) : ExperimentsRepository {
+class FileBasedExperimentsRepository(jsonUrl: String, initialState: List<Experiment>, private val dataLoader: (String) -> String) : ExperimentsRepository {
 
     private val inMemoryRepository: InMemoryExperimentsRepository = InMemoryExperimentsRepository(initialState)
     private val jsonParser: JsonParser = JsonParser()
     private var jsonUrl: String = jsonUrl
         set(jsonUrl) { field = jsonUrl }
 
-    constructor(jsonUrl: String, dataLoader: Function1<String, String>) : this(jsonUrl, emptyList<Experiment>(), dataLoader)
+    constructor(jsonUrl: String, dataLoader: (String) -> String) : this(jsonUrl, emptyList<Experiment>(), dataLoader)
 
     companion object {
         private val logger = LoggerFactory.getLogger(FileBasedExperimentsRepository::class.java)
     }
 
     init {
-        secureRefresh()
+        refresh()
     }
 
-    fun secureRefresh() {
+    override fun refresh() {
         try {
-            refresh()
+            rawRefresh()
         } catch (e: Exception) {
             logger.error("Error while loading experiments file.", e)
         }
     }
 
-    private fun refresh() {
+    private fun rawRefresh() {
         val data = dataLoader.invoke(jsonUrl)
+
         if (Strings.isNullOrEmpty(data)) {
             logger.error("refresh failed, dataLoader has returned empty String")
             return
@@ -41,7 +42,7 @@ class FileBasedExperimentsRepository(jsonUrl: String, initialState: List<Experim
         try {
             freshExperiments = jsonParser.fromJSON(data).orEmpty()
         } catch (e: IllegalArgumentException) {
-            logger.error("refresh failed, malformed experiments definition in JSON : {}" + e.javaClass.name + " - " + e.message)
+            logger.error("refresh failed, malformed experiments definition in JSON: " + e.message, e)
             return
         }
 

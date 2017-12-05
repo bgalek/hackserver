@@ -5,7 +5,7 @@ import pl.allegro.experiments.chi.chiserver.domain.Experiment
 import pl.allegro.experiments.chi.chiserver.domain.ExperimentsRepository
 
 class InMemoryExperimentsRepository(experiments: Collection<Experiment>) : ExperimentsRepository {
-    
+
     private val experiments: MutableMap<String, Experiment> = experiments
             .associateBy { it.id }
             .toMutableMap()
@@ -28,4 +28,8 @@ class InMemoryExperimentsRepository(experiments: Collection<Experiment>) : Exper
 
     override val all: List<Experiment>
         get() = ImmutableList.copyOf(experiments.values)
+
+    override fun refresh() {
+        // Nothing to do
+    }
 }

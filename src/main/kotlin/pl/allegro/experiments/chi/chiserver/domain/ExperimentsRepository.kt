@@ -4,4 +4,6 @@ interface ExperimentsRepository {
     fun getExperiment(id: String): Experiment?
 
     val all: List<Experiment>
+
+    fun refresh()
 }
