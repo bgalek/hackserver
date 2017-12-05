@@ -23,3 +23,6 @@ interactions:
 avro:
   schema:
     registry.location: http://schema-registry.allegrogroup.com
+
+druid:
+  apiHost: druidbroker-nga-prod.allegrogroup.com

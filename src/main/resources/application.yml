@@ -37,3 +37,6 @@ avro:
         schemaVersion: 1
         schemaLocation: /avro/pl.allegro.experiment.chi.chiserver.interactions.Interaction.avsc
         remoteSchemaSubject: pl.allegro.experiments.chi.interactions.Interaction
+
+druid:
+  apiHost: druidbroker-nga-test.allegrogroup.com
