@@ -1,5 +1,6 @@
 <template>
   <div>
+    <h2>Assignments</h2>
     <assignment-button
       v-if="experiment"
       v-for="(variant, i) in experiment.variants"
