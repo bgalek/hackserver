@@ -47,6 +47,14 @@ import { mapState, mapActions } from 'vuex'
 import axios from 'axios'
 import { variantColor } from '../utils/variantColor'
 
+// TODO move to endpoint
+const PIVOT_PROD = 'http://pivot-nga-prod.allegrogroup.com'
+const PIVOT_TEST = 'http://pivot-nga-test.allegrogroup.com'
+
+const PIVOT = (window.location.hostname === 'chi.allegrogroup.com') ? PIVOT_PROD : PIVOT_TEST
+console.log(window.location.hostname)
+console.log(PIVOT)
+
 export default {
   mounted () {
     this.getExperiments()
@@ -76,8 +84,8 @@ export default {
     },
 
     goToPivot (experimentId) {
-      axios.post('http://pivot-nga-prod.allegrogroup.com/mkurl', {
-        domain: 'http://pivot-nga-prod.allegrogroup.com',
+      axios.post(`${PIVOT}/mkurl`, {
+        domain: `${PIVOT}`,
         essence: {
           dataCube: '21b1',
           visualization: 'line-chart',
