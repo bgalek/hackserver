@@ -1,7 +1,7 @@
 import Vue from 'vue'
 import Router from 'vue-router'
 import Experiments from '../components/Experiments'
-import Experiment from '../components/Experiment'
+import Experiment from '../components/experiment/Experiment'
 import CookieBaker from '../components/CookieBaker'
 
 Vue.use(Router)
