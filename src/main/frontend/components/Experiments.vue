@@ -12,10 +12,11 @@
           <v-list-tile-content>
             <v-list-tile-title v-html="experiment.id"></v-list-tile-title>
             <v-list-tile-sub-title v-html="experiment.desc"></v-list-tile-sub-title>
+            <v-list-tile-sub-title v-html="experiment.activeFrom"></v-list-tile-sub-title>
           </v-list-tile-content>
           <v-list-tile-action>
             <v-badge>
-              <v-chip small :color="variantColor(i)" v-for="(variant, i) in experiment.variants" :key="variant.name" :disabled="true">
+              <v-chip small :color="variantColor(i, variant)" v-for="(variant, i) in experiment.variants" :key="variant.name" :disabled="true">
               {{ variant.name }}
               </v-chip>
 
@@ -46,6 +47,13 @@ import { mapState, mapActions } from 'vuex'
 import axios from 'axios'
 import { variantColor } from '../utils/variantColor'
 
+// TODO move to endpoint
+const PIVOT_PROD = 'http://pivot-nga-prod.allegrogroup.com'
+const PIVOT_TEST = 'http://pivot-nga-test.allegrogroup.com'
+
+const PIVOT = (window.location.hostname === 'chi.allegrogroup.com') ? PIVOT_PROD : PIVOT_TEST
+const CUBE = (window.location.hostname === 'chi.allegrogroup.com') ? '21b1' : 'ded9'
+
 export default {
   mounted () {
     this.getExperiments()
@@ -57,11 +65,15 @@ export default {
     }
   },
 
-  computed: mapState({
-    experiments: state => state.experiments.experiments,
-    error: state => state.experiments.error.experiments,
-    pending: state => state.experiments.pending.experiments
-  }),
+  computed: {
+    ...mapState({
+      error: state => state.experiments.error.experiments,
+      pending: state => state.experiments.pending.experiments
+    }),
+    experiments () {
+      return this.sortExperiments(this.$store.state.experiments.experiments)
+    }
+  },
 
   methods: {
     ...mapActions(['getExperiments']),
@@ -71,17 +83,34 @@ export default {
     },
 
     goToPivot (experimentId) {
-      axios.post('http://pivot-nga-prod.allegrogroup.com/mkurl', {
-        domain: 'http://pivot-nga-prod.allegrogroup.com',
+      axios.post(`${PIVOT}/mkurl`, {
+        domain: `${PIVOT}`,
         essence: {
-          dataCube: '21b1',
+          dataCube: CUBE,
           visualization: 'line-chart',
           filter: {
             clauses: [
-              { dimension: 'experiment_id',
+              {
+                dimension: 'experiment_id',
                 values: {
                   setType: 'STRING',
                   elements: [ experimentId ]
+                }
+              },
+              {
+                dimension: '__time',
+                dynamic: {
+                  op: 'timeRange',
+                  operand: {
+                    op: 'timeFloor',
+                    operand: {
+                      op: 'ref',
+                      name: 'n'
+                    },
+                    duration: 'P1D'
+                  },
+                  duration: 'P1D',
+                  'step': -7
                 }
               }
             ]
@@ -104,8 +133,40 @@ export default {
       })
     },
 
-    variantColor (i) {
-      return variantColor(i)
+    variantColor (i, variant) {
+      if (this.isBase(variant)) {
+        return variantColor(0)
+      } else {
+        return variantColor(i + 1)
+      }
+    },
+
+    sortExperiments (experiments) {
+      experiments.forEach(e => this.sortVariants(e.variants))
+
+      const sortingKey = function (experiment) {
+        return experiment.activeFrom ? experiment.activeFrom : '0' + experiment.id
+      }
+
+      experiments.sort((l, r) => sortingKey(r).localeCompare(sortingKey(l)))
+
+      return experiments
+    },
+
+    sortVariants (variants) {
+      variants.sort((l, r) => {
+        if (this.isBase(l)) {
+          return 1
+        }
+        if (this.isBase(r)) {
+          return -1
+        }
+        return l.name.localeCompare(r.name)
+      })
+    },
+
+    isBase (variant) {
+      return variant.name === 'base'
     }
   }
 }
