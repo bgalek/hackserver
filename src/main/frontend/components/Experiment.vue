@@ -4,11 +4,15 @@
       <v-flex offset-md1 md10 lg9 offset-xl2 xl8>
 
         <h1>Experiment: {{ $route.params.experimentId }}</h1>
+        <result-settings
+          :initialDevice="device"
+          :initialToDate="toDate"
+          v-on:settingsChanged="updateQueryParams"
+        ></result-settings>
         <results
           :experiment-id="$route.params.experimentId"
-          :initialDevice="initialDevice"
-          :initialStatsRangeEnd="initialStatsRangeEnd"
-          v-on:filtersChanged="updateQueryParams"
+          v-bind:device="device"
+          v-bind:toDate="toDate"
         ></results>
         <assignment-panel :experiment-id="$route.params.experimentId"></assignment-panel>
 
@@ -20,6 +24,7 @@
 <script>
   import AssignmentPanel from './AssignmentPanel.vue'
   import Results from './Results.vue'
+  import ResultSettings from './ResultSettings.vue'
   import moment from 'moment'
 
   export default {
@@ -28,22 +33,25 @@
       let toDateQueryParam = this.$route.query.toDate
       let defaultToDate = moment().add(-1, 'days').format('YYYY-MM-DD')
       return {
-        initialDevice: deviceQueryParam || 'all',
-        initialStatsRangeEnd: toDateQueryParam || defaultToDate
+        device: deviceQueryParam || 'all',
+        toDate: toDateQueryParam || defaultToDate,
       }
     },
 
     components: {
       AssignmentPanel,
-      Results
+      Results,
+      ResultSettings
     },
 
     methods: {
       updateQueryParams ({device, toDate}) {
+        this.device = device
+        this.toDate = toDate
         this.$router.push({
           name: 'experiment',
           params: {experimentId: this.$route.params.experimentId},
-          query: {device: device, toDate: toDate}
+          query: {device, toDate}
         })
       }
     }

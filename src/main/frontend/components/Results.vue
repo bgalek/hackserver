@@ -1,48 +1,6 @@
 <template>
   <div>
-    <h2>Results
-      <small>(Duration: {{experimentStatistics.durationDays}} days)</small>
-    </h2>
-    <v-container fluid>
-      <v-layout row wrap>
-        <v-flex xs2 md2>
-          <v-card flat>
-            <v-card-text>
-              <v-menu>
-                <v-text-field
-                  slot="activator"
-                  label="Results to day:"
-                  v-model="statsRangeEnd"
-                  prepend-icon="event"
-                ></v-text-field>
-                <v-date-picker v-model="statsRangeEnd" :allowed-dates="allowedDates" no-title scrollable actions>
-                  <template slot-scope="{ save, cancel }">
-                    <v-card-actions>
-                      <v-spacer></v-spacer>
-                      <v-btn flat color="primary" @click="cancel">Cancel</v-btn>
-                      <v-btn flat color="primary" @click="save">OK</v-btn>
-                    </v-card-actions>
-                  </template>
-                </v-date-picker>
-              </v-menu>
-            </v-card-text>
-          </v-card>
-        </v-flex>
-        <v-flex xs10 md10>
-          <v-card flat>
-            <v-card-text>
-              <v-radio-group v-model="device" row>
-                <v-radio flat id="all" label="All" value="all"></v-radio>
-                <v-radio flat id="desktop" label="Desktop" value="desktop"></v-radio>
-                <v-radio flat id="smartphone" label="Smartphone" value="smartphone"></v-radio>
-                <v-radio flat id="tablet" label="Tablet" value="tablet"></v-radio>
-              </v-radio-group>
-            </v-card-text>
-          </v-card>
-        </v-flex>
-      </v-layout>
-    </v-container>
-
+    <h2>Results for {{experimentStatistics.durationDays}} days</h2>
     <div v-if="experimentStatistics.metrics">
       <div v-for="(variantsMetricValue, metric) in experimentStatistics.metrics" :key="metric">
         <h3>{{metricNames[metric]}}</h3>
@@ -73,6 +31,7 @@
       <v-progress-circular v-if="experimentStatisticsPending" indeterminate :size="70" :width="7"
                            color="purple"></v-progress-circular>
     </p>
+
   </div>
 
 </template>
@@ -87,7 +46,7 @@
   const moment = extendMoment(Moment)
 
   export default {
-    props: ['experimentId', 'initialStatsRangeEnd', 'initialDevice'],
+    props: ['experimentId', 'toDate', 'device'],
 
     data () {
       return {
@@ -102,9 +61,7 @@
           'tx_visit': 'Transaction Per Visit',
           'gmv': 'GMV'
         },
-        allowedDates: moment.range(new Date('2017-01-01'), new Date()),
-        statsRangeEnd: this.initialStatsRangeEnd,
-        device: this.initialDevice
+        allowedDates: moment.range(new Date('2017-01-01'), new Date())
       }
     },
 
@@ -146,16 +103,12 @@
     methods: {
       ...mapActions(['getExperimentStatistics']),
 
-      yesterday () {
-        return moment().add(-1, 'day').format('YYYY-MM-DD')
-      },
-
-      mountExperimentStatistics (statsRangeEnd, device) {
+      mountExperimentStatistics (toDate, device) {
         this.getExperimentStatistics({
           params: {
             experimentId: this.experimentId,
-            device: device,
-            toDate: statsRangeEnd
+            device,
+            toDate
           }
         })
       }
@@ -163,19 +116,11 @@
 
     watch: {
       device (device) {
-        this.mountExperimentStatistics(this.statsRangeEnd, device)
-        this.$emit('filtersChanged', {
-          device: device,
-          toDate: this.statsRangeEnd
-        })
+        this.mountExperimentStatistics(this.toDate, device)
       },
 
-      statsRangeEnd (date) {
+      toDate (date) {
         this.mountExperimentStatistics(date, this.device)
-        this.$emit('filtersChanged', {
-          device: this.device,
-          toDate: date
-        })
       }
     }
   }
