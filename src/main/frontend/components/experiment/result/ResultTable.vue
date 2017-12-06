@@ -60,7 +60,7 @@
     },
 
     mounted () {
-      this.mountExperimentStatistics()
+      this.mountExperimentStatistics(this.toDate, this.device)
     },
 
     computed: mapState({
