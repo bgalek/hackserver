@@ -41,7 +41,7 @@
   import _ from 'lodash'
 
   export default {
-    props: ['experimentId', 'toDate', 'device'],
+    props: ['experiment', 'toDate', 'device'],
 
     data () {
       return {
@@ -98,9 +98,13 @@
       ...mapActions(['getExperimentStatistics']),
 
       mountExperimentStatistics (toDate, device) {
+
+        console.log('mountExperimentStatistics this', this);
+        console.log('mountExperimentStatistics this.experiment', this.experiment);
+
         this.getExperimentStatistics({
           params: {
-            experimentId: this.experimentId,
+            experimentId: this.experiment && this.experiment.id,
             device,
             toDate
           }

@@ -10,14 +10,6 @@
       :experiment-id="experiment.id"
     >
     </assignment-button>
-
-    <v-alert v-if="error" color="error" icon="warning" value="true">
-      Couldn't load experiment {{ $route.params.experimentId }} : {{ error.message }}
-    </v-alert>
-
-    <p class="text-xs-center">
-      <v-progress-circular v-if="pending" indeterminate :size="70" :width="7" color="purple"></v-progress-circular>
-    </p>
   </div>
 
 
@@ -29,25 +21,13 @@
   import AssignmentButton from './AssignmentButton.vue'
 
   export default {
-    props: ['experimentId'],
+    props: ['experiment'],
 
     components: {
       AssignmentButton
     },
 
-    computed: mapState({
-      experiment: state => state.experiment.experiment,
-      error: state => state.experiment.error.experiment,
-      pending: state => state.experiment.pending.experiment
-    }),
-
-    mounted () {
-      this.getExperiment({params: {experimentId: this.experimentId}})
-    },
-
     methods: {
-      ...mapActions(['getExperiment']),
-
       variantColor (i) {
         return variantColor(i)
       }

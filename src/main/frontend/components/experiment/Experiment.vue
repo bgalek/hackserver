@@ -5,20 +5,25 @@
 
         <h1>Experiment: {{ $route.params.experimentId }}</h1>
 
-        <experiment-details :experiment="experiment">
-        </experiment-details>
+        <experiment-details
+          :experiment="experiment"
+        ></experiment-details>
 
         <result-table-settings
           :initialDevice="device"
           :initialToDate="toDate"
           v-on:settingsChanged="updateQueryParams"
         ></result-table-settings>
+
         <result-table
-          :experiment-id="$route.params.experimentId"
+          :experiment="experiment"
           v-bind:device="device"
           v-bind:toDate="toDate"
         ></result-table>
-        <assignment-panel :experiment-id="$route.params.experimentId"></assignment-panel>
+
+        <assignment-panel
+          :experiment="experiment"
+        ></assignment-panel>
 
       </v-flex>
     </v-layout>
