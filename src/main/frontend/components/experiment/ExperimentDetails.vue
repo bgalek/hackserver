@@ -8,8 +8,12 @@
         {{ experiment.owner }}
         <div v-if="experiment.activeFrom || experiment.activeTo">
           <h3>Dates</h3>
-          Active from: {{ experiment.activeFrom}}
-          Active to: {{ experiment.activeTo}}
+          <v-layout row>
+            <v-flex xs2>Active from: </v-flex><v-flex xs9>{{ experiment.fromDateString() }}</v-flex>
+          </v-layout>
+          <v-layout row>
+            <v-flex xs2>Active to: </v-flex><v-flex xs9ą>{{ experiment.toDateString() }}</v-flex>
+          </v-layout>
 
         </div>
       </v-card-text>
