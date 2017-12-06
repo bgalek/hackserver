@@ -39,11 +39,6 @@
 <script>
   import {mapState, mapActions} from 'vuex'
   import _ from 'lodash'
-  import Moment from 'moment'
-  import Results from './Result.vue'
-  import { extendMoment } from 'moment-range'
-
-  const moment = extendMoment(Moment)
 
   export default {
     props: ['experimentId', 'toDate', 'device'],
@@ -60,8 +55,7 @@
         metricNames: {
           'tx_visit': 'Transaction Per Visit',
           'gmv': 'GMV'
-        },
-        allowedDates: moment.range(new Date('2017-01-01'), new Date())
+        }
       }
     },
 

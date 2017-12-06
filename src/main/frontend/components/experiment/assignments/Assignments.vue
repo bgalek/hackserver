@@ -38,7 +38,7 @@
     computed: mapState({
       experiment: state => state.experiment.experiment,
       error: state => state.experiment.error.experiment,
-      pending: state => state.experiment.pending.experiment,
+      pending: state => state.experiment.pending.experiment
     }),
 
     mounted () {

@@ -9,12 +9,12 @@
           :initialToDate="toDate"
           v-on:settingsChanged="updateQueryParams"
         ></result-settings>
-        <results
+        <result
           :experiment-id="$route.params.experimentId"
           v-bind:device="device"
           v-bind:toDate="toDate"
-        ></results>
-        <assignment-panel :experiment-id="$route.params.experimentId"></assignment-panel>
+        ></result>
+        <assignments :experiment-id="$route.params.experimentId"></assignments>
 
       </v-flex>
     </v-layout>
@@ -22,8 +22,8 @@
 </template>
 
 <script>
-  import AssignmentPanel from './assignments/Assignments.vue'
-  import Results from './result/Result.vue'
+  import Assignments from './assignments/Assignments.vue'
+  import Result from './result/Result.vue'
   import ResultSettings from './result/ResultSettings.vue'
   import moment from 'moment'
 
@@ -34,13 +34,13 @@
       let defaultToDate = moment().add(-1, 'days').format('YYYY-MM-DD')
       return {
         device: deviceQueryParam || 'all',
-        toDate: toDateQueryParam || defaultToDate,
+        toDate: toDateQueryParam || defaultToDate
       }
     },
 
     components: {
-      AssignmentPanel,
-      Results,
+      Assignments,
+      Result,
       ResultSettings
     },
 
