@@ -83,10 +83,27 @@ export default {
           visualization: 'line-chart',
           filter: {
             clauses: [
-              { dimension: 'experiment_id',
+              {
+                dimension: 'experiment_id',
                 values: {
                   setType: 'STRING',
                   elements: [ experimentId ]
+                }
+              },
+              {
+                dimension: "__time",
+                dynamic: {
+                  op: "timeRange",
+                  operand: {
+                    op: "timeFloor",
+                    operand: {
+                      op: "ref",
+                      name: "n"
+                    },
+                    duration: "P1D",
+                  },
+                  duration: "P1D",
+                  "step": -7
                 }
               }
             ]
