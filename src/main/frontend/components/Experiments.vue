@@ -52,8 +52,11 @@ const PIVOT_PROD = 'http://pivot-nga-prod.allegrogroup.com'
 const PIVOT_TEST = 'http://pivot-nga-test.allegrogroup.com'
 
 const PIVOT = (window.location.hostname === 'chi.allegrogroup.com') ? PIVOT_PROD : PIVOT_TEST
+const CUBE = (window.location.hostname === 'chi.allegrogroup.com') ? '21b1' : 'ded9'
+
 console.log(window.location.hostname)
 console.log(PIVOT)
+console.log(CUBE)
 
 export default {
   mounted () {
@@ -87,7 +90,7 @@ export default {
       axios.post(`${PIVOT}/mkurl`, {
         domain: `${PIVOT}`,
         essence: {
-          dataCube: '21b1',
+          dataCube: CUBE,
           visualization: 'line-chart',
           filter: {
             clauses: [
