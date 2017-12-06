@@ -1,7 +1,7 @@
 <template>
   <v-container fluid>
     <v-layout row wrap>
-      <v-flex xs2 md2>
+      <v-flex xs4 sm3 md3 lg3 xl3>
         <v-card flat>
           <v-card-text>
             <v-menu>
@@ -25,7 +25,7 @@
         </v-card>
       </v-flex>
 
-      <v-flex xs10 md10>
+      <v-flex xs8 sm9 md9 lg9 xl9>
         <v-card flat>
           <v-card-text>
             <v-radio-group v-model="device" row>
