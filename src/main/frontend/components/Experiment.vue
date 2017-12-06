@@ -8,7 +8,11 @@
           <v-progress-circular v-if="pending" indeterminate :size="70" :width="7" color="purple"></v-progress-circular>
         </p>
 
-        <h2>Results <small>(Duration: {{experimentStatistics.durationDays}} days)</small></h2>
+        <experiment-datails
+          :experiment="experiment" >
+        </experiment-datails>
+
+        <h2>Results <small>(Duration: {{ experimentStatistics.durationDays }} days)</small></h2>
         <v-container fluid>
           <v-layout row wrap>
             <v-flex xs2 md2>
@@ -107,6 +111,7 @@
   import moment from 'moment'
   import {variantColor} from '../utils/variantColor'
   import {cookieBakerHost} from '../utils/cookieBakerHost'
+  import ExperimentDetails from './ExperimentDetails.vue'
 
   function dateToString (dt) {
     let year = dt.getFullYear()
@@ -193,6 +198,10 @@
         return result
       }
     }),
+
+    components: {
+      ExperimentDetails
+    },
 
     methods: {
       ...mapActions(['getExperiment', 'getExperimentStatistics']),

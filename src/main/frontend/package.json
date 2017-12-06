@@ -1,6 +1,7 @@
 {
   "dependencies": {
     "axios": "^0.17.1",
+    "immutable": "^3.7.5",
     "lodash": "^4.17.4",
     "moment": "^2.19.3",
     "v-clipboard": "^1.0.4",

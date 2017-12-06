@@ -24,7 +24,6 @@ class ExperimentTypeAdapter : JsonSerializer<Experiment>, JsonDeserializer<Exper
             element.addProperty("activeTo", src.activeTo.format(formatter))
         }
 
-
         element.addProperty("description", src.description)
         element.addProperty("owner", src.owner)
         element.addProperty("reportingEnabled", src.reportingEnabled)
