@@ -25,8 +25,8 @@
 
 <script>
   import {mapState, mapActions} from 'vuex'
-  import {variantColor} from '../utils/variantColor'
-  import AssignmentButton from './AssignmentButton.vue'
+  import {variantColor} from '../../../utils/variantColor'
+  import AssignmentButton from './Assignment.vue'
 
   export default {
     props: ['experimentId'],

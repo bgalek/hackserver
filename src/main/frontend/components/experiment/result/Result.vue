@@ -40,7 +40,7 @@
   import {mapState, mapActions} from 'vuex'
   import _ from 'lodash'
   import Moment from 'moment'
-  import Results from './Results.vue'
+  import Results from './Result.vue'
   import { extendMoment } from 'moment-range'
 
   const moment = extendMoment(Moment)

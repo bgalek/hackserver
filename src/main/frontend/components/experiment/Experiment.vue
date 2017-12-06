@@ -22,9 +22,9 @@
 </template>
 
 <script>
-  import AssignmentPanel from './AssignmentPanel.vue'
-  import Results from './Results.vue'
-  import ResultSettings from './ResultSettings.vue'
+  import AssignmentPanel from './assignments/Assignments.vue'
+  import Results from './result/Result.vue'
+  import ResultSettings from './result/ResultSettings.vue'
   import moment from 'moment'
 
   export default {
