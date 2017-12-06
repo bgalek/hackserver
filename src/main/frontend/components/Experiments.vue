@@ -54,10 +54,6 @@ const PIVOT_TEST = 'http://pivot-nga-test.allegrogroup.com'
 const PIVOT = (window.location.hostname === 'chi.allegrogroup.com') ? PIVOT_PROD : PIVOT_TEST
 const CUBE = (window.location.hostname === 'chi.allegrogroup.com') ? '21b1' : 'ded9'
 
-console.log(window.location.hostname)
-console.log(PIVOT)
-console.log(CUBE)
-
 export default {
   mounted () {
     this.getExperiments()
