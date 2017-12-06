@@ -91,19 +91,19 @@ export default {
                 }
               },
               {
-                dimension: "__time",
+                dimension: '__time',
                 dynamic: {
-                  op: "timeRange",
+                  op: 'timeRange',
                   operand: {
-                    op: "timeFloor",
+                    op: 'timeFloor',
                     operand: {
-                      op: "ref",
-                      name: "n"
+                      op: 'ref',
+                      name: 'n'
                     },
-                    duration: "P1D",
+                    duration: 'P1D'
                   },
-                  duration: "P1D",
-                  "step": -7
+                  duration: 'P1D',
+                  'step': -7
                 }
               }
             ]
