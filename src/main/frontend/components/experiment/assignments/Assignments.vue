@@ -1,7 +1,7 @@
 <template>
   <div>
     <h2>Assignments</h2>
-    <assignment-button
+    <assignment
       v-if="experiment"
       v-for="(variant, i) in experiment.variants"
       :key="variant.name"
@@ -9,7 +9,7 @@
       :variant-name="variant.name"
       :experiment-id="experiment.id"
     >
-    </assignment-button>
+    </assignment>
 
     <v-alert v-if="error" color="error" icon="warning" value="true">
       Couldn't load experiment {{ $route.params.experimentId }} : {{ error.message }}
@@ -26,13 +26,13 @@
 <script>
   import {mapState, mapActions} from 'vuex'
   import {variantColor} from '../../../utils/variantColor'
-  import AssignmentButton from './Assignment.vue'
+  import Assignment from './Assignment.vue'
 
   export default {
     props: ['experimentId'],
 
     components: {
-      AssignmentButton
+      Assignment
     },
 
     computed: mapState({
