@@ -13,9 +13,9 @@
         >
           <template slot="items" slot-scope="props">
             <td>{{ props.item.variant }}</td>
-            <td class="text-xs-right">{{ props.item.value }}</td>
-            <td class="text-xs-right">{{ props.item.diff }}</td>
-            <td class="text-xs-right">{{ props.item.pValue }}</td>
+            <td class="text-xs-right">{{ props.item.value.toFixed(4) }}</td>
+            <td class="text-xs-right">{{ props.item.diff.toFixed(4) }}</td>
+            <td class="text-xs-right">{{ props.item.pValue.toFixed(4) }}</td>
             <td class="text-xs-right">{{ props.item.count }}</td>
           </template>
         </v-data-table>
