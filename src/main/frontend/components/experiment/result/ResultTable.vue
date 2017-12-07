@@ -46,11 +46,11 @@
     data () {
       return {
         headers: [
-          {text: 'Variant'},
-          {text: 'Value'},
-          {text: 'Diff'},
-          {text: 'P Value'},
-          {text: 'Count'}
+          {text: 'Variant', sortable: false},
+          {text: 'Value', sortable: false},
+          {text: 'Diff', sortable: false},
+          {text: 'P Value', sortable: false},
+          {text: 'Count', sortable: false}
         ],
         metricNames: {
           'tx_visit': 'Transaction Per Visit',
