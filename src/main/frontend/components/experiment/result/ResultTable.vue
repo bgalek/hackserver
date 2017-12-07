@@ -98,13 +98,9 @@
       ...mapActions(['getExperimentStatistics']),
 
       mountExperimentStatistics (toDate, device) {
-
-        console.log('mountExperimentStatistics this', this);
-        console.log('mountExperimentStatistics this.experiment', this.experiment);
-
         this.getExperimentStatistics({
           params: {
-            experimentId: this.experiment && this.experiment.id,
+            experimentId: this.$route.params.experimentId,
             device,
             toDate
           }

@@ -1,13 +1,13 @@
-import { Record } from 'immutable';
+import { Record } from 'immutable'
 
 const ExperimentVariantRecord = Record({
   name: ''
-});
+})
 
 export default class ExperimentVariantModel extends ExperimentVariantRecord {
-  constructor(object) {
-    object = Object.assign({}, object);
+  constructor (experimentVariantObject) {
+    experimentVariantObject = Object.assign({}, experimentVariantObject)
 
-    super(object);
+    super(experimentVariantObject)
   }
-};
+}

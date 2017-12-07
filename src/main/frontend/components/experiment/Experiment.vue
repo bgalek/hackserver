@@ -37,7 +37,6 @@
   import ResultTable from './result/ResultTable.vue'
   import ResultTableSettings from './result/ResultTableSettings.vue'
   import ExperimentDetails from './ExperimentDetails.vue'
-  import ExperimentModel from '../../model/experiment/experiment'
 
   import moment from 'moment'
 
@@ -57,7 +56,7 @@
       }
     },
     computed: mapState({
-      experiment: state => new ExperimentModel(state.experiment.experiment),
+      experiment: state => state.experiment.experiment,
       error: state => state.experiment.error.experiment,
       pending: state => state.experiment.pending.experiment
     }),
@@ -77,7 +76,7 @@
         this.toDate = toDate
         this.$router.push({
           name: 'experiment',
-          params: {experimentId: this.$route.params.experimentId},
+          params: { experimentId: this.$route.params.experimentId },
           query: {device, toDate}
         })
       }
