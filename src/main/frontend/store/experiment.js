@@ -11,7 +11,6 @@ export default new Vapi({
   property: 'experiment',
   path: ({experimentId}) => `/admin/experiments/${experimentId}`,
   onSuccess: (state, payload) => {
-    console.log('onSuccess', state, payload.data)
     state.experiment = new ExperimentModel(payload.data)
   }
 }).getStore()
