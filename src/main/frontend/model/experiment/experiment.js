@@ -23,7 +23,7 @@ export default class ExperimentModel extends ExperimentRecord {
     experimentObject.activeFrom = experimentObject.activeFrom ? new Date(experimentObject.activeFrom) : null
     experimentObject.activeTo = experimentObject.activeTo ? new Date(experimentObject.activeTo) : null
     experimentObject.variants = List(experimentObject.variants).map(variant => new ExperimentVariantModel(variant)).toArray()
-    experimentObject.hasBase = _.includes(_.map(experimentObject.variants, (v => v.name)), 'base')
+    experimentObject.hasBase = _.includes(_.map(experimentObject.variants, v => v.name), 'base')
 
     super(experimentObject)
   }

@@ -46,7 +46,6 @@
 import { mapState, mapActions } from 'vuex'
 import axios from 'axios'
 import { variantColor } from '../utils/variantColor'
-import _ from 'lodash'
 
 // TODO move to endpoint
 const PIVOT_PROD = 'http://pivot-nga-prod.allegrogroup.com'
