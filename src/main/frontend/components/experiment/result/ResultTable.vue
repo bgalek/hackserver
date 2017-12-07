@@ -41,7 +41,7 @@
   import _ from 'lodash'
 
   export default {
-    props: ['experimentId', 'toDate', 'device'],
+    props: ['experiment', 'toDate', 'device'],
 
     data () {
       return {
@@ -100,7 +100,7 @@
       mountExperimentStatistics (toDate, device) {
         this.getExperimentStatistics({
           params: {
-            experimentId: this.experimentId,
+            experimentId: this.$route.params.experimentId,
             device,
             toDate
           }
