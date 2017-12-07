@@ -46,6 +46,7 @@
 import { mapState, mapActions } from 'vuex'
 import axios from 'axios'
 import { variantColor } from '../utils/variantColor'
+import _ from 'lodash'
 
 // TODO move to endpoint
 const PIVOT_PROD = 'http://pivot-nga-prod.allegrogroup.com'
@@ -145,7 +146,7 @@ export default {
       experiments.forEach(e => this.sortVariants(e.variants))
 
       const sortingKey = function (experiment) {
-        return experiment.activeFrom ? experiment.activeFrom : '0' + experiment.id
+        return experiment.activeFrom ? experiment.fromDateString() : '0' + experiment.id
       }
 
       experiments.sort((l, r) => sortingKey(r).localeCompare(sortingKey(l)))
