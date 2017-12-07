@@ -10,6 +10,7 @@ class StatisticsConfig {
 
     @Bean
     fun statisticsRepository(@Value("\${druid.apiHost}") apiHost: String,
-                             restTemplate: RestTemplate, jsonConverter: JsonConverter) =
-            DruidStatisticsRepository(apiHost, restTemplate, jsonConverter)
+                             restTemplate: RestTemplate, jsonConverter: JsonConverter,
+                             @Value("\${druid.datasource}") datasource: String) =
+            DruidStatisticsRepository(apiHost, datasource, restTemplate, jsonConverter)
 }

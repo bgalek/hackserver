@@ -10,16 +10,16 @@ import java.time.Duration
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 
-class DruidStatisticsRepository(val druidApiHost : String, val restTemplate: RestTemplate,
+class DruidStatisticsRepository(val druidApiHost: String, val datasource: String, val restTemplate: RestTemplate,
                                 val jsonConverter: JsonConverter) : StatisticsRepository {
     override fun experimentStatistics(experimentId: ExperimentId, toDate: LocalDate, device: String) : ExperimentStatistics {
         val jsonUrl = "http://${druidApiHost}/druid/v2/?pretty"
-        val dateStr = DateTimeFormatter.ISO_LOCAL_DATE.format(toDate)
+        val dateStr = DateTimeFormatter.ISO_LOCAL_DATE.format(toDate.plusDays(1))
         val json = """
             {
               "queryType": "groupBy",
-              "dataSource": "chi_stats_beta",
-              "intervals": "${dateStr}T00Z/${dateStr}T23:59:59.999Z",
+              "dataSource": "$datasource",
+              "intervals": "${dateStr}T00Z/${dateStr}T00:01:00.000Z",
               "granularity": "all",
               "filter": {
                 "type": "and",
@@ -66,7 +66,6 @@ class DruidStatisticsRepository(val druidApiHost : String, val restTemplate: Res
               ]
             }
             """
-
         val headers = HttpHeaders()
         headers.contentType = MediaType.APPLICATION_JSON_UTF8
         val query = HttpEntity<String>(json, headers)
