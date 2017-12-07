@@ -9,6 +9,7 @@
           :items="variantsMetricValue"
           hide-actions
           class="elevation-1"
+          :custom-sort="sortVariantStats"
         >
           <template slot="items" slot-scope="props">
             <td>{{ props.item.variant }}</td>
@@ -105,6 +106,19 @@
             toDate
           }
         })
+      },
+
+      sortVariantStats (items) {
+        items.sort((l, r) => {
+          if (l.variant === 'base') {
+            return -1
+          }
+          if (r.variant === 'base') {
+            return 1
+          }
+          return r.diff - l.diff
+        })
+        return items
       }
     },
 
