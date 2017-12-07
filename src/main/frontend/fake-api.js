@@ -2,6 +2,7 @@ const moment = require('moment')
 
 const appState = {
   state: {
+    diffSign: -1,
     metrics: ['tx_visit', 'gmv'],
     devices: ['desktop', 'smartphone', 'tablet', 'all'],
     metricValueForDevice: {
@@ -71,10 +72,12 @@ const appState = {
   },
 
   getMetricValueForDeviceAndDuration: function (device, durationDays) {
+    this.state.diffSign *= -1
+    let diffVal = this.state.metricValueForDevice[device] * this.state.diffSign + Math.random() / 10
     return {
       value: this.state.metricValueForDevice[device],
       pValue: this.state.metricValueForDevice[device],
-      diff: this.state.metricValueForDevice[device],
+      diff: diffVal,
       count: Math.floor(this.state.metricValueForDevice[device] * durationDays * 10000)
     }
   },
