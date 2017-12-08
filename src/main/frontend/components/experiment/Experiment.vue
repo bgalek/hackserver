@@ -10,12 +10,14 @@
         ></experiment-details>
 
         <result-table-settings
+          v-if="experiment.reportingEnabled"
           :initialDevice="device"
           :initialToDate="toDate"
           v-on:settingsChanged="updateQueryParams"
         ></result-table-settings>
 
         <result-table
+          v-if="experiment.reportingEnabled"
           :experiment="experiment"
           v-bind:device="device"
           v-bind:toDate="toDate"

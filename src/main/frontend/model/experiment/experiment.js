@@ -32,4 +32,14 @@ export default class ExperimentModel extends ExperimentRecord {
   toDateString () {
     return this.activeTo && moment(this.activeTo).format(DEFAULT_FORMAT)
   }
+
+  status () {
+    if (this.activeFrom && moment(this.activeFrom).isAfter(moment())) {
+      return 'PLANNED'
+    }
+    if (this.activeTo && moment(this.activeTo).isBefore(moment())) {
+      return 'ENDED'
+    }
+    return 'ACTIVE'
+  }
 };
