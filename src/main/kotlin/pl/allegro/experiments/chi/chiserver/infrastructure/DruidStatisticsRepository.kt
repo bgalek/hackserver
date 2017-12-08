@@ -14,12 +14,13 @@ class DruidStatisticsRepository(val druidApiHost: String, val datasource: String
                                 val jsonConverter: JsonConverter) : StatisticsRepository {
     override fun experimentStatistics(experimentId: ExperimentId, toDate: LocalDate, device: String) : ExperimentStatistics {
         val jsonUrl = "http://${druidApiHost}/druid/v2/?pretty"
-        val dateStr = DateTimeFormatter.ISO_LOCAL_DATE.format(toDate.plusDays(1))
+        val leftBound = DateTimeFormatter.ISO_LOCAL_DATE.format(toDate)
+        val rightBound = DateTimeFormatter.ISO_LOCAL_DATE.format(toDate.plusDays(1))
         val json = """
             {
               "queryType": "groupBy",
               "dataSource": "$datasource",
-              "intervals": "${dateStr}T00Z/${dateStr}T00:01:00.000Z",
+              "intervals": "${leftBound}T00Z/${rightBound}T00:01:00.000Z",
               "granularity": "all",
               "filter": {
                 "type": "and",
