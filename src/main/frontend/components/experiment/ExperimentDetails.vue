@@ -42,21 +42,20 @@
     methods: {
       activityButtonClass () {
         let colors = {
-          PLANNED: "blue",
-          ACTIVE: "green",
+          PLANNED: 'blue',
+          ACTIVE: 'green',
           ENDED: 'black'
         }
-        console.log('status',this.experiment.status() )
         return colors[this.experiment.status()]
       },
 
       reportingEnabledButtonClass () {
-        return this.experiment.reportingEnabled ? 'green' : 'red';
+        return this.experiment.reportingEnabled ? 'green' : 'red'
       },
 
       reportingEnabledButtonText () {
-        return this.experiment.reportingEnabled ? 'Reporting enabled' : 'Reporting disabled';
+        return this.experiment.reportingEnabled ? 'Reporting enabled' : 'Reporting disabled'
       }
-    },
+    }
   }
 </script>
