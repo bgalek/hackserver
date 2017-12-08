@@ -14,8 +14,15 @@
           <template slot="items" slot-scope="props">
             <td>{{ props.item.variant }}</td>
             <td class="text-xs-right">{{ props.item.value.toFixed(4) }}</td>
-            <td class="text-xs-right">{{ props.item.diff.toFixed(4) }}</td>
-            <td class="text-xs-right">{{ props.item.pValue.toFixed(4) }}</td>
+
+            <td class="text-xs-right">
+              <v-chip v-if="showVariant(props.item.variant)" label :color="diffColor(props.item.diff)" text-color="white">
+                {{ props.item.diff.toFixed(4) }}
+                <v-icon right>{{ diffIcon(props.item.diff) }}</v-icon>
+              </v-chip>
+            </td>
+
+            <td class="text-xs-right"><div v-if="showVariant(props.item.variant)">{{ props.item.pValue.toFixed(4) }}</div></td>
             <td class="text-xs-right">{{ props.item.count }}</td>
           </template>
         </v-data-table>
@@ -106,6 +113,30 @@
             toDate
           }
         })
+      },
+
+      diffColor(diff) {
+        if (diff > 0) {
+          return 'green'
+        }
+        if (diff < 0) {
+          return 'red'
+        }
+        return 'black'
+      },
+
+      diffIcon(diff) {
+        if (diff > 0) {
+          return 'trending_up'
+        }
+        if (diff < 0) {
+          return 'trending_down'
+        }
+        return 'trending_flat'
+      },
+
+      showVariant(variant) {
+        return variant !== 'base'
       },
 
       sortVariantStats (items) {
