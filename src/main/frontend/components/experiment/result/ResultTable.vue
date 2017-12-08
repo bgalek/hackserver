@@ -115,7 +115,7 @@
         })
       },
 
-      diffColor(diff) {
+      diffColor (diff) {
         if (diff > 0) {
           return 'green'
         }
@@ -125,7 +125,7 @@
         return 'black'
       },
 
-      diffIcon(diff) {
+      diffIcon (diff) {
         if (diff > 0) {
           return 'trending_up'
         }
@@ -135,7 +135,7 @@
         return 'trending_flat'
       },
 
-      showVariant(variant) {
+      showVariant (variant) {
         return variant !== 'base'
       },
 
