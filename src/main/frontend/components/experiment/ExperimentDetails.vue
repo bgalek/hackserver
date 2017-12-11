@@ -1,10 +1,5 @@
 <template>
-  <div>
-  <v-toolbar color="blue">
-    <v-toolbar-title class="white--text">Details</v-toolbar-title>
-  </v-toolbar>
-  <v-card tile="true" style="padding:10px;">
-      <v-card-text>
+  <chi-panel title="Details">
         <h3>Description</h3>
         {{ experiment.description }}
         <h3>Owner</h3>
@@ -30,13 +25,18 @@
             </v-chip>
 
         </v-layout>
-      </v-card-text>
-    </v-card>
-  </div>
+  </chi-panel>
 </template>
+
 <script>
+  import ChiPanel from '../ChiPanel.vue'
+
   export default {
     props: ['experiment'],
+
+    components: {
+      ChiPanel
+    },
 
     methods: {
       activityButtonClass () {

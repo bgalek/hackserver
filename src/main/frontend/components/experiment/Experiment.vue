@@ -9,11 +9,7 @@
           :experiment="experiment"
         ></experiment-details>
 
-        <v-toolbar color="blue" style="margin-top: 15px;">
-          <v-toolbar-title class="white--text">Metrics & Statistics</v-toolbar-title>
-        </v-toolbar>
-        <v-card tile="true" style="padding:10px;">
-
+        <chi-panel title="Metrics & Statistics">
           <result-table-settings
             v-if="experiment.reportingEnabled"
             :initialDevice="device"
@@ -28,10 +24,10 @@
             v-bind:toDate="toDate"
           ></result-table>
 
-          <div>
+          <div slot="footer">
             Read the Docs about <a href="https://rtd.allegrogroup.com/docs/chi/pl/latest/chi_metrics/">Visit metrics</a>.
           </div>
-        </v-card>
+        </chi-panel>
 
         <assignment-panel
           :experiment="experiment"
@@ -49,7 +45,7 @@
   import ResultTable from './result/ResultTable.vue'
   import ResultTableSettings from './result/ResultTableSettings.vue'
   import ExperimentDetails from './ExperimentDetails.vue'
-
+  import ChiPanel from '../ChiPanel.vue'
   import moment from 'moment'
 
   export default {
@@ -77,7 +73,8 @@
       AssignmentPanel,
       ResultTable,
       ResultTableSettings,
-      ExperimentDetails
+      ExperimentDetails,
+      ChiPanel
     },
 
     methods: {
