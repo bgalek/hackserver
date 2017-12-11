@@ -1,7 +1,5 @@
 <template>
-  <v-container fluid>
-    <v-card flat>
-      <v-card-text>
+  <chi-panel title="Details">
         <h3>Description</h3>
         {{ experiment.description }}
         <h3>Owner</h3>
@@ -17,27 +15,28 @@
         </div>
         <h3>Status</h3>
         <v-layout row>
-            <v-btn
-              :color="activityButtonClass()"
-              class="white--text"
-            >
-              {{ experiment.status() }}
-            </v-btn>
-            <v-btn
-              :color="reportingEnabledButtonClass()"
-              class="white--text"
-            >
-              {{ reportingEnabledButtonText() }}
 
-            </v-btn>
+            <v-chip outline :color="activityButtonClass()">
+              {{ experiment.status() }}
+            </v-chip>
+
+            <v-chip outline :color="reportingEnabledButtonClass()">
+              {{ reportingEnabledButtonText() }}
+            </v-chip>
+
         </v-layout>
-      </v-card-text>
-    </v-card>
-  </v-container>
+  </chi-panel>
 </template>
+
 <script>
+  import ChiPanel from '../ChiPanel.vue'
+
   export default {
     props: ['experiment'],
+
+    components: {
+      ChiPanel
+    },
 
     methods: {
       activityButtonClass () {
