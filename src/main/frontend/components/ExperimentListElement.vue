@@ -1,5 +1,5 @@
 <template>
-  <v-list-tile @click="clickEvent">
+  <v-list-tile @click="goToExperiment(experiment.id)">
     <v-list-tile-content>
       <v-list-tile-title v-html="experiment.id"></v-list-tile-title>
       <v-list-tile-sub-title v-html="experiment.desc"></v-list-tile-sub-title>
@@ -34,7 +34,7 @@
   const CUBE = (window.location.hostname === 'chi.allegrogroup.com') ? '21b1' : 'ded9'
 
   export default {
-    props: ['experiment', 'linkToData', 'clickEvent'],
+    props: ['experiment', 'linkToData'],
 
     methods: {
       variantColor (i, variant) {
@@ -43,6 +43,10 @@
         } else {
           return variantColor(i + 1)
         }
+      },
+
+      goToExperiment (experimentId) {
+        return this.$router.push(`/experiments/${experimentId}`)
       },
 
       isBase (variant) {

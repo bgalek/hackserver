@@ -48,16 +48,47 @@ export default {
       error: state => state.experiments.error.experiments,
       pending: state => state.experiments.pending.experiments
     }),
+
     experiments () {
-      return _.filter(this.$store.state.experiments.experiments, (e) => e.isMeasured)
+      return this.sortExperiments(_.filter(this.$store.state.experiments.experiments, (e) => e.isMeasured))
     },
+
     immeasurableExperiments () {
-      return _.filter(this.$store.state.experiments.experiments, (e) => !e.isMeasured)
+      return this.sortExperiments(_.filter(this.$store.state.experiments.experiments, (e) => !e.isMeasured))
     }
   },
 
   methods: {
-    ...mapActions(['getExperiments'])
+    ...mapActions(['getExperiments']),
+
+    sortExperiments (experiments) {
+      experiments = _.cloneDeep(experiments)
+      experiments.forEach(e => this.sortVariants(e.variants))
+
+      const sortingKey = function (experiment) {
+        return experiment.activeFrom ? experiment.fromDateString() : '0' + experiment.id
+      }
+
+      experiments.sort((l, r) => sortingKey(r).localeCompare(sortingKey(l)))
+
+      return experiments
+    },
+
+    sortVariants (variants) {
+      variants.sort((l, r) => {
+        if (this.isBase(l)) {
+          return 1
+        }
+        if (this.isBase(r)) {
+          return -1
+        }
+        return l.name.localeCompare(r.name)
+      })
+    },
+
+    isBase (variant) {
+      return variant.name === 'base'
+    }
   }
 }
 </script>
