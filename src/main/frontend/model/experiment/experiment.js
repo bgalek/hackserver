@@ -12,7 +12,8 @@ const ExperimentRecord = Record({
   activeFrom: null,
   activeTo: null,
   reportingEnabled: true,
-  hasBase: true
+  hasBase: true,
+  isMeasured: true
 })
 
 const DEFAULT_FORMAT = 'MMMM Do YYYY, hh:mm:ss'
@@ -24,6 +25,7 @@ export default class ExperimentModel extends ExperimentRecord {
     experimentObject.activeTo = experimentObject.activeTo ? new Date(experimentObject.activeTo) : null
     experimentObject.variants = List(experimentObject.variants).map(variant => new ExperimentVariantModel(variant)).toArray()
     experimentObject.hasBase = _.includes(_.map(experimentObject.variants, v => v.name), 'base')
+    experimentObject.isMeasured = experimentObject.hasBase && experimentObject.reportingEnabled
 
     super(experimentObject)
   }

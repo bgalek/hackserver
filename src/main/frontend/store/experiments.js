@@ -12,9 +12,6 @@ export default new Vapi({
   property: 'experiments',
   path: '/experiments/v1',
   onSuccess: (state, payload) => {
-    state.experiments = _.filter(
-      _.map(payload.data, (experimentData) => new ExperimentModel(experimentData)),
-      (experiment) => experiment.hasBase
-    )
+    state.experiments = _.map(payload.data, (experimentData) => new ExperimentModel(experimentData))
   }
 }).getStore()
