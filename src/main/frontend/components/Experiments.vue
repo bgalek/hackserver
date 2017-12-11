@@ -8,7 +8,7 @@
 
     <experiment-list :linkToData="true" :experiments="experiments" v-if="experiments.length"></experiment-list>
 
-    <h1>Immeasurable Experiments</h1>
+    <h1>Unmeasurable Experiments</h1>
 
     <experiment-list :linkToData="false" :experiments="immeasurableExperiments" v-if="immeasurableExperiments.length"></experiment-list>
 

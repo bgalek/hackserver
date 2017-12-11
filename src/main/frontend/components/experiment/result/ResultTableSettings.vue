@@ -1,16 +1,25 @@
 <template>
-  <v-layout row wrap>
-    <v-flex xs6 sm5 md3 lg5 xl5>
-      <v-card flat>
-        <v-card-text>
-          <v-menu>
+  <v-layout row wrap class="ma-0 pa-0">
+    <v-flex xs6 sm5 md3 lg5 xl5 t0 class="ma-0 pa-0">
+      <v-card flat class="ma-0 pa-0">
+        <v-card-text class="ma-0 pa-0">
+          <p class="ma-0 pa-0">
+            Results until:
+            <v-tooltip v-model="show" right>
+              <v-btn icon slot="activator" class="ma-0 pa-0">
+                <v-icon color="grey" class="ma-0 pa-0" small>help</v-icon>
+              </v-btn>
+              <span>Metrics and statistics are calculated for period: experiment start to picked date</span>
+            </v-tooltip>
+          </p>
+          <v-menu class="ma-0 pa-0">
             <v-text-field
+              class="ma-0 pa-0"
               slot="activator"
-              label="Results until:"
               v-model="toDate"
               prepend-icon="event"
             ></v-text-field>
-            <v-date-picker v-model="toDate" :allowed-dates="allowedDates" no-title scrollable actions>
+            <v-date-picker class="ma-0 pa-0" v-model="toDate" :allowed-dates="allowedDates" no-title scrollable actions>
               <template slot-scope="{ save, cancel }">
                 <v-card-actions>
                   <v-spacer></v-spacer>
@@ -24,11 +33,11 @@
       </v-card>
     </v-flex>
     <v-spacer></v-spacer>
-    <v-flex xs6 sm7 md7 lg7 xl7>
-      <v-card flat>
-        <v-card-text>
-          <p>Device</p>
-          <v-btn-toggle v-model="device" row>
+    <v-flex xs6 sm7 md7 lg7 xl7 class="ma-0 pa-0">
+      <v-card flat class="ma-0 pa-0">
+        <v-card-text class="ma-0 pa-0">
+          <p class="mt-0 pt-0">Device:</p>
+          <v-btn-toggle v-model="device" row class="ma-0 pa-0">
             <v-btn flat value="all">
               All
             </v-btn>
