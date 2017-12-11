@@ -1,7 +1,7 @@
 <template>
 
   <div>
-    <p v-if="experimentStatistics.durationDays>0">
+    <p v-if="experimentStatistics.durationDays>0" style="margin-top: 10px;">
       Data calculated for
       <v-chip outline color="black">{{ experimentStatistics.durationDays }}</v-chip>
       days.

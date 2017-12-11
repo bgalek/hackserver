@@ -17,6 +17,8 @@
             v-on:settingsChanged="updateQueryParams"
           ></result-table-settings>
 
+          <v-divider></v-divider>
+
           <result-table
             v-if="experiment.reportingEnabled"
             :experiment="experiment"
