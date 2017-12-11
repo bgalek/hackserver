@@ -1,6 +1,6 @@
 <template>
   <v-layout row wrap>
-    <v-flex xs11 sm5>
+    <v-flex xs6 sm5 md3 lg5 xl5>
       <v-card flat>
         <v-card-text>
           <v-menu>
@@ -24,10 +24,10 @@
       </v-card>
     </v-flex>
     <v-spacer></v-spacer>
-    <v-flex xs11 sm5>
+    <v-flex xs6 sm7 md7 lg7 xl7>
       <v-card flat>
         <v-card-text>
-          <p>Device:</p>
+          <p>Device</p>
           <v-btn-toggle v-model="device" row>
             <v-btn flat value="all">
               All
