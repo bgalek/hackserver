@@ -1,5 +1,5 @@
 <template>
-  <div style="margin-top: 15px;">
+  <div class="mt-3">
     <v-toolbar color="blue">
       <v-toolbar-title class="white--text">{{title}}</v-toolbar-title>
     </v-toolbar>
@@ -7,7 +7,7 @@
       <slot>
       </slot>
 
-      <div style="margin-top: 5px;">
+      <div class="mt-1">
         <slot name="footer">
         </slot>
       </div>
