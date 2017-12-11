@@ -1,6 +1,11 @@
 <template>
+
   <div>
-    <h2>Results for {{experimentStatistics.durationDays}} days</h2>
+    <p v-if="experimentStatistics.durationDays>0">
+      Data calculated for
+      <v-chip outline color="black">{{ experimentStatistics.durationDays }}</v-chip>
+      days.
+    </p>
     <div v-if="experimentStatistics.metrics">
       <div v-for="(variantsMetricValue, metric) in experimentStatistics.metrics" :key="metric">
         <h3>{{metricNames[metric]}}</h3>
@@ -8,7 +13,6 @@
           v-bind:headers="headers"
           :items="variantsMetricValue"
           hide-actions
-          class="elevation-1"
           :custom-sort="sortVariantStats"
         >
           <template slot="items" slot-scope="props">
@@ -29,7 +33,6 @@
         <v-divider></v-divider>
       </div>
     </div>
-
 
     <v-alert v-if="experimentStatisticsError" color="error" icon="warning" value="true">
       Couldn't load experiment {{ $route.params.experimentId }} : {{ experimentStatisticsError.message }}
@@ -55,13 +58,13 @@
       return {
         headers: [
           {text: 'Variant', sortable: false},
-          {text: 'Value', sortable: false},
-          {text: 'Diff', sortable: false},
-          {text: 'P Value', sortable: false},
-          {text: 'Count', sortable: false}
+          {text: 'Metric Value', sortable: false},
+          {text: 'Diff to Base', sortable: false},
+          {text: 'p-Value', sortable: false},
+          {text: 'Sample Count', sortable: false}
         ],
         metricNames: {
-          'tx_visit': 'Transaction Per Visit',
+          'tx_visit': 'Visits With Transaction(s)',
           'gmv': 'GMV'
         }
       }

@@ -7,7 +7,7 @@
             <v-menu>
               <v-text-field
                 slot="activator"
-                label="Results to day:"
+                label="Results until:"
                 v-model="toDate"
                 prepend-icon="event"
               ></v-text-field>

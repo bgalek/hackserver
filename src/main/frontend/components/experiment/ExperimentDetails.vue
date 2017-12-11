@@ -1,6 +1,9 @@
 <template>
-  <v-container fluid>
-    <v-card flat>
+  <div>
+  <v-toolbar color="blue">
+    <v-toolbar-title class="white--text">Details</v-toolbar-title>
+  </v-toolbar>
+  <v-card tile="true" style="padding:10px;">
       <v-card-text>
         <h3>Description</h3>
         {{ experiment.description }}
@@ -17,23 +20,19 @@
         </div>
         <h3>Status</h3>
         <v-layout row>
-            <v-btn
-              :color="activityButtonClass()"
-              class="white--text"
-            >
-              {{ experiment.status() }}
-            </v-btn>
-            <v-btn
-              :color="reportingEnabledButtonClass()"
-              class="white--text"
-            >
-              {{ reportingEnabledButtonText() }}
 
-            </v-btn>
+            <v-chip outline :color="activityButtonClass()">
+              {{ experiment.status() }}
+            </v-chip>
+
+            <v-chip outline :color="reportingEnabledButtonClass()">
+              {{ reportingEnabledButtonText() }}
+            </v-chip>
+
         </v-layout>
       </v-card-text>
     </v-card>
-  </v-container>
+  </div>
 </template>
 <script>
   export default {

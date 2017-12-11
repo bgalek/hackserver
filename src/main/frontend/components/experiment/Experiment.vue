@@ -9,19 +9,29 @@
           :experiment="experiment"
         ></experiment-details>
 
-        <result-table-settings
-          v-if="experiment.reportingEnabled"
-          :initialDevice="device"
-          :initialToDate="toDate"
-          v-on:settingsChanged="updateQueryParams"
-        ></result-table-settings>
+        <v-toolbar color="blue" style="margin-top: 15px;">
+          <v-toolbar-title class="white--text">Metrics & Statistics</v-toolbar-title>
+        </v-toolbar>
+        <v-card tile="true" style="padding:10px;">
 
-        <result-table
-          v-if="experiment.reportingEnabled"
-          :experiment="experiment"
-          v-bind:device="device"
-          v-bind:toDate="toDate"
-        ></result-table>
+          <result-table-settings
+            v-if="experiment.reportingEnabled"
+            :initialDevice="device"
+            :initialToDate="toDate"
+            v-on:settingsChanged="updateQueryParams"
+          ></result-table-settings>
+
+          <result-table
+            v-if="experiment.reportingEnabled"
+            :experiment="experiment"
+            v-bind:device="device"
+            v-bind:toDate="toDate"
+          ></result-table>
+
+          <div>
+            Read the Docs about <a href="https://rtd.allegrogroup.com/docs/chi/pl/latest/chi_metrics/">Visit metrics</a>.
+          </div>
+        </v-card>
 
         <assignment-panel
           :experiment="experiment"
