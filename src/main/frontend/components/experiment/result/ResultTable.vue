@@ -17,16 +17,16 @@
         >
           <template slot="items" slot-scope="props">
             <td>{{ props.item.variant }}</td>
-            <td class="text-xs-right">{{ props.item.value.toFixed(4) }}</td>
+            <td class="text-xs-right">{{ formatNumber(props.item.value) }}</td>
 
             <td class="text-xs-right">
-              <v-chip v-if="showVariant(props.item.variant)" label :color="diffColor(props.item.diff)" text-color="white">
-                {{ props.item.diff.toFixed(4) }}
+              <v-chip v-if="showVariant(props.item.variant)" label :color="diffColor(props.item).back" :text-color="diffColor(props.item).text">
+                {{ formatDiff(props.item) }}
                 <v-icon right>{{ diffIcon(props.item.diff) }}</v-icon>
               </v-chip>
             </td>
 
-            <td class="text-xs-right"><div v-if="showVariant(props.item.variant)">{{ props.item.pValue.toFixed(4) }}</div></td>
+            <td class="text-xs-right"><div v-if="showVariant(props.item.variant)">{{ formatNumber(props.item.pValue) }}</div></td>
             <td class="text-xs-right">{{ props.item.count }}</td>
           </template>
         </v-data-table>
@@ -76,8 +76,8 @@
 
     computed: mapState({
       experimentStatistics: state => {
-        let stats = state.experimentStatistics.experimentStatistics
-        let mappedMetrics = {}
+        const stats = state.experimentStatistics.experimentStatistics
+        const mappedMetrics = {}
 
         _.forIn(stats.metrics, (metricValuePerVariant, metricName) => {
           let mappedVariants = []
@@ -118,14 +118,32 @@
         })
       },
 
-      diffColor (diff) {
-        if (diff > 0) {
-          return 'green'
+      diffColor (metricVariant) {
+        const pVal = metricVariant.pValue
+        const diff = metricVariant.diff
+
+        if (pVal > 0.05) {
+          return {
+            text: 'black',
+            back: 'white'
+          }
         }
-        if (diff < 0) {
-          return 'red'
+
+        const trendColor = diff > 0 ? 'green' : 'red'
+
+        // if p-Value < 0.01, we are sure about statistical significance
+        if (pVal < 0.01) {
+          return {
+            text: 'white',
+            back: trendColor
+          }
         }
-        return 'black'
+
+        // if p-Value is between 0.01 and 0.05, we are not so sure about statistical significance
+        return {
+          text: 'black',
+          back: trendColor + ' ' + 'lighten-4'
+        }
       },
 
       diffIcon (diff) {
@@ -153,6 +171,46 @@
           return r.diff - l.diff
         })
         return items
+      },
+
+      formatNumber (num) {
+        const expThres = 0.0001
+
+        if (!num) {
+          return ''
+        }
+
+        const numAbs = Math.abs(num)
+
+        if (numAbs > expThres && numAbs < 100) {
+          return num.toFixed(4)
+        }
+
+        if (numAbs > 100) {
+          return num.toFixed(2)
+        }
+
+        return num.toExponential(2)
+      },
+
+      formatPercent (num) {
+        if (!num) {
+          return ''
+        }
+
+        if (Math.abs(num) < 0.01) {
+          return num.toExponential(2) + '%'
+        }
+
+        return num.toFixed(2) + '%'
+      },
+
+      formatDiff (metricVariant) {
+        const variantValue = metricVariant.value
+        const diff = metricVariant.diff
+        const baseValue = variantValue - diff
+
+        return this.formatPercent(100 * diff / baseValue, 0.01)
       }
     },
 

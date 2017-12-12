@@ -27,7 +27,11 @@
           ></result-table>
 
           <div slot="footer">
-            Read the Docs about <a href="https://rtd.allegrogroup.com/docs/chi/pl/latest/chi_metrics/">Visit metrics</a>.
+            Read the χ Docs about <a href="https://rtd.allegrogroup.com/docs/chi/pl/latest/chi_metrics/">metrics</a>
+            and how to understand
+            <a href="https://rtd.allegrogroup.com/docs/chi/pl/latest/results/">p-Value</a>.
+
+
           </div>
         </chi-panel>
 
