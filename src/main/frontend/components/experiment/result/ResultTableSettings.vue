@@ -37,7 +37,7 @@
       <v-card flat class="ma-0 pa-0">
         <v-card-text class="ma-0 pa-0">
           <p class="mt-0 pt-0">Device:</p>
-          <v-btn-toggle v-model="device" row class="ma-0 pa-0">
+          <v-btn-toggle v-model="device" row mandatory class="ma-0 pa-0">
             <v-btn flat value="all">
               All
             </v-btn>
