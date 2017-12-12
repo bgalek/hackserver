@@ -11,6 +11,7 @@ import org.springframework.kafka.listener.MessageListener
 import org.springframework.kafka.listener.config.ContainerProperties
 import org.springframework.kafka.test.rule.KafkaEmbedded
 import org.springframework.kafka.test.utils.KafkaTestUtils
+import org.springframework.test.context.ContextConfiguration
 import pl.allegro.experiments.chi.chiserver.BaseIntegrationSpec
 import pl.allegro.experiments.chi.chiserver.interactions.infrastructure.KafkaConfig
 import pl.allegro.tech.common.andamio.server.cloud.CloudMetadata
@@ -22,6 +23,7 @@ import java.util.concurrent.BlockingQueue
 import java.util.concurrent.LinkedBlockingQueue
 import java.util.concurrent.TimeUnit
 
+@ContextConfiguration(classes = [InteractionsIntegrationTestConfig])
 class KafkaInteractionRepositoryIntegrationSpec extends BaseIntegrationSpec {
 
     @Shared

@@ -6,16 +6,22 @@ import org.springframework.http.HttpEntity
 import org.springframework.http.HttpHeaders
 import org.springframework.http.HttpMethod
 import org.springframework.http.MediaType
+import org.springframework.test.context.ContextConfiguration
 import org.springframework.web.client.HttpClientErrorException
 import org.springframework.web.client.RestTemplate
 import pl.allegro.experiments.chi.chiserver.BaseIntegrationSpec
+import pl.allegro.experiments.chi.chiserver.infrastructure.InMemoryExperimentsRepository
 import pl.allegro.experiments.chi.chiserver.interactions.infrastructure.InMemoryInteractionRepository
 import spock.lang.Unroll
 
+@ContextConfiguration(classes = [InteractionsIntegrationTestConfig])
 class InteractionsIntegrationSpec extends BaseIntegrationSpec {
 
     @Autowired
     InMemoryInteractionRepository inMemoryInteractionRepository
+
+    @Autowired
+    InMemoryExperimentsRepository experimentsRepository
 
     InteractionsConverter interactionConverter = new InteractionsConverter()
 
@@ -27,7 +33,7 @@ class InteractionsIntegrationSpec extends BaseIntegrationSpec {
                 [
                         "userId"         : "someUserId123",
                         "userCmId"       : "someUserCmId123",
-                        "experimentId"   : "someExperimentId123",
+                        "experimentId"   : InteractionsIntegrationTestConfig.TEST_EXPERIMENT_ID,
                         "variantName"    : "someVariantName",
                         "internal"       : true,
                         "deviceClass"    : "iphone",
@@ -35,7 +41,7 @@ class InteractionsIntegrationSpec extends BaseIntegrationSpec {
                         "appId"          : "a"
                 ],
                 [
-                        "experimentId"   : "anotherExperimentId",
+                        "experimentId"   : InteractionsIntegrationTestConfig.TEST_EXPERIMENT_ID,
                         "variantName"    : "variant",
                         "interactionDate": "1970-01-01T00:00:00Z"
                 ]
@@ -50,6 +56,68 @@ class InteractionsIntegrationSpec extends BaseIntegrationSpec {
         def interactions = interactionConverter.fromJson(interactionsJson)
         inMemoryInteractionRepository.interactionSaved(interactions[0])
         inMemoryInteractionRepository.interactionSaved(interactions[1])
+    }
+
+    def "should not save interactions when there is no connected experiment"() {
+        given:
+        String interactionsJson = JsonOutput.toJson([
+                [
+                        "userId"         : "someUserId123",
+                        "userCmId"       : "someUserCmId123",
+                        "experimentId"   : "SOME NONEXISTENT EXPERIMENT ID",
+                        "variantName"    : "someVariantName",
+                        "internal"       : true,
+                        "deviceClass"    : "iphone",
+                        "interactionDate": "1970-01-01T00:00:00Z",
+                        "appId"          : "a"
+                ],
+                [
+                        "experimentId"   : "SOME NONEXISTENT EXPERIMENT ID",
+                        "variantName"    : "variant",
+                        "interactionDate": "1970-01-01T00:00:00Z"
+                ]
+        ])
+
+        when:
+        restTemplate.exchange(localUrl('/api/interactions/v1/'),
+                HttpMethod.POST, httpJsonEntity(interactionsJson), Void.class)
+
+
+        then:
+        def interactions = interactionConverter.fromJson(interactionsJson)
+        !inMemoryInteractionRepository.interactionSaved(interactions[0])
+        !inMemoryInteractionRepository.interactionSaved(interactions[1])
+    }
+
+    def "should not save interactions when experiment reporting is disabled"() {
+        given:
+        String interactionsJson = JsonOutput.toJson([
+                [
+                        "userId"         : "someUserId123",
+                        "userCmId"       : "someUserCmId123",
+                        "experimentId"   : InteractionsIntegrationTestConfig.TEST_EXPERIMENT_ID_WITH_DISABLED_REPORTING,
+                        "variantName"    : "someVariantName",
+                        "internal"       : true,
+                        "deviceClass"    : "iphone",
+                        "interactionDate": "1970-01-01T00:00:00Z",
+                        "appId"          : "a"
+                ],
+                [
+                        "experimentId"   : InteractionsIntegrationTestConfig.TEST_EXPERIMENT_ID_WITH_DISABLED_REPORTING,
+                        "variantName"    : "variant",
+                        "interactionDate": "1970-01-01T00:00:00Z"
+                ]
+        ])
+
+        when:
+        restTemplate.exchange(localUrl('/api/interactions/v1/'),
+                HttpMethod.POST, httpJsonEntity(interactionsJson), Void.class)
+
+
+        then:
+        def interactions = interactionConverter.fromJson(interactionsJson)
+        !inMemoryInteractionRepository.interactionSaved(interactions[0])
+        !inMemoryInteractionRepository.interactionSaved(interactions[1])
     }
 
     @Unroll
@@ -77,7 +145,7 @@ class InteractionsIntegrationSpec extends BaseIntegrationSpec {
                         [
                                 "userId"      : "123",
                                 "userCmId"    : "123",
-                                "experimentId": "q234",
+                                "experimentId": InteractionsIntegrationTestConfig.TEST_EXPERIMENT_ID,
                                 "variantName" : "123",
                                 "internal"    : true,
                                 "deviceClass" : "iphone"

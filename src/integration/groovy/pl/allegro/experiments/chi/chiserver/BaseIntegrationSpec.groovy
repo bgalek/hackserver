@@ -8,8 +8,7 @@ import spock.lang.Specification
 
 @SpringBootTest(
         classes = [
-                AppRunner,
-                InteractionsIntegrationTestConfig
+                AppRunner
         ],
         properties = "application.environment=integration",
         webEnvironment=SpringBootTest.WebEnvironment.RANDOM_PORT)
