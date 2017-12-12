@@ -20,10 +20,13 @@
             <td class="text-xs-right">{{ formatNumber(props.item.value) }}</td>
 
             <td class="text-xs-right">
-              <v-chip v-if="showVariant(props.item.variant)" label :color="diffColor(props.item).back" :text-color="diffColor(props.item).text">
-                {{ formatDiff(props.item) }}
-                <v-icon right>{{ diffIcon(props.item.diff) }}</v-icon>
-              </v-chip>
+              <v-tooltip top>
+                <v-chip slot="activator" v-if="showVariant(props.item.variant)" label :color="diffColor(props.item).back" :text-color="diffColor(props.item).text">
+                  {{ formatDiff(props.item) }}
+                  <v-icon right>{{ diffIcon(props.item.diff) }}</v-icon>
+                </v-chip>
+                <span>{{ diffToolTip(props.item) }}</span>
+              </v-tooltip>
             </td>
 
             <td class="text-xs-right"><div v-if="showVariant(props.item.variant)">{{ formatNumber(props.item.pValue) }}</div></td>
@@ -118,11 +121,28 @@
         })
       },
 
+      diffToolTip (metricVariant) {
+        const testSignificance = this.testSignificance(metricVariant)
+
+        if (testSignificance === 'no') {
+          return 'The difference is statistically not significant.'
+        }
+
+        if (testSignificance === 'strong') {
+          return 'The difference is strongly statistically significant (p-Value is less than 0.01).'
+        }
+
+        if (testSignificance === 'light') {
+          return 'The difference is statistically significant (p-Value is less than 0.05).'
+        }
+      },
+
       diffColor (metricVariant) {
-        const pVal = metricVariant.pValue
         const diff = metricVariant.diff
 
-        if (pVal > 0.05) {
+        const testSignificance = this.testSignificance(metricVariant)
+
+        if (testSignificance === 'no') {
           return {
             text: 'black',
             back: 'white'
@@ -131,19 +151,35 @@
 
         const trendColor = diff > 0 ? 'green' : 'red'
 
-        // if p-Value < 0.01, we are sure about statistical significance
-        if (pVal < 0.01) {
+        if (testSignificance === 'strong') {
           return {
             text: 'white',
             back: trendColor
           }
         }
 
-        // if p-Value is between 0.01 and 0.05, we are not so sure about statistical significance
-        return {
-          text: 'black',
-          back: trendColor + ' ' + 'lighten-4'
+        if (testSignificance === 'light') {
+          return {
+            text: 'black',
+            back: trendColor + ' ' + 'lighten-4'
+          }
         }
+      },
+
+      testSignificance (metricVariant) {
+        const pVal = metricVariant.pValue
+
+        if (pVal > 0.05) {
+          return 'no'
+        }
+
+        // if p-Value < 0.01, we are sure about statistical significance
+        if (pVal < 0.01) {
+          return 'strong'
+        }
+
+        // if p-Value is between 0.01 and 0.05, we are not so sure about statistical significance
+        return 'light'
       },
 
       diffIcon (diff) {
