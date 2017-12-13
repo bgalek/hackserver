@@ -1,11 +1,28 @@
 <template>
+  <v-container>
+    <v-layout row>
+      <p v-if="experimentStatistics.durationDays>0">
+        <v-tooltip right>
+          <span slot="activator">
+          Data calculated on 
+          <span id="toDate">{{ experimentStatistics.toDate }}</span>
+          for
+          <v-chip outline color="black">{{ experimentStatistics.durationDays }}</v-chip>
+          days.
+          </span>
+          <span>Metrics and statistics are calculated for period: experiment start to {{ experimentStatistics.toDate }}</span>
+        </v-tooltip>
+      </p>
 
-  <div>
-    <p v-if="experimentStatistics.durationDays>0" style="margin-top: 10px;">
-      Data calculated for
-      <v-chip outline color="black">{{ experimentStatistics.durationDays }}</v-chip>
-      days.
-    </p>
+      <v-spacer></v-spacer>
+
+      <result-table-settings
+        v-if="experiment.reportingEnabled"
+        :initialDevice="device"
+        @settingsChanged="updateQueryParams"
+      ></result-table-settings>
+    </v-layout>
+
     <div v-if="experimentStatistics.metrics">
       <div v-for="(variantsMetricValue, metric) in experimentStatistics.metrics" :key="metric">
         <b>{{metricNames[metric]}}</b>
@@ -51,24 +68,26 @@
                            color="purple"></v-progress-circular>
     </p>
 
-  </div>
+  </v-container>
 
 </template>
 
 <script>
   import {mapState, mapActions} from 'vuex'
-  import _ from 'lodash'
   import PivotLink from '../../PivotLink.vue'
+  import ResultTableSettings from './ResultTableSettings.vue'
+  import _ from 'lodash'
 
   export default {
-    props: ['experiment', 'toDate', 'device'],
+    props: ['experiment'],
 
     components: {
-      PivotLink
+      PivotLink, ResultTableSettings
     },
 
     data () {
       return {
+        device: this.$route.query.device || 'all',
         headers: [
           {text: 'Variant', sortable: false},
           {text: 'Metric Value', sortable: false},
@@ -88,7 +107,7 @@
     },
 
     mounted () {
-      this.mountExperimentStatistics(this.toDate, this.device)
+      this.loadExperimentStatistics(this.device)
     },
 
     computed: mapState({
@@ -125,12 +144,11 @@
     methods: {
       ...mapActions(['getExperimentStatistics']),
 
-      mountExperimentStatistics (toDate, device) {
+      loadExperimentStatistics (device) {
         this.getExperimentStatistics({
           params: {
             experimentId: this.$route.params.experimentId,
-            device,
-            toDate
+            device
           }
         })
       },
@@ -261,17 +279,23 @@
         const baseValue = variantValue - diff
 
         return this.formatPercent(100 * diff / baseValue, 0.01)
-      }
-    },
-
-    watch: {
-      device (device) {
-        this.mountExperimentStatistics(this.toDate, device)
       },
 
-      toDate (date) {
-        this.mountExperimentStatistics(date, this.device)
+      updateQueryParams ({device}) {
+        this.device = device
+        this.loadExperimentStatistics(device)
+        this.$router.push({
+          name: 'experiment',
+          params: { experimentId: this.$route.params.experimentId },
+          query: {device}
+        })
       }
     }
   }
 </script>
+
+<style scoped>
+#toDate {
+  font-weight: bold;
+}
+</style>

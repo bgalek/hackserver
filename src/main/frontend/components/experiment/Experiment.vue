@@ -10,20 +10,9 @@
         ></experiment-details>
 
         <chi-panel title="Metrics & Statistics">
-          <result-table-settings
-            v-if="experiment.reportingEnabled"
-            :initialDevice="device"
-            :initialToDate="toDate"
-            v-on:settingsChanged="updateQueryParams"
-          ></result-table-settings>
-
-          <v-divider></v-divider>
-
           <result-table
             v-if="experiment.reportingEnabled"
             :experiment="experiment"
-            v-bind:device="device"
-            v-bind:toDate="toDate"
           ></result-table>
 
           <div slot="footer">
@@ -48,26 +37,14 @@
 
   import AssignmentPanel from './assignments/AssignmentPanel.vue'
   import ResultTable from './result/ResultTable.vue'
-  import ResultTableSettings from './result/ResultTableSettings.vue'
   import ExperimentDetails from './ExperimentDetails.vue'
   import ChiPanel from '../ChiPanel.vue'
-  import moment from 'moment'
 
   export default {
     mounted () {
       this.getExperiment({ params: { experimentId: this.$route.params.experimentId } })
     },
 
-    data () {
-      let deviceQueryParam = this.$route.query.device
-      let toDateQueryParam = this.$route.query.toDate
-      let defaultToDate = moment().add(-1, 'days').format('YYYY-MM-DD')
-
-      return {
-        device: deviceQueryParam || 'all',
-        toDate: toDateQueryParam || defaultToDate
-      }
-    },
     computed: mapState({
       experiment: state => state.experiment.experiment,
       error: state => state.experiment.error.experiment,
@@ -77,23 +54,12 @@
     components: {
       AssignmentPanel,
       ResultTable,
-      ResultTableSettings,
       ExperimentDetails,
       ChiPanel
     },
 
     methods: {
-      ...mapActions(['getExperiment']),
-
-      updateQueryParams ({device, toDate}) {
-        this.device = device
-        this.toDate = toDate
-        this.$router.push({
-          name: 'experiment',
-          params: { experimentId: this.$route.params.experimentId },
-          query: {device, toDate}
-        })
-      }
+      ...mapActions(['getExperiment'])
     }
   }
 </script>

@@ -1,0 +1,28 @@
+[
+  {
+    "version": "v1",
+    "timestamp": "2017-12-06T00:00:00.000Z",
+    "event": {
+      "sum_metric_value_diff": -0.00190975540317595,
+      "sum_experiment_duration": 950400000,
+      "metric": "tx_visit",
+      "count": 1859598,
+      "sum_p_value": 4.440892098500626E-16,
+      "experiment_variant": "metrum",
+      "sum_metric_value": 0.05314482003450394
+    }
+  },
+  {
+    "version": "v1",
+    "timestamp": "2017-12-06T00:00:00.000Z",
+    "event": {
+      "sum_metric_value_diff": 0.0,
+      "sum_experiment_duration": 950400000,
+      "metric": "tx_visit",
+      "count": 1844715,
+      "sum_p_value": 1.0,
+      "experiment_variant": "base",
+      "sum_metric_value": 0.05505457520484924
+    }
+  }
+]
