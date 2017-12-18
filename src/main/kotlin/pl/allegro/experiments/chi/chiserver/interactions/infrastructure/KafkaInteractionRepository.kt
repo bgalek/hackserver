@@ -12,16 +12,11 @@ import java.util.concurrent.TimeUnit
 class KafkaInteractionRepository(
         private val kafkaTemplate: KafkaOperations<String, ByteArray>,
         private val avroConverter: AvroConverter,
-        private val kafkaTopic: String,
-        private val experimentsRepository: ExperimentsRepository): InteractionRepository {
+        private val kafkaTopic: String): InteractionRepository {
 
-    override fun save(interaction: Interaction): Boolean {
-        val reportingEnabled = experimentsRepository.reportingEnabled(interaction.experimentId)
-        if (reportingEnabled) {
-            val data: ByteArray = serialize(interaction)
-            kafkaTemplate.send(kafkaTopic, data)
-        }
-        return reportingEnabled
+    override fun save(interaction: Interaction) {
+        val data: ByteArray = serialize(interaction)
+        kafkaTemplate.send(kafkaTopic, data)
     }
 
     private fun serialize(interaction: Interaction): ByteArray =

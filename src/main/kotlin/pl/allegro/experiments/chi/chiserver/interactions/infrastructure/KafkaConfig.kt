@@ -34,9 +34,8 @@ class KafkaConfig {
     fun kafkaInteractionRepository(
             kafkaTemplate: KafkaTemplate<String, ByteArray>,
             avroConverter: AvroConverter,
-            @Value("\${interactions.kafka.topic}") kafkaTopic: String,
-            experimentsRepository: ExperimentsRepository): InteractionRepository {
-        return KafkaInteractionRepository(kafkaTemplate, avroConverter, kafkaTopic, experimentsRepository)
+            @Value("\${interactions.kafka.topic}") kafkaTopic: String): InteractionRepository {
+        return KafkaInteractionRepository(kafkaTemplate, avroConverter, kafkaTopic)
     }
 
     @Bean

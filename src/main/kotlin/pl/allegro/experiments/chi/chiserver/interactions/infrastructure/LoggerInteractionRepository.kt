@@ -10,7 +10,7 @@ class LoggerInteractionRepository : InteractionRepository {
         private val logger = Logger.getLogger(LoggerInteractionRepository::class.java.name)
     }
 
-    override fun save(interaction: Interaction): Boolean {
+    override fun save(interaction: Interaction) {
         logger.info("""
              userId: ${interaction.userId}
              userCmId: ${interaction.userCmId}
@@ -20,6 +20,5 @@ class LoggerInteractionRepository : InteractionRepository {
              deviceClass: ${interaction.deviceClass}
              interactionDate: ${interaction.interactionDate}
         """.trimIndent())
-        return true
     }
 }

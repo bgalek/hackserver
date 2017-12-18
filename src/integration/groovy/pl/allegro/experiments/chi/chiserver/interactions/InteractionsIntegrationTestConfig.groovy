@@ -19,8 +19,8 @@ class InteractionsIntegrationTestConfig {
 
     @Primary
     @Bean
-    InMemoryInteractionRepository experimentInteractionRepository(ExperimentsRepository experimentsRepository) {
-        return new InMemoryInteractionRepository(experimentsRepository)
+    InMemoryInteractionRepository experimentInteractionRepository() {
+        return new InMemoryInteractionRepository()
     }
 
     @Primary

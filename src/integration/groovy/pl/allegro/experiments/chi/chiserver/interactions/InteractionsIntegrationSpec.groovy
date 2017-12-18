@@ -10,7 +10,6 @@ import org.springframework.test.context.ContextConfiguration
 import org.springframework.web.client.HttpClientErrorException
 import org.springframework.web.client.RestTemplate
 import pl.allegro.experiments.chi.chiserver.BaseIntegrationSpec
-import pl.allegro.experiments.chi.chiserver.infrastructure.InMemoryExperimentsRepository
 import pl.allegro.experiments.chi.chiserver.interactions.infrastructure.InMemoryInteractionRepository
 import spock.lang.Unroll
 
@@ -24,9 +23,7 @@ class InteractionsIntegrationSpec extends BaseIntegrationSpec {
     InMemoryInteractionRepository inMemoryInteractionRepository
 
     @Autowired
-    InMemoryExperimentsRepository experimentsRepository
-
-    InteractionsConverter interactionConverter = new InteractionsConverter()
+    InteractionConverter interactionConverter
 
     RestTemplate restTemplate = new RestTemplate()
 
