@@ -18,6 +18,7 @@ import pl.allegro.experiments.chi.chiserver.interactions.infrastructure.KafkaCon
 import pl.allegro.tech.common.andamio.server.cloud.CloudMetadata
 import pl.allegro.tech.common.andamio.spring.avro.AvroConverter
 import spock.lang.Shared
+import spock.lang.Unroll
 
 import java.time.Instant
 import java.util.concurrent.BlockingQueue
@@ -25,6 +26,7 @@ import java.util.concurrent.LinkedBlockingQueue
 import java.util.concurrent.TimeUnit
 
 import static InteractionsIntegrationTestConfig.TEST_EXPERIMENT_ID
+import static pl.allegro.experiments.chi.chiserver.interactions.InteractionsIntegrationTestConfig.TEST_EXPERIMENT_ID_WITH_DISABLED_REPORTING
 
 @ContextConfiguration(classes = [InteractionsIntegrationTestConfig])
 class KafkaInteractionRepositoryIntegrationSpec extends BaseIntegrationSpec {
@@ -86,7 +88,7 @@ class KafkaInteractionRepositoryIntegrationSpec extends BaseIntegrationSpec {
 
     def "avro should work"() {
         given:
-        Interaction interaction = sampleInteraction()
+        Interaction interaction = sampleInteraction(TEST_EXPERIMENT_ID)
 
         when:
         byte[] interactionAsBytes = avroConverter.toAvro(interaction).data()
@@ -97,25 +99,57 @@ class KafkaInteractionRepositoryIntegrationSpec extends BaseIntegrationSpec {
 
     def "should save interaction"() {
         given:
-        def interaction = sampleInteraction()
+        def interaction = sampleInteraction(TEST_EXPERIMENT_ID)
 
         when:
-        interactionRepository.save(interaction)
+        def triedToSave = interactionRepository.save(interaction)
         def received = receiveInteraction()
 
         then:
         equalsIgnoringAppId(received, interaction)
+
+        and:
+        triedToSave
     }
 
-    def "should not save interaction with null fields"() {
+    @Unroll
+    def "should not save interaction when #error"() {
+        when:
+        def triedToSave = interactionRepository.save(interaction)
+
+        then:
+        !receivedAnyInteractions()
+
+        and:
+        !triedToSave
+
+        where:
+        interaction << [
+                sampleInteraction('UNKNOWN EXPERIMENT ID'),
+                sampleInteraction(TEST_EXPERIMENT_ID_WITH_DISABLED_REPORTING)
+        ]
+        error << [
+                'there is no connected experiment',
+                'experiment reporting is disabled'
+        ]
+    }
+
+    def "should save interaction with null fields, when they are not required"() {
         given:
         def interaction = sampleInteractionWithNulls()
 
         when:
-        interactionRepository.save(interaction)
+        def triedToSave = interactionRepository.save(interaction)
 
         then:
         receiveInteraction() == interaction
+
+        and:
+        triedToSave
+    }
+
+    def receivedAnyInteractions() {
+        records.poll(1000, TimeUnit.MILLISECONDS) != null
     }
 
     def receiveInteraction() {
@@ -140,11 +174,11 @@ class KafkaInteractionRepositoryIntegrationSpec extends BaseIntegrationSpec {
         kafkaConfig.kafkaInteractionRepository(kafkaTemplate, avroConverter, TOPIC, experimentsRepository)
     }
 
-    Interaction sampleInteraction() {
+    Interaction sampleInteraction(String experimentId) {
         new Interaction(
                 "userId",
                 "userCmId",
-                TEST_EXPERIMENT_ID,
+                experimentId,
                 "variantName",
                 false,
                 "iphone",

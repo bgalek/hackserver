@@ -59,14 +59,14 @@ class InteractionsIntegrationSpec extends BaseIntegrationSpec {
     def "should not save interactions when #error"() {
         when:
         restTemplate.exchange(localUrl('/api/interactions/v1/'),
-                HttpMethod.POST, httpJsonEntity(data), Void.class)
+                HttpMethod.POST, httpJsonEntity(interaction), Void.class)
 
         then:
-        def interactions = interactionConverter.fromJson(data)
+        def interactions = interactionConverter.fromJson(interaction)
         !inMemoryInteractionRepository.interactionSaved(interactions[0])
 
         where:
-        data << [
+        interaction << [
                 JsonOutput.toJson([[
                         "userId"         : "someUserId123",
                         "userCmId"       : "someUserCmId123",
