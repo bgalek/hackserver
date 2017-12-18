@@ -13,6 +13,7 @@ import org.springframework.kafka.test.rule.KafkaEmbedded
 import org.springframework.kafka.test.utils.KafkaTestUtils
 import org.springframework.test.context.ContextConfiguration
 import pl.allegro.experiments.chi.chiserver.BaseIntegrationSpec
+import pl.allegro.experiments.chi.chiserver.domain.ExperimentsRepository
 import pl.allegro.experiments.chi.chiserver.interactions.infrastructure.KafkaConfig
 import pl.allegro.tech.common.andamio.server.cloud.CloudMetadata
 import pl.allegro.tech.common.andamio.spring.avro.AvroConverter
@@ -22,6 +23,8 @@ import java.time.Instant
 import java.util.concurrent.BlockingQueue
 import java.util.concurrent.LinkedBlockingQueue
 import java.util.concurrent.TimeUnit
+
+import static InteractionsIntegrationTestConfig.TEST_EXPERIMENT_ID
 
 @ContextConfiguration(classes = [InteractionsIntegrationTestConfig])
 class KafkaInteractionRepositoryIntegrationSpec extends BaseIntegrationSpec {
@@ -41,6 +44,9 @@ class KafkaInteractionRepositoryIntegrationSpec extends BaseIntegrationSpec {
 
     @Shared
     InteractionRepository interactionRepository
+
+    @Autowired
+    ExperimentsRepository experimentsRepository
 
     @Autowired
     AvroConverter avroConverter
@@ -131,14 +137,14 @@ class KafkaInteractionRepositoryIntegrationSpec extends BaseIntegrationSpec {
                 10,
                 new MetricRegistry()
         )
-        kafkaConfig.kafkaInteractionRepository(kafkaTemplate, avroConverter, TOPIC)
+        kafkaConfig.kafkaInteractionRepository(kafkaTemplate, avroConverter, TOPIC, experimentsRepository)
     }
 
     Interaction sampleInteraction() {
         new Interaction(
                 "userId",
                 "userCmId",
-                "experimentId",
+                TEST_EXPERIMENT_ID,
                 "variantName",
                 false,
                 "iphone",
@@ -151,7 +157,7 @@ class KafkaInteractionRepositoryIntegrationSpec extends BaseIntegrationSpec {
         new Interaction(
                 null,
                 null,
-                "experimentId",
+                TEST_EXPERIMENT_ID,
                 "variantName",
                 null,
                 null,

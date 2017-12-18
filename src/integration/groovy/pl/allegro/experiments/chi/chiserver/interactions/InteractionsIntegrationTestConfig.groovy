@@ -5,6 +5,7 @@ import org.springframework.context.annotation.Configuration
 import org.springframework.context.annotation.Primary
 import pl.allegro.experiments.chi.chiserver.domain.Experiment
 import pl.allegro.experiments.chi.chiserver.domain.ExperimentVariant
+import pl.allegro.experiments.chi.chiserver.domain.ExperimentsRepository
 import pl.allegro.experiments.chi.chiserver.infrastructure.InMemoryExperimentsRepository
 import pl.allegro.experiments.chi.chiserver.interactions.infrastructure.InMemoryInteractionRepository
 
@@ -18,8 +19,8 @@ class InteractionsIntegrationTestConfig {
 
     @Primary
     @Bean
-    InMemoryInteractionRepository experimentInteractionRepository() {
-        return new InMemoryInteractionRepository()
+    InMemoryInteractionRepository experimentInteractionRepository(ExperimentsRepository experimentsRepository) {
+        return new InMemoryInteractionRepository(experimentsRepository)
     }
 
     @Primary

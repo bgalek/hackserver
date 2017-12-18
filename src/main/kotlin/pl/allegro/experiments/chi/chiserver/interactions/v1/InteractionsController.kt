@@ -13,8 +13,7 @@ import pl.allegro.tech.common.andamio.metrics.MeteredEndpoint
 
 @RestController
 @RequestMapping(value = "/api/interactions", produces = arrayOf(MediaType.APPLICATION_JSON_UTF8_VALUE))
-class InteractionsController(private val experimentsRepository: ExperimentsRepository,
-    private val interactionRepository: InteractionRepository,
+class InteractionsController(private val interactionRepository: InteractionRepository,
     private val interactionsConverter: InteractionsConverter,
     private val interactionsMetricsReporter: InteractionsMetricsReporter) {
 
@@ -29,16 +28,12 @@ class InteractionsController(private val experimentsRepository: ExperimentsRepos
         logger.debug("Save interactions request received")
 
         val interactions = interactionsConverter.fromJson(interactionsAsJson)
-                .filter { interaction ->
-                    val experiment = experimentsRepository.getExperiment(interaction.experimentId)
-                    experiment != null && experiment.reportingEnabled
-                }.toList()
 
-        interactionsMetricsReporter.meter(interactions)
-
-        interactions.forEach { interaction ->
+        val savedInteractions = interactions.filter { interaction ->
             interactionRepository.save(interaction)
         }
+
+        interactionsMetricsReporter.meter(savedInteractions)
     }
 
     @ExceptionHandler(InvalidFormatException::class)

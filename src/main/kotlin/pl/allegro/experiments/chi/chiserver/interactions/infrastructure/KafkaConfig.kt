@@ -13,6 +13,7 @@ import org.springframework.context.annotation.Configuration
 import org.springframework.kafka.core.DefaultKafkaProducerFactory
 import org.springframework.kafka.core.KafkaTemplate
 import org.springframework.kafka.core.ProducerFactory
+import pl.allegro.experiments.chi.chiserver.domain.ExperimentsRepository
 import pl.allegro.experiments.chi.chiserver.interactions.InteractionRepository
 import pl.allegro.tech.common.andamio.server.cloud.CloudMetadata
 import pl.allegro.tech.common.andamio.spring.avro.AvroConverter
@@ -33,8 +34,9 @@ class KafkaConfig {
     fun kafkaInteractionRepository(
             kafkaTemplate: KafkaTemplate<String, ByteArray>,
             avroConverter: AvroConverter,
-            @Value("\${interactions.kafka.topic}") kafkaTopic: String): InteractionRepository {
-        return KafkaInteractionRepository(kafkaTemplate, avroConverter, kafkaTopic)
+            @Value("\${interactions.kafka.topic}") kafkaTopic: String,
+            experimentsRepository: ExperimentsRepository): InteractionRepository {
+        return KafkaInteractionRepository(kafkaTemplate, avroConverter, kafkaTopic, experimentsRepository)
     }
 
     @Bean

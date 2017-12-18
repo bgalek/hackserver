@@ -3,7 +3,6 @@ package pl.allegro.experiments.chi.chiserver
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.test.context.ContextConfiguration
-import pl.allegro.experiments.chi.chiserver.interactions.InteractionsIntegrationTestConfig
 import spock.lang.Specification
 
 @SpringBootTest(

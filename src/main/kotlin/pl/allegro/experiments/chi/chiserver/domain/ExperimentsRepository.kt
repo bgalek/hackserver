@@ -6,4 +6,9 @@ interface ExperimentsRepository {
     val all: List<Experiment>
 
     fun refresh()
+
+    fun reportingEnabled(experimentId: String): Boolean {
+        val experiment = getExperiment(experimentId)
+        return experiment != null && experiment.reportingEnabled
+    }
 }

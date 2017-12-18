@@ -14,6 +14,9 @@ import pl.allegro.experiments.chi.chiserver.infrastructure.InMemoryExperimentsRe
 import pl.allegro.experiments.chi.chiserver.interactions.infrastructure.InMemoryInteractionRepository
 import spock.lang.Unroll
 
+import static InteractionsIntegrationTestConfig.TEST_EXPERIMENT_ID
+import static InteractionsIntegrationTestConfig.TEST_EXPERIMENT_ID_WITH_DISABLED_REPORTING
+
 @ContextConfiguration(classes = [InteractionsIntegrationTestConfig])
 class InteractionsIntegrationSpec extends BaseIntegrationSpec {
 
@@ -33,17 +36,12 @@ class InteractionsIntegrationSpec extends BaseIntegrationSpec {
                 [
                         "userId"         : "someUserId123",
                         "userCmId"       : "someUserCmId123",
-                        "experimentId"   : InteractionsIntegrationTestConfig.TEST_EXPERIMENT_ID,
+                        "experimentId"   : TEST_EXPERIMENT_ID,
                         "variantName"    : "someVariantName",
                         "internal"       : true,
                         "deviceClass"    : "iphone",
                         "interactionDate": "1970-01-01T00:00:00Z",
                         "appId"          : "a"
-                ],
-                [
-                        "experimentId"   : InteractionsIntegrationTestConfig.TEST_EXPERIMENT_ID,
-                        "variantName"    : "variant",
-                        "interactionDate": "1970-01-01T00:00:00Z"
                 ]
         ])
 
@@ -55,13 +53,21 @@ class InteractionsIntegrationSpec extends BaseIntegrationSpec {
         then:
         def interactions = interactionConverter.fromJson(interactionsJson)
         inMemoryInteractionRepository.interactionSaved(interactions[0])
-        inMemoryInteractionRepository.interactionSaved(interactions[1])
     }
 
-    def "should not save interactions when there is no connected experiment"() {
-        given:
-        String interactionsJson = JsonOutput.toJson([
-                [
+    @Unroll
+    def "should not save interactions when #error"() {
+        when:
+        restTemplate.exchange(localUrl('/api/interactions/v1/'),
+                HttpMethod.POST, httpJsonEntity(data), Void.class)
+
+        then:
+        def interactions = interactionConverter.fromJson(data)
+        !inMemoryInteractionRepository.interactionSaved(interactions[0])
+
+        where:
+        data << [
+                JsonOutput.toJson([[
                         "userId"         : "someUserId123",
                         "userCmId"       : "someUserCmId123",
                         "experimentId"   : "SOME NONEXISTENT EXPERIMENT ID",
@@ -70,54 +76,19 @@ class InteractionsIntegrationSpec extends BaseIntegrationSpec {
                         "deviceClass"    : "iphone",
                         "interactionDate": "1970-01-01T00:00:00Z",
                         "appId"          : "a"
-                ],
-                [
-                        "experimentId"   : "SOME NONEXISTENT EXPERIMENT ID",
-                        "variantName"    : "variant",
-                        "interactionDate": "1970-01-01T00:00:00Z"
-                ]
-        ])
-
-        when:
-        restTemplate.exchange(localUrl('/api/interactions/v1/'),
-                HttpMethod.POST, httpJsonEntity(interactionsJson), Void.class)
-
-
-        then:
-        def interactions = interactionConverter.fromJson(interactionsJson)
-        !inMemoryInteractionRepository.interactionSaved(interactions[0])
-        !inMemoryInteractionRepository.interactionSaved(interactions[1])
-    }
-
-    def "should not save interactions when experiment reporting is disabled"() {
-        given:
-        String interactionsJson = JsonOutput.toJson([
-                [
+                ]]),
+                JsonOutput.toJson([[
                         "userId"         : "someUserId123",
                         "userCmId"       : "someUserCmId123",
-                        "experimentId"   : InteractionsIntegrationTestConfig.TEST_EXPERIMENT_ID_WITH_DISABLED_REPORTING,
+                        "experimentId"   : TEST_EXPERIMENT_ID_WITH_DISABLED_REPORTING,
                         "variantName"    : "someVariantName",
                         "internal"       : true,
                         "deviceClass"    : "iphone",
                         "interactionDate": "1970-01-01T00:00:00Z",
                         "appId"          : "a"
-                ],
-                [
-                        "experimentId"   : InteractionsIntegrationTestConfig.TEST_EXPERIMENT_ID_WITH_DISABLED_REPORTING,
-                        "variantName"    : "variant",
-                        "interactionDate": "1970-01-01T00:00:00Z"
-                ]
-        ])
-
-        when:
-        restTemplate.exchange(localUrl('/api/interactions/v1/'),
-                HttpMethod.POST, httpJsonEntity(interactionsJson), Void.class)
-
-
-        then:
-        def interactions = interactionConverter.fromJson(interactionsJson)
-        !inMemoryInteractionRepository.interactionSaved(interactions[0])
-        !inMemoryInteractionRepository.interactionSaved(interactions[1])
+                ]])
+        ]
+        error << ['there is no connected experiment', 'experiment reporting is disabled']
     }
 
     @Unroll
@@ -145,7 +116,7 @@ class InteractionsIntegrationSpec extends BaseIntegrationSpec {
                         [
                                 "userId"      : "123",
                                 "userCmId"    : "123",
-                                "experimentId": InteractionsIntegrationTestConfig.TEST_EXPERIMENT_ID,
+                                "experimentId": TEST_EXPERIMENT_ID,
                                 "variantName" : "123",
                                 "internal"    : true,
                                 "deviceClass" : "iphone"
