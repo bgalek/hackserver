@@ -16,9 +16,10 @@ class InteractionsConfig {
 
     @Bean
     fun interactionFactory(
+            interactionsMetricsReporter: InteractionsMetricsReporter,
             experimentsRepository: ExperimentsRepository,
             interactionConverter: InteractionConverter) : InteractionsFactory {
-        return InteractionsFactory(experimentsRepository, interactionConverter)
+        return InteractionsFactory(interactionsMetricsReporter, experimentsRepository, interactionConverter)
     }
 
     @Bean
