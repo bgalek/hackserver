@@ -9,6 +9,8 @@ class InteractionsMetricsReporter(private val metricRegistry : MetricRegistry) {
 
     private val RECEIVED_INTERACTIONS = "interactions.received"
 
+    private val IGNORED_INTERACTIONS = "interactions.ignored"
+
     val slugify = Slugify()
 
     val slugCache = CacheBuilder.newBuilder()
@@ -20,7 +22,13 @@ class InteractionsMetricsReporter(private val metricRegistry : MetricRegistry) {
                         }
                     })
 
-    fun meter(interactions : List<Interaction>) {
+    fun meterIgnored(ignored : Int) {
+        if (ignored > 0) {
+            metricRegistry.counter(IGNORED_INTERACTIONS).inc(ignored as Long)
+        }
+    }
+
+    fun meterReceived(interactions : List<Interaction>) {
         metricRegistry.meter(RECEIVED_INTERACTIONS+".all").mark(interactions.size.toLong())
 
         interactions.forEach {

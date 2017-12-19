@@ -32,7 +32,7 @@ class InteractionsController(private val interactionRepository: InteractionRepos
             interactionRepository.save(interaction)
         }
 
-        interactionsMetricsReporter.meter(interactions)
+        interactionsMetricsReporter.meterReceived(interactions)
     }
 
     @ExceptionHandler(InvalidFormatException::class)
