@@ -13,11 +13,10 @@ import org.springframework.kafka.test.rule.KafkaEmbedded
 import org.springframework.kafka.test.utils.KafkaTestUtils
 import org.springframework.test.context.ContextConfiguration
 import pl.allegro.experiments.chi.chiserver.BaseIntegrationSpec
+import pl.allegro.experiments.chi.chiserver.domain.experiments.ExperimentsRepository
 import pl.allegro.experiments.chi.chiserver.domain.interactions.Interaction
 import pl.allegro.experiments.chi.chiserver.domain.interactions.InteractionRepository
 import pl.allegro.experiments.chi.chiserver.infrastructure.interactions.KafkaConfig
-import pl.allegro.experiments.chi.chiserver.domain.ExperimentsRepository
-import pl.allegro.experiments.chi.chiserver.interactions.infrastructure.KafkaConfig
 import pl.allegro.tech.common.andamio.server.cloud.CloudMetadata
 import pl.allegro.tech.common.andamio.spring.avro.AvroConverter
 import spock.lang.Shared

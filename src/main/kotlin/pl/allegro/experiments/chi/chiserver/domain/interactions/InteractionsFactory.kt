@@ -2,6 +2,7 @@ package pl.allegro.experiments.chi.chiserver.domain.interactions
 
 import pl.allegro.experiments.chi.chiserver.application.interactions.v1.InvalidFormatException
 import pl.allegro.experiments.chi.chiserver.domain.experiments.ExperimentsRepository
+import pl.allegro.experiments.chi.chiserver.infrastructure.interactions.InteractionsMetricsReporter
 
 
 class InteractionsFactory(

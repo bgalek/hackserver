@@ -3,15 +3,10 @@ package pl.allegro.experiments.chi.chiserver.interactions
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.context.annotation.Primary
+import pl.allegro.experiments.chi.chiserver.domain.experiments.Experiment
+import pl.allegro.experiments.chi.chiserver.domain.experiments.ExperimentVariant
 import pl.allegro.experiments.chi.chiserver.infrastructure.interactions.InMemoryInteractionRepository
-import pl.allegro.experiments.chi.chiserver.domain.Experiment
-import pl.allegro.experiments.chi.chiserver.domain.ExperimentVariant
-import pl.allegro.experiments.chi.chiserver.domain.ExperimentsRepository
 import pl.allegro.experiments.chi.chiserver.infrastructure.InMemoryExperimentsRepository
-import pl.allegro.experiments.chi.chiserver.interactions.infrastructure.InMemoryInteractionRepository
-
-import java.time.Instant
-import java.time.ZoneId
 
 @Configuration
 class InteractionsIntegrationTestConfig {
