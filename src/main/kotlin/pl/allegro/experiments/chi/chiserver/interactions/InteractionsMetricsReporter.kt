@@ -24,7 +24,7 @@ class InteractionsMetricsReporter(private val metricRegistry : MetricRegistry) {
 
     fun meterIgnored(ignored : Int) {
         if (ignored > 0) {
-            metricRegistry.counter(IGNORED_INTERACTIONS).inc(ignored as Long)
+            metricRegistry.counter(IGNORED_INTERACTIONS).inc(ignored.toLong())
         }
     }
 
