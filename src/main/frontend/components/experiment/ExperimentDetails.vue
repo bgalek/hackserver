@@ -16,11 +16,11 @@
         <h3>Status</h3>
         <v-layout row>
 
-            <v-chip outline :color="activityButtonClass()">
+            <v-chip outline disabled :color="activityButtonClass()">
               {{ experiment.status() }}
             </v-chip>
 
-            <v-chip outline :color="reportingEnabledButtonClass()">
+            <v-chip disabled outline :color="reportingEnabledButtonClass()" >
               {{ reportingEnabledButtonText() }}
             </v-chip>
 
