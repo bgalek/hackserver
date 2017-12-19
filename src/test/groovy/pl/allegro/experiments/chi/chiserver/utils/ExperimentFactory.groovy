@@ -1,6 +1,10 @@
-package pl.allegro.experiments.chi.chiserver.utils;
+package pl.allegro.experiments.chi.chiserver.utils
 
-import pl.allegro.experiments.chi.chiserver.domain.*
+import pl.allegro.experiments.chi.chiserver.domain.experiments.CmuidRegexpPredicate
+import pl.allegro.experiments.chi.chiserver.domain.experiments.Experiment
+import pl.allegro.experiments.chi.chiserver.domain.experiments.ExperimentVariant
+import pl.allegro.experiments.chi.chiserver.domain.experiments.HashRangePredicate
+import pl.allegro.experiments.chi.chiserver.domain.experiments.PercentageRange
 
 import java.util.regex.Pattern;
 
@@ -19,8 +23,8 @@ class ExperimentFactory {
 
     static Experiment regexp50to50(String id, String vA, String vB) {
         return new Experiment(id, [
-                                    new ExperimentVariant(vA, [new CmuidRegexpPredicate(Pattern.compile('.*[0-7]$'))]),
-                                    new ExperimentVariant(vB, [new CmuidRegexpPredicate(Pattern.compile('.*[8-9,a-f]$'))])
+                new ExperimentVariant(vA, [new CmuidRegexpPredicate(Pattern.compile('.*[0-7]$'))]),
+                new ExperimentVariant(vB, [new CmuidRegexpPredicate(Pattern.compile('.*[8-9,a-f]$'))])
                                   ],
                                 "description", "owner", true, null, null
                              )

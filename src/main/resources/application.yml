@@ -33,7 +33,7 @@ avro:
     applicationSchemaProvider: classpath
     registry.location: http://schema-registry-test.allegrogroup.com
     mapping:
-      - className: pl.allegro.experiments.chi.chiserver.interactions.Interaction
+      - className: pl.allegro.experiments.chi.chiserver.domain.interactions.Interaction
         schemaVersion: 1
         schemaLocation: /avro/pl.allegro.experiment.chi.chiserver.interactions.Interaction.avsc
         remoteSchemaSubject: pl.allegro.experiments.chi.interactions.Interaction

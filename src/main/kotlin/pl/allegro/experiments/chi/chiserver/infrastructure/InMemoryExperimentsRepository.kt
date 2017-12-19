@@ -1,8 +1,8 @@
 package pl.allegro.experiments.chi.chiserver.infrastructure
 
 import com.google.common.collect.ImmutableList
-import pl.allegro.experiments.chi.chiserver.domain.Experiment
-import pl.allegro.experiments.chi.chiserver.domain.ExperimentsRepository
+import pl.allegro.experiments.chi.chiserver.domain.experiments.Experiment
+import pl.allegro.experiments.chi.chiserver.domain.experiments.ExperimentsRepository
 
 class InMemoryExperimentsRepository(experiments: Collection<Experiment>) : ExperimentsRepository {
 

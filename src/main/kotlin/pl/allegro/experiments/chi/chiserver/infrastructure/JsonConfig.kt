@@ -9,10 +9,11 @@ import com.google.gson.JsonElement
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import pl.allegro.experiments.chi.chiserver.domain.*
-import pl.allegro.experiments.chi.chiserver.experiments.v1.*
-import pl.allegro.experiments.chi.chiserver.experiments.v1.ExperimentTypeAdapter
-import pl.allegro.experiments.chi.chiserver.experiments.v1.ExperimentVariantTypeAdapter
-import pl.allegro.experiments.chi.chiserver.statistics.ExperimentStatistics
+import pl.allegro.experiments.chi.chiserver.application.experiments.v1.*
+import pl.allegro.experiments.chi.chiserver.application.experiments.v1.ExperimentTypeAdapter
+import pl.allegro.experiments.chi.chiserver.application.experiments.v1.ExperimentVariantTypeAdapter
+import pl.allegro.experiments.chi.chiserver.domain.experiments.*
+import pl.allegro.experiments.chi.chiserver.domain.statistics.ExperimentStatistics
 import java.time.Duration
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter

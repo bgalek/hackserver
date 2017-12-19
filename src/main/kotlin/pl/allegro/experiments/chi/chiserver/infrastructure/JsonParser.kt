@@ -3,10 +3,10 @@ package pl.allegro.experiments.chi.chiserver.infrastructure
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import com.google.gson.reflect.TypeToken
-import pl.allegro.experiments.chi.chiserver.domain.Experiment
-import pl.allegro.experiments.chi.chiserver.domain.ExperimentVariant
-import pl.allegro.experiments.chi.chiserver.experiments.v1.ExperimentTypeAdapter
-import pl.allegro.experiments.chi.chiserver.experiments.v1.ExperimentVariantTypeAdapter
+import pl.allegro.experiments.chi.chiserver.domain.experiments.Experiment
+import pl.allegro.experiments.chi.chiserver.domain.experiments.ExperimentVariant
+import pl.allegro.experiments.chi.chiserver.application.experiments.v1.ExperimentTypeAdapter
+import pl.allegro.experiments.chi.chiserver.application.experiments.v1.ExperimentVariantTypeAdapter
 
 internal class JsonParser {
     private val gson: Gson = GsonBuilder()
