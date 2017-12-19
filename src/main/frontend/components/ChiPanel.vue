@@ -3,7 +3,7 @@
     <v-toolbar color="blue">
       <v-toolbar-title class="white--text">{{title}}</v-toolbar-title>
     </v-toolbar>
-    <v-card tile="true" style="padding:10px;">
+    <v-card title="true" style="padding:10px;">
       <slot>
       </slot>
 

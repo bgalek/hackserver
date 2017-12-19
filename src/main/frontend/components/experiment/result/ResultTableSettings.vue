@@ -5,7 +5,7 @@
         <v-card-text class="ma-0 pa-0">
           <p class="ma-0 pa-0">
             Results until:
-            <v-tooltip v-model="show" right>
+            <v-tooltip right>
               <v-btn icon slot="activator" class="ma-0 pa-0">
                 <v-icon color="grey" class="ma-0 pa-0" small>help</v-icon>
               </v-btn>
