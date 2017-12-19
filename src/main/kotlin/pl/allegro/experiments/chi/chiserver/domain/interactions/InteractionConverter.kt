@@ -7,7 +7,7 @@ import pl.allegro.experiments.chi.chiserver.application.interactions.v1.Interact
 import pl.allegro.experiments.chi.chiserver.application.interactions.v1.InvalidFormatException
 import java.util.ArrayList
 
-class InteractionsConverter {
+class InteractionConverter {
     val gson: Gson = GsonBuilder()
             .registerTypeAdapter(Interaction::class.java, InteractionTypeAdapter())
             .create()

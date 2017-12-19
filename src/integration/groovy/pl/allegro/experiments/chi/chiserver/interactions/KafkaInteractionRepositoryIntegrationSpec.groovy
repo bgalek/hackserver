@@ -11,10 +11,13 @@ import org.springframework.kafka.listener.MessageListener
 import org.springframework.kafka.listener.config.ContainerProperties
 import org.springframework.kafka.test.rule.KafkaEmbedded
 import org.springframework.kafka.test.utils.KafkaTestUtils
+import org.springframework.test.context.ContextConfiguration
 import pl.allegro.experiments.chi.chiserver.BaseIntegrationSpec
 import pl.allegro.experiments.chi.chiserver.domain.interactions.Interaction
 import pl.allegro.experiments.chi.chiserver.domain.interactions.InteractionRepository
 import pl.allegro.experiments.chi.chiserver.infrastructure.interactions.KafkaConfig
+import pl.allegro.experiments.chi.chiserver.domain.ExperimentsRepository
+import pl.allegro.experiments.chi.chiserver.interactions.infrastructure.KafkaConfig
 import pl.allegro.tech.common.andamio.server.cloud.CloudMetadata
 import pl.allegro.tech.common.andamio.spring.avro.AvroConverter
 import spock.lang.Shared
@@ -24,6 +27,9 @@ import java.util.concurrent.BlockingQueue
 import java.util.concurrent.LinkedBlockingQueue
 import java.util.concurrent.TimeUnit
 
+import static InteractionsIntegrationTestConfig.TEST_EXPERIMENT_ID
+
+@ContextConfiguration(classes = [InteractionsIntegrationTestConfig])
 class KafkaInteractionRepositoryIntegrationSpec extends BaseIntegrationSpec {
 
     @Shared
@@ -41,6 +47,9 @@ class KafkaInteractionRepositoryIntegrationSpec extends BaseIntegrationSpec {
 
     @Shared
     InteractionRepository interactionRepository
+
+    @Autowired
+    ExperimentsRepository experimentsRepository
 
     @Autowired
     AvroConverter avroConverter
@@ -101,7 +110,7 @@ class KafkaInteractionRepositoryIntegrationSpec extends BaseIntegrationSpec {
         equalsIgnoringAppId(received, interaction)
     }
 
-    def "should not save interaction with null fields"() {
+    def "should save interaction with null fields, when they are not required"() {
         given:
         def interaction = sampleInteractionWithNulls()
 
@@ -110,6 +119,10 @@ class KafkaInteractionRepositoryIntegrationSpec extends BaseIntegrationSpec {
 
         then:
         receiveInteraction() == interaction
+    }
+
+    def receivedAnyInteractions() {
+        records.poll(1000, TimeUnit.MILLISECONDS) != null
     }
 
     def receiveInteraction() {
@@ -138,7 +151,7 @@ class KafkaInteractionRepositoryIntegrationSpec extends BaseIntegrationSpec {
         new Interaction(
                 "userId",
                 "userCmId",
-                "experimentId",
+                TEST_EXPERIMENT_ID,
                 "variantName",
                 false,
                 "iphone",
@@ -151,7 +164,7 @@ class KafkaInteractionRepositoryIntegrationSpec extends BaseIntegrationSpec {
         new Interaction(
                 null,
                 null,
-                "experimentId",
+                TEST_EXPERIMENT_ID,
                 "variantName",
                 null,
                 null,

@@ -4,9 +4,8 @@ import org.springframework.kafka.core.KafkaOperations
 import org.springframework.kafka.support.SendResult
 import pl.allegro.experiments.chi.chiserver.domain.interactions.InteractionRepository
 import pl.allegro.experiments.chi.chiserver.domain.interactions.Interaction
+
 import pl.allegro.tech.common.andamio.spring.avro.AvroConverter
-import java.util.concurrent.CompletableFuture
-import java.util.concurrent.TimeUnit
 
 class KafkaInteractionRepository(
         private val kafkaTemplate: KafkaOperations<String, ByteArray>,

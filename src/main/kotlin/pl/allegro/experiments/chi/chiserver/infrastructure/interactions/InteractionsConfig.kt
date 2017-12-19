@@ -3,13 +3,22 @@ package pl.allegro.experiments.chi.chiserver.infrastructure.interactions
 import com.codahale.metrics.MetricRegistry
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
-import pl.allegro.experiments.chi.chiserver.domain.interactions.InteractionsConverter
+import pl.allegro.experiments.chi.chiserver.domain.experiments.ExperimentsRepository
+import pl.allegro.experiments.chi.chiserver.domain.interactions.InteractionConverter
+import pl.allegro.experiments.chi.chiserver.domain.interactions.InteractionsFactory
 
 @Configuration
 class InteractionsConfig {
     @Bean
-    fun interactionConverter() : InteractionsConverter {
-        return InteractionsConverter()
+    fun interactionConverter(): InteractionConverter {
+        return InteractionConverter()
+    }
+
+    @Bean
+    fun interactionFactory(
+            experimentsRepository: ExperimentsRepository,
+            interactionConverter: InteractionConverter) : InteractionsFactory {
+        return InteractionsFactory(experimentsRepository, interactionConverter)
     }
 
     @Bean

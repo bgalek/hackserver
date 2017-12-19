@@ -8,7 +8,12 @@
     </p>
     <div v-if="experimentStatistics.metrics">
       <div v-for="(variantsMetricValue, metric) in experimentStatistics.metrics" :key="metric">
-        <h3>{{metricNames[metric]}}</h3>
+        <b>{{metricNames[metric]}}</b>
+
+        <pivot-link cube-type="metrics" :experiment-id="experiment.id"
+                    :selected-metric-name="metricPivotNames[metric]"
+        ></pivot-link>
+
         <v-data-table
           v-bind:headers="headers"
           :items="variantsMetricValue"
@@ -53,9 +58,14 @@
 <script>
   import {mapState, mapActions} from 'vuex'
   import _ from 'lodash'
+  import PivotLink from '../../PivotLink.vue'
 
   export default {
     props: ['experiment', 'toDate', 'device'],
+
+    components: {
+      PivotLink
+    },
 
     data () {
       return {
@@ -66,6 +76,10 @@
           {text: 'p-Value', sortable: false},
           {text: 'Sample Count', sortable: false}
         ],
+        metricPivotNames: {
+          'tx_visit': '1000sum-06a',
+          'gmv': 'define me'
+        },
         metricNames: {
           'tx_visit': 'Visits With Transaction(s)',
           'gmv': 'GMV'
