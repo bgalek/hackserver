@@ -3,13 +3,11 @@ package pl.allegro.experiments.chi.chiserver
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.test.context.ContextConfiguration
-import pl.allegro.experiments.chi.chiserver.interactions.InteractionsIntegrationTestConfig
 import spock.lang.Specification
 
 @SpringBootTest(
         classes = [
-                AppRunner,
-                InteractionsIntegrationTestConfig
+                AppRunner
         ],
         properties = "application.environment=integration",
         webEnvironment=SpringBootTest.WebEnvironment.RANDOM_PORT)

@@ -4,7 +4,7 @@ import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
-import pl.allegro.experiments.chi.chiserver.interactions.InteractionsConverter
+import pl.allegro.experiments.chi.chiserver.interactions.InteractionsFactory
 import pl.allegro.experiments.chi.chiserver.interactions.InteractionRepository
 import pl.allegro.experiments.chi.chiserver.interactions.InteractionsMetricsReporter
 import pl.allegro.experiments.chi.chiserver.logger
@@ -12,10 +12,9 @@ import pl.allegro.tech.common.andamio.metrics.MeteredEndpoint
 
 @RestController
 @RequestMapping(value = "/api/interactions", produces = arrayOf(MediaType.APPLICATION_JSON_UTF8_VALUE))
-class InteractionsController(
-    private val interactionRepository: InteractionRepository,
-    private val interactionsConverter: InteractionsConverter,
-    private val interactionsMetricsReporter: InteractionsMetricsReporter) {
+class InteractionsController(private val interactionRepository: InteractionRepository,
+                             private val interactionsFactory: InteractionsFactory,
+                             private val interactionsMetricsReporter: InteractionsMetricsReporter) {
 
     companion object {
         private val logger by logger()
@@ -27,13 +26,13 @@ class InteractionsController(
     fun saveInteractions(@RequestBody interactionsAsJson: String) {
         logger.debug("Save interactions request received")
 
-        val interactions = interactionsConverter.fromJson(interactionsAsJson)
-
-        interactionsMetricsReporter.meter(interactions)
+        val interactions = interactionsFactory.fromJson(interactionsAsJson)
 
         interactions.forEach { interaction ->
             interactionRepository.save(interaction)
         }
+
+        interactionsMetricsReporter.meter(interactions)
     }
 
     @ExceptionHandler(InvalidFormatException::class)

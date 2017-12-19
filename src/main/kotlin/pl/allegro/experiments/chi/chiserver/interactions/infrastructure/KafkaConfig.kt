@@ -3,7 +3,6 @@ package pl.allegro.experiments.chi.chiserver.interactions.infrastructure
 import com.codahale.metrics.Gauge
 import com.codahale.metrics.MetricRegistry
 import org.apache.kafka.clients.producer.ProducerConfig
-import org.apache.kafka.common.MetricName
 import org.apache.kafka.common.serialization.ByteArraySerializer
 import org.apache.kafka.common.serialization.StringSerializer
 import org.springframework.beans.factory.annotation.Value
