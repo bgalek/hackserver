@@ -31,7 +31,6 @@
             and how to understand
             <a href="https://rtd.allegrogroup.com/docs/chi/pl/latest/results/">p-Value</a>.
 
-
           </div>
         </chi-panel>
 

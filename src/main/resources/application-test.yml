@@ -10,6 +10,3 @@ metrics:
   graphite:
     enabled: true
     host: skystats-test.qxlint
-
-druid:
-  datasource: chi_experiments_stats_test
