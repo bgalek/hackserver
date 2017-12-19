@@ -26,6 +26,13 @@ class ExperimentsController(private val experimentsRepository: ExperimentsReposi
     @GetMapping(path = arrayOf("/experiments/v1", "/experiments"))
     fun activeExperiments() : String {
         ExperimentsController.logger.info("Active experiments request received")
+        return jsonConverter.toJSON(experimentsRepository.active)
+    }
+
+    @MeteredEndpoint
+    @GetMapping(path = arrayOf("/admin/experiments"))
+    fun allExperiments() : String {
+        ExperimentsController.logger.info("Active experiments request received")
         return jsonConverter.toJSON(experimentsRepository.all)
     }
 
