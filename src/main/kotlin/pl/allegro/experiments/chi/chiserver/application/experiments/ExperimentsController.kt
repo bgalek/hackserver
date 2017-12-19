@@ -32,7 +32,7 @@ class ExperimentsController(private val experimentsRepository: ExperimentsReposi
     @MeteredEndpoint
     @GetMapping(path = arrayOf("/admin/experiments"))
     fun allExperiments() : String {
-        ExperimentsController.logger.info("Active experiments request received")
+        ExperimentsController.logger.info("All experiments request received")
         return jsonConverter.toJSON(experimentsRepository.all)
     }
 
