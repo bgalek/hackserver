@@ -25,14 +25,14 @@ class ExperimentsController(private val experimentsRepository: ExperimentsReposi
     @MeteredEndpoint
     @GetMapping(path = arrayOf("/experiments/v1", "/experiments"))
     fun activeExperiments() : String {
-        logger.info("Active experiments request received")
+        ExperimentsController.logger.info("Active experiments request received")
         return jsonConverter.toJSON(experimentsRepository.all)
     }
 
     @MeteredEndpoint
     @GetMapping(path = arrayOf("/admin/experiments/{experimentId}"))
     fun getExperiment(@PathVariable experimentId: String) : ResponseEntity<String> {
-        logger.info("Single experiment request received")
+        ExperimentsController.logger.info("Single experiment request received")
         return experimentsRepository.getExperiment(experimentId)
                 ?.let { jsonConverter.toJSON(it) }
                 ?.let { ResponseEntity.ok(it) }

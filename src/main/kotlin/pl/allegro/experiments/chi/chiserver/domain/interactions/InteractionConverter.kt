@@ -4,7 +4,6 @@ import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import com.google.gson.reflect.TypeToken
 import pl.allegro.experiments.chi.chiserver.application.interactions.v1.InteractionTypeAdapter
-import pl.allegro.experiments.chi.chiserver.application.interactions.v1.InvalidFormatException
 import java.util.ArrayList
 
 class InteractionConverter {
@@ -13,11 +12,7 @@ class InteractionConverter {
             .create()
 
     fun fromJson(json: String): List<Interaction> {
-        try {
-            val listType = object : TypeToken<ArrayList<Interaction>>() {}.getType()
-            return gson.fromJson(json, listType)
-        } catch (e: Exception) {
-            throw InvalidFormatException("Cant deserialize Interaction. Invalid format.")
-        }
+        val listType = object : TypeToken<ArrayList<Interaction>>() {}.getType()
+        return gson.fromJson(json, listType)
     }
 }
