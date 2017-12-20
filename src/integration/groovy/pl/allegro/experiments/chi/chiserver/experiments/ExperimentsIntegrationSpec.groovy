@@ -68,7 +68,7 @@ class ExperimentsIntegrationSpec extends BaseIntegrationSpec {
         ]
     }
 
-    def "should return list of experiment in version 1"() {
+    def "should return list of active experiments in version 1"() {
         given:
         fileBasedExperimentsRepository.jsonUrl = resourceUrl('/experiments')
         fileBasedExperimentsRepository.refresh()
@@ -86,6 +86,28 @@ class ExperimentsIntegrationSpec extends BaseIntegrationSpec {
         response.body.contains(hashVariantExperiment())
         response.body.contains(sampleExperiment())
         response.body.contains(timeboundExperiment())
+        !response.body.contains(experimentFromThePast())
+    }
+
+    def "should return all experiments for admin"() {
+        given:
+        fileBasedExperimentsRepository.jsonUrl = resourceUrl('/experiments')
+        fileBasedExperimentsRepository.refresh()
+
+        when:
+        def response = restTemplate.getForEntity(localUrl('/api/admin/experiments'), List)
+
+        then:
+        response.statusCode.value() == 200
+        response.body.size() == 7
+
+        and:
+        response.body.contains(internalExperiment())
+        response.body.contains(cmuidRegexpExperiment())
+        response.body.contains(hashVariantExperiment())
+        response.body.contains(sampleExperiment())
+        response.body.contains(timeboundExperiment())
+        response.body.contains(experimentFromThePast())
     }
 
     def "should return last valid list when file is corrupted"() {
@@ -164,6 +186,17 @@ class ExperimentsIntegrationSpec extends BaseIntegrationSpec {
         [ id:'timed_internal_exp',
           activeFrom: '2017-11-03T10:15:30+02:00',
           activeTo: '2018-11-03T10:15:30+02:00',
+          variants: [
+                  [ name: 'internal', predicates: [[ type:'INTERNAL' ]] ]
+          ],
+          reportingEnabled: true
+        ]
+    }
+
+    Map experimentFromThePast() {
+        [ id:'experiment_from_the_past',
+          activeFrom: '2017-10-01T10:15:30+02:00',
+          activeTo: '2017-11-01T10:15:30+02:00',
           variants: [
                   [ name: 'internal', predicates: [[ type:'INTERNAL' ]] ]
           ],

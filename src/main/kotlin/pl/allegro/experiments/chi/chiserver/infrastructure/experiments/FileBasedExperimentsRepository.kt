@@ -65,4 +65,7 @@ class FileBasedExperimentsRepository(jsonUrl: String, initialState: List<Experim
 
     override val all: List<Experiment>
         get() = inMemoryRepository.all
+
+    override val active: List<Experiment>
+        get() = inMemoryRepository.active
 }

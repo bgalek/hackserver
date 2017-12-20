@@ -2,7 +2,6 @@ package pl.allegro.experiments.chi.chiserver.domain.experiments
 
 import com.google.common.base.Preconditions
 import com.google.common.base.Strings
-import pl.allegro.experiments.chi.chiserver.domain.experiments.ExperimentVariant
 import java.time.ZonedDateTime
 
 class Experiment(val id: String,
@@ -18,7 +17,11 @@ class Experiment(val id: String,
         Preconditions.checkArgument(!variants.isEmpty(), "empty list of Variants")
     }
 
-    fun isActive(now: ZonedDateTime): Boolean {
+    fun isActive(): Boolean {
+        return isActiveAt(ZonedDateTime.now())
+    }
+
+    private fun isActiveAt(now: ZonedDateTime): Boolean {
         return (activeFrom == null || now.isAfter(activeFrom)) && (activeTo == null || now.isBefore(activeTo))
     }
 }

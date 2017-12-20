@@ -29,6 +29,9 @@ class InMemoryExperimentsRepository(experiments: Collection<Experiment>) : Exper
     override val all: List<Experiment>
         get() = ImmutableList.copyOf(experiments.values)
 
+    override val active: List<Experiment>
+        get() = ImmutableList.copyOf(experiments.values.filter { it.isActive() })
+
     override fun refresh() {
         // Nothing to do
     }
