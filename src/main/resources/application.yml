@@ -12,6 +12,17 @@ metrics:
   graphite:
     enabled: false
 
+security:
+  enabled: true
+  rootGroup: "Chibox team"
+  oauth2:
+    client:
+      clientId: client_id
+      clientSecret: secret
+      accessTokenUri: https://oauth-test.allegrogroup.com/auth/oauth/token
+      userAuthorizationUri: https://oauth-test.allegrogroup.com/auth/oauth/authorize
+      logoutUri: https://oauth-test.allegrogroup.com/logout
+
 chi:
   experiments:
     file: "http://assets-chi.qxlint/chi-server/experiments-test.json"

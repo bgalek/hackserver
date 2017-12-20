@@ -24,12 +24,16 @@
     </v-navigation-drawer>
 
     <v-toolbar color="indigo" dark fixed app>
+
       <v-toolbar-side-icon @click.stop="drawer = !drawer"></v-toolbar-side-icon>
+      <v-avatar class="logo">
+        <img src="./assets/logo.png"/>
+      </v-avatar>
       <v-toolbar-title>Chi Admin</v-toolbar-title>
       <v-spacer></v-spacer>
-      <v-avatar class="logo">
-        <img src="./assets/logo.png"></img>
-      </v-avatar>
+      <v-btn icon @click="logout()">
+        <v-icon>exit_to_app</v-icon>
+      </v-btn>
     </v-toolbar>
 
     <v-content>
@@ -53,6 +57,11 @@
           { icon: 'bubble_chart', title: 'Experiments', path: '/experiments' },
           { icon: 'visibility', title: 'Cookie Baker', path: '/cookie_baker' }
         ]
+      }
+    },
+    methods: {
+      logout () {
+        window.open('/logout', '_self')
       }
     }
   }
