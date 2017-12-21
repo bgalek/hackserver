@@ -11,8 +11,8 @@ import pl.allegro.tech.common.andamio.metrics.MeteredEndpoint
 
 @RestController
 @RequestMapping(value = "/api/experiments", produces = arrayOf(MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_JSON_UTF8_VALUE))
-class ClientExperimentsController(private val experimentsRepository: ExperimentsRepository,
-                            private val jsonConverter: JsonConverter) {
+class ClientExperimentsController(private val clientExperimentsRepository: ExperimentsRepository,
+                                  private val jsonConverter: JsonConverter) {
 
     companion object {
         private val logger by logger()
@@ -22,6 +22,6 @@ class ClientExperimentsController(private val experimentsRepository: Experiments
     @GetMapping(path = arrayOf("/v1", ""))
     fun activeExperiments() : String {
         ClientExperimentsController.logger.info("Active experiments request received")
-        return jsonConverter.toJSON(experimentsRepository.active)
+        return jsonConverter.toJson(clientExperimentsRepository.active)
     }
 }

@@ -1,12 +1,8 @@
 package pl.allegro.experiments.chi.chiserver.utils
 
-import pl.allegro.experiments.chi.chiserver.domain.experiments.CmuidRegexpPredicate
-import pl.allegro.experiments.chi.chiserver.domain.experiments.Experiment
-import pl.allegro.experiments.chi.chiserver.domain.experiments.ExperimentVariant
-import pl.allegro.experiments.chi.chiserver.domain.experiments.HashRangePredicate
-import pl.allegro.experiments.chi.chiserver.domain.experiments.PercentageRange
+import pl.allegro.experiments.chi.chiserver.domain.experiments.*
 
-import java.util.regex.Pattern;
+import java.util.regex.Pattern
 
 class ExperimentFactory {
 
@@ -18,7 +14,7 @@ class ExperimentFactory {
     }
 
     static Experiment simple50(String id, String vA) {
-        return new Experiment(id, [ new ExperimentVariant(vA, [new HashRangePredicate(new PercentageRange(0, 50))])], "desc", "owner", true, null, null)
+        return new Experiment(id, [new ExperimentVariant(vA, [new HashRangePredicate(new PercentageRange(0, 50))])], "desc", "owner", true, null, null, null)
     }
 
     static Experiment regexp50to50(String id, String vA, String vB) {

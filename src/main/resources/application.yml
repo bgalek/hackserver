@@ -40,4 +40,5 @@ avro:
 
 druid:
   apiHost: druidbroker-nga-test.allegrogroup.com
-  datasource: chi_experiments_stats_test
+  experimentsCube: chi_experiments_test
+  experimentsStatsCube: chi_experiments_stats_test
