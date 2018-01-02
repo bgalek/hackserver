@@ -10,7 +10,8 @@
     props: {
       selectedMetricName: String,
       cubeType: String,
-      experimentId: String
+      experimentId: String,
+      variant: String
     },
 
     methods: {
@@ -18,10 +19,22 @@
         return window.location.hostname === 'chi.allegrogroup.com'
       },
 
-      cubeId () {
-        if (this.cubeType === 'metrics') {
-          return this.isProdEnv() ? '21b1' : 'ded9'
+      pivotMetricCode () {
+        const metric = this.selectedMetricName
+
+        const metricPivotNamesTest = {
+          'tx_visit': '1000sum-06a',
+          'p_value': 'sum_p_value',
+          'gmv': 'define me'
         }
+
+        const metricPivotNamesProd = {
+          'tx_visit': 'sumvisi-159',
+          'p_value': 'sum_p_value',
+          'gmv': 'define me'
+        }
+
+        return this.isProdEnv() ? metricPivotNamesProd[metric] : metricPivotNamesTest[metric]
       },
 
       pivotUrl () {
@@ -31,51 +44,111 @@
         return this.isProdEnv() ? PIVOT_PROD : PIVOT_TEST
       },
 
-      goToPivot () {
-        axios.post(`${this.pivotUrl()}/mkurl`, {
-          domain: this.pivotUrl(),
-          essence: {
-            dataCube: this.cubeId(),
-            visualization: 'line-chart',
-            filter: {
-              clauses: [
-                {
-                  dimension: 'experiment_id',
-                  values: {
-                    setType: 'STRING',
-                    elements: [ this.experimentId ]
-                  }
-                },
-                {
-                  dimension: '__time',
-                  dynamic: {
-                    op: 'timeRange',
-                    operand: {
-                      op: 'timeFloor',
+      buildPivotRequest () {
+        if (this.cubeType === 'metrics') {
+          return {
+            domain: this.pivotUrl(),
+            essence: {
+              dataCube: this.isProdEnv() ? '21b1' : 'ded9',
+              visualization: 'line-chart',
+              filter: {
+                clauses: [
+                  {
+                    dimension: 'experiment_id',
+                    values: {
+                      setType: 'STRING',
+                      elements: [ this.experimentId ]
+                    }
+                  },
+                  {
+                    dimension: '__time',
+                    dynamic: {
+                      op: 'timeRange',
                       operand: {
-                        op: 'ref',
-                        name: 'n'
+                        op: 'timeFloor',
+                        operand: {
+                          op: 'ref',
+                          name: 'n'
+                        },
+                        duration: 'P1D'
                       },
-                      duration: 'P1D'
-                    },
-                    duration: 'P1D',
-                    'step': -7
+                      duration: 'P1D',
+                      'step': -7
+                    }
+                  }
+                ]
+              },
+              splits: [
+                { dimension: 'experiment_variant' },
+                { dimension: '__time',
+                  bucketAction: {
+                    op: 'timeBucket',
+                    duration: 'PT1H'
                   }
                 }
-              ]
-            },
-            splits: [
-              { dimension: 'experiment_variant' },
-              { dimension: '__time',
-                bucketAction: {
-                  op: 'timeBucket',
-                  duration: 'PT1H'
-                }
-              }
-            ],
-            singleMeasure: this.selectedMetricName
+              ],
+              singleMeasure: this.pivotMetricCode()
+            }
           }
-        }).then(response => {
+        }
+
+        if (this.cubeType === 'stats') {
+          return {
+            domain: this.pivotUrl(),
+            essence: {
+              dataCube: this.isProdEnv() ? 'b63e' : 'acd9',
+              visualization: 'line-chart',
+              filter: {
+                clauses: [
+                  {
+                    dimension: 'experiment_id',
+                    values: {
+                      setType: 'STRING',
+                      elements: [ this.experimentId ]
+                    }
+                  },
+                  {
+                    dimension: 'experiment_variant',
+                    values: {
+                      setType: 'STRING',
+                      elements: [ this.variant ]
+                    }
+                  },
+                  {
+                    dimension: '__time',
+                    dynamic: {
+                      op: 'timeRange',
+                      operand: {
+                        op: 'timeFloor',
+                        operand: {
+                          op: 'ref',
+                          name: 'n'
+                        },
+                        duration: 'P1D'
+                      },
+                      duration: 'P1D',
+                      'step': -7
+                    }
+                  }
+                ]
+              },
+              splits: [
+                { dimension: 'device_class' },
+                { dimension: '__time',
+                  bucketAction: {
+                    op: 'timeBucket',
+                    duration: 'P1D'
+                  }
+                }
+              ],
+              singleMeasure: this.pivotMetricCode()
+            }
+          }
+        }
+      },
+
+      goToPivot () {
+        axios.post(`${this.pivotUrl()}/mkurl`, this.buildPivotRequest()).then(response => {
           window.open(response.data.url, '_blank')
         }).catch(error => {
           console.log('failed to generate Pivot link', error.message)

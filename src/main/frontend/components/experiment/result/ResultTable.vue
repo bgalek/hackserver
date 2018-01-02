@@ -4,7 +4,7 @@
       <p v-if="experimentStatistics.durationDays>0">
         <v-tooltip right>
           <span slot="activator">
-          Data calculated on 
+          Data calculated on
           <span id="toDate">{{ experimentStatistics.toDate }}</span>
           for
           <v-chip outline color="black">{{ experimentStatistics.durationDays }}</v-chip>
@@ -28,7 +28,7 @@
         <b>{{metricNames[metric]}}</b>
 
         <pivot-link cube-type="metrics" :experiment-id="experiment.id"
-                    :selected-metric-name="metricPivotNames[metric]"
+                    :selected-metric-name="metric"
         ></pivot-link>
 
         <v-data-table
@@ -51,7 +51,15 @@
               </v-tooltip>
             </td>
 
-            <td class="text-xs-right"><div v-if="showVariant(props.item.variant)">{{ formatNumber(props.item.pValue) }}</div></td>
+            <td class="text-xs-right">
+              <div v-if="showVariant(props.item.variant)">
+                {{ formatNumber(props.item.pValue) }}
+                <pivot-link cube-type="stats" :experiment-id="experiment.id"
+                            selected-metric-name="p_value" :variant="props.item.variant"
+                ></pivot-link>
+              </div>
+            </td>
+
             <td class="text-xs-right">{{ props.item.count }}</td>
           </template>
         </v-data-table>
@@ -95,10 +103,6 @@
           {text: 'p-Value', sortable: false},
           {text: 'Sample Count', sortable: false}
         ],
-        metricPivotNames: {
-          'tx_visit': '1000sum-06a',
-          'gmv': 'define me'
-        },
         metricNames: {
           'tx_visit': 'Visits With Transaction(s)',
           'gmv': 'GMV'
