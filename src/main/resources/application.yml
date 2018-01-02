@@ -18,7 +18,7 @@ spring:
       html-application-cache: false
   data:
     mongodb:
-        host: "dev0-mongos1.dc5.alledc.net,dev0-mongos2.dc5.alledc.net,dev0-mongos1.dc4.local,dev0-mongos2.dc4.local"
+        host: "dev0-mongos1.dc5.alledc.net"
         database: chi_server_d
         username: chi_server_d
         password: uogUo3knLzKV3qL9

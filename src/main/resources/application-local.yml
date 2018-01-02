@@ -1,10 +1,6 @@
 interactions:
   repository: local
 
-spring:
-  session:
-    store-type: none
-
 security:
   enabled: true
   rootGroup: "Chibox team"
