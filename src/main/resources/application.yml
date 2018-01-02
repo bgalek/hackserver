@@ -12,6 +12,10 @@ metrics:
   graphite:
     enabled: false
 
+spring:
+  session:
+    store-type: none
+
 security:
   enabled: true
   rootGroup: "Chibox team"
