@@ -10,7 +10,7 @@
             <v-flex xs2>Active from: </v-flex><v-flex xs9>{{ experiment.fromDateString() }}</v-flex>
           </v-layout>
           <v-layout row>
-            <v-flex xs2>Active to: </v-flex><v-flex xs9ą>{{ experiment.toDateString() }}</v-flex>
+            <v-flex xs2>Active to: </v-flex><v-flex xs9>{{ experiment.toDateString() }}</v-flex>
           </v-layout>
         </div>
         <h3>Status</h3>

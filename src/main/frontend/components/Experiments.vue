@@ -1,5 +1,5 @@
 <template>
-  <v-container><v-layout><v-flex offset-md1 md10 lg9 offset-xl2 xl8>
+  <v-container><v-layout><v-flex md12 lg10 offset-xl1 xl10>
     <h1>Experiments</h1>
 
     <v-alert v-if="pivotError" color="error" icon="warning" value="true">
@@ -66,7 +66,9 @@ export default {
       experiments.forEach(e => this.sortVariants(e.variants))
 
       const sortingKey = function (experiment) {
-        return experiment.activeFrom ? experiment.fromDateString() : '0' + experiment.id
+        return experiment.measurements.lastDayVisits.toString().padStart(8, '0') +
+          (experiment.activeFrom ? experiment.fromDateString() : '0') +
+          experiment.id
       }
 
       experiments.sort((l, r) => sortingKey(r).localeCompare(sortingKey(l)))

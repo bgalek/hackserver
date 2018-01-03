@@ -1,7 +1,7 @@
 <template>
   <v-container>
     <v-layout>
-      <v-flex offset-md1 md10 lg9 offset-xl2 xl8>
+      <v-flex md12 lg10 offset-xl1 xl10>
 
         <h1>Experiment: {{ $route.params.experimentId }}</h1>
 

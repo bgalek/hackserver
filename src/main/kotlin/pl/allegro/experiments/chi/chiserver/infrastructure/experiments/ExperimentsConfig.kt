@@ -7,6 +7,9 @@ import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.web.client.RestTemplate
 import pl.allegro.experiments.chi.chiserver.domain.experiments.ExperimentsRepository
+import pl.allegro.experiments.chi.chiserver.domain.experiments.MeasurementsRepository
+import pl.allegro.experiments.chi.chiserver.infrastructure.JsonConverter
+import pl.allegro.experiments.chi.chiserver.infrastructure.druid.DruidClient
 
 @Configuration
 class ExperimentsConfig {
@@ -14,10 +17,10 @@ class ExperimentsConfig {
 
     @Bean
     fun experimentsRepository(@Value("\${chi.experiments.file}") jsonUrl: String,
-                              restTemplate: RestTemplate,
+                              restTemplate: RestTemplate, jsonConverter: JsonConverter,
                               metricRegistry: MetricRegistry): ExperimentsRepository {
         val httpContentLoader = HttpContentLoader(restTemplate)
-        val repo = FileBasedExperimentsRepository(jsonUrl, httpContentLoader::loadFromHttp)
+        val repo = FileBasedExperimentsRepository(jsonUrl, httpContentLoader::loadFromHttp, jsonConverter)
 
         val gauge = Gauge<Int> { repo.all.size }
         metricRegistry.register(EXPERIMENTS_COUNT_METRIC, gauge)
@@ -26,7 +29,13 @@ class ExperimentsConfig {
     }
 
     @Bean
-    fun refresher(repository: ExperimentsRepository) : ExperimentRepositoryRefresher {
+    fun measurementsRepository(druid: DruidClient, jsonConverter: JsonConverter,
+                               @Value("\${druid.experimentsCube}") datasource: String): MeasurementsRepository
+        = DruidMeasurementsRepository(druid, jsonConverter, datasource)
+
+
+    @Bean
+    fun refresher(repository: ExperimentsRepository): ExperimentRepositoryRefresher {
         return ExperimentRepositoryRefresher(repository)
     }
 }

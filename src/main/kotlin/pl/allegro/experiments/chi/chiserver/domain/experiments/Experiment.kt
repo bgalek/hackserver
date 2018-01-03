@@ -10,8 +10,8 @@ class Experiment(val id: String,
                  val owner: String?,
                  val reportingEnabled: Boolean,
                  val activeFrom: ZonedDateTime? = null,
-                 val activeTo: ZonedDateTime? = null) {
-
+                 val activeTo: ZonedDateTime? = null,
+                 val measurements: ExperimentMeasurements? = null) {
     init {
         Preconditions.checkArgument(!Strings.isNullOrEmpty(id), "empty Experiment id")
         Preconditions.checkArgument(!variants.isEmpty(), "empty list of Variants")
@@ -25,3 +25,5 @@ class Experiment(val id: String,
         return (activeFrom == null || now.isAfter(activeFrom)) && (activeTo == null || now.isBefore(activeTo))
     }
 }
+
+data class ExperimentMeasurements(val lastDayVisits: Int = 0) {}

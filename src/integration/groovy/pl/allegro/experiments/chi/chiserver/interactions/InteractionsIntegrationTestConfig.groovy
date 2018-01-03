@@ -5,8 +5,8 @@ import org.springframework.context.annotation.Configuration
 import org.springframework.context.annotation.Primary
 import pl.allegro.experiments.chi.chiserver.domain.experiments.Experiment
 import pl.allegro.experiments.chi.chiserver.domain.experiments.ExperimentVariant
-import pl.allegro.experiments.chi.chiserver.infrastructure.interactions.InMemoryInteractionRepository
 import pl.allegro.experiments.chi.chiserver.infrastructure.InMemoryExperimentsRepository
+import pl.allegro.experiments.chi.chiserver.infrastructure.interactions.InMemoryInteractionRepository
 
 @Configuration
 class InteractionsIntegrationTestConfig {
@@ -33,6 +33,7 @@ class InteractionsIntegrationTestConfig {
                         'owner',
                         true,
                         null,
+                        null,
                         null
                 ),
                 new Experiment(
@@ -44,6 +45,7 @@ class InteractionsIntegrationTestConfig {
                         'description',
                         'owner',
                         false,
+                        null,
                         null,
                         null
                 )
