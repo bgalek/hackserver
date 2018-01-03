@@ -34,6 +34,10 @@ export default class ExperimentModel extends ExperimentRecord {
     super(experimentObject)
   }
 
+  fromDateShortString () {
+    return this.activeFrom && moment(this.activeFrom).fromNow()
+  }
+
   fromDateString () {
     return this.activeFrom && moment(this.activeFrom).format(DEFAULT_FORMAT)
   }
