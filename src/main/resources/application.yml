@@ -16,9 +16,6 @@ spring:
   resources:
     chain:
       html-application-cache: false
-  data:
-    mongodb:
-        uri: "mongodb://chi_server_d:uogUo3knLzKV3qL9@dev0-mongos1.dc5.alledc.net,dev0-mongos2.dc5.alledc.net,dev0-mongos1.dc4.local,dev0-mongos2.dc4.local/chi_server_d"
 
 security:
   enabled: true
