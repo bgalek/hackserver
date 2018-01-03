@@ -8,7 +8,6 @@ buildscript {
     }
 
     repositories {
-	jcenter()
         maven { url 'https://artifactory.allegrogroup.com/artifactory/group-maven/' }
         mavenCentral()
     }
