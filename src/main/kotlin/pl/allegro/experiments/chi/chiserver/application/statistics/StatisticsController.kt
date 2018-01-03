@@ -12,7 +12,7 @@ import pl.allegro.experiments.chi.chiserver.domain.statistics.StatisticsReposito
 import pl.allegro.tech.common.andamio.metrics.MeteredEndpoint
 
 @RestController
-@RequestMapping(value = "/api", produces = arrayOf(APPLICATION_JSON_VALUE, APPLICATION_JSON_UTF8_VALUE))
+@RequestMapping(value = ["/api"], produces = [APPLICATION_JSON_VALUE, APPLICATION_JSON_UTF8_VALUE])
 class StatisticsController(private val experimentsRepository: ExperimentsRepository,
                            private val statisticsRepository: StatisticsRepository,
                            private val jsonConverter: JsonConverter) {

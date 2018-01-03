@@ -11,7 +11,7 @@ import pl.allegro.experiments.chi.chiserver.logger
 import pl.allegro.tech.common.andamio.metrics.MeteredEndpoint
 
 @RestController
-@RequestMapping(value = "/api/interactions", produces = arrayOf(MediaType.APPLICATION_JSON_UTF8_VALUE))
+@RequestMapping(value = ["/api/interactions"], produces = [MediaType.APPLICATION_JSON_UTF8_VALUE])
 class InteractionsController(private val interactionRepository: InteractionRepository,
                              private val interactionsFactory: InteractionsFactory,
                              private val interactionsMetricsReporter: InteractionsMetricsReporter) {
