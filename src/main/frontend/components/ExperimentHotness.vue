@@ -1,11 +1,13 @@
 <template>
   <v-tooltip v-if="value > 0" right>
     <v-icon :color="color" slot="activator">whatshot</v-icon>
-    <span>{{ label }}: {{ value }}</span>
+    <span>{{ label }}: {{ formattedValue }}</span>
   </v-tooltip>
 </template>
 
 <script>
+  import numeral from 'numeral'
+
   export default {
     props: ['label', 'value'],
 
@@ -16,6 +18,10 @@
         ].find(([level, color]) => {
           return this.value >= level
         })[1]
+      },
+
+      formattedValue () {
+        return numeral(this.value).format('0,0a')
       }
     }
   }
