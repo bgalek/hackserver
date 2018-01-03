@@ -1,7 +1,5 @@
 package pl.allegro.experiments.chi.chiserver.domain.experiments
 
-import com.google.common.base.Preconditions
-import com.google.common.base.Strings
 import java.time.ZonedDateTime
 
 class Experiment(val id: String,
@@ -13,8 +11,8 @@ class Experiment(val id: String,
                  val activeTo: ZonedDateTime? = null,
                  val measurements: ExperimentMeasurements? = null) {
     init {
-        Preconditions.checkArgument(!Strings.isNullOrEmpty(id), "empty Experiment id")
-        Preconditions.checkArgument(!variants.isEmpty(), "empty list of Variants")
+        require(id.isNotBlank()) { "empty Experiment id" }
+        require(!variants.isEmpty()) { "empty list of Variants" }
     }
 
     fun isActive(): Boolean {
