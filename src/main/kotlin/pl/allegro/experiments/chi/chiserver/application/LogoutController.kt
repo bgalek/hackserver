@@ -27,7 +27,7 @@ class LogoutController {
         return if (request.serverPort == 80) {
             "${request.scheme}://${request.serverName}/"
         } else {
-            "${request.scheme}:${request.serverPort}//${request.serverName}/"
+            "${request.scheme}://${request.serverName}:${request.serverPort}/"
         }
     }
 
