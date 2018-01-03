@@ -1,5 +1,5 @@
 <template>
-  <v-container><v-layout><v-flex offset-md1 md10 lg10 offset-xl1 xl10>
+  <v-container><v-layout><v-flex md12 lg10 offset-xl1 xl10>
     <h1>Experiments</h1>
 
     <v-alert v-if="pivotError" color="error" icon="warning" value="true">
