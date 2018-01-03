@@ -1,18 +1,17 @@
 package pl.allegro.experiments.chi.chiserver.infrastructure.statistics
 
 import com.github.salomonbrys.kotson.*
-import org.springframework.http.HttpEntity
-import org.springframework.http.HttpHeaders
-import org.springframework.http.MediaType
-import org.springframework.web.client.RestTemplate
+import com.google.gson.JsonArray
 import pl.allegro.experiments.chi.chiserver.domain.experiments.Experiment
 import pl.allegro.experiments.chi.chiserver.domain.statistics.*
 import pl.allegro.experiments.chi.chiserver.infrastructure.JsonConverter
+import pl.allegro.experiments.chi.chiserver.infrastructure.druid.DruidClient
+import pl.allegro.experiments.chi.chiserver.infrastructure.druid.oneDayIntervals
 import java.time.Duration
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 
-class DruidStatisticsRepository(val druidApiHost: String, val datasource: String, val restTemplate: RestTemplate,
+class DruidStatisticsRepository(val druid: DruidClient, val datasource: String,
                                 val jsonConverter: JsonConverter) : StatisticsRepository {
 
     override fun lastStatisticsDate(experiment: Experiment): LocalDate? =
@@ -27,20 +26,20 @@ class DruidStatisticsRepository(val druidApiHost: String, val datasource: String
             }
           }
         }
-        """.let { druidQuery(it) }
-            .let { jsonConverter.fromJson(it).array }
+        """.let { druid.query(it) }
+            .let { jsonConverter.fromJson<JsonArray>(it) }
             .let { if (it.size() > 0) it[0] else null }
             ?.let { it["result"]["maxTime"].string }
             ?.let { it.substring(0, 10) }
             ?.let { LocalDate.parse(it, DateTimeFormatter.ofPattern("yyyy-MM-dd")) }
 
     override fun experimentStatistics(experiment: Experiment, toDate: LocalDate, device: String): ExperimentStatistics {
-        val dateStr = DateTimeFormatter.ISO_LOCAL_DATE.format(toDate)
+        val intervals = oneDayIntervals(toDate)
         val query = """
             {
               "queryType": "groupBy",
               "dataSource": "$datasource",
-              "intervals": "${dateStr}T00Z/${dateStr}T23:59:00.000Z",
+              "intervals": "$intervals",
               "granularity": "all",
               "filter": {
                 "type": "and",
@@ -88,7 +87,7 @@ class DruidStatisticsRepository(val druidApiHost: String, val datasource: String
             }
             """
 
-        val druidRespone = druidQuery(query)
+        val druidRespone = druid.query(query)
 
         return parseStatistics(druidRespone, experiment.id, toDate, device)
     }
@@ -97,7 +96,7 @@ class DruidStatisticsRepository(val druidApiHost: String, val datasource: String
         ExperimentStatistics {
         var duration = 0L
 
-        val stats = jsonConverter.fromJson(druidResponse).asJsonArray
+        val stats = jsonConverter.fromJson<JsonArray>(druidResponse)
         val metrics = stats.fold(mutableMapOf<MetricName, MutableMap<VariantName, VariantStatistics>>(), { m, e ->
             val metricName = e["event"]["metric"].string
             val variantName = e["event"]["experiment_variant"].string
@@ -118,13 +117,5 @@ class DruidStatisticsRepository(val druidApiHost: String, val datasource: String
         })
 
         return ExperimentStatistics(experimentId, toDate, Duration.ofMillis(duration), device, metrics)
-    }
-
-    private fun druidQuery(body: String): String {
-        val headers = HttpHeaders()
-        headers.contentType = MediaType.APPLICATION_JSON_UTF8
-        val query = HttpEntity<String>(body, headers)
-        return restTemplate.postForEntity("http://${druidApiHost}/druid/v2/?pretty",
-            query, String::class.java).body
     }
 }

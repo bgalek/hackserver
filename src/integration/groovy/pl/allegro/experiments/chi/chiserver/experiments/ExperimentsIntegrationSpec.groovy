@@ -8,10 +8,7 @@ import pl.allegro.experiments.chi.chiserver.BaseIntegrationSpec
 import pl.allegro.experiments.chi.chiserver.infrastructure.experiments.FileBasedExperimentsRepository
 import spock.lang.Shared
 
-import static com.github.tomakehurst.wiremock.client.WireMock.aResponse
-import static com.github.tomakehurst.wiremock.client.WireMock.get
-import static com.github.tomakehurst.wiremock.client.WireMock.stubFor
-import static com.github.tomakehurst.wiremock.client.WireMock.urlEqualTo
+import static com.github.tomakehurst.wiremock.client.WireMock.*
 
 class ExperimentsIntegrationSpec extends BaseIntegrationSpec {
 
@@ -60,11 +57,12 @@ class ExperimentsIntegrationSpec extends BaseIntegrationSpec {
         then:
         response.statusCode.value() == 200
         response.body == [
-            id: 'cmuid_regexp',
-            variants: [ [ name: 'v1', predicates: [ [ type: 'CMUID_REGEXP', regexp: '.*[0-3]$'] ] ] ],
-            reportingEnabled: true,
-            description: "Experiment description",
-            owner: "Experiment owner"
+                id              : 'cmuid_regexp',
+                variants        : [[name: 'v1', predicates: [[type: 'CMUID_REGEXP', regexp: '.*[0-3]$']]]],
+                reportingEnabled: true,
+                description     : "Experiment description",
+                owner           : "Experiment owner",
+                measurements    : [lastDayVisits: 0]
         ]
     }
 
@@ -89,10 +87,12 @@ class ExperimentsIntegrationSpec extends BaseIntegrationSpec {
         !response.body.contains(experimentFromThePast())
     }
 
-    def "should return all experiments for admin"() {
+    def "should return all experiments as measured for admin"() {
         given:
         fileBasedExperimentsRepository.jsonUrl = resourceUrl('/experiments')
         fileBasedExperimentsRepository.refresh()
+
+        def measuredExperiment = { ex -> ex << [measurements: [lastDayVisits: 0]] }
 
         when:
         def response = restTemplate.getForEntity(localUrl('/api/admin/experiments'), List)
@@ -102,12 +102,12 @@ class ExperimentsIntegrationSpec extends BaseIntegrationSpec {
         response.body.size() == 7
 
         and:
-        response.body.contains(internalExperiment())
-        response.body.contains(cmuidRegexpExperiment())
-        response.body.contains(hashVariantExperiment())
-        response.body.contains(sampleExperiment())
-        response.body.contains(timeboundExperiment())
-        response.body.contains(experimentFromThePast())
+        response.body.contains(measuredExperiment(internalExperiment()))
+        response.body.contains(measuredExperiment(cmuidRegexpExperiment()))
+        response.body.contains(measuredExperiment(hashVariantExperiment()))
+        response.body.contains(measuredExperiment(sampleExperiment()))
+        response.body.contains(measuredExperiment(timeboundExperiment()))
+        response.body.contains(measuredExperiment(experimentFromThePast()))
     }
 
     def "should return last valid list when file is corrupted"() {

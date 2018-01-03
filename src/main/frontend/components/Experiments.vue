@@ -66,7 +66,9 @@ export default {
       experiments.forEach(e => this.sortVariants(e.variants))
 
       const sortingKey = function (experiment) {
-        return experiment.activeFrom ? experiment.fromDateString() : '0' + experiment.id
+        return experiment.measurements.lastDayVisits.toString().padStart(8, '0') +
+          (experiment.activeFrom ? experiment.fromDateString() : '0') +
+          experiment.id
       }
 
       experiments.sort((l, r) => sortingKey(r).localeCompare(sortingKey(l)))

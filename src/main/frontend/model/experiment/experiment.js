@@ -13,7 +13,10 @@ const ExperimentRecord = Record({
   activeTo: null,
   reportingEnabled: true,
   hasBase: true,
-  isMeasured: true
+  isMeasured: true,
+  measurements: Record({
+    lastDayVisits: 0
+  })
 })
 
 const DEFAULT_FORMAT = 'MMMM Do YYYY, hh:mm:ss'
@@ -26,8 +29,13 @@ export default class ExperimentModel extends ExperimentRecord {
     experimentObject.variants = List(experimentObject.variants).map(variant => new ExperimentVariantModel(variant)).toArray()
     experimentObject.hasBase = _.includes(_.map(experimentObject.variants, v => v.name), 'base')
     experimentObject.isMeasured = experimentObject.hasBase && experimentObject.reportingEnabled
+    experimentObject.measurements = experimentObject.measurements
 
     super(experimentObject)
+  }
+
+  fromDateShortString () {
+    return this.activeFrom && moment(this.activeFrom).fromNow()
   }
 
   fromDateString () {
