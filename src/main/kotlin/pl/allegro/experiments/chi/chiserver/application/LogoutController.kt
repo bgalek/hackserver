@@ -18,20 +18,17 @@ class LogoutController {
     private val clientId: String? = null
 
     @RequestMapping(method = arrayOf(RequestMethod.GET))
-    fun getUserInfo(request: HttpServletRequest): RedirectView {
+    fun afterLogout(request: HttpServletRequest): RedirectView {
         val baseUrl = getBaseUrl(request)
-        val redirect = String.format("%s?client_id=%s&redirect_uri=%s", logoutUrl, clientId, baseUrl)
-        return RedirectView(redirect)
+        return RedirectView("$logoutUrl?client_id=$clientId&redirect_uri=$baseUrl")
     }
 
     private fun getBaseUrl(request: HttpServletRequest): String {
-        val baseUrl: String
-        baseUrl = if (request.serverPort == 80) {
-            String.format("%s://%s/", request.scheme, request.serverName)
+        return if (request.serverPort == 80) {
+            "${request.scheme}://${request.serverName}/"
         } else {
-            String.format("%s://%s:%d/", request.scheme, request.serverName, request.serverPort)
+            "${request.scheme}:${request.serverPort}//${request.serverName}/"
         }
-        return baseUrl
     }
 
 }
