@@ -23,7 +23,7 @@
       </v-list>
     </v-navigation-drawer>
 
-    <v-toolbar color="" dark fixed app>
+    <v-toolbar color="blue" dark fixed app>
 
       <v-toolbar-side-icon @click.stop="drawer = !drawer"></v-toolbar-side-icon>
       <v-avatar class="logo">
@@ -42,7 +42,7 @@
       </v-fade-transition>
     </v-content>
 
-    <v-footer color="" app>
+    <v-footer color="blue" app>
       <span class="white--text">&copy; 2017</span>
     </v-footer>
   </v-app>
