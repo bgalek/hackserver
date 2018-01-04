@@ -79,6 +79,7 @@ dependencies {
     integration group: 'org.springframework', name: 'spring-test', version: '4.3.10.RELEASE'
     integration group: 'org.springframework.boot', name: 'spring-boot-starter-test', version: '1.5.2.RELEASE'
     integration group: 'org.springframework.kafka', name: 'spring-kafka-test', version: '1.3.0.RELEASE'
+    integration group: 'com.github.fakemongo', name: 'fongo', version: '2.1.0'
 }
 
 mainClassName = 'pl.allegro.experiments.chi.chiserver.AppRunner'
