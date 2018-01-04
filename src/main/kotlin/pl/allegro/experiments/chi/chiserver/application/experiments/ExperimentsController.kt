@@ -15,7 +15,7 @@ import pl.allegro.experiments.chi.chiserver.logger
 import pl.allegro.tech.common.andamio.metrics.MeteredEndpoint
 
 @RestController
-@RequestMapping(value = "/api/admin/experiments", produces = arrayOf(APPLICATION_JSON_VALUE, APPLICATION_JSON_UTF8_VALUE))
+@RequestMapping(value = ["/api/admin/experiments"], produces = [APPLICATION_JSON_VALUE, APPLICATION_JSON_UTF8_VALUE])
 class ExperimentsController(private val experimentsRepository: ExperimentsRepository,
                             private val measurementsRepository: MeasurementsRepository,
                             private val jsonConverter: JsonConverter) {

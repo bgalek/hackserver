@@ -2,7 +2,7 @@ buildscript {
 
     ext {
         versions = [
-                kotlin: '1.1.51',
+                kotlin : '1.2.10',
                 jackson: '2.9.2'
         ]
     }
@@ -51,6 +51,8 @@ repositories {
 }
 
 dependencies {
+    compile group: 'org.jetbrains.kotlin', name: 'kotlin-stdlib', version: "$versions.kotlin"
+    compile group: 'org.jetbrains.kotlin', name: 'kotlin-reflect', version: "$versions.kotlin"
     compile 'org.springframework:spring-web:4.3.10.RELEASE'
     compile group: 'pl.allegro.tech.common', name: 'spring-boot-starter-andamio', version: '1.9.3'
     compile group: 'org.springframework.boot', name: 'spring-boot-starter-security', version: '1.5.1.RELEASE'
