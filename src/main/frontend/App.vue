@@ -26,9 +26,11 @@
     <v-toolbar color="blue" dark fixed app>
 
       <v-toolbar-side-icon @click.stop="drawer = !drawer"></v-toolbar-side-icon>
-      <v-avatar class="logo">
-        <img src="./assets/logo.png"/>
-      </v-avatar>
+      <v-btn href="/" icon>
+        <v-avatar class="logo">
+          <img src="./assets/logo.png"/>
+        </v-avatar>
+      </v-btn>
       <v-toolbar-title>Chi Admin</v-toolbar-title>
       <v-spacer></v-spacer>
         <v-btn href="/logout" icon>
