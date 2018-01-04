@@ -1,7 +1,6 @@
 package pl.allegro.experiments.chi.chiserver.infrastructure.experiments
 
 import com.github.salomonbrys.kotson.fromJson
-import com.google.common.base.Strings
 import org.slf4j.LoggerFactory
 import pl.allegro.experiments.chi.chiserver.domain.experiments.Experiment
 import pl.allegro.experiments.chi.chiserver.domain.experiments.ExperimentsRepository
@@ -36,7 +35,7 @@ class FileBasedExperimentsRepository(jsonUrl: String,
     private fun rawRefresh() {
         val data = dataLoader.invoke(jsonUrl)
 
-        if (Strings.isNullOrEmpty(data)) {
+        if (data.isBlank()) {
             logger.error("refresh failed, dataLoader has returned empty String")
             return
         }
