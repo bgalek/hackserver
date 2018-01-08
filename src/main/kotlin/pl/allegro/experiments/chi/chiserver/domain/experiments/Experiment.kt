@@ -2,14 +2,18 @@ package pl.allegro.experiments.chi.chiserver.domain.experiments
 
 import java.time.ZonedDateTime
 
-class Experiment(val id: String,
-                 val variants: List<ExperimentVariant>,
-                 val description: String?,
-                 val owner: String?,
-                 val reportingEnabled: Boolean,
-                 val activeFrom: ZonedDateTime? = null,
-                 val activeTo: ZonedDateTime? = null,
-                 val measurements: ExperimentMeasurements? = null) {
+typealias ExperimentId = String
+
+class Experiment(
+    val id: ExperimentId,
+    val variants: List<ExperimentVariant>,
+    val description: String?,
+    val owner: String?,
+    val reportingEnabled: Boolean,
+    val activeFrom: ZonedDateTime? = null,
+    val activeTo: ZonedDateTime? = null,
+    val measurements: ExperimentMeasurements? = null
+) {
     init {
         require(id.isNotBlank()) { "empty Experiment id" }
         require(!variants.isEmpty()) { "empty list of Variants" }

@@ -2,11 +2,12 @@ package pl.allegro.experiments.chi.chiserver.infrastructure.statistics
 
 import com.github.salomonbrys.kotson.*
 import com.google.gson.JsonArray
-import pl.allegro.experiments.chi.chiserver.domain.experiments.Experiment
 import pl.allegro.experiments.chi.chiserver.domain.statistics.*
 import pl.allegro.experiments.chi.chiserver.infrastructure.JsonConverter
 import pl.allegro.experiments.chi.chiserver.infrastructure.druid.DruidClient
 import pl.allegro.experiments.chi.chiserver.infrastructure.druid.oneDayIntervals
+import pl.allegro.experiments.chi.chiserver.domain.experiments.Experiment
+import pl.allegro.experiments.chi.chiserver.domain.experiments.ExperimentId
 import java.time.Duration
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
