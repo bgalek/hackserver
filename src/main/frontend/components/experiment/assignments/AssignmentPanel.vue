@@ -13,7 +13,7 @@
       </assignment-button>
 
       <div slot="footer">
-        Use these buttons to set Chi cookie. Read the Docs about
+        Use these buttons to open new browser tab with Chi cookie set to selected variant. Read the Docs about
         <a href="https://rtd.allegrogroup.com/docs/chi/pl/latest/chi_cookie/">Chi cookie</a>.
       </div>
 

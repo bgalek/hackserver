@@ -1,12 +1,16 @@
 <template>
-  <v-btn
-    :color="color"
-    @click="goToCookieBaker(experimentId, variantName)"
-    class="white--text"
-  >
-    {{ variantName }}
-    <v-icon right>edit</v-icon>
-  </v-btn>
+  <v-tooltip top>
+    <v-btn
+      :color="color"
+      @click="goToCookieBaker(experimentId, variantName)"
+      class="white--text"
+      slot="activator"
+    >
+      {{ variantName }}
+      <v-icon right>ondemand_video</v-icon>
+    </v-btn>
+    <span>open new browser tab with session assigned to {{ variantName }}</span>
+  </v-tooltip>
 </template>
 
 <script>
