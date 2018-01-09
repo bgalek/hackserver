@@ -1,21 +1,37 @@
 <template>
 
   <chi-panel title="Chi cookie assignments">
-
-      <assignment-button
-        v-if="experiment"
-        v-for="(variant, i) in experiment.variants"
-        :key="variant.name"
-        :color="variantColor(12)"
-        :variant-name="variant.name"
-        :experiment-id="experiment.id"
-      >
-      </assignment-button>
+    <v-layout row>
+      <v-flex>
+        <assignment-button
+          v-if="experiment"
+          v-for="(variant, i) in experiment.variants"
+          :key="variant.name"
+          :color="variantColor(12)"
+          :title="variant.name"
+          :redirect-link="cookieBakerLink(experiment.id, variant.name)"
+        >
+        </assignment-button>
+      </v-flex>
+    </v-layout>
 
       <div slot="footer">
         Use these buttons to open new browser tab with Chi cookie set to selected variant. Read the Docs about
         <a href="https://rtd.allegrogroup.com/docs/chi/pl/latest/chi_cookie/">Chi cookie</a>.
       </div>
+
+    <v-layout row>
+      <v-flex>
+        <assignment-button
+          v-if="experiment"
+          key="turn_off"
+          :color="variantColor(12)"
+          title="Exclude me"
+          :redirect-link="cookieBakerLink(experiment.id, '-')"
+        >
+        </assignment-button>
+      </v-flex>
+    </v-layout>
 
   </chi-panel>
 
@@ -25,6 +41,7 @@
   import {variantColor} from '../../../utils/variantColor'
   import AssignmentButton from './AssignmentButton.vue'
   import ChiPanel from '../../ChiPanel.vue'
+  import { cookieBakerLink } from '../../../utils/cookieBakerLink'
 
   export default {
     props: ['experiment'],
@@ -34,9 +51,19 @@
       ChiPanel
     },
 
+    data () {
+      return {
+        assignments_dialog: false
+      }
+    },
+
     methods: {
       variantColor (i) {
         return variantColor(i)
+      },
+
+      cookieBakerLink (experimentId, variantName) {
+        return cookieBakerLink(experimentId, variantName)
       }
     }
   }
