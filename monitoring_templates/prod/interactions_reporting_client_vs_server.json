@@ -1,0 +1,39 @@
+{
+  "name": "metrics.interactions_reporting_client_vs_server",
+  "checks": [
+    {
+      "name": "interactions reporting in client vs server",
+      "type": "graphite",
+      "tags": [
+        "service-stats"
+      ],
+      "fields": {
+        "metric": "absolute(diffSeries(sum(stats.experiments.chi.chi-server.*.interactions.received.all.m1_rate),sum(stats.*.*.*.*.chi.client.interactions.reporter.items.sent.m1_rate)))"
+      },
+      "triggers": [
+        {
+          "severity": "critical",
+          "enabled": true,
+          "fields": {
+            "threshold": 50.0,
+            "debounce": 2,
+            "condition": ">"
+          }
+        }
+      ]
+    }
+  ],
+  "alerts": [
+    {
+      "name": "pagerduty_alert",
+      "type": "pagerduty",
+      "severity": [
+        "critical"
+      ],
+      "applies_to": [
+        "interactions reporting in client vs server"
+      ],
+      "inc_key_format": "Interactions reporting: different rate of interactions on Client and Server (more than 50)"
+    }
+  ]
+}

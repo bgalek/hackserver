@@ -1,0 +1,39 @@
+{
+  "name": "metrics.http_status_codes",
+  "checks": [
+    {
+      "name": "number of 5xx",
+      "type": "graphite",
+      "tags": [
+        "service-stats"
+      ],
+      "fields": {
+        "metric": "sumSeries(stats.experiments.chi.chi-server.*.*.*.*.5xx.m1_rate)"
+      },
+      "triggers": [
+        {
+          "severity": "critical",
+          "enabled": true,
+          "fields": {
+            "threshold": 0.0,
+            "debounce": 2,
+            "condition": ">"
+          }
+        }
+      ]
+    }
+  ],
+  "alerts": [
+    {
+      "name": "pagerduty_alert",
+      "type": "pagerduty",
+      "severity": [
+        "critical"
+      ],
+      "applies_to": [
+        "number of 5xx"
+      ],
+      "inc_key_format": "Rate of 5xx in chi-server is > 0"
+    }
+  ]
+}
