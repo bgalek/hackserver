@@ -29,6 +29,7 @@ class WebSecurityConfig : WebSecurityConfigurerAdapter() {
 
         if (oauthEnabled) {
             http.authorizeRequests().antMatchers(HttpMethod.GET, "/api/**/*", "/status/**/*", "/env/**/*").permitAll()
+                    .antMatchers(HttpMethod.POST, "/api/**/*").permitAll()
                     .and().authorizeRequests().anyRequest().authenticated()
                     .and().logout().logoutSuccessUrl("/after-logout").permitAll()
         } else {
