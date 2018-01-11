@@ -1,16 +1,16 @@
-package pl.allegro.experiments.chi.chiserver.experiments
+package pl.allegro.experiments.chi.chiserver.infrastructure.experiments
 
 import com.github.tomakehurst.wiremock.junit.WireMockRule
 import org.junit.ClassRule
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.web.client.RestTemplate
 import pl.allegro.experiments.chi.chiserver.BaseIntegrationSpec
-import pl.allegro.experiments.chi.chiserver.infrastructure.experiments.FileBasedExperimentsRepository
+import pl.allegro.experiments.chi.chiserver.domain.experiments.ExperimentsRepository
 import spock.lang.Shared
 
 import static com.github.tomakehurst.wiremock.client.WireMock.*
 
-class ExperimentsIntegrationSpec extends BaseIntegrationSpec {
+class ExperimentsE2ESpec extends BaseIntegrationSpec {
 
     @ClassRule
     @Shared
@@ -21,6 +21,9 @@ class ExperimentsIntegrationSpec extends BaseIntegrationSpec {
     @Autowired
     FileBasedExperimentsRepository fileBasedExperimentsRepository
 
+    @Autowired
+    ExperimentsRepository experimentsRepository
+
     def setup() {
         teachWireMockJson("/experiments", '/some-experiments.json')
         teachWireMockJson("/invalid-experiments",'/invalid-experiments.json')
@@ -29,7 +32,7 @@ class ExperimentsIntegrationSpec extends BaseIntegrationSpec {
     def "should return list of experiments loaded from the backing HTTP resource"() {
         given:
         fileBasedExperimentsRepository.jsonUrl = resourceUrl('/experiments')
-        fileBasedExperimentsRepository.refresh()
+        experimentsRepository.refresh()
 
         when:
         def response = restTemplate.getForEntity(localUrl('/api/experiments'), List)
@@ -49,7 +52,7 @@ class ExperimentsIntegrationSpec extends BaseIntegrationSpec {
     def "should return single of experiment loaded from the backing HTTP resource"() {
         given:
         fileBasedExperimentsRepository.jsonUrl = resourceUrl('/experiments')
-        fileBasedExperimentsRepository.refresh()
+        experimentsRepository.refresh()
 
         when:
         def response = restTemplate.getForEntity(localUrl('/api/admin/experiments/cmuid_regexp'), Map)
@@ -69,7 +72,7 @@ class ExperimentsIntegrationSpec extends BaseIntegrationSpec {
     def "should return list of active experiments in version 1"() {
         given:
         fileBasedExperimentsRepository.jsonUrl = resourceUrl('/experiments')
-        fileBasedExperimentsRepository.refresh()
+        experimentsRepository.refresh()
 
         when:
         def response = restTemplate.getForEntity(localUrl('/api/experiments/v1'), List)
@@ -90,7 +93,7 @@ class ExperimentsIntegrationSpec extends BaseIntegrationSpec {
     def "should return all experiments as measured for admin"() {
         given:
         fileBasedExperimentsRepository.jsonUrl = resourceUrl('/experiments')
-        fileBasedExperimentsRepository.refresh()
+        experimentsRepository.refresh()
 
         def measuredExperiment = { ex -> ex << [measurements: [lastDayVisits: 0]] }
 
@@ -113,9 +116,9 @@ class ExperimentsIntegrationSpec extends BaseIntegrationSpec {
     def "should return last valid list when file is corrupted"() {
         given:
         fileBasedExperimentsRepository.jsonUrl = resourceUrl('/experiments')
-        fileBasedExperimentsRepository.refresh()
+        experimentsRepository.refresh()
         fileBasedExperimentsRepository.jsonUrl = resourceUrl('/invalid-experiments')
-        fileBasedExperimentsRepository.refresh()
+        experimentsRepository.refresh()
 
         when:
         def response = restTemplate.getForEntity(localUrl('/api/experiments'), List)

@@ -9,3 +9,7 @@ interface ExperimentsRepository {
 
     fun refresh()
 }
+
+interface WritableExperimentsRepository : ExperimentsRepository {
+    fun save(experiment: Experiment)
+}

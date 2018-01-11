@@ -3,6 +3,7 @@ package pl.allegro.experiments.chi.chiserver.infrastructure.experiments
 import pl.allegro.experiments.chi.chiserver.domain.experiments.Experiment
 import pl.allegro.experiments.chi.chiserver.domain.experiments.ExperimentVariant
 import pl.allegro.experiments.chi.chiserver.domain.experiments.ExperimentsRepository
+import pl.allegro.experiments.chi.chiserver.domain.experiments.WritableExperimentsRepository
 import spock.lang.Specification
 
 class ExperimentsMultiRepositorySpec extends Specification {
@@ -69,7 +70,7 @@ class ExperimentsMultiRepositorySpec extends Specification {
         second.id == "one"
     }
 
-    def "should get experiments from all working experiments"() {
+    def "should get experiments from all working repositories"() {
         given:
         def repo = new ExperimentsMultiRepository([
                 simpleRepo(["a"]),
@@ -110,13 +111,43 @@ class ExperimentsMultiRepositorySpec extends Specification {
         ])
 
         expect:
+        repo.all.size() == 4
+        repo.active.size() == 4
         repo.getExperiment("xx").id == "xx"
 
         when:
         repo.refresh()
 
         then:
+        repo.all.size() == 3
+        repo.active.size() == 3
         repo.getExperiment("xx") is null
+    }
+
+    def "should throw exception on save with no writable repo configured"() {
+        given:
+        def repo = new ExperimentsMultiRepository([
+                Stub(ExperimentsRepository), Stub(ExperimentsRepository)
+        ])
+
+        when:
+        repo.save(experiment("1234"))
+
+        then:
+        thrown IllegalStateException
+    }
+
+    def "should save experiments to all writable repos"() {
+        given:
+        def repos = [Stub(WritableExperimentsRepository), Stub(WritableExperimentsRepository)]
+        def repo = new ExperimentsMultiRepository(repos)
+        def experiment = experiment("1234")
+
+        when:
+        repo.save(experiment)
+
+        then:
+        repos.each { it.save(experiment) }
     }
 
     def simpleRepo(experimentIds) {

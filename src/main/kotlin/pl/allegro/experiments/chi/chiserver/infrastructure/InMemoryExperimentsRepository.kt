@@ -2,9 +2,9 @@ package pl.allegro.experiments.chi.chiserver.infrastructure
 
 import com.google.common.collect.ImmutableList
 import pl.allegro.experiments.chi.chiserver.domain.experiments.Experiment
-import pl.allegro.experiments.chi.chiserver.domain.experiments.ExperimentsRepository
+import pl.allegro.experiments.chi.chiserver.domain.experiments.WritableExperimentsRepository
 
-class InMemoryExperimentsRepository(experiments: Collection<Experiment>) : ExperimentsRepository {
+class InMemoryExperimentsRepository(experiments: Collection<Experiment>) : WritableExperimentsRepository {
 
     private val experiments: MutableMap<String, Experiment> = experiments
             .associateBy { it.id }
@@ -14,12 +14,12 @@ class InMemoryExperimentsRepository(experiments: Collection<Experiment>) : Exper
         return experiments.get(id)
     }
 
-    internal fun remove(experimentId: String) {
-        experiments.remove(experimentId)
+    override fun save(experiment: Experiment) {
+        experiments.put(experiment.id, experiment)
     }
 
-    internal fun save(experiment: Experiment) {
-        experiments.put(experiment.id, experiment)
+    internal fun remove(experimentId: String) {
+        experiments.remove(experimentId)
     }
 
     internal fun experimentIds(): Set<String> {

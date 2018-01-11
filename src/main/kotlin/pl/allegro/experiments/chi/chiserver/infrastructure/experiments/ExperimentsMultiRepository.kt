@@ -4,9 +4,10 @@ import org.slf4j.LoggerFactory
 import pl.allegro.experiments.chi.chiserver.domain.experiments.Experiment
 import pl.allegro.experiments.chi.chiserver.domain.experiments.ExperimentId
 import pl.allegro.experiments.chi.chiserver.domain.experiments.ExperimentsRepository
+import pl.allegro.experiments.chi.chiserver.domain.experiments.WritableExperimentsRepository
 
 class ExperimentsMultiRepository(private val repositories: List<ExperimentsRepository>) :
-    ExperimentsRepository {
+    WritableExperimentsRepository {
     private var experiments = emptyMap<ExperimentId, Experiment>()
     private val reposCache = repositories.mapTo(mutableListOf()) { emptyList<Experiment>() }
 
@@ -18,9 +19,17 @@ class ExperimentsMultiRepository(private val repositories: List<ExperimentsRepos
         refresh()
     }
 
-    override fun getExperiment(id: String): Experiment? = experiments[id]
+    override fun getExperiment(id: ExperimentId): Experiment? = experiments[id]
 
-    override val all: List<Experiment> = experiments.entries.map { it.value }
+    override fun save(experiment: Experiment) {
+        with(repositories.filterIsInstance(WritableExperimentsRepository::class.java)) {
+            check(isNotEmpty()) { "No writable experiments repository configured" }
+            forEach { it.save(experiment) }
+        }
+    }
+
+    override val all: List<Experiment>
+        get() = experiments.entries.map { it.value }
 
     override val active: List<Experiment>
         get() = all.filter { it.isActive() }
@@ -35,6 +44,8 @@ class ExperimentsMultiRepository(private val repositories: List<ExperimentsRepos
             }
         }
         experiments =
-            reposCache.fold(emptyMap(), { acc, experiments -> acc + experiments.associateBy({ it.id }, { it }) })
+            reposCache.fold(emptyMap(), { acc, experiments ->
+                acc + experiments.associateBy({ it.id }, { it })
+            })
     }
 }

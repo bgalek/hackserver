@@ -5,20 +5,28 @@ import com.codahale.metrics.MetricRegistry
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
+import org.springframework.data.mongodb.core.MongoTemplate
+import org.springframework.data.mongodb.core.convert.CustomConversions
 import org.springframework.web.client.RestTemplate
 import pl.allegro.experiments.chi.chiserver.domain.experiments.ExperimentsRepository
 import pl.allegro.experiments.chi.chiserver.domain.experiments.MeasurementsRepository
 import pl.allegro.experiments.chi.chiserver.infrastructure.JsonConverter
 import pl.allegro.experiments.chi.chiserver.infrastructure.druid.DruidClient
+import pl.allegro.experiments.chi.chiserver.infrastructure.mongo.MongoExperimentsRepository
+import pl.allegro.experiments.chi.chiserver.infrastructure.mongo.mongoConverters
+
 
 @Configuration
 class ExperimentsConfig {
     private val EXPERIMENTS_COUNT_METRIC = "experiments.count";
 
+
     @Bean
-    fun experimentsRepository(@Value("\${chi.experiments.file}") jsonUrl: String,
-                              restTemplate: RestTemplate, jsonConverter: JsonConverter,
-                              metricRegistry: MetricRegistry): ExperimentsRepository {
+    fun fileBasedExperimentsRepository(
+        @Value("\${chi.experiments.file}") jsonUrl: String,
+        restTemplate: RestTemplate, jsonConverter: JsonConverter,
+        metricRegistry: MetricRegistry
+    ): FileBasedExperimentsRepository {
         val httpContentLoader = HttpContentLoader(restTemplate)
         val repo = FileBasedExperimentsRepository(jsonUrl, httpContentLoader::loadFromHttp, jsonConverter)
 
@@ -28,14 +36,26 @@ class ExperimentsConfig {
         return repo
     }
 
+
+    @Bean
+    fun customConversions() = CustomConversions(mongoConverters)
+
+    @Bean
+    fun mongoExperimentsRepository(mongoTemplate: MongoTemplate): ExperimentsRepository {
+        return MongoExperimentsRepository(mongoTemplate)
+    }
+
+    @Bean
+    fun experimentsRepository(vararg repositories: ExperimentsRepository) =
+        ExperimentsMultiRepository(listOf(*repositories))
+
     @Bean
     fun measurementsRepository(druid: DruidClient, jsonConverter: JsonConverter,
                                @Value("\${druid.experimentsCube}") datasource: String): MeasurementsRepository
         = DruidMeasurementsRepository(druid, jsonConverter, datasource)
 
-
     @Bean
-    fun refresher(repository: ExperimentsRepository): ExperimentRepositoryRefresher {
-        return ExperimentRepositoryRefresher(repository)
+    fun refresher(experimentsRepository: ExperimentsRepository): ExperimentRepositoryRefresher {
+        return ExperimentRepositoryRefresher(experimentsRepository)
     }
 }
