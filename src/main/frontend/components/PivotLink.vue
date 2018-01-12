@@ -25,7 +25,7 @@
         const metricPivotNamesTest = {
           'tx_visit': '1000sum-06a',
           'p_value': 'sum_p_value',
-          'gmv': 'define me'
+          'gmv': 'sumtran-ed2'
         }
 
         const metricPivotNamesProd = {
