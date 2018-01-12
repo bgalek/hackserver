@@ -56,6 +56,7 @@
                 {{ formatNumber(props.item.pValue) }}
                 <pivot-link cube-type="stats" :experiment-id="experiment.id"
                             selected-metric-name="p_value" :variant="props.item.variant"
+                            :metric="metric"
                 ></pivot-link>
               </div>
             </td>

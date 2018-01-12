@@ -9,6 +9,7 @@
   export default {
     props: {
       selectedMetricName: String,
+      metric: String,
       cubeType: String,
       experimentId: String,
       variant: String
@@ -31,7 +32,7 @@
         const metricPivotNamesProd = {
           'tx_visit': 'sumvisi-159',
           'p_value': 'sum_p_value',
-          'gmv': 'define me'
+          'gmv': 'sumtran-7df'
         }
 
         return this.isProdEnv() ? metricPivotNamesProd[metric] : metricPivotNamesTest[metric]
@@ -112,6 +113,13 @@
                     values: {
                       setType: 'STRING',
                       elements: [ this.variant ]
+                    }
+                  },
+                  {
+                    dimension: 'metric',
+                    values: {
+                      setType: 'STRING',
+                      elements: [ this.metric ]
                     }
                   },
                   {
