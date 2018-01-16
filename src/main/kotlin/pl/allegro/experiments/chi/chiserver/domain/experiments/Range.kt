@@ -9,7 +9,7 @@ abstract class Range<out T : Number>(val from: T, val to: T) {
 
     init {
         require(from.toDouble() >= 0) { "Range.from < 0 in Range($from..$to)" }
-        require(from.toDouble() < to.toDouble()) { "Range.from >= Range.to in Range($from..$to)" }
+        require(from.toDouble() <= to.toDouble()) { "Range.from > Range.to in Range($from..$to)" }
     }
 }
 
