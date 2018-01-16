@@ -13,9 +13,8 @@ class InteractionsFactory(
     fun fromJson(json: String): List<Interaction> {
         try {
             val interactions = interactionConverter.fromJson(json)
-            val filtered = interactions.filter { interaction ->
-                val experiment = experimentsRepository.getExperiment(interaction.experimentId)
-                experiment != null && experiment.reportingEnabled
+            val filtered = interactions.filter {
+                experimentsRepository.getExperiment(it.experimentId)?.reportingEnabled ?: false
             }
 
             interactionsMetricsReporter.meterIgnored(interactions.size - filtered.size)

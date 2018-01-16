@@ -3,7 +3,7 @@ package pl.allegro.experiments.chi.chiserver.application.experiments.v1
 import com.google.gson.*
 import pl.allegro.experiments.chi.chiserver.domain.experiments.*
 import java.lang.reflect.Type
-import java.util.ArrayList
+import java.util.*
 import java.util.regex.Pattern
 
 class ExperimentVariantTypeAdapter : JsonSerializer<ExperimentVariant>, JsonDeserializer<ExperimentVariant> {
@@ -16,7 +16,7 @@ class ExperimentVariantTypeAdapter : JsonSerializer<ExperimentVariant>, JsonDese
     override fun serialize(src: ExperimentVariant, typeOfSrc: Type, context: JsonSerializationContext): JsonElement {
         val element = JsonObject()
         element.addProperty("name", src.name)
-        element.add("predicates", context.serialize(src.getPredicates()))
+        element.add("predicates", context.serialize(src.predicates))
         return element
     }
 

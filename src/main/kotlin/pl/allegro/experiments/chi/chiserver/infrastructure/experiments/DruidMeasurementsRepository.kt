@@ -4,9 +4,9 @@ import com.github.salomonbrys.kotson.*
 import com.google.common.base.Suppliers
 import com.google.gson.JsonArray
 import pl.allegro.experiments.chi.chiserver.domain.experiments.Experiment
+import pl.allegro.experiments.chi.chiserver.domain.experiments.ExperimentId
 import pl.allegro.experiments.chi.chiserver.domain.experiments.ExperimentMeasurements
 import pl.allegro.experiments.chi.chiserver.domain.experiments.MeasurementsRepository
-import pl.allegro.experiments.chi.chiserver.domain.statistics.ExperimentId
 import pl.allegro.experiments.chi.chiserver.infrastructure.JsonConverter
 import pl.allegro.experiments.chi.chiserver.infrastructure.druid.DruidClient
 import pl.allegro.experiments.chi.chiserver.infrastructure.druid.lastDayIntervals
