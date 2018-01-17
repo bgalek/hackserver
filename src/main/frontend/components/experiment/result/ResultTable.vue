@@ -69,7 +69,7 @@
     </div>
 
     <v-alert v-if="experimentStatisticsError" color="error" icon="warning" value="true">
-      Couldn't load experiment {{ $route.params.experimentId }} : {{ experimentStatisticsError.message }}
+      Couldn't load statistics for {{ $route.params.experimentId }} : {{ experimentStatisticsError.message }}
     </v-alert>
 
     <p class="text-xs-center">

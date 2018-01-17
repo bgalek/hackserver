@@ -1,0 +1,39 @@
+{
+  "name": "metrics.http_500",
+  "checks": [
+    {
+      "name": "number of 500s",
+      "type": "graphite",
+      "tags": [
+        "service-stats"
+      ],
+      "fields": {
+        "metric": "sumSeries(stats.experiments.chi.chi-server.*.*.*.*.500.m1_rate)"
+      },
+      "triggers": [
+        {
+          "severity": "critical",
+          "enabled": true,
+          "fields": {
+            "threshold": 0.0,
+            "debounce": 2,
+            "condition": ">"
+          }
+        }
+      ]
+    }
+  ],
+  "alerts": [
+    {
+      "name": "pagerduty_alert",
+      "type": "pagerduty",
+      "severity": [
+        "critical"
+      ],
+      "applies_to": [
+        "number of 500s"
+      ],
+      "inc_key_format": "Rate of 500s in chi-server is > 0"
+    }
+  ]
+}

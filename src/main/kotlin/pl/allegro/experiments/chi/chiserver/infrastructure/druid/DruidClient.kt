@@ -25,7 +25,13 @@ class DruidClient(val druidApiHost: String, val restTemplate: RestTemplate) {
         val headers = HttpHeaders()
         headers.contentType = MediaType.APPLICATION_JSON_UTF8
         val query = HttpEntity<String>(body, headers)
-        return restTemplate.postForEntity("http://${druidApiHost}/druid/v2/?pretty",
-            query, String::class.java).body
+        try {
+            return restTemplate.postForEntity(
+                "http://${druidApiHost}/druid/v2/?pretty",
+                query, String::class.java
+            ).body
+        } catch (e: Exception) {
+            throw DruidException("Error while trying to get data from ${druidApiHost}", e)
+        }
     }
 }

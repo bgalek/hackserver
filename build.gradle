@@ -55,7 +55,7 @@ dependencies {
     compile group: 'org.jetbrains.kotlin', name: 'kotlin-stdlib', version: "$versions.kotlin"
     compile group: 'org.jetbrains.kotlin', name: 'kotlin-reflect', version: "$versions.kotlin"
     compile 'org.springframework:spring-web:4.3.10.RELEASE'
-    compile group: 'pl.allegro.tech.common', name: 'spring-boot-starter-andamio', version: '1.9.3'
+    compile group: 'pl.allegro.tech.common', name: 'spring-boot-starter-andamio', version: '1.9.6'
     compile group: 'org.springframework.boot', name: 'spring-boot-starter-security', version: "$versions.springBoot"
     compile group: 'org.springframework.boot', name: 'spring-boot-starter-data-mongodb', version: "$versions.springBoot"
     compile group: 'org.springframework.security.oauth', name: 'spring-security-oauth2', version: '2.0.14.RELEASE'
@@ -96,10 +96,10 @@ task frontendDeps(type: YarnTask) {
     execOverrides { it.workingDir = './src/main/frontend' }
     args = ['install']
 }
-task frontendBuild(type: NodeTask) {
+
+task frontendBuild(type: YarnTask) {
     dependsOn frontendDeps
-    script = file('./src/main/frontend/node_modules/poi/bin/main.js')
-    execOverrides { it.workingDir = './src/main/frontend'}
+    execOverrides { it.workingDir = './src/main/frontend' }
     args = ['build']
 }
 

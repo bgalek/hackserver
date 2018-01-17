@@ -31,6 +31,7 @@ module.exports = (options, req) => ({
   },
   dist: "../../../public",
   presets: [
-    "eslint"
-  ]
+    "eslint",
+    "transform-test-files"
+  ],
 })

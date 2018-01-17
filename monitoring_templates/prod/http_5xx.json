@@ -1,5 +1,5 @@
 {
-  "name": "metrics.http_status_codes",
+  "name": "metrics.http_5xx",
   "checks": [
     {
       "name": "number of 5xx",
@@ -16,7 +16,7 @@
           "enabled": true,
           "fields": {
             "threshold": 0.0,
-            "debounce": 2,
+            "debounce": 20,
             "condition": ">"
           }
         }
@@ -25,15 +25,15 @@
   ],
   "alerts": [
     {
-      "name": "pagerduty_alert",
-      "type": "pagerduty",
+      "name": "email_alert",
+      "type": "email",
       "severity": [
         "critical"
       ],
       "applies_to": [
         "number of 5xx"
       ],
-      "inc_key_format": "Rate of 5xx in chi-server is > 0"
+      "recipient": "chibox-team@allegro.pl"
     }
   ]
 }

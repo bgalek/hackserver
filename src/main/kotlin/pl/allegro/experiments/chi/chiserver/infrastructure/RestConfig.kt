@@ -12,14 +12,14 @@ class RestConfig {
     @Bean
     fun restTemplate(factory: RestTemplateFactory): RestTemplate {
         val connectionConfig = OkHttpClientConfig.okHttpClientConfig()
-                .withMaxIdleConnections(2)
-                .withReadTimeoutMillis(300)
-                .withWriteTimeoutMillis(300)
-                .withConnectionTimeoutMillis(300)
-                // https://jira.allegrogroup.com/browse/SKYLAB-2072
-                .withKeepAliveDurationMillis(500)
-                .withRetryOnConnectionFailure(true)
-                .build()
+            .withMaxIdleConnections(2)
+            .withReadTimeoutMillis(2000)
+            .withWriteTimeoutMillis(2000)
+            .withConnectionTimeoutMillis(2000)
+            // https://jira.allegrogroup.com/browse/SKYLAB-2072
+            .withKeepAliveDurationMillis(500)
+            .withRetryOnConnectionFailure(true)
+            .build()
         return factory.usingOkHttp().create(connectionConfig)
     }
 }

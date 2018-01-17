@@ -9,7 +9,9 @@ import pl.allegro.experiments.chi.chiserver.domain.experiments.ExperimentMeasure
 import pl.allegro.experiments.chi.chiserver.domain.experiments.MeasurementsRepository
 import pl.allegro.experiments.chi.chiserver.infrastructure.JsonConverter
 import pl.allegro.experiments.chi.chiserver.infrastructure.druid.DruidClient
+import pl.allegro.experiments.chi.chiserver.infrastructure.druid.DruidException
 import pl.allegro.experiments.chi.chiserver.infrastructure.druid.lastDayIntervals
+import pl.allegro.experiments.chi.chiserver.logger
 import java.util.concurrent.TimeUnit
 
 private const val DRUID_QUERY_TIMEOUT_MS = 2000
@@ -19,10 +21,24 @@ class DruidMeasurementsRepository(private val druid: DruidClient,
                                   private val jsonConverter: JsonConverter,
                                   private val datasource: String) : MeasurementsRepository {
 
-    private val lastDayVisitsCache = Suppliers.memoizeWithExpiration({ lastDayVisits() },
+    private var lastDayVisits = emptyMap<ExperimentId, Int>()
+
+    companion object {
+        private val logger by logger()
+    }
+
+    private val lastDayVisitsCache = Suppliers.memoizeWithExpiration(
+        {
+            try {
+                lastDayVisits = queryLastDayVisits()
+            } catch (e: DruidException) {
+                logger.warn("Error while trying to query Druid for last day visits", e)
+            }
+            lastDayVisits
+        },
         CACHE_EXPIRE_DURATION_MINUTES, TimeUnit.MINUTES)
 
-    private fun asMeasuredExperiment(ex: Experiment, lastDayVisits: Map<ExperimentId, Int> = lastDayVisitsCache.get()) =
+    private fun asMeasuredExperiment(ex: Experiment, lastDayVisits: Map<ExperimentId, Int> = this.lastDayVisits) =
         with(ex) {
             Experiment(id, variants, description, owner, reportingEnabled, activeFrom, activeTo,
                 ExperimentMeasurements(lastDayVisits[id] ?: 0))
@@ -35,7 +51,7 @@ class DruidMeasurementsRepository(private val druid: DruidClient,
         return experiments.map { asMeasuredExperiment(it, lastDayVisits) }
     }
 
-    private fun lastDayVisits(): Map<ExperimentId, Int> =
+    private fun queryLastDayVisits(): Map<ExperimentId, Int> =
         """{
             "queryType": "topN",
             "dataSource": "$datasource",

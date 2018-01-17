@@ -31,6 +31,7 @@ public/
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
+*.test.transformed.js
 
 # Editor directories and files
 *.swp
