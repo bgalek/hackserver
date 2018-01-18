@@ -31,7 +31,7 @@
     <v-flex xs6>
       <h3>Variants</h3>
 
-      <v-list two-line>
+      <v-list>
         <template v-for="v in experiment.variants">
           <v-list-tile>
             <v-list-tile-content>
@@ -39,8 +39,8 @@
                 <v-chip :color="v.color" small :key="v.name" :disabled="true">
                   {{ v.name }}
                 </v-chip>
+                {{ v.predicatesInfo }}
               </v-badge>
-              <v-list-tile-sub-title v-html="v.predicatesInfo"></v-list-tile-sub-title>
             </v-list-tile-content>
           </v-list-tile>
         </template>
