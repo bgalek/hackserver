@@ -7,7 +7,7 @@
           v-if="experiment"
           v-for="(variant, i) in experiment.variants"
           :key="variant.name"
-          :color="variantColor(12)"
+          :color="variant.color"
           :title="variant.name"
           :redirect-link="cookieBakerLink(experiment.id, variant.name)"
         >
@@ -25,7 +25,7 @@
         <assignment-button
           v-if="experiment"
           key="turn_off"
-          :color="variantColor(12)"
+          color="gray"
           title="Exclude me"
           :redirect-link="cookieBakerLink(experiment.id, '-')"
         >
@@ -38,7 +38,6 @@
 </template>
 
 <script>
-  import {variantColor} from '../../../utils/variantColor'
   import AssignmentButton from './AssignmentButton.vue'
   import ChiPanel from '../../ChiPanel.vue'
   import { cookieBakerLink } from '../../../utils/cookieBakerLink'
@@ -58,10 +57,6 @@
     },
 
     methods: {
-      variantColor (i) {
-        return variantColor(i)
-      },
-
       cookieBakerLink (experimentId, variantName) {
         return cookieBakerLink(experimentId, variantName)
       }
