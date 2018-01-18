@@ -1,14 +1,14 @@
 {
-  "name": "metrics.http_5xx",
+  "name": "metrics.http_503",
   "checks": [
     {
-      "name": "number of 5xx",
+      "name": "number of 503",
       "type": "graphite",
       "tags": [
         "service-stats"
       ],
       "fields": {
-        "metric": "sumSeries(stats.experiments.chi.chi-server.*.*.*.*.5xx.m1_rate)"
+        "metric": "sumSeries(stats.experiments.chi.chi-server.*.*.*.*.503.m1_rate)"
       },
       "triggers": [
         {
@@ -16,7 +16,7 @@
           "enabled": true,
           "fields": {
             "threshold": 0.0,
-            "debounce": 20,
+            "debounce": 5,
             "condition": ">"
           }
         }
@@ -31,7 +31,7 @@
         "critical"
       ],
       "applies_to": [
-        "number of 5xx"
+        "number of 503"
       ],
       "recipient": "chibox-team@allegro.pl"
     }
