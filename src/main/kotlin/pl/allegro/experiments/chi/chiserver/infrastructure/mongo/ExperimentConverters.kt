@@ -13,10 +13,10 @@ internal object experimentDeserializer : Converter<DBObject, Experiment> {
             bson["_id"] as String,
             (bson["variants"] as List<DBObject>).map { experimentVariantDeserializer.convert(it) },
             bson["description"] as String?,
-            bson["owner"] as String?,
+            bson["author"] as String?,
+            bson["groups"] as List<String>,
             bson["reportingEnabled"] as Boolean? ?: true,
-            (bson["activeFrom"] as String?)?.let { dateTimeDeserializer.convert(it) },
-            (bson["activeTo"] as String?)?.let { dateTimeDeserializer.convert(it) }
+            (bson["activityPeriod"] as BasicDBObject?)?.let { activityPeriodDeserializer.convert(it) }
         )
 
         return experiment
@@ -34,10 +34,15 @@ internal object experimentSerializer : Converter<Experiment, DBObject> {
             )
 
             description?.let { bson["description"] = it }
-            owner?.let { bson["owner"] = it }
+            author?.let { bson["author"] = it }
+            bson["groups"] = groups
             reportingEnabled.let { bson["reportingEnabled"] = it }
-            activeFrom?.let { bson["activeFrom"] = dateTimeSerializer.convert(it) }
-            activeTo?.let { bson["activeTo"] = dateTimeSerializer.convert(it) }
+            activityPeriod?.let { bson["activityPeriod"] = BasicDBObject(
+                mapOf(
+                    "activeFrom" to dateTimeSerializer.convert(it.activeFrom),
+                    "activeTo" to dateTimeSerializer.convert(it.activeTo)
+                )
+            ) }
 
             return bson
         }

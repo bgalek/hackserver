@@ -60,12 +60,13 @@ class ExperimentsE2ESpec extends BaseIntegrationSpec {
         then:
         response.statusCode.value() == 200
         response.body == [
-                id              : 'cmuid_regexp',
-                variants        : [[name: 'v1', predicates: [[type: 'CMUID_REGEXP', regexp: '.*[0-3]$']]]],
-                reportingEnabled: true,
-                description     : "Experiment description",
-                owner           : "Experiment owner",
-                measurements    : [lastDayVisits: 0]
+                id               : 'cmuid_regexp',
+                variants         : [[name: 'v1', predicates: [[type: 'CMUID_REGEXP', regexp: '.*[0-3]$']]]],
+                reportingEnabled : true,
+                description      : "Experiment description",
+                author           : "Experiment owner",
+                measurements     : [lastDayVisits: 0],
+                groups           : []
         ]
     }
 
@@ -149,7 +150,8 @@ class ExperimentsE2ESpec extends BaseIntegrationSpec {
           variants: [
                   [ name: 'internal', predicates: [[type: 'INTERNAL']] ]
           ],
-          reportingEnabled: false
+          reportingEnabled: false,
+          groups: []
         ]
     }
 
@@ -160,7 +162,8 @@ class ExperimentsE2ESpec extends BaseIntegrationSpec {
           ],
           reportingEnabled: true,
           description: "Experiment description",
-          owner: "Experiment owner"
+          author: "Experiment owner",
+          groups: []
         ]
     }
 
@@ -170,7 +173,8 @@ class ExperimentsE2ESpec extends BaseIntegrationSpec {
                   [ name: 'v1', predicates: [[type: 'HASH', from: 0, to: 50]] ],
                   [ name: 'v2', predicates: [[type: 'HASH', from: 50, to: 100]] ]
           ],
-          reportingEnabled: true
+          reportingEnabled: true,
+          groups: []
         ]
     }
 
@@ -181,29 +185,36 @@ class ExperimentsE2ESpec extends BaseIntegrationSpec {
          ],
          reportingEnabled: true,
          description: "Another one",
-         owner: "Someone"
+         author: "Someone",
+         groups: []
         ]
     }
 
     Map timeboundExperiment() {
-        [ id:'timed_internal_exp',
-          activeFrom: '2017-11-03T10:15:30+02:00',
-          activeTo: '2018-11-03T10:15:30+02:00',
-          variants: [
-                  [ name: 'internal', predicates: [[ type:'INTERNAL' ]] ]
+        [ id: 'timed_internal_exp',
+          activityPeriod: [
+              activeFrom: '2017-11-03T10:15:30+02:00',
+              activeTo: '2018-11-03T10:15:30+02:00'
           ],
-          reportingEnabled: true
+          variants: [
+              [ name: 'internal', predicates: [[ type:'INTERNAL' ]] ]
+          ],
+          reportingEnabled: true,
+          groups: []
         ]
     }
 
     Map experimentFromThePast() {
-        [ id:'experiment_from_the_past',
-          activeFrom: '2017-10-01T10:15:30+02:00',
-          activeTo: '2017-11-01T10:15:30+02:00',
+        [ id: 'experiment_from_the_past',
+          activityPeriod: [
+              activeFrom: '2017-10-01T10:15:30+02:00',
+              activeTo: '2017-11-01T10:15:30+02:00'
+          ],
           variants: [
                   [ name: 'internal', predicates: [[ type:'INTERNAL' ]] ]
           ],
-          reportingEnabled: true
+          reportingEnabled: true,
+          groups: []
         ]
     }
 }

@@ -31,8 +31,8 @@ class ExperimentsMultiRepository(private val repositories: List<ExperimentsRepos
     override val all: List<Experiment>
         get() = experiments.entries.map { it.value }
 
-    override val active: List<Experiment>
-        get() = all.filter { it.isActive() }
+    override val assignable: List<Experiment>
+        get() = all.filter { it.isAssignable() }
 
     override fun refresh() {
         repositories.forEachIndexed { index, repo ->

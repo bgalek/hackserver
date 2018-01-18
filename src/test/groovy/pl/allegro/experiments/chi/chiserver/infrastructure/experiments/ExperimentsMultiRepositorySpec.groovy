@@ -8,13 +8,13 @@ import spock.lang.Specification
 
 class ExperimentsMultiRepositorySpec extends Specification {
 
-    def "should return empty all and active without internal repositories"() {
+    def "should return empty all and assignable without internal repositories"() {
         given:
         def repo = new ExperimentsMultiRepository([])
 
         expect:
         repo.all.size() == 0
-        repo.active.size() == 0
+        repo.assignable.size() == 0
     }
 
     def "should return experiment existing in one repo"() {
@@ -33,13 +33,13 @@ class ExperimentsMultiRepositorySpec extends Specification {
         repo.getExperiment("anything") is null
     }
 
-    def "should return all/active size as sum of internal repos"() {
+    def "should return all/assignable size as sum of internal repos"() {
         given:
         def repo = new ExperimentsMultiRepository([simpleRepo(["y"]), simpleRepo(["z"])])
 
         expect:
         repo.all.size() == 2
-        repo.active.size() == 2
+        repo.assignable.size() == 2
     }
 
     def "shouldn't fail on internal repository refresh fail"() {
@@ -112,7 +112,7 @@ class ExperimentsMultiRepositorySpec extends Specification {
 
         expect:
         repo.all.size() == 4
-        repo.active.size() == 4
+        repo.assignable.size() == 4
         repo.getExperiment("xx").id == "xx"
 
         when:
@@ -120,7 +120,7 @@ class ExperimentsMultiRepositorySpec extends Specification {
 
         then:
         repo.all.size() == 3
-        repo.active.size() == 3
+        repo.assignable.size() == 3
         repo.getExperiment("xx") is null
     }
 
@@ -153,14 +153,14 @@ class ExperimentsMultiRepositorySpec extends Specification {
     def simpleRepo(experimentIds) {
         def experiments = experimentIds.collect { experiment(it) }
         return [
-                getExperiment: { id -> experiments.find({ it.id == id }) },
-                getAll       : { experiments },
-                getActive    : { experiments },
-                refresh      : {}
+                getExperiment : { id -> experiments.find({ it.id == id }) },
+                getAll        : { experiments },
+                getAssignable : { experiments },
+                refresh       : {}
         ] as ExperimentsRepository
     }
 
     def experiment(id) {
-        new Experiment(id, [new ExperimentVariant("x", [])], "", "", false, null, null, null)
+        new Experiment(id, [new ExperimentVariant("x", [])], "", "", [], false, null, null)
     }
 }

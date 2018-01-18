@@ -4,7 +4,10 @@ interactions:
 security:
   enabled: false
 
+mongo:
+  password: uogUo3knLzKV3qL9
+
 spring:
   data:
     mongodb:
-        host: "localhost"
+        uri: "mongodb://chi_server_d:${mongo.password}@dev0-mongos1.dc5.alledc.net,dev0-mongos2.dc5.alledc.net,dev0-mongos1.dc4.local,dev0-mongos2.dc4.local/chi_server_d"
