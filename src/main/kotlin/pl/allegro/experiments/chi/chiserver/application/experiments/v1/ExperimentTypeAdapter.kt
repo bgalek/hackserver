@@ -4,6 +4,7 @@ import com.github.salomonbrys.kotson.bool
 import com.github.salomonbrys.kotson.jsonDeserializer
 import com.github.salomonbrys.kotson.obj
 import com.github.salomonbrys.kotson.string
+import pl.allegro.experiments.chi.chiserver.domain.experiments.ActivityPeriod
 import pl.allegro.experiments.chi.chiserver.domain.experiments.Experiment
 import pl.allegro.experiments.chi.chiserver.domain.experiments.ExperimentMeasurements
 import pl.allegro.experiments.chi.chiserver.domain.experiments.ExperimentVariant
@@ -23,5 +24,7 @@ val experimentSerializer = jsonDeserializer { (jsonElement, _, context) ->
     val variants = context.deserialize<List<ExperimentVariant>>(json["variants"]!!)
     val measurements = json["measurements"]?.let { context.deserialize<ExperimentMeasurements>(json["measurements"]) }
 
-    Experiment(id, variants, description, owner, reported, activeFrom, activeTo, measurements)
+    val period: ActivityPeriod? = if (activeFrom != null && activeTo != null) ActivityPeriod(activeFrom, activeTo) else null;
+
+    Experiment(id, variants, description, owner, emptyList(), reported, period, measurements)
 }

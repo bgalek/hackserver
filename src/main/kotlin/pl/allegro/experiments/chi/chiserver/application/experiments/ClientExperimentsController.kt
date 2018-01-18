@@ -27,6 +27,13 @@ class ClientExperimentsController(
     @GetMapping(path = ["/v1", ""])
     fun activeExperiments() : String {
         ClientExperimentsController.logger.info("Active experiments request received")
-        return jsonConverter.toJson(experimentsRepository.active)
+        return jsonConverter.toJson(experimentsRepository.assignable)
+    }
+
+    @MeteredEndpoint
+    @GetMapping(path = ["/v2"])
+    fun experimentsForClient() : String {
+        ClientExperimentsController.logger.info("Active experiments request received")
+        return jsonConverter.toJson(experimentsRepository.assignable)
     }
 }

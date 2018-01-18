@@ -62,8 +62,8 @@ class FileBasedExperimentsRepositorySpec extends Specification {
 
         with(timedExp) {
             id == "timed_internal_exp"
-            activeFrom == ZonedDateTime.of(2017, 11, 03, 10, 15, 30, 0, ZoneId.of('+02:00'))
-            activeTo == ZonedDateTime.of(2018, 11, 03, 10, 15, 30, 0, ZoneId.of('+02:00'))
+            activityPeriod.activeFrom == ZonedDateTime.of(2017, 11, 03, 10, 15, 30, 0, ZoneId.of('+02:00'))
+            activityPeriod.activeTo == ZonedDateTime.of(2018, 11, 03, 10, 15, 30, 0, ZoneId.of('+02:00'))
         }
     }
 

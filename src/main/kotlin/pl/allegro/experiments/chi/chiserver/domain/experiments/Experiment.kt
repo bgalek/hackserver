@@ -4,14 +4,18 @@ import java.time.ZonedDateTime
 
 typealias ExperimentId = String
 
+enum class ExperimentStatus {
+    DRAFT, PLANNED, ACTIVE, ENDED
+}
+
 class Experiment(
     val id: ExperimentId,
     val variants: List<ExperimentVariant>,
     val description: String?,
-    val owner: String?,
+    val author: String?,
+    val groups: List<String>,
     val reportingEnabled: Boolean = true,
-    val activeFrom: ZonedDateTime? = null,
-    val activeTo: ZonedDateTime? = null,
+    val activityPeriod: ActivityPeriod?,
     val measurements: ExperimentMeasurements? = null
 ) {
 
@@ -21,11 +25,24 @@ class Experiment(
     }
 
     fun isActive(): Boolean {
-        return isActiveAt(ZonedDateTime.now())
+        return status() == ExperimentStatus.ACTIVE
     }
 
-    private fun isActiveAt(now: ZonedDateTime): Boolean {
-        return (activeFrom == null || now.isAfter(activeFrom)) && (activeTo == null || now.isBefore(activeTo))
+    private fun status(): ExperimentStatus {
+        return when {
+            activityPeriod == null -> ExperimentStatus.DRAFT
+            activityPeriod.activeTo < ZonedDateTime.now() -> ExperimentStatus.ENDED
+            activityPeriod.activeFrom > ZonedDateTime.now() -> ExperimentStatus.PLANNED
+            else -> ExperimentStatus.ACTIVE
+        }
+    }
+
+    public fun isDraft(): Boolean {
+        return status() == ExperimentStatus.DRAFT
+    }
+
+    public fun isAssignable(): Boolean {
+        return isActive() || isDraft()
     }
 
     override fun equals(other: Any?): Boolean {
@@ -37,10 +54,10 @@ class Experiment(
         if (id != other.id) return false
         if (variants != other.variants) return false
         if (description != other.description) return false
-        if (owner != other.owner) return false
+        if (author != other.author) return false
+        if (groups != other.groups) return false
         if (reportingEnabled != other.reportingEnabled) return false
-        if (activeFrom != other.activeFrom) return false
-        if (activeTo != other.activeTo) return false
+        if (activityPeriod != other.activityPeriod) return false
         if (measurements != other.measurements) return false
 
         return true
@@ -50,13 +67,17 @@ class Experiment(
         var result = id.hashCode()
         result = 31 * result + variants.hashCode()
         result = 31 * result + (description?.hashCode() ?: 0)
-        result = 31 * result + (owner?.hashCode() ?: 0)
+        result = 31 * result + (author?.hashCode() ?: 0)
+        result = 31 * result + groups.hashCode()
         result = 31 * result + reportingEnabled.hashCode()
-        result = 31 * result + (activeFrom?.hashCode() ?: 0)
-        result = 31 * result + (activeTo?.hashCode() ?: 0)
+        result = 31 * result + (activityPeriod?.hashCode() ?: 0)
         result = 31 * result + (measurements?.hashCode() ?: 0)
         return result
     }
+
+
 }
 
 data class ExperimentMeasurements(val lastDayVisits: Int = 0) {}
+
+data class ActivityPeriod (val activeFrom: ZonedDateTime, val activeTo: ZonedDateTime)

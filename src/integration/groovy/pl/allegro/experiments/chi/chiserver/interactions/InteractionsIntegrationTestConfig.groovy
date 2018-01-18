@@ -31,8 +31,8 @@ class InteractionsIntegrationTestConfig {
                         ],
                         'description',
                         'owner',
+                        [],
                         true,
-                        null,
                         null,
                         null
                 ),
@@ -44,8 +44,8 @@ class InteractionsIntegrationTestConfig {
                         ],
                         'description',
                         'owner',
+                        [],
                         false,
-                        null,
                         null,
                         null
                 )
