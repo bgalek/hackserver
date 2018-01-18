@@ -1,5 +1,7 @@
 <template>
   <chi-panel title="Details">
+    <v-layout>
+    <v-flex xs6>
         <h3>Description</h3>
         {{ experiment.description }}
         <h3>Owner</h3>
@@ -25,6 +27,27 @@
             </v-chip>
 
         </v-layout>
+    </v-flex>
+    <v-flex xs6>
+      <h3>Variants</h3>
+
+      <v-list two-line>
+        <template v-for="v in experiment.variants">
+          <v-list-tile>
+            <v-list-tile-content>
+              <v-badge>
+                <v-chip :color="v.color" small :key="v.name" :disabled="true">
+                  {{ v.name }}
+                </v-chip>
+              </v-badge>
+              <v-list-tile-sub-title v-html="v.predicatesInfo"></v-list-tile-sub-title>
+            </v-list-tile-content>
+          </v-list-tile>
+        </template>
+      </v-list>
+    </v-flex>
+    </v-layout>
+
   </chi-panel>
 </template>
 

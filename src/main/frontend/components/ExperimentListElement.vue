@@ -14,7 +14,7 @@
     </v-list-tile-content>
     <v-list-tile-action>
       <v-badge>
-        <v-chip small :color="variantColor(i, variant)" v-for="(variant, i) in experiment.variants" :key="variant.name"
+        <v-chip small :color="variant.color" v-for="(variant, i) in experiment.variants" :key="variant.name"
                 :disabled="true">
           {{ variant.name }}
         </v-chip>
@@ -24,7 +24,6 @@
 </template>
 
 <script>
-  import { variantColor } from '../utils/variantColor'
   import ExperimentHotness from './ExperimentHotness.vue'
 
   export default {
@@ -33,14 +32,6 @@
     components: { ExperimentHotness },
 
     methods: {
-      variantColor (i, variant) {
-        if (this.isBase(variant)) {
-          return variantColor(0)
-        } else {
-          return variantColor(i + 1)
-        }
-      },
-
       goToExperiment (experimentId) {
         return this.$router.push(`/experiments/${experimentId}`)
       },
