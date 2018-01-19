@@ -70,6 +70,27 @@ class ExperimentsE2ESpec extends BaseIntegrationSpec {
         ]
     }
 
+    def "should return list of active experiments in version 2"() {
+        given:
+        fileBasedExperimentsRepository.jsonUrl = resourceUrl('/experiments')
+        experimentsRepository.refresh()
+
+        when:
+        def response = restTemplate.getForEntity(localUrl('/api/experiments/v2'), List)
+
+        then:
+        response.statusCode.value() == 200
+        response.body.size() == 6
+
+        and:
+        response.body.contains(internalExperiment())
+        response.body.contains(cmuidRegexpExperiment())
+        response.body.contains(hashVariantExperiment())
+        response.body.contains(sampleExperiment())
+        response.body.contains(timeboundExperiment())
+        !response.body.contains(experimentFromThePast())
+    }
+
     def "should return all experiments as measured for admin"() {
         given:
         fileBasedExperimentsRepository.jsonUrl = resourceUrl('/experiments')
