@@ -24,16 +24,16 @@
     </v-layout>
 
     <div v-if="experimentStatistics.metrics">
-      <div v-for="(variantsMetricValue, metric) in experimentStatistics.metrics" :key="metric">
-        <b>{{metricNames[metric]}}</b>
+      <div v-for="metric in experimentStatistics.metrics" :key="metric.order">
+        <b>{{metricNames[metric.key]}}</b>
 
         <pivot-link cube-type="metrics" :experiment-id="experiment.id"
-                    :selected-metric-name="metric"
+                    :selected-metric-name="metric.key"
         ></pivot-link>
 
         <v-data-table
           v-bind:headers="headers"
-          :items="variantsMetricValue"
+          :items="metric.variants"
           hide-actions
           :custom-sort="sortVariantStats"
         >
@@ -56,7 +56,7 @@
                 {{ formatNumber(props.item.pValue) }}
                 <pivot-link cube-type="stats" :experiment-id="experiment.id"
                             selected-metric-name="p_value" :variant="props.item.variant"
-                            :metric="metric"
+                            :metric="metric.key"
                 ></pivot-link>
               </div>
             </td>
@@ -104,9 +104,13 @@
           {text: 'p-Value', sortable: false},
           {text: 'Sample Count', sortable: false}
         ],
+        metricOrder: {
+          'tx_visit': 1,
+          'gmv': 2
+        },
         metricNames: {
-          'tx_visit': 'Visits With Transaction(s)',
-          'gmv': 'GMV'
+          'tx_visit': 'Visits with transaction(s)',
+          'gmv': 'GMV per visit'
         }
       }
     },
@@ -116,9 +120,10 @@
     },
 
     computed: mapState({
-      experimentStatistics: state => {
+      experimentStatistics (state) {
         const stats = state.experimentStatistics.experimentStatistics
-        const mappedMetrics = {}
+
+        const mappedMetrics = []
 
         _.forIn(stats.metrics, (metricValuePerVariant, metricName) => {
           let mappedVariants = []
@@ -131,7 +136,11 @@
               pValue: metricValue.pValue
             })
           })
-          mappedMetrics[metricName] = mappedVariants
+          mappedMetrics.push({
+            'key': metricName,
+            'variants': mappedVariants,
+            'order': this.metricOrder[metricName]
+          })
         })
 
         return {
@@ -139,7 +148,7 @@
           durationDays: Math.floor(stats.duration / (3600 * 24 * 1000)),
           device: stats.device,
           toDate: stats.toDate,
-          metrics: mappedMetrics
+          metrics: mappedMetrics.sort((x, y) => x.order - y.order)
         }
       },
       experimentStatisticsError: state => state.experimentStatistics.error.experimentStatistics,
