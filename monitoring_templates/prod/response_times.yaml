@@ -1,0 +1,31 @@
+channels:
+  pagerduty:
+    pagerduty_alert:
+      incident_format: Slow chi-server endpoints 99p response time
+
+sources:
+  graphite:
+    client_response_time:
+      metric: groupByNode(group(stats.experiments.chi.chi-server.*.InteractionsController.*.*.2xx.p99,
+                                stats.experiments.chi.chi-server.*.ClientExperimentsController.*.*.2xx.p99),
+                          6, 'averageSeries')
+    overall_response_time:
+      metric: groupByNode(stats.experiments.chi.chi-server.*.*.*.*.2xx.p99, 6, 'averageSeries')
+
+checks:
+  client_response_time:
+    sources: ['client_response_time']
+    frequency: 1
+    triggers:
+      - rule: client_response_time.values > 500
+        debounce: 2
+        severity: critical
+        notify: ['pagerduty_alert']
+  overall_response_time:
+    sources: ['overall_response_time']
+    frequency: 1
+    triggers:
+      - rule: overall_response_time.values > 2000
+        debounce: 4
+        severity: critical
+        notify: ['pagerduty_alert']

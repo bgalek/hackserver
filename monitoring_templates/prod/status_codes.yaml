@@ -1,0 +1,32 @@
+channels:
+  email:
+    email_alert:
+      recipients: ['chibox-team@allegro.pl']
+  pagerduty:
+    pagerduty_alert:
+      incident_format: Rate of http errors in chi-server is > 0
+
+sources:
+  graphite:
+    http_500_rate:
+      metric: sumSeries(stats.experiments.chi.chi-server.*.*.*.*.500.m1_rate)
+    http_503_rate:
+      metric: sumSeries(stats.experiments.chi.chi-server.*.*.*.*.503.m5_rate)
+
+checks:
+  last_500_rate:
+    sources: ['http_500_rate']
+    frequency: 1
+    triggers:
+      - rule: http_500_rate.values > 2
+        debounce: 2
+        severity: critical
+        notify: ['pagerduty_alert']
+  last_503_rate:
+    sources: ['http_503_rate']
+    frequency: 5
+    triggers:
+      - rule: http_503_rate.values > 50
+        debounce: 4
+        severity: critical
+        notify: ['email_alert']
