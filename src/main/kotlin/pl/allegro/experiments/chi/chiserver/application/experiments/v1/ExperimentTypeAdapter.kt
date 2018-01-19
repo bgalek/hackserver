@@ -11,7 +11,7 @@ import pl.allegro.experiments.chi.chiserver.domain.experiments.ExperimentVariant
 import java.time.ZonedDateTime
 import java.time.format.DateTimeFormatter
 
-val experimentSerializer = jsonDeserializer { (jsonElement, _, context) ->
+val experimentDeserializer = jsonDeserializer { (jsonElement, _, context) ->
     val formatter = DateTimeFormatter.ISO_DATE_TIME
     val json = jsonElement.obj
 

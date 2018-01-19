@@ -13,7 +13,7 @@ module.exports = (options, req) => ({
           res.end(JSON.stringify(appState.getStatistics(req.params.experimentId, device, toDate)))
         })
 
-        app.get('/api/experiments/v1', (req, res) => {
+        app.get('/api/admin/experiments', (req, res) => {
           res.end(JSON.stringify(appState.getExperiments()))
         })
 

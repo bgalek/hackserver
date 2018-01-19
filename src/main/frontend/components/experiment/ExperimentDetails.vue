@@ -4,9 +4,9 @@
     <v-flex xs6>
         <h3>Description</h3>
         {{ experiment.description }}
-        <h3>Owner</h3>
-        {{ experiment.owner }}
-        <div v-if="experiment.activeFrom || experiment.activeTo">
+        <h3>Author</h3>
+        {{ experiment.author }}
+        <div v-if="experiment.activityPeriod">
           <h3>Dates</h3>
           <v-layout row>
             <v-flex xs2>Active from: </v-flex><v-flex xs9>{{ experiment.fromDateString() }}</v-flex>
@@ -64,6 +64,7 @@
     methods: {
       activityButtonClass () {
         let colors = {
+          DRAFT: 'gray',
           PLANNED: 'blue',
           ACTIVE: 'green',
           ENDED: 'black'

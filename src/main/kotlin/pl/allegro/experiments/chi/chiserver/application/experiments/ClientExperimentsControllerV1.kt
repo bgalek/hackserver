@@ -4,6 +4,7 @@ import org.springframework.http.MediaType
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
+import pl.allegro.experiments.chi.chiserver.domain.experiments.ExperimentStatus
 import pl.allegro.experiments.chi.chiserver.domain.experiments.ExperimentsRepository
 import pl.allegro.experiments.chi.chiserver.infrastructure.JsonConverter
 import pl.allegro.experiments.chi.chiserver.logger
@@ -14,9 +15,9 @@ import pl.allegro.tech.common.andamio.metrics.MeteredEndpoint
     value = ["/api/experiments"],
     produces = [MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_JSON_UTF8_VALUE]
 )
-class ClientExperimentsController(
+class ClientExperimentsControllerV1(
     private val experimentsRepository: ExperimentsRepository,
-    private val jsonConverter: JsonConverter
+    private val jsonConverterV1: JsonConverter
 ) {
 
     companion object {
@@ -24,9 +25,9 @@ class ClientExperimentsController(
     }
 
     @MeteredEndpoint
-    @GetMapping(path = ["/v2", ""])
-    fun experimentsForClient() : String {
+    @GetMapping(path = ["/v1"])
+    fun activeExperiments() : String {
         logger.info("Active experiments request received")
-        return jsonConverter.toJson(experimentsRepository.assignable)
+        return jsonConverterV1.toJson(experimentsRepository.all.filter {it.status() != ExperimentStatus.ENDED})
     }
 }

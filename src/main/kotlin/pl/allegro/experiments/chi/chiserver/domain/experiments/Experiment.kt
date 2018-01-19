@@ -28,7 +28,7 @@ class Experiment(
         return status() == ExperimentStatus.ACTIVE
     }
 
-    private fun status(): ExperimentStatus {
+    fun status(): ExperimentStatus {
         return when {
             activityPeriod == null -> ExperimentStatus.DRAFT
             activityPeriod.activeTo < ZonedDateTime.now() -> ExperimentStatus.ENDED
@@ -37,11 +37,11 @@ class Experiment(
         }
     }
 
-    public fun isDraft(): Boolean {
+    fun isDraft(): Boolean {
         return status() == ExperimentStatus.DRAFT
     }
 
-    public fun isAssignable(): Boolean {
+    fun isAssignable(): Boolean {
         return isActive() || isDraft()
     }
 
