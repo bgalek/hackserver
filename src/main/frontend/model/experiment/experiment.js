@@ -3,14 +3,15 @@ import moment from 'moment'
 import _ from 'lodash'
 
 import ExperimentVariantModel from './experiment-variant'
+import ActivityPeriod from './activity-period'
 
 const ExperimentRecord = Record({
   id: null,
   variants: [],
   description: '',
-  owner: '',
-  activeFrom: null,
-  activeTo: null,
+  author: '',
+  groups: [],
+  activityPeriod: null,
   reportingEnabled: true,
   hasBase: true,
   isMeasured: true,
@@ -19,38 +20,43 @@ const ExperimentRecord = Record({
   })
 })
 
-const DEFAULT_FORMAT = 'MMMM Do YYYY, hh:mm:ss'
-
 export default class ExperimentModel extends ExperimentRecord {
   constructor (experimentObject) {
     experimentObject = Object.assign({}, experimentObject)
-    experimentObject.activeFrom = experimentObject.activeFrom ? new Date(experimentObject.activeFrom) : null
-    experimentObject.activeTo = experimentObject.activeTo ? new Date(experimentObject.activeTo) : null
+    experimentObject.activityPeriod = experimentObject.activityPeriod !== null ? new ActivityPeriod(experimentObject.activityPeriod) : null
     experimentObject.variants = List(experimentObject.variants).map((variant, i) => new ExperimentVariantModel(variant, i)).toArray()
     experimentObject.hasBase = _.includes(_.map(experimentObject.variants, v => v.name), 'base')
     experimentObject.isMeasured = experimentObject.hasBase && experimentObject.reportingEnabled
+    experimentObject.groups = List(experimentObject.groups)
     experimentObject.measurements = experimentObject.measurements
 
     super(experimentObject)
   }
 
   fromDateShortString () {
-    return this.activeFrom && moment(this.activeFrom).fromNow()
+    return this.activityPeriod && this.activityPeriod.fromDateShortString()
   }
 
   fromDateString () {
-    return this.activeFrom && moment(this.activeFrom).format(DEFAULT_FORMAT)
+    return this.activityPeriod && this.activityPeriod.fromDateString()
   }
 
   toDateString () {
-    return this.activeTo && moment(this.activeTo).format(DEFAULT_FORMAT)
+    return this.activityPeriod && this.activityPeriod.toDateString()
+  }
+
+  groupsInfo () {
+    return this.groups.join(', ')
   }
 
   status () {
-    if (this.activeFrom && moment(this.activeFrom).isAfter(moment())) {
+    if (this.activityPeriod === null) {
+      return 'DRAFT'
+    }
+    if (moment(this.activityPeriod.activeFrom).isAfter(moment())) {
       return 'PLANNED'
     }
-    if (this.activeTo && moment(this.activeTo).isBefore(moment())) {
+    if (moment(this.activityPeriod.activeTo).isBefore(moment())) {
       return 'ENDED'
     }
     return 'ACTIVE'
