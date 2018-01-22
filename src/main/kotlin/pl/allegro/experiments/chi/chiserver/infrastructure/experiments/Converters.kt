@@ -1,4 +1,4 @@
-package pl.allegro.experiments.chi.chiserver.infrastructure.mongo
+package pl.allegro.experiments.chi.chiserver.infrastructure.experiments
 
 import com.mongodb.BasicDBObject
 import org.springframework.core.convert.converter.Converter
@@ -7,10 +7,10 @@ import java.time.ZonedDateTime
 import java.time.format.DateTimeFormatter
 
 val mongoConverters = listOf(
-    dateTimeSerializer,
-    dateTimeDeserializer,
-    experimentDeserializer,
-    experimentSerializer
+        dateTimeSerializer,
+        dateTimeDeserializer,
+        experimentDeserializer,
+        experimentSerializer
 )
 
 private val dateFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ssXXX")

@@ -12,8 +12,6 @@ import pl.allegro.experiments.chi.chiserver.domain.experiments.ExperimentsReposi
 import pl.allegro.experiments.chi.chiserver.domain.experiments.MeasurementsRepository
 import pl.allegro.experiments.chi.chiserver.infrastructure.JsonConverter
 import pl.allegro.experiments.chi.chiserver.infrastructure.druid.DruidClient
-import pl.allegro.experiments.chi.chiserver.infrastructure.mongo.MongoExperimentsRepository
-import pl.allegro.experiments.chi.chiserver.infrastructure.mongo.mongoConverters
 
 
 @Configuration

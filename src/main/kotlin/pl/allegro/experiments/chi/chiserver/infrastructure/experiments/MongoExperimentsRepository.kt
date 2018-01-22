@@ -1,4 +1,4 @@
-package pl.allegro.experiments.chi.chiserver.infrastructure.mongo
+package pl.allegro.experiments.chi.chiserver.infrastructure.experiments
 
 import org.springframework.data.mongodb.core.MongoTemplate
 import pl.allegro.experiments.chi.chiserver.domain.experiments.Experiment

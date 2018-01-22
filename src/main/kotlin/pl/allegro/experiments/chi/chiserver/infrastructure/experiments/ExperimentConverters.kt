@@ -1,4 +1,4 @@
-package pl.allegro.experiments.chi.chiserver.infrastructure.mongo
+package pl.allegro.experiments.chi.chiserver.infrastructure.experiments
 
 import com.mongodb.BasicDBObject
 import com.mongodb.DBObject

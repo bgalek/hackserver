@@ -8,7 +8,6 @@ import pl.allegro.experiments.chi.chiserver.domain.experiments.Experiment
 import pl.allegro.experiments.chi.chiserver.domain.experiments.ExperimentVariant
 import pl.allegro.experiments.chi.chiserver.domain.experiments.HashRangePredicate
 import pl.allegro.experiments.chi.chiserver.domain.experiments.PercentageRange
-import pl.allegro.experiments.chi.chiserver.infrastructure.mongo.MongoExperimentsRepository
 
 import java.time.Clock
 import java.time.ZonedDateTime
