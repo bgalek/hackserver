@@ -15,7 +15,7 @@ class Experiment(
     val author: String?,
     val groups: List<String>,
     val reportingEnabled: Boolean = true,
-    val activityPeriod: ActivityPeriod?,
+    val activityPeriod: ActivityPeriod? = null,
     val measurements: ExperimentMeasurements? = null
 ) {
 

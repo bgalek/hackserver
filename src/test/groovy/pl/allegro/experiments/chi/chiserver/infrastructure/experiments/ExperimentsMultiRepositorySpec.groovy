@@ -3,7 +3,7 @@ package pl.allegro.experiments.chi.chiserver.infrastructure.experiments
 import pl.allegro.experiments.chi.chiserver.domain.experiments.Experiment
 import pl.allegro.experiments.chi.chiserver.domain.experiments.ExperimentVariant
 import pl.allegro.experiments.chi.chiserver.domain.experiments.ExperimentsRepository
-import pl.allegro.experiments.chi.chiserver.domain.experiments.WritableExperimentsRepository
+import pl.allegro.experiments.chi.chiserver.infrastructure.InMemoryExperimentsRepository
 import spock.lang.Specification
 
 class ExperimentsMultiRepositorySpec extends Specification {
@@ -139,7 +139,7 @@ class ExperimentsMultiRepositorySpec extends Specification {
 
     def "should save experiments to all writable repos"() {
         given:
-        def repos = [Stub(WritableExperimentsRepository), Stub(WritableExperimentsRepository)]
+        def repos = [Stub(MongoExperimentsRepository), Stub(InMemoryExperimentsRepository)]
         def repo = new ExperimentsMultiRepository(repos)
         def experiment = experiment("1234")
 

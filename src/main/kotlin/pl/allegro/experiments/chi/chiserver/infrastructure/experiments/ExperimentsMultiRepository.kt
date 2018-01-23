@@ -4,10 +4,10 @@ import org.slf4j.LoggerFactory
 import pl.allegro.experiments.chi.chiserver.domain.experiments.Experiment
 import pl.allegro.experiments.chi.chiserver.domain.experiments.ExperimentId
 import pl.allegro.experiments.chi.chiserver.domain.experiments.ExperimentsRepository
-import pl.allegro.experiments.chi.chiserver.domain.experiments.WritableExperimentsRepository
+import pl.allegro.experiments.chi.chiserver.infrastructure.InMemoryExperimentsRepository
 
 class ExperimentsMultiRepository(private val repositories: List<ExperimentsRepository>) :
-    WritableExperimentsRepository {
+    ExperimentsRepository {
     private var experiments = emptyMap<ExperimentId, Experiment>()
     private val reposCache = repositories.mapTo(mutableListOf()) { emptyList<Experiment>() }
 
@@ -22,7 +22,8 @@ class ExperimentsMultiRepository(private val repositories: List<ExperimentsRepos
     override fun getExperiment(id: ExperimentId): Experiment? = experiments[id]
 
     override fun save(experiment: Experiment) {
-        with(repositories.filterIsInstance(WritableExperimentsRepository::class.java)) {
+        // TODO this is poor solution but we are going to simplify it anyway.
+        with(repositories.filter{ it is InMemoryExperimentsRepository || it is MongoExperimentsRepository}){
             check(isNotEmpty()) { "No writable experiments repository configured" }
             forEach { it.save(experiment) }
         }

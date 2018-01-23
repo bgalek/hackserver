@@ -3,11 +3,11 @@ package pl.allegro.experiments.chi.chiserver.infrastructure.experiments
 import org.springframework.data.mongodb.core.MongoTemplate
 import pl.allegro.experiments.chi.chiserver.domain.experiments.Experiment
 import pl.allegro.experiments.chi.chiserver.domain.experiments.ExperimentId
-import pl.allegro.experiments.chi.chiserver.domain.experiments.WritableExperimentsRepository
+import pl.allegro.experiments.chi.chiserver.domain.experiments.ExperimentsRepository
 
 private const val COLLECTION = "experiments"
 
-class MongoExperimentsRepository(private val mongoTemplate: MongoTemplate) : WritableExperimentsRepository {
+open class MongoExperimentsRepository(private val mongoTemplate: MongoTemplate) : ExperimentsRepository {
     override fun getExperiment(id: ExperimentId): Experiment? =
         mongoTemplate.findById(id, Experiment::class.java, COLLECTION)
 

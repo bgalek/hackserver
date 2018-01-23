@@ -5,7 +5,12 @@ import org.junit.ClassRule
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.web.client.RestTemplate
 import pl.allegro.experiments.chi.chiserver.BaseIntegrationSpec
+import pl.allegro.experiments.chi.chiserver.domain.experiments.ActivityPeriod
+import pl.allegro.experiments.chi.chiserver.domain.experiments.Experiment
+import pl.allegro.experiments.chi.chiserver.domain.experiments.ExperimentVariant
 import pl.allegro.experiments.chi.chiserver.domain.experiments.ExperimentsRepository
+import pl.allegro.experiments.chi.chiserver.domain.experiments.HashRangePredicate
+import pl.allegro.experiments.chi.chiserver.domain.experiments.PercentageRange
 import spock.lang.Shared
 
 import static com.github.tomakehurst.wiremock.client.WireMock.*
@@ -129,6 +134,30 @@ class ExperimentsE2ESpec extends BaseIntegrationSpec {
         response.statusCode.value() == 200
         response.body.size() == 6
     }
+
+    def "should create simple experiment"() {
+        given:
+        def experiment = new Experiment(
+                "some", [
+                new ExperimentVariant("base", [new HashRangePredicate(new PercentageRange(0, 10))]),
+                new ExperimentVariant("v2", [new HashRangePredicate(new PercentageRange(10, 20))]),
+        ],
+                "exciting stuff", "tester", [], false,
+                null,
+                null)
+
+        when:
+        restTemplate.postForEntity(localUrl('/api/admin/experiments'), experiment, Experiment)
+
+        and:
+        def responseList = restTemplate.getForEntity(localUrl('/api/admin/experiments'), List)
+        def responseSingle = restTemplate.getForEntity(localUrl("/api/admin/experiments/${experiment.id}"), Experiment)
+
+        then:
+        responseList.body.contains(experiment)
+        responseSingle == experiment
+    }
+
 
     void teachWireMockJson(String path, String jsonPath) {
         String json = getResourceAsString(jsonPath)

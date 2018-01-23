@@ -7,6 +7,7 @@ import pl.allegro.experiments.chi.chiserver.domain.experiments.ExperimentId
 import pl.allegro.experiments.chi.chiserver.domain.experiments.ExperimentsRepository
 import pl.allegro.experiments.chi.chiserver.infrastructure.InMemoryExperimentsRepository
 import pl.allegro.experiments.chi.chiserver.infrastructure.JsonConverter
+import javax.naming.OperationNotSupportedException
 
 class FileBasedExperimentsRepository(jsonUrl: String,
                                      private val dataLoader: (String) -> String,
@@ -15,7 +16,6 @@ class FileBasedExperimentsRepository(jsonUrl: String,
 
     private val inMemoryRepository: InMemoryExperimentsRepository = InMemoryExperimentsRepository(initialState)
     private var jsonUrl: String = jsonUrl
-        set(jsonUrl) { field = jsonUrl }
 
     companion object {
         private val logger = LoggerFactory.getLogger(FileBasedExperimentsRepository::class.java)
@@ -69,4 +69,8 @@ class FileBasedExperimentsRepository(jsonUrl: String,
 
     override val assignable: List<Experiment>
         get() = inMemoryRepository.assignable
+
+    override fun save(experiment: Experiment) {
+        throw OperationNotSupportedException("Cannot add experiments to file based repository")
+    }
 }

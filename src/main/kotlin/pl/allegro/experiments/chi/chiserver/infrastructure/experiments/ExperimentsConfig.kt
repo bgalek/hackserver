@@ -18,7 +18,6 @@ import pl.allegro.experiments.chi.chiserver.infrastructure.druid.DruidClient
 class ExperimentsConfig {
     private val EXPERIMENTS_COUNT_METRIC = "experiments.count";
 
-
     @Bean
     fun fileBasedExperimentsRepository(
         @Value("\${chi.experiments.file}") jsonUrl: String,
@@ -39,7 +38,7 @@ class ExperimentsConfig {
     fun customConversions() = CustomConversions(mongoConverters)
 
     @Bean
-    fun mongoExperimentsRepository(mongoTemplate: MongoTemplate): ExperimentsRepository {
+    fun writableExperimentRepository(mongoTemplate: MongoTemplate): ExperimentsRepository {
         return MongoExperimentsRepository(mongoTemplate)
     }
 
