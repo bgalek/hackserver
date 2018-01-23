@@ -28,6 +28,6 @@ class ClientExperimentsControllerV1(
     @GetMapping(path = ["/v1"])
     fun activeExperiments() : String {
         logger.info("Active experiments request received")
-        return jsonConverterV1.toJson(experimentsRepository.all.filter {it.status() != ExperimentStatus.ENDED})
+        return jsonConverterV1.toJson(experimentsRepository.all.filter {it.status != ExperimentStatus.ENDED})
     }
 }

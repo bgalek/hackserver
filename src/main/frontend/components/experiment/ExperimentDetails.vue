@@ -19,7 +19,7 @@
         <v-layout row>
 
             <v-chip outline disabled :color="activityButtonClass()">
-              {{ experiment.status() }}
+              {{ experiment.status }}
             </v-chip>
 
             <v-chip disabled outline :color="reportingEnabledButtonClass()" >
@@ -69,7 +69,7 @@
           ACTIVE: 'green',
           ENDED: 'black'
         }
-        return colors[this.experiment.status()]
+        return colors[this.experiment.status] || 'gray'
       },
 
       reportingEnabledButtonClass () {

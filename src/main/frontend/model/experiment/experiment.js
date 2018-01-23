@@ -1,5 +1,4 @@
 import { Record, List } from 'immutable'
-import moment from 'moment'
 import _ from 'lodash'
 
 import ExperimentVariantModel from './experiment-variant'
@@ -15,6 +14,7 @@ const ExperimentRecord = Record({
   reportingEnabled: true,
   hasBase: true,
   isMeasured: true,
+  status: '',
   measurements: Record({
     lastDayVisits: 0
   })
@@ -47,18 +47,5 @@ export default class ExperimentModel extends ExperimentRecord {
 
   groupsInfo () {
     return this.groups.join(', ')
-  }
-
-  status () {
-    if (this.activityPeriod === null) {
-      return 'DRAFT'
-    }
-    if (moment(this.activityPeriod.activeFrom).isAfter(moment())) {
-      return 'PLANNED'
-    }
-    if (moment(this.activityPeriod.activeTo).isBefore(moment())) {
-      return 'ENDED'
-    }
-    return 'ACTIVE'
   }
 };

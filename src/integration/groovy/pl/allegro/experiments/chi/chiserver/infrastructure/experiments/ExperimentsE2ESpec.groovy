@@ -66,7 +66,8 @@ class ExperimentsE2ESpec extends BaseIntegrationSpec {
                 description      : "Experiment description",
                 author           : "Experiment owner",
                 measurements     : [lastDayVisits: 0],
-                groups           : []
+                groups           : [],
+                status           : 'DRAFT'
         ]
     }
 
@@ -151,7 +152,8 @@ class ExperimentsE2ESpec extends BaseIntegrationSpec {
                   [ name: 'internal', predicates: [[type: 'INTERNAL']] ]
           ],
           reportingEnabled: false,
-          groups: []
+          groups: [],
+          status: 'DRAFT'
         ]
     }
 
@@ -163,7 +165,8 @@ class ExperimentsE2ESpec extends BaseIntegrationSpec {
           reportingEnabled: true,
           description: "Experiment description",
           author: "Experiment owner",
-          groups: []
+          groups: [],
+          status: 'DRAFT'
         ]
     }
 
@@ -174,7 +177,8 @@ class ExperimentsE2ESpec extends BaseIntegrationSpec {
                   [ name: 'v2', predicates: [[type: 'HASH', from: 50, to: 100]] ]
           ],
           reportingEnabled: true,
-          groups: []
+          groups: [],
+          status: 'DRAFT'
         ]
     }
 
@@ -186,7 +190,8 @@ class ExperimentsE2ESpec extends BaseIntegrationSpec {
          reportingEnabled: true,
          description: "Another one",
          author: "Someone",
-         groups: []
+         groups: [],
+         status: 'DRAFT'
         ]
     }
 
@@ -200,7 +205,8 @@ class ExperimentsE2ESpec extends BaseIntegrationSpec {
               [ name: 'internal', predicates: [[ type:'INTERNAL' ]] ]
           ],
           reportingEnabled: true,
-          groups: []
+          groups: [],
+          status: 'ACTIVE'
         ]
     }
 
@@ -214,7 +220,8 @@ class ExperimentsE2ESpec extends BaseIntegrationSpec {
                   [ name: 'internal', predicates: [[ type:'INTERNAL' ]] ]
           ],
           reportingEnabled: true,
-          groups: []
+          groups: [],
+          status: 'ENDED'
         ]
     }
 }

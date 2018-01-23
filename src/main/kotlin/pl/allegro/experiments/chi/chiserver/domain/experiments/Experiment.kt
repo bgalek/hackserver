@@ -19,26 +19,24 @@ class Experiment(
     val measurements: ExperimentMeasurements? = null
 ) {
 
+    val status = when {
+        activityPeriod == null -> ExperimentStatus.DRAFT
+        activityPeriod.activeTo < ZonedDateTime.now() -> ExperimentStatus.ENDED
+        activityPeriod.activeFrom > ZonedDateTime.now() -> ExperimentStatus.PLANNED
+        else -> ExperimentStatus.ACTIVE
+    }
+
     init {
         require(id.isNotBlank()) { "empty Experiment id" }
         require(!variants.isEmpty()) { "empty list of Variants" }
     }
 
     fun isActive(): Boolean {
-        return status() == ExperimentStatus.ACTIVE
-    }
-
-    fun status(): ExperimentStatus {
-        return when {
-            activityPeriod == null -> ExperimentStatus.DRAFT
-            activityPeriod.activeTo < ZonedDateTime.now() -> ExperimentStatus.ENDED
-            activityPeriod.activeFrom > ZonedDateTime.now() -> ExperimentStatus.PLANNED
-            else -> ExperimentStatus.ACTIVE
-        }
+        return status == ExperimentStatus.ACTIVE
     }
 
     fun isDraft(): Boolean {
-        return status() == ExperimentStatus.DRAFT
+        return status == ExperimentStatus.DRAFT
     }
 
     fun isAssignable(): Boolean {
