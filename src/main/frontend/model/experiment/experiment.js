@@ -23,7 +23,7 @@ const ExperimentRecord = Record({
 export default class ExperimentModel extends ExperimentRecord {
   constructor (experimentObject) {
     experimentObject = Object.assign({}, experimentObject)
-    experimentObject.activityPeriod = experimentObject.activityPeriod !== null ? new ActivityPeriod(experimentObject.activityPeriod) : null
+    experimentObject.activityPeriod = experimentObject.activityPeriod && new ActivityPeriod(experimentObject.activityPeriod)
     experimentObject.variants = List(experimentObject.variants).map((variant, i) => new ExperimentVariantModel(variant, i)).toArray()
     experimentObject.hasBase = _.includes(_.map(experimentObject.variants, v => v.name), 'base')
     experimentObject.isMeasured = experimentObject.hasBase && experimentObject.reportingEnabled
