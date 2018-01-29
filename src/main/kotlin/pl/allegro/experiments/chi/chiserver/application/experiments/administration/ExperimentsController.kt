@@ -1,11 +1,11 @@
 package pl.allegro.experiments.chi.chiserver.application.experiments.administration
 
 import org.springframework.http.HttpStatus
+import org.springframework.http.MediaType
 import org.springframework.http.MediaType.APPLICATION_JSON_UTF8_VALUE
 import org.springframework.http.MediaType.APPLICATION_JSON_VALUE
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
-import pl.allegro.experiments.chi.chiserver.domain.experiments.Experiment
 import pl.allegro.experiments.chi.chiserver.domain.experiments.ExperimentsRepository
 import pl.allegro.experiments.chi.chiserver.domain.experiments.MeasurementsRepository
 import pl.allegro.experiments.chi.chiserver.infrastructure.JsonConverter
@@ -45,9 +45,9 @@ class ExperimentsController(private val experimentsRepository: ExperimentsReposi
 
     @MeteredEndpoint
     @PostMapping(path = [""])
-    fun addExperiment(experiment: Experiment) : ResponseEntity<String> {
-        logger.info("Experiment creation request received", experiment)
-        createExperimentCommand.createExperiment()
+    fun addExperiment(@RequestBody experimentCreationRequest: ExperimentCreationRequest) : ResponseEntity<String> {
+        logger.info("Experiment creation request received", experimentCreationRequest)
+        createExperimentCommand.createExperiment(experimentCreationRequest)
         return ResponseEntity(HttpStatus.CREATED)
     }
 }

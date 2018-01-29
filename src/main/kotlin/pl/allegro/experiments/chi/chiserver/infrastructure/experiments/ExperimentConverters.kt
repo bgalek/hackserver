@@ -89,5 +89,7 @@ fun Predicate.serialize(): DBObject = when (this) {
     is HashRangePredicate -> BasicDBObject(
         mapOf("type" to "HASH", "from" to hashRange.from, "to" to hashRange.to)
     )
+    is InternalPredicate -> BasicDBObject( mapOf("type" to "INTERNAL"))
+    is CmuidRegexpPredicate -> BasicDBObject( mapOf("type" to "CMUID_REGEXP", "regexp" to this.pattern.toString()))
     else -> throw UnsupportedOperationException("Can't serialize ${this.javaClass}")
 }

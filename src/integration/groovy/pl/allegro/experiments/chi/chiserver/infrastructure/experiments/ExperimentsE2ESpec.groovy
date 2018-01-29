@@ -3,14 +3,19 @@ package pl.allegro.experiments.chi.chiserver.infrastructure.experiments
 import com.github.tomakehurst.wiremock.junit.WireMockRule
 import org.junit.ClassRule
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.http.HttpStatus
+import org.springframework.http.ResponseEntity
 import org.springframework.web.client.RestTemplate
 import pl.allegro.experiments.chi.chiserver.BaseIntegrationSpec
+import pl.allegro.experiments.chi.chiserver.application.experiments.administration.ExperimentCreationRequest
 import pl.allegro.experiments.chi.chiserver.domain.experiments.ActivityPeriod
 import pl.allegro.experiments.chi.chiserver.domain.experiments.Experiment
 import pl.allegro.experiments.chi.chiserver.domain.experiments.ExperimentVariant
 import pl.allegro.experiments.chi.chiserver.domain.experiments.ExperimentsRepository
 import pl.allegro.experiments.chi.chiserver.domain.experiments.HashRangePredicate
+import pl.allegro.experiments.chi.chiserver.domain.experiments.InternalPredicate
 import pl.allegro.experiments.chi.chiserver.domain.experiments.PercentageRange
+import spock.lang.Ignore
 import spock.lang.Shared
 
 import static com.github.tomakehurst.wiremock.client.WireMock.*
@@ -137,25 +142,38 @@ class ExperimentsE2ESpec extends BaseIntegrationSpec {
 
     def "should create simple experiment"() {
         given:
-        def experiment = new Experiment(
-                "some", [
-                new ExperimentVariant("base", [new HashRangePredicate(new PercentageRange(0, 10))]),
-                new ExperimentVariant("v2", [new HashRangePredicate(new PercentageRange(10, 20))]),
-        ],
-                "exciting stuff", "tester", [], false,
-                null,
-                null)
+        def request = [
+                id: "some",
+                description: "desc",
+                variants: [
+                    [
+                        name: "v1",
+                        predicates: [ [ type: "INTERNAL" ]]
+                    ]
+                ],
+                groups: ['group a', 'group b'],
+                reportingEnabled: true
+        ]
+
+        def expectedExperiment = request + [
+                author: "Anonymous",
+                status: "DRAFT",
+                measurements: [ lastDayVisits: 0 ]
+        ]
 
         when:
-        restTemplate.postForEntity(localUrl('/api/admin/experiments'), experiment, Experiment)
-
-        and:
-        def responseList = restTemplate.getForEntity(localUrl('/api/admin/experiments'), List)
-        def responseSingle = restTemplate.getForEntity(localUrl("/api/admin/experiments/${experiment.id}"), Experiment)
+        def response = restTemplate.postForEntity(localUrl('/api/admin/experiments'), request, Map)
 
         then:
-        responseList.body.contains(experiment)
-        responseSingle == experiment
+        response.statusCode == HttpStatus.CREATED
+
+        and:
+        def responseList = restTemplate.getForEntity(localUrl("/api/admin/experiments"), List)
+        def responseSingle = restTemplate.getForEntity(localUrl("/api/admin/experiments/${request.id}/"), Map)
+
+        then:
+        responseList.body.contains(expectedExperiment)
+        responseSingle.body == expectedExperiment
     }
 
 
