@@ -8,7 +8,7 @@ enum class ExperimentStatus {
     DRAFT, PLANNED, ACTIVE, ENDED
 }
 
-class Experiment(
+open class Experiment(
     val id: ExperimentId,
     val variants: List<ExperimentVariant>,
     val description: String?,

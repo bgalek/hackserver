@@ -16,6 +16,6 @@ enum class PredicateType {
 }
 
 class PredicateDTO (val type: PredicateType,
-                    val hashRangeFrom: Int?,
-                    val hashRangeTo: Int?,
-                    val cmuidRegexp: String?)
+                    val hashRangeFrom: Int? = null,
+                    val hashRangeTo: Int? = null,
+                    val cmuidRegexp: String? = null)
