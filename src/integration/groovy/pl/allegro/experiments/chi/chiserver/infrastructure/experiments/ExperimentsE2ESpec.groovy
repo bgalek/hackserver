@@ -178,6 +178,50 @@ class ExperimentsE2ESpec extends BaseIntegrationSpec {
         responseSingle.body == expectedExperiment
     }
 
+    def "should create experiment with all types of predicates"() {
+        given:
+        def request = [
+                id: "some",
+                description: "desc",
+                variants: [
+                        [
+                                name: "v1",
+                                predicates: [ [ type: "INTERNAL" ]]
+                        ],
+                        [
+                                name: "v2",
+                                predicates: [ [ type: "HASH", from: 17, to: 90 ]]
+                        ],
+                        [
+                                name: "v3",
+                                predicates: [ [ type: "CMUID_REGEXP", regexp: "....[123]\$"]]
+                        ]
+                ],
+                groups: ['group a', 'group b'],
+                reportingEnabled: true
+        ]
+
+        def expectedExperiment = request + [
+                author: "Anonymous",
+                status: "DRAFT",
+                measurements: [ lastDayVisits: 0 ]
+        ]
+
+        when:
+        def response = restTemplate.postForEntity(localUrl('/api/admin/experiments'), request, Map)
+
+        then:
+        response.statusCode == HttpStatus.CREATED
+
+        and:
+        def responseList = restTemplate.getForEntity(localUrl("/api/admin/experiments"), List)
+        def responseSingle = restTemplate.getForEntity(localUrl("/api/admin/experiments/${request.id}/"), Map)
+
+        then:
+        responseList.body.contains(expectedExperiment)
+        responseSingle.body == expectedExperiment
+    }
+
 
     void teachWireMockJson(String path, String jsonPath) {
         String json = getResourceAsString(jsonPath)

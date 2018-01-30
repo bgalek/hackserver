@@ -16,7 +16,7 @@ import pl.allegro.tech.common.andamio.metrics.MeteredEndpoint
 @RequestMapping(value = ["/api/admin/experiments"], produces = [APPLICATION_JSON_VALUE, APPLICATION_JSON_UTF8_VALUE])
 class ExperimentsController(private val experimentsRepository: ExperimentsRepository,
                             private val measurementsRepository: MeasurementsRepository,
-                            private val createExperimentCommand: CreateExperimentCommand,
+                            private val createExperimentCommandFactory: CreateExperimentCommandFactory,
                             private val jsonConverter: JsonConverter) {
 
     companion object {
@@ -47,7 +47,7 @@ class ExperimentsController(private val experimentsRepository: ExperimentsReposi
     @PostMapping(path = [""])
     fun addExperiment(@RequestBody experimentCreationRequest: ExperimentCreationRequest) : ResponseEntity<String> {
         logger.info("Experiment creation request received", experimentCreationRequest)
-        createExperimentCommand.createExperiment(experimentCreationRequest)
+        createExperimentCommandFactory.createExperimentCommand(experimentCreationRequest).execute()
         return ResponseEntity(HttpStatus.CREATED)
     }
 }

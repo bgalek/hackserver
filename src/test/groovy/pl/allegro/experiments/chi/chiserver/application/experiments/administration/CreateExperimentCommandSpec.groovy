@@ -17,10 +17,10 @@ class CreateExperimentCommandSpec extends Specification {
         def userProvider = Stub(UserProvider) {
             getCurrentUser() >> { new User("user1", ["g1"], true) }
         }
-        def command = new CreateExperimentCommand(repository, userProvider)
+        def command = new CreateExperimentCommand(repository, userProvider, simpleExperimentRequest(id))
 
         when:
-        command.createExperiment(simpleExperimentRequest(id))
+        command.execute()
 
         then:
         notThrown(Exception)
@@ -35,10 +35,10 @@ class CreateExperimentCommandSpec extends Specification {
         def userProvider = Stub(UserProvider) {
             getCurrentUser() >> { new User("user1", ["g1"], true) }
         }
-        def command = new CreateExperimentCommand(repository, userProvider)
+        def command = new CreateExperimentCommand(repository, userProvider, simpleExperimentRequest(id))
 
         when:
-        command.createExperiment(simpleExperimentRequest(id))
+        command.execute()
 
         then:
         def ex = thrown(ExperimentCreationException)
@@ -55,10 +55,10 @@ class CreateExperimentCommandSpec extends Specification {
         def userProvider = Stub(UserProvider) {
             getCurrentUser() >> { new User("user1", ["g1"], false) }
         }
-        def command = new CreateExperimentCommand(repository, userProvider)
+        def command = new CreateExperimentCommand(repository, userProvider, simpleExperimentRequest(id))
 
         when:
-        command.createExperiment(simpleExperimentRequest(id))
+        command.execute()
 
         then:
         def ex = thrown(AuthorizationException)

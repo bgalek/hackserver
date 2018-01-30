@@ -1,29 +1,28 @@
 package pl.allegro.experiments.chi.chiserver.application.experiments.administration
 
-import org.springframework.stereotype.Component
 import pl.allegro.experiments.chi.chiserver.domain.UserProvider
 import pl.allegro.experiments.chi.chiserver.domain.experiments.*
 import pl.allegro.experiments.chi.chiserver.logger
 import java.util.regex.Pattern
 
-@Component
 class CreateExperimentCommand(val experimentsRepository: ExperimentsRepository,
-                              val userProvider: UserProvider) {
+                              val userProvider: UserProvider,
+                              val experimentCreationRequest: ExperimentCreationRequest) {
 
     companion object {
         private val logger by logger()
     }
 
-    fun createExperiment(request: ExperimentCreationRequest)  {
+    fun execute() {
         val user = userProvider.getCurrentUser()
         if (!user.isRoot) {
             throw AuthorizationException("User ${user.name} cannot create experiments")
         }
-        if (experimentsRepository.getExperiment(request.id) != null) {
-            throw ExperimentCreationException("Experiment with id ${request.id} already exists")
+        if (experimentsRepository.getExperiment(experimentCreationRequest.id) != null) {
+            throw ExperimentCreationException("Experiment with id ${experimentCreationRequest.id} already exists")
         }
 
-        experimentsRepository.save(convert(request, user.name))
+        experimentsRepository.save(convert(experimentCreationRequest, user.name))
     }
 
     private fun convert(request: ExperimentCreationRequest, author: String) : Experiment {
@@ -36,7 +35,7 @@ class CreateExperimentCommand(val experimentsRepository: ExperimentsRepository,
                     request.groups,
                     request.reportingEnabled)
         } catch (e: Exception) {
-            throw ExperimentCreationException("Cannot create experiment from request $request")
+            throw ExperimentCreationException("Cannot create experiment from request $request", e)
         }
     }
 
@@ -47,8 +46,8 @@ class CreateExperimentCommand(val experimentsRepository: ExperimentsRepository,
     private fun convertPredicate(predicate: ExperimentCreationRequest.Predicate): Predicate {
         return when (predicate.type) {
             ExperimentCreationRequest.PredicateType.INTERNAL -> InternalPredicate()
-            ExperimentCreationRequest.PredicateType.CMUID_REGEXP -> CmuidRegexpPredicate(Pattern.compile(predicate.cmuidRegexp))
-            ExperimentCreationRequest.PredicateType.HASH -> HashRangePredicate(PercentageRange(predicate.hashRangeFrom!!, predicate.hashRangeTo!!))
+            ExperimentCreationRequest.PredicateType.CMUID_REGEXP -> CmuidRegexpPredicate(Pattern.compile(predicate.regexp))
+            ExperimentCreationRequest.PredicateType.HASH -> HashRangePredicate(PercentageRange(predicate.from!!, predicate.to!!))
         }
     }
 }

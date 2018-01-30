@@ -15,8 +15,8 @@ data class ExperimentCreationRequest (var id: ExperimentId,
     }
 
     class Predicate (val type: PredicateType,
-                     val hashRangeFrom: Int? = null,
-                     val hashRangeTo: Int? = null,
-                     val cmuidRegexp: String? = null)
+                     val from: Int? = null,
+                     val to: Int? = null,
+                     val regexp: String? = null)
 
 }
