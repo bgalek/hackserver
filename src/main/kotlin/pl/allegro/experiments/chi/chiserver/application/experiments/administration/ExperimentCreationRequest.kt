@@ -3,19 +3,20 @@ package pl.allegro.experiments.chi.chiserver.application.experiments.administrat
 import pl.allegro.experiments.chi.chiserver.domain.experiments.ExperimentId
 
 data class ExperimentCreationRequest (var id: ExperimentId,
-                                      var variants: List<VariantDTO>,
+                                      var variants: List<Variant>,
                                       var description: String? = null,
                                       var groups: List<String> = emptyList(),
-                                      var reportingEnabled: Boolean = false)
+                                      var reportingEnabled: Boolean = false) {
+    class Variant (val name: String,
+                   val predicates: List<Predicate>)
 
-class VariantDTO (val name: String,
-                  val predicates: List<PredicateDTO>)
+    enum class PredicateType {
+        INTERNAL, HASH, CMUID_REGEXP
+    }
 
-enum class PredicateType {
-    INTERNAL, HASH, CMUID_REGEXP
+    class Predicate (val type: PredicateType,
+                     val hashRangeFrom: Int? = null,
+                     val hashRangeTo: Int? = null,
+                     val cmuidRegexp: String? = null)
+
 }
-
-class PredicateDTO (val type: PredicateType,
-                    val hashRangeFrom: Int? = null,
-                    val hashRangeTo: Int? = null,
-                    val cmuidRegexp: String? = null)

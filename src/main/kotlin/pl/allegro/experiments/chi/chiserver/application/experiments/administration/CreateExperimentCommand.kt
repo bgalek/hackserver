@@ -40,16 +40,15 @@ class CreateExperimentCommand(val experimentsRepository: ExperimentsRepository,
         }
     }
 
-    private fun convertVariant(variant: VariantDTO): ExperimentVariant {
+    private fun convertVariant(variant: ExperimentCreationRequest.Variant): ExperimentVariant {
         return ExperimentVariant(variant.name, variant.predicates.map { convertPredicate(it) })
     }
 
-    private fun convertPredicate(predicate: PredicateDTO): Predicate {
+    private fun convertPredicate(predicate: ExperimentCreationRequest.Predicate): Predicate {
         return when (predicate.type) {
-            PredicateType.INTERNAL -> InternalPredicate()
-            PredicateType.CMUID_REGEXP -> CmuidRegexpPredicate(Pattern.compile(predicate.cmuidRegexp))
-            PredicateType.HASH -> HashRangePredicate(PercentageRange(predicate.hashRangeFrom!!, predicate.hashRangeTo!!))
+            ExperimentCreationRequest.PredicateType.INTERNAL -> InternalPredicate()
+            ExperimentCreationRequest.PredicateType.CMUID_REGEXP -> CmuidRegexpPredicate(Pattern.compile(predicate.cmuidRegexp))
+            ExperimentCreationRequest.PredicateType.HASH -> HashRangePredicate(PercentageRange(predicate.hashRangeFrom!!, predicate.hashRangeTo!!))
         }
     }
-
 }

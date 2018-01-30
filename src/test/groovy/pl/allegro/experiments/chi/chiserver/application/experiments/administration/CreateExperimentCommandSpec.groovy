@@ -66,7 +66,7 @@ class CreateExperimentCommandSpec extends Specification {
     }
 
     def simpleExperimentRequest(String id) {
-        def variants = [new VariantDTO("v1", [new PredicateDTO(PredicateType.INTERNAL, null, null, null)])]
+        def variants = [new ExperimentCreationRequest.Variant("v1", [new ExperimentCreationRequest.Predicate(ExperimentCreationRequest.PredicateType.INTERNAL, null, null, null)])]
         return new ExperimentCreationRequest(id, variants, "simple description", ["group a", "group b"], true)
     }
 
