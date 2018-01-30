@@ -181,7 +181,7 @@ class ExperimentsE2ESpec extends BaseIntegrationSpec {
     def "should create experiment with all types of predicates"() {
         given:
         def request = [
-                id: "some",
+                id: "some2",
                 description: "desc",
                 variants: [
                         [
