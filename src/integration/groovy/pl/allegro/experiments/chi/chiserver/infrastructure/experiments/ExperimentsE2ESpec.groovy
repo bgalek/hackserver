@@ -5,6 +5,7 @@ import org.junit.ClassRule
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
+import org.springframework.test.annotation.DirtiesContext
 import org.springframework.web.client.RestTemplate
 import pl.allegro.experiments.chi.chiserver.BaseIntegrationSpec
 import pl.allegro.experiments.chi.chiserver.application.experiments.administration.ExperimentCreationRequest
@@ -20,6 +21,7 @@ import spock.lang.Shared
 
 import static com.github.tomakehurst.wiremock.client.WireMock.*
 
+@DirtiesContext
 class ExperimentsE2ESpec extends BaseIntegrationSpec {
 
     @ClassRule

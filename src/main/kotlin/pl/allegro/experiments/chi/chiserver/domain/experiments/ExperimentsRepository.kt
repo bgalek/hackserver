@@ -7,7 +7,5 @@ interface ExperimentsRepository {
 
     val assignable: List<Experiment>
 
-    fun refresh()
-
     fun save(experiment: Experiment)
 }

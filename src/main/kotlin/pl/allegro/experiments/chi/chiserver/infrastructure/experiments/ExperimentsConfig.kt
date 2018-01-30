@@ -8,11 +8,9 @@ import org.springframework.context.annotation.Configuration
 import org.springframework.data.mongodb.core.MongoTemplate
 import org.springframework.data.mongodb.core.convert.CustomConversions
 import org.springframework.web.client.RestTemplate
-import pl.allegro.experiments.chi.chiserver.domain.experiments.ExperimentsRepository
 import pl.allegro.experiments.chi.chiserver.domain.experiments.MeasurementsRepository
 import pl.allegro.experiments.chi.chiserver.infrastructure.JsonConverter
 import pl.allegro.experiments.chi.chiserver.infrastructure.druid.DruidClient
-
 
 @Configuration
 class ExperimentsConfig {
@@ -33,18 +31,17 @@ class ExperimentsConfig {
         return repo
     }
 
-
     @Bean
     fun customConversions() = CustomConversions(mongoConverters)
 
     @Bean
-    fun writableExperimentRepository(mongoTemplate: MongoTemplate): ExperimentsRepository {
+    fun mongoExperimentsRepository(mongoTemplate: MongoTemplate): MongoExperimentsRepository {
         return MongoExperimentsRepository(mongoTemplate)
     }
 
     @Bean
-    fun experimentsRepository(vararg repositories: ExperimentsRepository) =
-        ExperimentsMultiRepository(listOf(*repositories))
+    fun experimentsRepository(fileBasedExperimentsRepository: FileBasedExperimentsRepository, mongoExperimentsRepository: MongoExperimentsRepository) =
+        ExperimentsDoubleRepository(fileBasedExperimentsRepository, mongoExperimentsRepository)
 
     @Bean
     fun measurementsRepository(druid: DruidClient, jsonConverter: JsonConverter,
@@ -52,7 +49,7 @@ class ExperimentsConfig {
         = DruidMeasurementsRepository(druid, jsonConverter, datasource)
 
     @Bean
-    fun refresher(experimentsRepository: ExperimentsRepository): ExperimentRepositoryRefresher {
-        return ExperimentRepositoryRefresher(experimentsRepository)
+    fun refresher(fileBasedExperimentsRepository: FileBasedExperimentsRepository): ExperimentRepositoryRefresher {
+        return ExperimentRepositoryRefresher(fileBasedExperimentsRepository)
     }
 }

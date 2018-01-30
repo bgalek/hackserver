@@ -9,7 +9,7 @@ import pl.allegro.experiments.chi.chiserver.infrastructure.InMemoryExperimentsRe
 import pl.allegro.experiments.chi.chiserver.infrastructure.JsonConverter
 import javax.naming.OperationNotSupportedException
 
-class FileBasedExperimentsRepository(jsonUrl: String,
+open class FileBasedExperimentsRepository(jsonUrl: String,
                                      private val dataLoader: (String) -> String,
                                      private val jsonConverter: JsonConverter,
                                      initialState: List<Experiment> = emptyList()) : ExperimentsRepository {
@@ -25,7 +25,7 @@ class FileBasedExperimentsRepository(jsonUrl: String,
         refresh()
     }
 
-    override fun refresh() {
+    fun refresh() {
         try {
             rawRefresh()
         } catch (e: Exception) {
@@ -45,7 +45,7 @@ class FileBasedExperimentsRepository(jsonUrl: String,
         try {
             freshExperiments = jsonConverter.fromJson(data)
         } catch (e: IllegalArgumentException) {
-            logger.error("refresh failed, malformed experiments definition in JSON: " + e.message, e)
+            logger.error("refresh failed, malformed experiments definition in JSON: ${e.message}", e)
             return
         }
 

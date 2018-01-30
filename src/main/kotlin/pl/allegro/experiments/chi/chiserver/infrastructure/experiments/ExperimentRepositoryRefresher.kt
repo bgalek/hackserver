@@ -4,7 +4,7 @@ import org.slf4j.LoggerFactory
 import org.springframework.scheduling.annotation.Scheduled
 import pl.allegro.experiments.chi.chiserver.domain.experiments.ExperimentsRepository
 
-class ExperimentRepositoryRefresher (private val repository: ExperimentsRepository) {
+class ExperimentRepositoryRefresher (private val repository: FileBasedExperimentsRepository) {
 
     companion object {
         private val logger = LoggerFactory.getLogger(ExperimentRepositoryRefresher::class.java)

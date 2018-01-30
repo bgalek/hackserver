@@ -20,7 +20,4 @@ open class MongoExperimentsRepository(private val mongoTemplate: MongoTemplate) 
     override val assignable: List<Experiment>
         // TODO: use mongo query to filter active experiments
         get() = all.filter { it.isActive() }
-
-    override fun refresh() {
-    }
 }

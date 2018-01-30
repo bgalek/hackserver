@@ -24,7 +24,6 @@ class CreateExperimentCommand(val experimentsRepository: ExperimentsRepository,
         }
 
         experimentsRepository.save(convert(request, user.name))
-        experimentsRepository.refresh()
     }
 
     private fun convert(request: ExperimentCreationRequest, author: String) : Experiment {

@@ -31,8 +31,4 @@ open class InMemoryExperimentsRepository(experiments: Collection<Experiment>) : 
 
     override val assignable: List<Experiment>
         get() = ImmutableList.copyOf(experiments.values.filter { it.isAssignable() })
-
-    override fun refresh() {
-        // Nothing to do
-    }
 }
