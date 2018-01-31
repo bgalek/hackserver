@@ -17,10 +17,6 @@ class MongoExperimentsRepository(private val mongoTemplate: MongoTemplate) : Wri
     override val all: List<Experiment>
         get() = mongoTemplate.findAll(Experiment::class.java, COLLECTION)
 
-    override val assignable: List<Experiment>
-        // TODO: use mongo query to filter active experiments
-        get() = all.filter { it.isActive() }
-
     override val overridable: List<Experiment>
         get() = all.filter { it.isOverridable() }
 

@@ -5,8 +5,6 @@ interface ExperimentsRepository {
 
     val all: List<Experiment>
 
-    val assignable: List<Experiment>
-
     val overridable: List<Experiment>
 
     fun refresh()

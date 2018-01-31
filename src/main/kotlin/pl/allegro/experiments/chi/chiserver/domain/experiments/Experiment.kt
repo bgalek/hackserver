@@ -39,10 +39,6 @@ class Experiment(
         return status == ExperimentStatus.ENDED
     }
 
-    fun isAssignable(): Boolean {
-        return isActive()
-    }
-
     fun isOverridable(): Boolean {
         return !isEnded()
     }

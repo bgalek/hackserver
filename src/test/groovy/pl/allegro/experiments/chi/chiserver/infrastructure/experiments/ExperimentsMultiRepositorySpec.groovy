@@ -11,13 +11,13 @@ import java.time.ZonedDateTime
 
 class ExperimentsMultiRepositorySpec extends Specification {
 
-    def "should return empty all and assignable without internal repositories"() {
+    def "should return empty all and overridable without internal repositories"() {
         given:
         def repo = new ExperimentsMultiRepository([])
 
         expect:
         repo.all.size() == 0
-        repo.assignable.size() == 0
+        repo.overridable.size() == 0
     }
 
     def "should return experiment existing in one repo"() {
@@ -36,13 +36,13 @@ class ExperimentsMultiRepositorySpec extends Specification {
         repo.getExperiment("anything") is null
     }
 
-    def "should return all/assignable size as sum of internal repos"() {
+    def "should return all/overridable size as sum of internal repos"() {
         given:
         def repo = new ExperimentsMultiRepository([simpleRepo(["y"]), simpleRepo(["z"])])
 
         expect:
         repo.all.size() == 2
-        repo.assignable.size() == 2
+        repo.overridable.size() == 2
     }
 
     def "shouldn't fail on internal repository refresh fail"() {
@@ -115,7 +115,7 @@ class ExperimentsMultiRepositorySpec extends Specification {
 
         expect:
         repo.all.size() == 4
-        repo.assignable.size() == 4
+        repo.overridable.size() == 4
         repo.getExperiment("xx").id == "xx"
 
         when:
@@ -123,7 +123,7 @@ class ExperimentsMultiRepositorySpec extends Specification {
 
         then:
         repo.all.size() == 3
-        repo.assignable.size() == 3
+        repo.overridable.size() == 3
         repo.getExperiment("xx") is null
     }
 
@@ -158,7 +158,6 @@ class ExperimentsMultiRepositorySpec extends Specification {
         return [
                 getExperiment : { id -> experiments.find({ it.id == id }) },
                 getAll        : { experiments },
-                getAssignable : { experiments },
                 refresh       : {}
         ] as ExperimentsRepository
     }

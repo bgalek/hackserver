@@ -67,9 +67,6 @@ class FileBasedExperimentsRepository(jsonUrl: String,
     override val all: List<Experiment>
         get() = inMemoryRepository.all
 
-    override val assignable: List<Experiment>
-        get() = inMemoryRepository.assignable
-
     override val overridable: List<Experiment>
         get() = inMemoryRepository.overridable
 }

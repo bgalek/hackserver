@@ -29,9 +29,6 @@ class InMemoryExperimentsRepository(experiments: Collection<Experiment>) : Writa
     override val all: List<Experiment>
         get() = ImmutableList.copyOf(experiments.values)
 
-    override val assignable: List<Experiment>
-        get() = ImmutableList.copyOf(experiments.values.filter { it.isAssignable() })
-
     override val overridable: List<Experiment>
         get() = ImmutableList.copyOf(experiments.values.filter { it.isOverridable() })
 
