@@ -16,7 +16,7 @@
           "enabled": true,
           "fields": {
             "threshold": 50.0,
-            "debounce": 2,
+            "debounce": 10,
             "condition": ">"
           }
         }
