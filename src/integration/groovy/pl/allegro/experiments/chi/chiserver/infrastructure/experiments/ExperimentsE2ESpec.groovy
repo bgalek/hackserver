@@ -3,8 +3,13 @@ package pl.allegro.experiments.chi.chiserver.infrastructure.experiments
 import com.github.tomakehurst.wiremock.junit.WireMockRule
 import org.junit.ClassRule
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.http.HttpEntity
+import org.springframework.http.HttpHeaders
+import org.springframework.http.HttpMethod
 import org.springframework.http.HttpStatus
+import org.springframework.http.client.ClientHttpRequestExecution
 import org.springframework.test.annotation.DirtiesContext
+import org.springframework.web.client.HttpClientErrorException
 import org.springframework.web.client.RestTemplate
 import pl.allegro.experiments.chi.chiserver.BaseIntegrationSpec
 import pl.allegro.experiments.chi.chiserver.domain.User
@@ -193,6 +198,57 @@ class ExperimentsE2ESpec extends BaseIntegrationSpec {
         responseSingle.body == expectedExperiment
         responseList.body.contains(expectedExperiment)
 
+    }
+
+    def "should return BAD_REQUEST when predicate type is incorrect"() {
+        given:
+        userProvider.user = new User('Anonymous', [], true)
+
+        def request = [
+                id: "some2",
+                description: "desc",
+                variants: [
+                        [
+                                name: "v1",
+                                predicates: [ [ type: "NOT_SUPPORTED_TYPE" ]]
+                        ]
+                ],
+                groups: [],
+                reportingEnabled: true
+        ]
+
+        when:
+        HttpEntity<Map> entity = new HttpEntity<Map>(request)
+        restTemplate.exchange(localUrl('/api/admin/experiments'), HttpMethod.POST, entity, String)
+
+        then:
+        def ex = thrown(HttpClientErrorException)
+        ex.statusCode.value() == 400
+    }
+
+    def "should return BAD_REQUEST when predicate has no name"() {
+        given:
+        userProvider.user = new User('Anonymous', [], true)
+
+        def request = [
+                id: "some2",
+                description: "desc",
+                variants: [
+                        [
+                                predicates: [ [ type: "INTERNAL" ]]
+                        ]
+                ],
+                groups: [],
+                reportingEnabled: true
+        ]
+
+        when:
+        HttpEntity<Map> entity = new HttpEntity<Map>(request)
+        restTemplate.exchange(localUrl('/api/admin/experiments'), HttpMethod.POST, entity, String)
+
+        then:
+        def ex = thrown(HttpClientErrorException)
+        ex.statusCode.value() == 400
     }
 
 

@@ -36,8 +36,8 @@ class ExperimentsConfig {
     fun customConversions() = CustomConversions(mongoConverters)
 
     @Bean
-    fun mongoExperimentsRepository(mongoTemplate: MongoTemplate): MongoExperimentsRepository {
-        return MongoExperimentsRepository(mongoTemplate)
+    fun mongoExperimentsRepository(mongoTemplate: MongoTemplate, experimentsMongoMetricsReporter: ExperimentsMongoMetricsReporter): MongoExperimentsRepository {
+        return MongoExperimentsRepository(mongoTemplate, experimentsMongoMetricsReporter)
     }
 
     @Bean
@@ -58,5 +58,10 @@ class ExperimentsConfig {
     fun refresher(fileBasedExperimentsRepository: FileBasedExperimentsRepository,
                   cachedExperimentsRepository: CachedExperimentsRepository): ExperimentRepositoryRefresher {
         return ExperimentRepositoryRefresher(fileBasedExperimentsRepository, cachedExperimentsRepository )
+    }
+
+    @Bean
+    fun experimentsMetricsReporter(metricRegistry: MetricRegistry) : ExperimentsMongoMetricsReporter {
+        return ExperimentsMongoMetricsReporter(metricRegistry)
     }
 }
