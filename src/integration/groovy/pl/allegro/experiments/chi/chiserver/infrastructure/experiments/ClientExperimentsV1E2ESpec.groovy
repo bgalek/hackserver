@@ -39,11 +39,12 @@ class ClientExperimentsV1E2ESpec extends BaseIntegrationSpec {
 
         then:
         response.statusCode.value() == 200
-        response.body.size() == 6
+        response.body.size() == 7
 
         and:
         response.body.contains(internalExperiment())
         response.body.contains(cmuidRegexpExperiment())
+        response.body.contains(plannedExperiment())
         response.body.contains(hashVariantExperiment())
         response.body.contains(sampleExperiment())
         response.body.contains(timeboundExperiment())
@@ -111,6 +112,17 @@ class ClientExperimentsV1E2ESpec extends BaseIntegrationSpec {
         [ id: 'timed_internal_exp',
           activeFrom: '2017-11-03T10:15:30+02:00',
           activeTo: '2018-11-03T10:15:30+02:00',
+          variants: [
+                  [ name: 'internal', predicates: [[ type:'INTERNAL' ]] ]
+          ],
+          reportingEnabled: true
+        ]
+    }
+
+    Map plannedExperiment() {
+        [ id: 'planned_exp',
+          "activeFrom": "2050-11-03T10:15:30+02:00",
+          "activeTo": "2060-11-03T10:15:30+02:00",
           variants: [
                   [ name: 'internal', predicates: [[ type:'INTERNAL' ]] ]
           ],

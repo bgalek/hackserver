@@ -1,6 +1,5 @@
 package pl.allegro.experiments.chi.chiserver.infrastructure.experiments
 
-import org.xbill.DNS.Zone
 import pl.allegro.experiments.chi.chiserver.domain.experiments.ActivityPeriod
 import pl.allegro.experiments.chi.chiserver.domain.experiments.Experiment
 import pl.allegro.experiments.chi.chiserver.domain.experiments.ExperimentVariant
