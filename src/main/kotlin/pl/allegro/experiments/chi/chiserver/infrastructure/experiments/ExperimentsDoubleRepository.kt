@@ -31,7 +31,7 @@ class ExperimentsDoubleRepository(private val fileBasedExperimentsRepository: Fi
     override val assignable: List<Experiment>
     get() = all.filter { it.isAssignable() }
 
-    fun refresh() {
+    private fun refresh() {
         fileBasedExperimentsRepository.refresh()
     }
 }

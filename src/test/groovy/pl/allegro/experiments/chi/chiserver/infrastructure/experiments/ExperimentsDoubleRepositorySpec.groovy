@@ -7,21 +7,21 @@ import pl.allegro.experiments.chi.chiserver.infrastructure.FileBasedExperimentsR
 import pl.allegro.experiments.chi.chiserver.infrastructure.InMemoryExperimentsRepository
 import spock.lang.Specification
 
-class ExperimentsMultiRepositorySpec extends Specification {
+class ExperimentsDoubleRepositorySpec extends Specification {
 
-    def "should return all/assignable size as sum of internal repos"() {
+    def "should return size as sum of internal repos"() {
         given:
         def fileRepo = Stub(FileBasedExperimentsRepository) {
-            getAll() >> [experiment("y")]
+            getAll() >> [experiment("y1"), experiment("y2"), experiment("y3")]
         }
         def mongoRepo = Stub(MongoExperimentsRepository) {
-            getAll() >> [experiment("z")]
+            getAll() >> [experiment("z"), experiment("z2")]
         }
         def repo = new ExperimentsDoubleRepository(fileRepo, mongoRepo)
 
         expect:
-        repo.all.size() == 2
-        repo.assignable.size() == 2
+        repo.all.size() == 5
+        repo.assignable.size() == 5
     }
 
     def "shouldn't fail on internal repository refresh fail"() {

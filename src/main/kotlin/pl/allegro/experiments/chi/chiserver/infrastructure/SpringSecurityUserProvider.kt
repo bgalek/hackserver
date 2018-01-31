@@ -21,7 +21,7 @@ class SpringSecurityUserProvider(@Value("\${security.rootGroup}") val rootGroupN
             return User("Anonymous", emptyList(), !securityEnabled)
         }
 
-        val list:List<String> = authentication.authorities.map {it.authority }.toList()
+        val list:List<String> = authentication.authorities.map { it.authority }.toList()
         return User(authentication.name, list, list.contains(rootGroupName))
     }
 }

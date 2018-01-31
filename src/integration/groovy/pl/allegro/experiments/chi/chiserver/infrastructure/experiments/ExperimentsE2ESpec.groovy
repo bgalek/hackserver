@@ -4,19 +4,12 @@ import com.github.tomakehurst.wiremock.junit.WireMockRule
 import org.junit.ClassRule
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.HttpStatus
-import org.springframework.http.ResponseEntity
 import org.springframework.test.annotation.DirtiesContext
 import org.springframework.web.client.RestTemplate
 import pl.allegro.experiments.chi.chiserver.BaseIntegrationSpec
-import pl.allegro.experiments.chi.chiserver.application.experiments.administration.ExperimentCreationRequest
-import pl.allegro.experiments.chi.chiserver.domain.experiments.ActivityPeriod
-import pl.allegro.experiments.chi.chiserver.domain.experiments.Experiment
-import pl.allegro.experiments.chi.chiserver.domain.experiments.ExperimentVariant
+import pl.allegro.experiments.chi.chiserver.domain.User
+import pl.allegro.experiments.chi.chiserver.domain.UserProvider
 import pl.allegro.experiments.chi.chiserver.domain.experiments.ExperimentsRepository
-import pl.allegro.experiments.chi.chiserver.domain.experiments.HashRangePredicate
-import pl.allegro.experiments.chi.chiserver.domain.experiments.InternalPredicate
-import pl.allegro.experiments.chi.chiserver.domain.experiments.PercentageRange
-import spock.lang.Ignore
 import spock.lang.Shared
 
 import static com.github.tomakehurst.wiremock.client.WireMock.*
@@ -35,6 +28,9 @@ class ExperimentsE2ESpec extends BaseIntegrationSpec {
 
     @Autowired
     ExperimentsRepository experimentsRepository
+
+    @Autowired
+    UserProvider userProvider
 
     def setup() {
         teachWireMockJson("/experiments", '/some-experiments.json')
@@ -142,44 +138,10 @@ class ExperimentsE2ESpec extends BaseIntegrationSpec {
         response.body.size() == 6
     }
 
-    def "should create simple experiment"() {
-        given:
-        def request = [
-                id: "some",
-                description: "desc",
-                variants: [
-                    [
-                        name: "v1",
-                        predicates: [ [ type: "INTERNAL" ]]
-                    ]
-                ],
-                groups: ['group a', 'group b'],
-                reportingEnabled: true
-        ]
-
-        def expectedExperiment = request + [
-                author: "Anonymous",
-                status: "DRAFT",
-                measurements: [ lastDayVisits: 0 ]
-        ]
-
-        when:
-        def response = restTemplate.postForEntity(localUrl('/api/admin/experiments'), request, Map)
-
-        then:
-        response.statusCode == HttpStatus.CREATED
-
-        and:
-        def responseList = restTemplate.getForEntity(localUrl("/api/admin/experiments"), List)
-        def responseSingle = restTemplate.getForEntity(localUrl("/api/admin/experiments/${request.id}/"), Map)
-
-        then:
-        responseList.body.contains(expectedExperiment)
-        responseSingle.body == expectedExperiment
-    }
-
     def "should create experiment with all types of predicates"() {
         given:
+        userProvider.user = new User('Anonymous', [], true)
+
         def request = [
                 id: "some2",
                 description: "desc",
@@ -194,7 +156,7 @@ class ExperimentsE2ESpec extends BaseIntegrationSpec {
                         ],
                         [
                                 name: "v3",
-                                predicates: [ [ type: "CMUID_REGEXP", regexp: "....[123]\$"]]
+                                predicates: [ [ type: "CMUID_REGEXP", regexp: "....[123]\$"], [ type: "DEVICE_CLASS", device: "phone"] ]
                         ]
                 ],
                 groups: ['group a', 'group b'],
@@ -218,8 +180,10 @@ class ExperimentsE2ESpec extends BaseIntegrationSpec {
         def responseSingle = restTemplate.getForEntity(localUrl("/api/admin/experiments/${request.id}/"), Map)
 
         then:
-        responseList.body.contains(expectedExperiment)
+        responseSingle.body.variants == expectedExperiment.variants
         responseSingle.body == expectedExperiment
+        responseList.body.contains(expectedExperiment)
+
     }
 
 

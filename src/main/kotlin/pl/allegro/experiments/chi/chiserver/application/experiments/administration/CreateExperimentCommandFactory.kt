@@ -3,8 +3,8 @@ package pl.allegro.experiments.chi.chiserver.application.experiments.administrat
 import org.springframework.stereotype.Component
 import pl.allegro.experiments.chi.chiserver.domain.UserProvider
 import pl.allegro.experiments.chi.chiserver.domain.experiments.*
+import pl.allegro.experiments.chi.chiserver.domain.experiments.administration.ExperimentCreationRequest
 import pl.allegro.experiments.chi.chiserver.logger
-import java.util.regex.Pattern
 
 @Component
 class CreateExperimentCommandFactory(val experimentsRepository: ExperimentsRepository,
