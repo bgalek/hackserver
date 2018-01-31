@@ -21,6 +21,9 @@ class MongoExperimentsRepository(private val mongoTemplate: MongoTemplate) : Wri
         // TODO: use mongo query to filter active experiments
         get() = all.filter { it.isActive() }
 
+    override val overridable: List<Experiment>
+        get() = all.filter { it.isOverridable() }
+
     override fun refresh() {
     }
 }

@@ -43,6 +43,7 @@ class ExperimentsE2ESpec extends BaseIntegrationSpec {
 
         and:
         response.body.contains(internalExperiment())
+        response.body.contains(plannedExperiment())
         response.body.contains(cmuidRegexpExperiment())
         response.body.contains(hashVariantExperiment())
         response.body.contains(sampleExperiment())
@@ -71,7 +72,7 @@ class ExperimentsE2ESpec extends BaseIntegrationSpec {
         ]
     }
 
-    def "should return list of active experiments in version 2"() {
+    def "should return list of overridable experiments in version 2"() {
         given:
         fileBasedExperimentsRepository.jsonUrl = resourceUrl('/experiments')
         experimentsRepository.refresh()
@@ -85,6 +86,7 @@ class ExperimentsE2ESpec extends BaseIntegrationSpec {
 
         and:
         response.body.contains(internalExperiment())
+        response.body.contains(plannedExperiment())
         response.body.contains(cmuidRegexpExperiment())
         response.body.contains(hashVariantExperiment())
         response.body.contains(sampleExperiment())
@@ -207,6 +209,21 @@ class ExperimentsE2ESpec extends BaseIntegrationSpec {
           reportingEnabled: true,
           groups: [],
           status: 'ACTIVE'
+        ]
+    }
+
+    Map plannedExperiment() {
+        [ id: 'timed_internal_exp',
+          activityPeriod: [
+              activeFrom: '2019-11-03T10:15:30+02:00',
+              activeTo: '2020-11-03T10:15:30+02:00'
+          ],
+          variants: [
+              [ name: 'internal', predicates: [[ type:'INTERNAL' ]] ]
+          ],
+          reportingEnabled: true,
+          groups: [],
+          status: 'PLANNED'
         ]
     }
 

@@ -1,10 +1,14 @@
 package pl.allegro.experiments.chi.chiserver.infrastructure.experiments
 
+import org.xbill.DNS.Zone
+import pl.allegro.experiments.chi.chiserver.domain.experiments.ActivityPeriod
 import pl.allegro.experiments.chi.chiserver.domain.experiments.Experiment
 import pl.allegro.experiments.chi.chiserver.domain.experiments.ExperimentVariant
 import pl.allegro.experiments.chi.chiserver.domain.experiments.ExperimentsRepository
 import pl.allegro.experiments.chi.chiserver.domain.experiments.WritableExperimentsRepository
 import spock.lang.Specification
+
+import java.time.ZonedDateTime
 
 class ExperimentsMultiRepositorySpec extends Specification {
 
@@ -161,6 +165,7 @@ class ExperimentsMultiRepositorySpec extends Specification {
     }
 
     def experiment(id) {
-        new Experiment(id, [new ExperimentVariant("x", [])], "", "", [], false, null, null)
+        new Experiment(id, [new ExperimentVariant("x", [])], "", "", [],
+                false, new ActivityPeriod(ZonedDateTime.now().minusDays(10), ZonedDateTime.now().plusDays(10)), null)
     }
 }
