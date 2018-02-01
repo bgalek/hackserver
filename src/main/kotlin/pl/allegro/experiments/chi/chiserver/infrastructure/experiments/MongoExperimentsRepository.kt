@@ -7,17 +7,23 @@ import pl.allegro.experiments.chi.chiserver.domain.experiments.ExperimentsReposi
 
 private const val COLLECTION = "experiments"
 
-open class MongoExperimentsRepository(private val mongoTemplate: MongoTemplate) : ExperimentsRepository {
-    override fun getExperiment(id: ExperimentId): Experiment? =
-        mongoTemplate.findById(id, Experiment::class.java, COLLECTION)
+open class MongoExperimentsRepository(private val mongoTemplate: MongoTemplate, val experimentsMongoMetricsReporter: ExperimentsMongoMetricsReporter) : ExperimentsRepository {
+    override fun getExperiment(id: ExperimentId): Experiment? {
+        experimentsMongoMetricsReporter.timerSingleExperiment().use {
+            return mongoTemplate.findById(id, Experiment::class.java, COLLECTION)
+        }
+    }
 
     override fun save(experiment: Experiment) =
         mongoTemplate.save(experiment, COLLECTION)
 
     override val all: List<Experiment>
-        get() = mongoTemplate.findAll(Experiment::class.java, COLLECTION)
+        get() {
+            experimentsMongoMetricsReporter.timerAllExperiments().use {
+                return mongoTemplate.findAll(Experiment::class.java, COLLECTION)
+            }
+        }
 
     override val overridable: List<Experiment>
         get() = all.filter { it.isOverridable() }
-
 }

@@ -76,6 +76,23 @@ class CreateExperimentCommandIntegrationSpec extends BaseIntegrationSpec {
         ex.message == 'User user1 cannot create experiments'
     }
 
+    def "should not create experiment when request cannot be converted to object"() {
+        given:
+        mutableUserProvider.user = new User('root', [], true)
+
+        def brokenRequest = new ExperimentCreationRequest('x', [new ExperimentCreationRequest.Variant('v1', [new ExperimentCreationRequest.Predicate(ExperimentCreationRequest.PredicateType.HASH, null, null, null, null)])], '', [], false)
+
+        def command = new CreateExperimentCommand(experimentsRepository, mutableUserProvider, brokenRequest)
+
+        when:
+        command.execute()
+
+        then:
+        def ex = thrown(ExperimentCreationException)
+        ex.message == 'Cannot create experiment from request ExperimentCreationRequest(id=x, variants=[Variant(name=v1, predicates=[Predicate(type=HASH, from=null, to=null, regexp=null, device=null)])], description=, groups=[], reportingEnabled=false)'
+    }
+
+
     def simpleExperimentRequest(String id) {
         def variants = [new ExperimentCreationRequest.Variant("v1", [new ExperimentCreationRequest.Predicate(ExperimentCreationRequest.PredicateType.INTERNAL, null, null, null, null)])]
         return new ExperimentCreationRequest(id, variants, "simple description", ["group a", "group b"], true)
