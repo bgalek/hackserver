@@ -26,4 +26,7 @@ open class MongoExperimentsRepository(private val mongoTemplate: MongoTemplate, 
 
     override val overridable: List<Experiment>
         get() = all.filter { it.isOverridable() }
+
+    override fun refresh() {
+    }
 }
