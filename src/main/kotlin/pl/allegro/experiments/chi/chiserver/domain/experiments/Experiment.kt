@@ -35,12 +35,12 @@ open class Experiment(
         return status == ExperimentStatus.ACTIVE
     }
 
-    fun isDraft(): Boolean {
-        return status == ExperimentStatus.DRAFT
+    fun isEnded(): Boolean {
+        return status == ExperimentStatus.ENDED
     }
 
-    fun isAssignable(): Boolean {
-        return isActive() || isDraft()
+    fun isOverridable(): Boolean {
+        return !isEnded()
     }
 
     override fun equals(other: Any?): Boolean {

@@ -28,8 +28,8 @@ class ExperimentsDoubleRepository(private val fileBasedExperimentsRepository: Fi
     get() = fileBasedExperimentsRepository.all + mongoExperimentsRepository.all
 
 
-    override val assignable: List<Experiment>
-    get() = all.filter { it.isAssignable() }
+    override val overridable: List<Experiment>
+    get() = all.filter { it.isOverridable() }
 
     private fun refresh() {
         fileBasedExperimentsRepository.refresh()

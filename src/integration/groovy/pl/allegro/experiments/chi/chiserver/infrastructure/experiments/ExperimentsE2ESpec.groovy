@@ -53,10 +53,11 @@ class ExperimentsE2ESpec extends BaseIntegrationSpec {
 
         then:
         response.statusCode.value() == 200
-        response.body.size() == 6
+        response.body.size() == 7
 
         and:
         response.body.contains(internalExperiment())
+        response.body.contains(plannedExperiment())
         response.body.contains(cmuidRegexpExperiment())
         response.body.contains(hashVariantExperiment())
         response.body.contains(sampleExperiment())
@@ -85,20 +86,21 @@ class ExperimentsE2ESpec extends BaseIntegrationSpec {
         ]
     }
 
-    def "should return list of active experiments in version 2"() {
+    def "should return list of overridable experiments in version 2"() {
         given:
         fileBasedExperimentsRepository.jsonUrl = resourceUrl('/experiments')
         refresher.refresh()
 
         when:
-        def response = restTemplate.getForEntity(localUrl('/api/experiments/v2'), List)
+        def response = restTemplate.getForEntity(localUrl('/api/experiments'), List)
 
         then:
         response.statusCode.value() == 200
-        response.body.size() == 6
+        response.body.size() == 7
 
         and:
         response.body.contains(internalExperiment())
+        response.body.contains(plannedExperiment())
         response.body.contains(cmuidRegexpExperiment())
         response.body.contains(hashVariantExperiment())
         response.body.contains(sampleExperiment())
@@ -118,10 +120,11 @@ class ExperimentsE2ESpec extends BaseIntegrationSpec {
 
         then:
         response.statusCode.value() == 200
-        response.body.size() == 7
+        response.body.size() == 8
 
         and:
         response.body.contains(measuredExperiment(internalExperiment()))
+        response.body.contains(measuredExperiment(plannedExperiment()))
         response.body.contains(measuredExperiment(cmuidRegexpExperiment()))
         response.body.contains(measuredExperiment(hashVariantExperiment()))
         response.body.contains(measuredExperiment(sampleExperiment()))
@@ -141,7 +144,7 @@ class ExperimentsE2ESpec extends BaseIntegrationSpec {
 
         then:
         response.statusCode.value() == 200
-        response.body.size() == 6
+        response.body.size() == 7
     }
 
     def "should create experiment with all types of predicates"() {
@@ -270,6 +273,21 @@ class ExperimentsE2ESpec extends BaseIntegrationSpec {
           reportingEnabled: true,
           groups: [],
           status: 'ACTIVE'
+        ]
+    }
+
+    Map plannedExperiment() {
+        [ id: 'planned_exp',
+          activityPeriod: [
+                  "activeFrom": "2050-11-03T10:15:30+02:00",
+                  "activeTo": "2060-11-03T10:15:30+02:00"
+          ],
+          variants: [
+              [ name: 'internal', predicates: [[ type:'INTERNAL' ]] ]
+          ],
+          reportingEnabled: true,
+          groups: [],
+          status: 'PLANNED'
         ]
     }
 

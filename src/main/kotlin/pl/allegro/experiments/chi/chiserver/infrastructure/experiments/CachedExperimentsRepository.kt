@@ -10,8 +10,8 @@ class CachedExperimentsRepository(private val delegate: ExperimentsRepository): 
     override val all: List<Experiment>
         get() = experiments
 
-    override val assignable: List<Experiment>
-        get() = experiments.filter { it.isAssignable() }
+    override val overridable: List<Experiment>
+        get() = experiments.filter { it.isOverridable() }
 
     override fun save(experiment: Experiment) {
         delegate.save(experiment)
