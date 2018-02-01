@@ -30,9 +30,15 @@ class ExperimentsE2ESpec extends BaseIntegrationSpec {
     ExperimentsRepository experimentsRepository
 
     @Autowired
+    ExperimentRepositoryRefresher refresher
+
+    @Autowired
     UserProvider userProvider
 
     def setup() {
+        if (!experimentsRepository instanceof ExperimentsDoubleRepository) {
+            throw new RuntimeException("We should test real repository, not the fake one")
+        }
         teachWireMockJson("/experiments", '/some-experiments.json')
         teachWireMockJson("/invalid-experiments",'/invalid-experiments.json')
     }
@@ -40,7 +46,7 @@ class ExperimentsE2ESpec extends BaseIntegrationSpec {
     def "should return list of experiments loaded from the backing HTTP resource"() {
         given:
         fileBasedExperimentsRepository.jsonUrl = resourceUrl('/experiments')
-        experimentsRepository.refresh()
+        refresher.refresh()
 
         when:
         def response = restTemplate.getForEntity(localUrl('/api/experiments'), List)
@@ -60,7 +66,7 @@ class ExperimentsE2ESpec extends BaseIntegrationSpec {
     def "should return single of experiment loaded from the backing HTTP resource"() {
         given:
         fileBasedExperimentsRepository.jsonUrl = resourceUrl('/experiments')
-        experimentsRepository.refresh()
+        refresher.refresh()
 
         when:
         def response = restTemplate.getForEntity(localUrl('/api/admin/experiments/cmuid_regexp'), Map)
@@ -82,7 +88,7 @@ class ExperimentsE2ESpec extends BaseIntegrationSpec {
     def "should return list of active experiments in version 2"() {
         given:
         fileBasedExperimentsRepository.jsonUrl = resourceUrl('/experiments')
-        experimentsRepository.refresh()
+        refresher.refresh()
 
         when:
         def response = restTemplate.getForEntity(localUrl('/api/experiments/v2'), List)
@@ -103,7 +109,7 @@ class ExperimentsE2ESpec extends BaseIntegrationSpec {
     def "should return all experiments as measured for admin"() {
         given:
         fileBasedExperimentsRepository.jsonUrl = resourceUrl('/experiments')
-        experimentsRepository.refresh()
+        refresher.refresh()
 
         def measuredExperiment = { ex -> ex << [measurements: [lastDayVisits: 0]] }
 
@@ -126,9 +132,9 @@ class ExperimentsE2ESpec extends BaseIntegrationSpec {
     def "should return last valid list when file is corrupted"() {
         given:
         fileBasedExperimentsRepository.jsonUrl = resourceUrl('/experiments')
-        experimentsRepository.refresh()
+        refresher.refresh()
         fileBasedExperimentsRepository.jsonUrl = resourceUrl('/invalid-experiments')
-        experimentsRepository.refresh()
+        refresher.refresh()
 
         when:
         def response = restTemplate.getForEntity(localUrl('/api/experiments'), List)
