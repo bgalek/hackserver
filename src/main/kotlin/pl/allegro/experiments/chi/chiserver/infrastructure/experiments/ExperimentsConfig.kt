@@ -13,11 +13,9 @@ import pl.allegro.experiments.chi.chiserver.domain.experiments.MeasurementsRepos
 import pl.allegro.experiments.chi.chiserver.infrastructure.JsonConverter
 import pl.allegro.experiments.chi.chiserver.infrastructure.druid.DruidClient
 
-
 @Configuration
 class ExperimentsConfig {
     private val EXPERIMENTS_COUNT_METRIC = "experiments.count";
-
 
     @Bean
     fun fileBasedExperimentsRepository(
@@ -34,18 +32,18 @@ class ExperimentsConfig {
         return repo
     }
 
-
     @Bean
     fun customConversions() = CustomConversions(mongoConverters)
 
     @Bean
-    fun mongoExperimentsRepository(mongoTemplate: MongoTemplate): ExperimentsRepository {
-        return MongoExperimentsRepository(mongoTemplate)
+    fun mongoExperimentsRepository(mongoTemplate: MongoTemplate, experimentsMongoMetricsReporter: ExperimentsMongoMetricsReporter): MongoExperimentsRepository {
+        return MongoExperimentsRepository(mongoTemplate, experimentsMongoMetricsReporter)
     }
 
     @Bean
-    fun experimentsRepository(vararg repositories: ExperimentsRepository) =
-        ExperimentsMultiRepository(listOf(*repositories))
+    fun experimentsRepository(fileBasedExperimentsRepository: FileBasedExperimentsRepository, mongoExperimentsRepository: MongoExperimentsRepository): ExperimentsRepository {
+        return CachedExperimentsRepository(ExperimentsDoubleRepository(fileBasedExperimentsRepository, mongoExperimentsRepository))
+    }
 
     @Bean
     fun measurementsRepository(druid: DruidClient, jsonConverter: JsonConverter,
@@ -55,5 +53,10 @@ class ExperimentsConfig {
     @Bean
     fun refresher(experimentsRepository: ExperimentsRepository): ExperimentRepositoryRefresher {
         return ExperimentRepositoryRefresher(experimentsRepository)
+    }
+
+    @Bean
+    fun experimentsMetricsReporter(metricRegistry: MetricRegistry) : ExperimentsMongoMetricsReporter {
+        return ExperimentsMongoMetricsReporter(metricRegistry)
     }
 }

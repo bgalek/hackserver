@@ -8,14 +8,14 @@ enum class ExperimentStatus {
     DRAFT, PLANNED, ACTIVE, ENDED
 }
 
-class Experiment(
+open class Experiment(
     val id: ExperimentId,
     val variants: List<ExperimentVariant>,
     val description: String?,
     val author: String?,
     val groups: List<String>,
     val reportingEnabled: Boolean = true,
-    val activityPeriod: ActivityPeriod?,
+    val activityPeriod: ActivityPeriod? = null,
     val measurements: ExperimentMeasurements? = null
 ) {
 

@@ -7,9 +7,8 @@ interface ExperimentsRepository {
 
     val overridable: List<Experiment>
 
-    fun refresh()
-}
-
-interface WritableExperimentsRepository : ExperimentsRepository {
     fun save(experiment: Experiment)
+
+    @Deprecated("Should be considered again when removing temporary DoubleExperiments repo. Now it simplifies code a bit")
+    fun refresh()
 }

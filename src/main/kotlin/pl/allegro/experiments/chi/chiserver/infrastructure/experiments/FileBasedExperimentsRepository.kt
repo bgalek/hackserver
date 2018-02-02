@@ -7,15 +7,15 @@ import pl.allegro.experiments.chi.chiserver.domain.experiments.ExperimentId
 import pl.allegro.experiments.chi.chiserver.domain.experiments.ExperimentsRepository
 import pl.allegro.experiments.chi.chiserver.infrastructure.InMemoryExperimentsRepository
 import pl.allegro.experiments.chi.chiserver.infrastructure.JsonConverter
+import javax.naming.OperationNotSupportedException
 
-class FileBasedExperimentsRepository(jsonUrl: String,
+open class FileBasedExperimentsRepository(jsonUrl: String,
                                      private val dataLoader: (String) -> String,
                                      private val jsonConverter: JsonConverter,
                                      initialState: List<Experiment> = emptyList()) : ExperimentsRepository {
 
     private val inMemoryRepository: InMemoryExperimentsRepository = InMemoryExperimentsRepository(initialState)
     private var jsonUrl: String = jsonUrl
-        set(jsonUrl) { field = jsonUrl }
 
     companion object {
         private val logger = LoggerFactory.getLogger(FileBasedExperimentsRepository::class.java)
@@ -45,7 +45,7 @@ class FileBasedExperimentsRepository(jsonUrl: String,
         try {
             freshExperiments = jsonConverter.fromJson(data)
         } catch (e: IllegalArgumentException) {
-            logger.error("refresh failed, malformed experiments definition in JSON: " + e.message, e)
+            logger.error("refresh failed, malformed experiments definition in JSON: ${e.message}", e)
             return
         }
 
@@ -69,4 +69,8 @@ class FileBasedExperimentsRepository(jsonUrl: String,
 
     override val overridable: List<Experiment>
         get() = inMemoryRepository.overridable
+
+    override fun save(experiment: Experiment) {
+        throw OperationNotSupportedException("Cannot add experiments to file based repository")
+    }
 }

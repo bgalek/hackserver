@@ -3,6 +3,7 @@ package pl.allegro.experiments.chi.chiserver.infrastructure.experiments
 import com.github.tomakehurst.wiremock.junit.WireMockRule
 import org.junit.ClassRule
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.test.annotation.DirtiesContext
 import org.springframework.web.client.RestTemplate
 import pl.allegro.experiments.chi.chiserver.BaseIntegrationSpec
 import pl.allegro.experiments.chi.chiserver.domain.experiments.ExperimentsRepository
@@ -10,6 +11,7 @@ import spock.lang.Shared
 
 import static com.github.tomakehurst.wiremock.client.WireMock.*
 
+@DirtiesContext
 class ClientExperimentsV1E2ESpec extends BaseIntegrationSpec {
 
     @ClassRule
@@ -24,6 +26,9 @@ class ClientExperimentsV1E2ESpec extends BaseIntegrationSpec {
     @Autowired
     ExperimentsRepository experimentsRepository
 
+    @Autowired
+    ExperimentRepositoryRefresher refresher
+
     def setup() {
         teachWireMockJson("/experiments", '/some-experiments.json')
         teachWireMockJson("/invalid-experiments",'/invalid-experiments.json')
@@ -32,7 +37,7 @@ class ClientExperimentsV1E2ESpec extends BaseIntegrationSpec {
     def "should return list of active experiments in version 1"() {
         given:
         fileBasedExperimentsRepository.jsonUrl = resourceUrl('/experiments')
-        experimentsRepository.refresh()
+        refresher.refresh()
 
         when:
         def response = restTemplate.getForEntity(localUrl('/api/experiments/v1'), List)

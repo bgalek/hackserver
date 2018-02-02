@@ -3,13 +3,23 @@ package pl.allegro.experiments.chi.chiserver.infrastructure.experiments
 import com.github.tomakehurst.wiremock.junit.WireMockRule
 import org.junit.ClassRule
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.http.HttpEntity
+import org.springframework.http.HttpHeaders
+import org.springframework.http.HttpMethod
+import org.springframework.http.HttpStatus
+import org.springframework.http.client.ClientHttpRequestExecution
+import org.springframework.test.annotation.DirtiesContext
+import org.springframework.web.client.HttpClientErrorException
 import org.springframework.web.client.RestTemplate
 import pl.allegro.experiments.chi.chiserver.BaseIntegrationSpec
+import pl.allegro.experiments.chi.chiserver.domain.User
+import pl.allegro.experiments.chi.chiserver.domain.UserProvider
 import pl.allegro.experiments.chi.chiserver.domain.experiments.ExperimentsRepository
 import spock.lang.Shared
 
 import static com.github.tomakehurst.wiremock.client.WireMock.*
 
+@DirtiesContext
 class ExperimentsE2ESpec extends BaseIntegrationSpec {
 
     @ClassRule
@@ -24,7 +34,16 @@ class ExperimentsE2ESpec extends BaseIntegrationSpec {
     @Autowired
     ExperimentsRepository experimentsRepository
 
+    @Autowired
+    ExperimentRepositoryRefresher refresher
+
+    @Autowired
+    UserProvider userProvider
+
     def setup() {
+        if (!experimentsRepository instanceof ExperimentsDoubleRepository) {
+            throw new RuntimeException("We should test real repository, not the fake one")
+        }
         teachWireMockJson("/experiments", '/some-experiments.json')
         teachWireMockJson("/invalid-experiments",'/invalid-experiments.json')
     }
@@ -32,7 +51,7 @@ class ExperimentsE2ESpec extends BaseIntegrationSpec {
     def "should return list of experiments loaded from the backing HTTP resource"() {
         given:
         fileBasedExperimentsRepository.jsonUrl = resourceUrl('/experiments')
-        experimentsRepository.refresh()
+        refresher.refresh()
 
         when:
         def response = restTemplate.getForEntity(localUrl('/api/experiments'), List)
@@ -53,7 +72,7 @@ class ExperimentsE2ESpec extends BaseIntegrationSpec {
     def "should return single of experiment loaded from the backing HTTP resource"() {
         given:
         fileBasedExperimentsRepository.jsonUrl = resourceUrl('/experiments')
-        experimentsRepository.refresh()
+        refresher.refresh()
 
         when:
         def response = restTemplate.getForEntity(localUrl('/api/admin/experiments/cmuid_regexp'), Map)
@@ -75,7 +94,7 @@ class ExperimentsE2ESpec extends BaseIntegrationSpec {
     def "should return list of overridable experiments in version 2"() {
         given:
         fileBasedExperimentsRepository.jsonUrl = resourceUrl('/experiments')
-        experimentsRepository.refresh()
+        refresher.refresh()
 
         when:
         def response = restTemplate.getForEntity(localUrl('/api/experiments'), List)
@@ -97,7 +116,7 @@ class ExperimentsE2ESpec extends BaseIntegrationSpec {
     def "should return all experiments as measured for admin"() {
         given:
         fileBasedExperimentsRepository.jsonUrl = resourceUrl('/experiments')
-        experimentsRepository.refresh()
+        refresher.refresh()
 
         def measuredExperiment = { ex -> ex << [measurements: [lastDayVisits: 0]] }
 
@@ -121,9 +140,9 @@ class ExperimentsE2ESpec extends BaseIntegrationSpec {
     def "should return last valid list when file is corrupted"() {
         given:
         fileBasedExperimentsRepository.jsonUrl = resourceUrl('/experiments')
-        experimentsRepository.refresh()
+        refresher.refresh()
         fileBasedExperimentsRepository.jsonUrl = resourceUrl('/invalid-experiments')
-        experimentsRepository.refresh()
+        refresher.refresh()
 
         when:
         def response = restTemplate.getForEntity(localUrl('/api/experiments'), List)
@@ -131,6 +150,131 @@ class ExperimentsE2ESpec extends BaseIntegrationSpec {
         then:
         response.statusCode.value() == 200
         response.body.size() == 7
+    }
+
+    def "should create experiment with all types of predicates"() {
+        given:
+        userProvider.user = new User('Anonymous', [], true)
+
+        def request = [
+                id: "some2",
+                description: "desc",
+                variants: [
+                        [
+                                name: "v1",
+                                predicates: [ [ type: "INTERNAL" ]]
+                        ],
+                        [
+                                name: "v2",
+                                predicates: [ [ type: "HASH", from: 17, to: 90 ]]
+                        ],
+                        [
+                                name: "v3",
+                                predicates: [ [ type: "CMUID_REGEXP", regexp: "....[123]\$"], [ type: "DEVICE_CLASS", device: "phone"] ]
+                        ]
+                ],
+                groups: ['group a', 'group b'],
+                reportingEnabled: true
+        ]
+
+        def expectedExperiment = request + [
+                author: "Anonymous",
+                status: "DRAFT",
+                measurements: [ lastDayVisits: 0 ]
+        ]
+
+        when:
+        def response = restTemplate.postForEntity(localUrl('/api/admin/experiments'), request, Map)
+
+        then:
+        response.statusCode == HttpStatus.CREATED
+
+        and:
+        def responseList = restTemplate.getForEntity(localUrl("/api/admin/experiments"), List)
+        def responseSingle = restTemplate.getForEntity(localUrl("/api/admin/experiments/${request.id}/"), Map)
+
+        then:
+        responseSingle.body.variants == expectedExperiment.variants
+        responseSingle.body == expectedExperiment
+        responseList.body.contains(expectedExperiment)
+
+    }
+
+    def "should return BAD_REQUEST when predicate type is incorrect"() {
+        given:
+        userProvider.user = new User('Anonymous', [], true)
+
+        def request = [
+                id: "some2",
+                description: "desc",
+                variants: [
+                        [
+                                name: "v1",
+                                predicates: [ [ type: "NOT_SUPPORTED_TYPE" ]]
+                        ]
+                ],
+                groups: [],
+                reportingEnabled: true
+        ]
+
+        when:
+        HttpEntity<Map> entity = new HttpEntity<Map>(request)
+        restTemplate.exchange(localUrl('/api/admin/experiments'), HttpMethod.POST, entity, String)
+
+        then:
+        def ex = thrown(HttpClientErrorException)
+        ex.statusCode.value() == 400
+    }
+
+    def "should return BAD_REQUEST when predicate has no name"() {
+        given:
+        userProvider.user = new User('Anonymous', [], true)
+
+        def request = [
+                id: "some2",
+                description: "desc",
+                variants: [
+                        [
+                                predicates: [ [ type: "INTERNAL" ]]
+                        ]
+                ],
+                groups: [],
+                reportingEnabled: true
+        ]
+
+        when:
+        HttpEntity<Map> entity = new HttpEntity<Map>(request)
+        restTemplate.exchange(localUrl('/api/admin/experiments'), HttpMethod.POST, entity, String)
+
+        then:
+        def ex = thrown(HttpClientErrorException)
+        ex.statusCode.value() == 400
+    }
+
+    def "should return BAD_REQUEST when predicate has no required properties"() {
+        given:
+        userProvider.user = new User('Anonymous', [], true)
+
+        def request = [
+                id: "some2",
+                description: "desc",
+                variants: [
+                        [
+                                name: "v1",
+                                predicates: [ [ type: "HASH" ] ]
+                        ]
+                ],
+                groups: [],
+                reportingEnabled: true
+        ]
+
+        when:
+        HttpEntity<Map> entity = new HttpEntity<Map>(request)
+        restTemplate.exchange(localUrl('/api/admin/experiments'), HttpMethod.POST, entity, String)
+
+        then:
+        def ex = thrown(HttpClientErrorException)
+        ex.statusCode.value() == 400
     }
 
     void teachWireMockJson(String path, String jsonPath) {

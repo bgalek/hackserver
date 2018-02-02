@@ -2,10 +2,9 @@ package pl.allegro.experiments.chi.chiserver.infrastructure
 
 import com.google.common.collect.ImmutableList
 import pl.allegro.experiments.chi.chiserver.domain.experiments.Experiment
-import pl.allegro.experiments.chi.chiserver.domain.experiments.WritableExperimentsRepository
+import pl.allegro.experiments.chi.chiserver.domain.experiments.ExperimentsRepository
 
-class InMemoryExperimentsRepository(experiments: Collection<Experiment>) : WritableExperimentsRepository {
-
+open class InMemoryExperimentsRepository(experiments: Collection<Experiment>) : ExperimentsRepository {
     private val experiments: MutableMap<String, Experiment> = experiments
             .associateBy { it.id }
             .toMutableMap()
@@ -33,6 +32,5 @@ class InMemoryExperimentsRepository(experiments: Collection<Experiment>) : Writa
         get() = ImmutableList.copyOf(experiments.values.filter { it.isOverridable() })
 
     override fun refresh() {
-        // Nothing to do
     }
 }
