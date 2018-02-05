@@ -79,7 +79,7 @@
                   @input="removeVariant(data.item)"
                   :selected="data.selected"
                 >
-                  <strong>{{ data.item }}</strong>&nbsp;
+                  <strong>{{ slugify(data.item) }}</strong>&nbsp;
                 </v-chip>
 
               </template>
@@ -163,6 +163,10 @@
 
       experimentIdSlug () {
         return this.slugify(this.experimentId)
+      },
+
+      slugifiedVariants () {
+        return _.map(this.variants, v => this.slugify(v))
       }
     },
 
@@ -171,7 +175,7 @@
     },
 
     methods: {
-      slugify(str) {
+      slugify (str) {
         return str.toString().toLowerCase()
           .replace(/\s+/g, '-')
           .replace(/[^\w-]+/g, '')
@@ -263,7 +267,7 @@
       getVariantsDataToSend () {
         let bounds = this.calculatePercentageBoundsPerVariantForHashPredicate()
 
-        return _.map(this.variants, v => {
+        return _.map(this.slugifiedVariants, v => {
           let predicates = [this.getHashPredicateDataToSend(bounds[v])]
 
           if (this.selectedDeviceClass !== 'all') {
@@ -283,8 +287,8 @@
       calculatePercentageBoundsPerVariantForHashPredicate () {
         let step = this.maxPercentPerVariant
         let result = {}
-        _.forEach(_.range(0, this.variants.length), i => {
-          result[this.variants[i]] = [parseInt(i * step), parseInt(i * step) + this.percentPerVariant]
+        _.forEach(_.range(0, this.slugifiedVariants.length), i => {
+          result[this.slugifiedVariants[i]] = [parseInt(i * step), parseInt(i * step) + this.percentPerVariant]
         })
         return result
       },
