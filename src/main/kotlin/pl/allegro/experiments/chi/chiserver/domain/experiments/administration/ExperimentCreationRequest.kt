@@ -8,14 +8,14 @@ data class ExperimentCreationRequest (var id: ExperimentId,
                                       var description: String? = null,
                                       var groups: List<String> = emptyList(),
                                       var reportingEnabled: Boolean = false) {
-    class Variant (val name: String,
+    data class Variant (val name: String,
                    val predicates: List<Predicate>)
 
     enum class PredicateType {
         INTERNAL, HASH, CMUID_REGEXP, DEVICE_CLASS
     }
 
-    class Predicate (val type: PredicateType,
+    data class Predicate (val type: PredicateType,
                      val from: Int? = null,
                      val to: Int? = null,
                      val regexp: String? = null,

@@ -25,7 +25,7 @@ open class FileBasedExperimentsRepository(jsonUrl: String,
         refresh()
     }
 
-    fun refresh() {
+    override fun refresh() {
         try {
             rawRefresh()
         } catch (e: Exception) {

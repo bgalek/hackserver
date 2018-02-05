@@ -22,7 +22,8 @@ class CachedExperimentsRepository(private val delegate: ExperimentsRepository): 
         return experiments.find { it.id == id }
     }
 
-    fun refresh() {
+    override fun refresh() {
+        delegate.refresh()
         experiments = delegate.all
     }
 }
