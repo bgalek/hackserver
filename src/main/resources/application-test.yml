@@ -10,7 +10,3 @@ metrics:
   graphite:
     enabled: true
     host: skystats-test.qxlint
-
-security:
-  enabled: true
-  rootGroup: "Tech Content Team"

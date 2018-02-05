@@ -157,10 +157,7 @@
       },
 
       experimentIdSlug () {
-        return this.experimentId.toString().toLowerCase()
-          .replace(/\s+/g, '-')
-          .replace(/^-+/, '')
-          .replace(/-+$/, '')
+        return this.slugify(this.experimentId)
       }
     },
 
@@ -169,6 +166,15 @@
     },
 
     methods: {
+      slugify(str) {
+        return str.toString().toLowerCase()
+          .replace(/\s+/g, '-')
+          .replace(/[^\w-]+/g, '')
+          .replace(/--+/g, '-')
+          .replace(/^-+/, '')
+          .replace(/-+$/, '')
+      },
+
       onSubmit () {
         this.sending()
         this.cleanErrors()
@@ -177,13 +183,21 @@
           this.createExperiment({data: this.getExperimentDataToSend()}).then(response => {
             this.notSending()
             this.$router.push('/experiments/' + this.experimentIdSlug)
-          }).catch(response => {
-            this.setUnknownError()
+          }).catch(error => {
+            if (error.response.status === 401) {
+              this.setPermissionsError()
+            } else {
+              this.setUnknownError()
+            }
             this.notSending()
           })
         } else {
           this.notSending()
         }
+      },
+
+      setPermissionsError () {
+        this.errors = ['You have no permission to create experiment.']
       },
 
       setUnknownError () {

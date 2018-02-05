@@ -7,7 +7,3 @@ metrics:
     enabled: true
     host: skystats-dev.qxlint
     port: 2003
-
-security:
-  enabled: true
-  rootGroup: "Tech Content Team"
