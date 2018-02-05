@@ -59,9 +59,4 @@ class ExperimentsConfig {
     fun experimentsMetricsReporter(metricRegistry: MetricRegistry) : ExperimentsMongoMetricsReporter {
         return ExperimentsMongoMetricsReporter(metricRegistry)
     }
-
-    @Bean
-    fun experimentsMetricsReporter(metricRegistry: MetricRegistry) : ExperimentsMongoMetricsReporter {
-        return ExperimentsMongoMetricsReporter(metricRegistry)
-    }
 }
