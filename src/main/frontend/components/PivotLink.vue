@@ -1,6 +1,6 @@
 <template>
-      <v-btn icon @click="goToPivot()">
-        <v-icon>fa-line-chart</v-icon>
+      <v-btn icon @click="goToPivot()" style="margin-bottom: 0px; margin-top: 0px;">
+        <v-icon>fa-bar-chart</v-icon>
       </v-btn>
 </template>
 <script>

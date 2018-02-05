@@ -25,11 +25,14 @@
 
     <div v-if="experimentStatistics.metrics">
       <div v-for="metric in experimentStatistics.metrics" :key="metric.order">
-        <b>{{metricNames[metric.key]}}</b>
 
-        <pivot-link cube-type="metrics" :experiment-id="experiment.id"
-                    :selected-metric-name="metric.key"
-        ></pivot-link>
+        <div style="margin-top: 30px;">
+          <b>{{metricNames[metric.key]}}</b>
+
+          <pivot-link cube-type="metrics" :experiment-id="experiment.id"
+                      :selected-metric-name="metric.key"
+          ></pivot-link>
+        </div>
 
         <v-data-table
           v-bind:headers="headers"
@@ -63,6 +66,8 @@
 
             <td class="text-xs-right">{{ props.item.count }}</td>
           </template>
+          <hr/>
+
         </v-data-table>
         <v-divider></v-divider>
       </div>
@@ -106,10 +111,12 @@
         ],
         metricOrder: {
           'tx_visit': 1,
-          'gmv': 2
+          'tx_avg': 2,
+          'gmv': 3
         },
         metricNames: {
           'tx_visit': 'Visits with transaction(s)',
+          'tx_avg': 'Transactions per visit',
           'gmv': 'GMV per visit'
         }
       }
@@ -230,10 +237,10 @@
 
       diffIcon (diff) {
         if (diff > 0) {
-          return 'trending_up'
+          return 'arrow_upward'
         }
         if (diff < 0) {
-          return 'trending_down'
+          return 'arrow_downward'
         }
         return 'trending_flat'
       },
@@ -250,7 +257,7 @@
           if (r.variant === 'base') {
             return 1
           }
-          return r.diff - l.diff
+          return (l.variant < r.variant) ? -1 : (l.variant > r.variant) ? 1 : 0
         })
         return items
       },
