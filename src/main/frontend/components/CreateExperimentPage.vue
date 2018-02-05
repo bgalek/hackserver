@@ -94,10 +94,15 @@
               v-bind:min="1"
               ticks></v-slider>
 
-            <v-text-field
-              v-model="selectedInternal"
-              label="Internal"
-            ></v-text-field>
+            <v-tooltip bottom>
+              <v-text-field
+                slot="activator"
+                v-model="selectedInternal"
+                label="Internal"
+              ></v-text-field>
+
+              <span>You can choose from variants above or provide additional internal variant.</span>
+            </v-tooltip>
 
             <v-btn @click="onSubmit" color="success">create</v-btn>
           </form>
