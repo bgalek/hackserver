@@ -4,10 +4,8 @@ import com.github.tomakehurst.wiremock.junit.WireMockRule
 import org.junit.ClassRule
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.HttpEntity
-import org.springframework.http.HttpHeaders
 import org.springframework.http.HttpMethod
 import org.springframework.http.HttpStatus
-import org.springframework.http.client.ClientHttpRequestExecution
 import org.springframework.test.annotation.DirtiesContext
 import org.springframework.web.client.HttpClientErrorException
 import org.springframework.web.client.RestTemplate
@@ -152,7 +150,7 @@ class ExperimentsE2ESpec extends BaseIntegrationSpec {
         response.body.size() == 7
     }
 
-    def "should create experiment with all types of predicates"() {
+    def "should create and start experiment with all types of predicates"() {
         given:
         userProvider.user = new User('Anonymous', [], true)
 
@@ -198,6 +196,16 @@ class ExperimentsE2ESpec extends BaseIntegrationSpec {
         responseSingle.body == expectedExperiment
         responseList.body.contains(expectedExperiment)
 
+        and:
+        def startRequest = [
+                experimentId: "some2",
+                experimentDurationDays: 30
+        ]
+        restTemplate.put(localUrl('/api/admin/experiments'), startRequest, Map)
+        def startedExperiment = restTemplate.getForEntity(localUrl("/api/admin/experiments/${startRequest.experimentId}/"), Map)
+
+        then:
+        startedExperiment.body.status == 'ACTIVE'
     }
 
     def "should return BAD_REQUEST when predicate type is incorrect"() {

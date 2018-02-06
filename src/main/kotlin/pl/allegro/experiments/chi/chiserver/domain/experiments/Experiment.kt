@@ -31,6 +31,10 @@ open class Experiment(
         require(!variants.isEmpty()) { "empty list of Variants" }
     }
 
+    fun isDraft(): Boolean {
+        return status == ExperimentStatus.DRAFT
+    }
+
     fun isActive(): Boolean {
         return status == ExperimentStatus.ACTIVE
     }
@@ -41,6 +45,19 @@ open class Experiment(
 
     fun isOverridable(): Boolean {
         return !isEnded()
+    }
+
+    fun start(experimentDurationDays: Long): Experiment {
+        return Experiment(
+                id,
+                variants,
+                description,
+                author,
+                groups,
+                reportingEnabled,
+                ActivityPeriod(ZonedDateTime.now(), ZonedDateTime.now().plusDays(experimentDurationDays)),
+                measurements
+        )
     }
 
     override fun equals(other: Any?): Boolean {
