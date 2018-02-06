@@ -34,14 +34,12 @@
               chips
               append-icon=""
               tags
-              v-model="groups"
-            >
+              v-model="groups">
               <template slot="selection" slot-scope="data">
                 <v-chip
                   close
                   @input="removeGroup(data.item)"
-                  :selected="data.selected"
-                >
+                  :selected="data.selected">
                   <strong>{{ data.item }}</strong>&nbsp;
                 </v-chip>
               </template>
@@ -61,15 +59,13 @@
               chips
               append-icon=""
               tags
-              v-model="variants"
-            >
+              v-model="variants">
               <template slot="selection" slot-scope="data">
 
                 <v-chip
                   v-if="data.item === baseVariant"
                   :selected="data.selected"
-                  :disabled="true"
-                >
+                  :disabled="true">
                   <strong>{{ data.item }}</strong>&nbsp;
                 </v-chip>
 
@@ -77,8 +73,7 @@
                   v-else
                   close
                   @input="removeVariant(data.item)"
-                  :selected="data.selected"
-                >
+                  :selected="data.selected">
                   <strong>{{ slugify(data.item) }}</strong>&nbsp;
                 </v-chip>
 
