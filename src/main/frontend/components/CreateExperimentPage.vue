@@ -227,11 +227,20 @@
 
       validate () {
         if (this.experimentId === '') {
-          this.errors.push('ID is required')
+          this.errors.push('ID is required.')
         }
 
         if (this.isExperimentIdUnique()) {
-          this.errors.push('ID must be unique')
+          this.errors.push('ID must be unique.')
+        }
+
+        let distinctVariants = new Set(this.slugifiedVariants)
+        if (this.slugifiedVariants.length !== distinctVariants.size) {
+          this.errors.push('Variant names must be unique.')
+        }
+
+        if (this.slugifiedVariants.indexOf('') !== -1) {
+          this.errors.push('Variant name cant be empty string.')
         }
 
         return this.errors.length === 0
