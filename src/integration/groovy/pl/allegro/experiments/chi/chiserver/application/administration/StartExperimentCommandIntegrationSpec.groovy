@@ -87,7 +87,7 @@ class StartExperimentCommandIntegrationSpec extends BaseIntegrationSpec {
         thrown StartExperimentException
     }
 
-    def "should not start experiment if user has no permissions"() {
+    def "should not start experiment when user has no permissions"() {
         given:
         def id = UUID.randomUUID().toString()
         mutableUserProvider.user = new User('Root', [], true)
@@ -107,6 +107,28 @@ class StartExperimentCommandIntegrationSpec extends BaseIntegrationSpec {
 
         where:
         user << [new User('Root', ['some group'], false), new User('Root', [], false)]
+    }
+
+    def "should not start experiment when given number of days is negative or zero"() {
+        given:
+        def id = UUID.randomUUID().toString()
+        mutableUserProvider.user = new User('Root', [], true)
+        def command = new CreateExperimentCommand(experimentsRepository, mutableUserProvider, simpleExperimentRequest(id))
+        command.execute()
+
+        and:
+        mutableUserProvider.user = user
+        def startCommand = new StartExperimentCommand(experimentsRepository, mutableUserProvider,
+                new StartExperimentRequest(id, duration))
+
+        when:
+        startCommand.execute()
+
+        then:
+        thrown StartExperimentException
+
+        where:
+        duration << [0, -1]
     }
 
     def simpleExperimentRequest(String id) {

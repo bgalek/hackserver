@@ -33,5 +33,9 @@ class StartExperimentCommand(private val experimentsRepository: ExperimentsRepos
         if (!experiment.isDraft()) {
             throw StartExperimentException("Experiment is not DRAFT: " + startExperimentRequest.experimentId)
         }
+
+        if (startExperimentRequest.experimentDurationDays <= 0) {
+            throw StartExperimentException("Experiment duration days must be greater than 0: " + startExperimentRequest.experimentId)
+        }
     }
 }
