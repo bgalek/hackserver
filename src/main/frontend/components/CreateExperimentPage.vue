@@ -13,13 +13,13 @@
 
             <v-text-field
               v-model="experimentId"
-              label="ID"
+              label="Experiment ID"
               required
             ></v-text-field>
 
             <v-text-field
               v-model="experimentIdSlug"
-              label="Final ID"
+              label="Final Experiment ID"
               :readonly="true"
               :disabled="true"
             ></v-text-field>
