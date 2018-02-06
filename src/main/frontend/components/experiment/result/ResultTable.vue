@@ -315,8 +315,12 @@
   }
 </script>
 
-<style scoped>
-#toDate {
-  font-weight: bold;
-}
+<style>
+  #toDate {
+    font-weight: bold;
+  }
+
+  table.datatable thead tr {
+    height: auto;
+  }
 </style>

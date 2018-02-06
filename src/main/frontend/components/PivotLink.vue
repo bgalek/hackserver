@@ -1,5 +1,5 @@
 <template>
-      <v-btn icon @click="goToPivot()" style="margin-bottom: 0px; margin-top: 0px;">
+      <v-btn icon @click="goToPivot()" style="margin-bottom: 10px; margin-top: 0px;">
         <v-icon>fa-bar-chart</v-icon>
       </v-btn>
 </template>
