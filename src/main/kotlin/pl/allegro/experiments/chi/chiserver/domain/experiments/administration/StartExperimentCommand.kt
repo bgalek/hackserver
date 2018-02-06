@@ -25,6 +25,7 @@ class StartExperimentCommand(private val experimentsRepository: ExperimentsRepos
         if (experiment == null) {
             throw ExperimentNotFoundException("Experiment not found: " + startExperimentRequest.experimentId)
         }
+
         val user = userProvider.getCurrentUser()
         if (!user.canEdit(experiment) && !user.isRoot) {
             throw AuthorizationException("User has no permission to edit experiment: " + startExperimentRequest.experimentId)

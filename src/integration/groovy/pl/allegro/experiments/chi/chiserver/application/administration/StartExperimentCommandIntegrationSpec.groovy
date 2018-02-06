@@ -117,7 +117,6 @@ class StartExperimentCommandIntegrationSpec extends BaseIntegrationSpec {
         command.execute()
 
         and:
-        mutableUserProvider.user = user
         def startCommand = new StartExperimentCommand(experimentsRepository, mutableUserProvider,
                 new StartExperimentRequest(id, duration))
 
