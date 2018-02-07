@@ -11,12 +11,12 @@
        {{experiment.groups.join(', ')}}
 
         <div v-if="experiment.activityPeriod">
-          <h3>Dates</h3>
+          <h3>Activity period</h3>
           <v-layout row>
-            <v-flex xs2>Active from: </v-flex><v-flex xs9>{{ experiment.fromDateString() }}</v-flex>
+            <v-flex xs2>From: </v-flex><v-flex xs9>{{ experiment.fromDateString() }}</v-flex>
           </v-layout>
           <v-layout row>
-            <v-flex xs2>Active to: </v-flex><v-flex xs9>{{ experiment.toDateString() }}</v-flex>
+            <v-flex xs2>To: </v-flex><v-flex xs9>{{ experiment.toDateString() }}</v-flex>
           </v-layout>
         </div>
         <h3>Status</h3>
