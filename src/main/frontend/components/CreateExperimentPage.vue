@@ -5,7 +5,8 @@
 
         <chi-panel v-if="showForm" title="New experiment">
 
-          <v-alert v-for="error in errors" color="error" icon="warning" value="true">
+          <v-alert v-for="error in errors"
+                   color="error" icon="warning" value="true" :key="error">
             {{ error }}
           </v-alert>
 

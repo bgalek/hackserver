@@ -23,6 +23,10 @@
           </div>
         </chi-panel>
 
+        <experiment-actions
+          :experiment="experiment"
+        ></experiment-actions>
+
         <assignment-panel
           :experiment="experiment"
         ></assignment-panel>
@@ -38,6 +42,7 @@
   import AssignmentPanel from './assignments/AssignmentPanel.vue'
   import ResultTable from './result/ResultTable.vue'
   import ExperimentDetails from './ExperimentDetails.vue'
+  import ExperimentActions from './ExperimentActions.vue'
   import ChiPanel from '../ChiPanel.vue'
 
   export default {
@@ -55,7 +60,8 @@
       AssignmentPanel,
       ResultTable,
       ExperimentDetails,
-      ChiPanel
+      ChiPanel,
+      ExperimentActions
     },
 
     methods: {
