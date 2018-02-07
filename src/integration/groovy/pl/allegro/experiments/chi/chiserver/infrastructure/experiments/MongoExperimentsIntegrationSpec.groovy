@@ -30,7 +30,9 @@ class MongoExperimentsIntegrationSpec extends BaseIntegrationSpec {
                 ],
                 "exciting stuff", "tester", [], false,
                 new ActivityPeriod(someDateTime().minusDays(2), someDateTime().plusDays(3)),
-                null)
+                null,
+                null
+        )
 
         when:
         mongoExperimentsRepository.save(experiment)
