@@ -5,7 +5,6 @@ import org.junit.ClassRule
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.HttpEntity
 import org.springframework.http.HttpMethod
-import org.springframework.http.HttpStatus
 import org.springframework.test.annotation.DirtiesContext
 import org.springframework.web.client.HttpClientErrorException
 import org.springframework.web.client.RestTemplate
@@ -69,6 +68,7 @@ class ExperimentsE2ESpec extends BaseIntegrationSpec {
 
     def "should return single of experiment loaded from the backing HTTP resource"() {
         given:
+        userProvider.user = new User('Anonymous', [], true)
         fileBasedExperimentsRepository.jsonUrl = resourceUrl('/experiments')
         refresher.refresh()
 
@@ -85,7 +85,8 @@ class ExperimentsE2ESpec extends BaseIntegrationSpec {
                 author           : "Experiment owner",
                 measurements     : [lastDayVisits: 0],
                 groups           : [],
-                status           : 'DRAFT'
+                status           : 'DRAFT',
+                editable         : true
         ]
     }
 
@@ -148,64 +149,6 @@ class ExperimentsE2ESpec extends BaseIntegrationSpec {
         then:
         response.statusCode.value() == 200
         response.body.size() == 7
-    }
-
-    def "should create and start experiment with all types of predicates"() {
-        given:
-        userProvider.user = new User('Anonymous', [], true)
-
-        def request = [
-                id: "some2",
-                description: "desc",
-                variants: [
-                        [
-                                name: "v1",
-                                predicates: [ [ type: "INTERNAL" ]]
-                        ],
-                        [
-                                name: "v2",
-                                predicates: [ [ type: "HASH", from: 17, to: 90 ]]
-                        ],
-                        [
-                                name: "v3",
-                                predicates: [ [ type: "CMUID_REGEXP", regexp: "....[123]\$"], [ type: "DEVICE_CLASS", device: "phone"] ]
-                        ]
-                ],
-                groups: ['group a', 'group b'],
-                reportingEnabled: true
-        ]
-
-        def expectedExperiment = request + [
-                author: "Anonymous",
-                status: "DRAFT",
-                measurements: [ lastDayVisits: 0 ]
-        ]
-
-        when:
-        def response = restTemplate.postForEntity(localUrl('/api/admin/experiments'), request, Map)
-
-        then:
-        response.statusCode == HttpStatus.CREATED
-
-        and:
-        def responseList = restTemplate.getForEntity(localUrl("/api/admin/experiments"), List)
-        def responseSingle = restTemplate.getForEntity(localUrl("/api/admin/experiments/${request.id}/"), Map)
-
-        then:
-        responseSingle.body.variants == expectedExperiment.variants
-        responseSingle.body == expectedExperiment
-        responseList.body.contains(expectedExperiment)
-
-        and:
-        def startRequest = [
-                experimentId: "some2",
-                experimentDurationDays: 30
-        ]
-        restTemplate.put(localUrl('/api/admin/experiments'), startRequest, Map)
-        def startedExperiment = restTemplate.getForEntity(localUrl("/api/admin/experiments/${startRequest.experimentId}/"), Map)
-
-        then:
-        startedExperiment.body.status == 'ACTIVE'
     }
 
     def "should return BAD_REQUEST when predicate type is incorrect"() {

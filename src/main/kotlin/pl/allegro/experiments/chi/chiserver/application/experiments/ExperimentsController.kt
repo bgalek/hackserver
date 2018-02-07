@@ -9,6 +9,7 @@ import pl.allegro.experiments.chi.chiserver.application.experiments.administrati
 import pl.allegro.experiments.chi.chiserver.application.experiments.administration.CreateExperimentCommandFactory
 import pl.allegro.experiments.chi.chiserver.domain.experiments.ExperimentsRepository
 import pl.allegro.experiments.chi.chiserver.domain.experiments.MeasurementsRepository
+import pl.allegro.experiments.chi.chiserver.domain.experiments.PermissionsRepository
 import pl.allegro.experiments.chi.chiserver.domain.experiments.administration.*
 import pl.allegro.experiments.chi.chiserver.infrastructure.JsonConverter
 import pl.allegro.experiments.chi.chiserver.logger
@@ -23,6 +24,7 @@ class ExperimentsController(private val experimentsRepository: ExperimentsReposi
                             private val measurementsRepository: MeasurementsRepository,
                             private val createExperimentCommandFactory: CreateExperimentCommandFactory,
                             private val startExperimentCommandFactory: StartExperimentCommandFactory,
+                            private val permissionsRepository: PermissionsRepository,
                             private val jsonConverter: JsonConverter) {
 
     companion object {
@@ -43,10 +45,11 @@ class ExperimentsController(private val experimentsRepository: ExperimentsReposi
     fun getExperiment(@PathVariable experimentId: String) : ResponseEntity<String> {
         logger.info("Single experiment request received")
         return experimentsRepository.getExperiment(experimentId)
-            ?.let { measurementsRepository.withMeasurements(it) }
-            ?.let { jsonConverter.toJson(it) }
-            ?.let { ResponseEntity.ok(it) }
-            ?: (ResponseEntity(HttpStatus.NOT_FOUND))
+                ?.let { measurementsRepository.withMeasurements(it) }
+                ?.let { permissionsRepository.withPermissions(it)  }
+                ?.let { jsonConverter.toJson(it) }
+                ?.let { ResponseEntity.ok(it) }
+                ?: (ResponseEntity(HttpStatus.NOT_FOUND))
     }
 
     @MeteredEndpoint

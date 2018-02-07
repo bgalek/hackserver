@@ -315,12 +315,12 @@
   }
 </script>
 
-<style>
+<style scoped>
   #toDate {
     font-weight: bold;
   }
 
-  table.datatable thead tr {
+  >>>.datatable thead tr {
     height: auto;
   }
 </style>

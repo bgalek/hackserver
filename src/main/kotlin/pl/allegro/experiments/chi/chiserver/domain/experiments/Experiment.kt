@@ -16,7 +16,8 @@ open class Experiment(
     val groups: List<String>,
     val reportingEnabled: Boolean = true,
     val activityPeriod: ActivityPeriod? = null,
-    val measurements: ExperimentMeasurements? = null
+    val measurements: ExperimentMeasurements? = null,
+    val editable: Boolean? = null
 ) {
 
     val status = when {
@@ -33,10 +34,6 @@ open class Experiment(
 
     fun isDraft(): Boolean {
         return status == ExperimentStatus.DRAFT
-    }
-
-    fun isActive(): Boolean {
-        return status == ExperimentStatus.ACTIVE
     }
 
     fun isEnded(): Boolean {
@@ -56,7 +53,22 @@ open class Experiment(
                 groups,
                 reportingEnabled,
                 ActivityPeriod(ZonedDateTime.now(), ZonedDateTime.now().plusDays(experimentDurationDays)),
-                measurements
+                measurements,
+                editable
+        )
+    }
+
+    fun setEditableFlag(editable: Boolean): Experiment {
+        return Experiment(
+                id,
+                variants,
+                description,
+                author,
+                groups,
+                reportingEnabled,
+                activityPeriod,
+                measurements,
+                editable
         )
     }
 
