@@ -69,6 +69,7 @@ class ExperimentsE2ESpec extends BaseIntegrationSpec {
 
     def "should return single of experiment loaded from the backing HTTP resource"() {
         given:
+        userProvider.user = new User('Anonymous', [], true)
         fileBasedExperimentsRepository.jsonUrl = resourceUrl('/experiments')
         refresher.refresh()
 
@@ -85,8 +86,35 @@ class ExperimentsE2ESpec extends BaseIntegrationSpec {
                 author           : "Experiment owner",
                 measurements     : [lastDayVisits: 0],
                 groups           : [],
-                status           : 'DRAFT'
+                status           : 'DRAFT',
+                editable         : true
         ]
+    }
+
+    def "should set flag editable depending who ask for experiment"() {
+        given:
+        userProvider.user = new User('Anonymous', [], true)
+        fileBasedExperimentsRepository.jsonUrl = resourceUrl('/experiments')
+        refresher.refresh()
+
+        when:
+        def response = restTemplate.getForEntity(localUrl('/api/admin/experiments/cmuid_regexp'), Map)
+
+        then:
+        response.statusCode.value() == 200
+        response.body == [
+                id               : 'cmuid_regexp',
+                variants         : [[name: 'v1', predicates: [[type: 'CMUID_REGEXP', regexp: '.*[0-3]$']]]],
+                reportingEnabled : true,
+                description      : "Experiment description",
+                author           : "Experiment owner",
+                measurements     : [lastDayVisits: 0],
+                groups           : [],
+                status           : 'DRAFT',
+                editable         : true
+        ]
+
+        where
     }
 
     def "should return list of overridable experiments in version 2"() {
@@ -193,7 +221,7 @@ class ExperimentsE2ESpec extends BaseIntegrationSpec {
 
         then:
         responseSingle.body.variants == expectedExperiment.variants
-        responseSingle.body == expectedExperiment
+        responseSingle.body == expectedExperiment + [editable: true]
         responseList.body.contains(expectedExperiment)
 
         and:
