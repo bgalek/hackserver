@@ -10,5 +10,5 @@ import createExperiment from './createExperiment'
 Vue.use(Vuex)
 
 export default new Vuex.Store({
-  modules: { experiment, experiments, experimentStatistics, createExperiment, startExperiment}
+  modules: {experiment, experiments, experimentStatistics, createExperiment, startExperiment}
 })

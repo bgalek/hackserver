@@ -17,7 +17,8 @@ const ExperimentRecord = Record({
   status: '',
   measurements: Record({
     lastDayVisits: 0
-  })
+  }),
+  editable: false
 })
 
 export default class ExperimentModel extends ExperimentRecord {
@@ -29,7 +30,7 @@ export default class ExperimentModel extends ExperimentRecord {
     experimentObject.isMeasured = experimentObject.hasBase && experimentObject.reportingEnabled
     experimentObject.groups = List(experimentObject.groups)
     experimentObject.measurements = experimentObject.measurements
-
+    experimentObject.editable = experimentObject.editable
     super(experimentObject)
   }
 

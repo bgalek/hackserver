@@ -1,5 +1,5 @@
 <template>
-  <chi-panel title="Owner zone">
+  <chi-panel title="Owner zone" v-if="experiment.editable">
     <v-alert v-for="error in errors"
              color="error" icon="warning" value="true" :key="error">
       {{ error }}
@@ -49,12 +49,12 @@
 
     data () {
       return {
-        commandOkMessage:'',
-        actionFormValid:true,
+        commandOkMessage: '',
+        actionFormValid: true,
         durationDays: 14,
         durationDaysRules: [
           (v) => !!v || 'duration is required',
-          (v) => parseInt(v).toString() === v || "seriously?",
+          (v) => parseInt(v).toString() === v || 'seriously?',
           (v) => v <= 60 || 'more than 60 days? Seems like a long time...',
           (v) => v > 0 || 'try with a positive value'
         ],
@@ -65,15 +65,13 @@
 
     methods: {
 
-      start() {
-
+      start () {
         if (this.$refs.actionForm.validate()) {
           this.prepareToSend()
 
           this.startExperiment({data: this.buildStartExperimentCommand()}).then(response => {
             this.getExperiment({ params: { experimentId: this.experiment.id } })
             this.commandOkMessage = 'Experiment successfully started'
-
           }).catch(error => {
             this.showError(error)
           })
@@ -82,7 +80,7 @@
         }
       },
 
-      buildStartExperimentCommand(){
+      buildStartExperimentCommand () {
         return {
           experimentId: this.experiment.id,
           experimentDurationDays: this.durationDays
@@ -90,7 +88,7 @@
       },
 
       showError (error) {
-        this.errors.push( JSON.stringify(error) )
+        this.errors.push(JSON.stringify(error))
       },
 
       prepareToSend () {
@@ -107,11 +105,11 @@
         return this.sendingDataToServer
       },
 
-      canBeStarted() {
-        return this.experiment.status == 'DRAFT'
+      canBeStarted () {
+        return this.experiment.status === 'DRAFT'
       },
 
-      canRunAnyCommand() {
+      canRunAnyCommand () {
         return this.canBeStarted()
       },
 
