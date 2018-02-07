@@ -5,6 +5,6 @@ import pl.allegro.experiments.chi.chiserver.domain.UserProvider
 class PermissionsRepository(private val userProvider: UserProvider) {
     fun withPermissions(experiment: Experiment): Experiment {
         val currentUser = userProvider.getCurrentUser()
-        return if (currentUser.isOwner(experiment)) experiment.markAsEditable() else experiment
+        return if (currentUser.isOwner(experiment)) experiment.setEditableFlag(true) else experiment.setEditableFlag(false)
     }
 }

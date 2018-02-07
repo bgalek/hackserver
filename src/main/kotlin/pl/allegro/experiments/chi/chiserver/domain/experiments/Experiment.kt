@@ -58,7 +58,7 @@ open class Experiment(
         )
     }
 
-    fun markAsEditable(): Experiment {
+    fun setEditableFlag(editable: Boolean): Experiment {
         return Experiment(
                 id,
                 variants,
@@ -68,7 +68,7 @@ open class Experiment(
                 reportingEnabled,
                 activityPeriod,
                 measurements,
-                true
+                editable
         )
     }
 
