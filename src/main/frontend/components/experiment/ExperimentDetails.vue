@@ -8,7 +8,7 @@
         {{ experiment.author }}
 
       <h3>Authorized groups</h3>
-       {{experiment.groups.join(', ')}}
+       {{experiment.groups.join(', ') || '-'}}
 
         <div v-if="experiment.activityPeriod">
           <h3>Activity period</h3>
