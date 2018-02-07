@@ -51,7 +51,7 @@
       return {
         commandOkMessage: '',
         actionFormValid: true,
-        durationDays: 14,
+        durationDays: '14',
         durationDaysRules: [
           (v) => !!v || 'duration is required',
           (v) => parseInt(v).toString() === v || 'seriously?',

@@ -6,6 +6,10 @@
         {{ experiment.description }}
         <h3>Author</h3>
         {{ experiment.author }}
+
+      <h3>Authorized groups</h3>
+       {{experiment.groups.join(', ')}}
+
         <div v-if="experiment.activityPeriod">
           <h3>Dates</h3>
           <v-layout row>
@@ -47,7 +51,6 @@
       </v-list>
     </v-flex>
     </v-layout>
-
   </chi-panel>
 </template>
 
