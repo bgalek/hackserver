@@ -15,6 +15,8 @@ import pl.allegro.experiments.chi.chiserver.infrastructure.experiments.Experimen
 import pl.allegro.experiments.chi.chiserver.infrastructure.experiments.FileBasedExperimentsRepository
 import pl.allegro.experiments.chi.chiserver.infrastructure.experiments.MutableUserProvider
 
+import static pl.allegro.experiments.chi.chiserver.application.administration.CommandTestUtils.simpleExperimentRequest
+
 @ContextConfiguration(classes = [ExperimentsTestConfig])
 @DirtiesContext
 class CreateExperimentCommandIntegrationSpec extends BaseIntegrationSpec {
@@ -91,11 +93,4 @@ class CreateExperimentCommandIntegrationSpec extends BaseIntegrationSpec {
         def ex = thrown(ExperimentCreationException)
         ex.message == 'Cannot create experiment from request ExperimentCreationRequest(id=x, variants=[Variant(name=v1, predicates=[Predicate(type=HASH, from=null, to=null, regexp=null, device=null)])], description=, groups=[], reportingEnabled=false)'
     }
-
-
-    def simpleExperimentRequest(String id) {
-        def variants = [new ExperimentCreationRequest.Variant("v1", [new ExperimentCreationRequest.Predicate(ExperimentCreationRequest.PredicateType.INTERNAL, null, null, null, null)])]
-        return new ExperimentCreationRequest(id, variants, "simple description", ["group a", "group b"], true)
-    }
-
 }

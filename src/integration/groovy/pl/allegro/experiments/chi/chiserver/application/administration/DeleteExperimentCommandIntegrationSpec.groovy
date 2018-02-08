@@ -8,7 +8,6 @@ import pl.allegro.experiments.chi.chiserver.application.experiments.administrati
 import pl.allegro.experiments.chi.chiserver.application.experiments.administration.CreateExperimentCommand
 import pl.allegro.experiments.chi.chiserver.domain.User
 import pl.allegro.experiments.chi.chiserver.domain.experiments.ExperimentsRepository
-import pl.allegro.experiments.chi.chiserver.domain.experiments.administration.ExperimentCreationRequest
 import pl.allegro.experiments.chi.chiserver.domain.experiments.administration.ExperimentNotFoundException
 import pl.allegro.experiments.chi.chiserver.domain.experiments.administration.delete.DeleteExperimentCommand
 import pl.allegro.experiments.chi.chiserver.domain.experiments.administration.delete.DeleteExperimentException
@@ -16,6 +15,8 @@ import pl.allegro.experiments.chi.chiserver.domain.statistics.StatisticsReposito
 import pl.allegro.experiments.chi.chiserver.infrastructure.experiments.ExperimentsTestConfig
 import pl.allegro.experiments.chi.chiserver.infrastructure.experiments.FileBasedExperimentsRepository
 import pl.allegro.experiments.chi.chiserver.infrastructure.experiments.MutableUserProvider
+
+import static pl.allegro.experiments.chi.chiserver.application.administration.CommandTestUtils.simpleExperimentRequest
 
 @ContextConfiguration(classes = [ExperimentsTestConfig])
 @DirtiesContext
@@ -127,11 +128,5 @@ class DeleteExperimentCommandIntegrationSpec extends BaseIntegrationSpec {
                 new User('NotAuthor', [], false)
         ]
     }
-
-    def simpleExperimentRequest(String id) {
-        def variants = [new ExperimentCreationRequest.Variant("v1", [new ExperimentCreationRequest.Predicate(ExperimentCreationRequest.PredicateType.INTERNAL, null, null, null, null)])]
-        return new ExperimentCreationRequest(id, variants, "simple description", ["group a", "group b"], true)
-    }
-
 }
 

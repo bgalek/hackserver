@@ -17,6 +17,8 @@ import pl.allegro.experiments.chi.chiserver.domain.experiments.administration.St
 import pl.allegro.experiments.chi.chiserver.infrastructure.experiments.ExperimentsTestConfig
 import pl.allegro.experiments.chi.chiserver.infrastructure.experiments.MutableUserProvider
 
+import static pl.allegro.experiments.chi.chiserver.application.administration.CommandTestUtils.simpleExperimentRequest
+
 @ContextConfiguration(classes = [ExperimentsTestConfig])
 @DirtiesContext
 class StartExperimentCommandIntegrationSpec extends BaseIntegrationSpec {
@@ -131,10 +133,5 @@ class StartExperimentCommandIntegrationSpec extends BaseIntegrationSpec {
 
         where:
         duration << [0, -1]
-    }
-
-    def simpleExperimentRequest(String id) {
-        def variants = [new ExperimentCreationRequest.Variant("v1", [new ExperimentCreationRequest.Predicate(ExperimentCreationRequest.PredicateType.INTERNAL, null, null, null, null)])]
-        return new ExperimentCreationRequest(id, variants, "simple description", ["group a", "group b"], true)
     }
 }
