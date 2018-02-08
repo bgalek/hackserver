@@ -9,6 +9,7 @@ import pl.allegro.experiments.chi.chiserver.application.experiments.administrati
 import pl.allegro.experiments.chi.chiserver.domain.User
 import pl.allegro.experiments.chi.chiserver.domain.experiments.ExperimentsRepository
 import pl.allegro.experiments.chi.chiserver.domain.experiments.administration.ExperimentNotFoundException
+import pl.allegro.experiments.chi.chiserver.domain.experiments.administration.PermissionsAwareExperimentGetter
 import pl.allegro.experiments.chi.chiserver.domain.experiments.administration.delete.DeleteExperimentCommand
 import pl.allegro.experiments.chi.chiserver.domain.experiments.administration.delete.DeleteExperimentException
 import pl.allegro.experiments.chi.chiserver.domain.statistics.StatisticsRepository
@@ -33,8 +34,11 @@ class DeleteExperimentCommandIntegrationSpec extends BaseIntegrationSpec {
     @Autowired
     MutableUserProvider mutableUserProvider
 
+    PermissionsAwareExperimentGetter permissionsAwareExperimentGetter
+
     def setup() {
         statisticsRepository = Mock(StatisticsRepository)
+        permissionsAwareExperimentGetter = new PermissionsAwareExperimentGetter(experimentsRepository, mutableUserProvider)
     }
 
     def "should delete experiment"() {
@@ -46,7 +50,7 @@ class DeleteExperimentCommandIntegrationSpec extends BaseIntegrationSpec {
 
         and:
         mutableUserProvider.user = user
-        def deleteCommand = new DeleteExperimentCommand(experimentsRepository, mutableUserProvider, id, statisticsRepository)
+        def deleteCommand = new DeleteExperimentCommand(experimentsRepository, permissionsAwareExperimentGetter, id, statisticsRepository)
 
         and:
         statisticsRepository.hasAnyStatistics(_) >> false
@@ -70,7 +74,7 @@ class DeleteExperimentCommandIntegrationSpec extends BaseIntegrationSpec {
         mutableUserProvider.user = new User('Root', [], true)
 
         and:
-        def deleteCommand = new DeleteExperimentCommand(experimentsRepository, mutableUserProvider, id, statisticsRepository)
+        def deleteCommand = new DeleteExperimentCommand(experimentsRepository, permissionsAwareExperimentGetter, id, statisticsRepository)
 
         and:
         statisticsRepository.hasAnyStatistics(_) >> false
@@ -90,7 +94,7 @@ class DeleteExperimentCommandIntegrationSpec extends BaseIntegrationSpec {
         command.execute()
 
         and:
-        def deleteCommand = new DeleteExperimentCommand(experimentsRepository, mutableUserProvider, id, statisticsRepository)
+        def deleteCommand = new DeleteExperimentCommand(experimentsRepository, permissionsAwareExperimentGetter, id, statisticsRepository)
 
         and:
         statisticsRepository.hasAnyStatistics(_) >> true
@@ -111,7 +115,7 @@ class DeleteExperimentCommandIntegrationSpec extends BaseIntegrationSpec {
 
         and:
         mutableUserProvider.user = user
-        def deleteCommand = new DeleteExperimentCommand(experimentsRepository, mutableUserProvider, id, statisticsRepository)
+        def deleteCommand = new DeleteExperimentCommand(experimentsRepository, permissionsAwareExperimentGetter, id, statisticsRepository)
 
         and:
         statisticsRepository.hasAnyStatistics(_) >> false
