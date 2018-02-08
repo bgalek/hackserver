@@ -62,9 +62,9 @@ class ExperimentsController(private val experimentsRepository: ExperimentsReposi
 
     @MeteredEndpoint
     @PutMapping(path = [""])
-    fun startExperiment(@RequestBody startExperimentRequest: StartExperimentRequest) : ResponseEntity<String> {
-        logger.debug("Start experiment request received", startExperimentRequest)
-        startExperimentCommandFactory.startExperimentCommand(startExperimentRequest).execute()
+    fun startExperiment(@RequestBody manageRequest: ManageExperimentRequest<StartExperimentRequest>) : ResponseEntity<String> {
+        logger.debug("Start experiment request received", manageRequest.command)
+        startExperimentCommandFactory.startExperimentCommand(manageRequest.commandProperties).execute()
         return ResponseEntity(HttpStatus.OK)
     }
 

@@ -111,11 +111,14 @@ class ExperimentsSelfServiceE2ESpec extends BaseIntegrationSpec {
 
         and:
         def startRequest = [
-                experimentId: "some2",
-                experimentDurationDays: 30
+                command: 'START',
+                commandProperties: [
+                        experimentId: "some2",
+                        experimentDurationDays: 30
+                ]
         ]
         restTemplate.put(localUrl('/api/admin/experiments'), startRequest, Map)
-        def startedExperiment = restTemplate.getForEntity(localUrl("/api/admin/experiments/${startRequest.experimentId}/"), Map)
+        def startedExperiment = restTemplate.getForEntity(localUrl("/api/admin/experiments/${startRequest.commandProperties.experimentId}/"), Map)
 
         then:
         startedExperiment.body.status == 'ACTIVE'
