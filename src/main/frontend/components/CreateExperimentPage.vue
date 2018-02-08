@@ -10,13 +10,19 @@
             {{ error }}
           </v-alert>
 
-          <form>
+          <v-form v-model="createFormValid"
+                ref="createForm"
+                lazy-validation>
 
-            <v-text-field
-              v-model="experimentId"
-              label="Experiment ID"
-              required
-            ></v-text-field>
+            <v-tooltip bottom>
+              <v-text-field
+                v-model="experimentId"
+                label="Experiment ID"
+                :rules="experimentIdRules"
+                slot="activator"
+              ></v-text-field>
+              <span>Unique ID used by Chi and other applications to identify your experiment. Keep it concise.</span>
+            </v-tooltip>
 
             <v-text-field
               v-model="experimentIdSlug"
@@ -25,28 +31,46 @@
               :disabled="true"
             ></v-text-field>
 
-            <v-text-field
-              v-model="description"
-              label="Description"
-            ></v-text-field>
+            <v-tooltip bottom>
+              <v-text-field
+                v-model="description"
+                label="Description"
+                slot="activator"
+              ></v-text-field>
+              <span>Describe shortly what you are going to test.</span>
+            </v-tooltip>
 
-            <v-select
-              label="Authorization groups"
-              chips
-              append-icon=""
-              tags
-              v-model="groups">
-              <template slot="selection" slot-scope="data">
-                <v-chip
-                  close
-                  @input="removeGroup(data.item)"
-                  :selected="data.selected">
-                  <strong>{{ data.item }}</strong>&nbsp;
-                </v-chip>
-              </template>
-            </v-select>
+            <v-tooltip bottom>
+              <v-select
+                label="Authorization groups"
+                slot="activator"
+                chips
+                append-icon=""
+                tags
+                v-model="groups">
+                <template slot="selection" slot-scope="data">
+                  <v-chip
+                    close
+                    @input="removeGroup(data.item)"
+                    :selected="data.selected">
+                    <strong>{{ data.item }}</strong>&nbsp;
+                  </v-chip>
+                </template>
+              </v-select>
+              <span>Let your team manage this experiment.
+                Provide a group name, for example: <code>Tech Content Team</code>.
+                <br/>
+                Hit <b>ENTER</b> to add a group.</span>
+                You can add more than one group.
+                <br/>
+                Check your groups on your JIRA profile &mdash; https://jira.allegrogroup.com/secure/ViewProfile.jspa
+            </v-tooltip>
 
-            <v-switch label="Reporting" v-model="reportingEnabled"></v-switch>
+            <v-tooltip bottom>
+              <v-switch label="Reporting" v-model="reportingEnabled" slot="activator">
+              </v-switch>
+              <span>Disable <b>reporting</b> if don't want this experiment to be measured by Chi.</span>
+            </v-tooltip>
 
             <v-select
               v-bind:items="deviceClasses"
@@ -57,6 +81,7 @@
 
             <v-select
               label="Variants"
+              :rules="variantsRules"
               chips
               append-icon=""
               tags
@@ -97,11 +122,15 @@
                 label="Internal"
               ></v-text-field>
 
-              <span>You can choose from variants above or provide additional internal variant.</span>
+              <span>You can choose one of the existing variants to be forced internally
+                    or provide additional,
+                    internal only variant.
+                 <br/>
+                    <b>Internal</b> means &mdash; available only in Allegro intranet.</span>
             </v-tooltip>
 
             <v-btn @click="onSubmit" color="success">create</v-btn>
-          </form>
+          </v-form>
         </chi-panel>
         <v-progress-linear v-if="showProgress" v-bind:indeterminate="true"></v-progress-linear>
 
@@ -125,20 +154,26 @@
       const baseVariant = 'base'
 
       return {
+        createFormValid: true,
+        variantsRules: [
+          (v) => this.variantsUnique() || 'Slugified variant names must be unique.',
+          (v) => this.slugifiedVariants.indexOf('') === -1 || 'Slugified variant name can not be empty.',
+          (v) => this.slugifiedVariants.length > 1 || 'No variants. Seriously?'
+        ],
+        experimentIdRules: [
+          (v) => !!v || 'Experiment ID is required',
+          (v) => this.isExperimentIdUnique(v) || 'Experiment ID must be unique.'
+        ],
         baseVariant: baseVariant,
         experimentId: '',
         description: '',
         groups: [],
         reportingEnabled: true,
-
         selectedInternal: '',
-
         variants: [baseVariant],
         percentPerVariant: 1,
-
         deviceClasses: ['all', 'smartphone', 'desktop', 'tablet'],
         selectedDeviceClass: 'all',
-
         sendingDataToServer: false,
         errors: []
       }
@@ -184,7 +219,7 @@
         this.sending()
         this.cleanErrors()
 
-        if (this.validate()) {
+        if (this.$refs.createForm.validate()) {
           this.createExperiment({data: this.getExperimentDataToSend()}).then(response => {
             this.notSending()
             this.$router.push('/experiments/' + this.experimentIdSlug)
@@ -221,29 +256,13 @@
         this.sendingDataToServer = false
       },
 
-      validate () {
-        if (this.experimentId === '') {
-          this.errors.push('ID is required.')
-        }
-
-        if (this.isExperimentIdUnique()) {
-          this.errors.push('ID must be unique.')
-        }
-
+      variantsUnique () {
         let distinctVariants = new Set(this.slugifiedVariants)
-        if (this.slugifiedVariants.length !== distinctVariants.size) {
-          this.errors.push('Variant names must be unique.')
-        }
-
-        if (this.slugifiedVariants.indexOf('') !== -1) {
-          this.errors.push('Variant name cant be empty string.')
-        }
-
-        return this.errors.length === 0
+        return (this.slugifiedVariants.length === distinctVariants.size)
       },
 
       isExperimentIdUnique () {
-        return _.find(this.$store.state.experiments.experiments, e => e.id === this.experimentIdSlug) !== undefined
+        return _.find(this.$store.state.experiments.experiments, e => e.id === this.experimentIdSlug) === undefined
       },
 
       getExperimentDataToSend () {
