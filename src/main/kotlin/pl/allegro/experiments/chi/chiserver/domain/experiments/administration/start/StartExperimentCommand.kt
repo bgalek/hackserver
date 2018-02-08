@@ -1,8 +1,9 @@
-package pl.allegro.experiments.chi.chiserver.domain.experiments.administration
+package pl.allegro.experiments.chi.chiserver.domain.experiments.administration.start
 
 import pl.allegro.experiments.chi.chiserver.domain.experiments.Experiment
 import pl.allegro.experiments.chi.chiserver.domain.experiments.ExperimentId
 import pl.allegro.experiments.chi.chiserver.domain.experiments.ExperimentsRepository
+import pl.allegro.experiments.chi.chiserver.domain.experiments.administration.PermissionsAwareExperimentGetter
 
 
 class StartExperimentCommand(private val experimentsRepository: ExperimentsRepository,

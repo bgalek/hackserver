@@ -133,4 +133,3 @@ class DeleteExperimentCommandIntegrationSpec extends BaseIntegrationSpec {
         ]
     }
 }
-
