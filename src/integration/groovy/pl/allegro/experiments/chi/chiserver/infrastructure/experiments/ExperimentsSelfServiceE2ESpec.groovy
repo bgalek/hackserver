@@ -88,13 +88,7 @@ class ExperimentsSelfServiceE2ESpec extends BaseIntegrationSpec {
                 groups          : ['group a', 'group b'],
                 reportingEnabled: true
         ]
-
-        def expectedExperiment = request + [
-                author      : "Anonymous",
-                status      : "DRAFT",
-                measurements: [lastDayVisits: 0]
-        ]
-
+        
         when:
         def response = restTemplate.postForEntity(localUrl('/api/admin/experiments'), request, Map)
 
@@ -106,8 +100,14 @@ class ExperimentsSelfServiceE2ESpec extends BaseIntegrationSpec {
         def responseSingle = restTemplate.getForEntity(localUrl("/api/admin/experiments/${request.id}/"), Map)
 
         then:
+        def expectedExperiment = request + [
+                author      : "Anonymous",
+                status      : "DRAFT",
+                measurements: [lastDayVisits: 0],
+                editable: true
+        ]
         responseSingle.body.variants == expectedExperiment.variants
-        responseSingle.body == expectedExperiment + [editable: true]
+        responseSingle.body == expectedExperiment
         responseList.body.contains(expectedExperiment)
 
         and:

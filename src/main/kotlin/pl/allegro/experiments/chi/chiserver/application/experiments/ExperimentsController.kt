@@ -44,10 +44,11 @@ class ExperimentsController(private val experimentsRepository: ExperimentsReposi
     fun allExperiments(): String {
         logger.info("All experiments request received")
         return experimentsRepository.all
-                .let { measurementsRepository.withMeasurements(it) }
+                .let { measurementsRepository.withMeasurements(it)
+                        .map { permissionsRepository.withPermissions(it)} }
                 .let { jsonConverter.toJson(it) }
     }
-
+    
     @MeteredEndpoint
     @GetMapping(path = ["{experimentId}"])
     fun getExperiment(@PathVariable experimentId: String): ResponseEntity<String> {
