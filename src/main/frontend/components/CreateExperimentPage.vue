@@ -256,7 +256,7 @@
         this.sendingDataToServer = false
       },
 
-      noOfVariants() {
+      noOfVariants () {
         return this.slugifiedVariants.length + (this.selectedInternal !== '' ? 1 : 0)
       },
 
