@@ -158,7 +158,7 @@
         variantsRules: [
           (v) => this.variantsUnique() || 'Slugified variant names must be unique.',
           (v) => this.slugifiedVariants.indexOf('') === -1 || 'Slugified variant name can not be empty.',
-          (v) => this.slugifiedVariants.length > 1 || 'No variants. Seriously?'
+          (v) => this.noOfVariants() > 1 || 'No variants. Seriously?'
         ],
         experimentIdRules: [
           (v) => !!v || 'Experiment ID is required',
@@ -254,6 +254,10 @@
 
       notSending () {
         this.sendingDataToServer = false
+      },
+
+      noOfVariants() {
+        return this.slugifiedVariants.length + (this.selectedInternal !== '' ? 1 : 0)
       },
 
       variantsUnique () {
