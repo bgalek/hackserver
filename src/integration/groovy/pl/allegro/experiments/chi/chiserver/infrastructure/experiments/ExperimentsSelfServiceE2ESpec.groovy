@@ -30,15 +30,15 @@ class ExperimentsSelfServiceE2ESpec extends BaseIntegrationSpec {
         given:
         userProvider.user = new User('Author', [], true)
         def request = [
-                id: UUID.randomUUID().toString(),
-                description: "desc",
-                variants: [
+                id              : UUID.randomUUID().toString(),
+                description     : "desc",
+                variants        : [
                         [
-                                name: "v1",
-                                predicates: [ [ type: "INTERNAL" ]]
+                                name      : "v1",
+                                predicates: [[type: "INTERNAL"]]
                         ]
                 ],
-                groups: ['group a', 'group b'],
+                groups          : ['group a', 'group b'],
                 reportingEnabled: true
         ]
         restTemplate.postForEntity(localUrl('/api/admin/experiments'), request, Map)
@@ -51,15 +51,15 @@ class ExperimentsSelfServiceE2ESpec extends BaseIntegrationSpec {
         responseSingle.body.editable == editable
 
         where:
-        user                                      | editable
-        new User('Author', [], true)           | true
-        new User('Author', [], false)          | true
-        new User('Author', ['group a'], false) | true
-        new User('Author', ['group a'], true)  | true
-        new User('Author', [], false)  | true
-        new User('Unknown', [], false)  | false
-        new User('Unknown', ['group a'], false)  | true
-        new User('Unknown', [], true)  | true
+        user                                    | editable
+        new User('Author', [], true)            | true
+        new User('Author', [], false)           | true
+        new User('Author', ['group a'], false)  | true
+        new User('Author', ['group a'], true)   | true
+        new User('Author', [], false)           | true
+        new User('Unknown', [], false)          | false
+        new User('Unknown', ['group a'], false) | true
+        new User('Unknown', [], true)           | true
         new User('Unknown', ['group a'], true)  | true
     }
 
@@ -68,30 +68,30 @@ class ExperimentsSelfServiceE2ESpec extends BaseIntegrationSpec {
         userProvider.user = new User('Anonymous', [], true)
 
         def request = [
-                id: "some2",
-                description: "desc",
-                variants: [
+                id              : "some2",
+                description     : "desc",
+                variants        : [
                         [
-                                name: "v1",
-                                predicates: [ [ type: "INTERNAL" ]]
+                                name      : "v1",
+                                predicates: [[type: "INTERNAL"]]
                         ],
                         [
-                                name: "v2",
-                                predicates: [ [ type: "HASH", from: 17, to: 90 ]]
+                                name      : "v2",
+                                predicates: [[type: "HASH", from: 17, to: 90]]
                         ],
                         [
-                                name: "v3",
-                                predicates: [ [ type: "CMUID_REGEXP", regexp: "....[123]\$"], [ type: "DEVICE_CLASS", device: "phone"] ]
+                                name      : "v3",
+                                predicates: [[type: "CMUID_REGEXP", regexp: "....[123]\$"], [type: "DEVICE_CLASS", device: "phone"]]
                         ]
                 ],
-                groups: ['group a', 'group b'],
+                groups          : ['group a', 'group b'],
                 reportingEnabled: true
         ]
 
         def expectedExperiment = request + [
-                author: "Anonymous",
-                status: "DRAFT",
-                measurements: [ lastDayVisits: 0 ]
+                author      : "Anonymous",
+                status      : "DRAFT",
+                measurements: [lastDayVisits: 0]
         ]
 
         when:
@@ -111,14 +111,11 @@ class ExperimentsSelfServiceE2ESpec extends BaseIntegrationSpec {
 
         and:
         def startRequest = [
-                command: 'START',
-                commandProperties: [
-                        experimentId: "some2",
-                        experimentDurationDays: 30
-                ]
+                experimentDurationDays: 30
         ]
-        restTemplate.put(localUrl("/api/admin/experiments/${startRequest.commandProperties.experimentId}/"), startRequest, Map)
-        def startedExperiment = restTemplate.getForEntity(localUrl("/api/admin/experiments/${startRequest.commandProperties.experimentId}/"), Map)
+
+        restTemplate.put(localUrl("/api/admin/experiments/${request.id}/start"), startRequest, Map)
+        def startedExperiment = restTemplate.getForEntity(localUrl("/api/admin/experiments/${request.id}/"), Map)
 
         then:
         startedExperiment.body.status == 'ACTIVE'

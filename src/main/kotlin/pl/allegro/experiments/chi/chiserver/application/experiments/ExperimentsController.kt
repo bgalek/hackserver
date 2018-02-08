@@ -61,23 +61,22 @@ class ExperimentsController(private val experimentsRepository: ExperimentsReposi
     }
 
     @MeteredEndpoint
-    @PutMapping(path = ["{experimentId}"])
+    @PutMapping(path = ["{experimentId}/start"])
     fun startExperiment(
             @PathVariable experimentId: String,
-            @RequestBody manageRequest: ManageExperimentRequest<StartExperimentProperties>): ResponseEntity<String> {
-        logger.debug("Start experiment request received", manageRequest.command)
-        startExperimentCommandFactory.startExperimentCommand(experimentId, manageRequest.commandProperties).execute()
+            @RequestBody properties: StartExperimentProperties): ResponseEntity<String> {
+        logger.debug("Start experiment request received")
+        startExperimentCommandFactory.startExperimentCommand(experimentId, properties).execute()
         return ResponseEntity(HttpStatus.OK)
     }
 
-//    @MeteredEndpoint
-//    @DeleteMapping(path = ["{experimentId}"])
-//    fun deleteExperiment(
-//            @PathVariable experimentId: String,
-//            @RequestBody manageRequest: ManageExperimentRequest<DeleteExperimentRequest>): ResponseEntity<String> {
-//        logger.debug("Delete experiment request received", manageRequest.command)
-//        return ResponseEntity(HttpStatus.OK)
-//    }
+    @MeteredEndpoint
+    @DeleteMapping(path = ["{experimentId}", "delete"])
+    fun deleteExperiment(
+            @PathVariable experimentId: String): ResponseEntity<String> {
+        logger.debug("Delete experiment request received")
+        return ResponseEntity(HttpStatus.OK)
+    }
 
     @ExceptionHandler(ExperimentCreationException::class)
     fun handle(exception: ExperimentCreationException): ResponseEntity<ErrorsHolder> {
