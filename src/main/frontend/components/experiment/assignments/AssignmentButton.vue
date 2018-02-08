@@ -1,6 +1,7 @@
 <template>
   <v-menu open-on-hover bottom offset-y>
-    <v-btn flat :color="color" slot="activator" style="text-transform: none">{{ title }} <v-icon right>ondemand_video</v-icon> </v-btn>
+    <v-btn flat :color="color" slot="activator" style="text-transform: none">{{ title }}
+      <v-icon right>ondemand_video</v-icon> </v-btn>
     <v-list>
       <v-list-tile @click="goToCookieBaker(redirectLink)">
         <v-list-tile-title>Assign me and redirect</v-list-tile-title>

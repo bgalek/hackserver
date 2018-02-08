@@ -4,5 +4,5 @@ export default new Vapi({
   baseURL: '/api'
 }).put({
   action: 'startExperiment',
-  path: '/admin/experiments'
+  path: ({experimentId}) => `/admin/experiments/${experimentId}/start`
 }).getStore()

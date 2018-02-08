@@ -3,7 +3,7 @@
     <v-layout>
       <v-flex md12 lg10 offset-xl1 xl10>
 
-        <h1>Experiment: {{ $route.params.experimentId }}</h1>
+        <h1>Experiment <span style="font-family: monospace">{{ $route.params.experimentId }}</span></h1>
 
         <experiment-details
           :experiment="experiment"
@@ -51,7 +51,6 @@
     },
 
     computed: mapState({
-      //statistics: state => state.experimentStatistics.experimentStatistics,
       experiment: state => state.experiment.experiment,
       error: state => state.experiment.error.experiment,
       pending: state => state.experiment.pending.experiment,

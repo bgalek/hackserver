@@ -36,11 +36,17 @@
         Start experiment
       </v-btn>
 
-      <v-btn v-if="canBeDeleted()"
-             color="red"
-             @click="deleteMe">
-        Delete experiment
-      </v-btn>
+      <v-menu open-on-hover bottom offset-y
+              v-if="canBeDeleted()">
+        <v-btn color="gray" slot="activator" style="text-transform: none">Delete experiment
+        </v-btn>
+        <v-list>
+          <v-list-tile @click="deleteMe">
+            <v-list-tile-title>I really want to delete experiment {{this.experiment.id}}</v-list-tile-title>
+            &nbsp;<v-icon right>delete_forever</v-icon>
+          </v-list-tile>
+        </v-list>
+      </v-menu>
 
     </v-form>
 
@@ -77,28 +83,39 @@
     methods: {
 
       deleteMe () {
-        console.log("this.experiment", this.experiment)
+        this.prepareToSend()
+        this.deleteExperiment({
+          params: {
+            experimentId: this.experiment.id
+          }
+        }).then(response => {
+          console.log('delete.response', response.status)
+          return this.$router.push(`/experiments`)
+        }).catch(error => {
+          this.showError(error)
+        })
+        this.afterSending()
       },
 
       start () {
         if (this.$refs.actionForm.validate()) {
           this.prepareToSend()
 
-          this.startExperiment({data: this.buildStartExperimentCommand()}).then(response => {
-            this.getExperiment({ params: { experimentId: this.experiment.id } })
+          this.startExperiment({
+            data: {
+              experimentDurationDays: this.durationDays
+            },
+            params: {
+              experimentId: this.experiment.id
+            }
+          }).then(response => {
+            this.getExperiment({params: {experimentId: this.experiment.id}})
             this.commandOkMessage = 'Experiment successfully started'
           }).catch(error => {
             this.showError(error)
           })
 
           this.afterSending()
-        }
-      },
-
-      buildStartExperimentCommand () {
-        return {
-          experimentId: this.experiment.id,
-          experimentDurationDays: this.durationDays
         }
       },
 
