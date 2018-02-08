@@ -11,7 +11,7 @@
 
         <chi-panel title="Metrics & Statistics">
           <result-table
-            v-if="experiment.reportingEnabled"
+            v-if="experiment.reportingEnabled && experimentId"
             :experiment="experiment"
           ></result-table>
 
@@ -51,9 +51,11 @@
     },
 
     computed: mapState({
+      //statistics: state => state.experimentStatistics.experimentStatistics,
       experiment: state => state.experiment.experiment,
       error: state => state.experiment.error.experiment,
-      pending: state => state.experiment.pending.experiment
+      pending: state => state.experiment.pending.experiment,
+      experimentId: state => state.experiment.experiment.id
     }),
 
     components: {

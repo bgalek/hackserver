@@ -19,18 +19,29 @@
 
     <v-form ref="actionForm"
             v-model="actionFormValid"
-            v-if="canBeStarted()"
+            v-if="canRunAnyCommand()"
             lazy-validation>
+
       <v-text-field
-        label="Duration days"
-        v-model="durationDays"
-        :rules="durationDaysRules"
-        required
+             v-if="canBeStarted()"
+             label="Duration days"
+             v-model="durationDays"
+             :rules="durationDaysRules"
+             required
       ></v-text-field>
 
-      <v-btn color="green" @click="start">
+      <v-btn v-if="canBeStarted()"
+             color="green"
+             @click="start">
         Start experiment
       </v-btn>
+
+      <v-btn v-if="canBeDeleted()"
+             color="red"
+             @click="deleteMe">
+        Delete experiment
+      </v-btn>
+
     </v-form>
 
   </chi-panel>
@@ -64,6 +75,10 @@
     },
 
     methods: {
+
+      deleteMe () {
+        console.log("this.experiment", this.experiment)
+      },
 
       start () {
         if (this.$refs.actionForm.validate()) {
@@ -109,11 +124,15 @@
         return this.experiment.status === 'DRAFT'
       },
 
-      canRunAnyCommand () {
-        return this.canBeStarted()
+      canBeDeleted () {
+        return true
       },
 
-      ...mapActions(['startExperiment', 'getExperiment'])
+      canRunAnyCommand () {
+        return this.canBeStarted() || this.canBeDeleted()
+      },
+
+      ...mapActions(['startExperiment', 'getExperiment', 'deleteExperiment'])
     }
   }
 </script>

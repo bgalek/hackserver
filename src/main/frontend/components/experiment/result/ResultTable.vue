@@ -74,7 +74,7 @@
     </div>
 
     <v-alert v-if="experimentStatisticsError" color="error" icon="warning" value="true">
-      Couldn't load statistics for {{ $route.params.experimentId }} : {{ experimentStatisticsError.message }}
+      Couldn't load statistics for {{ this.experiment.id }} : {{ experimentStatisticsError.message }}
     </v-alert>
 
     <p class="text-xs-center">
@@ -168,7 +168,7 @@
       loadExperimentStatistics (device) {
         this.getExperimentStatistics({
           params: {
-            experimentId: this.$route.params.experimentId,
+            experimentId: this.experiment.id,
             device
           }
         })
@@ -307,7 +307,7 @@
         this.loadExperimentStatistics(device)
         this.$router.push({
           name: 'experiment',
-          params: { experimentId: this.$route.params.experimentId },
+          params: { experimentId: this.experiment.id },
           query: {device}
         })
       }
