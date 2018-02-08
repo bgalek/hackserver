@@ -1,6 +1,5 @@
 package pl.allegro.experiments.chi.chiserver.domain.experiments.administration
 
-import pl.allegro.experiments.chi.chiserver.application.experiments.administration.AuthorizationException
 import pl.allegro.experiments.chi.chiserver.domain.UserProvider
 import pl.allegro.experiments.chi.chiserver.domain.experiments.Experiment
 import pl.allegro.experiments.chi.chiserver.domain.experiments.ExperimentId
