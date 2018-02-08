@@ -71,7 +71,7 @@ class ExperimentsController(private val experimentsRepository: ExperimentsReposi
     }
 
     @MeteredEndpoint
-    @DeleteMapping(path = ["{experimentId}", "delete"])
+    @DeleteMapping(path = ["{experimentId}/delete"])
     fun deleteExperiment(
             @PathVariable experimentId: String): ResponseEntity<String> {
         logger.debug("Delete experiment request received")
