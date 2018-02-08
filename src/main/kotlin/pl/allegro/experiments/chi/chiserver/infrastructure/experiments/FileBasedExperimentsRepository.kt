@@ -73,4 +73,8 @@ open class FileBasedExperimentsRepository(jsonUrl: String,
     override fun save(experiment: Experiment) {
         throw OperationNotSupportedException("Cannot add experiments to file based repository")
     }
+
+    override fun delete(experimentId: ExperimentId) {
+        throw OperationNotSupportedException("Cannot delete experiments from file based repository")
+    }
 }

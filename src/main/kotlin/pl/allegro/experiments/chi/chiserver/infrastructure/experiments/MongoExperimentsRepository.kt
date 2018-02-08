@@ -14,6 +14,10 @@ open class MongoExperimentsRepository(private val mongoTemplate: MongoTemplate, 
         }
     }
 
+    override fun delete(experimentId: ExperimentId) {
+        mongoTemplate.remove(getExperiment(experimentId), COLLECTION)
+    }
+
     override fun save(experiment: Experiment) =
         mongoTemplate.save(experiment, COLLECTION)
 

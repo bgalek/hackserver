@@ -18,6 +18,11 @@ class CachedExperimentsRepository(private val delegate: ExperimentsRepository): 
         refresh()
     }
 
+    override fun delete(experimentId: ExperimentId) {
+        delegate.delete(experimentId)
+        refresh()
+    }
+
     override fun getExperiment(id: ExperimentId): Experiment? {
         return experiments.find { it.id == id }
     }

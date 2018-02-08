@@ -15,6 +15,10 @@ import java.time.format.DateTimeFormatter
 class DruidStatisticsRepository(val druid: DruidClient, val datasource: String,
                                 val jsonConverter: JsonConverter) : StatisticsRepository {
 
+    override fun hasAnyStatistics(experiment: Experiment): Boolean {
+        return lastStatisticsDate(experiment) != null
+    }
+
     override fun lastStatisticsDate(experiment: Experiment): LocalDate? =
         """{
           "queryType": "timeBoundary",

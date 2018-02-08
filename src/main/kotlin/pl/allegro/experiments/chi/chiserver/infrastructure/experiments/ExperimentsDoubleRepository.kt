@@ -24,6 +24,10 @@ class ExperimentsDoubleRepository(private val fileBasedExperimentsRepository: Fi
         mongoExperimentsRepository.save(experiment)
     }
 
+    override fun delete(experimentId: ExperimentId) {
+        mongoExperimentsRepository.delete(experimentId)
+    }
+
     override val all: List<Experiment>
     get() = fileBasedExperimentsRepository.all + mongoExperimentsRepository.all
 

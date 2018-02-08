@@ -7,4 +7,6 @@ interface StatisticsRepository {
     fun experimentStatistics(experiment: Experiment, toDate: LocalDate, device: String): ExperimentStatistics
 
     fun lastStatisticsDate(experiment: Experiment): LocalDate?
+
+    fun hasAnyStatistics(experiment: Experiment): Boolean
 }

@@ -3,6 +3,7 @@ package pl.allegro.experiments.chi.chiserver.infrastructure.experiments
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.HttpStatus
 import org.springframework.test.annotation.DirtiesContext
+import org.springframework.web.client.HttpClientErrorException
 import org.springframework.web.client.RestTemplate
 import pl.allegro.experiments.chi.chiserver.BaseIntegrationSpec
 import pl.allegro.experiments.chi.chiserver.domain.User
@@ -119,6 +120,15 @@ class ExperimentsSelfServiceE2ESpec extends BaseIntegrationSpec {
 
         then:
         startedExperiment.body.status == 'ACTIVE'
+
+        and:
+        restTemplate.delete(localUrl("/api/admin/experiments/${request.id}"))
+
+        when:
+        restTemplate.getForEntity(localUrl("/api/admin/experiments/${request.id}/"), Map)
+
+        then:
+        thrown HttpClientErrorException
     }
 }
 
