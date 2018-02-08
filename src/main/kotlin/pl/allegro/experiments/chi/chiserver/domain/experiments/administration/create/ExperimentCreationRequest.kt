@@ -1,4 +1,4 @@
-package pl.allegro.experiments.chi.chiserver.domain.experiments.administration
+package pl.allegro.experiments.chi.chiserver.domain.experiments.administration.create
 
 import pl.allegro.experiments.chi.chiserver.domain.experiments.*
 import java.util.regex.Pattern
@@ -16,10 +16,10 @@ data class ExperimentCreationRequest (var id: ExperimentId,
     }
 
     data class Predicate (val type: PredicateType,
-                     val from: Int? = null,
-                     val to: Int? = null,
-                     val regexp: String? = null,
-                     val device: String? = null)
+                          val from: Int? = null,
+                          val to: Int? = null,
+                          val regexp: String? = null,
+                          val device: String? = null)
 
     fun toExperiment(author: String) : Experiment {
         try {

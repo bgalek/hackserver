@@ -4,16 +4,18 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.test.annotation.DirtiesContext
 import org.springframework.test.context.ContextConfiguration
 import pl.allegro.experiments.chi.chiserver.BaseIntegrationSpec
-import pl.allegro.experiments.chi.chiserver.application.experiments.administration.AuthorizationException
-import pl.allegro.experiments.chi.chiserver.application.experiments.administration.CreateExperimentCommand
-import pl.allegro.experiments.chi.chiserver.domain.experiments.administration.ExperimentCreationException
-import pl.allegro.experiments.chi.chiserver.domain.experiments.administration.ExperimentCreationRequest
+import pl.allegro.experiments.chi.chiserver.domain.experiments.administration.AuthorizationException
+import pl.allegro.experiments.chi.chiserver.domain.experiments.administration.create.CreateExperimentCommand
+import pl.allegro.experiments.chi.chiserver.domain.experiments.administration.create.ExperimentCreationException
+import pl.allegro.experiments.chi.chiserver.domain.experiments.administration.create.ExperimentCreationRequest
 import pl.allegro.experiments.chi.chiserver.domain.User
 import pl.allegro.experiments.chi.chiserver.domain.experiments.ExperimentsRepository
 import pl.allegro.experiments.chi.chiserver.infrastructure.InMemoryExperimentsRepository
 import pl.allegro.experiments.chi.chiserver.infrastructure.experiments.ExperimentsTestConfig
 import pl.allegro.experiments.chi.chiserver.infrastructure.experiments.FileBasedExperimentsRepository
 import pl.allegro.experiments.chi.chiserver.infrastructure.experiments.MutableUserProvider
+
+import static pl.allegro.experiments.chi.chiserver.application.administration.CommandTestUtils.simpleExperimentRequest
 
 @ContextConfiguration(classes = [ExperimentsTestConfig])
 @DirtiesContext
@@ -91,11 +93,4 @@ class CreateExperimentCommandIntegrationSpec extends BaseIntegrationSpec {
         def ex = thrown(ExperimentCreationException)
         ex.message == 'Cannot create experiment from request ExperimentCreationRequest(id=x, variants=[Variant(name=v1, predicates=[Predicate(type=HASH, from=null, to=null, regexp=null, device=null)])], description=, groups=[], reportingEnabled=false)'
     }
-
-
-    def simpleExperimentRequest(String id) {
-        def variants = [new ExperimentCreationRequest.Variant("v1", [new ExperimentCreationRequest.Predicate(ExperimentCreationRequest.PredicateType.INTERNAL, null, null, null, null)])]
-        return new ExperimentCreationRequest(id, variants, "simple description", ["group a", "group b"], true)
-    }
-
 }
