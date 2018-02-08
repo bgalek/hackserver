@@ -117,7 +117,7 @@ class ExperimentsSelfServiceE2ESpec extends BaseIntegrationSpec {
                         experimentDurationDays: 30
                 ]
         ]
-        restTemplate.put(localUrl('/api/admin/experiments'), startRequest, Map)
+        restTemplate.put(localUrl("/api/admin/experiments/${startRequest.commandProperties.experimentId}/"), startRequest, Map)
         def startedExperiment = restTemplate.getForEntity(localUrl("/api/admin/experiments/${startRequest.commandProperties.experimentId}/"), Map)
 
         then:

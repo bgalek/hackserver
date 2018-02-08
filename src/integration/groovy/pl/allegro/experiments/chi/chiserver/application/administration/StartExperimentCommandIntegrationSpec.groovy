@@ -13,7 +13,7 @@ import pl.allegro.experiments.chi.chiserver.domain.experiments.administration.Ex
 import pl.allegro.experiments.chi.chiserver.domain.experiments.administration.ExperimentNotFoundException
 import pl.allegro.experiments.chi.chiserver.domain.experiments.administration.StartExperimentCommand
 import pl.allegro.experiments.chi.chiserver.domain.experiments.administration.StartExperimentException
-import pl.allegro.experiments.chi.chiserver.domain.experiments.administration.StartExperimentRequest
+import pl.allegro.experiments.chi.chiserver.domain.experiments.administration.StartExperimentProperties
 import pl.allegro.experiments.chi.chiserver.infrastructure.experiments.ExperimentsTestConfig
 import pl.allegro.experiments.chi.chiserver.infrastructure.experiments.MutableUserProvider
 
@@ -36,7 +36,7 @@ class StartExperimentCommandIntegrationSpec extends BaseIntegrationSpec {
         and:
         mutableUserProvider.user = user
         def startCommand = new StartExperimentCommand(experimentsRepository, mutableUserProvider,
-                new StartExperimentRequest(id, 30))
+                new StartExperimentProperties(30), id)
 
         when:
         startCommand.execute()
@@ -55,7 +55,7 @@ class StartExperimentCommandIntegrationSpec extends BaseIntegrationSpec {
         given:
         def id = UUID.randomUUID().toString()
         def startCommand = new StartExperimentCommand(experimentsRepository, mutableUserProvider,
-                new StartExperimentRequest(id, 30))
+                new StartExperimentProperties(30), id)
 
         when:
         startCommand.execute()
@@ -73,12 +73,12 @@ class StartExperimentCommandIntegrationSpec extends BaseIntegrationSpec {
 
         and:
         def startCommand = new StartExperimentCommand(experimentsRepository, mutableUserProvider,
-                new StartExperimentRequest(id, 30))
+                new StartExperimentProperties(30), id)
         startCommand.execute()
 
         and:
         def restartCommand = new StartExperimentCommand(experimentsRepository, mutableUserProvider,
-                new StartExperimentRequest(id, 30))
+                new StartExperimentProperties(30), id)
 
         when:
         restartCommand.execute()
@@ -97,7 +97,7 @@ class StartExperimentCommandIntegrationSpec extends BaseIntegrationSpec {
         and:
         mutableUserProvider.user = user
         def startCommand = new StartExperimentCommand(experimentsRepository, mutableUserProvider,
-                new StartExperimentRequest(id, 30))
+                new StartExperimentProperties(30), id)
 
         when:
         startCommand.execute()
@@ -121,7 +121,7 @@ class StartExperimentCommandIntegrationSpec extends BaseIntegrationSpec {
 
         and:
         def startCommand = new StartExperimentCommand(experimentsRepository, mutableUserProvider,
-                new StartExperimentRequest(id, duration))
+                new StartExperimentProperties(duration), id)
 
         when:
         startCommand.execute()

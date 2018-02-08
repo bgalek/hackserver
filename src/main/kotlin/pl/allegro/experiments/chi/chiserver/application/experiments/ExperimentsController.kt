@@ -33,20 +33,20 @@ class ExperimentsController(private val experimentsRepository: ExperimentsReposi
 
     @MeteredEndpoint
     @GetMapping(path = [""])
-    fun allExperiments() : String {
+    fun allExperiments(): String {
         logger.info("All experiments request received")
         return experimentsRepository.all
-            .let { measurementsRepository.withMeasurements(it) }
-            .let { jsonConverter.toJson(it) }
+                .let { measurementsRepository.withMeasurements(it) }
+                .let { jsonConverter.toJson(it) }
     }
 
     @MeteredEndpoint
     @GetMapping(path = ["{experimentId}"])
-    fun getExperiment(@PathVariable experimentId: String) : ResponseEntity<String> {
+    fun getExperiment(@PathVariable experimentId: String): ResponseEntity<String> {
         logger.info("Single experiment request received")
         return experimentsRepository.getExperiment(experimentId)
                 ?.let { measurementsRepository.withMeasurements(it) }
-                ?.let { permissionsRepository.withPermissions(it)  }
+                ?.let { permissionsRepository.withPermissions(it) }
                 ?.let { jsonConverter.toJson(it) }
                 ?.let { ResponseEntity.ok(it) }
                 ?: (ResponseEntity(HttpStatus.NOT_FOUND))
@@ -54,19 +54,30 @@ class ExperimentsController(private val experimentsRepository: ExperimentsReposi
 
     @MeteredEndpoint
     @PostMapping(path = [""])
-    fun addExperiment(@RequestBody experimentCreationRequest: ExperimentCreationRequest) : ResponseEntity<String> {
+    fun addExperiment(@RequestBody experimentCreationRequest: ExperimentCreationRequest): ResponseEntity<String> {
         logger.info("Experiment creation request received", experimentCreationRequest)
         createExperimentCommandFactory.createExperimentCommand(experimentCreationRequest).execute()
         return ResponseEntity(HttpStatus.CREATED)
     }
 
     @MeteredEndpoint
-    @PutMapping(path = [""])
-    fun startExperiment(@RequestBody manageRequest: ManageExperimentRequest<StartExperimentRequest>) : ResponseEntity<String> {
+    @PutMapping(path = ["{experimentId}"])
+    fun startExperiment(
+            @PathVariable experimentId: String,
+            @RequestBody manageRequest: ManageExperimentRequest<StartExperimentProperties>): ResponseEntity<String> {
         logger.debug("Start experiment request received", manageRequest.command)
-        startExperimentCommandFactory.startExperimentCommand(manageRequest.commandProperties).execute()
+        startExperimentCommandFactory.startExperimentCommand(experimentId, manageRequest.commandProperties).execute()
         return ResponseEntity(HttpStatus.OK)
     }
+
+//    @MeteredEndpoint
+//    @DeleteMapping(path = ["{experimentId}"])
+//    fun deleteExperiment(
+//            @PathVariable experimentId: String,
+//            @RequestBody manageRequest: ManageExperimentRequest<DeleteExperimentRequest>): ResponseEntity<String> {
+//        logger.debug("Delete experiment request received", manageRequest.command)
+//        return ResponseEntity(HttpStatus.OK)
+//    }
 
     @ExceptionHandler(ExperimentCreationException::class)
     fun handle(exception: ExperimentCreationException): ResponseEntity<ErrorsHolder> {
