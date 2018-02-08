@@ -7,11 +7,15 @@ import pl.allegro.experiments.chi.chiserver.domain.experiments.ExperimentsReposi
 
 @Component
 class StartExperimentCommandFactory(val experimentsRepository: ExperimentsRepository,
-                                    val userProvider: UserProvider) {
+                                    val permissionsAwareExperimentGetter: PermissionsAwareExperimentGetter) {
 
     fun startExperimentCommand(
             experimentId: ExperimentId,
             properties: StartExperimentProperties) : StartExperimentCommand {
-        return StartExperimentCommand(experimentsRepository, userProvider, properties, experimentId)
+        return StartExperimentCommand(
+                experimentsRepository,
+                properties,
+                permissionsAwareExperimentGetter,
+                experimentId)
     }
 }
