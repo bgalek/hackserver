@@ -58,7 +58,7 @@
   import { mapActions } from 'vuex'
 
   export default {
-    props: ['experiment'],
+    props: ['experiment', 'allowDelete'],
 
     components: {
       ChiPanel
@@ -81,7 +81,6 @@
     },
 
     methods: {
-
       deleteMe () {
         this.prepareToSend()
         this.deleteExperiment({
@@ -142,7 +141,7 @@
       },
 
       canBeDeleted () {
-        return true
+        return this.allowDelete
       },
 
       canRunAnyCommand () {

@@ -1,7 +1,7 @@
 <template>
   <v-container>
     <v-layout row>
-      <p v-if="experimentStatistics.durationDays>0">
+      <p v-if="experimentStatistics.durationDays > 0">
         <v-tooltip right>
           <span slot="activator">
           Data calculated on
@@ -18,7 +18,7 @@
 
       <result-table-settings
         v-if="experiment.reportingEnabled"
-        :initialDevice="device"
+        :initialDevice="initialDevice"
         @settingsChanged="updateQueryParams"
       ></result-table-settings>
     </v-layout>
@@ -87,13 +87,12 @@
 </template>
 
 <script>
-  import {mapState, mapActions} from 'vuex'
+  import {mapActions} from 'vuex'
   import PivotLink from '../../PivotLink.vue'
   import ResultTableSettings from './ResultTableSettings.vue'
-  import _ from 'lodash'
 
   export default {
-    props: ['experiment'],
+    props: ['experiment', 'experimentStatistics', 'experimentStatisticsError', 'experimentStatisticsPending'],
 
     components: {
       PivotLink, ResultTableSettings
@@ -101,7 +100,7 @@
 
     data () {
       return {
-        device: this.$route.query.device || 'all',
+        initialDevice: 'all',
         headers: [
           {text: 'Variant', sortable: false},
           {text: 'Metric Value', sortable: false},
@@ -109,11 +108,6 @@
           {text: 'p-Value', sortable: false},
           {text: 'Sample Count', sortable: false}
         ],
-        metricOrder: {
-          'tx_visit': 1,
-          'tx_avg': 2,
-          'gmv': 3
-        },
         metricNames: {
           'tx_visit': 'Visits with transaction(s)',
           'tx_avg': 'Transactions per visit',
@@ -122,57 +116,8 @@
       }
     },
 
-    mounted () {
-      this.loadExperimentStatistics(this.device)
-    },
-
-    computed: mapState({
-      experimentStatistics (state) {
-        const stats = state.experimentStatistics.experimentStatistics
-
-        const mappedMetrics = []
-
-        _.forIn(stats.metrics, (metricValuePerVariant, metricName) => {
-          let mappedVariants = []
-          _.forIn(metricValuePerVariant, (metricValue, variantName) => {
-            mappedVariants[(variantName !== 'base') ? 'push' : 'unshift']({
-              variant: variantName,
-              value: metricValue.value,
-              diff: metricValue.diff,
-              count: metricValue.count,
-              pValue: metricValue.pValue
-            })
-          })
-          mappedMetrics.push({
-            'key': metricName,
-            'variants': mappedVariants,
-            'order': this.metricOrder[metricName]
-          })
-        })
-
-        return {
-          id: stats.id,
-          durationDays: Math.floor(stats.duration / (3600 * 24 * 1000)),
-          device: stats.device,
-          toDate: stats.toDate,
-          metrics: mappedMetrics.sort((x, y) => x.order - y.order)
-        }
-      },
-      experimentStatisticsError: state => state.experimentStatistics.error.experimentStatistics,
-      experimentStatisticsPending: state => state.experimentStatistics.pending.experimentStatistics
-    }),
-
     methods: {
       ...mapActions(['getExperimentStatistics']),
-
-      loadExperimentStatistics (device) {
-        this.getExperimentStatistics({
-          params: {
-            experimentId: this.experiment.id,
-            device
-          }
-        })
-      },
 
       diffToolTip (metricVariant) {
         const testSignificance = this.testSignificance(metricVariant)
@@ -303,12 +248,8 @@
       },
 
       updateQueryParams ({device}) {
-        this.device = device
-        this.loadExperimentStatistics(device)
-        this.$router.push({
-          name: 'experiment',
-          params: { experimentId: this.experiment.id },
-          query: {device}
+        this.$emit('deviceChanged', {
+          device: device
         })
       }
     }
