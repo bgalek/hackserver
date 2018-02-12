@@ -30,6 +30,7 @@ class InteractionsIntegrationTestConfig {
                                 new ExperimentVariant('v1', [])
                         ],
                         'description',
+                        'link',
                         'owner',
                         [],
                         true,
@@ -44,6 +45,7 @@ class InteractionsIntegrationTestConfig {
                                 new ExperimentVariant('v1', [])
                         ],
                         'description',
+                        'link',
                         'owner',
                         [],
                         false,

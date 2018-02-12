@@ -82,7 +82,12 @@ class CreateExperimentCommandIntegrationSpec extends BaseIntegrationSpec {
         given:
         mutableUserProvider.user = new User('root', [], true)
 
-        def brokenRequest = new ExperimentCreationRequest('x', [new ExperimentCreationRequest.Variant('v1', [new ExperimentCreationRequest.Predicate(ExperimentCreationRequest.PredicateType.HASH, null, null, null, null)])], '', [], false)
+        def brokenRequest = new ExperimentCreationRequest(
+                'x', [new ExperimentCreationRequest.Variant('v1', [new ExperimentCreationRequest.Predicate(ExperimentCreationRequest.PredicateType.HASH, null, null, null, null)])],
+                '',
+                '',
+                [],
+                false)
 
         def command = new CreateExperimentCommand(experimentsRepository, mutableUserProvider, brokenRequest)
 
@@ -91,6 +96,6 @@ class CreateExperimentCommandIntegrationSpec extends BaseIntegrationSpec {
 
         then:
         def ex = thrown(ExperimentCreationException)
-        ex.message == 'Cannot create experiment from request ExperimentCreationRequest(id=x, variants=[Variant(name=v1, predicates=[Predicate(type=HASH, from=null, to=null, regexp=null, device=null)])], description=, groups=[], reportingEnabled=false)'
+        ex.message == 'Cannot create experiment from request ExperimentCreationRequest(id=x, variants=[Variant(name=v1, predicates=[Predicate(type=HASH, from=null, to=null, regexp=null, device=null)])], description=, documentLink=, groups=[], reportingEnabled=false)'
     }
 }

@@ -19,6 +19,7 @@ val experimentDeserializer = jsonDeserializer { (jsonElement, _, context) ->
     val activeFrom = json["activeFrom"]?.let { ZonedDateTime.parse(it.string, formatter) }
     val activeTo = json["activeTo"]?.let { ZonedDateTime.parse(it.string, formatter) }
     val description = json["description"]?.string
+    val documentLink = json["documentLink"]?.string
     val owner = json["owner"]?.string
     val reported = json["reportingEnabled"]?.bool ?: true
     val variants = context.deserialize<List<ExperimentVariant>>(json["variants"]!!)
@@ -26,5 +27,5 @@ val experimentDeserializer = jsonDeserializer { (jsonElement, _, context) ->
 
     val period: ActivityPeriod? = if (activeFrom != null && activeTo != null) ActivityPeriod(activeFrom, activeTo) else null;
 
-    Experiment(id, variants, description, owner, emptyList(), reported, period, measurements)
+    Experiment(id, variants, description, documentLink, owner, emptyList(), reported, period, measurements)
 }

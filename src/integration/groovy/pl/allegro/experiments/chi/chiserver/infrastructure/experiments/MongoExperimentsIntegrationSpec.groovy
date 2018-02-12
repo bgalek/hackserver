@@ -28,7 +28,7 @@ class MongoExperimentsIntegrationSpec extends BaseIntegrationSpec {
                     new ExperimentVariant("base", [new HashRangePredicate(new PercentageRange(0, 10))]),
                     new ExperimentVariant("v2", [new HashRangePredicate(new PercentageRange(10, 20))]),
                 ],
-                "exciting stuff", "tester", [], false,
+                "exciting stuff", "exciting link", "tester", [], false,
                 new ActivityPeriod(someDateTime().minusDays(2), someDateTime().plusDays(3)),
                 null,
                 null

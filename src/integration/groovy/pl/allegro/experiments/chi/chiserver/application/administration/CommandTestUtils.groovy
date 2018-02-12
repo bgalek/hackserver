@@ -5,6 +5,6 @@ import pl.allegro.experiments.chi.chiserver.domain.experiments.administration.cr
 class CommandTestUtils {
     static def simpleExperimentRequest(String id) {
         def variants = [new ExperimentCreationRequest.Variant("v1", [new ExperimentCreationRequest.Predicate(ExperimentCreationRequest.PredicateType.INTERNAL, null, null, null, null)])]
-        return new ExperimentCreationRequest(id, variants, "simple description", ["group a", "group b"], true)
+        return new ExperimentCreationRequest(id, variants, "simple description", "some link", ["group a", "group b"], true)
     }
 }

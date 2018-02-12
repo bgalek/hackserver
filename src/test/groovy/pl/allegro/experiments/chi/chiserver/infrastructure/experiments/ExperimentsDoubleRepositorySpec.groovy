@@ -59,6 +59,15 @@ class ExperimentsDoubleRepositorySpec extends Specification {
     }
 
     def experiment(id) {
-        new Experiment(id, [new ExperimentVariant("x", [])], "", "", [], false, null, null, null)
+        new Experiment(id,
+                [new ExperimentVariant("x", [])],
+                "",
+                "",
+                "",
+                [],
+                false,
+                null,
+                null,
+                null)
     }
 }

@@ -52,6 +52,7 @@ class ExperimentsController(private val experimentsRepository: ExperimentsReposi
     @GetMapping(path = ["{experimentId}"])
     fun getExperiment(@PathVariable experimentId: String): ResponseEntity<String> {
         logger.info("Single experiment request received")
+        print(experimentsRepository.getExperiment(experimentId))
         return experimentsRepository.getExperiment(experimentId)
                 ?.let { measurementsRepository.withMeasurements(it) }
                 ?.let { permissionsRepository.withPermissions(it) }

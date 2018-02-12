@@ -41,6 +41,16 @@
             </v-tooltip>
 
             <v-tooltip bottom>
+              <v-text-field
+                v-model="documentLink"
+                :rules="documentLinkRules"
+                label="Documentation link"
+                slot="activator"
+              ></v-text-field>
+              <span>Describe deeply what you are going to test.</span>
+            </v-tooltip>
+
+            <v-tooltip bottom>
               <v-select
                 label="Authorization groups"
                 slot="activator"
@@ -142,6 +152,7 @@
 <script>
   import { mapActions } from 'vuex'
   import _ from 'lodash'
+  import validUrl from 'valid-url'
 
   import ChiPanel from './ChiPanel.vue'
 
@@ -167,6 +178,10 @@
         baseVariant: baseVariant,
         experimentId: '',
         description: '',
+        documentLink: '',
+        documentLinkRules: [
+          (v) => !validUrl.isUri(v) || 'Provided string is not valid url'
+        ],
         groups: [],
         reportingEnabled: true,
         selectedInternal: '',
@@ -273,6 +288,7 @@
         let result = {
           id: this.experimentIdSlug,
           description: this.description,
+          documentLink: this.documentLink,
           groups: this.groups,
           reportingEnabled: this.reportingEnabled,
           variants: this.getVariantsDataToSend()
