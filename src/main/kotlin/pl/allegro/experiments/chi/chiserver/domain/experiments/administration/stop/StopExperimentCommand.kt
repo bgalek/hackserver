@@ -19,5 +19,8 @@ class StopExperimentCommand(
     }
 
     private fun validate(experiment: Experiment) {
+        if (!experiment.isActive()) {
+            throw StopExperimentException("Experiment is not ACTIVE: ${experimentId}")
+        }
     }
 }

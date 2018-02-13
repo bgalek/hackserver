@@ -40,6 +40,10 @@ open class Experiment(
         return status == ExperimentStatus.ENDED
     }
 
+    fun isActive(): Boolean {
+        return status == ExperimentStatus.ACTIVE
+    }
+
     fun isOverridable(): Boolean {
         return !isEnded()
     }
