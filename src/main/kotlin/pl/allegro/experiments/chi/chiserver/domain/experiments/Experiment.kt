@@ -58,6 +58,20 @@ open class Experiment(
         )
     }
 
+    fun stop(): Experiment {
+        return Experiment(
+                id,
+                variants,
+                description,
+                author,
+                groups,
+                reportingEnabled,
+                activityPeriod!!.endNow(),
+                measurements,
+                editable
+        )
+    }
+
     fun setEditableFlag(editable: Boolean): Experiment {
         return Experiment(
                 id,
@@ -107,4 +121,8 @@ open class Experiment(
 
 data class ExperimentMeasurements(val lastDayVisits: Int = 0) {}
 
-data class ActivityPeriod (val activeFrom: ZonedDateTime, val activeTo: ZonedDateTime)
+data class ActivityPeriod (val activeFrom: ZonedDateTime, val activeTo: ZonedDateTime) {
+    fun endNow(): ActivityPeriod {
+        return ActivityPeriod(activeFrom, ZonedDateTime.now())
+    }
+}
