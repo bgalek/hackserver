@@ -7,7 +7,7 @@
       </v-flex>
       <v-flex xs3>
         <v-switch
-          v-on:change="onFilterMyExperimentsChanged"
+          v-on:change="updateMyExperimentsFilter"
           label="My Experiments"
           v-model="filterMyExperiments"
         >
@@ -112,12 +112,7 @@ export default {
 
     isBase (variant) {
       return variant.name === 'base'
-    },
-
-    onFilterMyExperimentsChanged (event) {
-      this.updateMyExperimentsFilter(event)
     }
-
   }
 }
 </script>
