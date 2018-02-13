@@ -3,13 +3,16 @@
     <v-layout>
     <v-flex xs6>
         <h3>Description</h3>
-        {{ experiment.description }}
+        {{ experiment.description || '-'}}
 
       <h3>Documentation link</h3>
-        {{ experiment.documentLink || '-' }}
+      <a v-if=" experiment.documentLink !== '' " :href="experiment.documentLink">
+        {{ experiment.documentLink }}
+      </a>
+      <div v-else>-</div>
 
-        <h3>Author</h3>
-        {{ experiment.author }}
+      <h3>Author</h3>
+      {{ experiment.author }}
 
       <h3>Authorized groups</h3>
        {{ experiment.groups.join(', ') || '-' }}
