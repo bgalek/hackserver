@@ -64,7 +64,7 @@ class ExperimentsSelfServiceE2ESpec extends BaseIntegrationSpec {
         new User('Unknown', ['group a'], true)  | true
     }
 
-    def "should create and start experiment with all types of predicates"() {
+    def "should execute all administration commands"() {
         given:
         userProvider.user = new User('Anonymous', [], true)
 
@@ -120,6 +120,13 @@ class ExperimentsSelfServiceE2ESpec extends BaseIntegrationSpec {
 
         then:
         startedExperiment.body.status == 'ACTIVE'
+
+        when:
+        restTemplate.put(localUrl("/api/admin/experiments/${request.id}/stop"), Map)
+        def stoppedExperiment = restTemplate.getForEntity(localUrl("/api/admin/experiments/${request.id}/"), Map)
+
+        then:
+        stoppedExperiment.body.status == 'ENDED'
 
         and:
         restTemplate.delete(localUrl("/api/admin/experiments/${request.id}"))
