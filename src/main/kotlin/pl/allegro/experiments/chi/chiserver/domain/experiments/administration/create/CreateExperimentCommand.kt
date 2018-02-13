@@ -21,7 +21,6 @@ class CreateExperimentCommand(private val experimentsRepository: ExperimentsRepo
         if (experimentsRepository.getExperiment(experimentCreationRequest.id) != null) {
             throw ExperimentCreationException("Experiment with id ${experimentCreationRequest.id} already exists")
         }
-        print((experimentCreationRequest.toExperiment(user.name)))
         experimentsRepository.save((experimentCreationRequest.toExperiment(user.name)))
     }
 }
