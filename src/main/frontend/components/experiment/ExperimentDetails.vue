@@ -6,7 +6,7 @@
         {{ experiment.description }}
 
       <h3>Documentation link</h3>
-        {{ experiment.documentLink }}
+        {{ experiment.documentLink || '-' }}
 
         <h3>Author</h3>
         {{ experiment.author }}

@@ -40,15 +40,11 @@
               <span>Describe shortly what you are going to test.</span>
             </v-tooltip>
 
-            <v-tooltip bottom>
-              <v-text-field
-                v-model="documentLink"
-                :rules="documentLinkRules"
-                label="Documentation link"
-                slot="activator"
-              ></v-text-field>
-              <span>Describe deeply what you are going to test.</span>
-            </v-tooltip>
+            <v-text-field
+              v-model="documentLink"
+              :rules="documentLinkRules"
+              label="Documentation link"
+            ></v-text-field>
 
             <v-tooltip bottom>
               <v-select
@@ -152,7 +148,7 @@
 <script>
   import { mapActions } from 'vuex'
   import _ from 'lodash'
-  import validUrl from 'valid-url'
+  import {isUri} from 'valid-url'
 
   import ChiPanel from './ChiPanel.vue'
 
@@ -180,7 +176,7 @@
         description: '',
         documentLink: '',
         documentLinkRules: [
-          (v) => !validUrl.isUri(v) || 'Provided string is not valid url'
+          (v) => this.isUrlValid(v) || 'Provided string is not valid url'
         ],
         groups: [],
         reportingEnabled: true,
@@ -221,6 +217,10 @@
     },
 
     methods: {
+      isUrlValid (value) {
+        return isUri(value) !== undefined || value === ''
+      },
+
       slugify (str) {
         return str.toString().toLowerCase()
           .replace(/\s+/g, '-')
