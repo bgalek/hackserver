@@ -71,6 +71,7 @@ class ExperimentsSelfServiceE2ESpec extends BaseIntegrationSpec {
         def request = [
                 id              : "some2",
                 description     : "desc",
+                documentLink     : "https://vuetifyjs.com/vuetify/quick-start",
                 variants        : [
                         [
                                 name      : "v1",
