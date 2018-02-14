@@ -7,4 +7,5 @@ security:
 spring:
   data:
     mongodb:
+        database: chi-server
         host: "localhost"

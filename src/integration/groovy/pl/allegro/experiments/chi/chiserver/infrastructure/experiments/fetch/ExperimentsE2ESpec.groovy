@@ -115,10 +115,11 @@ class ExperimentsE2ESpec extends BaseIntegrationSpec {
 
     def "should return all experiments as measured for admin"() {
         given:
+        userProvider.user = new User('Anonymous', [], true)
         fileBasedExperimentsRepository.jsonUrl = Utils.resourceUrl('/experiments', wireMock)
         refresher.refresh()
 
-        def measuredExperiment = { ex -> ex << [measurements: [lastDayVisits: 0]] }
+        def editableMeasuredExperiment = { ex -> ex << [measurements: [lastDayVisits: 0], editable: true] }
 
         when:
         def response = restTemplate.getForEntity(localUrl('/api/admin/experiments'), List)
@@ -128,13 +129,13 @@ class ExperimentsE2ESpec extends BaseIntegrationSpec {
         response.body.size() == 8
 
         and:
-        response.body.contains(measuredExperiment(internalExperiment()))
-        response.body.contains(measuredExperiment(plannedExperiment()))
-        response.body.contains(measuredExperiment(cmuidRegexpExperiment()))
-        response.body.contains(measuredExperiment(hashVariantExperiment()))
-        response.body.contains(measuredExperiment(sampleExperiment()))
-        response.body.contains(measuredExperiment(timeboundExperiment()))
-        response.body.contains(measuredExperiment(experimentFromThePast()))
+        response.body.contains(editableMeasuredExperiment(internalExperiment()))
+        response.body.contains(editableMeasuredExperiment(plannedExperiment()))
+        response.body.contains(editableMeasuredExperiment(cmuidRegexpExperiment()))
+        response.body.contains(editableMeasuredExperiment(hashVariantExperiment()))
+        response.body.contains(editableMeasuredExperiment(sampleExperiment()))
+        response.body.contains(editableMeasuredExperiment(timeboundExperiment()))
+        response.body.contains(editableMeasuredExperiment(experimentFromThePast()))
     }
 
     def "should return last valid list when file is corrupted"() {

@@ -8,10 +8,17 @@ import deleteExperiment from './deleteExperiment'
 import startExperiment from './startExperiment'
 import createExperiment from './createExperiment'
 import stopExperiment from './stopExperiment'
+import {userPreferences} from './userPreferences'
+import createPersistedState from 'vuex-persistedstate'
 
 Vue.use(Vuex)
 
 export default new Vuex.Store({
+  plugins: [
+    createPersistedState({
+      key: 'chi-storage',
+      paths: ['userPreferences']
+    })],
   modules: {
     experiment,
     experiments,
@@ -19,6 +26,7 @@ export default new Vuex.Store({
     createExperiment,
     startExperiment,
     deleteExperiment,
+    userPreferences,
     stopExperiment
   }
 })
