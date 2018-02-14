@@ -151,6 +151,7 @@ class StopExperimentCommandIntegrationSpec extends BaseIntegrationSpec {
                 draft.id,
                 draft.variants,
                 draft.description,
+                draft.documentLink,
                 draft.author,
                 draft.groups,
                 draft.reportingEnabled,
