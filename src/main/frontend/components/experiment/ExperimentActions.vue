@@ -36,15 +36,21 @@
         Start experiment
       </v-btn>
 
-      <v-btn v-if="canBeStopped()"
-             color="red"
-             @click="stop">
-        Stop experiment
-      </v-btn>
+      <v-menu open-on-hover bottom offset-y
+              v-if="canBeStopped()">
+        <v-btn color="gray" slot="activator" style="text-transform: none">Stop experiment
+        </v-btn>
+        <v-list>
+          <v-list-tile @click="stop">
+            <v-list-tile-title>I really want to stop experiment {{this.experiment.id}}</v-list-tile-title>
+            &nbsp;<v-icon right>alarm</v-icon>
+          </v-list-tile>
+        </v-list>
+      </v-menu>
 
       <v-menu open-on-hover bottom offset-y
               v-if="canBeDeleted()">
-        <v-btn color="gray" slot="activator" style="text-transform: none">Delete experiment
+        <v-btn color="red" slot="activator" style="text-transform: none">Delete experiment
         </v-btn>
         <v-list>
           <v-list-tile @click="deleteMe">
