@@ -41,6 +41,10 @@ data class Experiment(
         return status == ExperimentStatus.ENDED
     }
 
+    fun isActive(): Boolean {
+        return status == ExperimentStatus.ACTIVE
+    }
+
     fun isOverridable(): Boolean {
         return !isEnded()
     }
@@ -53,8 +57,17 @@ data class Experiment(
     fun withEditableFlag(editable: Boolean): Experiment {
         return copy(editable = editable)
     }
+
+    fun stop(): Experiment {
+        return copy(activityPeriod = activityPeriod!!.endNow())
+    }
+
 }
 
 data class ExperimentMeasurements(val lastDayVisits: Int = 0) {}
 
-data class ActivityPeriod (val activeFrom: ZonedDateTime, val activeTo: ZonedDateTime)
+data class ActivityPeriod (val activeFrom: ZonedDateTime, val activeTo: ZonedDateTime) {
+    fun endNow(): ActivityPeriod {
+        return ActivityPeriod(activeFrom, ZonedDateTime.now())
+    }
+}

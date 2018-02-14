@@ -1,6 +1,19 @@
 <template>
   <v-container><v-layout><v-flex md12 lg10 offset-xl1 xl10>
-    <h1>Experiments</h1>
+
+    <v-layout row justify-space-between>
+      <v-flex xs2>
+        <h1>Experiments</h1>
+      </v-flex>
+      <v-flex xs3>
+        <v-switch
+          v-on:change="updateMyExperimentsFilter"
+          label="My Experiments"
+          v-model="filterMyExperiments"
+        >
+        </v-switch>
+      </v-flex>
+    </v-layout>
 
     <v-alert v-if="pivotError" color="error" icon="warning" value="true">
       Error while trying to get Pivot url: {{ pivotError }}
@@ -33,24 +46,30 @@ export default {
     ExperimentList
   },
 
-  mounted () {
+  created () {
+    this.filterMyExperiments = this.userPreferences.filters.myExperiments
     this.getExperiments()
   },
 
   data () {
     return {
-      pivotError: false
+      pivotError: false,
+      filterMyExperiments: false
     }
   },
 
   computed: {
     ...mapState({
       error: state => state.experiments.error.experiments,
-      pending: state => state.experiments.pending.experiments
+      pending: state => state.experiments.pending.experiments,
+      userPreferences: state => state.userPreferences
     }),
 
     experiments () {
-      return this.sortExperiments(_.filter(this.$store.state.experiments.experiments, (e) => e.isMeasured))
+      const sortedExperiments = this.sortExperiments(_.filter(this.$store.state.experiments.experiments, (e) => e.isMeasured))
+      return sortedExperiments.filter((e) => {
+        return this.filterMyExperiments ? e.editable : true
+      })
     },
 
     immeasurableExperiments () {
@@ -59,7 +78,10 @@ export default {
   },
 
   methods: {
-    ...mapActions(['getExperiments']),
+    ...mapActions([
+      'getExperiments',
+      'updateMyExperimentsFilter'
+    ]),
 
     sortExperiments (experiments) {
       experiments = _.cloneDeep(experiments)

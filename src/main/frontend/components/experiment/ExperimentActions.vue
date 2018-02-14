@@ -36,6 +36,12 @@
         Start experiment
       </v-btn>
 
+      <v-btn v-if="canBeStopped()"
+             color="red"
+             @click="stop">
+        Stop experiment
+      </v-btn>
+
       <v-menu open-on-hover bottom offset-y
               v-if="canBeDeleted()">
         <v-btn color="gray" slot="activator" style="text-transform: none">Delete experiment
@@ -118,6 +124,20 @@
         }
       },
 
+      stop () {
+        this.prepareToSend()
+        this.stopExperiment({
+          params: {experimentId: this.experiment.id}
+        }).then(response => {
+          this.afterSending()
+          this.getExperiment({params: {experimentId: this.experiment.id}})
+          this.commandOkMessage = 'Experiment successfully stopped'
+        }).catch(error => {
+          this.afterSending()
+          this.showError(error)
+        })
+      },
+
       showError (error) {
         this.errors.push(JSON.stringify(error))
       },
@@ -140,6 +160,10 @@
         return this.experiment.status === 'DRAFT'
       },
 
+      canBeStopped () {
+        return this.experiment.status === 'ACTIVE'
+      },
+
       canBeDeleted () {
         return this.allowDelete
       },
@@ -148,7 +172,7 @@
         return this.canBeStarted() || this.canBeDeleted()
       },
 
-      ...mapActions(['startExperiment', 'getExperiment', 'deleteExperiment'])
+      ...mapActions(['startExperiment', 'getExperiment', 'deleteExperiment', 'stopExperiment'])
     }
   }
 </script>

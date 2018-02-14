@@ -27,7 +27,7 @@ class ExperimentsSelfServiceE2ESpec extends BaseIntegrationSpec {
         }
     }
 
-    def "should set editable flag depending on who ask for experiment"() {
+    def "should set editable flag depending on who ask for single experiment/multiple experiments"() {
         given:
         userProvider.user = new User('Author', [], true)
         def request = [
@@ -51,6 +51,12 @@ class ExperimentsSelfServiceE2ESpec extends BaseIntegrationSpec {
         then:
         responseSingle.body.editable == editable
 
+        when:
+        def responseMultiple = restTemplate.getForEntity(localUrl("/api/admin/experiments"), List)
+
+        then:
+        responseMultiple.body.find {experiment -> experiment.id == request.id}.editable == editable
+
         where:
         user                                    | editable
         new User('Author', [], true)            | true
@@ -64,7 +70,7 @@ class ExperimentsSelfServiceE2ESpec extends BaseIntegrationSpec {
         new User('Unknown', ['group a'], true)  | true
     }
 
-    def "should create and start experiment with all types of predicates"() {
+    def "should execute all administration commands"() {
         given:
         userProvider.user = new User('Anonymous', [], true)
 
@@ -89,13 +95,7 @@ class ExperimentsSelfServiceE2ESpec extends BaseIntegrationSpec {
                 groups          : ['group a', 'group b'],
                 reportingEnabled: true
         ]
-
-        def expectedExperiment = request + [
-                author      : "Anonymous",
-                status      : "DRAFT",
-                measurements: [lastDayVisits: 0]
-        ]
-
+        
         when:
         def response = restTemplate.postForEntity(localUrl('/api/admin/experiments'), request, Map)
 
@@ -107,8 +107,14 @@ class ExperimentsSelfServiceE2ESpec extends BaseIntegrationSpec {
         def responseSingle = restTemplate.getForEntity(localUrl("/api/admin/experiments/${request.id}/"), Map)
 
         then:
+        def expectedExperiment = request + [
+                author      : "Anonymous",
+                status      : "DRAFT",
+                measurements: [lastDayVisits: 0],
+                editable: true
+        ]
         responseSingle.body.variants == expectedExperiment.variants
-        responseSingle.body == expectedExperiment + [editable: true]
+        responseSingle.body == expectedExperiment
         responseList.body.contains(expectedExperiment)
 
         and:
@@ -121,6 +127,13 @@ class ExperimentsSelfServiceE2ESpec extends BaseIntegrationSpec {
 
         then:
         startedExperiment.body.status == 'ACTIVE'
+
+        when:
+        restTemplate.put(localUrl("/api/admin/experiments/${request.id}/stop"), Map)
+        def stoppedExperiment = restTemplate.getForEntity(localUrl("/api/admin/experiments/${request.id}/"), Map)
+
+        then:
+        stoppedExperiment.body.status == 'ENDED'
 
         and:
         restTemplate.delete(localUrl("/api/admin/experiments/${request.id}"))

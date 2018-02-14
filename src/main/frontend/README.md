@@ -12,19 +12,19 @@ The user interface for experiments management.
 
 You need to have [Node.js](https://nodejs.org/) and [yarn](https://yarnpkg.com/) installed to start the development.
 
-Local **chi-server** app nned to be running at http://localhost:8080 for interactions with its **/api** endpoints.
+Local **chi-server** app need to be running at http://localhost:8080 for interactions with its **/api** endpoints.
 
 ### Workflow
 
 ```bash
 # install dependencies
-npm install yarn
+yarn install
 
 # serve with hot reload at localhost:4000
-node_modules/.bin/poi
+yarn poi
 
 # build for production with minification
-node_modules/.bin/poi build
+yarn poi build
 ```
 
 ### Used tools

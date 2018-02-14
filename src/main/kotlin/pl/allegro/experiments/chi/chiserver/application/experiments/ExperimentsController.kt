@@ -18,6 +18,8 @@ import pl.allegro.experiments.chi.chiserver.domain.experiments.administration.de
 import pl.allegro.experiments.chi.chiserver.domain.experiments.administration.start.StartExperimentCommandFactory
 import pl.allegro.experiments.chi.chiserver.domain.experiments.administration.start.StartExperimentException
 import pl.allegro.experiments.chi.chiserver.domain.experiments.administration.start.StartExperimentProperties
+import pl.allegro.experiments.chi.chiserver.domain.experiments.administration.stop.StopExperimentCommandFactory
+import pl.allegro.experiments.chi.chiserver.domain.experiments.administration.stop.StopExperimentException
 import pl.allegro.experiments.chi.chiserver.infrastructure.JsonConverter
 import pl.allegro.experiments.chi.chiserver.logger
 import pl.allegro.tech.common.andamio.errors.Error
@@ -31,6 +33,7 @@ class ExperimentsController(private val experimentsRepository: ExperimentsReposi
                             private val measurementsRepository: MeasurementsRepository,
                             private val createExperimentCommandFactory: CreateExperimentCommandFactory,
                             private val startExperimentCommandFactory: StartExperimentCommandFactory,
+                            private val stopExperimentCommandFactory: StopExperimentCommandFactory,
                             private val deleteExperimentCommandFactory: DeleteExperimentCommandFactory,
                             private val permissionsRepository: PermissionsRepository,
                             private val jsonConverter: JsonConverter) {
@@ -44,10 +47,11 @@ class ExperimentsController(private val experimentsRepository: ExperimentsReposi
     fun allExperiments(): String {
         logger.info("All experiments request received")
         return experimentsRepository.all
-                .let { measurementsRepository.withMeasurements(it) }
+                .let { measurementsRepository.withMeasurements(it)
+                        .map { permissionsRepository.withPermissions(it)} }
                 .let { jsonConverter.toJson(it) }
     }
-
+    
     @MeteredEndpoint
     @GetMapping(path = ["{experimentId}"])
     fun getExperiment(@PathVariable experimentId: String): ResponseEntity<String> {
@@ -73,8 +77,17 @@ class ExperimentsController(private val experimentsRepository: ExperimentsReposi
     fun startExperiment(
             @PathVariable experimentId: String,
             @RequestBody properties: StartExperimentProperties): ResponseEntity<String> {
-        logger.debug("Start experiment request received")
+        logger.info("Start experiment request received: $experimentId")
         startExperimentCommandFactory.startExperimentCommand(experimentId, properties).execute()
+        return ResponseEntity(HttpStatus.OK)
+    }
+
+    @MeteredEndpoint
+    @PutMapping(path = ["{experimentId}/stop"])
+    fun stopExperiment(
+            @PathVariable experimentId: String): ResponseEntity<String> {
+        logger.info("Stop experiment request received: $experimentId")
+        stopExperimentCommandFactory.stopExperimentCommand(experimentId).execute()
         return ResponseEntity(HttpStatus.OK)
     }
 
@@ -82,7 +95,7 @@ class ExperimentsController(private val experimentsRepository: ExperimentsReposi
     @DeleteMapping(path = ["{experimentId}"])
     fun deleteExperiment(
             @PathVariable experimentId: String): ResponseEntity<String> {
-        logger.debug("Delete experiment request received")
+        logger.info("Delete experiment request received: $experimentId")
         deleteExperimentCommandFactory.deleteExperimentCommand(experimentId).execute()
         return ResponseEntity(HttpStatus.OK)
     }
@@ -106,6 +119,11 @@ class ExperimentsController(private val experimentsRepository: ExperimentsReposi
     @ExceptionHandler(StartExperimentException::class)
     fun handle(exception: StartExperimentException): ResponseEntity<ErrorsHolder> {
         return handleBadRequest(exception, "StartExperimentException")
+    }
+
+    @ExceptionHandler(StopExperimentException::class)
+    fun handle(exception: StopExperimentException): ResponseEntity<ErrorsHolder> {
+        return handleBadRequest(exception, "StopExperimentException")
     }
 
     @ExceptionHandler(DeleteExperimentException::class)

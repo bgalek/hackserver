@@ -1,4 +1,4 @@
-package pl.allegro.experiments.chi.chiserver.infrastructure.experiments
+package pl.allegro.experiments.chi.chiserver.infrastructure.experiments.fetch
 
 import com.github.tomakehurst.wiremock.junit.WireMockRule
 import org.junit.ClassRule
@@ -7,9 +7,9 @@ import org.springframework.test.annotation.DirtiesContext
 import org.springframework.web.client.RestTemplate
 import pl.allegro.experiments.chi.chiserver.BaseIntegrationSpec
 import pl.allegro.experiments.chi.chiserver.domain.experiments.ExperimentsRepository
+import pl.allegro.experiments.chi.chiserver.infrastructure.experiments.ExperimentRepositoryRefresher
+import pl.allegro.experiments.chi.chiserver.infrastructure.experiments.FileBasedExperimentsRepository
 import spock.lang.Shared
-
-import static com.github.tomakehurst.wiremock.client.WireMock.*
 
 @DirtiesContext
 class ClientExperimentsV1E2ESpec extends BaseIntegrationSpec {
@@ -30,13 +30,13 @@ class ClientExperimentsV1E2ESpec extends BaseIntegrationSpec {
     ExperimentRepositoryRefresher refresher
 
     def setup() {
-        teachWireMockJson("/experiments", '/some-experiments.json')
-        teachWireMockJson("/invalid-experiments",'/invalid-experiments.json')
+        WireMockUtils.teachWireMockJson("/experiments", '/some-experiments.json')
+        WireMockUtils.teachWireMockJson("/invalid-experiments",'/invalid-experiments.json')
     }
 
     def "should return list of active experiments in version 1"() {
         given:
-        fileBasedExperimentsRepository.jsonUrl = resourceUrl('/experiments')
+        fileBasedExperimentsRepository.jsonUrl = WireMockUtils.resourceUrl('/experiments', wireMock)
         refresher.refresh()
 
         when:
@@ -54,22 +54,6 @@ class ClientExperimentsV1E2ESpec extends BaseIntegrationSpec {
         response.body.contains(sampleExperiment())
         response.body.contains(timeboundExperiment())
         !response.body.contains(experimentFromThePast())
-    }
-
-    void teachWireMockJson(String path, String jsonPath) {
-        String json = getResourceAsString(jsonPath)
-        stubFor(get(urlEqualTo(path))
-                .willReturn(aResponse()
-                .withStatus(200)
-                .withBody(json)))
-    }
-
-    String getResourceAsString(String resourceName) {
-        this.getClass().getResource(resourceName).text
-    }
-
-    String resourceUrl(String endpoint) {
-        "http://localhost:${wireMock.port()}$endpoint"
     }
 
     Map internalExperiment() {
