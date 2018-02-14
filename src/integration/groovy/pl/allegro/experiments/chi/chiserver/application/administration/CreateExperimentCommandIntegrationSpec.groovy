@@ -63,10 +63,10 @@ class CreateExperimentCommandIntegrationSpec extends BaseIntegrationSpec {
         ex.message == 'Experiment with id testExperiment already exists'
     }
 
-    def "should not create experiment when user is not a root"() {
+    def "should not create experiment when user is anonymous"() {
         given:
         def id = "simpleId"
-        mutableUserProvider.user = new User('user1', [], false)
+        mutableUserProvider.user = new User(User.ANONYMOUS, [], false)
 
         def command = new CreateExperimentCommand(experimentsRepository, mutableUserProvider, simpleExperimentRequest(id))
 
@@ -75,7 +75,7 @@ class CreateExperimentCommandIntegrationSpec extends BaseIntegrationSpec {
 
         then:
         def ex = thrown(AuthorizationException)
-        ex.message == 'User user1 cannot create experiments'
+        ex.message == 'User ' + User.ANONYMOUS + ' cannot create experiments'
     }
 
     def "should not create experiment when request cannot be converted to object"() {
