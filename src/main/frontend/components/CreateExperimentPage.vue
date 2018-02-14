@@ -176,7 +176,7 @@
         description: '',
         documentLink: '',
         documentLinkRules: [
-          (v) => this.isUrlValid(v) || 'Provided string is not valid url'
+          (v) => this.isUrlValid(v) || 'Provided string is not a valid URL'
         ],
         groups: [],
         reportingEnabled: true,
