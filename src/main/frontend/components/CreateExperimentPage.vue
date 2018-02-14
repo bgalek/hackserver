@@ -1,7 +1,7 @@
 <template>
   <v-container>
     <v-layout>
-      <v-flex md12 lg10 offset-xl1 xl10>
+      <v-flex md12 lg10 xl10 offset-xl1 offset-md1 offset-lg1>
 
         <chi-panel v-if="showForm" title="New experiment">
 
