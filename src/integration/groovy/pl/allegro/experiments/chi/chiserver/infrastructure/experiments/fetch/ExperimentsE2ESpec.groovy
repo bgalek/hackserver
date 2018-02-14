@@ -42,13 +42,13 @@ class ExperimentsE2ESpec extends BaseIntegrationSpec {
         if (!experimentsRepository instanceof ExperimentsDoubleRepository) {
             throw new RuntimeException("We should test real repository, not the fake one")
         }
-        Utils.teachWireMockJson("/experiments", '/some-experiments.json')
-        Utils.teachWireMockJson("/invalid-experiments",'/invalid-experiments.json')
+        WireMockUtils.teachWireMockJson("/experiments", '/some-experiments.json')
+        WireMockUtils.teachWireMockJson("/invalid-experiments",'/invalid-experiments.json')
     }
 
     def "should return list of experiments loaded from the backing HTTP resource"() {
         given:
-        fileBasedExperimentsRepository.jsonUrl = Utils.resourceUrl('/experiments', wireMock)
+        fileBasedExperimentsRepository.jsonUrl = WireMockUtils.resourceUrl('/experiments', wireMock)
         refresher.refresh()
 
         when:
@@ -70,7 +70,7 @@ class ExperimentsE2ESpec extends BaseIntegrationSpec {
     def "should return single of experiment loaded from the backing HTTP resource"() {
         given:
         userProvider.user = new User('Anonymous', [], true)
-        fileBasedExperimentsRepository.jsonUrl = Utils.resourceUrl('/experiments', wireMock)
+        fileBasedExperimentsRepository.jsonUrl = WireMockUtils.resourceUrl('/experiments', wireMock)
         refresher.refresh()
 
         when:
@@ -93,7 +93,7 @@ class ExperimentsE2ESpec extends BaseIntegrationSpec {
 
     def "should return list of overridable experiments in version 2"() {
         given:
-        fileBasedExperimentsRepository.jsonUrl = Utils.resourceUrl('/experiments', wireMock)
+        fileBasedExperimentsRepository.jsonUrl = WireMockUtils.resourceUrl('/experiments', wireMock)
         refresher.refresh()
 
         when:
@@ -116,7 +116,7 @@ class ExperimentsE2ESpec extends BaseIntegrationSpec {
     def "should return all experiments as measured for admin"() {
         given:
         userProvider.user = new User('Anonymous', [], true)
-        fileBasedExperimentsRepository.jsonUrl = Utils.resourceUrl('/experiments', wireMock)
+        fileBasedExperimentsRepository.jsonUrl = WireMockUtils.resourceUrl('/experiments', wireMock)
         refresher.refresh()
 
         def editableMeasuredExperiment = { ex -> ex << [measurements: [lastDayVisits: 0], editable: true] }
@@ -140,9 +140,9 @@ class ExperimentsE2ESpec extends BaseIntegrationSpec {
 
     def "should return last valid list when file is corrupted"() {
         given:
-        fileBasedExperimentsRepository.jsonUrl = Utils.resourceUrl('/experiments', wireMock)
+        fileBasedExperimentsRepository.jsonUrl = WireMockUtils.resourceUrl('/experiments', wireMock)
         refresher.refresh()
-        fileBasedExperimentsRepository.jsonUrl = Utils.resourceUrl('/invalid-experiments', wireMock)
+        fileBasedExperimentsRepository.jsonUrl = WireMockUtils.resourceUrl('/invalid-experiments', wireMock)
         refresher.refresh()
 
         when:

@@ -30,13 +30,13 @@ class ClientExperimentsV1E2ESpec extends BaseIntegrationSpec {
     ExperimentRepositoryRefresher refresher
 
     def setup() {
-        Utils.teachWireMockJson("/experiments", '/some-experiments.json')
-        Utils.teachWireMockJson("/invalid-experiments",'/invalid-experiments.json')
+        WireMockUtils.teachWireMockJson("/experiments", '/some-experiments.json')
+        WireMockUtils.teachWireMockJson("/invalid-experiments",'/invalid-experiments.json')
     }
 
     def "should return list of active experiments in version 1"() {
         given:
-        fileBasedExperimentsRepository.jsonUrl = Utils.resourceUrl('/experiments', wireMock)
+        fileBasedExperimentsRepository.jsonUrl = WireMockUtils.resourceUrl('/experiments', wireMock)
         refresher.refresh()
 
         when:

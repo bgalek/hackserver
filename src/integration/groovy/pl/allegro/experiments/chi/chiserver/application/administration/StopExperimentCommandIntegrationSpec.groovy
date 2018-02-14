@@ -5,7 +5,8 @@ import org.springframework.test.annotation.DirtiesContext
 import org.springframework.test.context.ContextConfiguration
 import pl.allegro.experiments.chi.chiserver.BaseIntegrationSpec
 import pl.allegro.experiments.chi.chiserver.domain.User
-import pl.allegro.experiments.chi.chiserver.domain.experiments.ExperimentsRepository
+import pl.allegro.experiments.chi.chiserver.domain.experiments.ActivityPeriod
+import pl.allegro.experiments.chi.chiserver.domain.experiments.Experiment
 import pl.allegro.experiments.chi.chiserver.domain.experiments.administration.AuthorizationException
 import pl.allegro.experiments.chi.chiserver.domain.experiments.administration.ExperimentNotFoundException
 import pl.allegro.experiments.chi.chiserver.domain.experiments.administration.PermissionsAwareExperimentGetter
@@ -17,6 +18,9 @@ import pl.allegro.experiments.chi.chiserver.domain.experiments.administration.st
 import pl.allegro.experiments.chi.chiserver.infrastructure.experiments.ExperimentsTestConfig
 import pl.allegro.experiments.chi.chiserver.infrastructure.experiments.MongoExperimentsRepository
 import pl.allegro.experiments.chi.chiserver.infrastructure.experiments.MutableUserProvider
+import spock.lang.Shared
+
+import java.time.ZonedDateTime
 
 import static pl.allegro.experiments.chi.chiserver.application.administration.CommandTestUtils.simpleExperimentRequest
 
@@ -30,6 +34,7 @@ class StopExperimentCommandIntegrationSpec extends BaseIntegrationSpec {
     @Autowired
     MutableUserProvider mutableUserProvider
 
+    @Shared
     PermissionsAwareExperimentGetter permissionsAwareExperimentGetter
 
     def setup() {
@@ -43,10 +48,10 @@ class StopExperimentCommandIntegrationSpec extends BaseIntegrationSpec {
         def experiment = startedExperiment()
 
         and:
-        def stopCommand = new StopExperimentCommand(
-                experiment.id,
-                experimentsRepository,
-                permissionsAwareExperimentGetter)
+        def stopCommand = stopCommand(experiment.id)
+
+        and:
+        mutableUserProvider.user = user
 
         when:
         stopCommand.execute()
@@ -54,41 +59,38 @@ class StopExperimentCommandIntegrationSpec extends BaseIntegrationSpec {
 
         then:
         experiment.isEnded()
+
+        where:
+        user << [new User('Root', [], true),
+                 new User('Normal', ['group a'], false),
+                 new User('Root', [], false), // owner
+                 new User('Normal', ['nonexistent', 'group a'], false),
+                 new User('Root with group', ['group a'], true)]
     }
 
     def "should not stop nonexistent experiment"() {
-        given:
-        def stopCommand = new StopExperimentCommand(
-                'nonexistentExperimentId',
-                experimentsRepository,
-                permissionsAwareExperimentGetter)
-
         when:
-        stopCommand.execute()
+        stopCommand('nonexistentExperimentId').execute()
 
         then:
         thrown ExperimentNotFoundException
     }
 
     def "should not stop experiment if it is not ACTIVE"() {
-        given:
-        def experiment = startedExperiment()
+        when:
+        stopCommand(draftExperiment().id).execute()
 
-        and:
-        def stopCommand = new StopExperimentCommand(
-                experiment.id,
-                experimentsRepository,
-                permissionsAwareExperimentGetter)
-        stopCommand.execute()
-
-        and:
-        stopCommand = new StopExperimentCommand(
-                experiment.id,
-                experimentsRepository,
-                permissionsAwareExperimentGetter)
+        then:
+        thrown StopExperimentException
 
         when:
-        stopCommand.execute()
+        stopCommand(plannedExperiment().id).execute()
+
+        then:
+        thrown StopExperimentException
+
+        when:
+        stopCommand(endedExperiment().id).execute()
 
         then:
         thrown StopExperimentException
@@ -99,16 +101,10 @@ class StopExperimentCommandIntegrationSpec extends BaseIntegrationSpec {
         def experiment = startedExperiment()
 
         and:
-        def stopCommand = new StopExperimentCommand(
-                experiment.id,
-                experimentsRepository,
-                permissionsAwareExperimentGetter)
-
-        and:
         mutableUserProvider.user = user
 
         when:
-        stopCommand.execute()
+        stopCommand(experiment.id).execute()
 
         then:
         thrown AuthorizationException
@@ -121,6 +117,17 @@ class StopExperimentCommandIntegrationSpec extends BaseIntegrationSpec {
     }
 
     def startedExperiment() {
+        def experiment = draftExperiment()
+        def startCommand = new StartExperimentCommand(
+                experimentsRepository,
+                new StartExperimentProperties(30),
+                permissionsAwareExperimentGetter,
+                experiment.id)
+        startCommand.execute()
+        return experimentsRepository.getExperiment(experiment.id)
+    }
+
+    Experiment draftExperiment() {
         def id = UUID.randomUUID().toString()
         mutableUserProvider.user = new User('Root', [], true)
         def command = new CreateExperimentCommand(
@@ -128,12 +135,40 @@ class StopExperimentCommandIntegrationSpec extends BaseIntegrationSpec {
                 mutableUserProvider,
                 simpleExperimentRequest(id))
         command.execute()
-        def startCommand = new StartExperimentCommand(
-                experimentsRepository,
-                new StartExperimentProperties(30),
-                permissionsAwareExperimentGetter,
-                id)
-        startCommand.execute()
-        return experimentsRepository.getExperiment(id)
+        experimentsRepository.getExperiment(id)
     }
+
+    def endedExperiment() {
+        def started = startedExperiment()
+        def stopCommand = stopCommand(started.id)
+        stopCommand.execute()
+        return experimentsRepository.getExperiment(started.id)
+    }
+
+    def plannedExperiment() {
+        def draft = draftExperiment()
+        experimentsRepository.save(new Experiment(
+                draft.id,
+                draft.variants,
+                draft.description,
+                draft.author,
+                draft.groups,
+                draft.reportingEnabled,
+                new ActivityPeriod(
+                        ZonedDateTime.now().plusDays(10),
+                        ZonedDateTime.now().plusDays(20)
+                ),
+                draft.measurements,
+                draft.editable
+        ))
+        return experimentsRepository.getExperiment(draft.id)
+    }
+
+    StopExperimentCommand stopCommand(String experimentId) {
+        new StopExperimentCommand(
+                experimentId,
+                experimentsRepository,
+                permissionsAwareExperimentGetter)
+    }
+
 }

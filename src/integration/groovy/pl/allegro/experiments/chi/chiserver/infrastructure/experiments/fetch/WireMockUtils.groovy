@@ -5,7 +5,7 @@ import static com.github.tomakehurst.wiremock.client.WireMock.get
 import static com.github.tomakehurst.wiremock.client.WireMock.stubFor
 import static com.github.tomakehurst.wiremock.client.WireMock.urlEqualTo
 
-class Utils {
+class WireMockUtils {
     static void teachWireMockJson(String path, String jsonPath) {
         String json = getResourceAsString(jsonPath)
         stubFor(get(urlEqualTo(path))
