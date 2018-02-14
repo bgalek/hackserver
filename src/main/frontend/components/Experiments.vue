@@ -73,7 +73,10 @@ export default {
     },
 
     immeasurableExperiments () {
-      return this.sortExperiments(_.filter(this.$store.state.experiments.experiments, (e) => !e.isMeasured))
+      const sortedExperiments = this.sortExperiments(_.filter(this.$store.state.experiments.experiments, (e) => !e.isMeasured))
+      return sortedExperiments.filter((e) => {
+        return this.filterMyExperiments ? e.editable : true
+      })
     }
   },
 
