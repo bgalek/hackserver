@@ -27,7 +27,7 @@ class ExperimentsSelfServiceE2ESpec extends BaseIntegrationSpec {
         }
     }
 
-    def "should set editable flag depending on who ask for experiment"() {
+    def "should set editable flag depending on who ask for single experiment/multiple experiments"() {
         given:
         userProvider.user = new User('Author', [], true)
         def request = [
@@ -50,6 +50,12 @@ class ExperimentsSelfServiceE2ESpec extends BaseIntegrationSpec {
 
         then:
         responseSingle.body.editable == editable
+
+        when:
+        def responseMultiple = restTemplate.getForEntity(localUrl("/api/admin/experiments"), List)
+
+        then:
+        responseMultiple.body.find {experiment -> experiment.id == request.id}.editable == editable
 
         where:
         user                                    | editable
