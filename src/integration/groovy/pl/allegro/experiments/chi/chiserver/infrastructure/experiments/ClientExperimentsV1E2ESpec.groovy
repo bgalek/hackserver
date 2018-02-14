@@ -26,9 +26,6 @@ class ClientExperimentsV1E2ESpec extends BaseIntegrationSpec {
     @Autowired
     ExperimentsRepository experimentsRepository
 
-    @Autowired
-    ExperimentRepositoryRefresher refresher
-
     def setup() {
         teachWireMockJson("/experiments", '/some-experiments.json')
         teachWireMockJson("/invalid-experiments",'/invalid-experiments.json')
@@ -37,7 +34,7 @@ class ClientExperimentsV1E2ESpec extends BaseIntegrationSpec {
     def "should return list of active experiments in version 1"() {
         given:
         fileBasedExperimentsRepository.jsonUrl = resourceUrl('/experiments')
-        refresher.refresh()
+        fileBasedExperimentsRepository.secureRefresh()
 
         when:
         def response = restTemplate.getForEntity(localUrl('/api/experiments/v1'), List)

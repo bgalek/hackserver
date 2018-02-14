@@ -43,8 +43,8 @@ class ExperimentsConfig {
     @Bean
     fun experimentsRepository(
             fileBasedExperimentsRepository: FileBasedExperimentsRepository,
-            mongoExperimentsRepository: MongoExperimentsRepository): ExperimentsRepository {
-        return CachedExperimentsRepository(ExperimentsDoubleRepository(fileBasedExperimentsRepository, mongoExperimentsRepository))
+            mongoExperimentsRepository: CachedMongoExperimentsRepository): ExperimentsRepository {
+        return ExperimentsDoubleRepository(fileBasedExperimentsRepository, mongoExperimentsRepository)
     }
 
     @Bean
@@ -53,8 +53,13 @@ class ExperimentsConfig {
         = DruidMeasurementsRepository(druid, jsonConverter, datasource)
 
     @Bean
-    fun refresher(experimentsRepository: ExperimentsRepository): ExperimentRepositoryRefresher {
-        return ExperimentRepositoryRefresher(experimentsRepository)
+    fun fileRefresher(experimentsRepository: FileBasedExperimentsRepository): FileBasedExperimentsRepositoryRefresher {
+        return FileBasedExperimentsRepositoryRefresher(experimentsRepository)
+    }
+
+    @Bean
+    fun mongoRefresher(experimentsRepository: MongoExperimentsRepository): CachedMongoExperimentsRepository {
+        return CachedMongoExperimentsRepository(experimentsRepository)
     }
 
     @Bean

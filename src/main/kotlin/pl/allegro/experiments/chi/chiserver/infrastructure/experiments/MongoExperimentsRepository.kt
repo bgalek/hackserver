@@ -4,6 +4,7 @@ import org.springframework.data.mongodb.core.MongoTemplate
 import pl.allegro.experiments.chi.chiserver.domain.experiments.Experiment
 import pl.allegro.experiments.chi.chiserver.domain.experiments.ExperimentId
 import pl.allegro.experiments.chi.chiserver.domain.experiments.ExperimentsRepository
+import java.util.*
 
 private const val COLLECTION = "experiments"
 
@@ -24,13 +25,11 @@ open class MongoExperimentsRepository(private val mongoTemplate: MongoTemplate, 
     override val all: List<Experiment>
         get() {
             experimentsMongoMetricsReporter.timerAllExperiments().use {
-                return mongoTemplate.findAll(Experiment::class.java, COLLECTION)
+                return Collections.unmodifiableList(
+                        mongoTemplate.findAll(Experiment::class.java, COLLECTION))
             }
         }
 
     override val overridable: List<Experiment>
         get() = all.filter { it.isOverridable() }
-
-    override fun refresh() {
-    }
 }

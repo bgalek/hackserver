@@ -10,7 +10,4 @@ interface ExperimentsRepository {
     fun delete(experimentId: ExperimentId)
 
     fun save(experiment: Experiment)
-
-    @Deprecated("Should be considered again when removing temporary DoubleExperiments repo. Now it simplifies code a bit")
-    fun refresh()
 }

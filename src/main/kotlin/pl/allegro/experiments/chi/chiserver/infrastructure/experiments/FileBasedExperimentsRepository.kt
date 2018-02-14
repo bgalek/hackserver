@@ -22,18 +22,18 @@ open class FileBasedExperimentsRepository(jsonUrl: String,
     }
 
     init {
-        refresh()
+        secureRefresh()
     }
 
-    override fun refresh() {
+    fun secureRefresh() {
         try {
-            rawRefresh()
+            refresh()
         } catch (e: Exception) {
             logger.error("Error while loading experiments file.", e)
         }
     }
 
-    private fun rawRefresh() {
+    private fun refresh() {
         val data = dataLoader.invoke(jsonUrl)
 
         if (data.isBlank()) {

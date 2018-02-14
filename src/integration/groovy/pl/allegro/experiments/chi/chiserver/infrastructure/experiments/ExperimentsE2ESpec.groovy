@@ -32,7 +32,7 @@ class ExperimentsE2ESpec extends BaseIntegrationSpec {
     ExperimentsRepository experimentsRepository
 
     @Autowired
-    ExperimentRepositoryRefresher refresher
+    FileBasedExperimentsRepositoryRefresher refresher
 
     @Autowired
     UserProvider userProvider
