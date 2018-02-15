@@ -305,7 +305,7 @@
       },
 
       shouldAppendSeparateInternalVariant () {
-        return this.selectedInternal !== '' && !_.find(this.variants, v => this.selectedInternal === v)
+        return this.selectedInternal !== ''
       },
 
       getVariantsDataToSend () {
@@ -316,9 +316,6 @@
 
           if (this.selectedDeviceClass !== 'all') {
             predicates.push(this.getDevicePredicateDataToSend())
-          }
-          if (this.selectedInternal === v) {
-            predicates.push(this.getInternalPredicateDataToSend())
           }
 
           return {
