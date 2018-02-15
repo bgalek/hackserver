@@ -34,6 +34,16 @@ class ExperimentsDoubleRepository(private val readOnlyExperimentsRepository: Rea
         return merged
     }
 
+    fun getOrigin(experiment: Experiment) : String {
+        if (readOnlyExperimentsRepository.getExperiment(experiment.id) != null) {
+            return "stash"
+        }
+        if (mongoExperimentsRepository.getExperiment(experiment.id) != null) {
+            return "mongo"
+        }
+        return "not found :("
+    }
+
     override val overridable: List<Experiment>
     get() = getAll().filter { it.isOverridable() }
 }

@@ -18,7 +18,9 @@ data class Experiment(
     val reportingEnabled: Boolean = true,
     val activityPeriod: ActivityPeriod? = null,
     val measurements: ExperimentMeasurements? = null,
-    val editable: Boolean? = null
+    //TODO move to UI layer
+    val editable: Boolean? = null,
+    val origin: String? = null
 ) {
 
     val status = when {
@@ -56,6 +58,10 @@ data class Experiment(
 
     fun withEditableFlag(editable: Boolean): Experiment {
         return copy(editable = editable)
+    }
+
+    fun withOrigin(origin: String): Experiment {
+        return copy(origin = origin)
     }
 
     fun stop(): Experiment {
