@@ -15,7 +15,7 @@
             :experimentStatistics="experimentStatistics"
             :experimentStatisticsError="experimentStatisticsError"
             :experimentStatisticsPending="experimentStatisticsPending"
-            v-if="experiment.reportingEnabled && experimentId"
+            v-if="experimentId"
             :experiment="experiment"
           ></result-table>
           <div slot="footer">
