@@ -4,7 +4,7 @@ import com.github.salomonbrys.kotson.fromJson
 import org.slf4j.LoggerFactory
 import pl.allegro.experiments.chi.chiserver.domain.experiments.Experiment
 import pl.allegro.experiments.chi.chiserver.domain.experiments.ExperimentId
-import pl.allegro.experiments.chi.chiserver.domain.experiments.ExperimentsRepository
+import pl.allegro.experiments.chi.chiserver.domain.experiments.ReadOnlyExperimentsRepository
 import pl.allegro.experiments.chi.chiserver.infrastructure.InMemoryExperimentsRepository
 import pl.allegro.experiments.chi.chiserver.infrastructure.JsonConverter
 import javax.naming.OperationNotSupportedException
@@ -12,7 +12,7 @@ import javax.naming.OperationNotSupportedException
 open class FileBasedExperimentsRepository(jsonUrl: String,
                                      private val dataLoader: (String) -> String,
                                      private val jsonConverter: JsonConverter,
-                                     initialState: List<Experiment> = emptyList()) : ExperimentsRepository {
+                                     initialState: List<Experiment> = emptyList()) : ReadOnlyExperimentsRepository {
 
     private val inMemoryRepository: InMemoryExperimentsRepository = InMemoryExperimentsRepository(initialState)
     private var jsonUrl: String = jsonUrl
@@ -60,21 +60,10 @@ open class FileBasedExperimentsRepository(jsonUrl: String,
         logger.debug("{} experiment(s) successfully loaded", freshExperiments.size)
     }
 
-    override fun getExperiment(id: ExperimentId): Experiment? {
-        return inMemoryRepository.getExperiment(id)
-    }
+    override fun getExperiment(id: ExperimentId): Experiment? = inMemoryRepository.getExperiment(id)
 
-    override val all: List<Experiment>
-        get() = inMemoryRepository.all
+    override fun getAll() : List<Experiment> = inMemoryRepository.getAll()
 
     override val overridable: List<Experiment>
         get() = inMemoryRepository.overridable
-
-    override fun save(experiment: Experiment) {
-        throw OperationNotSupportedException("Cannot add experiments to file based repository")
-    }
-
-    override fun delete(experimentId: ExperimentId) {
-        throw OperationNotSupportedException("Cannot delete experiments from file based repository")
-    }
 }

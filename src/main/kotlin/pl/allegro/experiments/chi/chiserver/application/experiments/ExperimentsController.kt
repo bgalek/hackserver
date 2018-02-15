@@ -43,7 +43,7 @@ class ExperimentsController(private val experimentsRepository: ExperimentsReposi
     @GetMapping(path = [""])
     fun allExperiments(): String {
         logger.info("All experiments request received")
-        return experimentsRepository.all
+        return experimentsRepository.getAll()
                 .let { measurementsRepository.withMeasurements(it)
                         .map { permissionsRepository.withPermissions(it)} }
                 .let { jsonConverter.toJson(it) }

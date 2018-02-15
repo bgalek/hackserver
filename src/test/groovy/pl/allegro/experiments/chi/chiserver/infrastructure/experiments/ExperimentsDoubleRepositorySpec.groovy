@@ -2,19 +2,17 @@ package pl.allegro.experiments.chi.chiserver.infrastructure.experiments
 
 import pl.allegro.experiments.chi.chiserver.domain.experiments.Experiment
 import pl.allegro.experiments.chi.chiserver.domain.experiments.ExperimentVariant
-import spock.lang.Ignore
+import pl.allegro.experiments.chi.chiserver.infrastructure.InMemoryExperimentsRepository
 import spock.lang.Specification
 
 class ExperimentsDoubleRepositorySpec extends Specification {
 
     def "should return size as sum of internal repos"() {
         given:
-        def fileRepo = Stub(FileBasedExperimentsRepository) {
-            getAll() >> [experiment("y1"), experiment("y2"), experiment("y3")]
-        }
-        def mongoRepo = Stub(MongoExperimentsRepository) {
-            getAll() >> [experiment("z"), experiment("z2")]
-        }
+        def fileRepo = new InMemoryExperimentsRepository(
+            [experiment("y1"), experiment("y2"), experiment("y3")])
+        def mongoRepo = new InMemoryExperimentsRepository(
+            [experiment("z"), experiment("z2")])
         def repo = new ExperimentsDoubleRepository(fileRepo, mongoRepo)
 
         expect:
@@ -22,31 +20,10 @@ class ExperimentsDoubleRepositorySpec extends Specification {
         repo.overridable.size() == 5
     }
 
-    @Ignore
-    def "shouldn't fail on internal repository refresh fail"() {
-        given:
-        def mongoRepo = Stub(MongoExperimentsRepository) {
-            getAll() >> [experiment("y1")]
-        }
-        def repo = new ExperimentsDoubleRepository(Stub(FileBasedExperimentsRepository) {
-            refresh() >> { throw new RuntimeException("refresh failed")}
-        }, mongoRepo)
-
-        when:
-        try {
-            repo.refresh()
-        } catch( e ) {
-
-        }
-
-        then:
-        repo.all.size() == 1
-    }
-
     def "should save experiments to mongo repo"() {
         given:
-        def fileRepo = Mock(FileBasedExperimentsRepository)
-        def mongoRepo = Mock(MongoExperimentsRepository)
+        def fileRepo = new InMemoryExperimentsRepository([])
+        def mongoRepo = new InMemoryExperimentsRepository([])
         def repo = new ExperimentsDoubleRepository(fileRepo, mongoRepo)
         def experiment = experiment("1234")
 
@@ -54,11 +31,43 @@ class ExperimentsDoubleRepositorySpec extends Specification {
         repo.save(experiment)
 
         then:
-        1 * mongoRepo.save(experiment)
-        0 * fileRepo.save(experiment)
+        !fileRepo.getExperiment("1234")
+        mongoRepo.getExperiment("1234")
+    }
+
+    def "first repo should have priority when calling getById"(){
+      given:
+      def fileRepo = new InMemoryExperimentsRepository([experiment("1", "from stash")])
+      def mongoRepo = new InMemoryExperimentsRepository([experiment("1", "from mongo")])
+
+      def repo = new ExperimentsDoubleRepository(fileRepo, mongoRepo)
+
+      when:
+      def e = repo.getExperiment("1")
+
+      then:
+      e.description == "from stash"
+    }
+
+    def "first repo should have priority when calling getAll"(){
+        given:
+        def fileRepo = new InMemoryExperimentsRepository(
+                [experiment("2", "from stash"), experiment("ambiguous", "from stash")])
+        def mongoRepo = new InMemoryExperimentsRepository(
+                [experiment("ambiguous", "from mongo"), experiment("3", "from mongo")])
+
+        def repo = new ExperimentsDoubleRepository(fileRepo, mongoRepo)
+
+        expect:
+        repo.all.size() == 3
+        repo.all.find{it.id == "ambiguous"}.description == "from stash"
     }
 
     def experiment(id) {
-        new Experiment(id, [new ExperimentVariant("x", [])], "", "", [], false, null, null, null)
+        experiment(id, null)
+    }
+
+    def experiment(id, desc) {
+        new Experiment(id, [new ExperimentVariant("x", [])], desc, "", [], false, null, null, null)
     }
 }

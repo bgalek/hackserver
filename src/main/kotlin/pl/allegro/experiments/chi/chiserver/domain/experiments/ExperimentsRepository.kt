@@ -1,11 +1,14 @@
 package pl.allegro.experiments.chi.chiserver.domain.experiments
 
-interface ExperimentsRepository {
+interface ReadOnlyExperimentsRepository {
     fun getExperiment(id: ExperimentId): Experiment?
 
-    val all: List<Experiment>
+    fun getAll() : List<Experiment>
 
     val overridable: List<Experiment>
+}
+
+interface ExperimentsRepository : ReadOnlyExperimentsRepository {
 
     fun delete(experimentId: ExperimentId)
 

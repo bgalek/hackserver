@@ -8,7 +8,8 @@ import java.util.*
 
 private const val COLLECTION = "experiments"
 
-open class MongoExperimentsRepository(private val mongoTemplate: MongoTemplate, val experimentsMongoMetricsReporter: ExperimentsMongoMetricsReporter) : ExperimentsRepository {
+open class MongoExperimentsRepository(private val mongoTemplate: MongoTemplate, val experimentsMongoMetricsReporter: ExperimentsMongoMetricsReporter) :
+        ExperimentsRepository {
     override fun getExperiment(id: ExperimentId): Experiment? {
         experimentsMongoMetricsReporter.timerSingleExperiment().use {
             return mongoTemplate.findById(id, Experiment::class.java, COLLECTION)
@@ -22,14 +23,12 @@ open class MongoExperimentsRepository(private val mongoTemplate: MongoTemplate, 
     override fun save(experiment: Experiment) =
         mongoTemplate.save(experiment, COLLECTION)
 
-    override val all: List<Experiment>
-        get() {
-            experimentsMongoMetricsReporter.timerAllExperiments().use {
-                return Collections.unmodifiableList(
-                        mongoTemplate.findAll(Experiment::class.java, COLLECTION))
-            }
+    override fun getAll() : List<Experiment> {
+        experimentsMongoMetricsReporter.timerAllExperiments().use {
+            return mongoTemplate.findAll(Experiment::class.java, COLLECTION)
         }
+    }
 
     override val overridable: List<Experiment>
-        get() = all.filter { it.isOverridable() }
+        get() = getAll().filter { it.isOverridable() }
 }

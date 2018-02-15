@@ -5,13 +5,14 @@ import org.springframework.scheduling.annotation.Scheduled
 import pl.allegro.experiments.chi.chiserver.domain.experiments.Experiment
 import pl.allegro.experiments.chi.chiserver.domain.experiments.ExperimentId
 import pl.allegro.experiments.chi.chiserver.domain.experiments.ExperimentsRepository
+import java.util.*
 
-class CachedMongoExperimentsRepository(private val delegate: MongoExperimentsRepository): ExperimentsRepository {
-    var experiments = delegate.all
+class CachedExperimentsRepository(private val delegate: ExperimentsRepository): ExperimentsRepository {
+    var experiments = delegate.getAll()
 
     companion object {
         private const val REFRESH_RATE_IN_SECONDS: Long = 1
-        private val logger = LoggerFactory.getLogger(CachedMongoExperimentsRepository::class.java)
+        private val logger = LoggerFactory.getLogger(CachedExperimentsRepository::class.java)
     }
 
 
@@ -19,17 +20,15 @@ class CachedMongoExperimentsRepository(private val delegate: MongoExperimentsRep
                initialDelay = REFRESH_RATE_IN_SECONDS * 1_000)
     fun secureRefresh() {
         try {
-            //TODO usunąć
-            logger.info("loading experiments from Mongo ...")
+            logger.debug("loading experiments from Mongo ...")
 
-            experiments = delegate.all
+            experiments = delegate.getAll()
         } catch (e: Exception) {
             logger.error("Error while loading all experiments from Mongo.", e)
         }
     }
 
-    override val all: List<Experiment>
-        get() = experiments
+    override fun getAll() : List<Experiment> = Collections.unmodifiableList(experiments)
 
     override val overridable: List<Experiment>
         get() = experiments.filter { it.isOverridable() }
@@ -44,7 +43,5 @@ class CachedMongoExperimentsRepository(private val delegate: MongoExperimentsRep
         secureRefresh()
     }
 
-    override fun getExperiment(id: ExperimentId): Experiment? {
-        return experiments.find { it.id == id }
-    }
+    override fun getExperiment(id: ExperimentId): Experiment? = experiments.find { it.id == id }
 }

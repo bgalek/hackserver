@@ -13,8 +13,7 @@ class FileBasedExperimentsRepositoryRefresher(private val experimentsRepository:
     @Scheduled(fixedDelay = REFRESH_RATE_IN_SECONDS * 1_000,
                initialDelay = REFRESH_RATE_IN_SECONDS * 1_000)
     fun refresh() {
-        //TODO usunąć
-        logger.info("loading experiments from File ...")
+        logger.debug("loading experiments from File ...")
 
         experimentsRepository.secureRefresh()
     }

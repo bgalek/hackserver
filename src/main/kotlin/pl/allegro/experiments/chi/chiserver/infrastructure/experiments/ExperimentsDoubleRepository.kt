@@ -1,14 +1,14 @@
 package pl.allegro.experiments.chi.chiserver.infrastructure.experiments
 
-import pl.allegro.experiments.chi.chiserver.domain.experiments.Experiment
-import pl.allegro.experiments.chi.chiserver.domain.experiments.ExperimentId
-import pl.allegro.experiments.chi.chiserver.domain.experiments.ExperimentsRepository
+import pl.allegro.experiments.chi.chiserver.domain.experiments.*
 
-class ExperimentsDoubleRepository(private val fileBasedExperimentsRepository: FileBasedExperimentsRepository,
+class ExperimentsDoubleRepository(private val readOnlyExperimentsRepository: ReadOnlyExperimentsRepository,
                                   private val mongoExperimentsRepository: ExperimentsRepository) : ExperimentsRepository {
 
     override fun getExperiment(id: ExperimentId): Experiment? {
-        return fileBasedExperimentsRepository.getExperiment(id) ?: mongoExperimentsRepository.getExperiment(id)
+
+        return readOnlyExperimentsRepository.getExperiment(id)
+               ?: mongoExperimentsRepository.getExperiment(id)
     }
 
     override fun save(experiment: Experiment) {
@@ -19,10 +19,21 @@ class ExperimentsDoubleRepository(private val fileBasedExperimentsRepository: Fi
         mongoExperimentsRepository.delete(experimentId)
     }
 
-    override val all: List<Experiment>
-    get() = fileBasedExperimentsRepository.all + mongoExperimentsRepository.all
+    override fun getAll() : List<Experiment> {
+        val readOnlyExperiments = readOnlyExperimentsRepository.getAll()
+        val readOnlyKeys = HashSet<String>(readOnlyExperiments.map(Experiment::id))
 
+        val merged = ArrayList(readOnlyExperiments)
+
+        mongoExperimentsRepository.getAll().forEach { e ->
+            if (!readOnlyKeys.contains(e.id)) {
+                merged.add(e)
+            }
+        }
+
+        return merged
+    }
 
     override val overridable: List<Experiment>
-    get() = all.filter { it.isOverridable() }
+    get() = getAll().filter { it.isOverridable() }
 }

@@ -26,7 +26,7 @@ class ExperimentsConfig {
         val httpContentLoader = HttpContentLoader(restTemplate)
         val repo = FileBasedExperimentsRepository(jsonUrl, httpContentLoader::loadFromHttp, jsonConverter)
 
-        val gauge = Gauge<Int> { repo.all.size }
+        val gauge = Gauge<Int> { repo.getAll().size }
         metricRegistry.register(EXPERIMENTS_COUNT_METRIC, gauge)
 
         return repo
@@ -43,7 +43,7 @@ class ExperimentsConfig {
     @Bean
     fun experimentsRepository(
             fileBasedExperimentsRepository: FileBasedExperimentsRepository,
-            mongoExperimentsRepository: CachedMongoExperimentsRepository): ExperimentsRepository {
+            mongoExperimentsRepository: CachedExperimentsRepository): ExperimentsRepository {
         return ExperimentsDoubleRepository(fileBasedExperimentsRepository, mongoExperimentsRepository)
     }
 
@@ -58,8 +58,8 @@ class ExperimentsConfig {
     }
 
     @Bean
-    fun mongoRefresher(experimentsRepository: MongoExperimentsRepository): CachedMongoExperimentsRepository {
-        return CachedMongoExperimentsRepository(experimentsRepository)
+    fun mongoRefresher(experimentsRepository: MongoExperimentsRepository): CachedExperimentsRepository {
+        return CachedExperimentsRepository(experimentsRepository)
     }
 
     @Bean

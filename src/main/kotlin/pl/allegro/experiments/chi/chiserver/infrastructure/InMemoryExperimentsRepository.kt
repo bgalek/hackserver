@@ -26,12 +26,9 @@ open class InMemoryExperimentsRepository(experiments: Collection<Experiment>) : 
         remove(experimentId)
     }
 
-    internal fun experimentIds(): Set<String> {
-        return experiments.keys
-    }
+    internal fun experimentIds(): Set<String> = experiments.keys
 
-    override val all: List<Experiment>
-        get() = ImmutableList.copyOf(experiments.values)
+    override fun getAll() : List<Experiment> = ImmutableList.copyOf(experiments.values)
 
     override val overridable: List<Experiment>
         get() = ImmutableList.copyOf(experiments.values.filter { it.isOverridable() })
