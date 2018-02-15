@@ -9,13 +9,9 @@ class CreateExperimentCommand(private val experimentsRepository: ExperimentsRepo
                               private val userProvider: UserProvider,
                               private val experimentCreationRequest: ExperimentCreationRequest) {
 
-    companion object {
-        private val logger by logger()
-    }
-
     fun execute() {
         val user = userProvider.getCurrentUser()
-        if (!user.isRoot) {
+        if (user.isAnonymous() && !user.isRoot) {
             throw AuthorizationException("User ${user.name} cannot create experiments")
         }
         if (experimentsRepository.getExperiment(experimentCreationRequest.id) != null) {

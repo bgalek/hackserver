@@ -32,7 +32,8 @@
 
       <v-btn v-if="canBeStarted()"
              color="green"
-             @click="start">
+             @click="start"
+             style="text-transform: none">
         Start experiment
       </v-btn>
 
@@ -175,7 +176,7 @@
       },
 
       canRunAnyCommand () {
-        return this.canBeStarted() || this.canBeDeleted()
+        return this.canBeStarted() || this.canBeDeleted() || this.canBeStopped()
       },
 
       ...mapActions(['startExperiment', 'getExperiment', 'deleteExperiment', 'stopExperiment'])
