@@ -12,6 +12,9 @@ class ExperimentsDoubleRepository(private val readOnlyExperimentsRepository: Rea
     }
 
     override fun save(experiment: Experiment) {
+        if (getOrigin(experiment.id) == "stash") {
+            throw IllegalArgumentException("experiment $experiment.id is from stash")
+        }
         mongoExperimentsRepository.save(experiment)
     }
 
@@ -34,11 +37,11 @@ class ExperimentsDoubleRepository(private val readOnlyExperimentsRepository: Rea
         return merged
     }
 
-    fun getOrigin(experiment: Experiment) : String {
-        if (readOnlyExperimentsRepository.getExperiment(experiment.id) != null) {
+    fun getOrigin(experimentId: String) : String {
+        if (readOnlyExperimentsRepository.getExperiment(experimentId) != null) {
             return "stash"
         }
-        if (mongoExperimentsRepository.getExperiment(experiment.id) != null) {
+        if (mongoExperimentsRepository.getExperiment(experimentId) != null) {
             return "mongo"
         }
         return "not found :("

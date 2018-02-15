@@ -49,6 +49,32 @@ class ExperimentsDoubleRepositorySpec extends Specification {
       e.description == "from stash"
     }
 
+    def "should not allow to save when experiment is from stash"() {
+        given:
+        def fileRepo = new InMemoryExperimentsRepository([experiment("1", "from stash")])
+        def mongoRepo = new InMemoryExperimentsRepository([experiment("2", "from mongo")])
+
+        def repo = new ExperimentsDoubleRepository(fileRepo, mongoRepo)
+
+        when:
+        repo.save(experiment("1", 'from stash, v2'))
+
+        then:
+        thrown IllegalArgumentException
+    }
+
+    def "should show origin"() {
+      given:
+      def fileRepo = new InMemoryExperimentsRepository([experiment("1", "from stash")])
+      def mongoRepo = new InMemoryExperimentsRepository([experiment("2", "from mongo")])
+
+      def repo = new ExperimentsDoubleRepository(fileRepo, mongoRepo)
+
+      expect:
+      repo.getOrigin("1") == 'stash'
+      repo.getOrigin("2") == 'mongo'
+    }
+
     def "first repo should have priority when calling getAll"(){
         given:
         def fileRepo = new InMemoryExperimentsRepository(
@@ -75,6 +101,7 @@ class ExperimentsDoubleRepositorySpec extends Specification {
                 "",
                 [],
                 false,
+                null,
                 null,
                 null,
                 null)

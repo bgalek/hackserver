@@ -8,6 +8,6 @@ class PermissionsRepository(private val userProvider: UserProvider,
     fun withPermissions(experiment: Experiment): Experiment {
         val currentUser = userProvider.getCurrentUser()
         return experiment.withEditableFlag(currentUser.isOwner(experiment))
-                         .withOrigin(experimentsRepository.getOrigin(experiment))
+                         .withOrigin(experimentsRepository.getOrigin(experiment.id))
     }
 }
