@@ -6,7 +6,6 @@ import org.springframework.core.convert.converter.Converter
 import pl.allegro.experiments.chi.chiserver.domain.experiments.*
 import java.util.regex.Pattern
 
-
 internal object experimentDeserializer : Converter<DBObject, Experiment> {
     override fun convert(bson: DBObject): Experiment {
         val experiment = Experiment(
@@ -17,7 +16,10 @@ internal object experimentDeserializer : Converter<DBObject, Experiment> {
             bson["author"] as String?,
             bson["groups"] as List<String>,
             bson["reportingEnabled"] as Boolean? ?: true,
-            (bson["activityPeriod"] as BasicDBObject?)?.let { activityPeriodDeserializer.convert(it) }
+            (bson["activityPeriod"] as BasicDBObject?)?.let { activityPeriodDeserializer.convert(it) },
+            null,
+            null,
+            null
         )
 
         return experiment

@@ -83,7 +83,8 @@ class ExperimentsE2ESpec extends BaseIntegrationSpec {
                 measurements     : [lastDayVisits: 0],
                 groups           : [],
                 status           : 'DRAFT',
-                editable         : true
+                editable         : true,
+                origin           : 'stash'
         ]
     }
 
@@ -115,7 +116,7 @@ class ExperimentsE2ESpec extends BaseIntegrationSpec {
         fileBasedExperimentsRepository.jsonUrl = WireMockUtils.resourceUrl('/experiments', wireMock)
         fileBasedExperimentsRepository.secureRefresh()
 
-        def editableMeasuredExperiment = { ex -> ex << [measurements: [lastDayVisits: 0], editable: true] }
+        def editableMeasuredExperiment = { ex -> ex << [measurements: [lastDayVisits: 0], editable: true, origin: 'stash'] }
 
         when:
         def response = restTemplate.getForEntity(localUrl('/api/admin/experiments'), List)

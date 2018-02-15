@@ -111,7 +111,8 @@ class ExperimentsSelfServiceE2ESpec extends BaseIntegrationSpec {
                 author      : "Anonymous",
                 status      : "DRAFT",
                 measurements: [lastDayVisits: 0],
-                editable: true
+                editable: true,
+                origin: 'mongo'
         ]
         responseSingle.body.variants == expectedExperiment.variants
         responseSingle.body == expectedExperiment

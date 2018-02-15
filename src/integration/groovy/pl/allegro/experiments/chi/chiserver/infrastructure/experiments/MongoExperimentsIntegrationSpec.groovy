@@ -31,6 +31,7 @@ class MongoExperimentsIntegrationSpec extends BaseIntegrationSpec {
                 "exciting stuff", "exciting link", "tester", [], false,
                 new ActivityPeriod(someDateTime().minusDays(2), someDateTime().plusDays(3)),
                 null,
+                null,
                 null
         )
 

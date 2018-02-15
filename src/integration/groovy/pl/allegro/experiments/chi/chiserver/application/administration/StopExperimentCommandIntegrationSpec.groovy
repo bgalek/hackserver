@@ -160,7 +160,8 @@ class StopExperimentCommandIntegrationSpec extends BaseIntegrationSpec {
                         ZonedDateTime.now().plusDays(20)
                 ),
                 draft.measurements,
-                draft.editable
+                draft.editable,
+                null
         ))
         return experimentsRepository.getExperiment(draft.id)
     }
