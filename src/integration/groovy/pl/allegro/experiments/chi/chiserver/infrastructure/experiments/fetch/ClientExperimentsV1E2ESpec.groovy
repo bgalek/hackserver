@@ -34,7 +34,7 @@ class ClientExperimentsV1E2ESpec extends BaseIntegrationSpec {
     def "should return list of active experiments in version 1"() {
         given:
         fileBasedExperimentsRepository.jsonUrl = WireMockUtils.resourceUrl('/experiments', wireMock)
-        refresher.refresh()
+        fileBasedExperimentsRepository.refresh()
 
         when:
         def response = restTemplate.getForEntity(localUrl('/api/experiments/v1'), List)

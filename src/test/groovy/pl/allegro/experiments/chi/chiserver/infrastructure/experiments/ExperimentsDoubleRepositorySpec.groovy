@@ -63,10 +63,14 @@ class ExperimentsDoubleRepositorySpec extends Specification {
         repo.all.find{it.id == "ambiguous"}.description == "from stash"
     }
 
-    def experiment(id) {
+    Experiment experiment(id) {
+        experiment(id, null)
+    }
+
+    Experiment experiment(id, desc) {
         new Experiment(id,
                 [new ExperimentVariant("x", [])],
-                "",
+                desc,
                 "",
                 "",
                 [],
