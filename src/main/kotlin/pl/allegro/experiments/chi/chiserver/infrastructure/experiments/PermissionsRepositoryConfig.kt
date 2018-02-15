@@ -11,7 +11,7 @@ class PermissionsRepositoryConfig {
 
     @Bean
     fun configurePermissionsRepository(userProvider: UserProvider,
-                                       experimentsRepository: ExperimentsDoubleRepository): PermissionsRepository {
+                                       experimentsRepository: ExperimentsRepository): PermissionsRepository {
         return PermissionsRepository(userProvider, experimentsRepository)
     }
 }

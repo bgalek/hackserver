@@ -31,7 +31,8 @@ data class ExperimentCreationRequest (var id: ExperimentId,
                     this.documentLink,
                     author,
                     this.groups,
-                    this.reportingEnabled)
+                    this.reportingEnabled,
+                    null)
         } catch (e: Exception) {
             throw ExperimentCreationException("Cannot create experiment from request $this", e)
         }

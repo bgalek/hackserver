@@ -43,7 +43,7 @@ class ExperimentsConfig {
     @Bean
     fun experimentsRepository(
             fileBasedExperimentsRepository: FileBasedExperimentsRepository,
-            mongoExperimentsRepository: CachedExperimentsRepository): ExperimentsDoubleRepository {
+            mongoExperimentsRepository: CachedExperimentsRepository): ExperimentsRepository {
         return ExperimentsDoubleRepository(fileBasedExperimentsRepository, mongoExperimentsRepository)
     }
 

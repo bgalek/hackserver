@@ -13,4 +13,7 @@ interface ExperimentsRepository : ReadOnlyExperimentsRepository {
     fun delete(experimentId: ExperimentId)
 
     fun save(experiment: Experiment)
+
+    /** to be removed with StashRepository */
+    fun getOrigin(experimentId: String) : String = "undefined"
 }
