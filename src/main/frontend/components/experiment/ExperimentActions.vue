@@ -176,7 +176,7 @@
       },
 
       canRunAnyCommand () {
-        return this.canBeStarted() || this.canBeDeleted() || this.canBeStopped()
+        return this.experiment.origin !== 'stash' && (this.canBeStarted() || this.canBeDeleted() || this.canBeStopped())
       },
 
       ...mapActions(['startExperiment', 'getExperiment', 'deleteExperiment', 'stopExperiment'])

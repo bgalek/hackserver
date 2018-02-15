@@ -19,7 +19,8 @@ const ExperimentRecord = Record({
   measurements: Record({
     lastDayVisits: 0
   }),
-  editable: false
+  editable: false,
+  origin: ''
 })
 
 export default class ExperimentModel extends ExperimentRecord {
