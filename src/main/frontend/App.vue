@@ -12,6 +12,7 @@
           v-for="(item, i) in drawerItems"
           :key=i
           :to="{path: item.path}"
+          v-if="!item.requireLogin || isLoggedIn"
         >
           <v-list-tile-action>
             <v-icon v-html="item.icon"></v-icon>
@@ -51,16 +52,30 @@
 </template>
 
 <script>
+  import { mapState, mapActions } from 'vuex'
+
   export default {
+    created () {
+      this.getUser()
+    },
+
+    computed: mapState({
+      isLoggedIn: state => state.user.isLoggedIn
+    }),
+
     data () {
       return {
         drawer: false,
         drawerItems: [
-          { icon: 'bubble_chart', title: 'Experiments', path: '/experiments' },
-          { icon: 'visibility', title: 'Cookie Baker', path: '/cookie_baker' },
-          { icon: 'add', title: 'Create experiment', path: '/experiments/create' }
+          { icon: 'bubble_chart', title: 'Experiments', path: '/experiments', requireLogin: false },
+          { icon: 'visibility', title: 'Cookie Baker', path: '/cookie_baker', requireLogin: false },
+          { icon: 'add', title: 'Create experiment', path: '/experiments/create', requireLogin: true }
         ]
       }
+    },
+
+    methods: {
+      ...mapActions(['getUser'])
     }
   }
 </script>
