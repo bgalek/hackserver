@@ -10,6 +10,7 @@
     "moment-range": "^3.1.0",
     "numeral": "^2.0.6",
     "v-clipboard": "^1.0.4",
+    "valid-url": "^1.0.9",
     "vue": "^2.5.6",
     "vue-router": "^3.0.1",
     "vuetify": "^0.17.1",

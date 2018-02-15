@@ -6,6 +6,7 @@ import java.util.regex.Pattern
 data class ExperimentCreationRequest (var id: ExperimentId,
                                       var variants: List<Variant>,
                                       var description: String? = null,
+                                      var documentLink: String? = null,
                                       var groups: List<String> = emptyList(),
                                       var reportingEnabled: Boolean = false) {
     data class Variant (val name: String,
@@ -27,6 +28,7 @@ data class ExperimentCreationRequest (var id: ExperimentId,
                     this.id,
                     this.variants.map { convertVariant(it) },
                     this.description,
+                    this.documentLink,
                     author,
                     this.groups,
                     this.reportingEnabled)

@@ -13,6 +13,7 @@ internal object experimentDeserializer : Converter<DBObject, Experiment> {
             bson["_id"] as String,
             (bson["variants"] as List<DBObject>).map { experimentVariantDeserializer.convert(it) },
             bson["description"] as String?,
+            bson["documentLink"] as String?,
             bson["author"] as String?,
             bson["groups"] as List<String>,
             bson["reportingEnabled"] as Boolean? ?: true,
@@ -34,6 +35,7 @@ internal object experimentSerializer : Converter<Experiment, DBObject> {
             )
 
             description?.let { bson["description"] = it }
+            documentLink?.let { bson["documentLink"] = it }
             author?.let { bson["author"] = it }
             bson["groups"] = groups
             reportingEnabled.let { bson["reportingEnabled"] = it }

@@ -8,6 +8,7 @@ const ExperimentRecord = Record({
   id: null,
   variants: [],
   description: '',
+  documentLink: '',
   author: '',
   groups: [],
   activityPeriod: null,
@@ -29,8 +30,6 @@ export default class ExperimentModel extends ExperimentRecord {
     experimentObject.hasBase = _.includes(_.map(experimentObject.variants, v => v.name), 'base')
     experimentObject.isMeasured = experimentObject.hasBase && experimentObject.reportingEnabled
     experimentObject.groups = List(experimentObject.groups)
-    experimentObject.measurements = experimentObject.measurements
-    experimentObject.editable = experimentObject.editable
     super(experimentObject)
   }
 

@@ -1,7 +1,7 @@
 <template>
   <v-container>
     <v-layout>
-      <v-flex md12 lg10 offset-xl1 xl10>
+      <v-flex md12 lg10 xl10 offset-xl1 offset-md1 offset-lg1>
 
         <h1>Experiment <span style="font-family: monospace">{{ $route.params.experimentId }}</span></h1>
 
@@ -33,6 +33,7 @@
         ></experiment-actions>
 
         <assignment-panel
+          v-if="experiment.status !== 'ENDED'"
           :experiment="experiment"
         ></assignment-panel>
 

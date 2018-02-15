@@ -31,6 +31,7 @@ class ExperimentsTestConfig {
                                 new ExperimentVariant('v1', [])
                         ],
                         'description',
+                        'link',
                         'owner',
                         [],
                         true,
@@ -45,6 +46,7 @@ class ExperimentsTestConfig {
                                 new ExperimentVariant('v1', [])
                         ],
                         'description',
+                        'link',
                         'owner',
                         [],
                         false,

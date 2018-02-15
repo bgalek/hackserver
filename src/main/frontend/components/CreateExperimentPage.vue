@@ -1,7 +1,7 @@
 <template>
   <v-container>
     <v-layout>
-      <v-flex md12 lg10 offset-xl1 xl10>
+      <v-flex md12 lg10 xl10 offset-xl1 offset-md1 offset-lg1>
 
         <chi-panel v-if="showForm" title="New experiment">
 
@@ -39,6 +39,12 @@
               ></v-text-field>
               <span>Describe shortly what you are going to test.</span>
             </v-tooltip>
+
+            <v-text-field
+              v-model="documentLink"
+              :rules="documentLinkRules"
+              label="Documentation link"
+            ></v-text-field>
 
             <v-tooltip bottom>
               <v-select
@@ -142,6 +148,7 @@
 <script>
   import { mapActions } from 'vuex'
   import _ from 'lodash'
+  import {isUri} from 'valid-url'
 
   import ChiPanel from './ChiPanel.vue'
 
@@ -167,6 +174,10 @@
         baseVariant: baseVariant,
         experimentId: '',
         description: '',
+        documentLink: '',
+        documentLinkRules: [
+          (v) => this.isUrlValid(v) || 'Provided string is not a valid URL'
+        ],
         groups: [],
         reportingEnabled: true,
         selectedInternal: '',
@@ -206,6 +217,10 @@
     },
 
     methods: {
+      isUrlValid (value) {
+        return isUri(value) !== undefined || value === ''
+      },
+
       slugify (str) {
         return str.toString().toLowerCase()
           .replace(/\s+/g, '-')
@@ -273,6 +288,7 @@
         let result = {
           id: this.experimentIdSlug,
           description: this.description,
+          documentLink: this.documentLink,
           groups: this.groups,
           reportingEnabled: this.reportingEnabled,
           variants: this.getVariantsDataToSend()

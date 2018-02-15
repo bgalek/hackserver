@@ -7,9 +7,10 @@ import pl.allegro.experiments.chi.chiserver.domain.experiments.administration.Pe
 import pl.allegro.experiments.chi.chiserver.domain.statistics.StatisticsRepository
 
 @Component
-class DeleteExperimentCommandFactory(val experimentsRepository: ExperimentsRepository,
-                                     val permissionsAwareExperimentGetter: PermissionsAwareExperimentGetter,
-                                     val statisticsRepository: StatisticsRepository) {
+class DeleteExperimentCommandFactory(
+        val experimentsRepository: ExperimentsRepository,
+        val permissionsAwareExperimentGetter: PermissionsAwareExperimentGetter,
+        val statisticsRepository: StatisticsRepository) {
 
     fun deleteExperimentCommand(experimentId: ExperimentId): DeleteExperimentCommand {
         return DeleteExperimentCommand(

@@ -1,5 +1,5 @@
 <template>
-  <v-container><v-layout><v-flex md12 lg10 offset-xl1 xl10>
+  <v-container><v-layout><v-flex md12 lg10 xl10 offset-xl1 offset-md1 offset-lg1>
 
     <v-layout row justify-space-between>
       <v-flex xs2>
@@ -20,11 +20,12 @@
     </v-alert>
 
     <experiment-list :linkToData="true" :experiments="experiments" v-if="experiments.length"></experiment-list>
+    <div v-else>There are no experiments available</div>
 
     <h1>Unmeasurable Experiments</h1>
 
     <experiment-list :linkToData="false" :experiments="immeasurableExperiments" v-if="immeasurableExperiments.length"></experiment-list>
-
+    <div v-else>There are no experiments available</div>
 
     <v-alert v-if="error" color="error" icon="warning" value="true">
       Couldn't load experiments: {{ error.message }}
@@ -73,7 +74,10 @@ export default {
     },
 
     immeasurableExperiments () {
-      return this.sortExperiments(_.filter(this.$store.state.experiments.experiments, (e) => !e.isMeasured))
+      const sortedExperiments = this.sortExperiments(_.filter(this.$store.state.experiments.experiments, (e) => !e.isMeasured))
+      return sortedExperiments.filter((e) => {
+        return this.filterMyExperiments ? e.editable : true
+      })
     }
   },
 

@@ -1,4 +1,4 @@
-package pl.allegro.experiments.chi.chiserver.infrastructure.experiments
+package pl.allegro.experiments.chi.chiserver.infrastructure.experiments.fetch
 
 import com.github.tomakehurst.wiremock.junit.WireMockRule
 import org.junit.ClassRule
@@ -12,9 +12,10 @@ import pl.allegro.experiments.chi.chiserver.BaseIntegrationSpec
 import pl.allegro.experiments.chi.chiserver.domain.User
 import pl.allegro.experiments.chi.chiserver.domain.UserProvider
 import pl.allegro.experiments.chi.chiserver.domain.experiments.ExperimentsRepository
+import pl.allegro.experiments.chi.chiserver.infrastructure.experiments.ExperimentRepositoryRefresher
+import pl.allegro.experiments.chi.chiserver.infrastructure.experiments.ExperimentsDoubleRepository
+import pl.allegro.experiments.chi.chiserver.infrastructure.experiments.FileBasedExperimentsRepository
 import spock.lang.Shared
-
-import static com.github.tomakehurst.wiremock.client.WireMock.*
 
 @DirtiesContext
 class ExperimentsE2ESpec extends BaseIntegrationSpec {
@@ -41,13 +42,13 @@ class ExperimentsE2ESpec extends BaseIntegrationSpec {
         if (!experimentsRepository instanceof ExperimentsDoubleRepository) {
             throw new RuntimeException("We should test real repository, not the fake one")
         }
-        teachWireMockJson("/experiments", '/some-experiments.json')
-        teachWireMockJson("/invalid-experiments",'/invalid-experiments.json')
+        WireMockUtils.teachWireMockJson("/experiments", '/some-experiments.json')
+        WireMockUtils.teachWireMockJson("/invalid-experiments",'/invalid-experiments.json')
     }
 
     def "should return list of experiments loaded from the backing HTTP resource"() {
         given:
-        fileBasedExperimentsRepository.jsonUrl = resourceUrl('/experiments')
+        fileBasedExperimentsRepository.jsonUrl = WireMockUtils.resourceUrl('/experiments', wireMock)
         refresher.refresh()
 
         when:
@@ -69,7 +70,7 @@ class ExperimentsE2ESpec extends BaseIntegrationSpec {
     def "should return single of experiment loaded from the backing HTTP resource"() {
         given:
         userProvider.user = new User('Anonymous', [], true)
-        fileBasedExperimentsRepository.jsonUrl = resourceUrl('/experiments')
+        fileBasedExperimentsRepository.jsonUrl = WireMockUtils.resourceUrl('/experiments', wireMock)
         refresher.refresh()
 
         when:
@@ -92,7 +93,7 @@ class ExperimentsE2ESpec extends BaseIntegrationSpec {
 
     def "should return list of overridable experiments in version 2"() {
         given:
-        fileBasedExperimentsRepository.jsonUrl = resourceUrl('/experiments')
+        fileBasedExperimentsRepository.jsonUrl = WireMockUtils.resourceUrl('/experiments', wireMock)
         refresher.refresh()
 
         when:
@@ -115,7 +116,7 @@ class ExperimentsE2ESpec extends BaseIntegrationSpec {
     def "should return all experiments as measured for admin"() {
         given:
         userProvider.user = new User('Anonymous', [], true)
-        fileBasedExperimentsRepository.jsonUrl = resourceUrl('/experiments')
+        fileBasedExperimentsRepository.jsonUrl = WireMockUtils.resourceUrl('/experiments', wireMock)
         refresher.refresh()
 
         def editableMeasuredExperiment = { ex -> ex << [measurements: [lastDayVisits: 0], editable: true] }
@@ -139,9 +140,9 @@ class ExperimentsE2ESpec extends BaseIntegrationSpec {
 
     def "should return last valid list when file is corrupted"() {
         given:
-        fileBasedExperimentsRepository.jsonUrl = resourceUrl('/experiments')
+        fileBasedExperimentsRepository.jsonUrl = WireMockUtils.resourceUrl('/experiments', wireMock)
         refresher.refresh()
-        fileBasedExperimentsRepository.jsonUrl = resourceUrl('/invalid-experiments')
+        fileBasedExperimentsRepository.jsonUrl = WireMockUtils.resourceUrl('/invalid-experiments', wireMock)
         refresher.refresh()
 
         when:
@@ -227,22 +228,6 @@ class ExperimentsE2ESpec extends BaseIntegrationSpec {
         then:
         def ex = thrown(HttpClientErrorException)
         ex.statusCode.value() == 400
-    }
-
-    void teachWireMockJson(String path, String jsonPath) {
-        String json = getResourceAsString(jsonPath)
-        stubFor(get(urlEqualTo(path))
-                .willReturn(aResponse()
-                .withStatus(200)
-                .withBody(json)))
-    }
-
-    String getResourceAsString(String resourceName) {
-        this.getClass().getResource(resourceName).text
-    }
-
-    String resourceUrl(String endpoint) {
-        "http://localhost:${wireMock.port()}$endpoint"
     }
 
     Map internalExperiment() {

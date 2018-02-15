@@ -7,6 +7,7 @@ import experimentStatistics from './experimentStatistics'
 import deleteExperiment from './deleteExperiment'
 import startExperiment from './startExperiment'
 import createExperiment from './createExperiment'
+import stopExperiment from './stopExperiment'
 import {userPreferences} from './userPreferences'
 import createPersistedState from 'vuex-persistedstate'
 
@@ -25,6 +26,7 @@ export default new Vuex.Store({
     createExperiment,
     startExperiment,
     deleteExperiment,
-    userPreferences
+    userPreferences,
+    stopExperiment
   }
 })
