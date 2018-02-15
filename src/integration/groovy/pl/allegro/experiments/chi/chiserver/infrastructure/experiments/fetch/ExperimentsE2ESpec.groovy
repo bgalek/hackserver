@@ -12,7 +12,6 @@ import pl.allegro.experiments.chi.chiserver.BaseIntegrationSpec
 import pl.allegro.experiments.chi.chiserver.domain.User
 import pl.allegro.experiments.chi.chiserver.domain.UserProvider
 import pl.allegro.experiments.chi.chiserver.domain.experiments.ExperimentsRepository
-import pl.allegro.experiments.chi.chiserver.infrastructure.experiments.ExperimentRepositoryRefresher
 import pl.allegro.experiments.chi.chiserver.infrastructure.experiments.ExperimentsDoubleRepository
 import pl.allegro.experiments.chi.chiserver.infrastructure.experiments.FileBasedExperimentsRepository
 import spock.lang.Shared
@@ -33,9 +32,6 @@ class ExperimentsE2ESpec extends BaseIntegrationSpec {
     ExperimentsRepository experimentsRepository
 
     @Autowired
-    FileBasedExperimentsRepositoryRefresher refresher
-
-    @Autowired
     UserProvider userProvider
 
     def setup() {
@@ -49,7 +45,7 @@ class ExperimentsE2ESpec extends BaseIntegrationSpec {
     def "should return list of experiments loaded from the backing HTTP resource"() {
         given:
         fileBasedExperimentsRepository.jsonUrl = WireMockUtils.resourceUrl('/experiments', wireMock)
-        refresher.refresh()
+        fileBasedExperimentsRepository.secureRefresh()
 
         when:
         def response = restTemplate.getForEntity(localUrl('/api/experiments'), List)
@@ -71,7 +67,7 @@ class ExperimentsE2ESpec extends BaseIntegrationSpec {
         given:
         userProvider.user = new User('Anonymous', [], true)
         fileBasedExperimentsRepository.jsonUrl = WireMockUtils.resourceUrl('/experiments', wireMock)
-        refresher.refresh()
+        fileBasedExperimentsRepository.secureRefresh()
 
         when:
         def response = restTemplate.getForEntity(localUrl('/api/admin/experiments/cmuid_regexp'), Map)
@@ -94,7 +90,7 @@ class ExperimentsE2ESpec extends BaseIntegrationSpec {
     def "should return list of overridable experiments in version 2"() {
         given:
         fileBasedExperimentsRepository.jsonUrl = WireMockUtils.resourceUrl('/experiments', wireMock)
-        refresher.refresh()
+        fileBasedExperimentsRepository.secureRefresh()
 
         when:
         def response = restTemplate.getForEntity(localUrl('/api/experiments'), List)
@@ -117,7 +113,7 @@ class ExperimentsE2ESpec extends BaseIntegrationSpec {
         given:
         userProvider.user = new User('Anonymous', [], true)
         fileBasedExperimentsRepository.jsonUrl = WireMockUtils.resourceUrl('/experiments', wireMock)
-        refresher.refresh()
+        fileBasedExperimentsRepository.secureRefresh()
 
         def editableMeasuredExperiment = { ex -> ex << [measurements: [lastDayVisits: 0], editable: true] }
 
@@ -141,9 +137,9 @@ class ExperimentsE2ESpec extends BaseIntegrationSpec {
     def "should return last valid list when file is corrupted"() {
         given:
         fileBasedExperimentsRepository.jsonUrl = WireMockUtils.resourceUrl('/experiments', wireMock)
-        refresher.refresh()
+        fileBasedExperimentsRepository.secureRefresh()
         fileBasedExperimentsRepository.jsonUrl = WireMockUtils.resourceUrl('/invalid-experiments', wireMock)
-        refresher.refresh()
+        fileBasedExperimentsRepository.secureRefresh()
 
         when:
         def response = restTemplate.getForEntity(localUrl('/api/experiments'), List)

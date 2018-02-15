@@ -2,7 +2,8 @@ package pl.allegro.experiments.chi.chiserver.domain.experiments
 
 import pl.allegro.experiments.chi.chiserver.domain.UserProvider
 
-class PermissionsRepository(private val userProvider: UserProvider) {
+class PermissionsRepository(private val userProvider: UserProvider,
+                            private val experimentsRepository : ExperimentsRepository) {
     fun withPermissions(experiment: Experiment): Experiment {
         val currentUser = userProvider.getCurrentUser()
         return if (currentUser.isOwner(experiment)) experiment.withEditableFlag(true) else experiment.withEditableFlag(false)
