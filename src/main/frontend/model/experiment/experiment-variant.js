@@ -23,7 +23,7 @@ export default class ExperimentVariantModel extends ExperimentVariantRecord {
   }
 
   static predicatesInfo (variant) {
-    return variant.predicates.map(ExperimentVariantModel.predicateToString).join(', ')
+    return variant.predicates.map(ExperimentVariantModel.predicateToString).join(' AND ')
   }
 
   static predicateToString (p) {
