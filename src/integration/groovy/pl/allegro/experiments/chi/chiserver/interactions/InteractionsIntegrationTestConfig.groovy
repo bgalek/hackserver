@@ -36,6 +36,7 @@ class InteractionsIntegrationTestConfig {
                         true,
                         null,
                         null,
+                        null,
                         null
                 ),
                 new Experiment(
@@ -49,6 +50,7 @@ class InteractionsIntegrationTestConfig {
                         'owner',
                         [],
                         false,
+                        null,
                         null,
                         null,
                         null
