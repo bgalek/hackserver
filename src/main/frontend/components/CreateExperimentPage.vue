@@ -125,14 +125,10 @@
               <v-text-field
                 slot="activator"
                 v-model="selectedInternal"
-                label="Internal"
+                label="Internal variant"
               ></v-text-field>
 
-              <span>You can choose one of the existing variants to be forced internally
-                    or provide additional,
-                    internal only variant.
-                 <br/>
-                    <b>Internal</b> means &mdash; available only in Allegro intranet.</span>
+              <span><b>Internal</b> means &mdash; available only in Allegro intranet.</span>
             </v-tooltip>
 
             <v-btn @click="onSubmit" color="success">create</v-btn>
