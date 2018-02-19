@@ -37,6 +37,21 @@
         Start experiment
       </v-btn>
 
+      <v-text-field
+             v-if="canBeProlonged()"
+             label="Additional duration days"
+             v-model="additionalDurationDays"
+             :rules="durationDaysRules"
+             required
+      ></v-text-field>
+
+      <v-btn v-if="canBeProlonged()"
+             color="gray"
+             @click="prolong"
+             style="text-transform: none">
+        Prolong experiment
+      </v-btn>
+
       <v-menu open-on-hover bottom offset-y
               v-if="canBeStopped()">
         <v-btn color="gray" slot="activator" style="text-transform: none">Stop experiment
@@ -82,6 +97,7 @@
         commandOkMessage: '',
         actionFormValid: true,
         durationDays: '14',
+        additionalDurationDays: '14',
         durationDaysRules: [
           (v) => !!v || 'duration is required',
           (v) => parseInt(v).toString() === v || 'seriously?',
@@ -145,6 +161,28 @@
         })
       },
 
+      prolong () {
+        if (this.$refs.actionForm.validate()) {
+          this.prepareToSend()
+
+          this.prolongExperiment({
+            data: {
+              experimentAdditionalDays: this.additionalDurationDays
+            },
+            params: {
+              experimentId: this.experiment.id
+            }
+          }).then(response => {
+            this.getExperiment({params: {experimentId: this.experiment.id}})
+            this.commandOkMessage = 'Experiment successfully prolonged'
+          }).catch(error => {
+            this.showError(error)
+          })
+
+          this.afterSending()
+        }
+      },
+
       showError (error) {
         this.errors.push(JSON.stringify(error))
       },
@@ -171,6 +209,10 @@
         return this.experiment.status === 'ACTIVE'
       },
 
+      canBeProlonged () {
+        return this.experiment.status === 'ACTIVE'
+      },
+
       canBeDeleted () {
         return this.allowDelete
       },
@@ -179,7 +221,7 @@
         return this.experiment.origin !== 'stash' && (this.canBeStarted() || this.canBeDeleted() || this.canBeStopped())
       },
 
-      ...mapActions(['startExperiment', 'getExperiment', 'deleteExperiment', 'stopExperiment'])
+      ...mapActions(['startExperiment', 'getExperiment', 'deleteExperiment', 'stopExperiment', 'prolongExperiment'])
     }
   }
 </script>
