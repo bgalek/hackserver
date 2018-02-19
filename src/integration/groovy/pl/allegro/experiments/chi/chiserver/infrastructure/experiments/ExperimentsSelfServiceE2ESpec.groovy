@@ -10,6 +10,8 @@ import pl.allegro.experiments.chi.chiserver.domain.User
 import pl.allegro.experiments.chi.chiserver.domain.UserProvider
 import pl.allegro.experiments.chi.chiserver.domain.experiments.ExperimentsRepository
 
+import java.time.ZonedDateTime
+
 @DirtiesContext
 class ExperimentsSelfServiceE2ESpec extends BaseIntegrationSpec {
 
@@ -128,6 +130,14 @@ class ExperimentsSelfServiceE2ESpec extends BaseIntegrationSpec {
 
         then:
         startedExperiment.body.status == 'ACTIVE'
+
+        when:
+        restTemplate.put(localUrl("/api/admin/experiments/${request.id}/prolong"), [experimentAdditionalDays: 30], Map)
+        def prolongedExperiment = restTemplate.getForEntity(localUrl("/api/admin/experiments/${request.id}/"), Map)
+
+        then:
+        def expectedActiveTo = ZonedDateTime.parse(startedExperiment.body.activityPeriod.activeTo).plusDays(30).toString()
+        prolongedExperiment.body.activityPeriod.activeTo == expectedActiveTo
 
         when:
         restTemplate.put(localUrl("/api/admin/experiments/${request.id}/stop"), Map)

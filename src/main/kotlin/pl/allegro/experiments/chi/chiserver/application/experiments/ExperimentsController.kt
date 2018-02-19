@@ -15,6 +15,9 @@ import pl.allegro.experiments.chi.chiserver.domain.experiments.administration.cr
 import pl.allegro.experiments.chi.chiserver.domain.experiments.administration.create.ExperimentCreationRequest
 import pl.allegro.experiments.chi.chiserver.domain.experiments.administration.delete.DeleteExperimentCommandFactory
 import pl.allegro.experiments.chi.chiserver.domain.experiments.administration.delete.DeleteExperimentException
+import pl.allegro.experiments.chi.chiserver.domain.experiments.administration.prolong.ProlongExperimentCommandFactory
+import pl.allegro.experiments.chi.chiserver.domain.experiments.administration.prolong.ProlongExperimentException
+import pl.allegro.experiments.chi.chiserver.domain.experiments.administration.prolong.ProlongExperimentProperties
 import pl.allegro.experiments.chi.chiserver.domain.experiments.administration.start.StartExperimentCommandFactory
 import pl.allegro.experiments.chi.chiserver.domain.experiments.administration.start.StartExperimentException
 import pl.allegro.experiments.chi.chiserver.domain.experiments.administration.start.StartExperimentProperties
@@ -33,6 +36,7 @@ class ExperimentsController(private val experimentsRepository: ExperimentsReposi
                             private val measurementsRepository: MeasurementsRepository,
                             private val createExperimentCommandFactory: CreateExperimentCommandFactory,
                             private val startExperimentCommandFactory: StartExperimentCommandFactory,
+                            private val prolongExperimentCommandFactory: ProlongExperimentCommandFactory,
                             private val stopExperimentCommandFactory: StopExperimentCommandFactory,
                             private val deleteExperimentCommandFactory: DeleteExperimentCommandFactory,
                             private val permissionsRepository: PermissionsRepository,
@@ -83,6 +87,16 @@ class ExperimentsController(private val experimentsRepository: ExperimentsReposi
     }
 
     @MeteredEndpoint
+    @PutMapping(path = ["{experimentId}/prolong"])
+    fun prolongExperiment(
+            @PathVariable experimentId: String,
+            @RequestBody properties: ProlongExperimentProperties): ResponseEntity<String> {
+        logger.info("Prolong experiment request received: $experimentId")
+        prolongExperimentCommandFactory.prolongExperimentCommand(experimentId, properties).execute()
+        return ResponseEntity(HttpStatus.OK)
+    }
+
+    @MeteredEndpoint
     @PutMapping(path = ["{experimentId}/stop"])
     fun stopExperiment(
             @PathVariable experimentId: String): ResponseEntity<String> {
@@ -119,6 +133,11 @@ class ExperimentsController(private val experimentsRepository: ExperimentsReposi
     @ExceptionHandler(StartExperimentException::class)
     fun handle(exception: StartExperimentException): ResponseEntity<ErrorsHolder> {
         return handleBadRequest(exception, "StartExperimentException")
+    }
+
+    @ExceptionHandler(ProlongExperimentException::class)
+    fun handle(exception: ProlongExperimentException): ResponseEntity<ErrorsHolder> {
+        return handleBadRequest(exception, "ProlongExperimentException")
     }
 
     @ExceptionHandler(StopExperimentException::class)
