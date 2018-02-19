@@ -56,6 +56,11 @@ data class Experiment(
         return copy(activityPeriod = newPeriod)
     }
 
+    fun prolong(experimentAdditionalDays: Long): Experiment {
+        val newPeriod = ActivityPeriod(activityPeriod!!.activeFrom, activityPeriod.activeTo.plusDays(experimentAdditionalDays))
+        return copy(activityPeriod = newPeriod)
+    }
+
     fun withEditableFlag(editable: Boolean): Experiment {
         return copy(editable = editable)
     }
