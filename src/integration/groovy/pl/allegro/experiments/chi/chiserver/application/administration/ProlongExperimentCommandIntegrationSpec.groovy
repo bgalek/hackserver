@@ -76,7 +76,7 @@ class ProlongExperimentCommandIntegrationSpec extends BaseIntegrationSpec {
                  new User('Root with group', ['group a'], true)]
     }
 
-    def "should not start nonexistent experiment"() {
+    def "should not prolong nonexistent experiment"() {
         given:
         def prolongCommand = new ProlongExperimentCommand(
                 experimentsRepository,
@@ -91,7 +91,7 @@ class ProlongExperimentCommandIntegrationSpec extends BaseIntegrationSpec {
         thrown ExperimentNotFoundException
     }
 
-    def "should not start experiment if it is not ACTIVE"() {
+    def "should not prolong experiment if it is not ACTIVE"() {
         given:
         def experiment = experimentCreatedByRoot()
 
@@ -109,7 +109,7 @@ class ProlongExperimentCommandIntegrationSpec extends BaseIntegrationSpec {
         thrown ProlongExperimentException
     }
 
-    def "should not start experiment when user has no permissions"() {
+    def "should not prolong experiment when user has no permissions"() {
         given:
         def experiment = experimentCreatedByRoot()
 
@@ -134,7 +134,7 @@ class ProlongExperimentCommandIntegrationSpec extends BaseIntegrationSpec {
         ]
     }
 
-    def "should not start experiment when given number of days is negative or zero"() {
+    def "should not prolong experiment when given number of days is negative or zero"() {
         given:
         def experiment = experimentCreatedByRoot()
 
