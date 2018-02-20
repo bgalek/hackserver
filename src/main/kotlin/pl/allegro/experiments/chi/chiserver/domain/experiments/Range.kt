@@ -30,16 +30,3 @@ abstract class Range<out T : Number>(val from: T, val to: T) {
         return result
     }
 }
-
-class PercentageRange(from: Int, to: Int) : Range<Int>(from, to) {
-    init {
-        require(to <= 100) { "Range.to > 100 in PercentageRange($from..$to)" }
-    }
-
-    override fun equals(other: Any?): Boolean {
-        if (this === other) return true
-        if (javaClass != other?.javaClass) return false
-        if (!super.equals(other)) return false
-        return true
-    }
-}
