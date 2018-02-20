@@ -4,7 +4,7 @@ import java.util.regex.Pattern
 
 interface Predicate
 
-class HashRangePredicate(val hashRange: Range<Int>) : Predicate {
+class HashRangePredicate(val hashRange: Range) : Predicate {
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
         if (javaClass != other?.javaClass) return false

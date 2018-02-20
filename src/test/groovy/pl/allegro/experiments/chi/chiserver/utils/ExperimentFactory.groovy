@@ -1,6 +1,7 @@
 package pl.allegro.experiments.chi.chiserver.utils
 
 import pl.allegro.experiments.chi.chiserver.domain.experiments.*
+import pl.allegro.experiments.chi.chiserver.domain.experiments.PercentageRange
 
 import java.util.regex.Pattern
 
