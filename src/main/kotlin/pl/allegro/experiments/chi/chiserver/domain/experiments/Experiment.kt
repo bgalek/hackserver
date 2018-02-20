@@ -4,10 +4,6 @@ import java.time.ZonedDateTime
 
 typealias ExperimentId = String
 
-enum class ExperimentStatus {
-    DRAFT, PLANNED, ACTIVE, ENDED
-}
-
 data class Experiment(
     val id: ExperimentId,
     val variants: List<ExperimentVariant>,
