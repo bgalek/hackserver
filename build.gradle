@@ -136,3 +136,9 @@ axionPublishing {
 task wrapper(type: Wrapper) {
     gradleVersion = '4.1'
 }
+
+tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile).all {
+    kotlinOptions {
+        jvmTarget = "1.8"
+    }
+}
