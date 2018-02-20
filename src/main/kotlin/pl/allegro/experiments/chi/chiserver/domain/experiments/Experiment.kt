@@ -71,8 +71,6 @@ data class Experiment(
 
 }
 
-data class ExperimentMeasurements(val lastDayVisits: Int = 0) {}
-
 data class ActivityPeriod (val activeFrom: ZonedDateTime, val activeTo: ZonedDateTime) {
     fun endNow(): ActivityPeriod {
         return ActivityPeriod(activeFrom, ZonedDateTime.now())
