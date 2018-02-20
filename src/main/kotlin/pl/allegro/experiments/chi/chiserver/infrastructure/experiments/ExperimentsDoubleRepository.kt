@@ -47,6 +47,7 @@ class ExperimentsDoubleRepository(private val readOnlyExperimentsRepository: Rea
         return super.getOrigin(experimentId)
     }
 
-    override val overridable: List<Experiment>
-    get() = getAll().filter { it.isOverridable() }
+    override fun overridable(): List<Experiment> {
+        return all.filter { it.isOverridable() }
+    }
 }

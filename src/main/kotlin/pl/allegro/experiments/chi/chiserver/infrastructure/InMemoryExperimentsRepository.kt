@@ -30,7 +30,7 @@ open class InMemoryExperimentsRepository(experiments: Collection<Experiment>) : 
 
     override fun getAll() : List<Experiment> = ImmutableList.copyOf(experiments.values)
 
-    override val overridable: List<Experiment>
-        get() = ImmutableList.copyOf(experiments.values.filter { it.isOverridable() })
-
+    override fun overridable(): List<Experiment> {
+        return ImmutableList.copyOf(experiments.values.filter { it.isOverridable() })
+    }
 }
