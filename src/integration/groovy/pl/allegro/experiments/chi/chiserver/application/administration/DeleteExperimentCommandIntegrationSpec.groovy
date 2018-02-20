@@ -49,7 +49,6 @@ class DeleteExperimentCommandIntegrationSpec extends BaseIntegrationSpec {
         command.execute()
 
         and:
-        mutableUserProvider.user = user
         def deleteCommand = new DeleteExperimentCommand(experimentsRepository, permissionsAwareExperimentGetter, id, statisticsRepository)
 
         and:
@@ -60,30 +59,6 @@ class DeleteExperimentCommandIntegrationSpec extends BaseIntegrationSpec {
 
         then:
         experimentsRepository.getExperiment(id) == null
-
-        where:
-        user << [new User('Root', [], true),
-                 new User('Normal', ['group a'], false),
-                 new User('Normal', ['nonexistent', 'group a'], false),
-                 new User('Root with group', ['group a'], true)]
-    }
-
-    def "should not delete nonexistent experiment"() {
-        given:
-        def id = UUID.randomUUID().toString()
-        mutableUserProvider.user = new User('Root', [], true)
-
-        and:
-        def deleteCommand = new DeleteExperimentCommand(experimentsRepository, permissionsAwareExperimentGetter, id, statisticsRepository)
-
-        and:
-        statisticsRepository.hasAnyStatistics(_) >> false
-
-        when:
-        deleteCommand.execute()
-
-        then:
-        thrown ExperimentNotFoundException
     }
 
     def "should not delete experiment with statistics"() {
@@ -104,32 +79,5 @@ class DeleteExperimentCommandIntegrationSpec extends BaseIntegrationSpec {
 
         then:
         thrown DeleteExperimentException
-    }
-
-    def "should not delete experiment when user has no permissions"() {
-        given:
-        def id = UUID.randomUUID().toString()
-        mutableUserProvider.user = new User('Root', [], true)
-        def command = new CreateExperimentCommand(experimentsRepository, mutableUserProvider, simpleExperimentRequest(id))
-        command.execute()
-
-        and:
-        mutableUserProvider.user = user
-        def deleteCommand = new DeleteExperimentCommand(experimentsRepository, permissionsAwareExperimentGetter, id, statisticsRepository)
-
-        and:
-        statisticsRepository.hasAnyStatistics(_) >> false
-
-        when:
-        deleteCommand.execute()
-
-        then:
-        thrown AuthorizationException
-
-        where:
-        user << [
-                new User('NotAuthor', ['some group'], false),
-                new User('NotAuthor', [], false)
-        ]
     }
 }

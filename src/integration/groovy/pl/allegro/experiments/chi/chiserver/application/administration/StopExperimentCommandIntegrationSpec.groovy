@@ -50,22 +50,12 @@ class StopExperimentCommandIntegrationSpec extends BaseIntegrationSpec {
         and:
         def stopCommand = stopCommand(experiment.id)
 
-        and:
-        mutableUserProvider.user = user
-
         when:
         stopCommand.execute()
         experiment = experimentsRepository.getExperiment(experiment.id)
 
         then:
         experiment.isEnded()
-
-        where:
-        user << [new User('Root', [], true),
-                 new User('Normal', ['group a'], false),
-                 new User('Root', [], false), // owner
-                 new User('Normal', ['nonexistent', 'group a'], false),
-                 new User('Root with group', ['group a'], true)]
     }
 
     def "should not stop nonexistent experiment"() {
@@ -82,38 +72,6 @@ class StopExperimentCommandIntegrationSpec extends BaseIntegrationSpec {
 
         then:
         thrown StopExperimentException
-
-        when:
-        stopCommand(plannedExperiment().id).execute()
-
-        then:
-        thrown StopExperimentException
-
-        when:
-        stopCommand(endedExperiment().id).execute()
-
-        then:
-        thrown StopExperimentException
-    }
-
-    def "should not stop experiment when user has no permissions"() {
-        given:
-        def experiment = startedExperiment()
-
-        and:
-        mutableUserProvider.user = user
-
-        when:
-        stopCommand(experiment.id).execute()
-
-        then:
-        thrown AuthorizationException
-
-        where:
-        user << [
-                new User('Other', [], false),
-                new User('Other', ['unknown group'], false)
-        ]
     }
 
     def startedExperiment() {
@@ -136,34 +94,6 @@ class StopExperimentCommandIntegrationSpec extends BaseIntegrationSpec {
                 simpleExperimentRequest(id))
         command.execute()
         experimentsRepository.getExperiment(id)
-    }
-
-    def endedExperiment() {
-        def started = startedExperiment()
-        def stopCommand = stopCommand(started.id)
-        stopCommand.execute()
-        return experimentsRepository.getExperiment(started.id)
-    }
-
-    def plannedExperiment() {
-        def draft = draftExperiment()
-        experimentsRepository.save(new Experiment(
-                draft.id,
-                draft.variants,
-                draft.description,
-                draft.documentLink,
-                draft.author,
-                draft.groups,
-                draft.reportingEnabled,
-                new ActivityPeriod(
-                        ZonedDateTime.now().plusDays(10),
-                        ZonedDateTime.now().plusDays(20)
-                ),
-                draft.measurements,
-                draft.editable,
-                null
-        ))
-        return experimentsRepository.getExperiment(draft.id)
     }
 
     StopExperimentCommand stopCommand(String experimentId) {

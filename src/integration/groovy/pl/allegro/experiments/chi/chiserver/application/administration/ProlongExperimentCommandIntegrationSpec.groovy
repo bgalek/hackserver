@@ -53,7 +53,6 @@ class ProlongExperimentCommandIntegrationSpec extends BaseIntegrationSpec {
         experiment = experimentsRepository.getExperiment(experiment.id)
 
         and:
-        mutableUserProvider.user = user
         def prolongCommand = new ProlongExperimentCommand(
                 experimentsRepository,
                 new ProlongExperimentProperties(30),
@@ -66,27 +65,6 @@ class ProlongExperimentCommandIntegrationSpec extends BaseIntegrationSpec {
         then:
         experimentsRepository.getExperiment(experiment.id).activityPeriod.activeTo == experiment.activityPeriod.activeTo.plusDays(30)
         experimentsRepository.getExperiment(experiment.id).activityPeriod.activeFrom == experiment.activityPeriod.activeFrom
-
-        where:
-        user << [new User('Root', [], true),
-                 new User('Normal', ['group a'], false),
-                 new User('Normal', ['nonexistent', 'group a'], false),
-                 new User('Root with group', ['group a'], true)]
-    }
-
-    def "should not prolong nonexistent experiment"() {
-        given:
-        def prolongCommand = new ProlongExperimentCommand(
-                experimentsRepository,
-                new ProlongExperimentProperties(30),
-                permissionsAwareExperimentGetter,
-                UUID.randomUUID().toString())
-
-        when:
-        prolongCommand.execute()
-
-        then:
-        thrown ExperimentNotFoundException
     }
 
     def "should not prolong experiment if it is not ACTIVE"() {
@@ -105,31 +83,6 @@ class ProlongExperimentCommandIntegrationSpec extends BaseIntegrationSpec {
 
         then:
         thrown ProlongExperimentException
-    }
-
-    def "should not prolong experiment when user has no permissions"() {
-        given:
-        def experiment = experimentCreatedByRoot()
-
-        and:
-        mutableUserProvider.user = user
-        def prolongCommand = new ProlongExperimentCommand(
-                experimentsRepository,
-                new ProlongExperimentProperties(30),
-                permissionsAwareExperimentGetter,
-                experiment.id)
-
-        when:
-        prolongCommand.execute()
-
-        then:
-        thrown AuthorizationException
-
-        where:
-        user << [
-                new User('NotAuthor', ['some group'], false),
-                new User('NotAuthor', [], false)
-        ]
     }
 
     def "should not prolong experiment when given number of days is negative or zero"() {

@@ -42,7 +42,6 @@ class StartExperimentCommandIntegrationSpec extends BaseIntegrationSpec {
         command.execute()
 
         and:
-        mutableUserProvider.user = user
         def startCommand = new StartExperimentCommand(
                 experimentsRepository,
                 new StartExperimentProperties(30),
@@ -54,28 +53,6 @@ class StartExperimentCommandIntegrationSpec extends BaseIntegrationSpec {
 
         then:
         experimentsRepository.getExperiment(id).status == ExperimentStatus.ACTIVE
-
-        where:
-        user << [new User('Root', [], true),
-                 new User('Normal', ['group a'], false),
-                 new User('Normal', ['nonexistent', 'group a'], false),
-                 new User('Root with group', ['group a'], true)]
-    }
-
-    def "should not start nonexistent experiment"() {
-        given:
-        def id = UUID.randomUUID().toString()
-        def startCommand = new StartExperimentCommand(
-                experimentsRepository,
-                new StartExperimentProperties(30),
-                permissionsAwareExperimentGetter,
-                id)
-
-        when:
-        startCommand.execute()
-
-        then:
-        thrown ExperimentNotFoundException
     }
 
     def "should not start experiment if it is not DRAFT"() {
@@ -105,34 +82,6 @@ class StartExperimentCommandIntegrationSpec extends BaseIntegrationSpec {
 
         then:
         thrown StartExperimentException
-    }
-
-    def "should not start experiment when user has no permissions"() {
-        given:
-        def id = UUID.randomUUID().toString()
-        mutableUserProvider.user = new User('Author', [], true)
-        def command = new CreateExperimentCommand(experimentsRepository, mutableUserProvider, simpleExperimentRequest(id))
-        command.execute()
-
-        and:
-        mutableUserProvider.user = user
-        def startCommand = new StartExperimentCommand(
-                experimentsRepository,
-                new StartExperimentProperties(30),
-                permissionsAwareExperimentGetter,
-                id)
-
-        when:
-        startCommand.execute()
-
-        then:
-        thrown AuthorizationException
-
-        where:
-        user << [
-                new User('NotAuthor', ['some group'], false),
-                new User('NotAuthor', [], false)
-        ]
     }
 
     def "should not start experiment when given number of days is negative or zero"() {
