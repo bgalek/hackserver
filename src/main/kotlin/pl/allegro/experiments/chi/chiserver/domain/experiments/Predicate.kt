@@ -2,25 +2,6 @@ package pl.allegro.experiments.chi.chiserver.domain.experiments
 
 import java.util.regex.Pattern
 
-interface Predicate
-
-class HashRangePredicate(val hashRange: Range) : Predicate {
-    override fun equals(other: Any?): Boolean {
-        if (this === other) return true
-        if (javaClass != other?.javaClass) return false
-
-        other as HashRangePredicate
-
-        if (hashRange != other.hashRange) return false
-
-        return true
-    }
-
-    override fun hashCode(): Int {
-        return hashRange.hashCode()
-    }
-}
-
 class DeviceClassPredicate(device: String) : Predicate {
     val device: String
 
