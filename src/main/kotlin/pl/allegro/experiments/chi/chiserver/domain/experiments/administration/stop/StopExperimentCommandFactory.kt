@@ -1,7 +1,6 @@
 package pl.allegro.experiments.chi.chiserver.domain.experiments.administration.stop
 
 import org.springframework.stereotype.Component
-import pl.allegro.experiments.chi.chiserver.domain.experiments.ExperimentId
 import pl.allegro.experiments.chi.chiserver.domain.experiments.ExperimentsRepository
 import pl.allegro.experiments.chi.chiserver.domain.experiments.administration.PermissionsAwareExperimentGetter
 
@@ -9,7 +8,7 @@ import pl.allegro.experiments.chi.chiserver.domain.experiments.administration.Pe
 class StopExperimentCommandFactory(
         val experimentsRepository: ExperimentsRepository,
         val permissionsAwareExperimentGetter: PermissionsAwareExperimentGetter) {
-    fun stopExperimentCommand(experimentId: ExperimentId): StopExperimentCommand {
+    fun stopExperimentCommand(experimentId: String): StopExperimentCommand {
         return StopExperimentCommand(experimentId, experimentsRepository, permissionsAwareExperimentGetter)
     }
 }

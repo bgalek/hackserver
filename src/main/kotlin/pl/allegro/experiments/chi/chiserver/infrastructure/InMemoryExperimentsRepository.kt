@@ -2,7 +2,6 @@ package pl.allegro.experiments.chi.chiserver.infrastructure
 
 import com.google.common.collect.ImmutableList
 import pl.allegro.experiments.chi.chiserver.domain.experiments.Experiment
-import pl.allegro.experiments.chi.chiserver.domain.experiments.ExperimentId
 import pl.allegro.experiments.chi.chiserver.domain.experiments.ExperimentsRepository
 
 open class InMemoryExperimentsRepository(experiments: Collection<Experiment>) : ExperimentsRepository {
@@ -22,7 +21,7 @@ open class InMemoryExperimentsRepository(experiments: Collection<Experiment>) : 
         experiments.remove(experimentId)
     }
 
-    override fun delete(experimentId: ExperimentId) {
+    override fun delete(experimentId: String) {
         remove(experimentId)
     }
 

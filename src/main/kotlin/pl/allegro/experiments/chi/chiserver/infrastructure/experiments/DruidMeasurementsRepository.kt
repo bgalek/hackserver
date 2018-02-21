@@ -4,7 +4,6 @@ import com.github.salomonbrys.kotson.*
 import com.google.common.base.Suppliers
 import com.google.gson.JsonArray
 import pl.allegro.experiments.chi.chiserver.domain.experiments.Experiment
-import pl.allegro.experiments.chi.chiserver.domain.experiments.ExperimentId
 import pl.allegro.experiments.chi.chiserver.domain.experiments.ExperimentMeasurements
 import pl.allegro.experiments.chi.chiserver.domain.experiments.MeasurementsRepository
 import pl.allegro.experiments.chi.chiserver.infrastructure.JsonConverter
@@ -21,7 +20,7 @@ class DruidMeasurementsRepository(private val druid: DruidClient,
                                   private val jsonConverter: JsonConverter,
                                   private val datasource: String) : MeasurementsRepository {
 
-    private var lastDayVisits = emptyMap<ExperimentId, Int>()
+    private var lastDayVisits = emptyMap<String, Int>()
 
     companion object {
         private val logger by logger()
@@ -38,10 +37,10 @@ class DruidMeasurementsRepository(private val druid: DruidClient,
         },
         CACHE_EXPIRE_DURATION_MINUTES, TimeUnit.MINUTES)
 
-    private fun asMeasuredExperiment(ex: Experiment, lastDayVisits: Map<ExperimentId, Int> = this.lastDayVisits) =
+    private fun asMeasuredExperiment(ex: Experiment, lastDayVisits: Map<String, Int> = this.lastDayVisits) =
         with(ex) {
             Experiment(id, variants, description, documentLink, author, groups, reportingEnabled, activityPeriod,
-                ExperimentMeasurements(lastDayVisits[id] ?: 0), editable)
+                ExperimentMeasurements(lastDayVisits[id] ?: 0), editable, null)
         }
 
     override fun withMeasurements(experiment: Experiment): Experiment = asMeasuredExperiment(experiment)
@@ -51,7 +50,7 @@ class DruidMeasurementsRepository(private val druid: DruidClient,
         return experiments.map { asMeasuredExperiment(it, lastDayVisits) }
     }
 
-    private fun queryLastDayVisits(): Map<ExperimentId, Int> =
+    private fun queryLastDayVisits(): Map<String, Int> =
         """{
             "queryType": "topN",
             "dataSource": "$datasource",

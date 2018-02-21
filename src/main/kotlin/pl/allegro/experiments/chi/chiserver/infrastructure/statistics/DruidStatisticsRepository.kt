@@ -7,7 +7,6 @@ import pl.allegro.experiments.chi.chiserver.infrastructure.JsonConverter
 import pl.allegro.experiments.chi.chiserver.infrastructure.druid.DruidClient
 import pl.allegro.experiments.chi.chiserver.infrastructure.druid.oneDayIntervals
 import pl.allegro.experiments.chi.chiserver.domain.experiments.Experiment
-import pl.allegro.experiments.chi.chiserver.domain.experiments.ExperimentId
 import java.time.Duration
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
@@ -97,7 +96,7 @@ class DruidStatisticsRepository(val druid: DruidClient, val datasource: String,
         return parseStatistics(druidRespone, experiment.id, toDate, device)
     }
 
-    private fun parseStatistics(druidResponse: String, experimentId: ExperimentId, toDate: LocalDate, device: String):
+    private fun parseStatistics(druidResponse: String, experimentId: String, toDate: LocalDate, device: String):
         ExperimentStatistics {
         var duration = 0L
 

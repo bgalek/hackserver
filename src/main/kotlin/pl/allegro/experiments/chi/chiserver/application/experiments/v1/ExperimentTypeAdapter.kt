@@ -27,5 +27,5 @@ val experimentDeserializer = jsonDeserializer { (jsonElement, _, context) ->
 
     val period: ActivityPeriod? = if (activeFrom != null && activeTo != null) ActivityPeriod(activeFrom, activeTo) else null;
 
-    Experiment(id, variants, description, documentLink, owner, emptyList(), reported, period, measurements)
+    Experiment(id, variants, description, documentLink, owner, emptyList(), reported, period, measurements, null, null)
 }

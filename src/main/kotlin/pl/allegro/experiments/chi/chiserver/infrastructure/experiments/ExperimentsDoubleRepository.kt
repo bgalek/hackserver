@@ -5,7 +5,7 @@ import pl.allegro.experiments.chi.chiserver.domain.experiments.*
 class ExperimentsDoubleRepository(private val readOnlyExperimentsRepository: ReadOnlyExperimentsRepository,
                                   private val mongoExperimentsRepository: ExperimentsRepository) : ExperimentsRepository {
 
-    override fun getExperiment(id: ExperimentId): Experiment? {
+    override fun getExperiment(id: String): Experiment? {
 
         return readOnlyExperimentsRepository.getExperiment(id)
                ?: mongoExperimentsRepository.getExperiment(id)
@@ -18,13 +18,13 @@ class ExperimentsDoubleRepository(private val readOnlyExperimentsRepository: Rea
         mongoExperimentsRepository.save(experiment)
     }
 
-    override fun delete(experimentId: ExperimentId) {
+    override fun delete(experimentId: String) {
         mongoExperimentsRepository.delete(experimentId)
     }
 
     override fun getAll() : List<Experiment> {
         val readOnlyExperiments = readOnlyExperimentsRepository.getAll()
-        val readOnlyKeys = HashSet<String>(readOnlyExperiments.map(Experiment::id))
+        val readOnlyKeys = HashSet<String>(readOnlyExperiments.map(Experiment::getId))
 
         val merged = ArrayList(readOnlyExperiments)
 

@@ -1,6 +1,5 @@
 package pl.allegro.experiments.chi.chiserver.domain.statistics
 
-import pl.allegro.experiments.chi.chiserver.domain.experiments.ExperimentId
 import java.time.Duration
 import java.time.LocalDate
 
@@ -12,7 +11,7 @@ data class VariantStatistics(val value: Double, val diff: Double, val pValue: Do
 typealias Variants = Map<VariantName, VariantStatistics>
 
 data class ExperimentStatistics(
-    val experimentId: ExperimentId,
+    val experimentId: String,
     val toDate: LocalDate,
     val duration: Duration,
     val device: String,

@@ -3,7 +3,7 @@ package pl.allegro.experiments.chi.chiserver.domain.experiments.administration.c
 import pl.allegro.experiments.chi.chiserver.domain.experiments.*
 import java.util.regex.Pattern
 
-data class ExperimentCreationRequest (var id: ExperimentId,
+data class ExperimentCreationRequest (var id: String,
                                       var variants: List<Variant>,
                                       var description: String? = null,
                                       var documentLink: String? = null,
@@ -32,6 +32,9 @@ data class ExperimentCreationRequest (var id: ExperimentId,
                     author,
                     this.groups,
                     this.reportingEnabled,
+                    null,
+                    null,
+                    null,
                     null)
         } catch (e: Exception) {
             throw ExperimentCreationException("Cannot create experiment from request $this", e)

@@ -3,7 +3,6 @@ package pl.allegro.experiments.chi.chiserver.infrastructure.experiments
 import org.slf4j.LoggerFactory
 import org.springframework.scheduling.annotation.Scheduled
 import pl.allegro.experiments.chi.chiserver.domain.experiments.Experiment
-import pl.allegro.experiments.chi.chiserver.domain.experiments.ExperimentId
 import pl.allegro.experiments.chi.chiserver.domain.experiments.ExperimentsRepository
 import java.util.*
 
@@ -39,10 +38,10 @@ class CachedExperimentsRepository(private val delegate: ExperimentsRepository): 
         secureRefresh()
     }
 
-    override fun delete(experimentId: ExperimentId) {
+    override fun delete(experimentId: String) {
         delegate.delete(experimentId)
         secureRefresh()
     }
 
-    override fun getExperiment(id: ExperimentId): Experiment? = experiments.find { it.id == id }
+    override fun getExperiment(id: String): Experiment? = experiments.find { it.id == id }
 }
