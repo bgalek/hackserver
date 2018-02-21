@@ -68,11 +68,4 @@ data class Experiment(
     fun stop(): Experiment {
         return copy(activityPeriod = activityPeriod!!.endNow())
     }
-
-}
-
-data class ActivityPeriod (val activeFrom: ZonedDateTime, val activeTo: ZonedDateTime) {
-    fun endNow(): ActivityPeriod {
-        return ActivityPeriod(activeFrom, ZonedDateTime.now())
-    }
 }

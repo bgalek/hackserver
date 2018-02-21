@@ -1,7 +1,5 @@
 package pl.allegro.experiments.chi.chiserver.domain.experiments;
 
-import com.google.common.base.Preconditions;
-
 public class ExperimentMeasurements {
     private final int lastDayVisits;
 
@@ -10,7 +8,6 @@ public class ExperimentMeasurements {
     }
 
     public ExperimentMeasurements(int lastDayVisits) {
-        Preconditions.checkNotNull(lastDayVisits);
         this.lastDayVisits = lastDayVisits;
     }
 
