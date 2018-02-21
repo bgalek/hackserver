@@ -47,7 +47,7 @@ public class Experiment {
         this.measurements = measurements;
         this.editable = editable;
         this.origin = origin;
-        this.status = getStatus();
+        this.status = ExperimentStatus.of(activityPeriod);
     }
 
     public String getId() {
@@ -109,15 +109,7 @@ public class Experiment {
     }
 
     public ExperimentStatus getStatus() {
-        if (activityPeriod == null) {
-            return ExperimentStatus.DRAFT;
-        } else if (activityPeriod.getActiveTo().isBefore(ZonedDateTime.now())) {
-            return ExperimentStatus.ENDED;
-        } else if (activityPeriod.getActiveFrom().isAfter(ZonedDateTime.now())) {
-            return ExperimentStatus.PLANNED;
-        } else {
-            return ExperimentStatus.ACTIVE;
-        }
+        return status;
     }
 
     public boolean isDraft() {
