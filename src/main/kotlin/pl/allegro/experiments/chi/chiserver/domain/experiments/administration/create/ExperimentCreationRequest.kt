@@ -1,3 +1,4 @@
+/*
 package pl.allegro.experiments.chi.chiserver.domain.experiments.administration.create
 
 import pl.allegro.experiments.chi.chiserver.domain.experiments.*
@@ -56,3 +57,4 @@ data class ExperimentCreationRequest (var id: String,
 
 
 }
+*/

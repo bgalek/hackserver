@@ -59,8 +59,7 @@ class CreateExperimentCommandIntegrationSpec extends BaseIntegrationSpec {
         command.execute()
 
         then:
-        def ex = thrown(ExperimentCreationException)
-        ex.message == 'Experiment with id testExperiment already exists'
+        thrown(ExperimentCreationException)
     }
 
     def "should not create experiment when user is anonymous"() {
@@ -74,8 +73,7 @@ class CreateExperimentCommandIntegrationSpec extends BaseIntegrationSpec {
         command.execute()
 
         then:
-        def ex = thrown(AuthorizationException)
-        ex.message == 'User ' + User.ANONYMOUS + ' cannot create experiments'
+        thrown(AuthorizationException)
     }
 
     def "should not create experiment when request cannot be converted to object"() {
@@ -95,7 +93,6 @@ class CreateExperimentCommandIntegrationSpec extends BaseIntegrationSpec {
         command.execute()
 
         then:
-        def ex = thrown(ExperimentCreationException)
-        ex.message == 'Cannot create experiment from request ExperimentCreationRequest(id=x, variants=[Variant(name=v1, predicates=[Predicate(type=HASH, from=null, to=null, regexp=null, device=null)])], description=, documentLink=, groups=[], reportingEnabled=false)'
+        thrown(ExperimentCreationException)
     }
 }
