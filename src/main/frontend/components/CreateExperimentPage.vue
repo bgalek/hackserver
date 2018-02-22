@@ -179,7 +179,7 @@
         selectedInternal: '',
         variants: [baseVariant],
         percentPerVariant: 1,
-        deviceClasses: ['all', 'smartphone', 'desktop', 'tablet'],
+        deviceClasses: ['all', 'phone', 'desktop', 'tablet'],
         selectedDeviceClass: 'all',
         sendingDataToServer: false,
         errors: []

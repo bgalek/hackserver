@@ -50,6 +50,4 @@ data class ExperimentCreationRequest (var id: ExperimentId,
             PredicateType.DEVICE_CLASS -> DeviceClassPredicate(predicate.device!!)
         }
     }
-
-
 }
