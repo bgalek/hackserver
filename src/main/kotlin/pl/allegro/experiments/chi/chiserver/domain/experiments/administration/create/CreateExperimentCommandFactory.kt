@@ -8,9 +8,6 @@ import pl.allegro.experiments.chi.chiserver.logger
 @Component
 class CreateExperimentCommandFactory(val experimentsRepository: ExperimentsRepository,
                                      val userProvider: UserProvider) {
-    companion object {
-        private val logger by logger()
-    }
 
     fun createExperimentCommand(request: ExperimentCreationRequest) : CreateExperimentCommand {
         return CreateExperimentCommand(experimentsRepository, userProvider, request)
