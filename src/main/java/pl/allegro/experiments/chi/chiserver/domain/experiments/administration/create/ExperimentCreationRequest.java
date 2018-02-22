@@ -16,6 +16,8 @@ public class ExperimentCreationRequest {
     private List<String> groups;
     private boolean reportingEnabled;
 
+    public ExperimentCreationRequest() {}
+
     public ExperimentCreationRequest(
             String id,
             List<Variant> variants,
@@ -135,6 +137,8 @@ public class ExperimentCreationRequest {
         private String name;
         private List<Predicate> predicates;
 
+        public Variant() {}
+
         public Variant(String name, List<Predicate> predicates) {
             Preconditions.checkNotNull(name);
             Preconditions.checkNotNull(predicates);
@@ -169,6 +173,8 @@ public class ExperimentCreationRequest {
         private Integer to;
         private String regexp;
         private String device;
+
+        public Predicate() {}
 
         public Predicate(
                 PredicateType type,
