@@ -102,8 +102,8 @@ class DruidStatisticsRepository(val druid: DruidClient, val datasource: String,
 
         val stats = jsonConverter.fromJson<JsonArray>(druidResponse)
         val metrics = stats.fold(mutableMapOf<MetricName, MutableMap<VariantName, VariantStatistics>>(), { m, e ->
-            val metricName = e["event"]["metric"].string
-            val variantName = e["event"]["experiment_variant"].string
+            val metricName = MetricName.of(e["event"]["metric"].string)
+            val variantName = VariantName.of(e["event"]["experiment_variant"].string)
             duration = maxOf(duration, e["event"]["sum_experiment_duration"].long)
 
             val variants = m.getOrDefault(metricName, mutableMapOf<VariantName, VariantStatistics>())

@@ -2,6 +2,8 @@ package pl.allegro.experiments.chi.chiserver.infrastructure.statistics
 
 import org.springframework.beans.factory.annotation.Autowired
 import pl.allegro.experiments.chi.chiserver.BaseIntegrationSpec
+import pl.allegro.experiments.chi.chiserver.domain.statistics.MetricName
+import pl.allegro.experiments.chi.chiserver.domain.statistics.VariantName
 import pl.allegro.experiments.chi.chiserver.infrastructure.ClasspathContentLoader
 
 import java.time.LocalDate
@@ -19,12 +21,12 @@ class DruidStatisticsRepositorySpec extends BaseIntegrationSpec {
 
         then:
         latest.metrics.size() == 1
-        latest.metrics['tx_visit'].size() == 2
+        latest.metrics[MetricName.of('tx_visit')].size() == 2
 
-        assertStatistics latest.metrics["tx_visit"]["base"], [
+        assertStatistics latest.metrics[MetricName.of("tx_visit")][VariantName.of("base")], [
                 count: 1844715, value: 0.05505457520484924, diff: 0.0, pValue: 1.0]
 
-        assertStatistics latest.metrics["tx_visit"]["metrum"], [
+        assertStatistics latest.metrics[MetricName.of("tx_visit")][VariantName.of("metrum")], [
                 count: 1859598, value: 0.05314482003450394, diff: -0.00190975540317595, pValue: 4.440892098500626E-16]
     }
 
