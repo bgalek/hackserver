@@ -1,7 +1,6 @@
 package pl.allegro.experiments.chi.chiserver.domain;
 
 import com.google.common.base.Preconditions;
-import jdk.packager.services.userjvmoptions.PreferencesUserJvmOptions;
 import pl.allegro.experiments.chi.chiserver.domain.experiments.Experiment;
 
 import java.util.List;
