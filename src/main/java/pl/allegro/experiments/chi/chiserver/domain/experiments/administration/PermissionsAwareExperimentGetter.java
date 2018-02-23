@@ -1,5 +1,6 @@
 package pl.allegro.experiments.chi.chiserver.domain.experiments.administration;
 
+import com.google.common.base.Preconditions;
 import pl.allegro.experiments.chi.chiserver.domain.User;
 import pl.allegro.experiments.chi.chiserver.domain.UserProvider;
 import pl.allegro.experiments.chi.chiserver.domain.experiments.Experiment;
@@ -12,11 +13,14 @@ public class PermissionsAwareExperimentGetter {
     public PermissionsAwareExperimentGetter(
             ExperimentsRepository experimentsRepository,
             UserProvider userProvider) {
+        Preconditions.checkNotNull(experimentsRepository);
+        Preconditions.checkNotNull(userProvider);
         this.experimentsRepository = experimentsRepository;
         this.userProvider = userProvider;
     }
 
     public Experiment getExperimentOrException(String experimentId) {
+        Preconditions.checkNotNull(experimentId);
         Experiment experiment = experimentsRepository.getExperiment(experimentId);
         if (experiment == null) {
             throw new ExperimentNotFoundException("Experiment not found: " + experimentId);

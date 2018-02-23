@@ -1,5 +1,6 @@
 package pl.allegro.experiments.chi.chiserver.domain.interactions;
 
+import com.google.common.base.Preconditions;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
@@ -19,6 +20,7 @@ public class InteractionConverter {
     }
 
     public List<Interaction> fromJson(String json) {
+        Preconditions.checkNotNull(json);
         Type listType = (new TypeToken<List<Interaction>>() {}).getType();
         Object result = this.gson.fromJson(json, listType);
         return result == null ? new ArrayList<Interaction>(): (List)result;

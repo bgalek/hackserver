@@ -193,6 +193,7 @@ public class Experiment {
     }
 
     public Experiment withOrigin(String origin) {
+        Preconditions.checkNotNull(origin);
         return new Experiment(
                 id,
                 variants,

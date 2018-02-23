@@ -1,5 +1,6 @@
 package pl.allegro.experiments.chi.chiserver.domain.experiments.administration.create;
 
+import com.google.common.base.Preconditions;
 import pl.allegro.experiments.chi.chiserver.domain.User;
 import pl.allegro.experiments.chi.chiserver.domain.UserProvider;
 import pl.allegro.experiments.chi.chiserver.domain.experiments.ExperimentsRepository;
@@ -14,6 +15,9 @@ public class CreateExperimentCommand {
             ExperimentsRepository experimentsRepository,
             UserProvider userProvider,
             ExperimentCreationRequest experimentCreationRequest) {
+        Preconditions.checkNotNull(experimentsRepository);
+        Preconditions.checkNotNull(userProvider);
+        Preconditions.checkNotNull(experimentCreationRequest);
         this.experimentsRepository = experimentsRepository;
         this.userProvider = userProvider;
         this.experimentCreationRequest = experimentCreationRequest;

@@ -1,5 +1,7 @@
 package pl.allegro.experiments.chi.chiserver.domain;
 
+import com.google.common.base.Preconditions;
+import jdk.packager.services.userjvmoptions.PreferencesUserJvmOptions;
 import pl.allegro.experiments.chi.chiserver.domain.experiments.Experiment;
 
 import java.util.List;
@@ -11,6 +13,8 @@ public class User {
     private final boolean isRoot;
 
     public User(String name, List<String> groups, boolean isRoot) {
+        Preconditions.checkNotNull(name);
+        Preconditions.checkNotNull(groups);
         this.name = name;
         this.groups = groups;
         this.isRoot = isRoot;
@@ -29,6 +33,7 @@ public class User {
     }
 
     public boolean isOwner(Experiment experiment) {
+        Preconditions.checkNotNull(experiment);
         return isRoot || groups.stream().anyMatch(g -> experiment.getGroups().contains(g)) || isAuthor(experiment);
     }
 

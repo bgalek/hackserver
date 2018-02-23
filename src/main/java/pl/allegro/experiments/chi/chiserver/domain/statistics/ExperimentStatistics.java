@@ -1,5 +1,7 @@
 package pl.allegro.experiments.chi.chiserver.domain.statistics;
 
+import com.google.common.base.Preconditions;
+
 import java.time.Duration;
 import java.time.LocalDate;
 import java.util.Map;
@@ -17,6 +19,11 @@ public class ExperimentStatistics {
             Duration duration,
             String device,
             Map<MetricName, Map<VariantName, VariantStatistics>> metrics) {
+        Preconditions.checkNotNull(experimentId);
+        Preconditions.checkNotNull(toDate);
+        Preconditions.checkNotNull(duration);
+        Preconditions.checkNotNull(device);
+        Preconditions.checkNotNull(metrics);
         this.experimentId = experimentId;
         this.toDate = toDate;
         this.duration = duration;

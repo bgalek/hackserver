@@ -1,5 +1,6 @@
 package pl.allegro.experiments.chi.chiserver.domain.experiments.administration.start;
 
+import com.google.common.base.Preconditions;
 import pl.allegro.experiments.chi.chiserver.domain.experiments.Experiment;
 import pl.allegro.experiments.chi.chiserver.domain.experiments.ExperimentsRepository;
 import pl.allegro.experiments.chi.chiserver.domain.experiments.administration.PermissionsAwareExperimentGetter;
@@ -15,6 +16,10 @@ public class StartExperimentCommand {
             StartExperimentProperties startExperimentProperties,
             PermissionsAwareExperimentGetter permissionsAwareExperimentGetter,
             String experimentId) {
+        Preconditions.checkNotNull(experimentsRepository);
+        Preconditions.checkNotNull(startExperimentProperties);
+        Preconditions.checkNotNull(permissionsAwareExperimentGetter);
+        Preconditions.checkNotNull(experimentId);
         this.experimentsRepository = experimentsRepository;
         this.startExperimentProperties = startExperimentProperties;
         this.permissionsAwareExperimentGetter = permissionsAwareExperimentGetter;

@@ -1,5 +1,6 @@
 package pl.allegro.experiments.chi.chiserver.domain.interactions;
 
+import com.google.common.base.Preconditions;
 import pl.allegro.experiments.chi.chiserver.application.interactions.v1.InvalidFormatException;
 import pl.allegro.experiments.chi.chiserver.domain.experiments.Experiment;
 import pl.allegro.experiments.chi.chiserver.domain.experiments.ExperimentsRepository;
@@ -17,12 +18,16 @@ public class InteractionsFactory {
             InteractionsMetricsReporter interactionsMetricsReporter,
             ExperimentsRepository experimentsRepository,
             InteractionConverter interactionConverter) {
+        Preconditions.checkNotNull(interactionConverter);
+        Preconditions.checkNotNull(interactionsMetricsReporter);
+        Preconditions.checkNotNull(experimentsRepository);
         this.interactionsMetricsReporter = interactionsMetricsReporter;
         this.experimentsRepository = experimentsRepository;
         this.interactionConverter = interactionConverter;
     }
 
     public List<Interaction> fromJson(String json) {
+        Preconditions.checkNotNull(json);
         try {
             List<Interaction> interactions = interactionConverter.fromJson(json);
             List<Interaction> filtered = interactions.stream().filter(i -> {

@@ -93,6 +93,7 @@ public class ExperimentCreationRequest {
 
 
     public Experiment toExperiment(String author) {
+        Preconditions.checkNotNull(author);
         try {
             return new Experiment(
                     this.id,
