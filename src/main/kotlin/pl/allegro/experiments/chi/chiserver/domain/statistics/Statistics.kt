@@ -6,8 +6,6 @@ import java.time.LocalDate
 typealias MetricName = String
 typealias VariantName = String
 
-data class VariantStatistics(val value: Double, val diff: Double, val pValue: Double, val count: Int)
-
 typealias Variants = Map<VariantName, VariantStatistics>
 
 data class ExperimentStatistics(

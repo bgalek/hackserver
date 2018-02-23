@@ -109,10 +109,10 @@ class DruidStatisticsRepository(val druid: DruidClient, val datasource: String,
             val variants = m.getOrDefault(metricName, mutableMapOf<VariantName, VariantStatistics>())
 
             variants[variantName] = VariantStatistics(
-                value = e["event"]["sum_metric_value"].double,
-                diff = e["event"]["sum_metric_value_diff"].double,
-                pValue = e["event"]["sum_p_value"].double,
-                count = e["event"]["count"].int
+                e["event"]["sum_metric_value"].double,
+                e["event"]["sum_metric_value_diff"].double,
+                e["event"]["sum_p_value"].double,
+                e["event"]["count"].int
             )
 
             m[metricName] = variants
