@@ -4,8 +4,4 @@ public class StopExperimentException extends RuntimeException {
     StopExperimentException(String message, Exception cause) {
         super(message, cause);
     }
-
-    StopExperimentException(String message) {
-        super(message);
-    }
 }

@@ -93,7 +93,7 @@ public class Interaction {
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (o == null || !(o instanceof Interaction)) return false;
 
         Interaction that = (Interaction) o;
 
@@ -110,13 +110,13 @@ public class Interaction {
     @Override
     public int hashCode() {
         int result = userId != null ? userId.hashCode() : 0;
-        result = 31 * result + (userCmId != null ? userCmId.hashCode() : 0);
-        result = 31 * result + experimentId.hashCode();
-        result = 31 * result + variantName.hashCode();
-        result = 31 * result + (internal != null ? internal.hashCode() : 0);
-        result = 31 * result + (deviceClass != null ? deviceClass.hashCode() : 0);
-        result = 31 * result + interactionDate.hashCode();
-        result = 31 * result + (appId != null ? appId.hashCode() : 0);
+        result += (userCmId != null ? userCmId.hashCode() : 0);
+        result += experimentId.hashCode();
+        result += variantName.hashCode();
+        result += (internal != null ? internal.hashCode() : 0);
+        result += (deviceClass != null ? deviceClass.hashCode() : 0);
+        result += interactionDate.hashCode();
+        result += (appId != null ? appId.hashCode() : 0);
         return result;
     }
 }

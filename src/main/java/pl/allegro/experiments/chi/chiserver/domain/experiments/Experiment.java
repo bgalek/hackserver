@@ -1,6 +1,7 @@
 package pl.allegro.experiments.chi.chiserver.domain.experiments;
 
 import com.google.common.base.Preconditions;
+import com.google.common.collect.ImmutableList;
 import joptsimple.internal.Strings;
 
 import java.time.ZonedDateTime;
@@ -37,11 +38,11 @@ public class Experiment {
         Preconditions.checkArgument(!variants.isEmpty());
         Preconditions.checkNotNull(groups);
         this.id = id;
-        this.variants = variants;
+        this.variants = ImmutableList.copyOf(variants);
         this.description = description;
         this.documentLink = documentLink;
         this.author = author;
-        this.groups = groups;
+        this.groups = ImmutableList.copyOf(groups);
         this.reportingEnabled = reportingEnabled;
         this.activityPeriod = activityPeriod;
         this.measurements = measurements;
@@ -97,7 +98,7 @@ public class Experiment {
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (o == null || !(o instanceof Experiment)) return false;
 
         Experiment that = (Experiment) o;
         return id.equals(that.id);

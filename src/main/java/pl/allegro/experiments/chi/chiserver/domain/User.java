@@ -1,6 +1,7 @@
 package pl.allegro.experiments.chi.chiserver.domain;
 
 import com.google.common.base.Preconditions;
+import com.google.common.collect.ImmutableList;
 import pl.allegro.experiments.chi.chiserver.domain.experiments.Experiment;
 
 import java.util.List;
@@ -15,7 +16,7 @@ public class User {
         Preconditions.checkNotNull(name);
         Preconditions.checkNotNull(groups);
         this.name = name;
-        this.groups = groups;
+        this.groups = ImmutableList.copyOf(groups);
         this.isRoot = isRoot;
     }
 

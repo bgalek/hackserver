@@ -4,8 +4,4 @@ public class ProlongExperimentException extends RuntimeException {
     ProlongExperimentException(String message, Exception cause) {
         super(message, cause);
     }
-
-    ProlongExperimentException(String message) {
-        super(message);
-    }
 }

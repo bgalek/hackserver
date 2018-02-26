@@ -1,6 +1,7 @@
 package pl.allegro.experiments.chi.chiserver.domain.experiments;
 
 import com.google.common.base.Preconditions;
+import com.google.common.collect.ImmutableList;
 import joptsimple.internal.Strings;
 
 import java.util.List;
@@ -13,7 +14,7 @@ public class ExperimentVariant {
         Preconditions.checkArgument(!Strings.isNullOrEmpty(name));
         Preconditions.checkNotNull(predicates);
         this.name = name;
-        this.predicates = predicates;
+        this.predicates = ImmutableList.copyOf(predicates);
     }
 
     public String getName() {
