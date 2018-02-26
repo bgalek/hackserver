@@ -15,18 +15,4 @@ public class ExperimentMeasurements {
         return lastDayVisits;
     }
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-
-        ExperimentMeasurements that = (ExperimentMeasurements) o;
-
-        return lastDayVisits == that.lastDayVisits;
-    }
-
-    @Override
-    public int hashCode() {
-        return lastDayVisits;
-    }
 }

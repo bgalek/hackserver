@@ -1,21 +1,40 @@
 package pl.allegro.experiments.chi.chiserver.domain.interactions;
 
 import java.time.Instant;
+
+import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.github.kristofa.brave.internal.zipkin.internal.moshi.Json;
 import com.google.common.base.Preconditions;
 
-public class Interaction {
-    private String userId;
-    private String userCmId;
-    private String experimentId;
-    private String variantName;
-    private Boolean internal;
-    private String deviceClass;
-    private Instant interactionDate;
-    @JsonIgnore
-    private String appId;
+import javax.validation.constraints.NotNull;
 
-    public Interaction() {}
+public class Interaction {
+    private final String userId;
+    private final String userCmId;
+    @NotNull
+    private final String experimentId;
+    @NotNull
+    private final String variantName;
+    private final Boolean internal;
+    private final String deviceClass;
+    @NotNull
+    private final Instant interactionDate;
+    @JsonIgnore
+    private final String appId;
+
+    @JsonCreator
+    public Interaction(
+            @JsonProperty("userId") String userId,
+            @JsonProperty("userCmId") String userCmId,
+            @JsonProperty("experimentId") String experimentId,
+            @JsonProperty("variantName") String variantName,
+            @JsonProperty("internal") Boolean internal,
+            @JsonProperty("deviceClass") String deviceClass,
+            @JsonProperty("interactionDate") Instant interactionDate) {
+        this(userId, userCmId, experimentId, variantName, internal, deviceClass, interactionDate, null);
+    }
 
     public Interaction(
             String userId,
@@ -43,64 +62,32 @@ public class Interaction {
         return userId;
     }
 
-    public void setUserId(String userId) {
-        this.userId = userId;
-    }
-
     public String getUserCmId() {
         return userCmId;
-    }
-
-    public void setUserCmId(String userCmId) {
-        this.userCmId = userCmId;
     }
 
     public String getExperimentId() {
         return experimentId;
     }
 
-    public void setExperimentId(String experimentId) {
-        this.experimentId = experimentId;
-    }
-
     public String getVariantName() {
         return variantName;
-    }
-
-    public void setVariantName(String variantName) {
-        this.variantName = variantName;
     }
 
     public Boolean getInternal() {
         return internal;
     }
 
-    public void setInternal(Boolean internal) {
-        this.internal = internal;
-    }
-
     public String getDeviceClass() {
         return deviceClass;
-    }
-
-    public void setDeviceClass(String deviceClass) {
-        this.deviceClass = deviceClass;
     }
 
     public Instant getInteractionDate() {
         return interactionDate;
     }
 
-    public void setInteractionDate(Instant interactionDate) {
-        this.interactionDate = interactionDate;
-    }
-
     public String getAppId() {
         return appId;
-    }
-
-    public void setAppId(String appId) {
-        this.appId = appId;
     }
 
     @Override

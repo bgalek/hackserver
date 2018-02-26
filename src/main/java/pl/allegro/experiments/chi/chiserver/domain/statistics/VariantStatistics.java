@@ -32,31 +32,4 @@ public class VariantStatistics {
     public int getCount() {
         return count;
     }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-
-        VariantStatistics that = (VariantStatistics) o;
-
-        if (Double.compare(that.value, value) != 0) return false;
-        if (Double.compare(that.diff, diff) != 0) return false;
-        if (Double.compare(that.pValue, pValue) != 0) return false;
-        return count == that.count;
-    }
-
-    @Override
-    public int hashCode() {
-        int result;
-        long temp;
-        temp = Double.doubleToLongBits(value);
-        result = (int) (temp ^ (temp >>> 32));
-        temp = Double.doubleToLongBits(diff);
-        result = 31 * result + (int) (temp ^ (temp >>> 32));
-        temp = Double.doubleToLongBits(pValue);
-        result = 31 * result + (int) (temp ^ (temp >>> 32));
-        result = 31 * result + count;
-        return result;
-    }
 }

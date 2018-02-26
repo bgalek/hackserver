@@ -8,11 +8,4 @@ public class PercentageRange extends Range {
         super(from, to);
         Preconditions.checkArgument(to <= 100, "Range.to > 100");
     }
-
-    @Override
-    public boolean equals(@Nullable Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        return super.equals(o);
-    }
 }

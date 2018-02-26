@@ -16,18 +16,4 @@ public class CmuidRegexpPredicate implements Predicate {
         return pattern;
     }
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-
-        CmuidRegexpPredicate that = (CmuidRegexpPredicate) o;
-
-        return pattern.equals(that.pattern);
-    }
-
-    @Override
-    public int hashCode() {
-        return pattern.hashCode();
-    }
 }

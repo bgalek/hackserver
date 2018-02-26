@@ -24,21 +24,4 @@ public class ExperimentVariant {
         return predicates;
     }
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-
-        ExperimentVariant that = (ExperimentVariant) o;
-
-        if (!name.equals(that.name)) return false;
-        return predicates.equals(that.predicates);
-    }
-
-    @Override
-    public int hashCode() {
-        int result = name.hashCode();
-        result = 31 * result + predicates.hashCode();
-        return result;
-    }
 }
