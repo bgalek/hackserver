@@ -5,7 +5,6 @@ import org.springframework.stereotype.Component;
 import pl.allegro.experiments.chi.chiserver.domain.UserProvider;
 import pl.allegro.experiments.chi.chiserver.domain.experiments.ExperimentsRepository;
 
-@Component
 public class CreateExperimentCommandFactory {
     private final ExperimentsRepository experimentsRepository;
     private final UserProvider userProvider;

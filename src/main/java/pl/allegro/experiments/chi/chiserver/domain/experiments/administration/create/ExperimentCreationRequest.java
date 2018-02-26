@@ -1,70 +1,51 @@
 package pl.allegro.experiments.chi.chiserver.domain.experiments.administration.create;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.common.base.Preconditions;
+import com.google.common.collect.ImmutableList;
 import pl.allegro.experiments.chi.chiserver.domain.experiments.*;
 
+import javax.validation.constraints.NotNull;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 public class ExperimentCreationRequest {
-    private String id;
-    private List<Variant> variants;
-    private String description;
-    private String documentLink;
-    private List<String> groups;
-    private boolean reportingEnabled;
+    @NotNull
+    private final String id;
+    @NotNull
+    private final List<Variant> variants;
+    private final String description;
+    private final String documentLink;
+    private final List<String> groups;
+    private final boolean reportingEnabled;
 
-    public ExperimentCreationRequest() {}
-
+    @JsonCreator
     public ExperimentCreationRequest(
-            String id,
-            List<Variant> variants,
-            String description,
-            String documentLink,
-            List<String> groups,
-            Boolean reportingEnabled) {
+            @JsonProperty("id") String id,
+            @JsonProperty("variants") List<Variant> variants,
+            @JsonProperty("description") String description,
+            @JsonProperty("documentLink") String documentLink,
+            @JsonProperty("groups") List<String> groups,
+            @JsonProperty("reportingEnabled") Boolean reportingEnabled) {
         Preconditions.checkNotNull(id);
         Preconditions.checkNotNull(variants);
         this.id = id;
-        this.variants = variants;
+        this.variants = ImmutableList.copyOf(variants);
         this.description = description;
         this.documentLink = documentLink;
         if (groups == null) {
-            this.groups = new ArrayList<>();
+            this.groups = ImmutableList.copyOf(new ArrayList<>());
         } else {
-            this.groups = groups;
+            this.groups = ImmutableList.copyOf(groups);
         }
         if (reportingEnabled == null) {
             this.reportingEnabled = false;
         } else {
             this.reportingEnabled = reportingEnabled;
         }
-    }
-
-    public void setId(String id) {
-        this.id = id;
-    }
-
-    public void setVariants(List<Variant> variants) {
-        this.variants = variants;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
-    public void setDocumentLink(String documentLink) {
-        this.documentLink = documentLink;
-    }
-
-    public void setGroups(List<String> groups) {
-        this.groups = groups;
-    }
-
-    public void setReportingEnabled(boolean reportingEnabled) {
-        this.reportingEnabled = reportingEnabled;
     }
 
     public String getId() {
@@ -135,16 +116,19 @@ public class ExperimentCreationRequest {
     }
 
     public static class Variant {
+        @NotNull
         private String name;
+        @NotNull
         private List<Predicate> predicates;
 
-        public Variant() {}
-
-        public Variant(String name, List<Predicate> predicates) {
+        @JsonCreator
+        public Variant(
+                @JsonProperty("name") String name,
+                @JsonProperty("predicates") List<Predicate> predicates) {
             Preconditions.checkNotNull(name);
             Preconditions.checkNotNull(predicates);
             this.name = name;
-            this.predicates = predicates;
+            this.predicates = ImmutableList.copyOf(predicates);
         }
 
         public String getName() {
@@ -154,14 +138,6 @@ public class ExperimentCreationRequest {
         public List<Predicate> getPredicates() {
             return predicates;
         }
-
-        public void setName(String name) {
-            this.name = name;
-        }
-
-        public void setPredicates(List<Predicate> predicates) {
-            this.predicates = predicates;
-        }
     }
 
     public enum PredicateType {
@@ -169,20 +145,20 @@ public class ExperimentCreationRequest {
     }
 
     public static class Predicate {
+        @NotNull
         private PredicateType type;
         private Integer from;
         private Integer to;
         private String regexp;
         private String device;
 
-        public Predicate() {}
-
+        @JsonCreator
         public Predicate(
-                PredicateType type,
-                Integer from,
-                Integer to,
-                String regexp,
-                String device) {
+                @JsonProperty("type") PredicateType type,
+                @JsonProperty("from") Integer from,
+                @JsonProperty("to") Integer to,
+                @JsonProperty("regexp") String regexp,
+                @JsonProperty("device") String device) {
             Preconditions.checkNotNull(type);
             this.type = type;
             this.from = from;
@@ -209,26 +185,6 @@ public class ExperimentCreationRequest {
 
         public String getDevice() {
             return device;
-        }
-
-        public void setType(PredicateType type) {
-            this.type = type;
-        }
-
-        public void setFrom(Integer from) {
-            this.from = from;
-        }
-
-        public void setTo(Integer to) {
-            this.to = to;
-        }
-
-        public void setRegexp(String regexp) {
-            this.regexp = regexp;
-        }
-
-        public void setDevice(String device) {
-            this.device = device;
         }
     }
 }

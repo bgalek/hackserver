@@ -5,7 +5,6 @@ import org.springframework.stereotype.Component;
 import pl.allegro.experiments.chi.chiserver.domain.experiments.ExperimentsRepository;
 import pl.allegro.experiments.chi.chiserver.domain.experiments.administration.PermissionsAwareExperimentGetter;
 
-@Component
 public class StopExperimentCommandFactory {
     private final ExperimentsRepository experimentsRepository;
     private final PermissionsAwareExperimentGetter permissionsAwareExperimentGetter;

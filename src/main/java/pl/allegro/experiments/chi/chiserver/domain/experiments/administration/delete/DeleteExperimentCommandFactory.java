@@ -6,7 +6,6 @@ import pl.allegro.experiments.chi.chiserver.domain.experiments.ExperimentsReposi
 import pl.allegro.experiments.chi.chiserver.domain.experiments.administration.PermissionsAwareExperimentGetter;
 import pl.allegro.experiments.chi.chiserver.domain.statistics.StatisticsRepository;
 
-@Component
 public class DeleteExperimentCommandFactory {
     private final ExperimentsRepository experimentsRepository;
     private final PermissionsAwareExperimentGetter permissionsAwareExperimentGetter;
