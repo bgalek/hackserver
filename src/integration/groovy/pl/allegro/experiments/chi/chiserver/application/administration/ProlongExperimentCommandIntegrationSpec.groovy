@@ -8,7 +8,7 @@ import pl.allegro.experiments.chi.chiserver.domain.experiments.Experiment
 import pl.allegro.experiments.chi.chiserver.domain.experiments.administration.create.CreateExperimentCommand
 import pl.allegro.experiments.chi.chiserver.domain.User
 import pl.allegro.experiments.chi.chiserver.domain.experiments.ExperimentsRepository
-import pl.allegro.experiments.chi.chiserver.domain.experiments.administration.PermissionsAwareExperimentGetter
+import pl.allegro.experiments.chi.chiserver.domain.experiments.administration.PermissionsAwareExperimentRepository
 import pl.allegro.experiments.chi.chiserver.domain.experiments.administration.prolong.ProlongExperimentCommand
 import pl.allegro.experiments.chi.chiserver.domain.experiments.administration.prolong.ProlongExperimentException
 import pl.allegro.experiments.chi.chiserver.domain.experiments.administration.prolong.ProlongExperimentProperties
@@ -29,10 +29,10 @@ class ProlongExperimentCommandIntegrationSpec extends BaseIntegrationSpec {
     @Autowired
     MutableUserProvider mutableUserProvider
 
-    PermissionsAwareExperimentGetter permissionsAwareExperimentGetter
+    PermissionsAwareExperimentRepository permissionsAwareExperimentGetter
 
     def setup() {
-        permissionsAwareExperimentGetter = new PermissionsAwareExperimentGetter(experimentsRepository, mutableUserProvider)
+        permissionsAwareExperimentGetter = new PermissionsAwareExperimentRepository(experimentsRepository, mutableUserProvider)
     }
 
     def "should prolong experiment"() {

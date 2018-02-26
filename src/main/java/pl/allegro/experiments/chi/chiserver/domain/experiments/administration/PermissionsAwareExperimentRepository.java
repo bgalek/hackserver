@@ -6,11 +6,11 @@ import pl.allegro.experiments.chi.chiserver.domain.UserProvider;
 import pl.allegro.experiments.chi.chiserver.domain.experiments.Experiment;
 import pl.allegro.experiments.chi.chiserver.domain.experiments.ExperimentsRepository;
 
-public class PermissionsAwareExperimentGetter {
+public class PermissionsAwareExperimentRepository {
     private final ExperimentsRepository experimentsRepository;
     private final UserProvider userProvider;
 
-    public PermissionsAwareExperimentGetter(
+    public PermissionsAwareExperimentRepository(
             ExperimentsRepository experimentsRepository,
             UserProvider userProvider) {
         Preconditions.checkNotNull(experimentsRepository);

@@ -3,31 +3,31 @@ package pl.allegro.experiments.chi.chiserver.domain.experiments.administration.s
 import com.google.common.base.Preconditions;
 import pl.allegro.experiments.chi.chiserver.domain.experiments.Experiment;
 import pl.allegro.experiments.chi.chiserver.domain.experiments.ExperimentsRepository;
-import pl.allegro.experiments.chi.chiserver.domain.experiments.administration.PermissionsAwareExperimentGetter;
+import pl.allegro.experiments.chi.chiserver.domain.experiments.administration.PermissionsAwareExperimentRepository;
 
 public class StartExperimentCommand {
     private final ExperimentsRepository experimentsRepository;
     private final StartExperimentProperties startExperimentProperties;
-    private final PermissionsAwareExperimentGetter permissionsAwareExperimentGetter;
+    private final PermissionsAwareExperimentRepository permissionsAwareExperimentRepository;
     private final String experimentId;
 
     public StartExperimentCommand(
             ExperimentsRepository experimentsRepository,
             StartExperimentProperties startExperimentProperties,
-            PermissionsAwareExperimentGetter permissionsAwareExperimentGetter,
+            PermissionsAwareExperimentRepository permissionsAwareExperimentRepository,
             String experimentId) {
         Preconditions.checkNotNull(experimentsRepository);
         Preconditions.checkNotNull(startExperimentProperties);
-        Preconditions.checkNotNull(permissionsAwareExperimentGetter);
+        Preconditions.checkNotNull(permissionsAwareExperimentRepository);
         Preconditions.checkNotNull(experimentId);
         this.experimentsRepository = experimentsRepository;
         this.startExperimentProperties = startExperimentProperties;
-        this.permissionsAwareExperimentGetter = permissionsAwareExperimentGetter;
+        this.permissionsAwareExperimentRepository = permissionsAwareExperimentRepository;
         this.experimentId = experimentId;
     }
 
     public void execute() {
-        Experiment experiment = permissionsAwareExperimentGetter.getExperimentOrException(experimentId);
+        Experiment experiment = permissionsAwareExperimentRepository.getExperimentOrException(experimentId);
         validate(experiment);
         experimentsRepository.save(experiment.start(startExperimentProperties.getExperimentDurationDays()));
     }

@@ -3,27 +3,27 @@ package pl.allegro.experiments.chi.chiserver.domain.experiments.administration.s
 import com.google.common.base.Preconditions;
 import pl.allegro.experiments.chi.chiserver.domain.experiments.Experiment;
 import pl.allegro.experiments.chi.chiserver.domain.experiments.ExperimentsRepository;
-import pl.allegro.experiments.chi.chiserver.domain.experiments.administration.PermissionsAwareExperimentGetter;
+import pl.allegro.experiments.chi.chiserver.domain.experiments.administration.PermissionsAwareExperimentRepository;
 
 public class StopExperimentCommand {
     private final String experimentId;
     private final ExperimentsRepository experimentsRepository;
-    private final PermissionsAwareExperimentGetter permissionsAwareExperimentGetter;
+    private final PermissionsAwareExperimentRepository permissionsAwareExperimentRepository;
 
-    public StopExperimentCommand(
+    StopExperimentCommand(
             String experimentId,
             ExperimentsRepository experimentsRepository,
-            PermissionsAwareExperimentGetter permissionsAwareExperimentGetter) {
+            PermissionsAwareExperimentRepository permissionsAwareExperimentRepository) {
         Preconditions.checkNotNull(experimentId);
         Preconditions.checkNotNull(experimentsRepository);
-        Preconditions.checkNotNull(permissionsAwareExperimentGetter);
+        Preconditions.checkNotNull(permissionsAwareExperimentRepository);
         this.experimentId = experimentId;
         this.experimentsRepository = experimentsRepository;
-        this.permissionsAwareExperimentGetter = permissionsAwareExperimentGetter;
+        this.permissionsAwareExperimentRepository = permissionsAwareExperimentRepository;
     }
 
     public void execute() {
-        Experiment experiment = permissionsAwareExperimentGetter.getExperimentOrException(experimentId);
+        Experiment experiment = permissionsAwareExperimentRepository.getExperimentOrException(experimentId);
         validate(experiment);
         Experiment stoppedExperiment = experiment.stop();
         experimentsRepository.save(stoppedExperiment);

@@ -14,19 +14,4 @@ public class DeviceClassPredicate implements Predicate {
     public String getDevice() {
         return device;
     }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-
-        DeviceClassPredicate that = (DeviceClassPredicate) o;
-
-        return device.equals(that.device);
-    }
-
-    @Override
-    public int hashCode() {
-        return device.hashCode();
-    }
 }

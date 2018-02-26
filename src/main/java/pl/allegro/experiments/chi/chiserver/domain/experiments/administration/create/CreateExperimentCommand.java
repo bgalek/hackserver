@@ -11,7 +11,7 @@ public class CreateExperimentCommand {
     private final UserProvider userProvider;
     private final ExperimentCreationRequest experimentCreationRequest;
 
-    public CreateExperimentCommand(
+    CreateExperimentCommand(
             ExperimentsRepository experimentsRepository,
             UserProvider userProvider,
             ExperimentCreationRequest experimentCreationRequest) {

@@ -7,7 +7,7 @@ import pl.allegro.experiments.chi.chiserver.BaseIntegrationSpec
 import pl.allegro.experiments.chi.chiserver.domain.experiments.administration.create.CreateExperimentCommand
 import pl.allegro.experiments.chi.chiserver.domain.User
 import pl.allegro.experiments.chi.chiserver.domain.experiments.ExperimentsRepository
-import pl.allegro.experiments.chi.chiserver.domain.experiments.administration.PermissionsAwareExperimentGetter
+import pl.allegro.experiments.chi.chiserver.domain.experiments.administration.PermissionsAwareExperimentRepository
 import pl.allegro.experiments.chi.chiserver.domain.experiments.administration.delete.DeleteExperimentCommand
 import pl.allegro.experiments.chi.chiserver.domain.experiments.administration.delete.DeleteExperimentException
 import pl.allegro.experiments.chi.chiserver.domain.statistics.StatisticsRepository
@@ -32,11 +32,11 @@ class DeleteExperimentCommandIntegrationSpec extends BaseIntegrationSpec {
     @Autowired
     MutableUserProvider mutableUserProvider
 
-    PermissionsAwareExperimentGetter permissionsAwareExperimentGetter
+    PermissionsAwareExperimentRepository permissionsAwareExperimentGetter
 
     def setup() {
         statisticsRepository = Mock(StatisticsRepository)
-        permissionsAwareExperimentGetter = new PermissionsAwareExperimentGetter(experimentsRepository, mutableUserProvider)
+        permissionsAwareExperimentGetter = new PermissionsAwareExperimentRepository(experimentsRepository, mutableUserProvider)
     }
 
     def "should delete experiment"() {

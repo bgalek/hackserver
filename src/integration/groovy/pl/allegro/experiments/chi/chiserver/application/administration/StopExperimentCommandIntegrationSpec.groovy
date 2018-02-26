@@ -7,7 +7,7 @@ import pl.allegro.experiments.chi.chiserver.BaseIntegrationSpec
 import pl.allegro.experiments.chi.chiserver.domain.User
 import pl.allegro.experiments.chi.chiserver.domain.experiments.Experiment
 import pl.allegro.experiments.chi.chiserver.domain.experiments.administration.ExperimentNotFoundException
-import pl.allegro.experiments.chi.chiserver.domain.experiments.administration.PermissionsAwareExperimentGetter
+import pl.allegro.experiments.chi.chiserver.domain.experiments.administration.PermissionsAwareExperimentRepository
 import pl.allegro.experiments.chi.chiserver.domain.experiments.administration.create.CreateExperimentCommand
 import pl.allegro.experiments.chi.chiserver.domain.experiments.administration.start.StartExperimentCommand
 import pl.allegro.experiments.chi.chiserver.domain.experiments.administration.start.StartExperimentProperties
@@ -31,10 +31,10 @@ class StopExperimentCommandIntegrationSpec extends BaseIntegrationSpec {
     MutableUserProvider mutableUserProvider
 
     @Shared
-    PermissionsAwareExperimentGetter permissionsAwareExperimentGetter
+    PermissionsAwareExperimentRepository permissionsAwareExperimentGetter
 
     def setup() {
-        permissionsAwareExperimentGetter = new PermissionsAwareExperimentGetter(
+        permissionsAwareExperimentGetter = new PermissionsAwareExperimentRepository(
                 experimentsRepository,
                 mutableUserProvider)
     }

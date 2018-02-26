@@ -3,31 +3,31 @@ package pl.allegro.experiments.chi.chiserver.domain.experiments.administration.p
 import com.google.common.base.Preconditions;
 import pl.allegro.experiments.chi.chiserver.domain.experiments.Experiment;
 import pl.allegro.experiments.chi.chiserver.domain.experiments.ExperimentsRepository;
-import pl.allegro.experiments.chi.chiserver.domain.experiments.administration.PermissionsAwareExperimentGetter;
+import pl.allegro.experiments.chi.chiserver.domain.experiments.administration.PermissionsAwareExperimentRepository;
 
 public class ProlongExperimentCommand {
     private final ExperimentsRepository experimentsRepository;
     private final ProlongExperimentProperties prolongExperimentProperties;
-    private final PermissionsAwareExperimentGetter permissionsAwareExperimentGetter;
+    private final PermissionsAwareExperimentRepository permissionsAwareExperimentRepository;
     private final String experimentId;
 
-    public ProlongExperimentCommand(
+    ProlongExperimentCommand(
             ExperimentsRepository experimentsRepository,
             ProlongExperimentProperties prolongExperimentProperties,
-            PermissionsAwareExperimentGetter permissionsAwareExperimentGetter,
+            PermissionsAwareExperimentRepository permissionsAwareExperimentRepository,
             String experimentId) {
         Preconditions.checkNotNull(experimentsRepository);
         Preconditions.checkNotNull(prolongExperimentProperties);
-        Preconditions.checkNotNull(permissionsAwareExperimentGetter);
+        Preconditions.checkNotNull(permissionsAwareExperimentRepository);
         Preconditions.checkNotNull(experimentId);
         this.experimentId = experimentId;
         this.experimentsRepository = experimentsRepository;
-        this.permissionsAwareExperimentGetter = permissionsAwareExperimentGetter;
+        this.permissionsAwareExperimentRepository = permissionsAwareExperimentRepository;
         this.prolongExperimentProperties = prolongExperimentProperties;
     }
 
     public void execute() {
-        Experiment experiment = permissionsAwareExperimentGetter.getExperimentOrException(experimentId);
+        Experiment experiment = permissionsAwareExperimentRepository.getExperimentOrException(experimentId);
         validate(experiment);
         experimentsRepository.save(experiment.prolong(prolongExperimentProperties.getExperimentAdditionalDays()));
     }

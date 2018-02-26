@@ -4,7 +4,7 @@ import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import pl.allegro.experiments.chi.chiserver.domain.UserProvider
 import pl.allegro.experiments.chi.chiserver.domain.experiments.ExperimentsRepository
-import pl.allegro.experiments.chi.chiserver.domain.experiments.administration.PermissionsAwareExperimentGetter
+import pl.allegro.experiments.chi.chiserver.domain.experiments.administration.PermissionsAwareExperimentRepository
 import pl.allegro.experiments.chi.chiserver.domain.experiments.administration.create.CreateExperimentCommandFactory
 import pl.allegro.experiments.chi.chiserver.domain.experiments.administration.delete.DeleteExperimentCommandFactory
 import pl.allegro.experiments.chi.chiserver.domain.experiments.administration.prolong.ProlongExperimentCommandFactory
@@ -25,32 +25,32 @@ class CommandsConfig {
     @Bean
     fun deleteExperimentCommandFactory(
             experimentsRepository: ExperimentsRepository,
-            permissionsAwareExperimentGetter: PermissionsAwareExperimentGetter,
+            permissionsAwareExperimentRepository: PermissionsAwareExperimentRepository,
             statisticsRepository: StatisticsRepository): DeleteExperimentCommandFactory {
         return DeleteExperimentCommandFactory(
                 experimentsRepository,
-                permissionsAwareExperimentGetter,
+                permissionsAwareExperimentRepository,
                 statisticsRepository)
     }
 
     @Bean
     fun prolongExperimentCommandFactory(
             experimentsRepository: ExperimentsRepository,
-            permissionsAwareExperimentGetter: PermissionsAwareExperimentGetter): ProlongExperimentCommandFactory {
-        return ProlongExperimentCommandFactory(experimentsRepository, permissionsAwareExperimentGetter)
+            permissionsAwareExperimentRepository: PermissionsAwareExperimentRepository): ProlongExperimentCommandFactory {
+        return ProlongExperimentCommandFactory(experimentsRepository, permissionsAwareExperimentRepository)
     }
 
     @Bean
     fun startExperimentCommandFactory(
             experimentsRepository: ExperimentsRepository,
-            permissionsAwareExperimentGetter: PermissionsAwareExperimentGetter): StartExperimentCommandFactory {
-        return StartExperimentCommandFactory(experimentsRepository, permissionsAwareExperimentGetter)
+            permissionsAwareExperimentRepository: PermissionsAwareExperimentRepository): StartExperimentCommandFactory {
+        return StartExperimentCommandFactory(experimentsRepository, permissionsAwareExperimentRepository)
     }
 
     @Bean
     fun stopExperimentCommandFactory(
             experimentsRepository: ExperimentsRepository,
-            permissionsAwareExperimentGetter: PermissionsAwareExperimentGetter): StopExperimentCommandFactory {
-        return StopExperimentCommandFactory(experimentsRepository, permissionsAwareExperimentGetter)
+            permissionsAwareExperimentRepository: PermissionsAwareExperimentRepository): StopExperimentCommandFactory {
+        return StopExperimentCommandFactory(experimentsRepository, permissionsAwareExperimentRepository)
     }
 }

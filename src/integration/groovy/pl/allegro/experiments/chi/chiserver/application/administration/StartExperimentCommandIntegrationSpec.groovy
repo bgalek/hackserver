@@ -8,7 +8,7 @@ import pl.allegro.experiments.chi.chiserver.domain.experiments.administration.cr
 import pl.allegro.experiments.chi.chiserver.domain.User
 import pl.allegro.experiments.chi.chiserver.domain.experiments.ExperimentStatus
 import pl.allegro.experiments.chi.chiserver.domain.experiments.ExperimentsRepository
-import pl.allegro.experiments.chi.chiserver.domain.experiments.administration.PermissionsAwareExperimentGetter
+import pl.allegro.experiments.chi.chiserver.domain.experiments.administration.PermissionsAwareExperimentRepository
 import pl.allegro.experiments.chi.chiserver.domain.experiments.administration.start.StartExperimentCommand
 import pl.allegro.experiments.chi.chiserver.domain.experiments.administration.start.StartExperimentException
 import pl.allegro.experiments.chi.chiserver.domain.experiments.administration.start.StartExperimentProperties
@@ -26,10 +26,10 @@ class StartExperimentCommandIntegrationSpec extends BaseIntegrationSpec {
     @Autowired
     MutableUserProvider mutableUserProvider
 
-    PermissionsAwareExperimentGetter permissionsAwareExperimentGetter
+    PermissionsAwareExperimentRepository permissionsAwareExperimentGetter
 
     def setup() {
-        permissionsAwareExperimentGetter = new PermissionsAwareExperimentGetter(experimentsRepository, mutableUserProvider)
+        permissionsAwareExperimentGetter = new PermissionsAwareExperimentRepository(experimentsRepository, mutableUserProvider)
     }
 
     def "should start experiment"() {

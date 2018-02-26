@@ -9,7 +9,7 @@ import pl.allegro.experiments.chi.chiserver.domain.experiments.ActivityPeriod
 import pl.allegro.experiments.chi.chiserver.domain.experiments.Experiment
 import pl.allegro.experiments.chi.chiserver.domain.experiments.administration.AuthorizationException
 import pl.allegro.experiments.chi.chiserver.domain.experiments.administration.ExperimentNotFoundException
-import pl.allegro.experiments.chi.chiserver.domain.experiments.administration.PermissionsAwareExperimentGetter
+import pl.allegro.experiments.chi.chiserver.domain.experiments.administration.PermissionsAwareExperimentRepository
 import pl.allegro.experiments.chi.chiserver.domain.experiments.administration.create.CreateExperimentCommand
 import pl.allegro.experiments.chi.chiserver.domain.experiments.administration.prolong.ProlongExperimentCommand
 import pl.allegro.experiments.chi.chiserver.domain.experiments.administration.prolong.ProlongExperimentProperties
@@ -36,10 +36,10 @@ class CommandValidationIntegrationSpec extends BaseIntegrationSpec {
     MutableUserProvider mutableUserProvider
 
     @Shared
-    PermissionsAwareExperimentGetter permissionsAwareExperimentGetter
+    PermissionsAwareExperimentRepository permissionsAwareExperimentGetter
 
     def setup() {
-        permissionsAwareExperimentGetter = new PermissionsAwareExperimentGetter(
+        permissionsAwareExperimentGetter = new PermissionsAwareExperimentRepository(
                 experimentsRepository,
                 mutableUserProvider)
     }

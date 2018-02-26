@@ -4,13 +4,13 @@ import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import pl.allegro.experiments.chi.chiserver.domain.UserProvider
 import pl.allegro.experiments.chi.chiserver.domain.experiments.ExperimentsRepository
-import pl.allegro.experiments.chi.chiserver.domain.experiments.administration.PermissionsAwareExperimentGetter
+import pl.allegro.experiments.chi.chiserver.domain.experiments.administration.PermissionsAwareExperimentRepository
 
 @Configuration
 class PermissionsAwareExperimentGetterConfig {
     @Bean
     fun permissionsAwareExperimentGetter(experimentsRepository: ExperimentsRepository, userProvider: UserProvider):
-            PermissionsAwareExperimentGetter {
-        return PermissionsAwareExperimentGetter(experimentsRepository, userProvider)
+            PermissionsAwareExperimentRepository {
+        return PermissionsAwareExperimentRepository(experimentsRepository, userProvider)
     }
 }

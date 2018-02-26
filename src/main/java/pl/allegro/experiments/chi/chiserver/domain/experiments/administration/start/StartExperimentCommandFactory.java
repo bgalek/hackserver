@@ -1,21 +1,20 @@
 package pl.allegro.experiments.chi.chiserver.domain.experiments.administration.start;
 
 import com.google.common.base.Preconditions;
-import org.springframework.stereotype.Component;
 import pl.allegro.experiments.chi.chiserver.domain.experiments.ExperimentsRepository;
-import pl.allegro.experiments.chi.chiserver.domain.experiments.administration.PermissionsAwareExperimentGetter;
+import pl.allegro.experiments.chi.chiserver.domain.experiments.administration.PermissionsAwareExperimentRepository;
 
 public class StartExperimentCommandFactory {
     private final ExperimentsRepository experimentsRepository;
-    private final PermissionsAwareExperimentGetter permissionsAwareExperimentGetter;
+    private final PermissionsAwareExperimentRepository permissionsAwareExperimentRepository;
 
     public StartExperimentCommandFactory(
             ExperimentsRepository experimentsRepository,
-            PermissionsAwareExperimentGetter permissionsAwareExperimentGetter) {
+            PermissionsAwareExperimentRepository permissionsAwareExperimentRepository) {
         Preconditions.checkNotNull(experimentsRepository);
-        Preconditions.checkNotNull(permissionsAwareExperimentGetter);
+        Preconditions.checkNotNull(permissionsAwareExperimentRepository);
         this.experimentsRepository = experimentsRepository;
-        this.permissionsAwareExperimentGetter = permissionsAwareExperimentGetter;
+        this.permissionsAwareExperimentRepository = permissionsAwareExperimentRepository;
     }
 
     public StartExperimentCommand startExperimentCommand(
@@ -26,7 +25,7 @@ public class StartExperimentCommandFactory {
         return new StartExperimentCommand(
                experimentsRepository,
                properties,
-               permissionsAwareExperimentGetter,
+                permissionsAwareExperimentRepository,
                experimentId
         );
     }
