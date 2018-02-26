@@ -253,7 +253,7 @@
       },
 
       formatCount (num) {
-        return num.toLocaleString('en')
+        return num.toLocaleString('pl')
       },
 
       formatCurrency (num, symbol) {
