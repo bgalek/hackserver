@@ -42,21 +42,25 @@
         >
           <template slot="items" slot-scope="props">
             <td>{{ props.item.variant }}</td>
-            <td class="text-xs-right">{{ formatNumber(props.item.value) }}</td>
+            <td class="text-xs-right">{{ metricFormatter[metric.key](props.item.value) }}</td>
 
             <td class="text-xs-right">
               <v-tooltip top>
-                <v-chip slot="activator" v-if="showVariant(props.item.variant)" label :color="diffColor(props.item).back" :text-color="diffColor(props.item).text">
+                <v-chip slot="activator" v-if="showVariant(props.item.variant)" label
+                        :color="diffColor(props.item).back"
+                        :outline="diffColor(props.item).outline"
+                        :text-color="diffColor(props.item).text"
+                >
                   {{ formatDiff(props.item) }}
                   <v-icon right>{{ diffIcon(props.item.diff) }}</v-icon>
                 </v-chip>
-                <span>{{ diffToolTip(props.item) }}</span>
+                <div>{{ diffToolTip(props.item) }}</div>
               </v-tooltip>
             </td>
 
             <td class="text-xs-right">
               <div v-if="showVariant(props.item.variant)">
-                {{ formatNumber(props.item.pValue) }}
+                {{ formatNumber(props.item.pValue, 4) }}
                 <pivot-link cube-type="stats" :experiment-id="experiment.id"
                             selected-metric-name="p_value" :variant="props.item.variant"
                             :metric="metric.key"
@@ -64,7 +68,7 @@
               </div>
             </td>
 
-            <td class="text-xs-right">{{ props.item.count }}</td>
+            <td class="text-xs-right">{{ formatCount(props.item.count) }}</td>
           </template>
           <hr/>
 
@@ -109,9 +113,14 @@
           {text: 'Sample Count', sortable: false}
         ],
         metricNames: {
-          'tx_visit': 'Visits with transaction(s)',
+          'tx_visit': 'Visits conversion',
           'tx_avg': 'Transactions per visit',
           'gmv': 'GMV per visit'
+        },
+        metricFormatter: {
+          'tx_visit': (it) => this.formatAsPercent(it),
+          'tx_avg': (it) => this.formatNumber(it, 4),
+          'gmv': (it) => this.formatCurrency(it, 'PLN')
         }
       }
     },
@@ -122,16 +131,53 @@
       diffToolTip (metricVariant) {
         const testSignificance = this.testSignificance(metricVariant)
 
+        if (testSignificance === 'wait') {
+          return 'Wait till the end of the experiment...'
+        }
+
         if (testSignificance === 'no') {
-          return 'The difference is statistically not significant.'
+          return 'According to our data, the difference is statistically not significant. ' +
+                 'Don\'t give up! ' +
+                 'Pro tip: try to reduce the noise in data using Event Filter.'
         }
 
         if (testSignificance === 'strong') {
-          return 'The difference is strongly statistically significant (p-Value is less than 0.01).'
+          return 'The difference is strongly statistically significant (with α = 1%).'
         }
 
         if (testSignificance === 'light') {
-          return 'The difference is statistically significant (p-Value is less than 0.05).'
+          return 'The difference is statistically significant (with α = 5%).'
+        }
+
+        if (testSignificance === 'promising') {
+          return 'Okay, looks like the experiment is going to become statistically significant. ' +
+                 'Wait till the end of the experiment for the official results. '
+        }
+      },
+
+      testSignificance (metricVariant) {
+        const pVal = metricVariant.pValue
+
+        if (pVal > 0.05) {
+          if (this.experiment.status === 'ENDED') {
+            return 'no'
+          } else {
+            return 'wait'
+          }
+        }
+
+        if (pVal < 0.05 && this.experiment.status !== 'ENDED') {
+          return 'promising'
+        }
+
+        // if p-Value is between 0.01 and 0.05, we are not so sure about statistical significance
+        if (pVal > 0.01 && pVal < 0.05 && this.experiment.status === 'ENDED') {
+          return 'light'
+        }
+
+        // if p-Value < 0.01, we are sure about statistical significance
+        if (pVal <= 0.01 && this.experiment.status === 'ENDED') {
+          return 'strong'
         }
       },
 
@@ -140,14 +186,14 @@
 
         const testSignificance = this.testSignificance(metricVariant)
 
+        const trendColor = diff > 0 ? 'green' : 'red'
+
         if (testSignificance === 'no') {
           return {
             text: 'black',
-            back: 'white'
+            back: 'gray-lighten-4'
           }
         }
-
-        const trendColor = diff > 0 ? 'green' : 'red'
 
         if (testSignificance === 'strong') {
           return {
@@ -162,22 +208,21 @@
             back: trendColor + ' ' + 'lighten-4'
           }
         }
-      },
 
-      testSignificance (metricVariant) {
-        const pVal = metricVariant.pValue
-
-        if (pVal > 0.05) {
-          return 'no'
+        if (testSignificance === 'promising') {
+          return {
+            text: 'black',
+            back: trendColor + ' ' + 'lighten-4',
+            outline: true
+          }
         }
 
-        // if p-Value < 0.01, we are sure about statistical significance
-        if (pVal < 0.01) {
-          return 'strong'
+        if (testSignificance === 'wait') {
+          return {
+            text: 'black',
+            back: 'white'
+          }
         }
-
-        // if p-Value is between 0.01 and 0.05, we are not so sure about statistical significance
-        return 'light'
       },
 
       diffIcon (diff) {
@@ -207,17 +252,25 @@
         return items
       },
 
-      formatNumber (num) {
-        const expThres = 0.0001
+      formatCount (num) {
+        return num.toLocaleString('en')
+      },
 
+      formatCurrency (num, symbol) {
+        return this.formatNumber(num, 4) + ' ' + symbol
+      },
+
+      formatNumber (num, decimals) {
         if (!num) {
           return ''
         }
 
+        const expThres = 0.0001
+
         const numAbs = Math.abs(num)
 
         if (numAbs > expThres && numAbs < 100) {
-          return num.toFixed(4)
+          return num.toFixed(decimals)
         }
 
         if (numAbs > 100) {
@@ -227,16 +280,18 @@
         return num.toExponential(2)
       },
 
-      formatPercent (num) {
+      formatAsPercent (num) {
         if (!num) {
           return ''
         }
 
-        if (Math.abs(num) < 0.01) {
-          return num.toExponential(2) + '%'
+        const numPercent = num * 100
+
+        if (Math.abs(numPercent) < 0.01) {
+          return numPercent.toExponential(2) + ' %'
         }
 
-        return num.toFixed(2) + '%'
+        return numPercent.toFixed(2) + ' %'
       },
 
       formatDiff (metricVariant) {
@@ -244,7 +299,7 @@
         const diff = metricVariant.diff
         const baseValue = variantValue - diff
 
-        return this.formatPercent(100 * diff / baseValue, 0.01)
+        return this.formatAsPercent(diff / baseValue)
       },
 
       updateQueryParams ({device}) {
