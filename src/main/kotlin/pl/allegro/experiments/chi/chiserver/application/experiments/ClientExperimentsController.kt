@@ -16,7 +16,9 @@ import pl.allegro.tech.common.andamio.metrics.MeteredEndpoint
 )
 class ClientExperimentsController(
     private val experimentsRepository: ExperimentsRepository,
-    private val jsonConverter: JsonConverter
+    private val jsonConverter: JsonConverter,
+    private val crisisManagementFilter: CrisisManagementFilter
+
 ) {
 
     companion object {
@@ -27,6 +29,6 @@ class ClientExperimentsController(
     @GetMapping(path = ["/v2", ""])
     fun experimentsForClient() : String {
         logger.info("Active experiments request received")
-        return jsonConverter.toJson(experimentsRepository.overridable())
+        return jsonConverter.toJson(experimentsRepository.overridable().filter { crisisManagementFilter.filter(it) })
     }
 }

@@ -25,12 +25,14 @@
 
         const metricPivotNamesTest = {
           'tx_visit': '1000sum-06a',
+          'tx_avg': '1000sum-40c',
           'p_value': 'sum_p_value',
           'gmv': 'sumtran-ed2'
         }
 
         const metricPivotNamesProd = {
           'tx_visit': 'sumvisi-159',
+          'tx_avg': 'sumtran-cb5',
           'p_value': 'sum_p_value',
           'gmv': 'sumtran-7df'
         }

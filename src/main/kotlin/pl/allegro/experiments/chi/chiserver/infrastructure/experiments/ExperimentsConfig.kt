@@ -3,11 +3,15 @@ package pl.allegro.experiments.chi.chiserver.infrastructure.experiments
 import com.codahale.metrics.Gauge
 import com.codahale.metrics.MetricRegistry
 import org.springframework.beans.factory.annotation.Value
+import org.springframework.boot.context.properties.ConfigurationProperties
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.data.mongodb.core.MongoTemplate
 import org.springframework.data.mongodb.core.convert.CustomConversions
 import org.springframework.web.client.RestTemplate
+import pl.allegro.experiments.chi.chiserver.application.experiments.AllEnabledCrisisManagementFilter
+import pl.allegro.experiments.chi.chiserver.application.experiments.CrisisManagementFilter
+import pl.allegro.experiments.chi.chiserver.application.experiments.WhitelistCrisisManagementFilter
 import pl.allegro.experiments.chi.chiserver.domain.experiments.ExperimentsRepository
 import pl.allegro.experiments.chi.chiserver.domain.experiments.MeasurementsRepository
 import pl.allegro.experiments.chi.chiserver.infrastructure.JsonConverter
@@ -65,5 +69,27 @@ class ExperimentsConfig {
     @Bean
     fun experimentsMetricsReporter(metricRegistry: MetricRegistry) : ExperimentsMongoMetricsReporter {
         return ExperimentsMongoMetricsReporter(metricRegistry)
+    }
+
+    @Bean
+    fun crisisManagementFilter(crisisManagementProperties: CrisisManagementProperties) : CrisisManagementFilter  {
+        if (crisisManagementProperties.enabled) {
+            return WhitelistCrisisManagementFilter(crisisManagementProperties.whitelist)
+        } else {
+            return AllEnabledCrisisManagementFilter()
+        }
+    }
+
+    @Bean
+    @ConfigurationProperties("chi.crisisManagement")
+    fun crisisManagementProperties(): CrisisManagementProperties {
+        return CrisisManagementProperties()
+    }
+}
+
+data class CrisisManagementProperties(var enabled: Boolean = false, var whitelist:List<String> = emptyList()) {
+    init {
+        enabled = false
+        whitelist = ArrayList<String>()
     }
 }
