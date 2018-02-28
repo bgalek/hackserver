@@ -2,6 +2,7 @@ package pl.allegro.experiments.chi.chiserver.domain.experiments.administration.s
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.google.common.base.Preconditions;
 
 import javax.validation.constraints.NotNull;
 
@@ -11,6 +12,7 @@ public class StartExperimentProperties {
 
     @JsonCreator
     public StartExperimentProperties(@JsonProperty("experimentDurationDays") long experimentDurationDays) {
+        Preconditions.checkArgument(experimentDurationDays > 0);
         this.experimentDurationDays = experimentDurationDays;
     }
 

@@ -34,10 +34,7 @@ public class ProlongExperimentCommand {
 
     private void validate(Experiment experiment) {
         if (!experiment.isActive()) {
-            throw new ProlongExperimentException("Experiment additional days must be greater than 0: " + experimentId, null);
-        }
-        if (prolongExperimentProperties.getExperimentAdditionalDays() <= 0) {
-            throw new ProlongExperimentException("Experiment additional days must be greater than 0: " + experimentId, null);
+            throw new ProlongExperimentException("Experiment cant be prolonged if it is not ACTIVE");
         }
     }
 }

@@ -35,7 +35,7 @@ public class DeleteExperimentCommand {
 
     private void validate(Experiment experiment) {
         if (statisticsRepository.hasAnyStatistics(experiment)) {
-            throw new DeleteExperimentException("Experiment with statistics cannot be deleted: " + experimentId, null);
+            throw new DeleteExperimentException("Experiment with statistics cannot be deleted: " + experimentId);
         }
     }
 }

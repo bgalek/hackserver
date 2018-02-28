@@ -84,21 +84,11 @@ class ProlongExperimentCommandIntegrationSpec extends BaseIntegrationSpec {
     }
 
     def "should not prolong experiment when given number of days is negative or zero"() {
-        given:
-        def experiment = experimentCreatedByRoot()
-
-        and:
-        def prolongCommand = new ProlongExperimentCommand(
-                experimentsRepository,
-                new ProlongExperimentProperties(30),
-                permissionsAwareExperimentGetter,
-                experiment.id)
-
         when:
-        prolongCommand.execute()
+        new ProlongExperimentProperties(duration)
 
         then:
-        thrown ProlongExperimentException
+        thrown IllegalArgumentException
 
         where:
         duration << [0, -1]

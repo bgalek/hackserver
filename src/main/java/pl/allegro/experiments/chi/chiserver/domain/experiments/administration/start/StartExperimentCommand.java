@@ -34,10 +34,7 @@ public class StartExperimentCommand {
 
     private void validate(Experiment experiment) {
         if (!experiment.isDraft()) {
-            throw new StartExperimentException("Experiment is not DRAFT: " + experimentId, null);
-        }
-        if (startExperimentProperties.getExperimentDurationDays() <= 0) {
-            throw new StartExperimentException("Experiment duration days must be greater than 0: " + experimentId, null);
+            throw new StartExperimentException("Experiment is not DRAFT: " + experimentId);
         }
     }
 }

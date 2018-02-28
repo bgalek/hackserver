@@ -26,7 +26,7 @@ public class CreateExperimentCommand {
     public void execute() {
         User user = userProvider.getCurrentUser();
         if (user.isAnonymous() && !user.isRoot()) {
-            throw new AuthorizationException("Experiment with id " + experimentCreationRequest.getId() + " already exists");
+            throw new AuthorizationException("Only logged in user can create experiment");
         }
         if (experimentsRepository.getExperiment(experimentCreationRequest.getId()) != null) {
             throw new ExperimentCreationException("Experiment with id " + experimentCreationRequest.getId() + " already exists");

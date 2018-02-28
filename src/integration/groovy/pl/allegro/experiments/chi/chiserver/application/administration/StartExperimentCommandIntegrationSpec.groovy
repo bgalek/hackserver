@@ -83,24 +83,11 @@ class StartExperimentCommandIntegrationSpec extends BaseIntegrationSpec {
     }
 
     def "should not start experiment when given number of days is negative or zero"() {
-        given:
-        def id = UUID.randomUUID().toString()
-        mutableUserProvider.user = new User('Root', [], true)
-        def command = new CreateExperimentCommand(experimentsRepository, mutableUserProvider, simpleExperimentRequest(id))
-        command.execute()
-
-        and:
-        def startCommand = new StartExperimentCommand(
-                experimentsRepository,
-                new StartExperimentProperties(duration),
-                permissionsAwareExperimentGetter,
-                id)
-
         when:
-        startCommand.execute()
+        new StartExperimentProperties(duration)
 
         then:
-        thrown StartExperimentException
+        thrown IllegalArgumentException
 
         where:
         duration << [0, -1]
