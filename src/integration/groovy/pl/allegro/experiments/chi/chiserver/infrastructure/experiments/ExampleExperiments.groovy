@@ -94,4 +94,19 @@ trait ExampleExperiments {
           status: 'ENDED'
         ]
     }
+
+    Map pausedExperiment() {
+        [ id: 'paused_experiment',
+          activityPeriod: [
+                  activeFrom: '2050-11-03T10:15:30+02:00',
+                  activeTo: '2060-11-03T10:15:30+02:00'
+          ],
+          variants: [
+                  [ name: 'internal', predicates: [[ type:'INTERNAL' ]] ]
+          ],
+          reportingEnabled: true,
+          groups: [],
+          status: 'PAUSED'
+        ]
+    }
 }

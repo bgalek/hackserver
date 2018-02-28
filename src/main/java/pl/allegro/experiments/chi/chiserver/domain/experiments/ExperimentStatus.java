@@ -1,9 +1,11 @@
 package pl.allegro.experiments.chi.chiserver.domain.experiments;
 
+import com.google.common.base.Preconditions;
+
 import java.time.ZonedDateTime;
 
 public enum ExperimentStatus {
-    DRAFT, PLANNED, ACTIVE, ENDED;
+    DRAFT, PLANNED, ACTIVE, ENDED, PAUSED;
 
     public static ExperimentStatus of(ActivityPeriod activityPeriod) {
         if (activityPeriod == null) {
@@ -15,5 +17,13 @@ public enum ExperimentStatus {
         } else {
             return ExperimentStatus.ACTIVE;
         }
+    }
+
+    public static ExperimentStatus of(ExperimentStatus status, ActivityPeriod activityPeriod) {
+        Preconditions.checkArgument(status == null || status == ExperimentStatus.PAUSED, "Explicit experiment status can be only PAUSED");
+        if (status == null) {
+            return of(activityPeriod);
+        }
+        return status;
     }
 }

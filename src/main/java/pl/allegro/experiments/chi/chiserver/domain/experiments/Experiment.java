@@ -6,6 +6,7 @@ import joptsimple.internal.Strings;
 
 import java.time.ZonedDateTime;
 import java.util.List;
+import java.util.Optional;
 
 public class Experiment {
     private final String id;
@@ -20,7 +21,6 @@ public class Experiment {
     private final Boolean editable;
     private final String origin;
     private final ExperimentStatus status;
-
     public Experiment(
             String id,
             List<ExperimentVariant> variants,
@@ -32,7 +32,8 @@ public class Experiment {
             ActivityPeriod activityPeriod,
             ExperimentMeasurements measurements,
             Boolean editable,
-            String origin) {
+            String origin,
+            ExperimentStatus status) {
         Preconditions.checkArgument(!Strings.isNullOrEmpty(id));
         Preconditions.checkNotNull(variants);
         Preconditions.checkArgument(!variants.isEmpty());
@@ -48,7 +49,7 @@ public class Experiment {
         this.measurements = measurements;
         this.editable = editable;
         this.origin = origin;
-        this.status = ExperimentStatus.of(activityPeriod);
+        this.status = ExperimentStatus.of(status, activityPeriod);
     }
 
     public String getId() {
@@ -113,6 +114,10 @@ public class Experiment {
         return status;
     }
 
+    public Optional<ExperimentStatus> getExplicitStatus() {
+        return status == ExperimentStatus.PAUSED ? Optional.of(this.status) : Optional.empty();
+    }
+
     public boolean isDraft() {
         return getStatus() == ExperimentStatus.DRAFT;
     }
@@ -121,12 +126,16 @@ public class Experiment {
         return getStatus() == ExperimentStatus.ENDED;
     }
 
+    public boolean isPaused() {
+        return getStatus() == ExperimentStatus.PAUSED;
+    }
+
     public boolean isActive() {
         return getStatus() == ExperimentStatus.ACTIVE;
     }
 
     public boolean isOverridable() {
-        return !isEnded();
+        return !isEnded() && !isPaused();
     }
 
     public Experiment start(long experimentDurationDays) {
@@ -141,7 +150,8 @@ public class Experiment {
                 new ActivityPeriod(ZonedDateTime.now(), ZonedDateTime.now().plusDays(experimentDurationDays)),
                 measurements,
                 editable,
-                origin
+                origin,
+                getExplicitStatus().orElse(null)
         );
     }
 
@@ -157,7 +167,8 @@ public class Experiment {
                 activityPeriod.endNow(),
                 measurements,
                 editable,
-                origin
+                origin,
+                getExplicitStatus().orElse(null)
         );
     }
 
@@ -173,7 +184,8 @@ public class Experiment {
                 new ActivityPeriod(activityPeriod.getActiveFrom(), activityPeriod.getActiveTo().plusDays(experimentAdditionalDays)),
                 measurements,
                 editable,
-                origin
+                origin,
+                getExplicitStatus().orElse(null)
         );
     }
 
@@ -189,7 +201,8 @@ public class Experiment {
                 activityPeriod,
                 measurements,
                 editable,
-                origin
+                origin,
+                getExplicitStatus().orElse(null)
         );
     }
 
@@ -206,7 +219,8 @@ public class Experiment {
                 activityPeriod,
                 measurements,
                 editable,
-                origin
+                origin,
+                getExplicitStatus().orElse(null)
         );
     }
 }

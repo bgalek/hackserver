@@ -38,6 +38,7 @@ class ExperimentsTestConfig {
                         null,
                         null,
                         null,
+                        null,
                         null
                 ),
                 new Experiment(
@@ -51,6 +52,7 @@ class ExperimentsTestConfig {
                         'owner',
                         [],
                         false,
+                        null,
                         null,
                         null,
                         null,

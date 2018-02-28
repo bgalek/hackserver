@@ -124,9 +124,10 @@ class ExperimentsE2ESpec extends BaseIntegrationSpec implements ExampleExperimen
 
         then:
         response.statusCode.value() == 200
-        response.body.size() == 8
+        response.body.size() == 9
 
         and:
+        //verifyExperiments(response.body, )
         response.body.contains(editableMeasuredExperiment(internalExperiment()))
         response.body.contains(editableMeasuredExperiment(plannedExperiment()))
         response.body.contains(editableMeasuredExperiment(cmuidRegexpExperiment()))
@@ -134,6 +135,8 @@ class ExperimentsE2ESpec extends BaseIntegrationSpec implements ExampleExperimen
         response.body.contains(editableMeasuredExperiment(sampleExperiment()))
         response.body.contains(editableMeasuredExperiment(timeboundExperiment()))
         response.body.contains(editableMeasuredExperiment(experimentFromThePast()))
+        response.body.contains(editableMeasuredExperiment(pausedExperiment()))
+
     }
 
     def "should return last valid list when file is corrupted"() {

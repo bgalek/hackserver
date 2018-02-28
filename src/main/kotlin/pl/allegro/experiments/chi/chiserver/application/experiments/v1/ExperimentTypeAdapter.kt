@@ -4,10 +4,7 @@ import com.github.salomonbrys.kotson.bool
 import com.github.salomonbrys.kotson.jsonDeserializer
 import com.github.salomonbrys.kotson.obj
 import com.github.salomonbrys.kotson.string
-import pl.allegro.experiments.chi.chiserver.domain.experiments.ActivityPeriod
-import pl.allegro.experiments.chi.chiserver.domain.experiments.Experiment
-import pl.allegro.experiments.chi.chiserver.domain.experiments.ExperimentMeasurements
-import pl.allegro.experiments.chi.chiserver.domain.experiments.ExperimentVariant
+import pl.allegro.experiments.chi.chiserver.domain.experiments.*
 import java.time.ZonedDateTime
 import java.time.format.DateTimeFormatter
 
@@ -24,8 +21,9 @@ val experimentDeserializer = jsonDeserializer { (jsonElement, _, context) ->
     val reported = json["reportingEnabled"]?.bool ?: true
     val variants = context.deserialize<List<ExperimentVariant>>(json["variants"]!!)
     val measurements = json["measurements"]?.let { context.deserialize<ExperimentMeasurements>(json["measurements"]) }
+    val explicitStatus:ExperimentStatus? =  json["status"]?.let{ExperimentStatus.valueOf(it.string)}
 
-    val period: ActivityPeriod? = if (activeFrom != null && activeTo != null) ActivityPeriod(activeFrom, activeTo) else null;
+    val period: ActivityPeriod? = if (activeFrom != null && activeTo != null) ActivityPeriod(activeFrom, activeTo) else null
 
-    Experiment(id, variants, description, documentLink, owner, emptyList(), reported, period, measurements, null, null)
+    Experiment(id, variants, description, documentLink, owner, emptyList(), reported, period, measurements, null, null, explicitStatus)
 }

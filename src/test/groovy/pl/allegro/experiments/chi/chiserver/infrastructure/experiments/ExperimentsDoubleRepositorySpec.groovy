@@ -77,16 +77,16 @@ class ExperimentsDoubleRepositorySpec extends Specification {
 
     def "first repo should have priority when calling getAll"(){
         given:
-        def fileRepo = new InMemoryExperimentsRepository(
-                [experiment("2", "from stash"), experiment("ambiguous", "from stash")])
-        def mongoRepo = new InMemoryExperimentsRepository(
-                [experiment("ambiguous", "from mongo"), experiment("3", "from mongo")])
+            def fileRepo = new InMemoryExperimentsRepository(
+                    [experiment("2", "from stash"), experiment("ambiguous", "from stash")])
+            def mongoRepo = new InMemoryExperimentsRepository(
+                    [experiment("ambiguous", "from mongo"), experiment("3", "from mongo")])
 
-        def repo = new ExperimentsDoubleRepository(fileRepo, mongoRepo)
+            def repo = new ExperimentsDoubleRepository(fileRepo, mongoRepo)
 
         expect:
-        repo.all.size() == 3
-        repo.all.find{it.id == "ambiguous"}.description == "from stash"
+            repo.all.size() == 3
+            repo.all.find{it.id == "ambiguous"}.description == "from stash"
     }
 
     Experiment experiment(id) {
@@ -101,6 +101,7 @@ class ExperimentsDoubleRepositorySpec extends Specification {
                 "",
                 [],
                 false,
+                null,
                 null,
                 null,
                 null,

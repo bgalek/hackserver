@@ -33,6 +33,6 @@ class ClientExperimentsControllerV1(
         logger.info("Active experiments request received")
         return jsonConverterV1.toJson(experimentsRepository.getAll()
                 .filter {crisisManagementFilter.filter(it)}
-                .filter {it.status != ExperimentStatus.ENDED})
+                .filter {it.status != ExperimentStatus.ENDED && it.status != ExperimentStatus.PAUSED})
     }
 }
