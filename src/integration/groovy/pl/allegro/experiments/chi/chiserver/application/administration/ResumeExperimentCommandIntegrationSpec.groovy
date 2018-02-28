@@ -15,7 +15,7 @@ import spock.lang.Shared
 
 @ContextConfiguration(classes = [ExperimentsTestConfig])
 @DirtiesContext
-class PauseExperimentCommandIntegrationSpec extends BaseIntegrationSpec implements PreparedExperiments {
+class ResumeExperimentCommandIntegrationSpec extends BaseIntegrationSpec implements PreparedExperiments {
 
     @Autowired
     MongoExperimentsRepository experimentsRepository
@@ -32,32 +32,32 @@ class PauseExperimentCommandIntegrationSpec extends BaseIntegrationSpec implemen
                 mutableUserProvider)
     }
 
-    def "should pause experiment"() {
+    def "should resume experiment"() {
         given:
-        Experiment experiment = startedExperiment()
+        Experiment experiment = pausedExperiment()
 
         and:
-        def pauseCommand = this.pauseCommand(experiment.id)
+        def resumeCommand = resumeCommand(experiment.id)
 
         when:
-        pauseCommand.execute()
+        resumeCommand.execute()
         experiment = experimentsRepository.getExperiment(experiment.id)
 
         then:
-        experiment.isPaused()
+        experiment.isActive()
     }
 
-    def "should not pause nonexistent experiment"() {
+    def "should not resume non existing experiment"() {
         when:
-        pauseCommand('nonexistentExperimentId').execute()
+        resumeCommand('nonexistentExperimentId').execute()
 
         then:
         thrown ExperimentNotFoundException
     }
 
-    def "should not pause experiment if it is ENDED"() {
+    def "should not resume ENDED experiment"() {
         when:
-        pauseCommand(endedExperiment().id).execute()
+        resumeCommand(endedExperiment().id).execute()
 
         then:
         thrown ExperimentCommandException
