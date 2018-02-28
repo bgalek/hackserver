@@ -12,14 +12,15 @@ public class ExperimentStatistics {
     private final LocalDate toDate;
     private final Duration duration;
     private final String device;
-    private final Map<MetricName, Map<VariantName, VariantStatistics>> metrics;
+    private final Map<String, Map<String, VariantStatistics>> metrics;
 
     public ExperimentStatistics(
             String experimentId,
             LocalDate toDate,
             Duration duration,
             String device,
-            Map<MetricName, Map<VariantName, VariantStatistics>> metrics) {
+            // metricName  variantName
+            Map<String, Map<String, VariantStatistics>> metrics) {
         Preconditions.checkNotNull(experimentId);
         Preconditions.checkNotNull(toDate);
         Preconditions.checkNotNull(duration);
@@ -48,7 +49,7 @@ public class ExperimentStatistics {
         return device;
     }
 
-    public Map<MetricName, Map<VariantName, VariantStatistics>> getMetrics() {
+    public Map<String, Map<String, VariantStatistics>> getMetrics() {
         return metrics;
     }
 }
