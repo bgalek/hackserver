@@ -2,6 +2,7 @@ package pl.allegro.experiments.chi.chiserver.application.administration
 
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.HttpStatus
+import org.springframework.http.ResponseEntity
 import org.springframework.test.annotation.DirtiesContext
 import org.springframework.web.client.HttpClientErrorException
 import org.springframework.web.client.RestTemplate
@@ -150,11 +151,11 @@ class ExperimentsSelfServiceE2ESpec extends BaseIntegrationSpec {
                 .hasStatus(ExperimentStatus.ENDED)
 
         when:
-        restTemplate.put(localUrl("/api/admin/experiments/${request.id}/pause"), Map)
+        def pauseResponse = restTemplate.put(localUrl("/api/admin/experiments/${request.id}/pause"), Map)
 
         then:
-        assertThatExperimentWithId(request.id)
-                .hasStatus(ExperimentStatus.PAUSED)
+        def ex = thrown(HttpClientErrorException)
+        ex.statusCode == HttpStatus.BAD_REQUEST
 
         and:
         restTemplate.delete(localUrl("/api/admin/experiments/${request.id}"))
@@ -163,7 +164,8 @@ class ExperimentsSelfServiceE2ESpec extends BaseIntegrationSpec {
         restTemplate.getForEntity(localUrl("/api/admin/experiments/${request.id}/"), Map)
 
         then:
-        thrown HttpClientErrorException
+        ex = thrown(HttpClientErrorException)
+        ex.statusCode == HttpStatus.NOT_FOUND
     }
 
     ExperimentResponseAssertions assertThatExperimentWithId(String id) {
@@ -176,17 +178,17 @@ class ExperimentsSelfServiceE2ESpec extends BaseIntegrationSpec {
     }
 
     static class ExperimentResponseAssertions {
+        ResponseEntity<Map> response
 
-        def response
-
-        ExperimentResponseAssertions(response) {
+        ExperimentResponseAssertions(ResponseEntity<Map> response) {
             this.response = response
         }
 
-        def hasStatus(ExperimentStatus expectedStatus) {
-            assert response.body.status == expectedStatus.toString()
+        def hasStatus(ExperimentStatus experimentStatus) {
+            assert response.body.status == experimentStatus.toString()
             return this
         }
+
     }
 }
 

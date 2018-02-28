@@ -1,6 +1,8 @@
 package pl.allegro.experiments.chi.chiserver.domain.experiments.administration.prolong;
 
-public class ProlongExperimentException extends RuntimeException {
+import pl.allegro.experiments.chi.chiserver.domain.experiments.administration.ExperimentCommandException;
+
+public class ProlongExperimentException extends ExperimentCommandException {
     ProlongExperimentException(String message) {
         super(message);
     }

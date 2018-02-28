@@ -34,7 +34,7 @@ public class PauseExperimentCommand {
         if (experiment.isPaused()) {
             throw new PauseExperimentException(String.format("Experiment <%s> is already PAUSED.", experimentId));
         } else if (experiment.isEnded()) {
-         //   throw new PauseExperimentException(String.format("Experiment <%s> is ENDED.", experimentId));
+            throw new PauseExperimentException(String.format("Experiment <%s> is ENDED.", experimentId));
         }
     }
 }

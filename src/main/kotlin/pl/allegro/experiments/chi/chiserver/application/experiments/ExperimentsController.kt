@@ -126,11 +126,6 @@ class ExperimentsController(private val experimentsRepository: ExperimentsReposi
         return ResponseEntity(HttpStatus.OK)
     }
 
-    @ExceptionHandler(ExperimentCreationException::class)
-    fun handle(exception: ExperimentCreationException): ResponseEntity<ErrorsHolder> {
-        return handleBadRequest(exception, "ExperimentCreationException")
-    }
-
     @ExceptionHandler(AuthorizationException::class)
     fun handle(exception: AuthorizationException): ResponseEntity<ErrorsHolder> {
         logger.error("Error creating experiment: ${exception.javaClass.simpleName}, cause: ${exception.message}")
@@ -142,24 +137,11 @@ class ExperimentsController(private val experimentsRepository: ExperimentsReposi
         return handleBadRequest(exception, "ExperimentNotFoundException")
     }
 
-    @ExceptionHandler(StartExperimentException::class)
-    fun handle(exception: StartExperimentException): ResponseEntity<ErrorsHolder> {
-        return handleBadRequest(exception, "StartExperimentException")
-    }
 
-    @ExceptionHandler(ProlongExperimentException::class)
-    fun handle(exception: ProlongExperimentException): ResponseEntity<ErrorsHolder> {
-        return handleBadRequest(exception, "ProlongExperimentException")
-    }
-
-    @ExceptionHandler(StopExperimentException::class)
-    fun handle(exception: StopExperimentException): ResponseEntity<ErrorsHolder> {
-        return handleBadRequest(exception, "StopExperimentException")
-    }
-
-    @ExceptionHandler(DeleteExperimentException::class)
-    fun handle(exception: DeleteExperimentException): ResponseEntity<ErrorsHolder> {
-        return handleBadRequest(exception, "DeleteExperimentException")
+    @ExceptionHandler(ExperimentCommandException::class)
+    fun handle(exception: ExperimentCommandException): ResponseEntity<ErrorsHolder> {
+        val code = exception.javaClass.simpleName
+        return handleBadRequest(exception, code)
     }
 
     fun handleBadRequest(exception: RuntimeException, code: String): ResponseEntity<ErrorsHolder> {
