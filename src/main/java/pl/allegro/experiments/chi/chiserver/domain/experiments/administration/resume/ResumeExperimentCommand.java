@@ -1,4 +1,4 @@
-package pl.allegro.experiments.chi.chiserver.domain.experiments.administration.pause;
+package pl.allegro.experiments.chi.chiserver.domain.experiments.administration.resume;
 
 import pl.allegro.experiments.chi.chiserver.domain.experiments.Experiment;
 import pl.allegro.experiments.chi.chiserver.domain.experiments.ExperimentsRepository;
@@ -7,12 +7,12 @@ import pl.allegro.experiments.chi.chiserver.domain.experiments.administration.Pe
 
 import java.util.Objects;
 
-public class PauseExperimentCommand {
+public class ResumeExperimentCommand {
     private final String experimentId;
     private final ExperimentsRepository experimentsRepository;
     private final PermissionsAwareExperimentRepository permissionsAwareExperimentRepository;
 
-    PauseExperimentCommand(
+    ResumeExperimentCommand(
             String experimentId,
             ExperimentsRepository experimentsRepository,
             PermissionsAwareExperimentRepository permissionsAwareExperimentRepository) {
@@ -27,15 +27,13 @@ public class PauseExperimentCommand {
     public void execute() {
         Experiment experiment = permissionsAwareExperimentRepository.getExperimentOrException(experimentId);
         validate(experiment);
-        Experiment pausedExperiment = experiment.pause();
-        experimentsRepository.save(pausedExperiment);
+        Experiment resumed = experiment.resume();
+        experimentsRepository.save(resumed);
     }
 
     private void validate(Experiment experiment) {
-        if (experiment.isPaused()) {
-            throw new ExperimentCommandException(String.format("Experiment <%s> is already PAUSED.", experimentId));
-        } else if (experiment.isEnded()) {
-            throw new ExperimentCommandException(String.format("Experiment <%s> is ENDED.", experimentId));
+        if (!experiment.isPaused()) {
+            throw new ExperimentCommandException(String.format("Experiment <%s> is not PAUSED.", experimentId));
         }
     }
 }

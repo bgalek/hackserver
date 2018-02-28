@@ -1,15 +1,15 @@
-package pl.allegro.experiments.chi.chiserver.domain.experiments.administration.pause;
+package pl.allegro.experiments.chi.chiserver.domain.experiments.administration.resume;
 
 import pl.allegro.experiments.chi.chiserver.domain.experiments.ExperimentsRepository;
 import pl.allegro.experiments.chi.chiserver.domain.experiments.administration.PermissionsAwareExperimentRepository;
 
 import java.util.Objects;
 
-public class PauseExperimentCommandFactory {
+public class ResumeExperimentCommandFactory {
     private final ExperimentsRepository experimentsRepository;
     private final PermissionsAwareExperimentRepository permissionsAwareExperimentRepository;
 
-    public PauseExperimentCommandFactory(
+    public ResumeExperimentCommandFactory(
             ExperimentsRepository experimentsRepository,
             PermissionsAwareExperimentRepository permissionsAwareExperimentRepository) {
         Objects.requireNonNull(experimentsRepository);
@@ -18,8 +18,8 @@ public class PauseExperimentCommandFactory {
         this.permissionsAwareExperimentRepository = permissionsAwareExperimentRepository;
     }
 
-    public PauseExperimentCommand pauseExperimentCommand(String experimentId) {
-        return new PauseExperimentCommand(
+    public ResumeExperimentCommand resumeExperimentCommand(String experimentId) {
+        return new ResumeExperimentCommand(
                 experimentId,
                 experimentsRepository,
                 permissionsAwareExperimentRepository

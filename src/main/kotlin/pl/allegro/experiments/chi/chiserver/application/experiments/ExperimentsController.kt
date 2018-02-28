@@ -5,25 +5,22 @@ import org.springframework.http.MediaType.APPLICATION_JSON_UTF8_VALUE
 import org.springframework.http.MediaType.APPLICATION_JSON_VALUE
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
-import pl.allegro.experiments.chi.chiserver.domain.experiments.administration.AuthorizationException
-import pl.allegro.experiments.chi.chiserver.domain.experiments.administration.create.CreateExperimentCommandFactory
 import pl.allegro.experiments.chi.chiserver.domain.experiments.ExperimentsRepository
 import pl.allegro.experiments.chi.chiserver.domain.experiments.MeasurementsRepository
 import pl.allegro.experiments.chi.chiserver.domain.experiments.PermissionsRepository
-import pl.allegro.experiments.chi.chiserver.domain.experiments.administration.*
-import pl.allegro.experiments.chi.chiserver.domain.experiments.administration.create.ExperimentCreationException
+import pl.allegro.experiments.chi.chiserver.domain.experiments.administration.AuthorizationException
+import pl.allegro.experiments.chi.chiserver.domain.experiments.administration.ExperimentCommandException
+import pl.allegro.experiments.chi.chiserver.domain.experiments.administration.ExperimentNotFoundException
+import pl.allegro.experiments.chi.chiserver.domain.experiments.administration.create.CreateExperimentCommandFactory
 import pl.allegro.experiments.chi.chiserver.domain.experiments.administration.create.ExperimentCreationRequest
 import pl.allegro.experiments.chi.chiserver.domain.experiments.administration.delete.DeleteExperimentCommandFactory
-import pl.allegro.experiments.chi.chiserver.domain.experiments.administration.delete.DeleteExperimentException
+import pl.allegro.experiments.chi.chiserver.domain.experiments.administration.pause.PauseExperimentCommandFactory
 import pl.allegro.experiments.chi.chiserver.domain.experiments.administration.prolong.ProlongExperimentCommandFactory
-import pl.allegro.experiments.chi.chiserver.domain.experiments.administration.prolong.ProlongExperimentException
 import pl.allegro.experiments.chi.chiserver.domain.experiments.administration.prolong.ProlongExperimentProperties
+import pl.allegro.experiments.chi.chiserver.domain.experiments.administration.resume.ResumeExperimentCommandFactory
 import pl.allegro.experiments.chi.chiserver.domain.experiments.administration.start.StartExperimentCommandFactory
-import pl.allegro.experiments.chi.chiserver.domain.experiments.administration.start.StartExperimentException
 import pl.allegro.experiments.chi.chiserver.domain.experiments.administration.start.StartExperimentProperties
 import pl.allegro.experiments.chi.chiserver.domain.experiments.administration.stop.StopExperimentCommandFactory
-import pl.allegro.experiments.chi.chiserver.domain.experiments.administration.pause.PauseExperimentCommandFactory
-import pl.allegro.experiments.chi.chiserver.domain.experiments.administration.stop.StopExperimentException
 import pl.allegro.experiments.chi.chiserver.infrastructure.JsonConverter
 import pl.allegro.experiments.chi.chiserver.logger
 import pl.allegro.tech.common.andamio.errors.Error
@@ -40,6 +37,7 @@ class ExperimentsController(private val experimentsRepository: ExperimentsReposi
                             private val prolongExperimentCommandFactory: ProlongExperimentCommandFactory,
                             private val stopExperimentCommandFactory: StopExperimentCommandFactory,
                             private val pasueExperimentCommandFactory: PauseExperimentCommandFactory,
+                            private val resumeExperimentCommandFactory: ResumeExperimentCommandFactory,
                             private val deleteExperimentCommandFactory: DeleteExperimentCommandFactory,
                             private val permissionsRepository: PermissionsRepository,
                             private val jsonConverter: JsonConverter) {
@@ -116,6 +114,14 @@ class ExperimentsController(private val experimentsRepository: ExperimentsReposi
         return ResponseEntity(HttpStatus.OK)
     }
 
+    @MeteredEndpoint
+    @PutMapping(path = ["{experimentId}/resume"])
+    fun resumeExperiment(
+            @PathVariable experimentId: String): ResponseEntity<String> {
+        logger.info("Resume experiment request received: $experimentId")
+        resumeExperimentCommandFactory.resumeExperimentCommand(experimentId).execute()
+        return ResponseEntity(HttpStatus.OK)
+    }
 
     @MeteredEndpoint
     @DeleteMapping(path = ["{experimentId}"])

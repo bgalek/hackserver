@@ -135,6 +135,20 @@ class ExperimentsSelfServiceE2ESpec extends BaseIntegrationSpec {
                 .hasStatus(ExperimentStatus.ACTIVE)
 
         when:
+        restTemplate.put(localUrl("/api/admin/experiments/${request.id}/pause"), Map)
+
+        then:
+        assertThatExperimentWithId(request.id)
+                .hasStatus(ExperimentStatus.PAUSED)
+
+        when:
+        restTemplate.put(localUrl("/api/admin/experiments/${request.id}/resume"), Map)
+
+        then:
+        assertThatExperimentWithId(request.id)
+                .hasStatus(ExperimentStatus.ACTIVE)
+
+        when:
         def startedExperiment = restTemplate.getForEntity(localUrl("/api/admin/experiments/${request.id}/"), Map)
         restTemplate.put(localUrl("/api/admin/experiments/${request.id}/prolong"), [experimentAdditionalDays: 30], Map)
         def prolongedExperiment = restTemplate.getForEntity(localUrl("/api/admin/experiments/${request.id}/"), Map)
@@ -151,7 +165,7 @@ class ExperimentsSelfServiceE2ESpec extends BaseIntegrationSpec {
                 .hasStatus(ExperimentStatus.ENDED)
 
         when:
-        def pauseResponse = restTemplate.put(localUrl("/api/admin/experiments/${request.id}/pause"), Map)
+        restTemplate.put(localUrl("/api/admin/experiments/${request.id}/pause"), Map)
 
         then:
         def ex = thrown(HttpClientErrorException)

@@ -9,6 +9,7 @@ import pl.allegro.experiments.chi.chiserver.domain.experiments.administration.cr
 import pl.allegro.experiments.chi.chiserver.domain.experiments.administration.delete.DeleteExperimentCommandFactory
 import pl.allegro.experiments.chi.chiserver.domain.experiments.administration.pause.PauseExperimentCommandFactory
 import pl.allegro.experiments.chi.chiserver.domain.experiments.administration.prolong.ProlongExperimentCommandFactory
+import pl.allegro.experiments.chi.chiserver.domain.experiments.administration.resume.ResumeExperimentCommandFactory
 import pl.allegro.experiments.chi.chiserver.domain.experiments.administration.start.StartExperimentCommandFactory
 import pl.allegro.experiments.chi.chiserver.domain.experiments.administration.stop.StopExperimentCommandFactory
 import pl.allegro.experiments.chi.chiserver.domain.statistics.StatisticsRepository
@@ -60,5 +61,12 @@ class CommandsConfig {
             experimentsRepository: ExperimentsRepository,
             permissionsAwareExperimentRepository: PermissionsAwareExperimentRepository): PauseExperimentCommandFactory {
         return PauseExperimentCommandFactory(experimentsRepository, permissionsAwareExperimentRepository)
+    }
+
+    @Bean
+    fun resumeExperimentCommandFactory(
+            experimentsRepository: ExperimentsRepository,
+            permissionsAwareExperimentRepository: PermissionsAwareExperimentRepository): ResumeExperimentCommandFactory {
+        return ResumeExperimentCommandFactory(experimentsRepository, permissionsAwareExperimentRepository)
     }
 }

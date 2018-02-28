@@ -11,7 +11,7 @@ public class StartExperimentCommand {
     private final PermissionsAwareExperimentRepository permissionsAwareExperimentRepository;
     private final String experimentId;
 
-    public StartExperimentCommand(
+    StartExperimentCommand(
             ExperimentsRepository experimentsRepository,
             StartExperimentProperties startExperimentProperties,
             PermissionsAwareExperimentRepository permissionsAwareExperimentRepository,

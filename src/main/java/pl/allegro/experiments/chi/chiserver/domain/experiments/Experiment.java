@@ -189,6 +189,24 @@ public class Experiment {
         );
     }
 
+
+    public Experiment resume() {
+        return new Experiment(
+                id,
+                variants,
+                description,
+                documentLink,
+                author,
+                groups,
+                reportingEnabled,
+                activityPeriod,
+                measurements,
+                editable,
+                origin,
+                null
+        );
+    }
+
     public Experiment prolong(long experimentAdditionalDays) {
         return new Experiment(
                 id,
