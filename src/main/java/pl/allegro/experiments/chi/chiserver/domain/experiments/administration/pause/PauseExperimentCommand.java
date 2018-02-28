@@ -31,8 +31,10 @@ public class PauseExperimentCommand {
     }
 
     private void validate(Experiment experiment) {
-        if (!experiment.isActive()) {
-            throw new PauseExperimentException("Experiment is not ACTIVE: " + experimentId);
+        if (experiment.isPaused()) {
+            throw new PauseExperimentException(String.format("Experiment <%s> is already PAUSED.", experimentId));
+        } else if (experiment.isEnded()) {
+         //   throw new PauseExperimentException(String.format("Experiment <%s> is ENDED.", experimentId));
         }
     }
 }

@@ -1,4 +1,4 @@
-package pl.allegro.experiments.chi.chiserver.infrastructure.experiments
+package pl.allegro.experiments.chi.chiserver.application.administration
 
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.HttpStatus
@@ -8,9 +8,12 @@ import org.springframework.web.client.RestTemplate
 import pl.allegro.experiments.chi.chiserver.BaseIntegrationSpec
 import pl.allegro.experiments.chi.chiserver.domain.User
 import pl.allegro.experiments.chi.chiserver.domain.UserProvider
+import pl.allegro.experiments.chi.chiserver.domain.experiments.ExperimentStatus
 import pl.allegro.experiments.chi.chiserver.domain.experiments.ExperimentsRepository
+import pl.allegro.experiments.chi.chiserver.infrastructure.experiments.ExperimentsDoubleRepository
 
 import java.time.ZonedDateTime
+
 
 @DirtiesContext
 class ExperimentsSelfServiceE2ESpec extends BaseIntegrationSpec {
@@ -57,7 +60,7 @@ class ExperimentsSelfServiceE2ESpec extends BaseIntegrationSpec {
         def responseMultiple = restTemplate.getForEntity(localUrl("/api/admin/experiments"), List)
 
         then:
-        responseMultiple.body.find {experiment -> experiment.id == request.id}.editable == editable
+        responseMultiple.body.find { experiment -> experiment.id == request.id }.editable == editable
 
         where:
         user                                    | editable
@@ -79,7 +82,7 @@ class ExperimentsSelfServiceE2ESpec extends BaseIntegrationSpec {
         def request = [
                 id              : "some2",
                 description     : "desc",
-                documentLink     : "https://vuetifyjs.com/vuetify/quick-start",
+                documentLink    : "https://vuetifyjs.com/vuetify/quick-start",
                 variants        : [
                         [
                                 name      : "v1",
@@ -97,7 +100,7 @@ class ExperimentsSelfServiceE2ESpec extends BaseIntegrationSpec {
                 groups          : ['group a', 'group b'],
                 reportingEnabled: true
         ]
-        
+
         when:
         def response = restTemplate.postForEntity(localUrl('/api/admin/experiments'), request, Map)
 
@@ -113,25 +116,25 @@ class ExperimentsSelfServiceE2ESpec extends BaseIntegrationSpec {
                 author      : "Anonymous",
                 status      : "DRAFT",
                 measurements: [lastDayVisits: 0],
-                editable: true,
-                origin: 'mongo'
+                editable    : true,
+                origin      : 'mongo'
         ]
         responseSingle.body.variants == expectedExperiment.variants
         responseSingle.body == expectedExperiment
         responseList.body.contains(expectedExperiment)
 
-        and:
+        when:
         def startRequest = [
                 experimentDurationDays: 30
         ]
-
         restTemplate.put(localUrl("/api/admin/experiments/${request.id}/start"), startRequest, Map)
-        def startedExperiment = restTemplate.getForEntity(localUrl("/api/admin/experiments/${request.id}/"), Map)
 
         then:
-        startedExperiment.body.status == 'ACTIVE'
+        assertThatExperimentWithId(request.id)
+                .hasStatus(ExperimentStatus.ACTIVE)
 
         when:
+        def startedExperiment = restTemplate.getForEntity(localUrl("/api/admin/experiments/${request.id}/"), Map)
         restTemplate.put(localUrl("/api/admin/experiments/${request.id}/prolong"), [experimentAdditionalDays: 30], Map)
         def prolongedExperiment = restTemplate.getForEntity(localUrl("/api/admin/experiments/${request.id}/"), Map)
 
@@ -141,10 +144,17 @@ class ExperimentsSelfServiceE2ESpec extends BaseIntegrationSpec {
 
         when:
         restTemplate.put(localUrl("/api/admin/experiments/${request.id}/stop"), Map)
-        def stoppedExperiment = restTemplate.getForEntity(localUrl("/api/admin/experiments/${request.id}/"), Map)
 
         then:
-        stoppedExperiment.body.status == 'ENDED'
+        assertThatExperimentWithId(request.id)
+                .hasStatus(ExperimentStatus.ENDED)
+
+        when:
+        restTemplate.put(localUrl("/api/admin/experiments/${request.id}/pause"), Map)
+
+        then:
+        assertThatExperimentWithId(request.id)
+                .hasStatus(ExperimentStatus.PAUSED)
 
         and:
         restTemplate.delete(localUrl("/api/admin/experiments/${request.id}"))
@@ -154,6 +164,29 @@ class ExperimentsSelfServiceE2ESpec extends BaseIntegrationSpec {
 
         then:
         thrown HttpClientErrorException
+    }
+
+    ExperimentResponseAssertions assertThatExperimentWithId(String id) {
+        def response = fetchExperiment(id)
+        return new ExperimentResponseAssertions(response)
+    }
+
+    def fetchExperiment(String id) {
+        return restTemplate.getForEntity(localUrl("/api/admin/experiments/$id/"), Map)
+    }
+
+    static class ExperimentResponseAssertions {
+
+        def response
+
+        ExperimentResponseAssertions(response) {
+            this.response = response
+        }
+
+        def hasStatus(ExperimentStatus expectedStatus) {
+            assert response.body.status == expectedStatus.toString()
+            return this
+        }
     }
 }
 

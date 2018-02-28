@@ -22,6 +22,7 @@ import pl.allegro.experiments.chi.chiserver.domain.experiments.administration.st
 import pl.allegro.experiments.chi.chiserver.domain.experiments.administration.start.StartExperimentException
 import pl.allegro.experiments.chi.chiserver.domain.experiments.administration.start.StartExperimentProperties
 import pl.allegro.experiments.chi.chiserver.domain.experiments.administration.stop.StopExperimentCommandFactory
+import pl.allegro.experiments.chi.chiserver.domain.experiments.administration.pause.PauseExperimentCommandFactory
 import pl.allegro.experiments.chi.chiserver.domain.experiments.administration.stop.StopExperimentException
 import pl.allegro.experiments.chi.chiserver.infrastructure.JsonConverter
 import pl.allegro.experiments.chi.chiserver.logger
@@ -38,6 +39,7 @@ class ExperimentsController(private val experimentsRepository: ExperimentsReposi
                             private val startExperimentCommandFactory: StartExperimentCommandFactory,
                             private val prolongExperimentCommandFactory: ProlongExperimentCommandFactory,
                             private val stopExperimentCommandFactory: StopExperimentCommandFactory,
+                            private val pasueExperimentCommandFactory: PauseExperimentCommandFactory,
                             private val deleteExperimentCommandFactory: DeleteExperimentCommandFactory,
                             private val permissionsRepository: PermissionsRepository,
                             private val jsonConverter: JsonConverter) {
@@ -104,6 +106,16 @@ class ExperimentsController(private val experimentsRepository: ExperimentsReposi
         stopExperimentCommandFactory.stopExperimentCommand(experimentId).execute()
         return ResponseEntity(HttpStatus.OK)
     }
+
+    @MeteredEndpoint
+    @PutMapping(path = ["{experimentId}/pause"])
+    fun pauseExperiment(
+            @PathVariable experimentId: String): ResponseEntity<String> {
+        logger.info("Pause experiment request received: $experimentId")
+        pasueExperimentCommandFactory.pauseExperimentCommand(experimentId).execute()
+        return ResponseEntity(HttpStatus.OK)
+    }
+
 
     @MeteredEndpoint
     @DeleteMapping(path = ["{experimentId}"])
