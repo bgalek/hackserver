@@ -172,6 +172,23 @@ public class Experiment {
         );
     }
 
+    public Experiment pause() {
+        return new Experiment(
+                id,
+                variants,
+                description,
+                documentLink,
+                author,
+                groups,
+                reportingEnabled,
+                activityPeriod,
+                measurements,
+                editable,
+                origin,
+                ExperimentStatus.PAUSED
+        );
+    }
+
     public Experiment prolong(long experimentAdditionalDays) {
         return new Experiment(
                 id,

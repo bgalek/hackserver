@@ -20,7 +20,9 @@ internal object experimentDeserializer : Converter<DBObject, Experiment> {
             null,
             null,
             null,
-            bson["status"] as ExperimentStatus?
+            bson["status"]?.let {
+                ExperimentStatus.valueOf(it as String)
+            }
         )
 
         return experiment
@@ -48,7 +50,9 @@ internal object experimentSerializer : Converter<Experiment, DBObject> {
                     "activeTo" to dateTimeSerializer.convert(it.activeTo)
                 )
             ) }
-            bson["status"] = source.explicitStatus.orElse(null)
+            bson["status"] = source.explicitStatus
+                    .map { it.toString() }
+                    .orElse(null)
             return bson
         }
     }
