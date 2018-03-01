@@ -3,7 +3,8 @@ import { Record } from 'immutable'
 const ExperimentVariantRecord = Record({
   name: '',
   color: '',
-  predicatesInfo: ''
+  predicatesInfo: '',
+  deviceClass: ''
 })
 
 export default class ExperimentVariantModel extends ExperimentVariantRecord {
@@ -11,7 +12,12 @@ export default class ExperimentVariantModel extends ExperimentVariantRecord {
     variant = Object.assign({}, variant)
     variant.predicatesInfo = ExperimentVariantModel.predicatesInfo(variant)
     variant.color = ExperimentVariantModel.color(variant.name, i)
+    variant.deviceClass = ExperimentVariantModel.deviceClass(variant)
     super(variant)
+  }
+
+  isBase () {
+    return this.name === 'base'
   }
 
   static color (name, i) {
@@ -24,6 +30,14 @@ export default class ExperimentVariantModel extends ExperimentVariantRecord {
 
   static predicatesInfo (variant) {
     return variant.predicates.map(ExperimentVariantModel.predicateToString).join(' AND ')
+  }
+
+  static deviceClass (variant) {
+    const devicePredicate = variant.predicates.find(p => p.type === 'DEVICE_CLASS')
+
+    if (devicePredicate) {
+      return devicePredicate.device
+    }
   }
 
   static predicateToString (p) {

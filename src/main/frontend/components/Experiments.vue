@@ -104,18 +104,14 @@ export default {
 
     sortVariants (variants) {
       variants.sort((l, r) => {
-        if (this.isBase(l)) {
+        if (l.isBase()) {
           return 1
         }
-        if (this.isBase(r)) {
+        if (r.isBase()) {
           return -1
         }
         return l.name.localeCompare(r.name)
       })
-    },
-
-    isBase (variant) {
-      return variant.name === 'base'
     }
   }
 }

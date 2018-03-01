@@ -18,7 +18,7 @@
 
       <result-table-settings
         v-if="experiment.reportingEnabled"
-        :initialDevice="initialDevice"
+        :experiment="experiment"
         @settingsChanged="updateQueryParams"
       ></result-table-settings>
     </v-layout>
@@ -104,7 +104,6 @@
 
     data () {
       return {
-        initialDevice: 'all',
         headers: [
           {text: 'Variant', sortable: false},
           {text: 'Metric Value', sortable: false},

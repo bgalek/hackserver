@@ -21,11 +21,27 @@
 
 <script>
   export default {
-    props: ['initialDevice'],
+    props: ['experiment'],
 
     data () {
       return {
-        device: this.initialDevice
+        device: this.calcInitialDeviceClass()
+      }
+    },
+
+    methods: {
+      calcInitialDeviceClass () {
+        const baseClass = this.experiment.getBaseDeviceClass()
+
+        if (baseClass === 'desktop' || baseClass === 'tablet') {
+          return baseClass
+        }
+
+        if (baseClass === 'phone') {
+          return 'smartphone'
+        }
+
+        return 'all'
       }
     },
 

@@ -7,6 +7,7 @@
 
         <experiment-details
           :experiment="experiment"
+          v-if="loadingExperimentDone"
         ></experiment-details>
 
         <chi-panel title="Metrics & Statistics">
@@ -15,25 +16,24 @@
             :experimentStatistics="experimentStatistics"
             :experimentStatisticsError="experimentStatisticsError"
             :experimentStatisticsPending="experimentStatisticsPending"
-            v-if="experimentId"
+            v-if="loadingExperimentDone"
             :experiment="experiment"
           ></result-table>
           <div slot="footer">
             Read the χ Docs about <a href="https://rtd.allegrogroup.com/docs/chi/pl/latest/chi_metrics/">metrics</a>
             and how to understand
             <a href="https://rtd.allegrogroup.com/docs/chi/pl/latest/results/">p-Value</a>.
-
           </div>
         </chi-panel>
 
         <experiment-actions
-          v-if="loadingStatsDone"
+          v-if="loadingExperimentDone && loadingStatsDone"
           :experiment="experiment"
           :allowDelete="allowDelete"
         ></experiment-actions>
 
         <assignment-panel
-          v-if="experiment.status !== 'ENDED'"
+          v-if="loadingExperimentDone && experiment.status !== 'ENDED'"
           :experiment="experiment"
         ></assignment-panel>
 
@@ -54,9 +54,14 @@
 
   export default {
     mounted () {
-      this.getExperiment({ params: { experimentId: this.$route.params.experimentId } })
+      this.getExperiment({ params: { experimentId: this.$route.params.experimentId } }).then(() => {
+        console.log('loading experiment "' + this.experiment.id + '" done')
+        this.loadingExperimentDone = true
+      })
+
       this.loadExperimentStatistics('all', this.$route.params.experimentId).then(() => {
         this.allowDelete = this.experimentStatistics.metrics.length === 0
+        console.log('loading stats for "' + this.experiment.id + '" done')
         this.loadingStatsDone = true
       }).catch(() => {
         this.allowDelete = false
@@ -68,6 +73,7 @@
       return {
         allowDelete: false,
         loadingStatsDone: false,
+        loadingExperimentDone: false,
         device: 'all',
         metricOrder: {
           'tx_visit': 1,
@@ -75,6 +81,10 @@
           'gmv': 3
         }
       }
+    },
+
+    beforeRouteUpdate () {
+      this.$router.go(this.$router.currentRoute)
     },
 
     computed: mapState({

@@ -82,4 +82,14 @@ export default class ExperimentModel extends ExperimentRecord {
           this.canBePaused() ||
           this.canBeResumed())
   }
+
+  getBaseVariant () {
+    return this.variants.find(it => it.isBase())
+  }
+
+  getBaseDeviceClass () {
+    if (this.getBaseVariant()) {
+      return this.getBaseVariant().deviceClass
+    }
+  }
 };
