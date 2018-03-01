@@ -51,7 +51,7 @@ internal object experimentSerializer : Converter<Experiment, DBObject> {
                     "activeTo" to dateTimeSerializer.convert(it.activeTo)
                 )
             ) }
-            bson["explicitStatus"] = source.status.explicitOrNull()
+            bson["explicitStatus"] = source.status.explicitOrNull()?.let{ it.toString() }
             return bson
         }
     }
