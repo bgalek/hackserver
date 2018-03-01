@@ -2,8 +2,10 @@ package pl.allegro.experiments.chi.chiserver.domain.experiments;
 
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
+import com.google.gson.annotations.Expose;
 import joptsimple.internal.Strings;
 
+import java.beans.Transient;
 import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.Optional;
@@ -20,6 +22,7 @@ public class Experiment {
     private final ExperimentMeasurements measurements;
     private final Boolean editable;
     private final String origin;
+    private final transient ExperimentStatus explicitStatus;
     private final ExperimentStatus status;
 
     public Experiment(
@@ -34,7 +37,7 @@ public class Experiment {
             ExperimentMeasurements measurements,
             Boolean editable,
             String origin,
-            ExperimentStatus status) {
+            ExperimentStatus explicitStatus) {
         Preconditions.checkArgument(!Strings.isNullOrEmpty(id));
         Preconditions.checkNotNull(variants);
         Preconditions.checkArgument(!variants.isEmpty());
@@ -50,7 +53,8 @@ public class Experiment {
         this.measurements = measurements;
         this.editable = editable;
         this.origin = origin;
-        this.status = ExperimentStatus.of(status, activityPeriod);
+        this.explicitStatus = explicitStatus;
+        this.status = ExperimentStatus.of(explicitStatus, activityPeriod);
     }
 
     public String getId() {
@@ -116,7 +120,7 @@ public class Experiment {
     }
 
     public Optional<ExperimentStatus> getExplicitStatus() {
-        return status == ExperimentStatus.PAUSED ? Optional.of(this.status) : Optional.empty();
+       return Optional.ofNullable(explicitStatus);
     }
 
     public boolean isDraft() {
@@ -140,35 +144,30 @@ public class Experiment {
     }
 
     public Experiment start(long experimentDurationDays) {
-        final ZonedDateTime now = ZonedDateTime.now();
-        final ZonedDateTime from = now;
-        final ZonedDateTime to = now.plusDays(experimentDurationDays);
+        final ZonedDateTime from = ZonedDateTime.now();
+        final ZonedDateTime to = from.plusDays(experimentDurationDays);
         final ActivityPeriod newActivityPeriod = new ActivityPeriod(from, to);
-        final ExperimentStatus newStatus = getExplicitStatus().orElse(null);
         return mutate()
                 .activityPeriod(newActivityPeriod)
-                .status(newStatus)
                 .build();
     }
 
     public Experiment stop() {
         final ActivityPeriod activityPeriod = this.activityPeriod.endNow();
-        final ExperimentStatus newStatus = getExplicitStatus().orElse(null);
         return mutate()
                 .activityPeriod(activityPeriod)
-                .status(newStatus)
                 .build();
     }
 
     public Experiment pause() {
         return mutate()
-                .status(ExperimentStatus.PAUSED)
+                .explicitStatus(ExperimentStatus.PAUSED)
                 .build();
     }
 
     public Experiment resume() {
         return mutate()
-                .status(null)
+                .explicitStatus(null)
                 .build();
     }
 
@@ -176,27 +175,21 @@ public class Experiment {
         final ZonedDateTime from = this.activityPeriod.getActiveFrom();
         final ZonedDateTime to = this.activityPeriod.getActiveTo().plusDays(experimentAdditionalDays);
         final ActivityPeriod newActivityPeriod = new ActivityPeriod(from, to);
-        final ExperimentStatus newStatus = getExplicitStatus().orElse(null);
         return mutate()
                 .activityPeriod(newActivityPeriod)
-                .status(newStatus)
                 .build();
     }
 
     public Experiment withEditableFlag(boolean editable) {
-        final ExperimentStatus status = getExplicitStatus().orElse(null);
         return mutate()
                 .editable(editable)
-                .status(status)
                 .build();
     }
 
     public Experiment withOrigin(String origin) {
         Preconditions.checkNotNull(origin);
-        final ExperimentStatus newStatus = getExplicitStatus().orElse(null);
         return mutate()
                 .origin(origin)
-                .status(newStatus)
                 .build();
     }
 
@@ -223,7 +216,7 @@ public class Experiment {
                     .measurements(other.measurements)
                     .editable(other.editable)
                     .origin(other.origin)
-                    .status(other.status);
+                    .explicitStatus(other.explicitStatus);
         }
 
         private String id;
@@ -237,7 +230,7 @@ public class Experiment {
         private ExperimentMeasurements measurements;
         private Boolean editable;
         private String origin;
-        private ExperimentStatus status;
+        private ExperimentStatus explicitStatus;
 
         public Builder id(String id) {
             this.id = id;
@@ -294,8 +287,8 @@ public class Experiment {
             return this;
         }
 
-        public Builder status(ExperimentStatus status) {
-            this.status = status;
+        public Builder explicitStatus(ExperimentStatus explicitStatus) {
+            this.explicitStatus = explicitStatus;
             return this;
         }
 
@@ -312,7 +305,7 @@ public class Experiment {
                     measurements,
                     editable,
                     origin,
-                    status);
+                    explicitStatus);
         }
     }
 }

@@ -21,7 +21,7 @@ val experimentDeserializer = jsonDeserializer { (jsonElement, _, context) ->
     val reported = json["reportingEnabled"]?.bool ?: true
     val variants = context.deserialize<List<ExperimentVariant>>(json["variants"]!!)
     val measurements = json["measurements"]?.let { context.deserialize<ExperimentMeasurements>(json["measurements"]) }
-    val explicitStatus:ExperimentStatus? =  json["status"]?.let{ExperimentStatus.valueOf(it.string)}
+    val explicitStatus:ExperimentStatus? =  json["explicitStatus"]?.let{ExperimentStatus.valueOf(it.string)}
 
     val period: ActivityPeriod? = if (activeFrom != null && activeTo != null) ActivityPeriod(activeFrom, activeTo) else null
 

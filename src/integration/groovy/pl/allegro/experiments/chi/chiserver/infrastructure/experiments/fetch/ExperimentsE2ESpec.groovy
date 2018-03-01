@@ -135,7 +135,6 @@ class ExperimentsE2ESpec extends BaseIntegrationSpec implements ExampleExperimen
         response.body.contains(editableMeasuredExperiment(timeboundExperiment()))
         response.body.contains(editableMeasuredExperiment(experimentFromThePast()))
         response.body.contains(editableMeasuredExperiment(pausedExperiment()))
-
     }
 
     def "should return last valid list when file is corrupted"() {

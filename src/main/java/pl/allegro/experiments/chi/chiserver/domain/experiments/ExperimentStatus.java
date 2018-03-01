@@ -20,7 +20,7 @@ public enum ExperimentStatus {
     }
 
     public static ExperimentStatus of(ExperimentStatus status, ActivityPeriod activityPeriod) {
-        Preconditions.checkArgument(status == null || status == ExperimentStatus.PAUSED, "Explicit experiment status can be only PAUSED");
+        Preconditions.checkArgument(status == null || status == ExperimentStatus.PAUSED, "Explicit experiment explicitStatus can be only PAUSED");
         if (status == null) {
             return of(activityPeriod);
         }

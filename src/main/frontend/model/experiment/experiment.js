@@ -75,11 +75,11 @@ export default class ExperimentModel extends ExperimentRecord {
   }
 
   canRunAnyCommand () {
-    return this.origin !== 'stash'
-      && (this.canBeStarted() ||
+    return this.origin !== 'stash' &&
+      (this.canBeStarted() ||
           this.canBeDeleted() ||
           this.canBeStopped() ||
-          this.canBePaused()  ||
+          this.canBePaused() ||
           this.canBeResumed())
   }
 };

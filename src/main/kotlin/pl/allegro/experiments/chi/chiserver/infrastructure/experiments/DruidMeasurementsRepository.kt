@@ -40,7 +40,7 @@ class DruidMeasurementsRepository(private val druid: DruidClient,
     private fun asMeasuredExperiment(ex: Experiment, lastDayVisits: Map<String, Int> = this.lastDayVisits) =
         with(ex) {
             Experiment(id, variants, description, documentLink, author, groups, reportingEnabled, activityPeriod,
-                ExperimentMeasurements(lastDayVisits[id] ?: 0), editable, null, ex.explicitStatus.orElse(null))
+                ExperimentMeasurements(lastDayVisits[id] ?: 0), editable, null, ex.getExplicitStatus().orElse(null))
         }
 
     override fun withMeasurements(experiment: Experiment): Experiment = asMeasuredExperiment(experiment)

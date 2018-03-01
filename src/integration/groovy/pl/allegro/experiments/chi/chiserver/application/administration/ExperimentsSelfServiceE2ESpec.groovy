@@ -15,7 +15,6 @@ import pl.allegro.experiments.chi.chiserver.infrastructure.experiments.Experimen
 
 import java.time.ZonedDateTime
 
-
 @DirtiesContext
 class ExperimentsSelfServiceE2ESpec extends BaseIntegrationSpec {
 

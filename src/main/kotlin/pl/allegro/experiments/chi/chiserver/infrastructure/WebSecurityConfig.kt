@@ -28,7 +28,7 @@ class WebSecurityConfig : WebSecurityConfigurerAdapter() {
         http.headers().addHeaderWriter(StaticHeadersWriter(HttpHeaders.CACHE_CONTROL, "private"))
 
         if (oauthEnabled) {
-            http.authorizeRequests().antMatchers(HttpMethod.GET, "/api/**/*", "/status/**/*", "/env/**/*").permitAll()
+            http.authorizeRequests().antMatchers(HttpMethod.GET, "/api/**/*", "/explicitStatus/**/*", "/env/**/*").permitAll()
                     .antMatchers(HttpMethod.POST, "/api/**/*").permitAll()
                     .and().authorizeRequests().anyRequest().authenticated()
                     .and().logout().logoutSuccessUrl("/after-logout").permitAll()
