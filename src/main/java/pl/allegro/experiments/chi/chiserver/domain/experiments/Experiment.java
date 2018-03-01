@@ -21,6 +21,7 @@ public class Experiment {
     private final Boolean editable;
     private final String origin;
     private final ExperimentStatus status;
+
     public Experiment(
             String id,
             List<ExperimentVariant> variants,
@@ -139,123 +140,179 @@ public class Experiment {
     }
 
     public Experiment start(long experimentDurationDays) {
-        return new Experiment(
-                id,
-                variants,
-                description,
-                documentLink,
-                author,
-                groups,
-                reportingEnabled,
-                new ActivityPeriod(ZonedDateTime.now(), ZonedDateTime.now().plusDays(experimentDurationDays)),
-                measurements,
-                editable,
-                origin,
-                getExplicitStatus().orElse(null)
-        );
+        final ZonedDateTime now = ZonedDateTime.now();
+        final ZonedDateTime from = now;
+        final ZonedDateTime to = now.plusDays(experimentDurationDays);
+        final ActivityPeriod newActivityPeriod = new ActivityPeriod(from, to);
+        final ExperimentStatus newStatus = getExplicitStatus().orElse(null);
+        return mutate()
+                .activityPeriod(newActivityPeriod)
+                .status(newStatus)
+                .build();
     }
 
     public Experiment stop() {
-        return new Experiment(
-                id,
-                variants,
-                description,
-                documentLink,
-                author,
-                groups,
-                reportingEnabled,
-                activityPeriod.endNow(),
-                measurements,
-                editable,
-                origin,
-                getExplicitStatus().orElse(null)
-        );
+        final ActivityPeriod activityPeriod = this.activityPeriod.endNow();
+        final ExperimentStatus newStatus = getExplicitStatus().orElse(null);
+        return mutate()
+                .activityPeriod(activityPeriod)
+                .status(newStatus)
+                .build();
     }
 
     public Experiment pause() {
-        return new Experiment(
-                id,
-                variants,
-                description,
-                documentLink,
-                author,
-                groups,
-                reportingEnabled,
-                activityPeriod,
-                measurements,
-                editable,
-                origin,
-                ExperimentStatus.PAUSED
-        );
+        return mutate()
+                .status(ExperimentStatus.PAUSED)
+                .build();
     }
 
-
     public Experiment resume() {
-        return new Experiment(
-                id,
-                variants,
-                description,
-                documentLink,
-                author,
-                groups,
-                reportingEnabled,
-                activityPeriod,
-                measurements,
-                editable,
-                origin,
-                null
-        );
+        return mutate()
+                .status(null)
+                .build();
     }
 
     public Experiment prolong(long experimentAdditionalDays) {
-        return new Experiment(
-                id,
-                variants,
-                description,
-                documentLink,
-                author,
-                groups,
-                reportingEnabled,
-                new ActivityPeriod(activityPeriod.getActiveFrom(), activityPeriod.getActiveTo().plusDays(experimentAdditionalDays)),
-                measurements,
-                editable,
-                origin,
-                getExplicitStatus().orElse(null)
-        );
+        final ZonedDateTime from = this.activityPeriod.getActiveFrom();
+        final ZonedDateTime to = this.activityPeriod.getActiveTo().plusDays(experimentAdditionalDays);
+        final ActivityPeriod newActivityPeriod = new ActivityPeriod(from, to);
+        final ExperimentStatus newStatus = getExplicitStatus().orElse(null);
+        return mutate()
+                .activityPeriod(newActivityPeriod)
+                .status(newStatus)
+                .build();
     }
 
     public Experiment withEditableFlag(boolean editable) {
-        return new Experiment(
-                id,
-                variants,
-                description,
-                documentLink,
-                author,
-                groups,
-                reportingEnabled,
-                activityPeriod,
-                measurements,
-                editable,
-                origin,
-                getExplicitStatus().orElse(null)
-        );
+        final ExperimentStatus status = getExplicitStatus().orElse(null);
+        return mutate()
+                .editable(editable)
+                .status(status)
+                .build();
     }
 
     public Experiment withOrigin(String origin) {
         Preconditions.checkNotNull(origin);
-        return new Experiment(
-                id,
-                variants,
-                description,
-                documentLink,
-                author,
-                groups,
-                reportingEnabled,
-                activityPeriod,
-                measurements,
-                editable,
-                origin,
-                getExplicitStatus().orElse(null)
-        );
+        final ExperimentStatus newStatus = getExplicitStatus().orElse(null);
+        return mutate()
+                .origin(origin)
+                .status(newStatus)
+                .build();
+    }
+
+    public Builder mutate() {
+        return Builder.from(this);
+    }
+
+    public static Builder builder() {
+        return new Builder();
+    }
+
+    public static class Builder {
+
+        static Builder from(Experiment other) {
+            return new Builder()
+                    .id(other.id)
+                    .variants(other.variants)
+                    .description(other.description)
+                    .documentLink(other.documentLink)
+                    .author(other.author)
+                    .groups(other.groups)
+                    .reportingEnabled(other.reportingEnabled)
+                    .activityPeriod(other.activityPeriod)
+                    .measurements(other.measurements)
+                    .editable(other.editable)
+                    .origin(other.origin)
+                    .status(other.status);
+        }
+
+        private String id;
+        private List<ExperimentVariant> variants;
+        private String description;
+        private String documentLink;
+        private String author;
+        private List<String> groups;
+        private boolean reportingEnabled;
+        private ActivityPeriod activityPeriod;
+        private ExperimentMeasurements measurements;
+        private Boolean editable;
+        private String origin;
+        private ExperimentStatus status;
+
+        public Builder id(String id) {
+            this.id = id;
+            return this;
+        }
+
+        public Builder variants(List<ExperimentVariant> variants) {
+            this.variants = variants;
+            return this;
+        }
+
+        public Builder description(String description) {
+            this.description = description;
+            return this;
+        }
+
+        public Builder documentLink(String documentLink) {
+            this.documentLink = documentLink;
+            return this;
+        }
+
+        public Builder author(String author) {
+            this.author = author;
+            return this;
+        }
+
+        public Builder groups(List<String> groups) {
+            this.groups = groups;
+            return this;
+        }
+
+        public Builder reportingEnabled(boolean reportingEnabled) {
+            this.reportingEnabled = reportingEnabled;
+            return this;
+        }
+
+        public Builder activityPeriod(ActivityPeriod activityPeriod) {
+            this.activityPeriod = activityPeriod;
+            return this;
+        }
+
+        public Builder measurements(ExperimentMeasurements measurements) {
+            this.measurements = measurements;
+            return this;
+        }
+
+        public Builder editable(Boolean editable) {
+            this.editable = editable;
+            return this;
+        }
+
+        public Builder origin(String origin) {
+            this.origin = origin;
+            return this;
+        }
+
+        public Builder status(ExperimentStatus status) {
+            this.status = status;
+            return this;
+        }
+
+        public Experiment build() {
+            return new Experiment(
+                    id,
+                    variants,
+                    description,
+                    documentLink,
+                    author,
+                    groups,
+                    reportingEnabled,
+                    activityPeriod,
+                    measurements,
+                    editable,
+                    origin,
+                    status);
+        }
     }
 }
