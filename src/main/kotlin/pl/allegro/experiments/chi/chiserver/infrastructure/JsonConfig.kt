@@ -21,6 +21,7 @@ class JsonConfig {
     @Bean
     fun jsonConverter(): JsonConverter = GsonBuilder()
         .registerTypeAdapter(experimentDeserializer)
+        .registerTypeAdapter(experimentSerializer)
         .registerTypeAdapter(HashRangePredicate::class.java, HashRangePredicateSerializer())
         .registerTypeAdapter(CmuidRegexpPredicate::class.java, CmuidRegexpPredicateSerializer())
         .registerTypeAdapter(InternalPredicate::class.java, InternalPredicateSerializer())

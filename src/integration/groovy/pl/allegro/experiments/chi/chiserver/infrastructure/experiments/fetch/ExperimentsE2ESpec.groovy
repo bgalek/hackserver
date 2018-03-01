@@ -123,18 +123,21 @@ class ExperimentsE2ESpec extends BaseIntegrationSpec implements ExampleExperimen
         def response = restTemplate.getForEntity(localUrl('/api/admin/experiments'), List)
 
         then:
+        def expectedExperiments = [
+                internalExperiment(),
+                plannedExperiment(),
+                cmuidRegexpExperiment(),
+                hashVariantExperiment(),
+                sampleExperiment(),
+                timeboundExperiment(),
+                experimentFromThePast(),
+                pausedExperiment()
+        ].collect { editableMeasuredExperiment(it) }
         response.statusCode.value() == 200
-        response.body.size() == 9
+        response.body.size() == 9 // TODO ADD MISSING ONE ! expectedExperiments.size()
 
         and:
-        response.body.contains(editableMeasuredExperiment(internalExperiment()))
-        response.body.contains(editableMeasuredExperiment(plannedExperiment()))
-        response.body.contains(editableMeasuredExperiment(cmuidRegexpExperiment()))
-        response.body.contains(editableMeasuredExperiment(hashVariantExperiment()))
-        response.body.contains(editableMeasuredExperiment(sampleExperiment()))
-        response.body.contains(editableMeasuredExperiment(timeboundExperiment()))
-        response.body.contains(editableMeasuredExperiment(experimentFromThePast()))
-        response.body.contains(editableMeasuredExperiment(pausedExperiment()))
+        response.body.containsAll(expectedExperiments)
     }
 
     def "should return last valid list when file is corrupted"() {
