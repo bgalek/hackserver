@@ -4,7 +4,13 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
-import pl.allegro.experiments.chi.chiserver.domain.experiments.*;
+import pl.allegro.experiments.chi.chiserver.domain.experiments.CmuidRegexpPredicate;
+import pl.allegro.experiments.chi.chiserver.domain.experiments.DeviceClassPredicate;
+import pl.allegro.experiments.chi.chiserver.domain.experiments.Experiment;
+import pl.allegro.experiments.chi.chiserver.domain.experiments.ExperimentVariant;
+import pl.allegro.experiments.chi.chiserver.domain.experiments.HashRangePredicate;
+import pl.allegro.experiments.chi.chiserver.domain.experiments.InternalPredicate;
+import pl.allegro.experiments.chi.chiserver.domain.experiments.PercentageRange;
 
 import javax.validation.constraints.NotNull;
 import java.util.ArrayList;

@@ -127,7 +127,6 @@ class ExperimentsE2ESpec extends BaseIntegrationSpec implements ExampleExperimen
         response.body.size() == 9
 
         and:
-        //verifyExperiments(response.body, )
         response.body.contains(editableMeasuredExperiment(internalExperiment()))
         response.body.contains(editableMeasuredExperiment(plannedExperiment()))
         response.body.contains(editableMeasuredExperiment(cmuidRegexpExperiment()))

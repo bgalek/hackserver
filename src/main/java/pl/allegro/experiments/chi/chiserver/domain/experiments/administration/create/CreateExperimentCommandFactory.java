@@ -1,7 +1,6 @@
 package pl.allegro.experiments.chi.chiserver.domain.experiments.administration.create;
 
 import com.google.common.base.Preconditions;
-import org.springframework.stereotype.Component;
 import pl.allegro.experiments.chi.chiserver.domain.UserProvider;
 import pl.allegro.experiments.chi.chiserver.domain.experiments.ExperimentsRepository;
 

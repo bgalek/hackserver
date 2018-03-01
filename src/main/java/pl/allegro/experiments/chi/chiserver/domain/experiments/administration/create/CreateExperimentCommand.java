@@ -1,10 +1,11 @@
 package pl.allegro.experiments.chi.chiserver.domain.experiments.administration.create;
 
-import com.google.common.base.Preconditions;
 import pl.allegro.experiments.chi.chiserver.domain.User;
 import pl.allegro.experiments.chi.chiserver.domain.UserProvider;
 import pl.allegro.experiments.chi.chiserver.domain.experiments.ExperimentsRepository;
 import pl.allegro.experiments.chi.chiserver.domain.experiments.administration.AuthorizationException;
+
+import java.util.Objects;
 
 public class CreateExperimentCommand {
     private final ExperimentsRepository experimentsRepository;
@@ -15,9 +16,9 @@ public class CreateExperimentCommand {
             ExperimentsRepository experimentsRepository,
             UserProvider userProvider,
             ExperimentCreationRequest experimentCreationRequest) {
-        Preconditions.checkNotNull(experimentsRepository);
-        Preconditions.checkNotNull(userProvider);
-        Preconditions.checkNotNull(experimentCreationRequest);
+        Objects.requireNonNull(experimentsRepository);
+        Objects.requireNonNull(userProvider);
+        Objects.requireNonNull(experimentCreationRequest);
         this.experimentsRepository = experimentsRepository;
         this.userProvider = userProvider;
         this.experimentCreationRequest = experimentCreationRequest;

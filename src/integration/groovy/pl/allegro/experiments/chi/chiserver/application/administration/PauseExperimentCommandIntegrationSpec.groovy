@@ -5,9 +5,9 @@ import org.springframework.test.annotation.DirtiesContext
 import org.springframework.test.context.ContextConfiguration
 import pl.allegro.experiments.chi.chiserver.BaseIntegrationSpec
 import pl.allegro.experiments.chi.chiserver.domain.experiments.Experiment
-import pl.allegro.experiments.chi.chiserver.domain.experiments.administration.ExperimentCommandException
 import pl.allegro.experiments.chi.chiserver.domain.experiments.administration.ExperimentNotFoundException
 import pl.allegro.experiments.chi.chiserver.domain.experiments.administration.PermissionsAwareExperimentRepository
+import pl.allegro.experiments.chi.chiserver.domain.experiments.administration.pause.PauseExperimentException
 import pl.allegro.experiments.chi.chiserver.infrastructure.experiments.ExperimentsTestConfig
 import pl.allegro.experiments.chi.chiserver.infrastructure.experiments.MongoExperimentsRepository
 import pl.allegro.experiments.chi.chiserver.infrastructure.experiments.MutableUserProvider
@@ -60,6 +60,14 @@ class PauseExperimentCommandIntegrationSpec extends BaseIntegrationSpec implemen
         pauseCommand(endedExperiment().id).execute()
 
         then:
-        thrown ExperimentCommandException
+        thrown PauseExperimentException
+    }
+
+    def "should not pause experiment if it is PAUSED"() {
+        when:
+        pauseCommand(pausedExperiment().id).execute()
+
+        then:
+        thrown PauseExperimentException
     }
 }
