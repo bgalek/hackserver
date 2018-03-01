@@ -14,8 +14,8 @@ import pl.allegro.experiments.chi.chiserver.domain.interactions.InteractionConve
 import pl.allegro.experiments.chi.chiserver.infrastructure.interactions.InMemoryInteractionRepository
 import spock.lang.Unroll
 
-import static InteractionsIntegrationTestConfig.TEST_EXPERIMENT_ID
-import static InteractionsIntegrationTestConfig.TEST_EXPERIMENT_ID_WITH_DISABLED_REPORTING
+import static pl.allegro.experiments.chi.chiserver.utils.SampleInMemoryExperimentsRepository.TEST_EXPERIMENT_ID
+import static pl.allegro.experiments.chi.chiserver.utils.SampleInMemoryExperimentsRepository.TEST_EXPERIMENT_ID_WITH_DISABLED_REPORTING
 
 @ContextConfiguration(classes = [InteractionsIntegrationTestConfig])
 class InteractionsIntegrationSpec extends BaseIntegrationSpec {

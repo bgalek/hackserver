@@ -3,6 +3,7 @@ package pl.allegro.experiments.chi.chiserver.infrastructure.experiments
 import pl.allegro.experiments.chi.chiserver.domain.experiments.Experiment
 import pl.allegro.experiments.chi.chiserver.domain.experiments.ExperimentVariant
 import pl.allegro.experiments.chi.chiserver.infrastructure.InMemoryExperimentsRepository
+import pl.allegro.experiments.chi.chiserver.utils.ExperimentFactory
 import spock.lang.Specification
 
 class ExperimentsDoubleRepositorySpec extends Specification {
@@ -93,18 +94,11 @@ class ExperimentsDoubleRepositorySpec extends Specification {
         experiment(id, null)
     }
 
-    Experiment experiment(id, desc) {
-        new Experiment(id,
-                [new ExperimentVariant("x", [])],
-                desc,
-                "",
-                "",
-                [],
-                false,
-                null,
-                null,
-                null,
-                null,
-                null)
+    Experiment experiment(id, description) {
+        List<ExperimentVariant> variants = [new ExperimentVariant("x", [])]
+        return ExperimentFactory.experimentWithVariants(id, variants).mutate()
+                .description(description)
+                .build()
+
     }
 }

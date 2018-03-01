@@ -9,24 +9,28 @@ import java.util.regex.Pattern
 
 internal object experimentDeserializer : Converter<DBObject, Experiment> {
     override fun convert(bson: DBObject): Experiment {
-        val experiment = Experiment(
-            bson["_id"] as String,
-            (bson["variants"] as List<DBObject>).map { experimentVariantDeserializer.convert(it) },
-            bson["description"] as String?,
-            bson["documentLink"] as String?,
-            bson["author"] as String?,
-            bson["groups"] as List<String>,
-            bson["reportingEnabled"] as Boolean? ?: true,
-            (bson["activityPeriod"] as BasicDBObject?)?.let { activityPeriodDeserializer.convert(it) },
-            null,
-            null,
-            null,
-            bson["explicitStatus"]?.let {
-                ExperimentStatus.valueOf(it as String)
-            }
-        )
-
-        return experiment
+        val id = bson["_id"] as String
+        val variants = (bson["variants"] as List<DBObject>).map { experimentVariantDeserializer.convert(it) }
+        val description = bson["description"] as String?
+        val documentLink = bson["documentLink"] as String?
+        val author = bson["author"] as String?
+        val groups = bson["groups"] as List<String>
+        val reportingEnabled = bson["reportingEnabled"] as Boolean? ?: true
+        val activityPeriod = (bson["activityPeriod"] as BasicDBObject?)?.let { activityPeriodDeserializer.convert(it) }
+        val explicitStatus = bson["explicitStatus"]?.let {
+            ExperimentStatus.valueOf(it as String)
+        }
+        return Experiment.builder()
+                .id(id)
+                .variants(variants)
+                .description(description)
+                .documentLink(documentLink)
+                .author(author)
+                .groups(groups)
+                .reportingEnabled(reportingEnabled)
+                .activityPeriod(activityPeriod)
+                .explicitStatus(explicitStatus)
+                .build()
     }
 }
 

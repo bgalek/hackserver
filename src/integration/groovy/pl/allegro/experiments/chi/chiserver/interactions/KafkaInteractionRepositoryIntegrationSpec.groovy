@@ -26,7 +26,7 @@ import java.util.concurrent.BlockingQueue
 import java.util.concurrent.LinkedBlockingQueue
 import java.util.concurrent.TimeUnit
 
-import static InteractionsIntegrationTestConfig.TEST_EXPERIMENT_ID
+import static pl.allegro.experiments.chi.chiserver.utils.SampleInMemoryExperimentsRepository.TEST_EXPERIMENT_ID
 
 @ContextConfiguration(classes = [InteractionsIntegrationTestConfig])
 class KafkaInteractionRepositoryIntegrationSpec extends BaseIntegrationSpec {

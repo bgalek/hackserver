@@ -2,10 +2,13 @@ package pl.allegro.experiments.chi.chiserver.domain.experiments;
 
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
+import com.google.gson.annotations.Expose;
 import joptsimple.internal.Strings;
 
+import java.beans.Transient;
 import java.time.ZonedDateTime;
 import java.util.List;
+import java.util.Optional;
 
 public class Experiment {
     private final String id;
@@ -22,7 +25,7 @@ public class Experiment {
     private final ExperimentStatus explicitStatus;
     private final ExperimentStatus status;
 
-    public Experiment(
+    private Experiment(
             String id,
             List<ExperimentVariant> variants,
             String description,

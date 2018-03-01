@@ -166,22 +166,12 @@ class CommandValidationIntegrationSpec extends BaseIntegrationSpec {
         def prevUser = mutableUserProvider.user
         mutableUserProvider.user = new User('RootAuthor', [], true)
         def draft = draftExperiment()
-        experimentsRepository.save(new Experiment(
-                draft.id,
-                draft.variants,
-                draft.description,
-                draft.documentLink,
-                draft.author,
-                draft.groups,
-                draft.reportingEnabled,
-                new ActivityPeriod(
+        experimentsRepository.save(draft.mutate()
+                .activityPeriod(new ActivityPeriod(
                         ZonedDateTime.now().plusDays(10),
                         ZonedDateTime.now().plusDays(20)
-                ),
-                draft.measurements,
-                draft.editable,
-                null
-        ))
+                ))
+                .build())
         mutableUserProvider.user = prevUser
         experimentsRepository.getExperiment(draft.id)
     }

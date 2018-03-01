@@ -9,5 +9,4 @@ public abstract class ExperimentCommandException extends RuntimeException {
     public ExperimentCommandException(String message, Throwable cause) {
         super(message, cause);
     }
-
 }

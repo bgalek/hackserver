@@ -82,20 +82,19 @@ public class ExperimentCreationRequest {
     public Experiment toExperiment(String author) {
         Preconditions.checkNotNull(author);
         try {
-            return new Experiment(
-                    this.id,
-                    this.variants.stream().map(v -> convertVariant(v)).collect(Collectors.toList()),
-                    this.description,
-                    this.documentLink,
-                    author,
-                    this.groups,
-                    this.reportingEnabled,
-                    null,
-                    null,
-                    null,
-                    null,
-                    null
-            );
+            final List<ExperimentVariant> experimentVariants = this.variants.stream()
+                    .map(this::convertVariant)
+                    .collect(Collectors.toList());
+            return Experiment.builder()
+                    .id(this.id)
+                    .variants(experimentVariants)
+                    .description(this.description)
+                    .documentLink(this.documentLink)
+                    .author(author)
+                    .groups(this.groups)
+                    .reportingEnabled(this.reportingEnabled)
+                    .build();
+
         } catch (Exception e) {
             throw new ExperimentCreationException("Cannot create experiment from request", e);
         }
@@ -104,7 +103,7 @@ public class ExperimentCreationRequest {
     private ExperimentVariant convertVariant(Variant variant) {
         return new ExperimentVariant(
                 variant.name,
-                variant.predicates.stream().map(p -> convertPredicate(p)).collect(Collectors.toList())
+                variant.predicates.stream().map(this::convertPredicate).collect(Collectors.toList())
         );
     }
 

@@ -1,6 +1,10 @@
 package pl.allegro.experiments.chi.chiserver.infrastructure.experiments
 
-import com.github.salomonbrys.kotson.*
+import com.github.salomonbrys.kotson.array
+import com.github.salomonbrys.kotson.fromJson
+import com.github.salomonbrys.kotson.get
+import com.github.salomonbrys.kotson.int
+import com.github.salomonbrys.kotson.string
 import com.google.common.base.Suppliers
 import com.google.gson.JsonArray
 import pl.allegro.experiments.chi.chiserver.domain.experiments.Experiment
@@ -27,21 +31,25 @@ class DruidMeasurementsRepository(private val druid: DruidClient,
     }
 
     private val lastDayVisitsCache = Suppliers.memoizeWithExpiration(
-        {
-            try {
-                lastDayVisits = queryLastDayVisits()
-            } catch (e: DruidException) {
-                logger.warn("Error while trying to query Druid for last day visits", e)
-            }
-            lastDayVisits
-        },
-        CACHE_EXPIRE_DURATION_MINUTES, TimeUnit.MINUTES)
+            {
+                try {
+                    lastDayVisits = queryLastDayVisits()
+                } catch (e: DruidException) {
+                    logger.warn("Error while trying to query Druid for last day visits", e)
+                }
+                lastDayVisits
+            },
+            CACHE_EXPIRE_DURATION_MINUTES, TimeUnit.MINUTES)
 
-    private fun asMeasuredExperiment(ex: Experiment, lastDayVisits: Map<String, Int> = this.lastDayVisits) =
-        with(ex) {
-            Experiment(id, variants, description, documentLink, author, groups, reportingEnabled, activityPeriod,
-                ExperimentMeasurements(lastDayVisits[id] ?: 0), editable, null, ex.status.explicitOrNull())
-        }
+
+    private fun asMeasuredExperiment(experiment: Experiment,
+                                     lastDayVisits: Map<String, Int> = this.lastDayVisits): Experiment {
+        val measurements = ExperimentMeasurements(lastDayVisits[experiment.id] ?: 0)
+        return experiment.mutate()
+                .measurements(measurements)
+                .origin(null)
+                .build()
+    }
 
     override fun withMeasurements(experiment: Experiment): Experiment = asMeasuredExperiment(experiment)
 
@@ -51,7 +59,7 @@ class DruidMeasurementsRepository(private val druid: DruidClient,
     }
 
     private fun queryLastDayVisits(): Map<String, Int> =
-        """{
+            """{
             "queryType": "topN",
             "dataSource": "$datasource",
             "intervals": "${lastDayIntervals()}",
@@ -75,12 +83,12 @@ class DruidMeasurementsRepository(private val druid: DruidClient,
             "threshold": 50
         }
         """.let { druid.query(it) }
-            .let { jsonConverter.fromJson<JsonArray>(it) }
-            .let { if (it.size() > 0) it[0] else null }
-            ?.let {
-                it["result"].array.associateBy(
-                    { it["experiment_id"].string },
-                    { it["sum_visit_count"].int })
-            }
-            ?: emptyMap()
+                    .let { jsonConverter.fromJson<JsonArray>(it) }
+                    .let { if (it.size() > 0) it[0] else null }
+                    ?.let {
+                        it["result"].array.associateBy(
+                                { it["experiment_id"].string },
+                                { it["sum_visit_count"].int })
+                    }
+                    ?: emptyMap()
 }
