@@ -8,7 +8,7 @@
     <v-progress-linear v-if="showProgressBar()" v-bind:indeterminate="true">
     </v-progress-linear>
 
-    <span v-if="!canRunAnyCommand() && !commandOkMessage">
+    <span v-if="!this.experiment.canRunAnyCommand() && !commandOkMessage">
       Not much to do here.
     </span>
 
@@ -19,18 +19,18 @@
 
     <v-form ref="actionForm"
             v-model="actionFormValid"
-            v-if="canRunAnyCommand()"
+            v-if="this.experiment.canRunAnyCommand()"
             lazy-validation>
 
       <v-text-field
-             v-if="canBeStarted()"
+             v-if="this.experiment.canBeStarted()"
              label="Duration days"
              v-model="durationDays"
              :rules="durationDaysRules"
              required
       ></v-text-field>
 
-      <v-btn v-if="canBeStarted()"
+      <v-btn v-if="this.experiment.canBeStarted()"
              color="green"
              @click="start"
              style="text-transform: none">
@@ -38,14 +38,14 @@
       </v-btn>
 
       <v-text-field
-             v-if="canBeProlonged()"
+             v-if="this.experiment.canBeProlonged()"
              label="Additional duration days"
              v-model="additionalDurationDays"
              :rules="durationDaysRules"
              required
       ></v-text-field>
 
-      <v-btn v-if="canBeProlonged()"
+      <v-btn v-if="this.experiment.canBeProlonged()"
              color="gray"
              @click="prolong"
              style="text-transform: none">
@@ -53,7 +53,7 @@
       </v-btn>
 
       <v-menu open-on-hover bottom offset-y
-              v-if="canBeStopped()">
+              v-if="this.experiment.canBeStopped()">
         <v-btn color="gray" slot="activator" style="text-transform: none">Stop experiment
         </v-btn>
         <v-list>
@@ -65,7 +65,31 @@
       </v-menu>
 
       <v-menu open-on-hover bottom offset-y
-              v-if="canBeDeleted()">
+              v-if="this.experiment.canBePaused()">
+        <v-btn color="gray" slot="activator" style="text-transform: none">Pause experiment
+        </v-btn>
+        <v-list>
+          <v-list-tile @click="pause">
+            <v-list-tile-title>I really want to pause experiment {{this.experiment.id}}</v-list-tile-title>
+            &nbsp;<v-icon right>alarm</v-icon>
+          </v-list-tile>
+        </v-list>
+      </v-menu>
+
+      <v-menu open-on-hover bottom offset-y
+              v-if="this.experiment.canBeResumed()">
+        <v-btn color="gray" slot="activator" style="text-transform: none">Resume experiment
+        </v-btn>
+        <v-list>
+          <v-list-tile @click="resume">
+            <v-list-tile-title>I really want to resume paused experiment {{this.experiment.id}}</v-list-tile-title>
+            &nbsp;<v-icon right>alarm</v-icon>
+          </v-list-tile>
+        </v-list>
+      </v-menu>
+
+      <v-menu open-on-hover bottom offset-y
+              v-if="this.experiment.canBeDeleted()">
         <v-btn color="red" slot="activator" style="text-transform: none">Delete experiment
         </v-btn>
         <v-list>
@@ -161,6 +185,34 @@
         })
       },
 
+      pause () {
+        this.prepareToSend()
+        this.pauseExperiment({
+          params: {experimentId: this.experiment.id}
+        }).then(response => {
+          this.afterSending()
+          this.getExperiment({params: {experimentId: this.experiment.id}})
+          this.commandOkMessage = 'Experiment successfully paused'
+        }).catch(error => {
+          this.afterSending()
+          this.showError(error)
+        })
+      },
+
+      resume () {
+        this.prepareToSend()
+        this.resumeExperiment({
+          params: {experimentId: this.experiment.id}
+        }).then(response => {
+          this.afterSending()
+          this.getExperiment({params: {experimentId: this.experiment.id}})
+          this.commandOkMessage = 'Experiment successfully resumed'
+        }).catch(error => {
+          this.afterSending()
+          this.showError(error)
+        })
+      },
+
       prolong () {
         if (this.$refs.actionForm.validate()) {
           this.prepareToSend()
@@ -201,27 +253,7 @@
         return this.sendingDataToServer
       },
 
-      canBeStarted () {
-        return this.experiment.status === 'DRAFT'
-      },
-
-      canBeStopped () {
-        return this.experiment.status === 'ACTIVE'
-      },
-
-      canBeProlonged () {
-        return this.experiment.status === 'ACTIVE'
-      },
-
-      canBeDeleted () {
-        return this.allowDelete
-      },
-
-      canRunAnyCommand () {
-        return this.experiment.origin !== 'stash' && (this.canBeStarted() || this.canBeDeleted() || this.canBeStopped())
-      },
-
-      ...mapActions(['startExperiment', 'getExperiment', 'deleteExperiment', 'stopExperiment', 'prolongExperiment'])
+      ...mapActions(['startExperiment', 'getExperiment', 'deleteExperiment', 'stopExperiment', 'pauseExperiment', 'resumeExperiment', 'prolongExperiment'])
     }
   }
 </script>

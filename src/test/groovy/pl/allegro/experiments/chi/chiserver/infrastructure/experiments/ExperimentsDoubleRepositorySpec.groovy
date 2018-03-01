@@ -10,9 +10,9 @@ class ExperimentsDoubleRepositorySpec extends Specification {
     def "should return size as sum of internal repos"() {
         given:
         def fileRepo = new InMemoryExperimentsRepository(
-            [experiment("y1"), experiment("y2"), experiment("y3")])
+                [experiment("y1"), experiment("y2"), experiment("y3")])
         def mongoRepo = new InMemoryExperimentsRepository(
-            [experiment("z"), experiment("z2")])
+                [experiment("z"), experiment("z2")])
         def repo = new ExperimentsDoubleRepository(fileRepo, mongoRepo)
 
         expect:
@@ -35,18 +35,18 @@ class ExperimentsDoubleRepositorySpec extends Specification {
         mongoRepo.getExperiment("1234")
     }
 
-    def "first repo should have priority when calling getById"(){
-      given:
-      def fileRepo = new InMemoryExperimentsRepository([experiment("1", "from stash")])
-      def mongoRepo = new InMemoryExperimentsRepository([experiment("1", "from mongo")])
+    def "first repo should have priority when calling getById"() {
+        given:
+        def fileRepo = new InMemoryExperimentsRepository([experiment("1", "from stash")])
+        def mongoRepo = new InMemoryExperimentsRepository([experiment("1", "from mongo")])
 
-      def repo = new ExperimentsDoubleRepository(fileRepo, mongoRepo)
+        def repo = new ExperimentsDoubleRepository(fileRepo, mongoRepo)
 
-      when:
-      def e = repo.getExperiment("1")
+        when:
+        def e = repo.getExperiment("1")
 
-      then:
-      e.description == "from stash"
+        then:
+        e.description == "from stash"
     }
 
     def "should not allow to save when experiment is from stash"() {
@@ -64,29 +64,29 @@ class ExperimentsDoubleRepositorySpec extends Specification {
     }
 
     def "should show origin"() {
-      given:
-      def fileRepo = new InMemoryExperimentsRepository([experiment("1", "from stash")])
-      def mongoRepo = new InMemoryExperimentsRepository([experiment("2", "from mongo")])
-
-      def repo = new ExperimentsDoubleRepository(fileRepo, mongoRepo)
-
-      expect:
-      repo.getOrigin("1") == 'stash'
-      repo.getOrigin("2") == 'mongo'
-    }
-
-    def "first repo should have priority when calling getAll"(){
         given:
-            def fileRepo = new InMemoryExperimentsRepository(
-                    [experiment("2", "from stash"), experiment("ambiguous", "from stash")])
-            def mongoRepo = new InMemoryExperimentsRepository(
-                    [experiment("ambiguous", "from mongo"), experiment("3", "from mongo")])
+        def fileRepo = new InMemoryExperimentsRepository([experiment("1", "from stash")])
+        def mongoRepo = new InMemoryExperimentsRepository([experiment("2", "from mongo")])
 
-            def repo = new ExperimentsDoubleRepository(fileRepo, mongoRepo)
+        def repo = new ExperimentsDoubleRepository(fileRepo, mongoRepo)
 
         expect:
-            repo.all.size() == 3
-            repo.all.find{it.id == "ambiguous"}.description == "from stash"
+        repo.getOrigin("1") == 'stash'
+        repo.getOrigin("2") == 'mongo'
+    }
+
+    def "first repo should have priority when calling getAll"() {
+        given:
+        def fileRepo = new InMemoryExperimentsRepository(
+                [experiment("2", "from stash"), experiment("ambiguous", "from stash")])
+        def mongoRepo = new InMemoryExperimentsRepository(
+                [experiment("ambiguous", "from mongo"), experiment("3", "from mongo")])
+
+        def repo = new ExperimentsDoubleRepository(fileRepo, mongoRepo)
+
+        expect:
+        repo.all.size() == 3
+        repo.all.find { it.id == "ambiguous" }.description == "from stash"
     }
 
     Experiment experiment(id) {
