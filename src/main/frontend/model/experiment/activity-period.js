@@ -6,7 +6,7 @@ const ActivityPeriodRecord = Record({
   activeTo: null
 })
 
-const DEFAULT_FORMAT = 'MMMM Do YYYY, hh:mm:ss'
+const DEFAULT_FORMAT = 'MMMM Do YYYY, HH:mm'
 
 export default class ActivityPeriodModel extends ActivityPeriodRecord {
   constructor (periodObject) {

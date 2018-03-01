@@ -33,11 +33,8 @@
 
     methods: {
       goToExperiment (experimentId) {
+        console.log('goToExperiment')
         return this.$router.push(`/experiments/${experimentId}`)
-      },
-
-      isBase (variant) {
-        return variant.name === 'base'
       }
     }
   }
