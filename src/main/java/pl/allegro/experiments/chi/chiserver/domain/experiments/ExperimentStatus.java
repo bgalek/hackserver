@@ -5,7 +5,24 @@ import com.google.common.base.Preconditions;
 import java.time.ZonedDateTime;
 
 public enum ExperimentStatus {
-    DRAFT, PLANNED, ACTIVE, ENDED, PAUSED;
+    DRAFT(false), PLANNED(false), ACTIVE(false), ENDED(false), PAUSED(true);
+
+    boolean explicit;
+
+    ExperimentStatus(boolean explicit) {
+        this.explicit = explicit;
+    }
+
+    public boolean isExplicit() {
+        return explicit;
+    }
+
+    public ExperimentStatus explicitOrNull() {
+        if (isExplicit()) {
+            return this;
+        }
+        return null;
+    }
 
     public static ExperimentStatus of(ActivityPeriod activityPeriod) {
         if (activityPeriod == null) {

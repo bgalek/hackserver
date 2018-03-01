@@ -4,6 +4,7 @@ import com.mongodb.BasicDBObject
 import com.mongodb.DBObject
 import org.springframework.core.convert.converter.Converter
 import pl.allegro.experiments.chi.chiserver.domain.experiments.*
+import java.util.*
 import java.util.regex.Pattern
 
 internal object experimentDeserializer : Converter<DBObject, Experiment> {
@@ -50,14 +51,11 @@ internal object experimentSerializer : Converter<Experiment, DBObject> {
                     "activeTo" to dateTimeSerializer.convert(it.activeTo)
                 )
             ) }
-            bson["explicitStatus"] = source.explicitStatus
-                    .map { it.toString() }
-                    .orElse(null)
+            bson["explicitStatus"] = source.status.explicitOrNull()
             return bson
         }
     }
 }
-
 
 internal object experimentVariantDeserializer : Converter<DBObject, ExperimentVariant> {
     override fun convert(bson: DBObject): ExperimentVariant {

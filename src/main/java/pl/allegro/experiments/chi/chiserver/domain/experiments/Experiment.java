@@ -6,7 +6,6 @@ import joptsimple.internal.Strings;
 
 import java.time.ZonedDateTime;
 import java.util.List;
-import java.util.Optional;
 
 public class Experiment {
     private final String id;
@@ -115,10 +114,6 @@ public class Experiment {
 
     public ExperimentStatus getStatus() {
         return status;
-    }
-
-    public Optional<ExperimentStatus> getExplicitStatus() {
-       return Optional.ofNullable(explicitStatus);
     }
 
     public boolean isDraft() {
