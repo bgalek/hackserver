@@ -2,7 +2,6 @@ package pl.allegro.experiments.chi.chiserver.domain.experiments.administration.p
 
 import pl.allegro.experiments.chi.chiserver.domain.experiments.Experiment;
 import pl.allegro.experiments.chi.chiserver.domain.experiments.ExperimentsRepository;
-import pl.allegro.experiments.chi.chiserver.domain.experiments.administration.ExperimentCommandException;
 import pl.allegro.experiments.chi.chiserver.domain.experiments.administration.PermissionsAwareExperimentRepository;
 
 import java.util.Objects;
@@ -33,9 +32,9 @@ public class PauseExperimentCommand {
 
     private void validate(Experiment experiment) {
         if (experiment.isPaused()) {
-            throw new ExperimentCommandException(String.format("Experiment <%s> is already PAUSED.", experimentId));
+            throw new PauseExperimentException(String.format("Experiment <%s> is already PAUSED.", experimentId));
         } else if (experiment.isEnded()) {
-            throw new ExperimentCommandException(String.format("Experiment <%s> is ENDED.", experimentId));
+            throw new PauseExperimentException(String.format("Experiment <%s> is ENDED.", experimentId));
         }
     }
 }

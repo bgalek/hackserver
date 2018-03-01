@@ -1,9 +1,10 @@
 package pl.allegro.experiments.chi.chiserver.domain.experiments.administration.stop;
 
-import com.google.common.base.Preconditions;
 import pl.allegro.experiments.chi.chiserver.domain.experiments.Experiment;
 import pl.allegro.experiments.chi.chiserver.domain.experiments.ExperimentsRepository;
 import pl.allegro.experiments.chi.chiserver.domain.experiments.administration.PermissionsAwareExperimentRepository;
+
+import java.util.Objects;
 
 public class StopExperimentCommand {
     private final String experimentId;
@@ -14,9 +15,9 @@ public class StopExperimentCommand {
             String experimentId,
             ExperimentsRepository experimentsRepository,
             PermissionsAwareExperimentRepository permissionsAwareExperimentRepository) {
-        Preconditions.checkNotNull(experimentId);
-        Preconditions.checkNotNull(experimentsRepository);
-        Preconditions.checkNotNull(permissionsAwareExperimentRepository);
+        Objects.requireNonNull(experimentId);
+        Objects.requireNonNull(experimentsRepository);
+        Objects.requireNonNull(permissionsAwareExperimentRepository);
         this.experimentId = experimentId;
         this.experimentsRepository = experimentsRepository;
         this.permissionsAwareExperimentRepository = permissionsAwareExperimentRepository;

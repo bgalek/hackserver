@@ -1,10 +1,11 @@
 package pl.allegro.experiments.chi.chiserver.domain.experiments.administration.delete;
 
-import com.google.common.base.Preconditions;
 import pl.allegro.experiments.chi.chiserver.domain.experiments.Experiment;
 import pl.allegro.experiments.chi.chiserver.domain.experiments.ExperimentsRepository;
 import pl.allegro.experiments.chi.chiserver.domain.experiments.administration.PermissionsAwareExperimentRepository;
 import pl.allegro.experiments.chi.chiserver.domain.statistics.StatisticsRepository;
+
+import java.util.Objects;
 
 public class DeleteExperimentCommand {
     private final ExperimentsRepository experimentsRepository;
@@ -17,10 +18,10 @@ public class DeleteExperimentCommand {
             PermissionsAwareExperimentRepository permissionsAwareExperimentRepository,
             String experimentId,
             StatisticsRepository statisticsRepository) {
-        Preconditions.checkNotNull(experimentsRepository);
-        Preconditions.checkNotNull(permissionsAwareExperimentRepository);
-        Preconditions.checkNotNull(experimentId);
-        Preconditions.checkNotNull(statisticsRepository);
+        Objects.requireNonNull(experimentsRepository);
+        Objects.requireNonNull(permissionsAwareExperimentRepository);
+        Objects.requireNonNull(experimentId);
+        Objects.requireNonNull(statisticsRepository);
         this.experimentsRepository = experimentsRepository;
         this.permissionsAwareExperimentRepository = permissionsAwareExperimentRepository;
         this.experimentId = experimentId;
