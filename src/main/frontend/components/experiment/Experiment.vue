@@ -83,6 +83,10 @@
       }
     },
 
+    beforeRouteUpdate () {
+      this.$router.go(this.$router.currentRoute)
+    },
+
     computed: mapState({
       experiment: state => state.experiment.experiment,
       error: state => state.experiment.error.experiment,
