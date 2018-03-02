@@ -59,7 +59,7 @@ export default class ExperimentModel extends ExperimentRecord {
   }
 
   canBePaused () {
-    return this.status == 'ACTIVE'
+    return this.status === 'ACTIVE'
   }
 
   canBeResumed () {
