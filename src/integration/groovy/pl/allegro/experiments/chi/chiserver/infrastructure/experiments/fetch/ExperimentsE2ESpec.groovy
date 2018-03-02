@@ -127,6 +127,7 @@ class ExperimentsE2ESpec extends BaseIntegrationSpec implements ExampleExperimen
                 internalExperiment(),
                 plannedExperiment(),
                 cmuidRegexpExperiment(),
+                cmuidRegexpWithPhoneExperiment(),
                 hashVariantExperiment(),
                 sampleExperiment(),
                 timeboundExperiment(),
@@ -134,9 +135,10 @@ class ExperimentsE2ESpec extends BaseIntegrationSpec implements ExampleExperimen
                 pausedExperiment()
         ].collect { editableMeasuredExperiment(it) }
         response.statusCode.value() == 200
-        response.body.size() == 9 // TODO ADD MISSING ONE ! expectedExperiments.size()
+        response.body.size() == expectedExperiments.size()
 
         and:
+        //response.body.findAll{ it["id"] == "cmuid_with_phone"}
         response.body.containsAll(expectedExperiments)
     }
 

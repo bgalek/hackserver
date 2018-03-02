@@ -12,6 +12,18 @@ trait ExampleExperiments {
         ]
     }
 
+    Map cmuidRegexpWithPhoneExperiment() {
+        [ id: 'cmuid_regexp_with_phone',
+          variants: [
+                  [ name: 'v1', predicates: [[type: 'CMUID_REGEXP', regexp: '.*[0-3]$'], [type: 'DEVICE_CLASS', device: 'phone']] ]
+          ],
+          reportingEnabled: true,
+          description: "Experiment description",
+          author: "Experiment owner",
+          groups: [],
+          status: 'DRAFT'
+        ]
+    }
     Map cmuidRegexpExperiment() {
         [ id: 'cmuid_regexp',
           variants: [

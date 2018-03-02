@@ -61,7 +61,7 @@
 
       this.loadExperimentStatistics('all', this.$route.params.experimentId).then(() => {
         this.allowDelete = this.experimentStatistics.metrics.length === 0
-        console.log('loading stats for "' + this.experiment.id + '" done')
+        console.log('loading stats for "' + this.experimentId + '" done')
         this.loadingStatsDone = true
       }).catch(() => {
         this.allowDelete = false

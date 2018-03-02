@@ -2,6 +2,8 @@
 [
   {
     "id": "cmuid_regexp_with_phone",
+    "owner": "Experiment owner",
+    "description": "Experiment description",
     "variants": [
       {
         "name": "v1",
