@@ -55,7 +55,7 @@ class PauseExperimentCommandIntegrationSpec extends BaseIntegrationSpec implemen
         thrown ExperimentNotFoundException
     }
 
-    def "should not pause experiment if it is ENDED"() {
+    def "should not pause experiment if it has ENDED status"() {
         when:
         pauseCommand(endedExperiment().id).execute()
 
@@ -63,7 +63,15 @@ class PauseExperimentCommandIntegrationSpec extends BaseIntegrationSpec implemen
         thrown PauseExperimentException
     }
 
-    def "should not pause experiment if it is PAUSED"() {
+    def "should not pause experiment if it is has PAUSED status"() {
+        when:
+        pauseCommand(pausedExperiment().id).execute()
+
+        then:
+        thrown PauseExperimentException
+    }
+
+    def "should not pause experiment if it has DRAFT status"() {
         when:
         pauseCommand(pausedExperiment().id).execute()
 
