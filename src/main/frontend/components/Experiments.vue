@@ -25,6 +25,9 @@
           <v-btn flat value="ended">
             Ended
           </v-btn>
+          <v-btn flat value="draft">
+            Draft
+          </v-btn>
           <v-btn flat value="other">
             Other
           </v-btn>
@@ -132,7 +135,7 @@ export default {
     experimentFilter (e) {
       const myExperimentFilter = this.filterMyExperiments ? e.editable : true
       const statusFilter = this.statusFilter === 'all' ||
-        (this.statusFilter === 'other' && ['PLANNED', 'DRAFT', 'PAUSED'].includes(e.status)) ||
+        (this.statusFilter === 'other' && ['PLANNED', 'PAUSED'].includes(e.status)) ||
         (this.statusFilter.toUpperCase() === e.status)
       return myExperimentFilter && statusFilter
     }
