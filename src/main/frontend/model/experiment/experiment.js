@@ -34,8 +34,11 @@ export default class ExperimentModel extends ExperimentRecord {
     super(experimentObject)
   }
 
-  fromDateShortString () {
-    return this.activityPeriod && this.activityPeriod.fromDateShortString()
+  fromDateShortString (prefix) {
+    if (!this.activityPeriod) {
+      return ''
+    }
+    return `${prefix} ${this.activityPeriod.fromDateShortString()}`
   }
 
   fromDateString () {

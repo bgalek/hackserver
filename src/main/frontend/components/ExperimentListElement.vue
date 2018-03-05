@@ -7,9 +7,8 @@
       </v-list-tile-title>
       <v-list-tile-sub-title v-html="experiment.desc"></v-list-tile-sub-title>
 
-      <v-list-tile-sub-title v-if="experiment.fromDateShortString()">
-        Started {{ experiment.fromDateShortString() }},
-        Status: {{ experiment.status }}
+      <v-list-tile-sub-title>
+        Status: {{ experiment.status }}{{ experiment.fromDateShortString(", Started: ") }}
       </v-list-tile-sub-title>
 
     </v-list-tile-content>
