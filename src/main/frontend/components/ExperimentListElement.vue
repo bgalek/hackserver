@@ -8,18 +8,11 @@
       <v-list-tile-sub-title v-html="experiment.desc"></v-list-tile-sub-title>
 
       <v-list-tile-sub-title v-if="experiment.fromDateShortString()">
-        Started {{ experiment.fromDateShortString() }}
+        Started {{ experiment.fromDateShortString() }},
+        Status: {{ experiment.status }}
       </v-list-tile-sub-title>
 
     </v-list-tile-content>
-    <v-list-tile-action>
-      <v-badge>
-        <v-chip small :color="variant.color" v-for="(variant, i) in experiment.variants" :key="variant.name"
-                :disabled="true">
-          {{ variant.name }}
-        </v-chip>
-      </v-badge>
-    </v-list-tile-action>
   </v-list-tile>
 </template>
 

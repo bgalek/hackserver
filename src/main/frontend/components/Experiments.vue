@@ -1,8 +1,8 @@
 <template>
   <v-container><v-layout><v-flex md12 lg10 xl10 offset-xl1 offset-md1 offset-lg1>
 
-    <v-layout row justify-space-between>
-      <v-flex xs2>
+    <v-layout row>
+      <v-flex xs3>
         <h1>Experiments</h1>
       </v-flex>
       <v-flex xs3>
@@ -12,6 +12,23 @@
           v-model="filterMyExperiments"
         >
         </v-switch>
+      </v-flex>
+
+      <v-flex xs3>
+        <v-btn-toggle v-model="statusFilter" mandatory>
+          <v-btn flat value="all">
+            All
+          </v-btn>
+          <v-btn flat value="active">
+            Active
+          </v-btn>
+          <v-btn flat value="ended">
+            Ended
+          </v-btn>
+          <v-btn flat value="other">
+            Other
+          </v-btn>
+        </v-btn-toggle>
       </v-flex>
     </v-layout>
 
@@ -49,13 +66,15 @@ export default {
 
   created () {
     this.filterMyExperiments = this.userPreferences.filters.myExperiments
+    this.statusFilter = 'all'
     this.getExperiments()
   },
 
   data () {
     return {
       pivotError: false,
-      filterMyExperiments: false
+      filterMyExperiments: false,
+      statusFilter: 'all'
     }
   },
 
@@ -68,16 +87,12 @@ export default {
 
     experiments () {
       const sortedExperiments = this.sortExperiments(_.filter(this.$store.state.experiments.experiments, (e) => e.isMeasured))
-      return sortedExperiments.filter((e) => {
-        return this.filterMyExperiments ? e.editable : true
-      })
+      return sortedExperiments.filter(this.experimentFilter)
     },
 
     immeasurableExperiments () {
       const sortedExperiments = this.sortExperiments(_.filter(this.$store.state.experiments.experiments, (e) => !e.isMeasured))
-      return sortedExperiments.filter((e) => {
-        return this.filterMyExperiments ? e.editable : true
-      })
+      return sortedExperiments.filter(this.experimentFilter)
     }
   },
 
@@ -112,6 +127,14 @@ export default {
         }
         return l.name.localeCompare(r.name)
       })
+    },
+
+    experimentFilter (e) {
+      const myExperimentFilter = this.filterMyExperiments ? e.editable : true
+      const statusFilter = this.statusFilter === 'all' ||
+        (this.statusFilter === 'other' && ['PLANNED', 'DRAFT', 'PAUSED'].includes(e.status)) ||
+        (this.statusFilter.toUpperCase() === e.status)
+      return myExperimentFilter && statusFilter
     }
   }
 }
