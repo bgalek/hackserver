@@ -12,7 +12,7 @@
           v-for="(item, i) in drawerItems"
           :key=i
           :to="{path: item.path}"
-          v-if="!item.requireLogin || isLoggedIn"
+          v-if="!item.requireLogin || user.isLoggedIn"
         >
           <v-list-tile-action>
             <v-icon v-html="item.icon"></v-icon>
@@ -36,7 +36,9 @@
       <v-spacer></v-spacer>
         <v-btn href="/logout" icon>
           <v-icon>exit_to_app</v-icon>
+          {{ user.name }}
         </v-btn>
+      {{ user.name }}
     </v-toolbar>
 
     <v-content>
@@ -60,7 +62,7 @@
     },
 
     computed: mapState({
-      isLoggedIn: state => state.user.isLoggedIn
+      user: state => state.user
     }),
 
     data () {
