@@ -185,7 +185,7 @@
         })
       },
 
-      canBeDeleted() {
+      canBeDeleted () {
         return this.allowDelete
       },
 
