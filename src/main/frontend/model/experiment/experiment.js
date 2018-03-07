@@ -70,10 +70,6 @@ export default class ExperimentModel extends ExperimentRecord {
     return this.status === 'ACTIVE'
   }
 
-  canBeDeleted () {
-    return this.allowDelete
-  }
-
   canRunAnyCommand () {
     return this.origin !== 'stash' &&
       (this.canBeStarted() ||
