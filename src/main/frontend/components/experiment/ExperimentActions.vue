@@ -89,7 +89,7 @@
       </v-menu>
 
       <v-menu open-on-hover bottom offset-y
-              v-if="this.experiment.canBeDeleted()">
+              v-if="this.allowDelete">
         <v-btn color="red" slot="activator" style="text-transform: none">Delete experiment
         </v-btn>
         <v-list>
