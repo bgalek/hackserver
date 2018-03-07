@@ -13,7 +13,7 @@
 
     </v-list-tile-content>
     <v-list-tile-action>
-      <experiment-status :experiment="experiment" show-reporting-status="false"/>
+      <experiment-status :experiment="experiment" :show-reporting-status="false"/>
     </v-list-tile-action>
   </v-list-tile>
 </template>

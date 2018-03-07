@@ -28,7 +28,7 @@
         </div>
         <h3>Status</h3>
         <v-layout row>
-            <experiment-status :experiment="experiment" show-reporting-status="true"/>
+            <experiment-status :experiment="experiment" :show-reporting-status="true"/>
         </v-layout>
     </v-flex>
     <v-flex xs6>

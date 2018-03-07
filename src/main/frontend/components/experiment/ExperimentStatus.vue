@@ -4,7 +4,7 @@
       {{ experiment.status }}
     </v-chip>
 
-    <v-chip v-if="showReportingStatus===true" disabled outline :color="reportingEnabledButtonClass()" >
+    <v-chip v-if="showReportingStatus" disabled outline :color="reportingEnabledButtonClass()" >
       {{ reportingEnabledButtonText() }}
     </v-chip>
   </span>
