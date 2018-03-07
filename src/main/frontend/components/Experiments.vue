@@ -15,7 +15,10 @@
       </v-flex>
 
       <v-flex xs3>
-        <v-btn-toggle v-model="statusFilter" mandatory>
+        <v-btn-toggle
+          v-on:change="updateStatusFilter"
+          v-model="statusFilter"
+          mandatory>
           <v-btn flat value="all">
             All
           </v-btn>
@@ -69,7 +72,7 @@ export default {
 
   created () {
     this.filterMyExperiments = this.userPreferences.filters.myExperiments
-    this.statusFilter = 'all'
+    this.statusFilter = this.userPreferences.filters.statusFilter
     this.getExperiments()
   },
 
@@ -102,7 +105,8 @@ export default {
   methods: {
     ...mapActions([
       'getExperiments',
-      'updateMyExperimentsFilter'
+      'updateMyExperimentsFilter',
+      'updateStatusFilter'
     ]),
 
     sortExperiments (experiments) {
