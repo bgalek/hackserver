@@ -2,6 +2,8 @@ package pl.allegro.experiments.chi.chiserver.infrastructure.experiments
 
 import com.codahale.metrics.Gauge
 import com.codahale.metrics.MetricRegistry
+import org.javers.core.Javers
+import org.javers.spring.auditable.AuthorProvider
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.boot.context.properties.ConfigurationProperties
 import org.springframework.context.annotation.Bean
@@ -35,8 +37,11 @@ class ExperimentsConfig {
     fun customConversions() = CustomConversions(mongoConverters)
 
     @Bean
-    fun mongoExperimentsRepository(mongoTemplate: MongoTemplate, experimentsMongoMetricsReporter: ExperimentsMongoMetricsReporter): MongoExperimentsRepository {
-        return MongoExperimentsRepository(mongoTemplate, experimentsMongoMetricsReporter)
+    fun mongoExperimentsRepository(mongoTemplate: MongoTemplate,
+                                   experimentsMongoMetricsReporter: ExperimentsMongoMetricsReporter,
+                                   javers: Javers,
+                                   authorProvider: AuthorProvider): MongoExperimentsRepository {
+        return MongoExperimentsRepository(mongoTemplate, experimentsMongoMetricsReporter, javers, authorProvider)
     }
 
     @Bean

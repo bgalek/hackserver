@@ -1,3 +1,6 @@
+javers:
+  mappingStyle: BEAN
+
 application:
   name: chi-server
 

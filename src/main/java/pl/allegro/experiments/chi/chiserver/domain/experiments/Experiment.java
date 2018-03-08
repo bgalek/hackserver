@@ -2,14 +2,15 @@ package pl.allegro.experiments.chi.chiserver.domain.experiments;
 
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
-import com.google.gson.annotations.Expose;
 import joptsimple.internal.Strings;
+import org.javers.core.metamodel.annotation.DiffInclude;
+import org.javers.core.metamodel.annotation.Id;
+import org.javers.core.metamodel.annotation.TypeName;
 
-import java.beans.Transient;
 import java.time.ZonedDateTime;
 import java.util.List;
-import java.util.Optional;
 
+@TypeName("Experiment")
 public class Experiment {
     private final String id;
     private final List<ExperimentVariant> variants;
@@ -57,6 +58,8 @@ public class Experiment {
         this.status = ExperimentStatus.of(explicitStatus, activityPeriod);
     }
 
+    @Id
+    @DiffInclude
     public String getId() {
         return id;
     }
@@ -65,18 +68,22 @@ public class Experiment {
         return variants;
     }
 
+    @DiffInclude
     public String getDescription() {
         return description;
     }
 
+    @DiffInclude
     public String getDocumentLink() {
         return documentLink;
     }
 
+    @DiffInclude
     public String getAuthor() {
         return author;
     }
 
+    @DiffInclude
     public List<String> getGroups() {
         return groups;
     }
@@ -87,6 +94,27 @@ public class Experiment {
 
     public ActivityPeriod getActivityPeriod() {
         return activityPeriod;
+    }
+
+    @DiffInclude
+    public ZonedDateTime getActiveFrom() {
+        if (activityPeriod == null) {
+            return null;
+        }
+        return activityPeriod.getActiveFrom();
+    }
+
+    @DiffInclude
+    public ZonedDateTime getActiveTo() {
+        if (activityPeriod == null) {
+            return null;
+        }
+        return activityPeriod.getActiveTo();
+    }
+
+    @DiffInclude
+    public ExperimentStatus getStatus() {
+        return status;
     }
 
     public ExperimentMeasurements getMeasurements() {
@@ -113,10 +141,6 @@ public class Experiment {
     @Override
     public int hashCode() {
         return id.hashCode();
-    }
-
-    public ExperimentStatus getStatus() {
-        return status;
     }
 
     public boolean isDraft() {

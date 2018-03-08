@@ -52,6 +52,7 @@ repositories {
 }
 
 dependencies {
+    compile 'org.javers:javers-spring-boot-starter-mongo:3.8.4'
     compile group: 'org.jetbrains.kotlin', name: 'kotlin-stdlib', version: "$versions.kotlin"
     compile group: 'org.jetbrains.kotlin', name: 'kotlin-reflect', version: "$versions.kotlin"
     compile 'org.springframework:spring-web:4.3.10.RELEASE'
