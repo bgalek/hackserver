@@ -1,6 +1,7 @@
 package pl.allegro.experiments.chi.chiserver.application;
 
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
@@ -21,7 +22,7 @@ public class LogoutController {
         this.clientId = clientId;
     }
 
-    @RequestMapping(method = {RequestMethod.GET})
+    @GetMapping
     RedirectView afterLogout(HttpServletRequest request) {
         String baseUrl = getBaseUrl(request);
         return new RedirectView(logoutUrl + "?client_id=" + clientId + "&redirect_uri=" + baseUrl);
