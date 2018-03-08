@@ -38,7 +38,7 @@
         Start experiment<v-icon right dark>play_arrow</v-icon>
       </v-btn>
 
-      <v-menu open-on-hover offset-x :close-on-content-click="false"
+      <v-menu offset-x :close-on-content-click="false"
               v-model="prolongMenuVisible"
               v-if="this.experiment.canBeProlonged()">
         <v-btn color="gray" slot="activator" style="text-transform: none">
@@ -53,52 +53,52 @@
                  required
           ></v-text-field>
 
-          <v-btn flat @click="prolongMenuVisible = false">Cancel</v-btn>
+          <v-btn flat @click="cancelProlong()">Cancel</v-btn>
           <v-btn color="gray"
                  @click="prolong"
                  style="text-transform: none">
-            Prolong experiment {{this.experiment.id}}
+            Prolong experiment {{ this.experiment.id }}
           </v-btn>
         </v-list>
       </v-menu>
 
-      <v-menu open-on-hover bottom offset-y
+      <v-menu bottom offset-y
               v-if="this.experiment.canBePaused()">
         <v-btn color="gray" slot="activator" style="text-transform: none">
           Pause<v-icon right>pause</v-icon>
         </v-btn>
         <v-list>
           <v-list-tile @click="pause">
-            <v-list-tile-title>I really want to pause experiment {{this.experiment.id}}</v-list-tile-title>
+            <v-list-tile-title>I really want to pause experiment <b>{{this.experiment.id}}</b></v-list-tile-title>
           </v-list-tile>
         </v-list>
       </v-menu>
 
-      <v-menu open-on-hover bottom offset-y
+      <v-menu bottom offset-y
               v-if="this.experiment.canBeResumed()">
         <v-btn color="gray" slot="activator" style="text-transform: none">
           Resume<v-icon right>play_arrow</v-icon>
         </v-btn>
         <v-list>
           <v-list-tile @click="resume">
-            <v-list-tile-title>I really want to resume paused experiment {{this.experiment.id}}</v-list-tile-title>
+            <v-list-tile-title>I really want to resume experiment <b>{{this.experiment.id}}</b></v-list-tile-title>
           </v-list-tile>
         </v-list>
       </v-menu>
 
-      <v-menu open-on-hover bottom offset-y
+      <v-menu bottom offset-y
               v-if="this.experiment.canBeStopped()">
         <v-btn color="gray" slot="activator" style="text-transform: none">
           Stop <v-icon right>stop</v-icon>
         </v-btn>
         <v-list>
           <v-list-tile @click="stop">
-            <v-list-tile-title>I really want to stop experiment {{this.experiment.id}}</v-list-tile-title>
+            <v-list-tile-title>I really want to stop experiment <b>{{this.experiment.id}}</b></v-list-tile-title>
           </v-list-tile>
         </v-list>
       </v-menu>
 
-      <v-menu open-on-hover bottom offset-y
+      <v-menu bottom offset-y
               v-if="this.allowDelete">
         <v-btn color="red" slot="activator" class="white--text" style="text-transform: none">
           Delete experiment<v-icon right>delete_forever</v-icon>
@@ -223,6 +223,10 @@
           this.afterSending()
           this.showError(error)
         })
+      },
+
+      cancelProlong () {
+        this.prolongMenuVisible = false
       },
 
       prolong () {
