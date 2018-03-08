@@ -39,7 +39,7 @@
           <v-list-tile>
             <v-list-tile-content>
               <v-badge>
-                <v-chip :color="v.color" small :key="v.name" :disabled="true">
+                <v-chip :color="v.color+' lighten-2'" small :key="v.name" :disabled="true">
                   {{ v.name }}
                 </v-chip>
                 {{ v.predicatesInfo }}

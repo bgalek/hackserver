@@ -34,11 +34,17 @@ export default class ExperimentModel extends ExperimentRecord {
     super(experimentObject)
   }
 
-  fromDateShortString (prefix) {
-    if (!this.activityPeriod) {
-      return ''
+  whenStartedOrEnded () {
+    if (this.activityPeriod) {
+      if (this.status === 'PLANNED') {
+        return 'to be started ' + this.activityPeriod.fromDateShortString()
+      } else
+      if (this.status === 'ENDED') {
+        return 'ended ' + this.activityPeriod.toDateShortString()
+      } else {
+        return 'started ' + this.activityPeriod.fromDateShortString()
+      }
     }
-    return `${prefix} ${this.activityPeriod.fromDateShortString()}`
   }
 
   fromDateString () {
