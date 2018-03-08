@@ -6,6 +6,9 @@ import pl.allegro.experiments.chi.chiserver.domain.interactions.Interaction;
 import java.lang.reflect.Type;
 import java.time.Instant;
 
+import static pl.allegro.experiments.chi.chiserver.application.JsonObjectGetters.getAsBooleanOrNull;
+import static pl.allegro.experiments.chi.chiserver.application.JsonObjectGetters.getAsStringOrNull;
+
 public class InteractionTypeAdapter implements JsonDeserializer<Interaction> {
 
     @Override
@@ -15,21 +18,16 @@ public class InteractionTypeAdapter implements JsonDeserializer<Interaction> {
             JsonDeserializationContext context) throws JsonParseException {
         JsonObject jsonObj = json.getAsJsonObject();
 
-        JsonElement rawUserId = jsonObj.get("userId");
-        JsonElement rawUserCmId = jsonObj.get("userCmId");
-        JsonElement rawInternal = jsonObj.get("internal");
-        JsonElement rawDeviceClass = jsonObj.get("deviceClass");
-        JsonElement rawAppId = jsonObj.get("appId");
-
         return new Interaction(
-                rawUserId != null ? rawUserId.getAsString(): null,
-                rawUserCmId != null ? rawUserCmId.getAsString(): null,
+                getAsStringOrNull("userId", jsonObj),
+                getAsStringOrNull("userCmId", jsonObj),
                 jsonObj.get("experimentId").getAsString(),
                 jsonObj.get("variantName").getAsString(),
-                rawInternal != null ? rawInternal.getAsBoolean(): null,
-                rawDeviceClass != null ? rawDeviceClass.getAsString(): null,
+                getAsBooleanOrNull("internal", jsonObj),
+                getAsStringOrNull("deviceClass", jsonObj),
                 Instant.parse(jsonObj.get("interactionDate").getAsString()),
-                rawAppId != null ? rawAppId.getAsString(): null
+                getAsStringOrNull("appId", jsonObj)
         );
     }
+
 }

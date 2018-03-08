@@ -1,7 +1,6 @@
 package pl.allegro.experiments.chi.chiserver.application.experiments.v1;
 
 import com.google.gson.*;
-import org.springframework.web.bind.annotation.PathVariable;
 import pl.allegro.experiments.chi.chiserver.domain.experiments.*;
 
 import java.lang.reflect.Type;
