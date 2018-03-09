@@ -11,6 +11,7 @@ import pl.allegro.experiments.chi.chiserver.application.experiments.v1.*
 import pl.allegro.experiments.chi.chiserver.domain.experiments.*
 import java.time.Duration
 import java.time.LocalDate
+import java.time.LocalDateTime
 import java.time.ZonedDateTime
 import java.time.format.DateTimeFormatter
 
@@ -27,6 +28,7 @@ class JsonConfig {
             .registerTypeAdapter(InternalPredicate::class.java, InternalPredicateSerializer())
             .registerTypeAdapter(DeviceClassPredicate::class.java, DeviceClassPredicateSerializer())
             .registerTypeAdapter(ExperimentVariant::class.java, ExperimentVariantTypeAdapter())
+            .registerTypeAdapter(LocalDateTime::class.java, LocalDateTimeSerializer())
             .registerTypeAdapter<LocalDate> {
                 serialize { (src) -> DateTimeFormatter.ISO_LOCAL_DATE.format(src).toJson() }
             }
