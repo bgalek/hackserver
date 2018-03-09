@@ -5,6 +5,7 @@ import NotFound from '../components/NotFound'
 import Experiment from '../components/experiment/Experiment'
 import CookieBaker from '../components/CookieBaker'
 import CreateExperimentPage from '../components/CreateExperimentPage'
+import AuditLog from '../components/experiment/audit/AuditLog'
 
 Vue.use(Router)
 
@@ -13,6 +14,7 @@ export default new Router({
     { path: '/experiments', component: Experiments },
     { path: '/experiments/create', component: CreateExperimentPage },
     { path: '/experiments/:experimentId', component: Experiment, name: 'experiment' },
+    { path: '/experiments/:experimentId/audit-log', component: AuditLog },
     { path: '/cookie_baker', component: CookieBaker },
     { path: '/404', component: NotFound },
     { path: '/', redirect: '/experiments' },

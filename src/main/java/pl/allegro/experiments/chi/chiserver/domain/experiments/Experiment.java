@@ -7,6 +7,7 @@ import org.javers.core.metamodel.annotation.DiffInclude;
 import org.javers.core.metamodel.annotation.Id;
 import org.javers.core.metamodel.annotation.TypeName;
 
+import java.time.LocalDateTime;
 import java.time.ZonedDateTime;
 import java.util.List;
 
@@ -97,19 +98,19 @@ public class Experiment {
     }
 
     @DiffInclude
-    public ZonedDateTime getActiveFrom() {
+    public LocalDateTime getActiveFrom() {
         if (activityPeriod == null) {
             return null;
         }
-        return activityPeriod.getActiveFrom();
+        return activityPeriod.getActiveFrom().toLocalDateTime();
     }
 
     @DiffInclude
-    public ZonedDateTime getActiveTo() {
+    public LocalDateTime getActiveTo() {
         if (activityPeriod == null) {
             return null;
         }
-        return activityPeriod.getActiveTo();
+        return activityPeriod.getActiveTo().toLocalDateTime();
     }
 
     @DiffInclude

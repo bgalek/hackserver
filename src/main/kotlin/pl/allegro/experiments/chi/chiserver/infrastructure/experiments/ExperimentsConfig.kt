@@ -14,6 +14,7 @@ import org.springframework.web.client.RestTemplate
 import pl.allegro.experiments.chi.chiserver.application.experiments.AllEnabledCrisisManagementFilter
 import pl.allegro.experiments.chi.chiserver.application.experiments.CrisisManagementFilter
 import pl.allegro.experiments.chi.chiserver.application.experiments.WhitelistCrisisManagementFilter
+import pl.allegro.experiments.chi.chiserver.domain.UserProvider
 import pl.allegro.experiments.chi.chiserver.domain.experiments.ExperimentsRepository
 import pl.allegro.experiments.chi.chiserver.domain.experiments.MeasurementsRepository
 import pl.allegro.experiments.chi.chiserver.infrastructure.JsonConverter
@@ -40,8 +41,8 @@ class ExperimentsConfig {
     fun mongoExperimentsRepository(mongoTemplate: MongoTemplate,
                                    experimentsMongoMetricsReporter: ExperimentsMongoMetricsReporter,
                                    javers: Javers,
-                                   authorProvider: AuthorProvider): MongoExperimentsRepository {
-        return MongoExperimentsRepository(mongoTemplate, experimentsMongoMetricsReporter, javers, authorProvider)
+                                   userProvieder: UserProvider): MongoExperimentsRepository {
+        return MongoExperimentsRepository(mongoTemplate, experimentsMongoMetricsReporter, javers, userProvieder)
     }
 
     @Bean

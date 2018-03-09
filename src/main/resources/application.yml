@@ -1,5 +1,6 @@
 javers:
   mappingStyle: BEAN
+  algorithm: AS_SET
 
 application:
   name: chi-server

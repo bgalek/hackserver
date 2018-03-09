@@ -10,6 +10,7 @@ import pl.allegro.experiments.chi.chiserver.domain.experiments.ExperimentsReposi
 import pl.allegro.experiments.chi.chiserver.domain.experiments.MeasurementsRepository;
 import pl.allegro.experiments.chi.chiserver.domain.experiments.PermissionsRepository;
 import pl.allegro.experiments.chi.chiserver.domain.experiments.administration.AuthorizationException;
+import pl.allegro.experiments.chi.chiserver.domain.experiments.administration.ExperimentActions;
 import pl.allegro.experiments.chi.chiserver.domain.experiments.administration.ExperimentCommandException;
 import pl.allegro.experiments.chi.chiserver.domain.experiments.administration.ExperimentNotFoundException;
 import pl.allegro.experiments.chi.chiserver.domain.experiments.administration.audit.Audit;
@@ -41,13 +42,7 @@ public class ExperimentsController {
     private final ExperimentsRepository experimentsRepository;
     private final MeasurementsRepository measurementsRepository;
     private final PermissionsRepository permissionsRepository;
-    private final CreateExperimentCommandFactory createExperimentCommandFactory;
-    private final StartExperimentCommandFactory startExperimentCommandFactory;
-    private final ProlongExperimentCommandFactory prolongExperimentCommandFactory;
-    private final StopExperimentCommandFactory stopExperimentCommandFactory;
-    private final PauseExperimentCommandFactory pauseExperimentCommandFactory;
-    private final ResumeExperimentCommandFactory resumeExperimentCommandFactory;
-    private final DeleteExperimentCommandFactory deleteExperimentCommandFactory;
+    private ExperimentActions experimentActions;
     private final Gson jsonConverter;
     private final Audit audit;
 
@@ -57,26 +52,14 @@ public class ExperimentsController {
             ExperimentsRepository experimentsRepository,
             MeasurementsRepository measurementsRepository,
             PermissionsRepository permissionsRepository,
-            CreateExperimentCommandFactory createExperimentCommandFactory,
-            StartExperimentCommandFactory startExperimentCommandFactory,
-            ProlongExperimentCommandFactory prolongExperimentCommandFactory,
-            StopExperimentCommandFactory stopExperimentCommandFactory,
-            PauseExperimentCommandFactory pauseExperimentCommandFactory,
-            ResumeExperimentCommandFactory resumeExperimentCommandFactory,
-            DeleteExperimentCommandFactory deleteExperimentCommandFactory,
+            ExperimentActions experimentActions,
             Gson jsonConverter,
             Audit audit) {
 
         this.experimentsRepository = experimentsRepository;
         this.measurementsRepository = measurementsRepository;
         this.permissionsRepository = permissionsRepository;
-        this.createExperimentCommandFactory = createExperimentCommandFactory;
-        this.startExperimentCommandFactory = startExperimentCommandFactory;
-        this.prolongExperimentCommandFactory = prolongExperimentCommandFactory;
-        this.stopExperimentCommandFactory = stopExperimentCommandFactory;
-        this.pauseExperimentCommandFactory = pauseExperimentCommandFactory;
-        this.resumeExperimentCommandFactory = resumeExperimentCommandFactory;
-        this.deleteExperimentCommandFactory = deleteExperimentCommandFactory;
+        this.experimentActions = experimentActions;
         this.jsonConverter = jsonConverter;
         this.audit = audit;
     }
@@ -106,7 +89,7 @@ public class ExperimentsController {
     @PostMapping(path = {""})
     ResponseEntity<String> addExperiment(@RequestBody ExperimentCreationRequest experimentCreationRequest) {
         logger.info("Experiment creation request received", experimentCreationRequest);
-        createExperimentCommandFactory.createExperimentCommand(experimentCreationRequest).execute();
+        experimentActions.create(experimentCreationRequest);
         return new ResponseEntity<String>(HttpStatus.CREATED);
     }
 
@@ -116,7 +99,7 @@ public class ExperimentsController {
             @PathVariable String experimentId,
             @RequestBody StartExperimentProperties properties) {
         logger.info("Start experiment request received: " + experimentId);
-        startExperimentCommandFactory.startExperimentCommand(experimentId, properties).execute();
+        experimentActions.start(experimentId, properties);
         return new ResponseEntity<String>(HttpStatus.OK);
     }
 
@@ -126,7 +109,7 @@ public class ExperimentsController {
             @PathVariable String experimentId,
             @RequestBody ProlongExperimentProperties properties) {
         logger.info("Prolong experiment request received: " + experimentId);
-        prolongExperimentCommandFactory.prolongExperimentCommand(experimentId, properties).execute();
+        experimentActions.prolong(experimentId, properties);
         return new ResponseEntity<String>(HttpStatus.OK);
     }
 
@@ -134,7 +117,7 @@ public class ExperimentsController {
     @PutMapping(path = {"{experimentId}/stop"})
     ResponseEntity<String> stopExperiment(@PathVariable String experimentId) {
         logger.info("Stop experiment request received: " + experimentId);
-        stopExperimentCommandFactory.stopExperimentCommand(experimentId).execute();
+        experimentActions.stopExperiment(experimentId);
         return new ResponseEntity<String>(HttpStatus.OK);
     }
 
@@ -142,7 +125,7 @@ public class ExperimentsController {
     @PutMapping(path = {"{experimentId}/pause"})
     ResponseEntity<String> pauseExperiment(@PathVariable String experimentId) {
         logger.info("Pause experiment request received: " + experimentId);
-        pauseExperimentCommandFactory.pauseExperimentCommand(experimentId).execute();
+        experimentActions.pause(experimentId);
         return new ResponseEntity<String>(HttpStatus.OK);
     }
 
@@ -150,7 +133,7 @@ public class ExperimentsController {
     @PutMapping(path = {"{experimentId}/resume"})
     ResponseEntity<String> resumeExperiment(@PathVariable String experimentId) {
         logger.info("Resume experiment request received: " + experimentId);
-        resumeExperimentCommandFactory.resumeExperimentCommand(experimentId).execute();
+        experimentActions.resumeExperiment(experimentId);
         return new ResponseEntity<String>(HttpStatus.OK);
     }
 
@@ -158,14 +141,14 @@ public class ExperimentsController {
     @DeleteMapping(path = {"{experimentId}"})
     ResponseEntity<String> deleteExperiment(@PathVariable String experimentId) {
         logger.info("Delete experiment request received: " + experimentId);
-        deleteExperimentCommandFactory.deleteExperimentCommand(experimentId).execute();
+        experimentActions.delete(experimentId);
         return new ResponseEntity<String>(HttpStatus.OK);
     }
 
     @MeteredEndpoint
     @GetMapping(path = {"{experimentId}/audit-log"})
     ResponseEntity<String> getAuditLog(@PathVariable String experimentId) {
-        logger.info("Audit log request received");
+        logger.info("Audit log request received: " + experimentId);
         final AuditLog auditLog = audit.getAuditLog(experimentId);
         final String body = jsonConverter.toJson(auditLog);
         return ResponseEntity.ok(body);

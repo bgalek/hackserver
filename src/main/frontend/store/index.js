@@ -3,6 +3,7 @@ import Vuex from 'vuex'
 
 import experiments from './experiments'
 import experiment from './experiment'
+import experimentAuditLog from './experimentAuditLog'
 import experimentStatistics from './experimentStatistics'
 import deleteExperiment from './deleteExperiment'
 import startExperiment from './startExperiment'
@@ -26,6 +27,7 @@ export default new Vuex.Store({
   modules: {
     experiment,
     experiments,
+    experimentAuditLog,
     experimentStatistics,
     createExperiment,
     startExperiment,

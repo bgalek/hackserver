@@ -25,7 +25,7 @@ class ExperimentsTestConfig {
 }
 
 class MutableUserProvider implements UserProvider {
-    User user
+    User user = new User("Anonymous", [], false)
 
     def setUser(User user) {
         this.user = user
