@@ -1,10 +1,12 @@
 package pl.allegro.experiments.chi.chiserver.infrastructure.experiments
 
+import org.javers.core.Javers
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import pl.allegro.experiments.chi.chiserver.domain.UserProvider
 import pl.allegro.experiments.chi.chiserver.domain.experiments.ExperimentsRepository
 import pl.allegro.experiments.chi.chiserver.domain.experiments.administration.PermissionsAwareExperimentRepository
+import pl.allegro.experiments.chi.chiserver.domain.experiments.administration.audit.Audit
 import pl.allegro.experiments.chi.chiserver.domain.experiments.administration.create.CreateExperimentCommandFactory
 import pl.allegro.experiments.chi.chiserver.domain.experiments.administration.delete.DeleteExperimentCommandFactory
 import pl.allegro.experiments.chi.chiserver.domain.experiments.administration.pause.PauseExperimentCommandFactory
@@ -68,5 +70,10 @@ class CommandsConfig {
             experimentsRepository: ExperimentsRepository,
             permissionsAwareExperimentRepository: PermissionsAwareExperimentRepository): ResumeExperimentCommandFactory {
         return ResumeExperimentCommandFactory(experimentsRepository, permissionsAwareExperimentRepository)
+    }
+
+    @Bean
+    fun auditLog(javers: Javers): Audit {
+        return Audit(javers);
     }
 }

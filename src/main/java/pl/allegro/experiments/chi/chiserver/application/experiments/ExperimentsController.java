@@ -12,6 +12,8 @@ import pl.allegro.experiments.chi.chiserver.domain.experiments.PermissionsReposi
 import pl.allegro.experiments.chi.chiserver.domain.experiments.administration.AuthorizationException;
 import pl.allegro.experiments.chi.chiserver.domain.experiments.administration.ExperimentCommandException;
 import pl.allegro.experiments.chi.chiserver.domain.experiments.administration.ExperimentNotFoundException;
+import pl.allegro.experiments.chi.chiserver.domain.experiments.administration.audit.Audit;
+import pl.allegro.experiments.chi.chiserver.domain.experiments.administration.audit.AuditLog;
 import pl.allegro.experiments.chi.chiserver.domain.experiments.administration.create.CreateExperimentCommandFactory;
 import pl.allegro.experiments.chi.chiserver.domain.experiments.administration.create.ExperimentCreationRequest;
 import pl.allegro.experiments.chi.chiserver.domain.experiments.administration.delete.DeleteExperimentCommandFactory;
@@ -47,6 +49,7 @@ public class ExperimentsController {
     private final ResumeExperimentCommandFactory resumeExperimentCommandFactory;
     private final DeleteExperimentCommandFactory deleteExperimentCommandFactory;
     private final Gson jsonConverter;
+    private final Audit audit;
 
     private static final Logger logger = LoggerFactory.getLogger(ExperimentsController.class);
 
@@ -61,7 +64,8 @@ public class ExperimentsController {
             PauseExperimentCommandFactory pauseExperimentCommandFactory,
             ResumeExperimentCommandFactory resumeExperimentCommandFactory,
             DeleteExperimentCommandFactory deleteExperimentCommandFactory,
-            Gson jsonConverter) {
+            Gson jsonConverter,
+            Audit audit) {
 
         this.experimentsRepository = experimentsRepository;
         this.measurementsRepository = measurementsRepository;
@@ -74,6 +78,7 @@ public class ExperimentsController {
         this.resumeExperimentCommandFactory = resumeExperimentCommandFactory;
         this.deleteExperimentCommandFactory = deleteExperimentCommandFactory;
         this.jsonConverter = jsonConverter;
+        this.audit = audit;
     }
 
     @MeteredEndpoint
@@ -155,6 +160,15 @@ public class ExperimentsController {
         logger.info("Delete experiment request received: " + experimentId);
         deleteExperimentCommandFactory.deleteExperimentCommand(experimentId).execute();
         return new ResponseEntity<String>(HttpStatus.OK);
+    }
+
+    @MeteredEndpoint
+    @GetMapping(path = {"{experimentId}/audit-log"})
+    ResponseEntity<String> getAuditLog(@PathVariable String experimentId) {
+        logger.info("Audit log request received");
+        final AuditLog auditLog = audit.getAuditLog(experimentId);
+        final String body = jsonConverter.toJson(auditLog);
+        return ResponseEntity.ok(body);
     }
 
     @ExceptionHandler(AuthorizationException.class)

@@ -1,8 +1,5 @@
 package pl.allegro.experiments.chi.chiserver.application.administration
 
-import org.javers.core.Javers
-import org.javers.core.changelog.SimpleTextChangeLog
-import org.javers.repository.jql.QueryBuilder
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
@@ -12,7 +9,6 @@ import org.springframework.web.client.RestTemplate
 import pl.allegro.experiments.chi.chiserver.BaseIntegrationSpec
 import pl.allegro.experiments.chi.chiserver.domain.User
 import pl.allegro.experiments.chi.chiserver.domain.UserProvider
-import pl.allegro.experiments.chi.chiserver.domain.experiments.Experiment
 import pl.allegro.experiments.chi.chiserver.domain.experiments.ExperimentStatus
 import pl.allegro.experiments.chi.chiserver.domain.experiments.ExperimentsRepository
 import pl.allegro.experiments.chi.chiserver.infrastructure.experiments.ExperimentsDoubleRepository
@@ -29,9 +25,6 @@ class ExperimentsSelfServiceE2ESpec extends BaseIntegrationSpec {
 
     @Autowired
     UserProvider userProvider
-
-    @Autowired
-    Javers javers
 
     def setup() {
         if (!experimentsRepository instanceof ExperimentsDoubleRepository) {
@@ -188,14 +181,11 @@ class ExperimentsSelfServiceE2ESpec extends BaseIntegrationSpec {
         ex.statusCode == HttpStatus.NOT_FOUND
 
         when:
-        def changes = javers.findChanges(QueryBuilder.byInstanceId("some2", Experiment).build())
-
-        //TODO clear
-        println( javers.processChangeList(changes, new SimpleTextChangeLog()) )
-        println( javers.getJsonConverter().toJson(changes) )
+        def auditResponse = restTemplate.getForEntity(localUrl("/api/admin/experiments/${request.id}/audit-log"), Map)
 
         then:
-        changes
+        auditResponse.body.experimentId == request.id
+        auditResponse.body.changes.isEmpty() == false
     }
 
     ExperimentResponseAssertions assertThatExperimentWithId(String id) {
