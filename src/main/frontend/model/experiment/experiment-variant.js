@@ -22,7 +22,7 @@ export default class ExperimentVariantModel extends ExperimentVariantRecord {
 
   static color (name, i) {
     if (name === 'base') {
-      return 'gray'
+      return 'grey'
     }
     let colors = ['orange', 'cyan', 'yellow', 'green', 'pink', 'blue', 'amber', 'lime', 'red']
     return colors[i % colors.length]

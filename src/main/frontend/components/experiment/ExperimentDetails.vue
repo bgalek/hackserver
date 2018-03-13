@@ -28,15 +28,7 @@
         </div>
         <h3>Status</h3>
         <v-layout row>
-
-            <v-chip outline disabled :color="activityButtonClass()">
-              {{ experiment.status }}
-            </v-chip>
-
-            <v-chip disabled outline :color="reportingEnabledButtonClass()" >
-              {{ reportingEnabledButtonText() }}
-            </v-chip>
-
+            <experiment-status :experiment="experiment" :show-reporting-status="true"/>
         </v-layout>
     </v-flex>
     <v-flex xs6>
@@ -47,7 +39,7 @@
           <v-list-tile>
             <v-list-tile-content>
               <v-badge>
-                <v-chip :color="v.color" small :key="v.name" :disabled="true">
+                <v-chip :color="v.color+' lighten-2'" small :key="v.name" :disabled="true">
                   {{ v.name }}
                 </v-chip>
                 {{ v.predicatesInfo }}
@@ -62,33 +54,18 @@
 </template>
 
 <script>
-  import ChiPanel from '../ChiPanel.vue'
+  import ChiPanel from '../ChiPanel'
+  import ExperimentStatus from './ExperimentStatus'
 
   export default {
     props: ['experiment'],
 
     components: {
+      ExperimentStatus,
       ChiPanel
     },
 
     methods: {
-      activityButtonClass () {
-        let colors = {
-          DRAFT: 'gray',
-          PLANNED: 'blue',
-          ACTIVE: 'green',
-          ENDED: 'black'
-        }
-        return colors[this.experiment.status] || 'gray'
-      },
-
-      reportingEnabledButtonClass () {
-        return this.experiment.reportingEnabled ? 'green' : 'red'
-      },
-
-      reportingEnabledButtonText () {
-        return this.experiment.reportingEnabled ? 'Reporting enabled' : 'Reporting disabled'
-      }
     }
   }
 </script>

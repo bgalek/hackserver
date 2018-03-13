@@ -9,29 +9,34 @@
           :key="variant.name"
           :color="variant.color"
           :title="variant.name"
+          redirect-label="Assign me"
           :redirect-link="cookieBakerLink(experiment.id, variant.name)"
         >
         </assignment-button>
-      </v-flex>
-    </v-layout>
 
-      <div slot="footer">
-        Use these buttons to open new browser tab with Chi cookie set to selected variant. Read the Docs about
-        <a href="https://rtd.allegrogroup.com/docs/chi/pl/latest/chi_cookie/">Chi cookie</a>.
-      </div>
-
-    <v-layout row>
-      <v-flex>
         <assignment-button
           v-if="experiment"
           key="turn_off"
-          color="gray"
+          color="grey"
           title="Exclude me"
+          redirect-label="Exclude me"
           :redirect-link="cookieBakerLink(experiment.id, '-')"
         >
         </assignment-button>
+
       </v-flex>
     </v-layout>
+
+    <v-layout row>
+      <v-flex>
+
+      </v-flex>
+    </v-layout>
+
+    <div slot="footer">
+      Use these buttons to open new browser tab with Chi cookie set to selected variant. Read the Docs about
+      <a href="https://rtd.allegrogroup.com/docs/chi/pl/latest/chi_cookie/">Chi cookie</a>.
+    </div>
 
   </chi-panel>
 

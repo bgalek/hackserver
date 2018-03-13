@@ -11,6 +11,7 @@ import com.google.common.base.Preconditions;
 import javax.validation.constraints.NotNull;
 
 public class Interaction {
+
     private final String userId;
     private final String userCmId;
     @NotNull

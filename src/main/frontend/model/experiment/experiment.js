@@ -34,8 +34,17 @@ export default class ExperimentModel extends ExperimentRecord {
     super(experimentObject)
   }
 
-  fromDateShortString () {
-    return this.activityPeriod && this.activityPeriod.fromDateShortString()
+  whenStartedOrEnded () {
+    if (this.activityPeriod) {
+      if (this.status === 'PLANNED') {
+        return 'to be started ' + this.activityPeriod.fromDateShortString()
+      } else
+      if (this.status === 'ENDED') {
+        return 'ended ' + this.activityPeriod.toDateShortString()
+      } else {
+        return 'started ' + this.activityPeriod.fromDateShortString()
+      }
+    }
   }
 
   fromDateString () {
@@ -70,17 +79,12 @@ export default class ExperimentModel extends ExperimentRecord {
     return this.status === 'ACTIVE'
   }
 
-  canBeDeleted () {
-    return this.allowDelete
-  }
-
   canRunAnyCommand () {
     return this.origin !== 'stash' &&
       (this.canBeStarted() ||
-          this.canBeDeleted() ||
-          this.canBeStopped() ||
-          this.canBePaused() ||
-          this.canBeResumed())
+       this.canBeStopped() ||
+       this.canBePaused() ||
+       this.canBeResumed())
   }
 
   getBaseVariant () {

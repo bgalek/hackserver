@@ -20,20 +20,20 @@ typealias JsonConverter = Gson
 class JsonConfig {
     @Bean
     fun jsonConverter(): JsonConverter = GsonBuilder()
-        .registerTypeAdapter(experimentDeserializer)
-        .registerTypeAdapter(experimentSerializer)
-        .registerTypeAdapter(HashRangePredicate::class.java, HashRangePredicateSerializer())
-        .registerTypeAdapter(CmuidRegexpPredicate::class.java, CmuidRegexpPredicateSerializer())
-        .registerTypeAdapter(InternalPredicate::class.java, InternalPredicateSerializer())
-        .registerTypeAdapter(DeviceClassPredicate::class.java, DeviceClassPredicateSerializer())
-        .registerTypeAdapter(ExperimentVariant::class.java, ExperimentVariantTypeAdapter())
-        .registerTypeAdapter<LocalDate> {
-            serialize { (src) -> DateTimeFormatter.ISO_LOCAL_DATE.format(src).toJson() }
-        }
-        .registerTypeAdapter<ZonedDateTime> {
-            serialize { (src) -> DateTimeFormatter.ISO_DATE_TIME.format(src).toJson() }
-            deserialize { (json) -> ZonedDateTime.parse(json.string, DateTimeFormatter.ISO_DATE_TIME) }
-        }
-        .registerTypeAdapter<Duration> { serialize { d -> d.src.toMillis().toJson() } }
-        .create()
+            .registerTypeAdapter(Experiment::class.java, ExperimentTypeDeserializer())
+            .registerTypeAdapter(Experiment::class.java, ExperimentTypeSerializer())
+            .registerTypeAdapter(HashRangePredicate::class.java, HashRangePredicateSerializer())
+            .registerTypeAdapter(CmuidRegexpPredicate::class.java, CmuidRegexpPredicateSerializer())
+            .registerTypeAdapter(InternalPredicate::class.java, InternalPredicateSerializer())
+            .registerTypeAdapter(DeviceClassPredicate::class.java, DeviceClassPredicateSerializer())
+            .registerTypeAdapter(ExperimentVariant::class.java, ExperimentVariantTypeAdapter())
+            .registerTypeAdapter<LocalDate> {
+                serialize { (src) -> DateTimeFormatter.ISO_LOCAL_DATE.format(src).toJson() }
+            }
+            .registerTypeAdapter<ZonedDateTime> {
+                serialize { (src) -> DateTimeFormatter.ISO_DATE_TIME.format(src).toJson() }
+                deserialize { (json) -> ZonedDateTime.parse(json.string, DateTimeFormatter.ISO_DATE_TIME) }
+            }
+            .registerTypeAdapter<Duration> { serialize { d -> d.src.toMillis().toJson() } }
+            .create()
 }
