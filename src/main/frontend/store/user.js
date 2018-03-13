@@ -1,16 +1,21 @@
 import Vapi from 'vuex-rest-api'
+import UserModel from '../model/user/user'
 
 export default new Vapi({
   baseURL: '/api',
-  state: {
-    isLoggedIn: false
-  }
+  state: new UserModel({
+    root: false,
+    anonymous: true
+  })
 }).get({
   action: 'getUser',
   path: '/admin/user',
-  property: 'isLoggedIn',
+  property: 'user',
   onSuccess: (state, payload) => {
-    state.isLoggedIn = !payload.data.anonymous || payload.data.root
-    console.log(state.isLoggedIn)
+    state.user = new UserModel(payload.data)
+  },
+  onError: (state, error) => {
+    console.log(`Oops, there was following error: ${error}`)
+    state.user = null
   }
 }).getStore()

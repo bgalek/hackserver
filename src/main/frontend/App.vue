@@ -12,7 +12,7 @@
           v-for="(item, i) in drawerItems"
           :key=i
           :to="{path: item.path}"
-          v-if="!item.requireLogin || isLoggedIn"
+          v-if="!item.requireLogin || (user && user.isLoggedIn)"
         >
           <v-list-tile-action>
             <v-icon v-html="item.icon"></v-icon>
@@ -34,9 +34,11 @@
       </v-btn>
       <v-toolbar-title>Chi Admin</v-toolbar-title>
       <v-spacer></v-spacer>
-        <v-btn href="/logout" icon>
+        <v-btn href="/logout" flat style="text-transform: none">
+          {{ user && user.name }}
           <v-icon>exit_to_app</v-icon>
         </v-btn>
+
     </v-toolbar>
 
     <v-content>
@@ -53,6 +55,7 @@
 
 <script>
   import { mapState, mapActions } from 'vuex'
+  import UserModel from './model/user/user'
 
   export default {
     created () {
@@ -60,7 +63,7 @@
     },
 
     computed: mapState({
-      isLoggedIn: state => state.user.isLoggedIn
+      user: state => state.user ? state.user.user : new UserModel({})
     }),
 
     data () {
