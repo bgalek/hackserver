@@ -36,8 +36,8 @@ public class ClientExperimentsControllerV1 {
 
     @MeteredEndpoint
     @GetMapping(path = {"/v1"})
-    String activeExperiments() {
-        logger.info("Active experiments request received");
+    String experiments() {
+        logger.info("Overridable experiments request received");
         return jsonConverterV1.toJson(experimentsRepository.getAll()
                 .stream()
                 .filter(crisisManagementFilter::filter)

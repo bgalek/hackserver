@@ -14,14 +14,14 @@ import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping(value = {"/api/experiments"}, produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_JSON_UTF8_VALUE})
-class ClientExperimentsController {
+class ClientExperimentsControllerV2 {
     private final ExperimentsRepository experimentsRepository;
     private final Gson jsonConverter;
     private final CrisisManagementFilter crisisManagementFilter;
 
-    private static final Logger logger = LoggerFactory.getLogger(ClientExperimentsController.class);
+    private static final Logger logger = LoggerFactory.getLogger(ClientExperimentsControllerV2.class);
 
-    ClientExperimentsController(
+    ClientExperimentsControllerV2(
             ExperimentsRepository experimentsRepository,
             Gson jsonConverter,
             CrisisManagementFilter crisisManagementFilter) {
@@ -32,8 +32,8 @@ class ClientExperimentsController {
 
     @MeteredEndpoint
     @GetMapping(path = {"/v2", ""})
-    String experimentsForClient() {
-        logger.info("Active experiments request received");
+    String experiments() {
+        logger.info("Client experiments request received");
         return jsonConverter.toJson(experimentsRepository
                 .overridable()
                 .stream()
