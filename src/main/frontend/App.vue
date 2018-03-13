@@ -34,11 +34,11 @@
       </v-btn>
       <v-toolbar-title>Chi Admin</v-toolbar-title>
       <v-spacer></v-spacer>
-        <v-btn href="/logout" icon>
-          <v-icon>exit_to_app</v-icon>
+        <v-btn href="/logout" flat style="text-transform: none">
           {{ user.name }}
+          <v-icon>exit_to_app</v-icon>
         </v-btn>
-      {{ user.name }}
+
     </v-toolbar>
 
     <v-content>
@@ -62,7 +62,7 @@
     },
 
     computed: mapState({
-      user: state => state.user
+      user: state => state.user && state.user.user
     }),
 
     data () {
