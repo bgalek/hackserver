@@ -13,7 +13,6 @@ export default new Vapi({
   property: 'user',
   onSuccess: (state, payload) => {
     state.user = new UserModel(payload.data)
-    console.log('state.user', state.user)
   },
   onError: (state, error) => {
     console.log(`Oops, there was following error: ${error}`)
