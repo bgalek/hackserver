@@ -5,10 +5,6 @@ channels:
 
 sources:
   graphite:
-    client_response_time:
-      metric: groupByNode(group(stats.experiments.chi.chi-server.*.InteractionsController.*.*.2xx.p99,
-                                stats.experiments.chi.chi-server.*.ClientExperimentsController.*.*.2xx.p99),
-                          6, 'averageSeries')
     client_interactions_post_latency:
       metric: maxSeries(stats.experiments.chi.chi-server.*.InteractionsController.*.POST.2xx.p99)
     client_experiments_get_latency:
