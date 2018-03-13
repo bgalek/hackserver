@@ -37,11 +37,10 @@ public class ClientExperimentsControllerV1 {
     @MeteredEndpoint
     @GetMapping(path = {"/v1"})
     String experiments() {
-        logger.info("Overridable experiments request received");
-        return jsonConverterV1.toJson(experimentsRepository.getAll()
+        logger.info("Client V1 experiments request received");
+        return jsonConverterV1.toJson(experimentsRepository
+                .assignable()
                 .stream()
-                .filter(crisisManagementFilter::filter)
-                .filter(e -> !e.getStatus().equals(ExperimentStatus.ENDED) && !e.getStatus().equals(ExperimentStatus.PAUSED))
-                .collect(Collectors.toList()));
+                .filter(crisisManagementFilter::filter).collect(Collectors.toList()));
     }
 }

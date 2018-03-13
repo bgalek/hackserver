@@ -29,8 +29,8 @@ class CachedExperimentsRepository(private val delegate: ExperimentsRepository): 
 
     override fun getAll() : List<Experiment> = Collections.unmodifiableList(experiments)
 
-    override fun overridable(): List<Experiment> {
-        return experiments.filter { it.isOverridable() }
+    override fun assignable(): List<Experiment> {
+        return experiments.filter { it.isAssignable() }
     }
 
     override fun save(experiment: Experiment) {

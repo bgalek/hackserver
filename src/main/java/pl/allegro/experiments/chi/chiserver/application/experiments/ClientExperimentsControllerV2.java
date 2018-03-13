@@ -35,7 +35,7 @@ class ClientExperimentsControllerV2 {
     String experiments() {
         logger.info("Client experiments request received");
         return jsonConverter.toJson(experimentsRepository
-                .overridable()
+                .assignable()
                 .stream()
                 .filter(crisisManagementFilter::filter).collect(Collectors.toList()));
     }

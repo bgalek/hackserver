@@ -7,5 +7,5 @@ public interface ReadOnlyExperimentsRepository {
 
     List<Experiment> getAll();
 
-    List<Experiment> overridable();
+    List<Experiment> assignable();
 }

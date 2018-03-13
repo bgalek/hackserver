@@ -27,7 +27,7 @@ open class MongoExperimentsRepository(private val mongoTemplate: MongoTemplate, 
         }
     }
 
-    override fun overridable(): List<Experiment> {
-        return getAll().filter { it.isOverridable() }
+    override fun assignable(): List<Experiment> {
+        return getAll().filter { it.isAssignable() }
     }
 }

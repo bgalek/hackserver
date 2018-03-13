@@ -62,7 +62,7 @@ open class FileBasedExperimentsRepository(jsonUrl: String,
 
     override fun getAll() : List<Experiment> = inMemoryRepository.getAll()
 
-    override fun overridable(): List<Experiment> {
-        return inMemoryRepository.overridable()
+    override fun assignable(): List<Experiment> {
+        return inMemoryRepository.assignable()
     }
 }

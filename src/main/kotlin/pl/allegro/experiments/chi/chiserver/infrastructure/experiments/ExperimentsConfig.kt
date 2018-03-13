@@ -19,21 +19,16 @@ import pl.allegro.experiments.chi.chiserver.infrastructure.druid.DruidClient
 
 @Configuration
 class ExperimentsConfig {
-    private val EXPERIMENTS_COUNT_METRIC = "experiments.count";
+    private val EXPERIMENTS_COUNT_ALL_METRIC =  "experiments.count.all";
+    private val EXPERIMENTS_COUNT_LIVE_METRIC = "experiments.count.live";
 
     @Bean
     fun fileBasedExperimentsRepository(
         @Value("\${chi.experiments.file}") jsonUrl: String,
-        restTemplate: RestTemplate, jsonConverter: JsonConverter,
-        metricRegistry: MetricRegistry
+        restTemplate: RestTemplate, jsonConverter: JsonConverter
     ): FileBasedExperimentsRepository {
         val httpContentLoader = HttpContentLoader(restTemplate)
-        val repo = FileBasedExperimentsRepository(jsonUrl, httpContentLoader::loadFromHttp, jsonConverter)
-
-        val gauge = Gauge<Int> { repo.getAll().size }
-        metricRegistry.register(EXPERIMENTS_COUNT_METRIC, gauge)
-
-        return repo
+        return FileBasedExperimentsRepository(jsonUrl, httpContentLoader::loadFromHttp, jsonConverter)
     }
 
     @Bean
@@ -47,8 +42,18 @@ class ExperimentsConfig {
     @Bean
     fun experimentsRepository(
             fileBasedExperimentsRepository: FileBasedExperimentsRepository,
-            mongoExperimentsRepository: CachedExperimentsRepository): ExperimentsRepository {
-        return ExperimentsDoubleRepository(fileBasedExperimentsRepository, mongoExperimentsRepository)
+            mongoExperimentsRepository: CachedExperimentsRepository,
+            metricRegistry: MetricRegistry): ExperimentsRepository {
+
+        val repo = ExperimentsDoubleRepository(fileBasedExperimentsRepository, mongoExperimentsRepository)
+
+        val gaugeAll = Gauge<Int> { repo.getAll().size }
+        metricRegistry.register(EXPERIMENTS_COUNT_ALL_METRIC, gaugeAll)
+
+        val gaugeLive = Gauge<Int> { repo.assignable().size }
+        metricRegistry.register(EXPERIMENTS_COUNT_LIVE_METRIC, gaugeLive)
+
+        return repo
     }
 
     @Bean

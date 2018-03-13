@@ -18,7 +18,7 @@ class ExperimentsDoubleRepositorySpec extends Specification {
 
         expect:
         repo.all.size() == 5
-        repo.overridable().size() == 5
+        repo.assignable().size() == 5
     }
 
     def "should save experiments to mongo repo"() {

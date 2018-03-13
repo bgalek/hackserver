@@ -135,7 +135,7 @@ public class Experiment {
         return getStatus() == ExperimentStatus.ACTIVE;
     }
 
-    public boolean isOverridable() {
+    public boolean isAssignable() {
         return !isEnded() && !isPaused();
     }
 
