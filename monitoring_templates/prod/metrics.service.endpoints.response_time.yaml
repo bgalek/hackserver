@@ -9,23 +9,55 @@ sources:
       metric: groupByNode(group(stats.experiments.chi.chi-server.*.InteractionsController.*.*.2xx.p99,
                                 stats.experiments.chi.chi-server.*.ClientExperimentsController.*.*.2xx.p99),
                           6, 'averageSeries')
-    overall_response_time:
-      metric: groupByNode(stats.experiments.chi.chi-server.*.*.*.*.2xx.p99, 6, 'averageSeries')
+    client_interactions_post_latency:
+      metric: maxSeries(stats.experiments.chi.chi-server.*.InteractionsController.*.POST.2xx.p99)
+    client_experiments_get_latency:
+      metric: maxSeries(stats.experiments.chi.chi-server.*.ClientExperimentsController*.*.GET.2xx.p99)
+    admin_experiments_get_latency:
+      metric: maxSeries(stats.experiments.chi.chi-server.*.ExperimentsController.*.GET.2xx.p99)
+    admin_statistics_get_latency:
+      metric: maxSeries(stats.experiments.chi.chi-server.*.StatisticsController.*.GET.2xx.p99)
+    admin_user_get_latency:
+      metric: maxSeries(stats.experiments.chi.chi-server.*.UserController.*.GET.2xx.p99)
 
 checks:
-  client_response_time:
-    sources: ['client_response_time']
+  client_interactions_post_latency:
+    sources: ['client_interactions_post_latency']
     frequency: 1
     triggers:
-      - rule: client_response_time.values > 500
+      - rule: client_interactions_post_latency.values > 500
         debounce: 2
         severity: critical
         notify: ['pagerduty_alert']
-  overall_response_time:
-    sources: ['overall_response_time']
+  client_experiments_get_latency:
+    sources: ['client_experiments_get_latency']
     frequency: 1
     triggers:
-      - rule: overall_response_time.values > 2000
+      - rule: client_experiments_get_latency.values > 500
+        debounce: 2
+        severity: critical
+        notify: ['pagerduty_alert']
+  admin_experiments_get_latency:
+    sources: ['admin_experiments_get_latency']
+    frequency: 1
+    triggers:
+      - rule: admin_experiments_get_latency.values > 2000
+        debounce: 4
+        severity: critical
+        notify: ['pagerduty_alert']
+  admin_statistics_get_latency:
+    sources: ['admin_statistics_get_latency']
+    frequency: 1
+    triggers:
+      - rule: admin_statistics_get_latency.values > 2000
+        debounce: 4
+        severity: critical
+        notify: ['pagerduty_alert']
+  admin_user_get_latency:
+    sources: ['admin_user_get_latency']
+    frequency: 1
+    triggers:
+      - rule: admin_user_get_latency.values > 2000
         debounce: 4
         severity: critical
         notify: ['pagerduty_alert']
