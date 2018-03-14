@@ -5,6 +5,9 @@ import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+
 public class DruidClient {
     private final String druidApiHost;
     private final RestTemplate restTemplate;
@@ -26,5 +29,14 @@ public class DruidClient {
         } catch (Exception e) {
             throw new DruidException("Error while trying to get data from " + druidApiHost, e);
         }
+    }
+
+    public static String oneDayIntervals(LocalDate date) {
+        String dateStr = DateTimeFormatter.ISO_LOCAL_DATE.format(date);
+        return dateStr + "T00Z/" + dateStr + "T23:59:59.999Z";
+    }
+
+    public static String lastDayIntervals() {
+        return oneDayIntervals(LocalDate.now().minusDays(1));
     }
 }

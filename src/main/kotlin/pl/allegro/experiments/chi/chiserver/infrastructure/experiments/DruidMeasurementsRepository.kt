@@ -12,8 +12,8 @@ import pl.allegro.experiments.chi.chiserver.domain.experiments.ExperimentMeasure
 import pl.allegro.experiments.chi.chiserver.domain.experiments.MeasurementsRepository
 import pl.allegro.experiments.chi.chiserver.infrastructure.JsonConverter
 import pl.allegro.experiments.chi.chiserver.infrastructure.druid.DruidClient
+import pl.allegro.experiments.chi.chiserver.infrastructure.druid.DruidClient.lastDayIntervals
 import pl.allegro.experiments.chi.chiserver.infrastructure.druid.DruidException
-import pl.allegro.experiments.chi.chiserver.infrastructure.druid.lastDayIntervals
 import pl.allegro.experiments.chi.chiserver.logger
 import java.util.concurrent.TimeUnit
 
