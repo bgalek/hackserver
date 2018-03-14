@@ -13,11 +13,13 @@ import pl.allegro.experiments.chi.chiserver.domain.experiments.administration.re
 import pl.allegro.experiments.chi.chiserver.domain.experiments.administration.start.StartExperimentCommandFactory;
 import pl.allegro.experiments.chi.chiserver.domain.experiments.administration.stop.StopExperimentCommandFactory;
 
+import java.time.ZoneId;
+
 @Configuration
 class AuditConfig {
 
     @Bean
     Audit audit(Javers javers) {
-        return new Audit(javers);
+        return new Audit(javers, ZoneId.systemDefault());
     }
 }
