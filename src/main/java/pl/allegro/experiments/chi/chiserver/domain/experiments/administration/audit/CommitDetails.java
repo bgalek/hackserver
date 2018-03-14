@@ -7,7 +7,7 @@ public class CommitDetails {
     private final LocalDateTime date;
     private final String changelog;
 
-    public CommitDetails(String author, LocalDateTime date, String changelog) {
+    CommitDetails(String author, LocalDateTime date, String changelog) {
         this.author = author;
         this.date = date;
         this.changelog = changelog;

@@ -15,16 +15,9 @@ import pl.allegro.experiments.chi.chiserver.domain.experiments.administration.Ex
 import pl.allegro.experiments.chi.chiserver.domain.experiments.administration.ExperimentNotFoundException;
 import pl.allegro.experiments.chi.chiserver.domain.experiments.administration.audit.Audit;
 import pl.allegro.experiments.chi.chiserver.domain.experiments.administration.audit.AuditLog;
-import pl.allegro.experiments.chi.chiserver.domain.experiments.administration.create.CreateExperimentCommandFactory;
 import pl.allegro.experiments.chi.chiserver.domain.experiments.administration.create.ExperimentCreationRequest;
-import pl.allegro.experiments.chi.chiserver.domain.experiments.administration.delete.DeleteExperimentCommandFactory;
-import pl.allegro.experiments.chi.chiserver.domain.experiments.administration.pause.PauseExperimentCommandFactory;
-import pl.allegro.experiments.chi.chiserver.domain.experiments.administration.prolong.ProlongExperimentCommandFactory;
 import pl.allegro.experiments.chi.chiserver.domain.experiments.administration.prolong.ProlongExperimentProperties;
-import pl.allegro.experiments.chi.chiserver.domain.experiments.administration.resume.ResumeExperimentCommandFactory;
-import pl.allegro.experiments.chi.chiserver.domain.experiments.administration.start.StartExperimentCommandFactory;
 import pl.allegro.experiments.chi.chiserver.domain.experiments.administration.start.StartExperimentProperties;
-import pl.allegro.experiments.chi.chiserver.domain.experiments.administration.stop.StopExperimentCommandFactory;
 import pl.allegro.tech.common.andamio.errors.Error;
 import pl.allegro.tech.common.andamio.errors.ErrorsHolder;
 import pl.allegro.tech.common.andamio.errors.SimpleErrorsHolder;
@@ -117,7 +110,7 @@ public class ExperimentsController {
     @PutMapping(path = {"{experimentId}/stop"})
     ResponseEntity<String> stopExperiment(@PathVariable String experimentId) {
         logger.info("Stop experiment request received: " + experimentId);
-        experimentActions.stopExperiment(experimentId);
+        experimentActions.stop(experimentId);
         return new ResponseEntity<String>(HttpStatus.OK);
     }
 
@@ -133,7 +126,7 @@ public class ExperimentsController {
     @PutMapping(path = {"{experimentId}/resume"})
     ResponseEntity<String> resumeExperiment(@PathVariable String experimentId) {
         logger.info("Resume experiment request received: " + experimentId);
-        experimentActions.resumeExperiment(experimentId);
+        experimentActions.resume(experimentId);
         return new ResponseEntity<String>(HttpStatus.OK);
     }
 

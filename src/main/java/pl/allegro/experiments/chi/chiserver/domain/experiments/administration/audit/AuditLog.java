@@ -18,5 +18,4 @@ public class AuditLog {
     public List<CommitDetails> getChanges() {
         return changes;
     }
-
 }

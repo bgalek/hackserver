@@ -12,7 +12,6 @@ import pl.allegro.experiments.chi.chiserver.domain.experiments.administration.st
 import pl.allegro.experiments.chi.chiserver.domain.experiments.administration.stop.StopExperimentCommandFactory;
 
 public class ExperimentActions {
-
     private final CreateExperimentCommandFactory createExperimentCommandFactory;
     private final StartExperimentCommandFactory startExperimentCommandFactory;
     private final ProlongExperimentCommandFactory prolongExperimentCommandFactory;
@@ -46,33 +45,34 @@ public class ExperimentActions {
     public void start(
             String experimentId,
             StartExperimentProperties properties) {
-        startExperimentCommandFactory.startExperimentCommand(experimentId, properties).execute();
+        startExperimentCommandFactory.startExperimentCommand(experimentId, properties)
+                .execute();
     }
 
     public void prolong(
             String experimentId,
             ProlongExperimentProperties properties) {
-        prolongExperimentCommandFactory.prolongExperimentCommand(experimentId, properties).execute();
-
+        prolongExperimentCommandFactory.prolongExperimentCommand(experimentId, properties)
+                .execute();
     }
 
-    public void stopExperiment(String experimentId) {
-
-        stopExperimentCommandFactory.stopExperimentCommand(experimentId).execute();
-
+    public void stop(String experimentId) {
+        stopExperimentCommandFactory.stopExperimentCommand(experimentId)
+                .execute();
     }
 
     public void pause(String experimentId) {
-        pauseExperimentCommandFactory.pauseExperimentCommand(experimentId).execute();
+        pauseExperimentCommandFactory.pauseExperimentCommand(experimentId)
+                .execute();
     }
     
-    public void resumeExperiment(String experimentId) {
-        resumeExperimentCommandFactory.resumeExperimentCommand(experimentId).execute();
-
+    public void resume(String experimentId) {
+        resumeExperimentCommandFactory.resumeExperimentCommand(experimentId)
+                .execute();
     }
 
     public void delete(String experimentId) {
-        deleteExperimentCommandFactory.deleteExperimentCommand(experimentId).execute();
+        deleteExperimentCommandFactory.deleteExperimentCommand(experimentId)
+                .execute();
     }
-
 }

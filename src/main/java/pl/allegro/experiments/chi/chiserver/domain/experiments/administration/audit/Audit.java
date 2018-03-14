@@ -15,7 +15,6 @@ import java.util.Map.Entry;
 import java.util.stream.Collectors;
 
 public class Audit {
-
     private final Javers javers;
 
     public Audit(Javers javers) {
@@ -46,7 +45,7 @@ public class Audit {
     private CommitDetails createCommitChanges(Entry<CommitMetadata, List<Change>> entry) {
         final CommitMetadata commitMetadata = entry.getKey();
         final List<Change> changes = entry.getValue();
-        String changeLog = javers.processChangeList(changes, new CommitChangeLogWithoutMetadata());
+        String changeLog = javers.processChangeList(changes, new TextChangeLogWithoutCommitMetadata());
         return new CommitDetails(
                 commitMetadata.getAuthor(),
                 commitMetadata.getCommitDate(),

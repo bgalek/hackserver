@@ -4,7 +4,6 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.test.annotation.DirtiesContext
 import pl.allegro.experiments.chi.chiserver.BaseIntegrationSpec
 import pl.allegro.experiments.chi.chiserver.domain.User
-import pl.allegro.experiments.chi.chiserver.domain.experiments.ExperimentsRepository
 import pl.allegro.experiments.chi.chiserver.domain.experiments.administration.ExperimentActions
 import pl.allegro.experiments.chi.chiserver.domain.experiments.administration.audit.Audit
 import pl.allegro.experiments.chi.chiserver.domain.experiments.administration.start.StartExperimentProperties
@@ -14,9 +13,6 @@ import static pl.allegro.experiments.chi.chiserver.application.administration.Co
 
 @DirtiesContext
 class AuditIntegrationSpec extends BaseIntegrationSpec {
-
-    @Autowired
-    ExperimentsRepository experimentsRepository
 
     @Autowired
     MutableUserProvider mutableUserProvider
