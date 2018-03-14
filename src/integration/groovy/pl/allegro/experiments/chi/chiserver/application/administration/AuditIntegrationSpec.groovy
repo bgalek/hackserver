@@ -35,13 +35,13 @@ class AuditIntegrationSpec extends BaseIntegrationSpec {
         with(auditLog.changes.first()) {
             author == "user1"
             date
-            changelog.contains("""changed on 'id'""")
-            changelog.contains("""changed on 'description'""")
-            changelog.contains("""changed on 'documentLink'""")
-            changelog.contains("""changed on 'groups'""")
-            changelog.contains("""changed on 'status'""")
-            changelog.contains("""changed on 'author'""")
-            changelog.contains("""new object: Experiment/$id""")
+            changelog.contains("changed on 'id'")
+            changelog.contains("changed on 'description'")
+            changelog.contains("changed on 'documentLink'")
+            changelog.contains("changed on 'groups'")
+            changelog.contains("changed on 'status'")
+            changelog.contains("changed on 'author'")
+            changelog.contains("new object: Experiment/$id")
         }
 
         when:
@@ -52,9 +52,9 @@ class AuditIntegrationSpec extends BaseIntegrationSpec {
         with(lastChange(id)) {
             author == "user2"
             date
-            changelog.contains("""changed on 'status'""")
-            changelog.contains("""changed on 'activeTo'""")
-            changelog.contains("""changed on 'activeFrom'""")
+            changelog.contains("changed on 'status'")
+            changelog.contains("changed on 'activeTo'")
+            changelog.contains("changed on 'activeFrom'")
         }
 
         when:
@@ -65,7 +65,7 @@ class AuditIntegrationSpec extends BaseIntegrationSpec {
         with(lastChange(id)) {
             author == "user3"
             date
-            changelog.contains("""object removed: 'Experiment/$id""")
+            changelog.contains("object removed: 'Experiment/$id")
         }
     }
 
