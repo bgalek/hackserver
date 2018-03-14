@@ -291,10 +291,10 @@
         }
 
         if (this.shouldAppendSeparateInternalVariant()) {
-          result.variants.push({
+          result.variants = [{
             name: this.selectedInternal,
             predicates: [this.getInternalPredicateDataToSend()]
-          })
+          }].concat(result.variants)
         }
 
         return result
