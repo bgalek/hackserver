@@ -17,11 +17,11 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.stream.Collectors;
 
-public class Audit {
+public class Auditor {
     private final Javers javers;
     private final ZoneId zoneId;
 
-    public Audit(Javers javers, ZoneId zoneId) {
+    public Auditor(Javers javers, ZoneId zoneId) {
         this.javers = javers;
         this.zoneId = zoneId;
     }

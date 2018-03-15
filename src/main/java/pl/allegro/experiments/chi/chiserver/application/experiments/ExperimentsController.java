@@ -13,7 +13,7 @@ import pl.allegro.experiments.chi.chiserver.domain.experiments.administration.Au
 import pl.allegro.experiments.chi.chiserver.domain.experiments.administration.ExperimentActions;
 import pl.allegro.experiments.chi.chiserver.domain.experiments.administration.ExperimentCommandException;
 import pl.allegro.experiments.chi.chiserver.domain.experiments.administration.ExperimentNotFoundException;
-import pl.allegro.experiments.chi.chiserver.domain.experiments.administration.audit.Audit;
+import pl.allegro.experiments.chi.chiserver.domain.experiments.administration.audit.Auditor;
 import pl.allegro.experiments.chi.chiserver.domain.experiments.administration.audit.AuditLog;
 import pl.allegro.experiments.chi.chiserver.domain.experiments.administration.create.ExperimentCreationRequest;
 import pl.allegro.experiments.chi.chiserver.domain.experiments.administration.prolong.ProlongExperimentProperties;
@@ -37,7 +37,7 @@ public class ExperimentsController {
     private final PermissionsRepository permissionsRepository;
     private ExperimentActions experimentActions;
     private final Gson jsonConverter;
-    private final Audit audit;
+    private final Auditor auditor;
 
     private static final Logger logger = LoggerFactory.getLogger(ExperimentsController.class);
 
@@ -47,14 +47,14 @@ public class ExperimentsController {
             PermissionsRepository permissionsRepository,
             ExperimentActions experimentActions,
             Gson jsonConverter,
-            Audit audit) {
+            Auditor auditor) {
 
         this.experimentsRepository = experimentsRepository;
         this.measurementsRepository = measurementsRepository;
         this.permissionsRepository = permissionsRepository;
         this.experimentActions = experimentActions;
         this.jsonConverter = jsonConverter;
-        this.audit = audit;
+        this.auditor = auditor;
     }
 
     @MeteredEndpoint
@@ -142,7 +142,7 @@ public class ExperimentsController {
     @GetMapping(path = {"{experimentId}/audit-log"})
     ResponseEntity<String> getAuditLog(@PathVariable String experimentId) {
         logger.info("Audit log request received: " + experimentId);
-        final AuditLog auditLog = audit.getAuditLog(experimentId);
+        final AuditLog auditLog = auditor.getAuditLog(experimentId);
         final String body = jsonConverter.toJson(auditLog);
         return ResponseEntity.ok(body);
     }

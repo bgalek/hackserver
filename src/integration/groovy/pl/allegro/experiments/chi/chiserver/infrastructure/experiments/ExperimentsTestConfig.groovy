@@ -25,7 +25,8 @@ class ExperimentsTestConfig {
 }
 
 class MutableUserProvider implements UserProvider {
-    User user = new User("Anonymous", [], false)
+    static User DEFAULT = new User("Anonymous", [], false)
+    User user = DEFAULT
 
     def setUser(User user) {
         this.user = user
@@ -34,6 +35,10 @@ class MutableUserProvider implements UserProvider {
     @Override
     User getCurrentUser() {
         return user;
+    }
+
+    void reset() {
+        user = DEFAULT
     }
 }
 

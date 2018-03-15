@@ -5,20 +5,20 @@ import org.springframework.test.annotation.DirtiesContext
 import pl.allegro.experiments.chi.chiserver.BaseIntegrationSpec
 import pl.allegro.experiments.chi.chiserver.domain.User
 import pl.allegro.experiments.chi.chiserver.domain.experiments.administration.ExperimentActions
-import pl.allegro.experiments.chi.chiserver.domain.experiments.administration.audit.Audit
+import pl.allegro.experiments.chi.chiserver.domain.experiments.administration.audit.Auditor
 import pl.allegro.experiments.chi.chiserver.domain.experiments.administration.start.StartExperimentProperties
 import pl.allegro.experiments.chi.chiserver.infrastructure.experiments.MutableUserProvider
 
 import static pl.allegro.experiments.chi.chiserver.application.administration.CommandTestUtils.simpleExperimentRequest
 
 @DirtiesContext
-class AuditIntegrationSpec extends BaseIntegrationSpec {
+class AuditorIntegrationSpec extends BaseIntegrationSpec {
 
     @Autowired
     MutableUserProvider mutableUserProvider
 
     @Autowired
-    Audit audit
+    Auditor auditor
 
     @Autowired
     ExperimentActions experimentActions
@@ -28,7 +28,7 @@ class AuditIntegrationSpec extends BaseIntegrationSpec {
         def id = "sample-experiment-id"
         signInAs("user1")
         experimentActions.create(simpleExperimentRequest(id))
-        def auditLog = audit.getAuditLog(id)
+        def auditLog = auditor.getAuditLog(id)
 
         then:
         auditLog.experimentId == id
@@ -70,7 +70,7 @@ class AuditIntegrationSpec extends BaseIntegrationSpec {
     }
 
     def lastChange(String id) {
-        def auditLog = audit.getAuditLog(id)
+        def auditLog = auditor.getAuditLog(id)
         return auditLog.changes.first()
     }
 
