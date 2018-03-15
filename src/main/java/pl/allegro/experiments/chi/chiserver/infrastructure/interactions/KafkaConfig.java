@@ -48,7 +48,7 @@ public class KafkaConfig {
             @Value("${interactions.kafka.linger-ms}") int lingerMs,
             MetricRegistry metricRegistry) {
         String bootstrapServer = cloudMetadata.getDatacenter().equals("dc5") ? bootstrapServersDc5 : bootstrapServersDc4;
-        KafkaTemplate<String, ByteArray> kafkaTemplate = new KafkaTemplate<String, ByteArray>(producerFactory(bootstrapServer, batchSize, lingerMs));
+        KafkaTemplate<String, byte[]> kafkaTemplate = new KafkaTemplate<String, byte[]>(producerFactory(bootstrapServer, batchSize, lingerMs));
         metricsList.forEach(metricName ->
                 metricRegistry.register("kafka." + metricName, new Gauge<Double>() {
                     @Override
@@ -61,7 +61,7 @@ public class KafkaConfig {
         return kafkaTemplate;
     }
 
-    private double getMetricValue(KafkaTemplate<String, ByteArray> kafkaTemplate, String metricName) {
+    private double getMetricValue(KafkaTemplate<String, byte[]> kafkaTemplate, String metricName) {
         return kafkaTemplate.metrics().keySet().stream()
                 .filter(it -> it.name().equals(metricName) && it.tags().size() < 2)
                 .findFirst()
@@ -72,11 +72,11 @@ public class KafkaConfig {
                 .orElse(.0);
     }
 
-    private DefaultKafkaProducerFactory<String, ByteArray> producerFactory(
+    private DefaultKafkaProducerFactory<String, byte[]> producerFactory(
             String bootstrapServers,
             int batchSize,
             int lingerMs) {
-        return new DefaultKafkaProducerFactory<String, ByteArray>(config(bootstrapServers, batchSize, lingerMs));
+        return new DefaultKafkaProducerFactory<String, byte[]>(config(bootstrapServers, batchSize, lingerMs));
     }
 
     private Map<String, Object> config(
