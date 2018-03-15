@@ -30,15 +30,18 @@
   import ChiPanel from '../../ChiPanel.vue'
 
   export default {
+
     components: {
       ChiPanel
     },
+
     created () {
       const experimentId = this.$route.params.experimentId
       this.getExperimentAuditLog({params: {experimentId: experimentId}})
     },
 
     computed: {
+
       ...mapState({
         auditLog: state => state.experimentAuditLog.auditLog,
         error: state => state.experimentAuditLog.error
@@ -48,6 +51,7 @@
         return `Audit log for ${this.auditLog.experimentId}`
       }
     },
+
     methods: {
       ...mapActions(['getExperimentAuditLog']),
 
