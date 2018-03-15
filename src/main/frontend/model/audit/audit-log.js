@@ -13,6 +13,10 @@ export default class AuditLog extends AuditLogRecord {
     super(auditLog)
   }
 
+  hasChanges () {
+    return this.changes.length > 0
+  }
+
   static empty () {
     return new this({experimentId: '', changes: []})
   }

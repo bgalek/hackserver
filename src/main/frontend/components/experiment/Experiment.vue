@@ -37,6 +37,11 @@
           :experiment="experiment"
         ></assignment-panel>
 
+        <audit-log-panel
+          v-if="loadingExperimentDone"
+          :experimentId=experimentId
+        ></audit-log-panel>
+
       </v-flex>
     </v-layout>
   </v-container>
@@ -50,6 +55,7 @@
   import ExperimentDetails from './ExperimentDetails.vue'
   import ExperimentActions from './ExperimentActions.vue'
   import ChiPanel from '../ChiPanel.vue'
+  import AuditLogPanel from './audit/AuditLogPanel'
   import _ from 'lodash'
 
   export default {
@@ -131,6 +137,7 @@
 
     components: {
       AssignmentPanel,
+      AuditLogPanel,
       ResultTable,
       ExperimentDetails,
       ChiPanel,

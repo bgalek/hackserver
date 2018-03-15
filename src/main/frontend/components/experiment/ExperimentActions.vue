@@ -111,11 +111,6 @@
         </v-list>
       </v-menu>
 
-      <v-btn color="gray" style="text-transform: none"
-             @click="showAuditLog()">
-        Audit log
-      </v-btn>
-
     </v-form>
 
   </chi-panel>
@@ -255,11 +250,6 @@
 
           this.afterSending()
         }
-      },
-
-      showAuditLog () {
-        const id = this.experiment.id
-        this.$router.push(`/experiments/${id}/audit-log`)
       },
 
       showError (error) {

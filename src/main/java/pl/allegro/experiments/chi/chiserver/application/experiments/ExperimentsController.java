@@ -48,7 +48,6 @@ public class ExperimentsController {
             ExperimentActions experimentActions,
             Gson jsonConverter,
             Auditor auditor) {
-
         this.experimentsRepository = experimentsRepository;
         this.measurementsRepository = measurementsRepository;
         this.permissionsRepository = permissionsRepository;
@@ -75,7 +74,7 @@ public class ExperimentsController {
                 .map(measurementsRepository::withMeasurements)
                 .map(permissionsRepository::withPermissions)
                 .map(e -> ResponseEntity.ok(jsonConverter.toJson(e)))
-                .orElse(new ResponseEntity<String>(HttpStatus.NOT_FOUND));
+                .orElse(new ResponseEntity<>(HttpStatus.NOT_FOUND));
     }
 
     @MeteredEndpoint
@@ -83,7 +82,7 @@ public class ExperimentsController {
     ResponseEntity<String> addExperiment(@RequestBody ExperimentCreationRequest experimentCreationRequest) {
         logger.info("Experiment creation request received", experimentCreationRequest);
         experimentActions.create(experimentCreationRequest);
-        return new ResponseEntity<String>(HttpStatus.CREATED);
+        return new ResponseEntity<>(HttpStatus.CREATED);
     }
 
     @MeteredEndpoint
@@ -93,7 +92,7 @@ public class ExperimentsController {
             @RequestBody StartExperimentProperties properties) {
         logger.info("Start experiment request received: " + experimentId);
         experimentActions.start(experimentId, properties);
-        return new ResponseEntity<String>(HttpStatus.OK);
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 
     @MeteredEndpoint
@@ -103,7 +102,7 @@ public class ExperimentsController {
             @RequestBody ProlongExperimentProperties properties) {
         logger.info("Prolong experiment request received: " + experimentId);
         experimentActions.prolong(experimentId, properties);
-        return new ResponseEntity<String>(HttpStatus.OK);
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 
     @MeteredEndpoint
@@ -111,7 +110,7 @@ public class ExperimentsController {
     ResponseEntity<String> stopExperiment(@PathVariable String experimentId) {
         logger.info("Stop experiment request received: " + experimentId);
         experimentActions.stop(experimentId);
-        return new ResponseEntity<String>(HttpStatus.OK);
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 
     @MeteredEndpoint
@@ -119,7 +118,7 @@ public class ExperimentsController {
     ResponseEntity<String> pauseExperiment(@PathVariable String experimentId) {
         logger.info("Pause experiment request received: " + experimentId);
         experimentActions.pause(experimentId);
-        return new ResponseEntity<String>(HttpStatus.OK);
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 
     @MeteredEndpoint
@@ -127,7 +126,7 @@ public class ExperimentsController {
     ResponseEntity<String> resumeExperiment(@PathVariable String experimentId) {
         logger.info("Resume experiment request received: " + experimentId);
         experimentActions.resume(experimentId);
-        return new ResponseEntity<String>(HttpStatus.OK);
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 
     @MeteredEndpoint
@@ -135,7 +134,7 @@ public class ExperimentsController {
     ResponseEntity<String> deleteExperiment(@PathVariable String experimentId) {
         logger.info("Delete experiment request received: " + experimentId);
         experimentActions.delete(experimentId);
-        return new ResponseEntity<String>(HttpStatus.OK);
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 
     @MeteredEndpoint
@@ -155,7 +154,7 @@ public class ExperimentsController {
                 .withCode("AuthorizationException")
                 .withMessage(exception.getMessage())
                 .build();
-        return new ResponseEntity<ErrorsHolder>(new SimpleErrorsHolder(error), HttpStatus.UNAUTHORIZED);
+        return new ResponseEntity<>(new SimpleErrorsHolder(error), HttpStatus.UNAUTHORIZED);
     }
 
     @ExceptionHandler(ExperimentNotFoundException.class)
@@ -176,6 +175,6 @@ public class ExperimentsController {
                 .withMessage(exception.getMessage())
                 .build();
 
-        return new ResponseEntity<ErrorsHolder>(new SimpleErrorsHolder(error), HttpStatus.BAD_REQUEST);
+        return new ResponseEntity<>(new SimpleErrorsHolder(error), HttpStatus.BAD_REQUEST);
     }
 }
