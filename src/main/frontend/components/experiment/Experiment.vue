@@ -39,7 +39,7 @@
 
         <audit-log-panel
           v-if="loadingExperimentDone"
-          :experimentId=experimentId
+          :experiment=experiment
         ></audit-log-panel>
 
       </v-flex>

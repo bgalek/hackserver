@@ -27,16 +27,20 @@
   import ChiPanel from '../../ChiPanel.vue'
 
   export default {
-    props: {
-      experimentId: String
-    },
+    props: ['experiment'],
 
     components: {
       ChiPanel
     },
 
+    watch: {
+      experiment: function (changedExperiment) {
+        this.onExperimentChanged(changedExperiment)
+      }
+    },
+
     mounted () {
-      this.getExperimentAuditLog({params: {experimentId: this.experimentId}})
+      this.onExperimentChanged(this.experiment)
     },
 
     computed: {
@@ -51,6 +55,10 @@
 
       errorOccurred () {
         return this.error instanceof Error
+      },
+
+      onExperimentChanged (experiment) {
+        this.getExperimentAuditLog({params: {experimentId: experiment.id}})
       }
     }
   }
