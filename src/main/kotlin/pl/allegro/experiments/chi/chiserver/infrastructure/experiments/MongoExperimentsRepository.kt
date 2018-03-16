@@ -1,7 +1,6 @@
 package pl.allegro.experiments.chi.chiserver.infrastructure.experiments
 
 import org.javers.core.Javers
-import org.javers.spring.auditable.AuthorProvider
 import org.springframework.data.mongodb.core.MongoTemplate
 import pl.allegro.experiments.chi.chiserver.domain.UserProvider
 import pl.allegro.experiments.chi.chiserver.domain.experiments.Experiment
@@ -23,7 +22,9 @@ open class MongoExperimentsRepository(val mongoTemplate: MongoTemplate,
     override fun delete(experimentId: String) {
         val experiment = getExperiment(experimentId)
         val userName = userProvider.currentUser.name
-        javers.commitShallowDelete(userName, experiment)
+        javers.getLatestSnapshot(experimentId, Experiment::class.java).ifPresent {
+            javers.commitShallowDelete(userName, experiment)
+        }
         mongoTemplate.remove(experiment, COLLECTION)
     }
 
@@ -33,7 +34,7 @@ open class MongoExperimentsRepository(val mongoTemplate: MongoTemplate,
         mongoTemplate.save(experiment, COLLECTION)
     }
 
-    override fun getAll() : List<Experiment> {
+    override fun getAll(): List<Experiment> {
         experimentsMongoMetricsReporter.timerAllExperiments().use {
             return mongoTemplate.findAll(Experiment::class.java, COLLECTION)
         }
