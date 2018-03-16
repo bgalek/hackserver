@@ -179,13 +179,6 @@ class ExperimentsSelfServiceE2ESpec extends BaseIntegrationSpec {
         then:
         ex = thrown(HttpClientErrorException)
         ex.statusCode == HttpStatus.NOT_FOUND
-
-        when:
-        def auditResponse = restTemplate.getForEntity(localUrl("/api/admin/experiments/${request.id}/audit-log"), Map)
-
-        then:
-        auditResponse.body.experimentId == request.id
-        auditResponse.body.changes.isEmpty() == false
     }
 
     ExperimentResponseAssertions assertThatExperimentWithId(String id) {
