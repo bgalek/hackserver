@@ -12,8 +12,8 @@ public class ActivityPeriod {
         Preconditions.checkNotNull(activeFrom);
         Preconditions.checkNotNull(activeTo);
         Preconditions.checkArgument(activeTo.isAfter(activeFrom) || activeTo.equals(activeFrom));
-        this.activeFrom = activeFrom;
-        this.activeTo = activeTo;
+        this.activeFrom = activeFrom.withNano(0);
+        this.activeTo = activeTo.withNano(0);
     }
 
     public ZonedDateTime getActiveFrom() {
@@ -25,7 +25,8 @@ public class ActivityPeriod {
     }
 
     public ActivityPeriod endNow() {
-        return new ActivityPeriod(activeFrom, ZonedDateTime.now());
+        //minus 1 sec is to force ENDED status after calling this method
+        return new ActivityPeriod(activeFrom, ZonedDateTime.now().minusSeconds(1));
     }
 
 }
