@@ -25,8 +25,12 @@ public class ActivityPeriod {
     }
 
     public ActivityPeriod endNow() {
+        final ZonedDateTime newActiveTo = ZonedDateTime.now();
         //minus 1 sec is to force ENDED status after calling this method
-        return new ActivityPeriod(activeFrom, ZonedDateTime.now().minusSeconds(1));
+        if (activeTo.isAfter(activeFrom)) {
+            newActiveTo.minusSeconds(1);
+        }
+        return new ActivityPeriod(activeFrom, newActiveTo);
     }
 
 }
