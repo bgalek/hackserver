@@ -20,15 +20,14 @@ import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
-import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 
 class ChangeLogProcessor implements ChangeProcessor<List<CommitDetails>> {
     private final ZoneId zoneId;
-    private final List<CommitDetails> changes = new ArrayList<>();
-    private SimpleTextChangeLog commitChangeLogProcessor;
-    private CommitMetadata commitMetadata;
+    private final LinkedList<CommitChangeLogProcessor> commitChangeLogProcessors = new LinkedList<>();
 
     ChangeLogProcessor(ZoneId zoneId) {
         this.zoneId = zoneId;
@@ -36,14 +35,12 @@ class ChangeLogProcessor implements ChangeProcessor<List<CommitDetails>> {
 
     @Override
     public void onCommit(CommitMetadata commitMetadata) {
-        collectLastCommitDetails();
-        this.commitMetadata = commitMetadata;
-        this.commitChangeLogProcessor = new SimpleTextChangeLog();
+        commitChangeLogProcessors.add(new CommitChangeLogProcessor(commitMetadata));
     }
 
     @Override
     public void onAffectedObject(GlobalId globalId) {
-        commitChangeLogProcessor.onAffectedObject(globalId);
+        getCommitChangeLogProcessor().onAffectedObject(globalId);
     }
 
     @Override
@@ -68,76 +65,91 @@ class ChangeLogProcessor implements ChangeProcessor<List<CommitDetails>> {
 
     @Override
     public void onPropertyChange(PropertyChange propertyChange) {
-        commitChangeLogProcessor.onPropertyChange(propertyChange);
+        getCommitChangeLogProcessor().onPropertyChange(propertyChange);
     }
 
     @Override
     public void onValueChange(ValueChange valueChange) {
-        commitChangeLogProcessor.onValueChange(valueChange);
+        getCommitChangeLogProcessor().onValueChange(valueChange);
     }
 
     @Override
     public void onReferenceChange(ReferenceChange referenceChange) {
-        commitChangeLogProcessor.onReferenceChange(referenceChange);
+        getCommitChangeLogProcessor().onReferenceChange(referenceChange);
     }
 
     @Override
     public void onNewObject(NewObject newObject) {
-        commitChangeLogProcessor.onNewObject(newObject);
+        getCommitChangeLogProcessor().onNewObject(newObject);
     }
 
     @Override
     public void onObjectRemoved(ObjectRemoved objectRemoved) {
-        commitChangeLogProcessor.onObjectRemoved(objectRemoved);
+        getCommitChangeLogProcessor().onObjectRemoved(objectRemoved);
     }
 
     @Override
     public void onContainerChange(ContainerChange containerChange) {
-        commitChangeLogProcessor.onContainerChange(containerChange);
+        getCommitChangeLogProcessor().onContainerChange(containerChange);
     }
 
     @Override
     public void onSetChange(SetChange setChange) {
-        commitChangeLogProcessor.onSetChange(setChange);
+        getCommitChangeLogProcessor().onSetChange(setChange);
     }
 
     @Override
     public void onArrayChange(ArrayChange arrayChange) {
-        commitChangeLogProcessor.onArrayChange(arrayChange);
+        getCommitChangeLogProcessor().onArrayChange(arrayChange);
     }
 
     @Override
     public void onListChange(ListChange listChange) {
-        commitChangeLogProcessor.onListChange(listChange);
+        getCommitChangeLogProcessor().onListChange(listChange);
     }
 
     @Override
     public void onMapChange(MapChange mapChange) {
-        commitChangeLogProcessor.onMapChange(mapChange);
+        getCommitChangeLogProcessor().onMapChange(mapChange);
+    }
+
+    private SimpleTextChangeLog getCommitChangeLogProcessor() {
+        return commitChangeLogProcessors.getLast().getChangeLogProcessor();
     }
 
     @Override
     public List<CommitDetails> result() {
-        collectLastCommitDetails();
-        return changes;
+        return commitChangeLogProcessors.stream()
+                .map(this::toCommitDetails)
+                .collect(Collectors.toList());
     }
 
-    private void collectLastCommitDetails() {
-        if (commitMetadata != null) {
-            CommitDetails commitDetails = createCommitDetails();
-            changes.add(commitDetails);
+    private CommitDetails toCommitDetails(CommitChangeLogProcessor commitChangeLogProcessor) {
+        return commitChangeLogProcessor.toCommitDetails(zoneId);
+    }
+
+    private static class CommitChangeLogProcessor {
+        final SimpleTextChangeLog changeLogProcessor = new SimpleTextChangeLog();
+        final CommitMetadata commitMetadata;
+
+        private CommitChangeLogProcessor(CommitMetadata commitMetadata) {
+            this.commitMetadata = commitMetadata;
         }
-    }
 
-    private CommitDetails createCommitDetails() {
-        String author = commitMetadata.getAuthor();
-        ZonedDateTime date = toZonedDateTime(commitMetadata.getCommitDate());
-        String changelog = commitChangeLogProcessor.result();
-        return new CommitDetails(author, date, changelog);
-    }
+        SimpleTextChangeLog getChangeLogProcessor() {
+            return changeLogProcessor;
+        }
 
-    private ZonedDateTime toZonedDateTime(LocalDateTime localDateTime) {
-        final ZoneOffset offset = zoneId.getRules().getOffset(localDateTime);
-        return ZonedDateTime.ofLocal(localDateTime, offset, offset);
+        CommitDetails toCommitDetails(ZoneId zoneId) {
+            String author = commitMetadata.getAuthor();
+            ZonedDateTime date = toZonedDateTime(commitMetadata.getCommitDate(), zoneId);
+            String changelog = changeLogProcessor.result();
+            return new CommitDetails(author, date, changelog);
+        }
+
+        private ZonedDateTime toZonedDateTime(LocalDateTime localDateTime, ZoneId zoneId) {
+            final ZoneOffset offset = zoneId.getRules().getOffset(localDateTime);
+            return ZonedDateTime.ofLocal(localDateTime, offset, offset);
+        }
     }
 }
