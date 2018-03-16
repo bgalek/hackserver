@@ -4,3 +4,8 @@ security:
 chi:
   experiments:
     file: ""
+
+server:
+  shutdown:
+    delay:
+      enabled: false

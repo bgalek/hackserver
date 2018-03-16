@@ -2,6 +2,8 @@ package pl.allegro.experiments.chi.chiserver.infrastructure.experiments
 
 import com.codahale.metrics.Gauge
 import com.codahale.metrics.MetricRegistry
+import org.javers.core.Javers
+import org.javers.spring.auditable.AuthorProvider
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.boot.context.properties.ConfigurationProperties
 import org.springframework.context.annotation.Bean
@@ -12,6 +14,7 @@ import org.springframework.web.client.RestTemplate
 import pl.allegro.experiments.chi.chiserver.application.experiments.AllEnabledCrisisManagementFilter
 import pl.allegro.experiments.chi.chiserver.application.experiments.CrisisManagementFilter
 import pl.allegro.experiments.chi.chiserver.application.experiments.WhitelistCrisisManagementFilter
+import pl.allegro.experiments.chi.chiserver.domain.UserProvider
 import pl.allegro.experiments.chi.chiserver.domain.experiments.ExperimentsRepository
 import pl.allegro.experiments.chi.chiserver.domain.experiments.MeasurementsRepository
 import pl.allegro.experiments.chi.chiserver.infrastructure.JsonConverter
@@ -35,8 +38,11 @@ class ExperimentsConfig {
     fun customConversions() = CustomConversions(mongoConverters)
 
     @Bean
-    fun mongoExperimentsRepository(mongoTemplate: MongoTemplate, experimentsMongoMetricsReporter: ExperimentsMongoMetricsReporter): MongoExperimentsRepository {
-        return MongoExperimentsRepository(mongoTemplate, experimentsMongoMetricsReporter)
+    fun mongoExperimentsRepository(mongoTemplate: MongoTemplate,
+                                   experimentsMongoMetricsReporter: ExperimentsMongoMetricsReporter,
+                                   javers: Javers,
+                                   userProvieder: UserProvider): MongoExperimentsRepository {
+        return MongoExperimentsRepository(mongoTemplate, experimentsMongoMetricsReporter, javers, userProvieder)
     }
 
     @Bean

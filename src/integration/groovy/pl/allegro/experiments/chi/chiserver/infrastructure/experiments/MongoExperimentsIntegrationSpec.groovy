@@ -1,11 +1,14 @@
 package pl.allegro.experiments.chi.chiserver.infrastructure.experiments
 
+import org.javers.common.exception.JaversException
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.data.mongodb.core.MongoTemplate
 import pl.allegro.experiments.chi.chiserver.BaseIntegrationSpec
 import pl.allegro.experiments.chi.chiserver.utils.ExperimentFactory
 
 class MongoExperimentsIntegrationSpec extends BaseIntegrationSpec {
+
+    static EXPERIMENTS_COLLECTION = MongoExperimentsRepositoryKt.COLLECTION
 
     @Autowired
     MongoExperimentsRepository mongoExperimentsRepository
@@ -24,7 +27,22 @@ class MongoExperimentsIntegrationSpec extends BaseIntegrationSpec {
         mongoExperimentsRepository.getExperiment("some") == experiment
     }
 
+    def "should remove not experiments not tracked by javers"() {
+        given:
+        def experiment = ExperimentFactory.experimentWithId("legacy-experiment")
+        mongoTemplate.save(experiment, EXPERIMENTS_COLLECTION)
+
+        when:
+        mongoExperimentsRepository.delete(experiment.id)
+
+        then:
+        notThrown(JaversException)
+
+        and:
+        mongoExperimentsRepository.getExperiment(experiment.id) == null
+    }
+
     def cleanup() {
-        mongoTemplate.dropCollection("experiments")
+        mongoTemplate.dropCollection(EXPERIMENTS_COLLECTION)
     }
 }

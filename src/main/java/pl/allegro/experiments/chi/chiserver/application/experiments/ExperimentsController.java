@@ -10,18 +10,14 @@ import pl.allegro.experiments.chi.chiserver.domain.experiments.ExperimentsReposi
 import pl.allegro.experiments.chi.chiserver.domain.experiments.MeasurementsRepository;
 import pl.allegro.experiments.chi.chiserver.domain.experiments.PermissionsRepository;
 import pl.allegro.experiments.chi.chiserver.domain.experiments.administration.AuthorizationException;
+import pl.allegro.experiments.chi.chiserver.domain.experiments.administration.ExperimentActions;
 import pl.allegro.experiments.chi.chiserver.domain.experiments.administration.ExperimentCommandException;
 import pl.allegro.experiments.chi.chiserver.domain.experiments.administration.ExperimentNotFoundException;
-import pl.allegro.experiments.chi.chiserver.domain.experiments.administration.create.CreateExperimentCommandFactory;
+import pl.allegro.experiments.chi.chiserver.domain.experiments.administration.audit.Auditor;
+import pl.allegro.experiments.chi.chiserver.domain.experiments.administration.audit.AuditLog;
 import pl.allegro.experiments.chi.chiserver.domain.experiments.administration.create.ExperimentCreationRequest;
-import pl.allegro.experiments.chi.chiserver.domain.experiments.administration.delete.DeleteExperimentCommandFactory;
-import pl.allegro.experiments.chi.chiserver.domain.experiments.administration.pause.PauseExperimentCommandFactory;
-import pl.allegro.experiments.chi.chiserver.domain.experiments.administration.prolong.ProlongExperimentCommandFactory;
 import pl.allegro.experiments.chi.chiserver.domain.experiments.administration.prolong.ProlongExperimentProperties;
-import pl.allegro.experiments.chi.chiserver.domain.experiments.administration.resume.ResumeExperimentCommandFactory;
-import pl.allegro.experiments.chi.chiserver.domain.experiments.administration.start.StartExperimentCommandFactory;
 import pl.allegro.experiments.chi.chiserver.domain.experiments.administration.start.StartExperimentProperties;
-import pl.allegro.experiments.chi.chiserver.domain.experiments.administration.stop.StopExperimentCommandFactory;
 import pl.allegro.tech.common.andamio.errors.Error;
 import pl.allegro.tech.common.andamio.errors.ErrorsHolder;
 import pl.allegro.tech.common.andamio.errors.SimpleErrorsHolder;
@@ -39,14 +35,9 @@ public class ExperimentsController {
     private final ExperimentsRepository experimentsRepository;
     private final MeasurementsRepository measurementsRepository;
     private final PermissionsRepository permissionsRepository;
-    private final CreateExperimentCommandFactory createExperimentCommandFactory;
-    private final StartExperimentCommandFactory startExperimentCommandFactory;
-    private final ProlongExperimentCommandFactory prolongExperimentCommandFactory;
-    private final StopExperimentCommandFactory stopExperimentCommandFactory;
-    private final PauseExperimentCommandFactory pauseExperimentCommandFactory;
-    private final ResumeExperimentCommandFactory resumeExperimentCommandFactory;
-    private final DeleteExperimentCommandFactory deleteExperimentCommandFactory;
+    private ExperimentActions experimentActions;
     private final Gson jsonConverter;
+    private final Auditor auditor;
 
     private static final Logger logger = LoggerFactory.getLogger(ExperimentsController.class);
 
@@ -54,26 +45,15 @@ public class ExperimentsController {
             ExperimentsRepository experimentsRepository,
             MeasurementsRepository measurementsRepository,
             PermissionsRepository permissionsRepository,
-            CreateExperimentCommandFactory createExperimentCommandFactory,
-            StartExperimentCommandFactory startExperimentCommandFactory,
-            ProlongExperimentCommandFactory prolongExperimentCommandFactory,
-            StopExperimentCommandFactory stopExperimentCommandFactory,
-            PauseExperimentCommandFactory pauseExperimentCommandFactory,
-            ResumeExperimentCommandFactory resumeExperimentCommandFactory,
-            DeleteExperimentCommandFactory deleteExperimentCommandFactory,
-            Gson jsonConverter) {
-
+            ExperimentActions experimentActions,
+            Gson jsonConverter,
+            Auditor auditor) {
         this.experimentsRepository = experimentsRepository;
         this.measurementsRepository = measurementsRepository;
         this.permissionsRepository = permissionsRepository;
-        this.createExperimentCommandFactory = createExperimentCommandFactory;
-        this.startExperimentCommandFactory = startExperimentCommandFactory;
-        this.prolongExperimentCommandFactory = prolongExperimentCommandFactory;
-        this.stopExperimentCommandFactory = stopExperimentCommandFactory;
-        this.pauseExperimentCommandFactory = pauseExperimentCommandFactory;
-        this.resumeExperimentCommandFactory = resumeExperimentCommandFactory;
-        this.deleteExperimentCommandFactory = deleteExperimentCommandFactory;
+        this.experimentActions = experimentActions;
         this.jsonConverter = jsonConverter;
+        this.auditor = auditor;
     }
 
     @MeteredEndpoint
@@ -94,15 +74,15 @@ public class ExperimentsController {
                 .map(measurementsRepository::withMeasurements)
                 .map(permissionsRepository::withPermissions)
                 .map(e -> ResponseEntity.ok(jsonConverter.toJson(e)))
-                .orElse(new ResponseEntity<String>(HttpStatus.NOT_FOUND));
+                .orElse(new ResponseEntity<>(HttpStatus.NOT_FOUND));
     }
 
     @MeteredEndpoint
     @PostMapping(path = {""})
     ResponseEntity<String> addExperiment(@RequestBody ExperimentCreationRequest experimentCreationRequest) {
         logger.info("Experiment creation request received", experimentCreationRequest);
-        createExperimentCommandFactory.createExperimentCommand(experimentCreationRequest).execute();
-        return new ResponseEntity<String>(HttpStatus.CREATED);
+        experimentActions.create(experimentCreationRequest);
+        return new ResponseEntity<>(HttpStatus.CREATED);
     }
 
     @MeteredEndpoint
@@ -111,8 +91,8 @@ public class ExperimentsController {
             @PathVariable String experimentId,
             @RequestBody StartExperimentProperties properties) {
         logger.info("Start experiment request received: " + experimentId);
-        startExperimentCommandFactory.startExperimentCommand(experimentId, properties).execute();
-        return new ResponseEntity<String>(HttpStatus.OK);
+        experimentActions.start(experimentId, properties);
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 
     @MeteredEndpoint
@@ -121,40 +101,49 @@ public class ExperimentsController {
             @PathVariable String experimentId,
             @RequestBody ProlongExperimentProperties properties) {
         logger.info("Prolong experiment request received: " + experimentId);
-        prolongExperimentCommandFactory.prolongExperimentCommand(experimentId, properties).execute();
-        return new ResponseEntity<String>(HttpStatus.OK);
+        experimentActions.prolong(experimentId, properties);
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 
     @MeteredEndpoint
     @PutMapping(path = {"{experimentId}/stop"})
     ResponseEntity<String> stopExperiment(@PathVariable String experimentId) {
         logger.info("Stop experiment request received: " + experimentId);
-        stopExperimentCommandFactory.stopExperimentCommand(experimentId).execute();
-        return new ResponseEntity<String>(HttpStatus.OK);
+        experimentActions.stop(experimentId);
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 
     @MeteredEndpoint
     @PutMapping(path = {"{experimentId}/pause"})
     ResponseEntity<String> pauseExperiment(@PathVariable String experimentId) {
         logger.info("Pause experiment request received: " + experimentId);
-        pauseExperimentCommandFactory.pauseExperimentCommand(experimentId).execute();
-        return new ResponseEntity<String>(HttpStatus.OK);
+        experimentActions.pause(experimentId);
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 
     @MeteredEndpoint
     @PutMapping(path = {"{experimentId}/resume"})
     ResponseEntity<String> resumeExperiment(@PathVariable String experimentId) {
         logger.info("Resume experiment request received: " + experimentId);
-        resumeExperimentCommandFactory.resumeExperimentCommand(experimentId).execute();
-        return new ResponseEntity<String>(HttpStatus.OK);
+        experimentActions.resume(experimentId);
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 
     @MeteredEndpoint
     @DeleteMapping(path = {"{experimentId}"})
     ResponseEntity<String> deleteExperiment(@PathVariable String experimentId) {
         logger.info("Delete experiment request received: " + experimentId);
-        deleteExperimentCommandFactory.deleteExperimentCommand(experimentId).execute();
-        return new ResponseEntity<String>(HttpStatus.OK);
+        experimentActions.delete(experimentId);
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    @MeteredEndpoint
+    @GetMapping(path = {"{experimentId}/audit-log"})
+    ResponseEntity<String> getAuditLog(@PathVariable String experimentId) {
+        logger.info("Audit log request received: " + experimentId);
+        final AuditLog auditLog = auditor.getAuditLog(experimentId);
+        final String body = jsonConverter.toJson(auditLog);
+        return ResponseEntity.ok(body);
     }
 
     @ExceptionHandler(AuthorizationException.class)
@@ -165,7 +154,7 @@ public class ExperimentsController {
                 .withCode("AuthorizationException")
                 .withMessage(exception.getMessage())
                 .build();
-        return new ResponseEntity<ErrorsHolder>(new SimpleErrorsHolder(error), HttpStatus.UNAUTHORIZED);
+        return new ResponseEntity<>(new SimpleErrorsHolder(error), HttpStatus.UNAUTHORIZED);
     }
 
     @ExceptionHandler(ExperimentNotFoundException.class)
@@ -186,6 +175,6 @@ public class ExperimentsController {
                 .withMessage(exception.getMessage())
                 .build();
 
-        return new ResponseEntity<ErrorsHolder>(new SimpleErrorsHolder(error), HttpStatus.BAD_REQUEST);
+        return new ResponseEntity<>(new SimpleErrorsHolder(error), HttpStatus.BAD_REQUEST);
     }
 }
