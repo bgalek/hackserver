@@ -8,7 +8,7 @@
     <v-progress-linear v-if="showProgressBar()" v-bind:indeterminate="true">
     </v-progress-linear>
 
-    <span v-if="!this.experiment.canRunAnyCommand() && !commandOkMessage">
+    <span v-if="!this.canRunAnyCommand() && !commandOkMessage">
       Not much to do here.
     </span>
 
@@ -19,7 +19,7 @@
 
     <v-form ref="actionForm"
             v-model="actionFormValid"
-            v-if="this.experiment.canRunAnyCommand()"
+            v-if="this.canRunAnyCommand()"
             lazy-validation>
 
       <v-text-field
@@ -146,6 +146,10 @@
     },
 
     methods: {
+      canRunAnyCommand () {
+        return this.experiment.canRunAnyCommand() || this.allowDelete
+      },
+
       deleteMe () {
         this.prepareToSend()
         this.deleteExperiment({
