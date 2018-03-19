@@ -1,15 +1,15 @@
 package pl.allegro.experiments.chi.chiserver.infrastructure.experiments
 
 import com.github.salomonbrys.kotson.fromJson
+import com.google.gson.Gson
 import org.slf4j.LoggerFactory
 import pl.allegro.experiments.chi.chiserver.domain.experiments.Experiment
 import pl.allegro.experiments.chi.chiserver.domain.experiments.ReadOnlyExperimentsRepository
 import pl.allegro.experiments.chi.chiserver.infrastructure.InMemoryExperimentsRepository
-import pl.allegro.experiments.chi.chiserver.infrastructure.JsonConverter
 
 open class FileBasedExperimentsRepository(jsonUrl: String,
                                      private val dataLoader: (String) -> String,
-                                     private val jsonConverter: JsonConverter,
+                                     private val jsonConverter: Gson,
                                      initialState: List<Experiment> = emptyList()) : ReadOnlyExperimentsRepository {
 
     private val inMemoryRepository: InMemoryExperimentsRepository = InMemoryExperimentsRepository(initialState)

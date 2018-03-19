@@ -6,11 +6,11 @@ import com.github.salomonbrys.kotson.get
 import com.github.salomonbrys.kotson.int
 import com.github.salomonbrys.kotson.string
 import com.google.common.base.Suppliers
+import com.google.gson.Gson
 import com.google.gson.JsonArray
 import pl.allegro.experiments.chi.chiserver.domain.experiments.Experiment
 import pl.allegro.experiments.chi.chiserver.domain.experiments.ExperimentMeasurements
 import pl.allegro.experiments.chi.chiserver.domain.experiments.MeasurementsRepository
-import pl.allegro.experiments.chi.chiserver.infrastructure.JsonConverter
 import pl.allegro.experiments.chi.chiserver.infrastructure.druid.DruidClient
 import pl.allegro.experiments.chi.chiserver.infrastructure.druid.DruidClient.lastDayIntervals
 import pl.allegro.experiments.chi.chiserver.infrastructure.druid.DruidException
@@ -21,7 +21,7 @@ private const val DRUID_QUERY_TIMEOUT_MS = 2000
 private const val CACHE_EXPIRE_DURATION_MINUTES = 30L
 
 class DruidMeasurementsRepository(private val druid: DruidClient,
-                                  private val jsonConverter: JsonConverter,
+                                  private val jsonConverter: Gson,
                                   private val datasource: String) : MeasurementsRepository {
 
     private var lastDayVisits = emptyMap<String, Int>()

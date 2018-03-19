@@ -2,6 +2,7 @@ package pl.allegro.experiments.chi.chiserver.infrastructure.experiments
 
 import com.codahale.metrics.Gauge
 import com.codahale.metrics.MetricRegistry
+import com.google.gson.Gson
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.boot.context.properties.ConfigurationProperties
 import org.springframework.context.annotation.Bean
@@ -14,8 +15,11 @@ import pl.allegro.experiments.chi.chiserver.application.experiments.CrisisManage
 import pl.allegro.experiments.chi.chiserver.application.experiments.WhitelistCrisisManagementFilter
 import pl.allegro.experiments.chi.chiserver.domain.experiments.ExperimentsRepository
 import pl.allegro.experiments.chi.chiserver.domain.experiments.MeasurementsRepository
-import pl.allegro.experiments.chi.chiserver.infrastructure.JsonConverter
 import pl.allegro.experiments.chi.chiserver.infrastructure.druid.DruidClient
+import pl.allegro.experiments.chi.chiserver.infrastructure.experiments.converters.DateTimeDeserializer
+import pl.allegro.experiments.chi.chiserver.infrastructure.experiments.converters.DateTimeSerializer
+import pl.allegro.experiments.chi.chiserver.infrastructure.experiments.converters.ExperimentDeserializer
+import pl.allegro.experiments.chi.chiserver.infrastructure.experiments.converters.ExperimentSerializer
 
 @Configuration
 class ExperimentsConfig {
@@ -25,14 +29,25 @@ class ExperimentsConfig {
     @Bean
     fun fileBasedExperimentsRepository(
         @Value("\${chi.experiments.file}") jsonUrl: String,
-        restTemplate: RestTemplate, jsonConverter: JsonConverter
+        restTemplate: RestTemplate, jsonConverter: Gson
     ): FileBasedExperimentsRepository {
         val httpContentLoader = HttpContentLoader(restTemplate)
         return FileBasedExperimentsRepository(jsonUrl, httpContentLoader::loadFromHttp, jsonConverter)
     }
 
     @Bean
-    fun customConversions() = CustomConversions(mongoConverters)
+    fun customConversions(
+            dateTimeSerializer: DateTimeSerializer,
+            dateTimeDeserializer: DateTimeDeserializer,
+            experimentSerializer: ExperimentSerializer,
+            experimentDeserializer: ExperimentDeserializer): CustomConversions {
+        return CustomConversions(listOf(
+                dateTimeDeserializer,
+                dateTimeSerializer,
+                experimentSerializer,
+                experimentDeserializer
+        ))
+    }
 
     @Bean
     fun mongoExperimentsRepository(mongoTemplate: MongoTemplate, experimentsMongoMetricsReporter: ExperimentsMongoMetricsReporter): MongoExperimentsRepository {
@@ -57,7 +72,7 @@ class ExperimentsConfig {
     }
 
     @Bean
-    fun measurementsRepository(druid: DruidClient, jsonConverter: JsonConverter,
+    fun measurementsRepository(druid: DruidClient, jsonConverter: Gson,
                                @Value("\${druid.experimentsCube}") datasource: String): MeasurementsRepository
         = DruidMeasurementsRepository(druid, jsonConverter, datasource)
 
