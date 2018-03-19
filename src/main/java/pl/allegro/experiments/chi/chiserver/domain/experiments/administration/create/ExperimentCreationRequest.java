@@ -4,25 +4,20 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
-import pl.allegro.experiments.chi.chiserver.domain.experiments.CmuidRegexpPredicate;
-import pl.allegro.experiments.chi.chiserver.domain.experiments.DeviceClassPredicate;
-import pl.allegro.experiments.chi.chiserver.domain.experiments.Experiment;
-import pl.allegro.experiments.chi.chiserver.domain.experiments.ExperimentVariant;
-import pl.allegro.experiments.chi.chiserver.domain.experiments.HashRangePredicate;
-import pl.allegro.experiments.chi.chiserver.domain.experiments.InternalPredicate;
-import pl.allegro.experiments.chi.chiserver.domain.experiments.PercentageRange;
+import pl.allegro.experiments.chi.chiserver.domain.experiments.*;
 
 import javax.validation.constraints.NotNull;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.regex.Pattern;
-import java.util.stream.Collectors;
 
 public class ExperimentCreationRequest {
     @NotNull
     private final String id;
     @NotNull
-    private final List<Variant> variants;
+    private final List<String> variantNames;
+    private final String internalVariantName;
+    private final Integer percentage;
+    private final String deviceClass;
     private final String description;
     private final String documentLink;
     private final List<String> groups;
@@ -31,15 +26,21 @@ public class ExperimentCreationRequest {
     @JsonCreator
     public ExperimentCreationRequest(
             @JsonProperty("id") String id,
-            @JsonProperty("variants") List<Variant> variants,
+            @JsonProperty("variantNames") List<String> variantNames,
+            @JsonProperty("internalVariantName") String internalVariantName,
+            @JsonProperty("percentage") Integer percentage,
+            @JsonProperty("deviceClass") String deviceClass,
             @JsonProperty("description") String description,
             @JsonProperty("documentLink") String documentLink,
             @JsonProperty("groups") List<String> groups,
             @JsonProperty("reportingEnabled") Boolean reportingEnabled) {
         Preconditions.checkNotNull(id);
-        Preconditions.checkNotNull(variants);
+        Preconditions.checkNotNull(variantNames);
         this.id = id;
-        this.variants = ImmutableList.copyOf(variants);
+        this.variantNames = ImmutableList.copyOf(variantNames);
+        this.internalVariantName = internalVariantName;
+        this.percentage = percentage;
+        this.deviceClass = deviceClass;
         this.description = description;
         this.documentLink = documentLink;
         if (groups == null) {
@@ -58,8 +59,8 @@ public class ExperimentCreationRequest {
         return id;
     }
 
-    public List<Variant> getVariants() {
-        return variants;
+    public List<String> getVariantNames() {
+        return variantNames;
     }
 
     public String getDescription() {
@@ -82,9 +83,22 @@ public class ExperimentCreationRequest {
     public Experiment toExperiment(String author) {
         Preconditions.checkNotNull(author);
         try {
-            final List<ExperimentVariant> experimentVariants = this.variants.stream()
-                    .map(this::convertVariant)
-                    .collect(Collectors.toList());
+            List<ExperimentVariant> experimentVariants = new ArrayList<>();
+
+            if (internalVariantName != null) {
+                experimentVariants.add(new ExperimentVariant(internalVariantName, ImmutableList.of(new InternalPredicate())));
+            }
+
+            if (percentage != null) {
+                int maxPercentageVariant = 100 / variantNames.size();
+                if (percentage > maxPercentageVariant) {
+                    throw new ExperimentCreationException("Percentage exceeds maximum value ( " + percentage + " > " + maxPercentageVariant + " )");
+                }
+                for (int i = 0; i < variantNames.size(); i++) {
+                    experimentVariants.add(convertVariant(variantNames.get(i), i * maxPercentageVariant,i * maxPercentageVariant + percentage));
+                }
+            }
+
             return Experiment.builder()
                     .id(this.id)
                     .variants(experimentVariants)
@@ -100,97 +114,20 @@ public class ExperimentCreationRequest {
         }
     }
 
-    private ExperimentVariant convertVariant(Variant variant) {
+    private ExperimentVariant convertVariant(String variantName, int from, int to) {
+
+        List<Predicate> predicates = new ArrayList<>();
+
+        if (deviceClass != null) {
+            predicates.add(new DeviceClassPredicate(deviceClass));
+        }
+
+        predicates.add(new HashRangePredicate(new PercentageRange(from, to)));
+
         return new ExperimentVariant(
-                variant.name,
-                variant.predicates.stream().map(this::convertPredicate).collect(Collectors.toList())
+                variantName,
+                predicates
         );
     }
-
-    private pl.allegro.experiments.chi.chiserver.domain.experiments.Predicate convertPredicate(Predicate predicate) {
-        if (predicate.type == PredicateType.INTERNAL) {
-            return new InternalPredicate();
-        } else if (predicate.type == PredicateType.CMUID_REGEXP) {
-            return new CmuidRegexpPredicate(Pattern.compile(predicate.regexp));
-        } else if (predicate.type == PredicateType.HASH) {
-            return new HashRangePredicate(new PercentageRange(predicate.from, predicate.to));
-        } else if (predicate.type == PredicateType.DEVICE_CLASS) {
-            return new DeviceClassPredicate(predicate.device);
-        } else {
-            throw new RuntimeException("Unknown predicate");
-        }
-    }
-
-    public static class Variant {
-        @NotNull
-        private String name;
-        @NotNull
-        private List<Predicate> predicates;
-
-        @JsonCreator
-        public Variant(
-                @JsonProperty("name") String name,
-                @JsonProperty("predicates") List<Predicate> predicates) {
-            Preconditions.checkNotNull(name);
-            Preconditions.checkNotNull(predicates);
-            this.name = name;
-            this.predicates = ImmutableList.copyOf(predicates);
-        }
-
-        public String getName() {
-            return name;
-        }
-
-        public List<Predicate> getPredicates() {
-            return predicates;
-        }
-    }
-
-    public enum PredicateType {
-        INTERNAL, HASH, CMUID_REGEXP, DEVICE_CLASS
-    }
-
-    public static class Predicate {
-        @NotNull
-        private PredicateType type;
-        private Integer from;
-        private Integer to;
-        private String regexp;
-        private String device;
-
-        @JsonCreator
-        public Predicate(
-                @JsonProperty("type") PredicateType type,
-                @JsonProperty("from") Integer from,
-                @JsonProperty("to") Integer to,
-                @JsonProperty("regexp") String regexp,
-                @JsonProperty("device") String device) {
-            Preconditions.checkNotNull(type);
-            this.type = type;
-            this.from = from;
-            this.to = to;
-            this.regexp = regexp;
-            this.device = device;
-        }
-
-        public PredicateType getType() {
-            return type;
-        }
-
-        public Integer getFrom() {
-            return from;
-        }
-
-        public Integer getTo() {
-            return to;
-        }
-
-        public String getRegexp() {
-            return regexp;
-        }
-
-        public String getDevice() {
-            return device;
-        }
-    }
 }
+
