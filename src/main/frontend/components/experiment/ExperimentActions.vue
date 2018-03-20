@@ -98,6 +98,29 @@
         </v-list>
       </v-menu>
 
+      <v-menu offset-x :close-on-content-click="false"
+              v-model="descriptionsMenuVisible">
+        <v-btn color="gray" slot="activator" style="text-transform: none">
+          Update descriptions <v-icon right>format_align_left</v-icon>
+        </v-btn>
+
+        <v-list>
+          <experiment-desc-editing :experiment="experiment"
+                                   v-model="descriptionsEditingResult"
+
+          />
+<br/>
+From Comp: {{ descriptionsEditingResult }}
+
+          <v-btn flat @click="cancelDescriptions()">Cancel</v-btn>
+          <v-btn color="gray"
+                 @click="updateDescriptions"
+                 style="text-transform: none">
+            Update descriptions of {{ this.experiment.id }}
+          </v-btn>
+        </v-list>
+      </v-menu>
+
       <v-menu bottom offset-y
               v-if="this.allowDelete">
         <v-btn color="red" slot="activator" class="white--text" style="text-transform: none">
@@ -117,6 +140,7 @@
 </template>
 
 <script>
+  import ExperimentDescEditing from './ExperimentDescEditing.vue'
   import ChiPanel from '../ChiPanel.vue'
   import { mapActions } from 'vuex'
 
@@ -124,11 +148,14 @@
     props: ['experiment', 'allowDelete'],
 
     components: {
-      ChiPanel
+      ChiPanel,
+      ExperimentDescEditing
     },
 
     data () {
       return {
+        descriptionsMenuVisible: false,
+        descriptionsEditingResult: {},
         prolongMenuVisible: false,
         commandOkMessage: '',
         actionFormValid: true,
@@ -231,6 +258,14 @@
 
       cancelProlong () {
         this.prolongMenuVisible = false
+      },
+
+      cancelDescriptions () {
+        this.descriptionsMenuVisible = false
+      },
+
+      updateDescriptions () {
+
       },
 
       prolong () {

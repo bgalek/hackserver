@@ -31,14 +31,7 @@
               :disabled="true"
             ></v-text-field>
 
-            <v-tooltip bottom>
-              <v-text-field
-                v-model="description"
-                label="Description"
-                slot="activator"
-              ></v-text-field>
-              <span>Describe shortly what you are going to test.</span>
-            </v-tooltip>
+         !!
 
             <v-text-field
               v-model="documentLink"
@@ -169,7 +162,6 @@
         ],
         baseVariant: baseVariant,
         experimentId: '',
-        description: '',
         documentLink: '',
         documentLinkRules: [
           (v) => this.isUrlValid(v) || 'Provided string is not a valid URL'
