@@ -8,15 +8,15 @@ import pl.allegro.experiments.chi.chiserver.domain.interactions.InteractionConve
 import pl.allegro.experiments.chi.chiserver.domain.interactions.InteractionsFactory;
 
 @Configuration
-public class InteractionsConfig {
+class InteractionsConfig {
 
     @Bean
-    public InteractionConverter interactionConverter() {
+    InteractionConverter interactionConverter() {
         return new InteractionConverter();
     }
 
     @Bean
-    public InteractionsFactory interactionsFactory(
+    InteractionsFactory interactionsFactory(
             InteractionsMetricsReporter interactionsMetricsReporter,
             ExperimentsRepository experimentsRepository,
             InteractionConverter interactionConverter) {
@@ -24,7 +24,7 @@ public class InteractionsConfig {
     }
 
     @Bean
-    public InteractionsMetricsReporter interactionsMetricsReporter(MetricRegistry metricRegistry) {
+    InteractionsMetricsReporter interactionsMetricsReporter(MetricRegistry metricRegistry) {
         return new InteractionsMetricsReporter(metricRegistry);
     }
 }

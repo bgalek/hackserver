@@ -12,12 +12,12 @@ import org.springframework.security.web.header.writers.StaticHeadersWriter;
 
 @Configuration
 @EnableOAuth2Sso
-public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
+class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
     private final boolean oauthEnabled;
     private final String rootGroup;
 
-    public WebSecurityConfig(
+    WebSecurityConfig(
             @Value("${security.enabled}") Boolean oauthEnabled,
             @Value(value = "${security.rootGroup}") String rootGroup) {
         this.oauthEnabled = oauthEnabled != null ? oauthEnabled : false;

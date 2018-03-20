@@ -41,7 +41,7 @@ public class InMemoryExperimentsRepository implements ExperimentsRepository {
     @Override
     public List<Experiment> assignable() {
         return ImmutableList.copyOf(experiments.values().stream()
-                .filter(it -> it.isAssignable())
+                .filter(Experiment::isAssignable)
                 .collect(Collectors.toList()));
     }
 

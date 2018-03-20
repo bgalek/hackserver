@@ -8,10 +8,10 @@ import pl.allegro.experiments.chi.chiserver.infrastructure.druid.DruidClient;
 
 
 @Configuration
-public class StatisticsConfig {
+class StatisticsConfig {
 
     @Bean
-    public DruidStatisticsRepository statisticsRepository(
+    DruidStatisticsRepository statisticsRepository(
             DruidClient druid,
             Gson jsonConverter,
             @Value("${druid.experimentsStatsCube}") String datasource) {

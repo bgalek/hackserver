@@ -13,10 +13,10 @@ import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 
 @Configuration
-public class JsonConfig {
+class JsonConfig {
 
     @Bean
-    public Gson jsonConverter() {
+    Gson jsonConverter() {
         return new GsonBuilder()
                 .registerTypeAdapter(Experiment.class, new ExperimentTypeDeserializer())
                 .registerTypeAdapter(Experiment.class, new ExperimentTypeSerializer())

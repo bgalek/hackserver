@@ -16,10 +16,10 @@ import org.springframework.context.annotation.Configuration;
 import pl.allegro.tech.common.andamio.errors.jackson.ErrorsModule;
 
 @Configuration
-public class ObjectMapperConfig {
+class ObjectMapperConfig {
 
     @Autowired
-    public void configureObjectMapper(ObjectMapper objectMapper) {
+    void configureObjectMapper(ObjectMapper objectMapper) {
         applyCommonConfiguration(objectMapper);
         objectMapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
         objectMapper.disable(DeserializationFeature.READ_DATE_TIMESTAMPS_AS_NANOSECONDS);
@@ -30,7 +30,7 @@ public class ObjectMapperConfig {
     }
 
     @Autowired
-    public void configureAvroMapper(AvroMapper avroMapper) {
+    void configureAvroMapper(AvroMapper avroMapper) {
         applyCommonConfiguration(avroMapper);
         avroMapper.enable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
         avroMapper.disable(SerializationFeature.WRITE_DATE_TIMESTAMPS_AS_NANOSECONDS);
