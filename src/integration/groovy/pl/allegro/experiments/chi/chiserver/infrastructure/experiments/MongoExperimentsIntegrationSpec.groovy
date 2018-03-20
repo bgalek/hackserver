@@ -8,7 +8,7 @@ import pl.allegro.experiments.chi.chiserver.utils.ExperimentFactory
 
 class MongoExperimentsIntegrationSpec extends BaseIntegrationSpec {
 
-    static EXPERIMENTS_COLLECTION = MongoExperimentsRepositoryKt.COLLECTION
+    static EXPERIMENTS_COLLECTION = MongoExperimentsRepository.COLLECTION
 
     @Autowired
     MongoExperimentsRepository mongoExperimentsRepository

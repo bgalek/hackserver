@@ -3,6 +3,7 @@ package pl.allegro.experiments.chi.chiserver.infrastructure.experiments;
 import com.codahale.metrics.Gauge;
 import com.codahale.metrics.MetricRegistry;
 import com.google.gson.Gson;
+import org.javers.core.Javers;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
@@ -14,6 +15,7 @@ import org.springframework.web.client.RestTemplate;
 import pl.allegro.experiments.chi.chiserver.application.experiments.AllEnabledCrisisManagementFilter;
 import pl.allegro.experiments.chi.chiserver.application.experiments.CrisisManagementFilter;
 import pl.allegro.experiments.chi.chiserver.application.experiments.WhitelistCrisisManagementFilter;
+import pl.allegro.experiments.chi.chiserver.domain.UserProvider;
 import pl.allegro.experiments.chi.chiserver.domain.experiments.ExperimentsRepository;
 import pl.allegro.experiments.chi.chiserver.domain.experiments.MeasurementsRepository;
 import pl.allegro.experiments.chi.chiserver.infrastructure.druid.DruidClient;
@@ -56,8 +58,10 @@ public class ExperimentsConfig {
     @Bean
     MongoExperimentsRepository mongoExperimentsRepository(
             MongoTemplate mongoTemplate,
-            ExperimentsMongoMetricsReporter experimentsMongoMetricsReporter) {
-        return new MongoExperimentsRepository(mongoTemplate, experimentsMongoMetricsReporter);
+            ExperimentsMongoMetricsReporter experimentsMongoMetricsReporter,
+            Javers javers,
+            UserProvider userProvider) {
+        return new MongoExperimentsRepository(mongoTemplate, experimentsMongoMetricsReporter, javers, userProvider);
     }
 
     @Bean
