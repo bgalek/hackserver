@@ -26,7 +26,7 @@ public class ExperimentSerializer implements Converter<Experiment, DBObject> {
         Map<String, Object> experimentAsJson = new HashMap<>();
         experimentAsJson.put("_id", source.getId());
         experimentAsJson.put("variants", source.getVariants().stream()
-                .map(it -> experimentVariantSerializer.convert(it))
+                .map(experimentVariantSerializer::convert)
                 .collect(Collectors.toList()));
         if (source.getDescription() != null) {
             experimentAsJson.put("description", source.getDescription());

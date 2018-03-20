@@ -48,6 +48,6 @@ public class MongoExperimentsRepository implements ExperimentsRepository {
 
     @Override
     public List<Experiment> assignable() {
-        return getAll().stream().filter(it -> it.isAssignable()).collect(Collectors.toList());
+        return getAll().stream().filter(Experiment::isAssignable).collect(Collectors.toList());
     }
 }

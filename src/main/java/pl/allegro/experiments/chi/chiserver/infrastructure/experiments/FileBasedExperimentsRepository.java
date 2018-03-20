@@ -62,11 +62,11 @@ public class FileBasedExperimentsRepository implements ReadOnlyExperimentsReposi
         }
         Set<String> currentExperimentIds = inMemoryExperimentsRepository.experimentIds();
         Set<String> freshExperimentsIds = freshExperiments.stream()
-                .map(it -> it.getId())
+                .map(Experiment::getId)
                 .collect(Collectors.toSet());
         Set<String> removedExperiments = Sets.difference(currentExperimentIds, freshExperimentsIds);
-        freshExperiments.stream().forEach(it -> inMemoryExperimentsRepository.save(it));
-        removedExperiments.stream().forEach(it -> inMemoryExperimentsRepository.remove(it));
+        freshExperiments.forEach(inMemoryExperimentsRepository::save);
+        removedExperiments.forEach(inMemoryExperimentsRepository::remove);
         logger.debug(freshExperiments.size() + " experiment(s) successfully loaded");
     }
 

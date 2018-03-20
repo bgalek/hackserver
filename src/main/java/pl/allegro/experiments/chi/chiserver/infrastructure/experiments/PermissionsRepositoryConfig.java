@@ -7,7 +7,7 @@ import pl.allegro.experiments.chi.chiserver.domain.experiments.ExperimentsReposi
 import pl.allegro.experiments.chi.chiserver.domain.experiments.PermissionsRepository;
 
 @Configuration
-public class PermissionsRepositoryConfig {
+class PermissionsRepositoryConfig {
 
     @Bean
     PermissionsRepository permissionsRepository(

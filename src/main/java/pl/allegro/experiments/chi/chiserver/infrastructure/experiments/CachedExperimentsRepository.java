@@ -41,7 +41,7 @@ public class CachedExperimentsRepository implements ExperimentsRepository {
     @Override
     public List<Experiment> assignable() {
         return experiments.stream()
-                .filter(it -> it.isAssignable())
+                .filter(Experiment::isAssignable)
                 .collect(Collectors.toList());
     }
 

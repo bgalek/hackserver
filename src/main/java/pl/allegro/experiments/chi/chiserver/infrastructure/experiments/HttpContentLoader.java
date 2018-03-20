@@ -7,16 +7,16 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.web.client.RestTemplate;
 
-public class HttpContentLoader {
+class HttpContentLoader {
     private static final Logger logger = LoggerFactory.getLogger(HttpContentLoader.class);
 
     private final RestTemplate restTemplate;
 
-    public HttpContentLoader(RestTemplate restTemplate) {
+    HttpContentLoader(RestTemplate restTemplate) {
         this.restTemplate = restTemplate;
     }
 
-    public String loadFromHttp(String jsonUrl) {
+    String loadFromHttp(String jsonUrl) {
         logger.info("loading data from URL: " + jsonUrl);
         HttpHeaders headers = new HttpHeaders();
         HttpEntity entity = new HttpEntity<String>(headers);

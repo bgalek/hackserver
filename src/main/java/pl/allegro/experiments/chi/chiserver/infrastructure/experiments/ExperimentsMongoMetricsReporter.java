@@ -13,11 +13,11 @@ public class ExperimentsMongoMetricsReporter {
         this.metricRegistry = metricRegistry;
     }
 
-    public Timer.Context timerAllExperiments() {
+    Timer.Context timerAllExperiments() {
         return metricRegistry.timer(ALL_EXPERIMENTS).time();
     }
 
-    public Timer.Context timerSingleExperiment() {
+    Timer.Context timerSingleExperiment() {
         return metricRegistry.timer(SINGLE_EXPERIMENT).time();
     }
 }

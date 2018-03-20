@@ -21,7 +21,7 @@ public class ExperimentVariantSerializer implements Converter<ExperimentVariant,
         Map<String, Object> experimentVariantAsMap = new HashMap<>();
         experimentVariantAsMap.put("name", source.getName());
         experimentVariantAsMap.put("predicates", source.getPredicates().stream()
-                .map(it -> predicateSerializer.convert(it))
+                .map(predicateSerializer::convert)
                 .collect(Collectors.toList()));
         return new BasicDBObject(experimentVariantAsMap);
     }

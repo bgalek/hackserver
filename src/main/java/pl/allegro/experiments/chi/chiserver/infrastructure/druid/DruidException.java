@@ -5,7 +5,7 @@ import pl.allegro.tech.common.andamio.errors.spring.LogLevel;
 import pl.allegro.tech.common.andamio.errors.spring.MappableToErrorResponse;
 
 public class DruidException extends RuntimeException implements MappableToErrorResponse {
-    public DruidException(String message, Throwable cause) {
+    DruidException(String message, Throwable cause) {
         super(message, cause);
     }
 

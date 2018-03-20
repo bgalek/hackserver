@@ -19,7 +19,7 @@ public class ExperimentVariantDeserializer implements Converter<DBObject, Experi
         return new ExperimentVariant(
                 (String) bson.get("name"),
                 ((List<DBObject>) bson.get("predicates")).stream()
-                        .map(it -> predicateDeserializer.convert(it))
+                        .map(predicateDeserializer::convert)
                         .collect(Collectors.toList())
         );
     }

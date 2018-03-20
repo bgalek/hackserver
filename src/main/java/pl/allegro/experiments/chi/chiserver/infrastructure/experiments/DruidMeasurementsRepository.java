@@ -30,7 +30,7 @@ public class DruidMeasurementsRepository implements MeasurementsRepository {
     private Map<String, Integer> lastDayVisits;
     private final Supplier<Map<String, Integer>> lastDayVisitsCache;
 
-    public DruidMeasurementsRepository(
+    DruidMeasurementsRepository(
             DruidClient druid,
             Gson jsonConverter,
             String datasource) {

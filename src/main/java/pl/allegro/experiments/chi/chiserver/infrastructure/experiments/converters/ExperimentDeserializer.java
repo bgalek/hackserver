@@ -27,7 +27,7 @@ public class ExperimentDeserializer implements Converter<DBObject, Experiment> {
         String id = (String) bson.get("_id");
         List<DBObject> rawVariants = (List<DBObject>) bson.get("variants");
         List<ExperimentVariant> variants = rawVariants.stream()
-                .map(it -> experimentVariantDeserializer.convert(it))
+                .map(experimentVariantDeserializer::convert)
                 .collect(Collectors.toList());
         String description = bson.get("description") != null ? (String) bson.get("description") : null;
         String documentLink = bson.get("documentLink") != null ? (String) bson.get("documentLink") : null;
