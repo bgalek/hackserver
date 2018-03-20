@@ -47,30 +47,4 @@ public class JsonConfigV1 {
             return element;
         }
     }
-
-    static class LocalDateTypeSerializer implements JsonSerializer<LocalDate> {
-        @Override
-        public JsonElement serialize(LocalDate src, Type typeOfSrc, JsonSerializationContext context) {
-            return new JsonPrimitive(DateTimeFormatter.ISO_LOCAL_DATE.format(src));
-        }
-    }
-
-    static class ZonedDateTimeTypeAdapter implements JsonSerializer<ZonedDateTime>, JsonDeserializer<ZonedDateTime> {
-        @Override
-        public JsonElement serialize(ZonedDateTime src, Type typeOfSrc, JsonSerializationContext context) {
-            return new JsonPrimitive(DateTimeFormatter.ISO_DATE_TIME.format(src));
-        }
-
-        @Override
-        public ZonedDateTime deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
-            return ZonedDateTime.parse(json.getAsString(), DateTimeFormatter.ISO_DATE_TIME);
-        }
-    }
-
-    static class DurationTypeAdapter implements JsonSerializer<Duration> {
-        @Override
-        public JsonElement serialize(Duration src, Type typeOfSrc, JsonSerializationContext context) {
-            return new JsonPrimitive(src.toMillis());
-        }
-    }
 }
