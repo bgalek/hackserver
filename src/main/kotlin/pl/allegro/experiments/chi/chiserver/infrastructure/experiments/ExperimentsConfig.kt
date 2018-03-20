@@ -32,7 +32,7 @@ class ExperimentsConfig {
         restTemplate: RestTemplate, jsonConverter: Gson
     ): FileBasedExperimentsRepository {
         val httpContentLoader = HttpContentLoader(restTemplate)
-        return FileBasedExperimentsRepository(jsonUrl, httpContentLoader::loadFromHttp, jsonConverter)
+        return FileBasedExperimentsRepository(jsonUrl, httpContentLoader, jsonConverter, null)
     }
 
     @Bean
