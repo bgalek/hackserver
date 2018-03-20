@@ -16,14 +16,14 @@ import java.util.stream.Collectors;
 
 public class FileBasedExperimentsRepository implements ReadOnlyExperimentsRepository {
     private static final Logger logger = LoggerFactory.getLogger(FileBasedExperimentsRepository.class);
-    private final HttpContentLoader dataLoader;
+    private final DataLoader dataLoader;
     private final Gson jsonConverter;
     private final InMemoryExperimentsRepository inMemoryExperimentsRepository;
     private String jsonUrl;
 
     public FileBasedExperimentsRepository(
             String jsonUrl,
-            HttpContentLoader dataLoader,
+            DataLoader dataLoader,
             Gson jsonConverter,
             List<Experiment> initialState) {
         if (initialState == null) {
@@ -46,7 +46,7 @@ public class FileBasedExperimentsRepository implements ReadOnlyExperimentsReposi
     }
 
     private void refresh() {
-        String data = dataLoader.loadFromHttp(jsonUrl);
+        String data = dataLoader.load(jsonUrl);
 
         if (data.isEmpty()) {
             logger.error("refresh failed, dataLoader has returned empty String");

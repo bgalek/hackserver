@@ -69,8 +69,10 @@ class FileBasedExperimentsRepositorySpec extends Specification {
 
     def "should remove experiments not existing in the source file"(){
         given:
-        def repo = new FileBasedExperimentsRepository('some-experiments.json',
-                { p -> new ClasspathContentLoader().localResource(p) }, new JsonConfig().jsonConverter(),
+        def repo = new FileBasedExperimentsRepository(
+                'some-experiments.json',
+                { p -> new ClasspathContentLoader().localResource(p) },
+                new JsonConfig().jsonConverter(),
                 [ExperimentFactory.simple50("obsolete", "vA")])
 
         expect:
@@ -78,6 +80,9 @@ class FileBasedExperimentsRepositorySpec extends Specification {
     }
 
     FileBasedExperimentsRepository newFileBasedExperimentsRepository(String jsonUrl) {
-        new FileBasedExperimentsRepository(jsonUrl, { p -> new ClasspathContentLoader().localResource(p) }, new JsonConfig().jsonConverter(), [])
+        new FileBasedExperimentsRepository(
+                jsonUrl,
+                { p -> new ClasspathContentLoader().localResource(p) },
+                new JsonConfig().jsonConverter(), [])
     }
 }
