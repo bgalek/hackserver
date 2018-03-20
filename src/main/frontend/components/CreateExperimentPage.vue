@@ -91,7 +91,7 @@
               chips
               append-icon=""
               tags
-              v-model="variants">
+              v-model="variantNames">
               <template slot="selection" slot-scope="data">
 
                 <v-chip
@@ -161,7 +161,7 @@
         variantsRules: [
           (v) => this.variantsUnique() || 'Slugified variant names must be unique.',
           (v) => this.slugifiedVariants.indexOf('') === -1 || 'Slugified variant name can not be empty.',
-          (v) => this.noOfVariants() > 1 || 'No variants. Seriously?'
+          (v) => this.noOfVariants() > 1 || 'No variantNames. Seriously?'
         ],
         experimentIdRules: [
           (v) => !!v || 'Experiment ID is required',
@@ -177,7 +177,7 @@
         groups: [],
         reportingEnabled: true,
         selectedInternal: '',
-        variants: [baseVariant],
+        variantNames: [baseVariant],
         percentPerVariant: 1,
         deviceClasses: ['all', 'phone', 'desktop', 'tablet'],
         selectedDeviceClass: 'all',
@@ -188,7 +188,7 @@
 
     computed: {
       maxPercentPerVariant () {
-        return 100 / this.variants.length
+        return 100 / this.variantNames.length
       },
 
       showForm () {
@@ -204,7 +204,7 @@
       },
 
       slugifiedVariants () {
-        return _.map(this.variants, v => this.slugify(v))
+        return _.map(this.variantNames, v => this.slugify(v))
       }
     },
 
@@ -281,78 +281,21 @@
       },
 
       getExperimentDataToSend () {
-        let result = {
+        return {
           id: this.experimentIdSlug,
           description: this.description,
           documentLink: this.documentLink,
           groups: this.groups,
           reportingEnabled: this.reportingEnabled,
-          variants: this.getVariantsDataToSend()
-        }
-
-        if (this.shouldAppendSeparateInternalVariant()) {
-          result.variants.push({
-            name: this.selectedInternal,
-            predicates: [this.getInternalPredicateDataToSend()]
-          })
-        }
-
-        return result
-      },
-
-      shouldAppendSeparateInternalVariant () {
-        return this.selectedInternal !== ''
-      },
-
-      getVariantsDataToSend () {
-        let bounds = this.calculatePercentageBoundsPerVariantForHashPredicate()
-
-        return _.map(this.slugifiedVariants, v => {
-          let predicates = [this.getHashPredicateDataToSend(bounds[v])]
-
-          if (this.selectedDeviceClass !== 'all') {
-            predicates.push(this.getDevicePredicateDataToSend())
-          }
-
-          return {
-            name: v,
-            predicates: predicates
-          }
-        })
-      },
-
-      calculatePercentageBoundsPerVariantForHashPredicate () {
-        let step = this.maxPercentPerVariant
-        let result = {}
-        _.forEach(_.range(0, this.slugifiedVariants.length), i => {
-          result[this.slugifiedVariants[i]] = [parseInt(i * step), parseInt(i * step) + this.percentPerVariant]
-        })
-        return result
-      },
-
-      getHashPredicateDataToSend (bounds) {
-        return {
-          type: 'HASH',
-          from: bounds[0],
-          to: bounds[1]
-        }
-      },
-
-      getDevicePredicateDataToSend () {
-        return {
-          type: 'DEVICE_CLASS',
-          device: this.selectedDeviceClass
-        }
-      },
-
-      getInternalPredicateDataToSend () {
-        return {
-          type: 'INTERNAL'
+          variantNames: this.slugifiedVariants,
+          internalVariantName: this.selectedInternal !== '' ? this.selectedInternal : null,
+          deviceClass: this.selectedDeviceClass !== 'all' ? this.selectedDeviceClass : null,
+          percentage: this.percentPerVariant
         }
       },
 
       removeVariant (variant) {
-        this.remove('variants', variant)
+        this.remove('variantNames', variant)
       },
 
       removeGroup (group) {

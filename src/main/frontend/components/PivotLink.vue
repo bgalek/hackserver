@@ -41,7 +41,7 @@
       },
 
       pivotUrl () {
-        const PIVOT_PROD = 'http://pivot.allegrogroup.com'
+        const PIVOT_PROD = 'https://pivot.allegrogroup.com'
         const PIVOT_TEST = 'http://pivot-nga-test.allegrogroup.com'
 
         return this.isProdEnv() ? PIVOT_PROD : PIVOT_TEST

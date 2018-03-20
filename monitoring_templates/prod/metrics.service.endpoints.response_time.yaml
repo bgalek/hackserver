@@ -10,11 +10,11 @@ sources:
     client_experiments_get_latency:
       metric: maxSeries(stats.experiments.chi.chi-server.*.ClientExperimentsController*.*.GET.2xx.p99)
     admin_experiments_get_latency:
-      metric: maxSeries(stats.experiments.chi.chi-server.*.ExperimentsController.*.GET.2xx.p99)
+      metric: maxSeries(stats.experiments.chi.chi-server.*.ExperimentsController.*.GET.2xx.p75)
     admin_statistics_get_latency:
-      metric: maxSeries(stats.experiments.chi.chi-server.*.StatisticsController.*.GET.2xx.p99)
+      metric: maxSeries(stats.experiments.chi.chi-server.*.StatisticsController.*.GET.2xx.p75)
     admin_user_get_latency:
-      metric: maxSeries(stats.experiments.chi.chi-server.*.UserController.*.GET.2xx.p99)
+      metric: maxSeries(stats.experiments.chi.chi-server.*.UserController.*.GET.2xx.p75)
 
 checks:
   client_interactions_post_latency:
@@ -37,7 +37,7 @@ checks:
     sources: ['admin_experiments_get_latency']
     frequency: 1
     triggers:
-      - rule: admin_experiments_get_latency.values > 2000
+      - rule: admin_experiments_get_latency.values > 3000
         debounce: 4
         severity: critical
         notify: ['pagerduty_alert']
@@ -45,7 +45,7 @@ checks:
     sources: ['admin_statistics_get_latency']
     frequency: 1
     triggers:
-      - rule: admin_statistics_get_latency.values > 2000
+      - rule: admin_statistics_get_latency.values > 3000
         debounce: 4
         severity: critical
         notify: ['pagerduty_alert']

@@ -1,3 +1,4 @@
+
 package pl.allegro.experiments.chi.chiserver.application.administration
 
 import org.springframework.beans.factory.annotation.Autowired
@@ -81,7 +82,11 @@ class CreateExperimentCommandIntegrationSpec extends BaseIntegrationSpec {
         mutableUserProvider.user = new User('root', [], true)
 
         def brokenRequest = new ExperimentCreationRequest(
-                'x', [new ExperimentCreationRequest.Variant('v1', [new ExperimentCreationRequest.Predicate(ExperimentCreationRequest.PredicateType.HASH, null, null, null, null)])],
+                'x',
+                ['v1'],
+                'xyz',
+                1000,
+                'a',
                 '',
                 '',
                 [],
