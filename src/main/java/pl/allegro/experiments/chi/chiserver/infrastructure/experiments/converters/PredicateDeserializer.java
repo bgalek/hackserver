@@ -14,10 +14,10 @@ public class PredicateDeserializer implements Converter<DBObject, Predicate> {
     private final Map<String, Converter<DBObject, Predicate>> predicateDeserializers = new HashMap<>();
 
     public PredicateDeserializer() {
-        predicateDeserializers.put("HASH", new HashRangePredicateDeserializer());
-        predicateDeserializers.put("INTERNAL", new InternalPredicateDeserializer());
-        predicateDeserializers.put("DEVICE_CLASS", new DeviceClassPredicateDeserializer());
-        predicateDeserializers.put("CMUID_REGEXP", new CmuidRegexpPredicateDeserializer());
+        predicateDeserializers.put(PredicateType.HASH.toString(), new HashRangePredicateDeserializer());
+        predicateDeserializers.put(PredicateType.INTERNAL.toString(), new InternalPredicateDeserializer());
+        predicateDeserializers.put(PredicateType.DEVICE_CLASS.toString(), new DeviceClassPredicateDeserializer());
+        predicateDeserializers.put(PredicateType.CMUID_REGEXP.toString(), new CmuidRegexpPredicateDeserializer());
     }
 
     @Override
