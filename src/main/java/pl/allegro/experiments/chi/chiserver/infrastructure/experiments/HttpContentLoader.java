@@ -18,7 +18,7 @@ class HttpContentLoader implements DataLoader {
 
     @Override
     public String load(String jsonUrl) {
-        logger.info("loading data from URL: " + jsonUrl);
+        logger.info("loading data from URL: ", jsonUrl);
         HttpHeaders headers = new HttpHeaders();
         HttpEntity entity = new HttpEntity<String>(headers);
         return restTemplate.exchange(jsonUrl, HttpMethod.GET, entity, String.class).getBody();

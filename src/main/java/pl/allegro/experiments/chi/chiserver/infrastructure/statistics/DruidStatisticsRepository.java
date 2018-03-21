@@ -1,5 +1,6 @@
 package pl.allegro.experiments.chi.chiserver.infrastructure.statistics;
 
+import com.google.common.collect.ImmutableMap;
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
@@ -138,6 +139,6 @@ public class DruidStatisticsRepository implements StatisticsRepository {
             ));
             metrics.put(metricName, variants);
         }
-        return new ExperimentStatistics(experimentId, toDate, Duration.ofMillis(duration), device, metrics);
+        return new ExperimentStatistics(experimentId, toDate, Duration.ofMillis(duration), device, ImmutableMap.copyOf(metrics));
     }
 }

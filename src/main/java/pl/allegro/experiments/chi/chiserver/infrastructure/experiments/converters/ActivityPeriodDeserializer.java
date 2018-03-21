@@ -13,9 +13,7 @@ public class ActivityPeriodDeserializer implements Converter<BasicDBObject, Acti
 
     @Override
     public ActivityPeriod convert(BasicDBObject source) {
-        String from = source.getString("activeFrom");
-        String to = source.getString("activeTo");
-        return new ActivityPeriod(dateTimeDeserializer.convert(from),
-                dateTimeDeserializer.convert(to));
+        return new ActivityPeriod(dateTimeDeserializer.convert(source.getString("activeFrom")),
+                dateTimeDeserializer.convert(source.getString("activeTo")));
     }
 }

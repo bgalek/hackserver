@@ -38,16 +38,13 @@ public class DruidMeasurementsRepository implements MeasurementsRepository {
         this.jsonConverter = jsonConverter;
         this.datasource = datasource;
         this.lastDayVisits = new HashMap<>();
-        this.lastDayVisitsCache = Suppliers.memoizeWithExpiration(new Supplier<Map<String, Integer>>() {
-            @Override
-            public Map<String, Integer> get() {
-                try {
-                    lastDayVisits = queryLastDayVisits();
-                } catch (DruidException e) {
-                    logger.warn("Error while trying to query Druid for last day visits", e);
-                }
-                return lastDayVisits;
+        this.lastDayVisitsCache = Suppliers.memoizeWithExpiration(() -> {
+            try {
+                lastDayVisits = queryLastDayVisits();
+            } catch (DruidException e) {
+                logger.warn("Error while trying to query Druid for last day visits", e);
             }
+            return lastDayVisits;
         }, CACHE_EXPIRE_DURATION_MINUTES, TimeUnit.MINUTES);
     }
 

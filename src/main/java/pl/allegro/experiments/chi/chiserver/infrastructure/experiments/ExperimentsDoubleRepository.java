@@ -53,12 +53,12 @@ public class ExperimentsDoubleRepository implements ExperimentsRepository {
     }
 
     @Override
-    public String getOrigin(String experimentId) {
+    public ExperimentOrigin getOrigin(String experimentId) {
         if (readOnlyExperimentsRepository.getExperiment(experimentId) != null) {
-            return "stash";
+            return ExperimentOrigin.STASH;
         }
         if (mongoExperimentsRepository.getExperiment(experimentId) != null) {
-            return "mongo";
+            return ExperimentOrigin.MONGO;
         }
         return ExperimentsRepository.super.getOrigin(experimentId);
     }

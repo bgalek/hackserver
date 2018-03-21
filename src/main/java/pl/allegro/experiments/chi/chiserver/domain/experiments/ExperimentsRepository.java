@@ -1,11 +1,13 @@
 package pl.allegro.experiments.chi.chiserver.domain.experiments;
 
+import pl.allegro.experiments.chi.chiserver.infrastructure.experiments.ExperimentOrigin;
+
 public interface ExperimentsRepository extends ReadOnlyExperimentsRepository {
     void delete(String experimentId);
 
     void save(Experiment experiment);
 
-    default String getOrigin(String experimentId) {
-        return "undefined";
+    default ExperimentOrigin getOrigin(String experimentId) {
+        return ExperimentOrigin.UNDEFINED;
     }
 }

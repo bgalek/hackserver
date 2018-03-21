@@ -70,20 +70,10 @@ public class ExperimentsConfig {
             CachedExperimentsRepository mongoExperimentsRepository,
             MetricRegistry metricRegistry) {
         ExperimentsRepository repo = new ExperimentsDoubleRepository(fileBasedExperimentsRepository, mongoExperimentsRepository);
-        Gauge<Integer> gaugeAll = new Gauge<Integer>() {
-            @Override
-            public Integer getValue() {
-                return repo.getAll().size();
-            }
-        };
+        Gauge<Integer> gaugeAll = () -> repo.getAll().size();
         metricRegistry.register(EXPERIMENTS_COUNT_ALL_METRIC, gaugeAll);
 
-        Gauge<Integer> gaugeLive = new Gauge<Integer>() {
-            @Override
-            public Integer getValue() {
-                return repo.getAll().size();
-            }
-        };
+        Gauge<Integer> gaugeLive = () -> repo.getAll().size();
         metricRegistry.register(EXPERIMENTS_COUNT_LIVE_METRIC, gaugeLive);
         return repo;
     }
