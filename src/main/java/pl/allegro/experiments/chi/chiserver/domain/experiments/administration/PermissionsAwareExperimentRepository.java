@@ -21,16 +21,13 @@ public class PermissionsAwareExperimentRepository {
 
     public Experiment getExperimentOrException(String experimentId) {
         Preconditions.checkNotNull(experimentId);
-        Experiment experiment = experimentsRepository.getExperiment(experimentId).orElse(null);
-        if (experiment == null) {
-            throw new ExperimentNotFoundException("Experiment not found: " + experimentId);
-        }
-
-        User user = userProvider.getCurrentUser();
-        if (!user.isOwner(experiment)) {
-            throw new AuthorizationException("User has no permission to edit experiment: " + experimentId);
-        }
-
-        return experiment;
+        return experimentsRepository.getExperiment(experimentId)
+                .map(e -> {
+                    User user = userProvider.getCurrentUser();
+                    if (!user.isOwner(e)) {
+                        throw new AuthorizationException("User has no permission to edit experiment: " + experimentId);
+                    }
+                    return e;
+                }).orElseThrow(() -> new ExperimentNotFoundException("Experiment not found: " + experimentId));
     }
 }
