@@ -1,5 +1,7 @@
 package pl.allegro.experiments.chi.chiserver.infrastructure.experiments.converters;
 
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableMap;
 import com.mongodb.BasicDBObject;
 import com.mongodb.DBObject;
 import org.springframework.core.convert.converter.Converter;
@@ -23,6 +25,6 @@ public class ExperimentVariantSerializer implements Converter<ExperimentVariant,
         experimentVariantAsMap.put("predicates", source.getPredicates().stream()
                 .map(predicateSerializer::convert)
                 .collect(Collectors.toList()));
-        return new BasicDBObject(experimentVariantAsMap);
+        return new BasicDBObject(ImmutableMap.copyOf(experimentVariantAsMap));
     }
 }
