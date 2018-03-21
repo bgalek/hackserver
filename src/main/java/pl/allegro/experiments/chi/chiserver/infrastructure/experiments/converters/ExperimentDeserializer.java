@@ -9,6 +9,7 @@ import pl.allegro.experiments.chi.chiserver.domain.experiments.ExperimentStatus;
 import pl.allegro.experiments.chi.chiserver.domain.experiments.ExperimentVariant;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 public class ExperimentDeserializer implements Converter<DBObject, Experiment> {
@@ -34,8 +35,9 @@ public class ExperimentDeserializer implements Converter<DBObject, Experiment> {
         String author = bson.get("author") != null ? (String) bson.get("author") : null;
         List<String> groups = bson.get("groups") != null ? (List<String>) bson.get("groups") : null;
         boolean reportingEnabled = bson.get("reportingEnabled") != null ? (boolean) bson.get("reportingEnabled") : null;
-        Object rawActivityPeriod = bson.get("activityPeriod");
-        ActivityPeriod activityPeriod = rawActivityPeriod != null ? activityPeriodDeserializer.convert((BasicDBObject) rawActivityPeriod) : null;
+        ActivityPeriod activityPeriod = Optional.ofNullable(bson.get("activityPeriod"))
+                .map(a -> activityPeriodDeserializer.convert((BasicDBObject)a))
+                .orElse(null);
         Object rawExplicitStatus = bson.get("explicitStatus");
         ExperimentStatus explicitStatus = rawExplicitStatus != null ? ExperimentStatus.valueOf((String) rawExplicitStatus) : null;
         return Experiment.builder()
