@@ -79,7 +79,7 @@ export default class ExperimentModel extends ExperimentRecord {
     return this.status === 'ACTIVE'
   }
 
-  canRunAnyCommand () {
+  canRunLifecycleCommand () {
     return this.origin !== 'stash' &&
       (this.canBeStarted() ||
        this.canBeStopped() ||

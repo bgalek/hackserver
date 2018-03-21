@@ -2,6 +2,7 @@ package pl.allegro.experiments.chi.chiserver.domain.experiments;
 
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableMap;
 import joptsimple.internal.Strings;
 import org.javers.core.metamodel.annotation.DiffInclude;
 import org.javers.core.metamodel.annotation.Id;
@@ -62,7 +63,9 @@ public class Experiment {
     @Id
     @DiffInclude
     public String getId() {
+        ImmutableMap.of("k","v");
         return id;
+
     }
 
     public List<ExperimentVariant> getVariants() {

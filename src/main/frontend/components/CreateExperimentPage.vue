@@ -14,115 +14,137 @@
                 ref="createForm"
                 lazy-validation>
 
-            <v-tooltip bottom>
-              <v-text-field
-                v-model="experimentId"
-                label="Experiment ID"
-                :rules="experimentIdRules"
-                slot="activator"
-              ></v-text-field>
-              <span>Unique ID used by Chi and other applications to identify your experiment. Keep it concise.</span>
-            </v-tooltip>
+            <v-container fluid style="margin: 0px; padding: 0px" >
+              <v-layout row align-center>
 
-            <v-text-field
-              v-model="experimentIdSlug"
-              label="Final Experiment ID"
-              :readonly="true"
-              :disabled="true"
-            ></v-text-field>
+                <v-flex xs1 >
+                  <v-tooltip right >
+                    <span>Unique ID used by Chi and other applications to identify your experiment. Keep it concise.</span>
+                    <v-icon
+                      slot="activator">help_outline</v-icon>
+                  </v-tooltip>
+                </v-flex>
+                <v-flex xs11>
+                  <v-text-field
+                    style="width: 90%"
+                    v-model="experimentId"
+                    label="Experiment ID"
+                    :rules="experimentIdRules"
+                  ></v-text-field>
+                </v-flex>
 
-         !!
+              </v-layout>
+              <v-layout row align-center>
 
-            <v-text-field
-              v-model="documentLink"
-              :rules="documentLinkRules"
-              label="Documentation link"
-            ></v-text-field>
+                <v-flex offset-xs1>
+                  <v-text-field
+                    style="width: 300px"
+                    v-model="experimentIdSlug"
+                    label="Final Experiment ID"
+                    :readonly="true"
+                    :disabled="true"
+                  ></v-text-field>
+                </v-flex>
 
-            <v-tooltip bottom>
-              <v-select
-                label="Authorization groups"
-                slot="activator"
-                chips
-                append-icon=""
-                tags
-                v-model="groups">
-                <template slot="selection" slot-scope="data">
-                  <v-chip
-                    close
-                    @input="removeGroup(data.item)"
-                    :selected="data.selected">
-                    <strong>{{ data.item }}</strong>&nbsp;
-                  </v-chip>
-                </template>
-              </v-select>
-              <span>Let your team manage this experiment.
-                Provide a group name, for example: <code>Tech Content Team</code>.
-                <br/>
-                Hit <b>ENTER</b> to add a group.</span>
-                You can add more than one group.
-                <br/>
-                Check your groups on your JIRA profile &mdash; https://jira.allegrogroup.com/secure/ViewProfile.jspa
-            </v-tooltip>
+              </v-layout>
+            </v-container>
 
-            <v-tooltip bottom>
-              <v-switch label="Reporting" v-model="reportingEnabled" slot="activator">
-              </v-switch>
-              <span>Disable <b>reporting</b> if don't want this experiment to be measured by Chi.</span>
-            </v-tooltip>
+            <experiment-desc-editing v-model="descriptions"/>
 
-            <v-select
-              v-bind:items="deviceClasses"
-              v-model="selectedDeviceClass"
-              label="Device class"
-              item-value="text"
-            ></v-select>
+            <v-container fluid style="margin: 0px; padding: 0px">
 
-            <v-select
-              label="Variants"
-              :rules="variantsRules"
-              chips
-              append-icon=""
-              tags
-              v-model="variants">
-              <template slot="selection" slot-scope="data">
+              <v-layout row align-top>
 
-                <v-chip
-                  v-if="data.item === baseVariant"
-                  :selected="data.selected"
-                  :disabled="true">
-                  <strong>{{ data.item }}</strong>&nbsp;
-                </v-chip>
+                <v-flex xs1>
+                  <v-tooltip right>
+                    <span>Disable <b>reporting</b> if don't want this experiment to be measured by Chi.</span>
+                    <v-icon
+                      slot="activator">help_outline</v-icon>
+                  </v-tooltip>
+                </v-flex>
+                <v-flex xs11>
+                  <v-switch
+                    label="Reporting" v-model="reportingEnabled" slot="activator">
+                  </v-switch>
+                </v-flex>
 
-                <v-chip
-                  v-else
-                  close
-                  @input="removeVariant(data.item)"
-                  :selected="data.selected">
-                  <strong>{{ slugify(data.item) }}</strong>&nbsp;
-                </v-chip>
+              </v-layout>
+              <v-layout row align-center>
 
-              </template>
-            </v-select>
+                <v-flex offset-xs1>
+                  <v-select
+                    v-bind:items="deviceClasses"
+                    v-model="selectedDeviceClass"
+                    label="Device class"
+                    item-value="text"
+                  ></v-select>
+                </v-flex>
 
-            <v-slider
-              v-model="percentPerVariant"
-              thumb-label
-              :label="parseInt(this.percentPerVariant) + '% per variant'"
-              step="1"
-              v-bind:max="maxPercentPerVariant"
-              v-bind:min="1"
-              ticks></v-slider>
+              </v-layout>
+              <v-layout row align-center>
 
-            <v-tooltip bottom>
-              <v-text-field
-                slot="activator"
-                v-model="selectedInternal"
-                label="Internal variant"
-              ></v-text-field>
+                <v-flex offset-xs1>
+                  <v-select
+                    label="Variants"
+                    :rules="variantsRules"
+                    chips
+                    append-icon=""
+                    tags
+                    v-model="variants">
+                    <template slot="selection" slot-scope="data">
 
-              <span><b>Internal</b> means &mdash; available only in Allegro intranet.</span>
-            </v-tooltip>
+                      <v-chip
+                        v-if="data.item === baseVariant"
+                        :selected="data.selected"
+                        :disabled="true">
+                        <strong>{{ data.item }}</strong>&nbsp;
+                      </v-chip>
+
+                      <v-chip
+                        v-else
+                        close
+                        @input="removeVariant(data.item)"
+                        :selected="data.selected">
+                        <strong>{{ slugify(data.item) }}</strong>&nbsp;
+                      </v-chip>
+
+                    </template>
+                  </v-select>
+                </v-flex>
+
+              </v-layout>
+              <v-layout row align-center>
+
+                <v-flex offset-xs1>
+                  <v-slider
+                    v-model="percentPerVariant"
+                    thumb-label
+                    :label="parseInt(this.percentPerVariant) + '% per variant'"
+                    step="1"
+                    v-bind:max="maxPercentPerVariant"
+                    v-bind:min="1"
+                    ticks></v-slider>
+                </v-flex>
+
+              </v-layout>
+              <v-layout row align-center>
+
+                <v-flex xs1>
+                  <v-tooltip right>
+                    <span><b>Internal</b> means &mdash; available only in Allegro intranet.</span>
+                    <v-icon
+                      slot="activator">help_outline</v-icon>
+                  </v-tooltip>
+                </v-flex>
+                <v-flex xs11>
+                  <v-text-field
+                    v-model="selectedInternal"
+                    label="Internal variant"
+                  ></v-text-field>
+                </v-flex>
+
+              </v-layout>
+            </v-container>
 
             <v-btn @click="onSubmit" color="success">create</v-btn>
           </v-form>
@@ -136,8 +158,9 @@
 
 <script>
   import { mapActions } from 'vuex'
+  import ExperimentDescEditing from './experiment/ExperimentDescEditing'
+
   import _ from 'lodash'
-  import {isUri} from 'valid-url'
 
   import ChiPanel from './ChiPanel.vue'
 
@@ -162,11 +185,6 @@
         ],
         baseVariant: baseVariant,
         experimentId: '',
-        documentLink: '',
-        documentLinkRules: [
-          (v) => this.isUrlValid(v) || 'Provided string is not a valid URL'
-        ],
-        groups: [],
         reportingEnabled: true,
         selectedInternal: '',
         variants: [baseVariant],
@@ -174,7 +192,8 @@
         deviceClasses: ['all', 'phone', 'desktop', 'tablet'],
         selectedDeviceClass: 'all',
         sendingDataToServer: false,
-        errors: []
+        errors: [],
+        descriptions: {}
       }
     },
 
@@ -201,14 +220,11 @@
     },
 
     components: {
-      ChiPanel
+      ChiPanel,
+      ExperimentDescEditing
     },
 
     methods: {
-      isUrlValid (value) {
-        return isUri(value) !== undefined || value === ''
-      },
-
       slugify (str) {
         return str.toString().toLowerCase()
           .replace(/\s+/g, '-')
@@ -275,9 +291,9 @@
       getExperimentDataToSend () {
         let result = {
           id: this.experimentIdSlug,
-          description: this.description,
-          documentLink: this.documentLink,
-          groups: this.groups,
+          description: this.descriptions.description,
+          documentLink: this.descriptions.documentLink,
+          groups: this.descriptions.groups,
           reportingEnabled: this.reportingEnabled,
           variants: this.getVariantsDataToSend()
         }
@@ -345,10 +361,6 @@
 
       removeVariant (variant) {
         this.remove('variants', variant)
-      },
-
-      removeGroup (group) {
-        this.remove('groups', group)
       },
 
       remove (arrayName, toRemove) {

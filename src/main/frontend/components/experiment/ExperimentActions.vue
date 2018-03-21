@@ -19,8 +19,10 @@
 
     <v-form ref="actionForm"
             v-model="actionFormValid"
-            v-if="this.canRunAnyCommand()"
+            v-if="this.canRunLifecycleCommand()"
             lazy-validation>
+
+      <h4 style="margin-top: 5px">Lifecycle actions</h4>
 
       <v-text-field
              v-if="this.experiment.canBeStarted()"
@@ -38,15 +40,15 @@
         Start experiment<v-icon right dark>play_arrow</v-icon>
       </v-btn>
 
-      <v-menu offset-x :close-on-content-click="false"
+      <v-menu :close-on-content-click="false"
               v-model="prolongMenuVisible"
               v-if="this.experiment.canBeProlonged()">
         <v-btn color="gray" slot="activator" style="text-transform: none">
           Prolong <v-icon right>alarm_add</v-icon>
         </v-btn>
 
-        <v-list>
-          <v-text-field style="margin: 15px"
+        <v-list style="padding:15px; display: block;">
+          <v-text-field
                  label="Additional days"
                  v-model="additionalDurationDays"
                  :rules="durationDaysRules"
@@ -57,7 +59,7 @@
           <v-btn color="gray"
                  @click="prolong"
                  style="text-transform: none">
-            Prolong experiment {{ this.experiment.id }}
+            Prolong experiment &nbsp;<b>{{ this.experiment.id }}</b>
           </v-btn>
         </v-list>
       </v-menu>
@@ -86,6 +88,7 @@
         </v-list>
       </v-menu>
 
+
       <v-menu bottom offset-y
               v-if="this.experiment.canBeStopped()">
         <v-btn color="gray" slot="activator" style="text-transform: none">
@@ -98,25 +101,30 @@
         </v-list>
       </v-menu>
 
-      <v-menu offset-x :close-on-content-click="false"
+    </v-form>
+
+
+    <div v-if="canRunOtherCommand">
+      <h4 style="margin-top: 15px">Other actions</h4>
+
+      <v-menu :close-on-content-click="false"
               v-model="descriptionsMenuVisible">
         <v-btn color="gray" slot="activator" style="text-transform: none">
-          Update descriptions <v-icon right>format_align_left</v-icon>
+          Update descriptions
+          <v-icon right>format_align_left</v-icon>
         </v-btn>
 
-        <v-list>
+        <v-list style="padding:15px; display: block;">
           <experiment-desc-editing :experiment="experiment"
                                    v-model="descriptionsEditingResult"
-
           />
-<br/>
-From Comp: {{ descriptionsEditingResult }}
 
           <v-btn flat @click="cancelDescriptions()">Cancel</v-btn>
           <v-btn color="gray"
+                 :disabled="!descriptionsChanged()"
                  @click="updateDescriptions"
                  style="text-transform: none">
-            Update descriptions of {{ this.experiment.id }}
+            Update descriptions of &nbsp;<b>{{ this.experiment.id }}</b>
           </v-btn>
         </v-list>
       </v-menu>
@@ -124,7 +132,8 @@ From Comp: {{ descriptionsEditingResult }}
       <v-menu bottom offset-y
               v-if="this.allowDelete">
         <v-btn color="red" slot="activator" class="white--text" style="text-transform: none">
-          Delete experiment<v-icon right>delete_forever</v-icon>
+          Delete experiment
+          <v-icon right>delete_forever</v-icon>
         </v-btn>
         <v-list>
           <v-list-tile @click="deleteMe">
@@ -133,8 +142,7 @@ From Comp: {{ descriptionsEditingResult }}
           </v-list-tile>
         </v-list>
       </v-menu>
-
-    </v-form>
+    </div>
 
   </chi-panel>
 </template>
@@ -173,8 +181,16 @@ From Comp: {{ descriptionsEditingResult }}
     },
 
     methods: {
+      canRunLifecycleCommand () {
+        return this.experiment.canRunLifecycleCommand()
+      },
+
+      canRunOtherCommand () {
+        return true
+      },
+
       canRunAnyCommand () {
-        return this.experiment.canRunAnyCommand() || this.allowDelete
+        return this.canRunLifecycleCommand() || this.canRunOtherCommand()
       },
 
       deleteMe () {
@@ -264,8 +280,14 @@ From Comp: {{ descriptionsEditingResult }}
         this.descriptionsMenuVisible = false
       },
 
-      updateDescriptions () {
+      descriptionsChanged () {
+        return this.descriptionsEditingResult.description !== this.experiment.description ||
+               JSON.stringify(this.descriptionsEditingResult.groups) !== JSON.stringify(this.experiment.groups) ||
+               this.descriptionsEditingResult.documentLink !== this.experiment.documentLink
+      },
 
+      updateDescriptions () {
+        this.descriptionsMenuVisible = false
       },
 
       prolong () {
