@@ -8,6 +8,7 @@ import pl.allegro.experiments.chi.chiserver.domain.experiments.Experiment;
 import pl.allegro.experiments.chi.chiserver.domain.experiments.ExperimentsRepository;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 public class MongoExperimentsRepository implements ExperimentsRepository {
@@ -29,21 +30,21 @@ public class MongoExperimentsRepository implements ExperimentsRepository {
     }
 
     @Override
-    public Experiment getExperiment(String id) {
+    public Optional<Experiment> getExperiment(String id) {
         Timer.Context context = experimentsMongoMetricsReporter.timerSingleExperiment();
         Experiment experiment = mongoTemplate.findById(id, Experiment.class, COLLECTION);
         context.close();
-        return experiment;
+        return Optional.ofNullable(experiment);
     }
 
     @Override
     public void delete(String experimentId) {
-        Experiment experiment = getExperiment(experimentId);
+        Experiment experiment = getExperiment(experimentId).orElse(null);
         String username = userProvider.getCurrentUser().getName();
         javers.getLatestSnapshot(experimentId, Experiment.class).ifPresent(it ->
             javers.commitShallowDelete(username, experiment)
         );
-        mongoTemplate.remove(getExperiment(experimentId), COLLECTION);
+        mongoTemplate.remove(getExperiment(experimentId).orElse(null), COLLECTION);
     }
 
     @Override

@@ -40,7 +40,7 @@ public class StatisticsController {
             @PathVariable String experimentId,
             @RequestParam(value = "device", required = false) String device) {
         logger.debug("Experiment statistics request received");
-        Experiment experiment = experimentsRepository.getExperiment(experimentId);
+        Experiment experiment = experimentsRepository.getExperiment(experimentId).orElse(null);
         if (experiment == null) {
             return new ResponseEntity<String>(HttpStatus.NOT_FOUND);
         }

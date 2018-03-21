@@ -24,7 +24,7 @@ class MongoExperimentsIntegrationSpec extends BaseIntegrationSpec {
         mongoExperimentsRepository.save(experiment)
 
         then:
-        mongoExperimentsRepository.getExperiment("some") == experiment
+        mongoExperimentsRepository.getExperiment("some").get() == experiment
     }
 
     def "should remove not experiments not tracked by javers"() {
@@ -39,7 +39,7 @@ class MongoExperimentsIntegrationSpec extends BaseIntegrationSpec {
         notThrown(JaversException)
 
         and:
-        mongoExperimentsRepository.getExperiment(experiment.id) == null
+        !mongoExperimentsRepository.getExperiment(experiment.id).isPresent()
     }
 
     def cleanup() {

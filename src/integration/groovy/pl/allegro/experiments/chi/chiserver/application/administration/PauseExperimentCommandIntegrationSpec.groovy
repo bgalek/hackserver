@@ -41,7 +41,7 @@ class PauseExperimentCommandIntegrationSpec extends BaseIntegrationSpec implemen
 
         when:
         pauseCommand.execute()
-        experiment = experimentsRepository.getExperiment(experiment.id)
+        experiment = experimentsRepository.getExperiment(experiment.id).get()
 
         then:
         experiment.isPaused()

@@ -21,7 +21,7 @@ public class PermissionsAwareExperimentRepository {
 
     public Experiment getExperimentOrException(String experimentId) {
         Preconditions.checkNotNull(experimentId);
-        Experiment experiment = experimentsRepository.getExperiment(experimentId);
+        Experiment experiment = experimentsRepository.getExperiment(experimentId).orElse(null);
         if (experiment == null) {
             throw new ExperimentNotFoundException("Experiment not found: " + experimentId);
         }

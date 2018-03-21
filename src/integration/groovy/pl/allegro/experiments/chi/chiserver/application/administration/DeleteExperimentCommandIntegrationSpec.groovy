@@ -56,7 +56,7 @@ class DeleteExperimentCommandIntegrationSpec extends BaseIntegrationSpec {
         deleteCommand.execute()
 
         then:
-        experimentsRepository.getExperiment(id) == null
+        !experimentsRepository.getExperiment(id).isPresent()
     }
 
     def "should not delete experiment with statistics"() {

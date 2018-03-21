@@ -46,7 +46,7 @@ class CreateExperimentCommandIntegrationSpec extends BaseIntegrationSpec {
         command.execute()
 
         then:
-        experimentsRepository.getExperiment("simpleId").id == "simpleId"
+        experimentsRepository.getExperiment("simpleId").get().id == "simpleId"
     }
 
     def "should not create experiment where experiment with given id exists"() {

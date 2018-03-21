@@ -50,7 +50,7 @@ class StartExperimentCommandIntegrationSpec extends BaseIntegrationSpec {
         startCommand.execute()
 
         then:
-        experimentsRepository.getExperiment(id).status == ExperimentStatus.ACTIVE
+        experimentsRepository.getExperiment(id).get().status == ExperimentStatus.ACTIVE
     }
 
     def "should not start experiment if it is not DRAFT"() {

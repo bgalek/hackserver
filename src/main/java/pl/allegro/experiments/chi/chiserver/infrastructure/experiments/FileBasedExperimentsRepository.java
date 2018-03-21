@@ -11,6 +11,7 @@ import pl.allegro.experiments.chi.chiserver.infrastructure.InMemoryExperimentsRe
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -71,7 +72,7 @@ public class FileBasedExperimentsRepository implements ReadOnlyExperimentsReposi
     }
 
     @Override
-    public Experiment getExperiment(String id) {
+    public Optional<Experiment> getExperiment(String id) {
         return inMemoryExperimentsRepository.getExperiment(id);
     }
 

@@ -29,7 +29,7 @@ public class CreateExperimentCommand {
         if (user.isAnonymous() && !user.isRoot()) {
             throw new AuthorizationException("Only logged in user can create experiment");
         }
-        if (experimentsRepository.getExperiment(experimentCreationRequest.getId()) != null) {
+        if (experimentsRepository.getExperiment(experimentCreationRequest.getId()).isPresent()) {
             throw new ExperimentCreationException("Experiment with id " + experimentCreationRequest.getId() + " already exists");
         }
         experimentsRepository.save(experimentCreationRequest.toExperiment(user.getName()));

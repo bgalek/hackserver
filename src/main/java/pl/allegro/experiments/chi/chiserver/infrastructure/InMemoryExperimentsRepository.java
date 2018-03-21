@@ -4,10 +4,7 @@ import com.google.common.collect.ImmutableList;
 import pl.allegro.experiments.chi.chiserver.domain.experiments.Experiment;
 import pl.allegro.experiments.chi.chiserver.domain.experiments.ExperimentsRepository;
 
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public class InMemoryExperimentsRepository implements ExperimentsRepository {
@@ -19,8 +16,8 @@ public class InMemoryExperimentsRepository implements ExperimentsRepository {
     }
 
     @Override
-    public Experiment getExperiment(String experimentId) {
-        return experiments.get(experimentId);
+    public Optional<Experiment> getExperiment(String experimentId) {
+        return Optional.ofNullable(experiments.get(experimentId));
     }
 
     @Override

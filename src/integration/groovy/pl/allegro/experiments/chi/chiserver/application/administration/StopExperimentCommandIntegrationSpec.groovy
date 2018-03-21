@@ -48,7 +48,7 @@ class StopExperimentCommandIntegrationSpec extends BaseIntegrationSpec {
 
         when:
         stopCommand.execute()
-        experiment = experimentsRepository.getExperiment(experiment.id)
+        experiment = experimentsRepository.getExperiment(experiment.id).get()
 
         then:
         experiment.isEnded()
@@ -78,7 +78,7 @@ class StopExperimentCommandIntegrationSpec extends BaseIntegrationSpec {
                 permissionsAwareExperimentGetter,
                 experiment.id)
         startCommand.execute()
-        return experimentsRepository.getExperiment(experiment.id)
+        return experimentsRepository.getExperiment(experiment.id).get()
     }
 
     Experiment draftExperiment() {
@@ -89,7 +89,7 @@ class StopExperimentCommandIntegrationSpec extends BaseIntegrationSpec {
                 mutableUserProvider,
                 simpleExperimentRequest(id))
         command.execute()
-        experimentsRepository.getExperiment(id)
+        experimentsRepository.getExperiment(id).get()
     }
 
     StopExperimentCommand stopCommand(String experimentId) {

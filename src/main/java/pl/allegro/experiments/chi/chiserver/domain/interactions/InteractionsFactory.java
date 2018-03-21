@@ -31,7 +31,7 @@ public class InteractionsFactory {
         try {
             List<Interaction> interactions = interactionConverter.fromJson(json);
             List<Interaction> filtered = interactions.stream().filter(i -> {
-                Experiment experiment = experimentsRepository.getExperiment(i.getExperimentId());
+                Experiment experiment = experimentsRepository.getExperiment(i.getExperimentId()).orElse(null);
                 return experiment != null && experiment.getReportingEnabled();
             }).collect(Collectors.toList());
             interactionsMetricsReporter.meterIgnored(interactions.size() - filtered.size());

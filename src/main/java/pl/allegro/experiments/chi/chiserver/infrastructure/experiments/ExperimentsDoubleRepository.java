@@ -19,14 +19,14 @@ public class ExperimentsDoubleRepository implements ExperimentsRepository {
     }
 
     @Override
-    public Experiment getExperiment(String id) {
-        return Optional.ofNullable(readOnlyExperimentsRepository.getExperiment(id))
-                .orElse(mongoExperimentsRepository.getExperiment(id));
+    public Optional<Experiment> getExperiment(String id) {
+        Optional<Experiment> experiment = readOnlyExperimentsRepository.getExperiment(id);
+        return experiment.isPresent() ? experiment : mongoExperimentsRepository.getExperiment(id);
     }
 
     @Override
     public void save(Experiment experiment) {
-        if (getOrigin(experiment.getId()).equals("stash")) {
+        if (getOrigin(experiment.getId()).equals(ExperimentOrigin.STASH)) {
             throw new IllegalArgumentException("experiment " + experiment.getId() + " is from stash");
         }
         mongoExperimentsRepository.save(experiment);
@@ -54,10 +54,10 @@ public class ExperimentsDoubleRepository implements ExperimentsRepository {
 
     @Override
     public ExperimentOrigin getOrigin(String experimentId) {
-        if (readOnlyExperimentsRepository.getExperiment(experimentId) != null) {
+        if (readOnlyExperimentsRepository.getExperiment(experimentId).isPresent()) {
             return ExperimentOrigin.STASH;
         }
-        if (mongoExperimentsRepository.getExperiment(experimentId) != null) {
+        if (mongoExperimentsRepository.getExperiment(experimentId).isPresent()) {
             return ExperimentOrigin.MONGO;
         }
         return ExperimentsRepository.super.getOrigin(experimentId);

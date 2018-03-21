@@ -8,6 +8,7 @@ import pl.allegro.experiments.chi.chiserver.domain.experiments.ExperimentsReposi
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 public class CachedExperimentsRepository implements ExperimentsRepository {
@@ -58,10 +59,10 @@ public class CachedExperimentsRepository implements ExperimentsRepository {
     }
 
     @Override
-    public Experiment getExperiment(String experimentId) {
-        return experiments.stream()
+    public Optional<Experiment> getExperiment(String experimentId) {
+        return Optional.ofNullable(experiments.stream()
                 .filter(it -> it.getId().equals(experimentId))
                 .findFirst()
-                .orElse(null);
+                .orElse(null));
     }
 }

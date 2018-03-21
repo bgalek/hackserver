@@ -32,8 +32,8 @@ class ExperimentsDoubleRepositorySpec extends Specification {
         repo.save(experiment)
 
         then:
-        !fileRepo.getExperiment("1234")
-        mongoRepo.getExperiment("1234")
+        !fileRepo.getExperiment("1234").isPresent()
+        mongoRepo.getExperiment("1234").isPresent()
     }
 
     def "first repo should have priority when calling getById"() {

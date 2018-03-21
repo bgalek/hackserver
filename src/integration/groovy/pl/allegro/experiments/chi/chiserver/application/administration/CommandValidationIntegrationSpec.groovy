@@ -135,7 +135,7 @@ class CommandValidationIntegrationSpec extends BaseIntegrationSpec {
                 simpleExperimentRequest(id))
         command.execute()
         mutableUserProvider.user = prevUser
-        experimentsRepository.getExperiment(id)
+        experimentsRepository.getExperiment(id).get()
     }
 
     def startedExperiment() {
@@ -149,7 +149,7 @@ class CommandValidationIntegrationSpec extends BaseIntegrationSpec {
                 experiment.id)
         startCommand.execute()
         mutableUserProvider.user = prevUser
-        experimentsRepository.getExperiment(experiment.id)
+        experimentsRepository.getExperiment(experiment.id).get()
     }
 
     def endedExperiment() {
@@ -159,7 +159,7 @@ class CommandValidationIntegrationSpec extends BaseIntegrationSpec {
         def stopCommand = stopCommand(started.id)
         stopCommand.execute()
         mutableUserProvider.user = prevUser
-        experimentsRepository.getExperiment(started.id)
+        experimentsRepository.getExperiment(started.id).get()
     }
 
     def plannedExperiment() {
@@ -173,7 +173,7 @@ class CommandValidationIntegrationSpec extends BaseIntegrationSpec {
                 ))
                 .build())
         mutableUserProvider.user = prevUser
-        experimentsRepository.getExperiment(draft.id)
+        experimentsRepository.getExperiment(draft.id).get()
     }
 
     StopExperimentCommand stopCommand(String experimentId) {
