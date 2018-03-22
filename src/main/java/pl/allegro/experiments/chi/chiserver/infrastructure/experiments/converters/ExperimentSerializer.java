@@ -23,30 +23,31 @@ public class ExperimentSerializer implements Converter<Experiment, DBObject> {
 
     @Override
     public DBObject convert(Experiment source) {
-        Map<String, Object> experimentAsJson = new HashMap<>();
-        experimentAsJson.put("_id", source.getId());
-        experimentAsJson.put("variants", source.getVariants().stream()
+        BasicDBObject result = new BasicDBObject();
+
+        result.put("_id", source.getId());
+        result.put("variants", source.getVariants().stream()
                 .map(experimentVariantSerializer::convert)
                 .collect(Collectors.toList()));
         if (source.getDescription() != null) {
-            experimentAsJson.put("description", source.getDescription());
+            result.put("description", source.getDescription());
         }
         if (source.getDocumentLink() != null) {
-            experimentAsJson.put("documentLink", source.getDocumentLink());
+            result.put("documentLink", source.getDocumentLink());
         }
         if (source.getAuthor() != null) {
-            experimentAsJson.put("author", source.getAuthor());
+            result.put("author", source.getAuthor());
         }
-        experimentAsJson.put("groups", source.getGroups());
-        experimentAsJson.put("reportingEnabled", source.getReportingEnabled());
+        result.put("groups", source.getGroups());
+        result.put("reportingEnabled", source.getReportingEnabled());
         if (source.getActivityPeriod() != null) {
             Map<String, String> activityPeriodAsMap = new HashMap<>();
             activityPeriodAsMap.put("activeFrom", dateTimeSerializer.convert(source.getActivityPeriod().getActiveFrom()));
             activityPeriodAsMap.put("activeTo", dateTimeSerializer.convert(source.getActivityPeriod().getActiveTo()));
-            experimentAsJson.put("activityPeriod", activityPeriodAsMap);
+            result.put("activityPeriod", activityPeriodAsMap);
         }
         ExperimentStatus experimentStatus = source.getStatus().explicitOrNull();
-        experimentAsJson.put("explicitStatus", experimentStatus != null ? experimentStatus.toString() : null);
-        return new BasicDBObject(experimentAsJson);
+        result.put("explicitStatus", experimentStatus != null ? experimentStatus.toString() : null);
+        return result;
     }
 }

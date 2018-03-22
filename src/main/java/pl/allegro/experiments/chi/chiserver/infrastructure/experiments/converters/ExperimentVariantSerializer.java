@@ -20,11 +20,11 @@ public class ExperimentVariantSerializer implements Converter<ExperimentVariant,
 
     @Override
     public DBObject convert(ExperimentVariant source) {
-        Map<String, Object> experimentVariantAsMap = new HashMap<>();
-        experimentVariantAsMap.put("name", source.getName());
-        experimentVariantAsMap.put("predicates", source.getPredicates().stream()
+        BasicDBObject result = new BasicDBObject();
+        result.put("name", source.getName());
+        result.put("predicates", source.getPredicates().stream()
                 .map(predicateSerializer::convert)
                 .collect(Collectors.toList()));
-        return new BasicDBObject(ImmutableMap.copyOf(experimentVariantAsMap));
+        return result;
     }
 }

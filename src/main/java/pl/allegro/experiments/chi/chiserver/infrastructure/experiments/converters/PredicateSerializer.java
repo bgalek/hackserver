@@ -12,27 +12,27 @@ public class PredicateSerializer implements Converter<Predicate, DBObject> {
 
     @Override
     public DBObject convert(Predicate source) {
-        Map<String, Object> predicateAsMap = new HashMap<>();
+        BasicDBObject result = new BasicDBObject();
 
         if (source instanceof HashRangePredicate) {
             HashRangePredicate predicate = (HashRangePredicate) source;
-            predicateAsMap.put("type", PredicateType.HASH.toString());
-            predicateAsMap.put("from", predicate.getHashRange().getFrom());
-            predicateAsMap.put("to", predicate.getHashRange().getTo());
+            result.put("type", PredicateType.HASH.toString());
+            result.put("from", predicate.getHashRange().getFrom());
+            result.put("to", predicate.getHashRange().getTo());
         } else if (source instanceof InternalPredicate) {
-            predicateAsMap.put("type", PredicateType.INTERNAL.toString());
+            result.put("type", PredicateType.INTERNAL.toString());
         } else if (source instanceof CmuidRegexpPredicate) {
             CmuidRegexpPredicate predicate = (CmuidRegexpPredicate) source;
-            predicateAsMap.put("type", PredicateType.CMUID_REGEXP.toString());
-            predicateAsMap.put("regexp", predicate.getPattern().toString());
+            result.put("type", PredicateType.CMUID_REGEXP.toString());
+            result.put("regexp", predicate.getPattern().toString());
         } else if (source instanceof DeviceClassPredicate) {
             DeviceClassPredicate predicate = (DeviceClassPredicate) source;
-            predicateAsMap.put("type", PredicateType.DEVICE_CLASS.toString());
-            predicateAsMap.put("device", predicate.getDevice());
+            result.put("type", PredicateType.DEVICE_CLASS.toString());
+            result.put("device", predicate.getDevice());
         } else {
             throw new UnsupportedOperationException("Can't serialize " + source.getClass().getName());
         }
 
-        return new BasicDBObject(predicateAsMap);
+        return new BasicDBObject(result);
     }
 }
