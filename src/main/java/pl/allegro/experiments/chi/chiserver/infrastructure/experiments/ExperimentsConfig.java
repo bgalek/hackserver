@@ -16,6 +16,7 @@ import pl.allegro.experiments.chi.chiserver.application.experiments.AllEnabledCr
 import pl.allegro.experiments.chi.chiserver.application.experiments.CrisisManagementFilter;
 import pl.allegro.experiments.chi.chiserver.application.experiments.WhitelistCrisisManagementFilter;
 import pl.allegro.experiments.chi.chiserver.domain.UserProvider;
+import pl.allegro.experiments.chi.chiserver.domain.experiments.Experiment;
 import pl.allegro.experiments.chi.chiserver.domain.experiments.ExperimentsRepository;
 import pl.allegro.experiments.chi.chiserver.domain.experiments.MeasurementsRepository;
 import pl.allegro.experiments.chi.chiserver.infrastructure.druid.DruidClient;
@@ -26,11 +27,13 @@ import pl.allegro.experiments.chi.chiserver.infrastructure.experiments.converter
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Configuration
 public class ExperimentsConfig {
     private static final String EXPERIMENTS_COUNT_ALL_METRIC =  "experiments.count.all";
-    private static final String EXPERIMENTS_COUNT_LIVE_METRIC = "experiments.count.live";
+    private static final String EXPERIMENTS_COUNT_ACTIVE_METRIC = "experiments.count.active";
+    private static final String EXPERIMENTS_COUNT_DRAFT_METRIC = "experiments.count.draft";
 
     @Bean
     FileBasedExperimentsRepository fileBasedExperimentsRepository(
@@ -73,8 +76,15 @@ public class ExperimentsConfig {
         Gauge<Integer> gaugeAll = () -> repo.getAll().size();
         metricRegistry.register(EXPERIMENTS_COUNT_ALL_METRIC, gaugeAll);
 
-        Gauge<Integer> gaugeLive = () -> repo.getAll().size();
-        metricRegistry.register(EXPERIMENTS_COUNT_LIVE_METRIC, gaugeLive);
+        Gauge<Integer> gaugeActive = () -> repo.getAll().stream()
+                .filter(Experiment::isActive)
+                .collect(Collectors.toList()).size();
+        metricRegistry.register(EXPERIMENTS_COUNT_ACTIVE_METRIC, gaugeActive);
+
+        Gauge<Integer> gaugeDraft = () -> repo.getAll().stream()
+                .filter(Experiment::isDraft)
+                .collect(Collectors.toList()).size();
+        metricRegistry.register(EXPERIMENTS_COUNT_DRAFT_METRIC, gaugeDraft);
         return repo;
     }
 
