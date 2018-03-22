@@ -11,6 +11,7 @@ import pl.allegro.experiments.chi.chiserver.domain.experiments.ExperimentVariant
 import pl.allegro.experiments.chi.chiserver.domain.experiments.HashRangePredicate;
 import pl.allegro.experiments.chi.chiserver.domain.experiments.InternalPredicate;
 import pl.allegro.experiments.chi.chiserver.domain.experiments.PercentageRange;
+import pl.allegro.experiments.chi.chiserver.domain.experiments.administration.ExperimentCommandException;
 
 import javax.validation.constraints.NotNull;
 import java.util.ArrayList;
@@ -96,7 +97,7 @@ public class ExperimentCreationRequest {
                     .build();
 
         } catch (Exception e) {
-            throw new ExperimentCreationException("Cannot create experiment from request", e);
+            throw new ExperimentCommandException("Cannot create experiment from request", e);
         }
     }
 

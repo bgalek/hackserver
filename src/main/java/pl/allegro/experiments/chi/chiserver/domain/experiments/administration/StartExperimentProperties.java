@@ -1,4 +1,4 @@
-package pl.allegro.experiments.chi.chiserver.domain.experiments.administration.start;
+package pl.allegro.experiments.chi.chiserver.domain.experiments.administration;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;

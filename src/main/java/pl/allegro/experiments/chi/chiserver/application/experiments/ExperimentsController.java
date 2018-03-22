@@ -16,8 +16,9 @@ import pl.allegro.experiments.chi.chiserver.domain.experiments.administration.Ex
 import pl.allegro.experiments.chi.chiserver.domain.experiments.administration.audit.Auditor;
 import pl.allegro.experiments.chi.chiserver.domain.experiments.administration.audit.AuditLog;
 import pl.allegro.experiments.chi.chiserver.domain.experiments.administration.create.ExperimentCreationRequest;
-import pl.allegro.experiments.chi.chiserver.domain.experiments.administration.prolong.ProlongExperimentProperties;
-import pl.allegro.experiments.chi.chiserver.domain.experiments.administration.start.StartExperimentProperties;
+import pl.allegro.experiments.chi.chiserver.domain.experiments.administration.ProlongExperimentProperties;
+import pl.allegro.experiments.chi.chiserver.domain.experiments.administration.UpdateExperimentProperties;
+import pl.allegro.experiments.chi.chiserver.domain.experiments.administration.StartExperimentProperties;
 import pl.allegro.tech.common.andamio.errors.Error;
 import pl.allegro.tech.common.andamio.errors.ErrorsHolder;
 import pl.allegro.tech.common.andamio.errors.SimpleErrorsHolder;
@@ -102,6 +103,16 @@ public class ExperimentsController {
             @RequestBody ProlongExperimentProperties properties) {
         logger.info("Prolong experiment request received: " + experimentId);
         experimentActions.prolong(experimentId, properties);
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    @MeteredEndpoint
+    @PutMapping(path = {"{experimentId}/update-descriptions"})
+    ResponseEntity<String> updateExperimentDescriptions(
+            @PathVariable String experimentId,
+            @RequestBody UpdateExperimentProperties properties) {
+        logger.info("Update experiment descriptions request received: " + experimentId);
+        experimentActions.updateDescriptions(experimentId, properties);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 

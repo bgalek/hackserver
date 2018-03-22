@@ -1,41 +1,39 @@
-package pl.allegro.experiments.chi.chiserver.domain.experiments.administration.start;
+package pl.allegro.experiments.chi.chiserver.domain.experiments.administration;
 
 import pl.allegro.experiments.chi.chiserver.domain.experiments.Experiment;
 import pl.allegro.experiments.chi.chiserver.domain.experiments.ExperimentsRepository;
+import pl.allegro.experiments.chi.chiserver.domain.experiments.administration.ExperimentCommandException;
 import pl.allegro.experiments.chi.chiserver.domain.experiments.administration.PermissionsAwareExperimentRepository;
 
 import java.util.Objects;
 
-public class StartExperimentCommand {
-    private final ExperimentsRepository experimentsRepository;
-    private final StartExperimentProperties startExperimentProperties;
-    private final PermissionsAwareExperimentRepository permissionsAwareExperimentRepository;
+public class ResumeExperimentCommand {
     private final String experimentId;
+    private final ExperimentsRepository experimentsRepository;
+    private final PermissionsAwareExperimentRepository permissionsAwareExperimentRepository;
 
-    StartExperimentCommand(
+    ResumeExperimentCommand(
+            String experimentId,
             ExperimentsRepository experimentsRepository,
-            StartExperimentProperties startExperimentProperties,
-            PermissionsAwareExperimentRepository permissionsAwareExperimentRepository,
-            String experimentId) {
-        Objects.requireNonNull(experimentsRepository);
-        Objects.requireNonNull(startExperimentProperties);
-        Objects.requireNonNull(permissionsAwareExperimentRepository);
+            PermissionsAwareExperimentRepository permissionsAwareExperimentRepository) {
         Objects.requireNonNull(experimentId);
-        this.experimentsRepository = experimentsRepository;
-        this.startExperimentProperties = startExperimentProperties;
-        this.permissionsAwareExperimentRepository = permissionsAwareExperimentRepository;
+        Objects.requireNonNull(experimentsRepository);
+        Objects.requireNonNull(permissionsAwareExperimentRepository);
         this.experimentId = experimentId;
+        this.experimentsRepository = experimentsRepository;
+        this.permissionsAwareExperimentRepository = permissionsAwareExperimentRepository;
     }
 
     public void execute() {
         Experiment experiment = permissionsAwareExperimentRepository.getExperimentOrException(experimentId);
         validate(experiment);
-        experimentsRepository.save(experiment.start(startExperimentProperties.getExperimentDurationDays()));
+        Experiment resumed = experiment.resume();
+        experimentsRepository.save(resumed);
     }
 
     private void validate(Experiment experiment) {
-        if (!experiment.isDraft()) {
-            throw new StartExperimentException("Experiment is not DRAFT: " + experimentId);
+        if (!experiment.isPaused()) {
+            throw new ExperimentCommandException(String.format("Experiment <%s> is not PAUSED.", experimentId));
         }
     }
 }

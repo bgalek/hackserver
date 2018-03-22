@@ -4,14 +4,10 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.test.annotation.DirtiesContext
 import org.springframework.test.context.ContextConfiguration
 import pl.allegro.experiments.chi.chiserver.BaseIntegrationSpec
-import pl.allegro.experiments.chi.chiserver.domain.experiments.administration.create.CreateExperimentCommand
 import pl.allegro.experiments.chi.chiserver.domain.User
 import pl.allegro.experiments.chi.chiserver.domain.experiments.ExperimentStatus
 import pl.allegro.experiments.chi.chiserver.domain.experiments.ExperimentsRepository
-import pl.allegro.experiments.chi.chiserver.domain.experiments.administration.PermissionsAwareExperimentRepository
-import pl.allegro.experiments.chi.chiserver.domain.experiments.administration.start.StartExperimentCommand
-import pl.allegro.experiments.chi.chiserver.domain.experiments.administration.start.StartExperimentException
-import pl.allegro.experiments.chi.chiserver.domain.experiments.administration.start.StartExperimentProperties
+import pl.allegro.experiments.chi.chiserver.domain.experiments.administration.*
 import pl.allegro.experiments.chi.chiserver.infrastructure.experiments.ExperimentsTestConfig
 import pl.allegro.experiments.chi.chiserver.infrastructure.experiments.MutableUserProvider
 
@@ -79,7 +75,8 @@ class StartExperimentCommandIntegrationSpec extends BaseIntegrationSpec {
         restartCommand.execute()
 
         then:
-        thrown StartExperimentException
+        ExperimentCommandException e = thrown()
+        e.message.startsWith("Experiment is not DRAFT")
     }
 
     def "should not start experiment when given number of days is negative or zero"() {

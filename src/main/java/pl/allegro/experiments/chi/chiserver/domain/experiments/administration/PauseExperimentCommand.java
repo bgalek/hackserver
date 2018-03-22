@@ -1,17 +1,18 @@
-package pl.allegro.experiments.chi.chiserver.domain.experiments.administration.stop;
+package pl.allegro.experiments.chi.chiserver.domain.experiments.administration;
 
 import pl.allegro.experiments.chi.chiserver.domain.experiments.Experiment;
 import pl.allegro.experiments.chi.chiserver.domain.experiments.ExperimentsRepository;
+import pl.allegro.experiments.chi.chiserver.domain.experiments.administration.ExperimentCommandException;
 import pl.allegro.experiments.chi.chiserver.domain.experiments.administration.PermissionsAwareExperimentRepository;
 
 import java.util.Objects;
 
-public class StopExperimentCommand {
+public class PauseExperimentCommand {
     private final String experimentId;
     private final ExperimentsRepository experimentsRepository;
     private final PermissionsAwareExperimentRepository permissionsAwareExperimentRepository;
 
-    StopExperimentCommand(
+    PauseExperimentCommand(
             String experimentId,
             ExperimentsRepository experimentsRepository,
             PermissionsAwareExperimentRepository permissionsAwareExperimentRepository) {
@@ -26,13 +27,16 @@ public class StopExperimentCommand {
     public void execute() {
         Experiment experiment = permissionsAwareExperimentRepository.getExperimentOrException(experimentId);
         validate(experiment);
-        Experiment stoppedExperiment = experiment.stop();
-        experimentsRepository.save(stoppedExperiment);
+        Experiment pausedExperiment = experiment.pause();
+        experimentsRepository.save(pausedExperiment);
     }
 
     private void validate(Experiment experiment) {
         if (!experiment.isActive()) {
-            throw new StopExperimentException("Experiment is not ACTIVE: " + experimentId);
+            throw new ExperimentCommandException(
+                    String.format("Experiment is not ACTIVE. Now '%s' has %s status",
+                            experimentId, experiment.getStatus().toString())
+            );
         }
     }
 }

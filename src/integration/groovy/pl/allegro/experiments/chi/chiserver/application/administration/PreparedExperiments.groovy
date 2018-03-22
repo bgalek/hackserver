@@ -2,12 +2,12 @@ package pl.allegro.experiments.chi.chiserver.application.administration
 
 import pl.allegro.experiments.chi.chiserver.domain.User
 import pl.allegro.experiments.chi.chiserver.domain.experiments.Experiment
-import pl.allegro.experiments.chi.chiserver.domain.experiments.administration.create.CreateExperimentCommand
-import pl.allegro.experiments.chi.chiserver.domain.experiments.administration.pause.PauseExperimentCommand
-import pl.allegro.experiments.chi.chiserver.domain.experiments.administration.resume.ResumeExperimentCommand
-import pl.allegro.experiments.chi.chiserver.domain.experiments.administration.start.StartExperimentCommand
-import pl.allegro.experiments.chi.chiserver.domain.experiments.administration.start.StartExperimentProperties
-import pl.allegro.experiments.chi.chiserver.domain.experiments.administration.stop.StopExperimentCommand
+import pl.allegro.experiments.chi.chiserver.domain.experiments.administration.CreateExperimentCommand
+import pl.allegro.experiments.chi.chiserver.domain.experiments.administration.PauseExperimentCommand
+import pl.allegro.experiments.chi.chiserver.domain.experiments.administration.ResumeExperimentCommand
+import pl.allegro.experiments.chi.chiserver.domain.experiments.administration.StartExperimentCommand
+import pl.allegro.experiments.chi.chiserver.domain.experiments.administration.StartExperimentProperties
+import pl.allegro.experiments.chi.chiserver.domain.experiments.administration.StopExperimentCommand
 
 import static pl.allegro.experiments.chi.chiserver.application.administration.CommandTestUtils.simpleExperimentRequest
 

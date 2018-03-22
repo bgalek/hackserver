@@ -1,6 +1,6 @@
 package pl.allegro.experiments.chi.chiserver.domain.experiments.administration;
 
-public abstract class ExperimentCommandException extends RuntimeException {
+public class ExperimentCommandException extends RuntimeException {
 
     public ExperimentCommandException(String message) {
         super(message);

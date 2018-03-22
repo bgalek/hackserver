@@ -6,7 +6,7 @@ import pl.allegro.experiments.chi.chiserver.BaseIntegrationSpec
 import pl.allegro.experiments.chi.chiserver.domain.User
 import pl.allegro.experiments.chi.chiserver.domain.experiments.administration.ExperimentActions
 import pl.allegro.experiments.chi.chiserver.domain.experiments.administration.audit.Auditor
-import pl.allegro.experiments.chi.chiserver.domain.experiments.administration.start.StartExperimentProperties
+import pl.allegro.experiments.chi.chiserver.domain.experiments.administration.StartExperimentProperties
 import pl.allegro.experiments.chi.chiserver.infrastructure.experiments.MutableUserProvider
 
 import static pl.allegro.experiments.chi.chiserver.application.administration.CommandTestUtils.simpleExperimentRequest

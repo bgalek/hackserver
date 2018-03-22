@@ -55,7 +55,7 @@
                  required
           ></v-text-field>
 
-          <v-btn flat @click="cancelProlong()">Cancel</v-btn>
+          <v-btn flat @click="closeProlong()">Cancel</v-btn>
           <v-btn color="gray"
                  @click="prolong"
                  style="text-transform: none">
@@ -119,7 +119,7 @@
                                    v-model="descriptionsEditingResult"
           />
 
-          <v-btn flat @click="cancelDescriptions()">Cancel</v-btn>
+          <v-btn flat @click="closeDescriptions()">Cancel</v-btn>
           <v-btn color="gray"
                  :disabled="!descriptionsChanged()"
                  @click="updateDescriptions"
@@ -272,11 +272,11 @@
         })
       },
 
-      cancelProlong () {
+      closeProlong () {
         this.prolongMenuVisible = false
       },
 
-      cancelDescriptions () {
+      closeDescriptions () {
         this.descriptionsMenuVisible = false
       },
 
@@ -287,12 +287,32 @@
       },
 
       updateDescriptions () {
+        this.closeDescriptions()
+        this.prepareToSend()
+        this.updateExperimentDescriptions({
+          data: {
+            description: this.descriptionsEditingResult.description,
+            groups: this.descriptionsEditingResult.groups,
+            documentLink: this.descriptionsEditingResult.documentLink
+          },
+          params: {
+            experimentId: this.experiment.id
+          }
+        }).then(response => {
+          this.afterSending()
+          this.getExperiment({params: {experimentId: this.experiment.id}})
+          this.commandOkMessage = 'Experiment  successfully updated'
+        }).catch(error => {
+          this.afterSending()
+          this.showError(error)
+        })
+
         this.descriptionsMenuVisible = false
       },
 
       prolong () {
         if (this.$refs.actionForm.validate()) {
-          this.prolongMenuVisible = false
+          this.closeProlong()
           this.prepareToSend()
 
           this.prolongExperiment({
@@ -331,7 +351,16 @@
         return this.sendingDataToServer
       },
 
-      ...mapActions(['startExperiment', 'getExperiment', 'deleteExperiment', 'stopExperiment', 'pauseExperiment', 'resumeExperiment', 'prolongExperiment'])
+      ...mapActions([
+        'startExperiment',
+        'getExperiment',
+        'deleteExperiment',
+        'stopExperiment',
+        'pauseExperiment',
+        'resumeExperiment',
+        'prolongExperiment',
+        'updateExperimentDescriptions'
+      ])
     }
   }
 </script>

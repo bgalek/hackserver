@@ -4,12 +4,12 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.test.annotation.DirtiesContext
 import org.springframework.test.context.ContextConfiguration
 import pl.allegro.experiments.chi.chiserver.BaseIntegrationSpec
-import pl.allegro.experiments.chi.chiserver.domain.experiments.administration.create.CreateExperimentCommand
 import pl.allegro.experiments.chi.chiserver.domain.User
 import pl.allegro.experiments.chi.chiserver.domain.experiments.ExperimentsRepository
+import pl.allegro.experiments.chi.chiserver.domain.experiments.administration.CreateExperimentCommand
+import pl.allegro.experiments.chi.chiserver.domain.experiments.administration.ExperimentCommandException
 import pl.allegro.experiments.chi.chiserver.domain.experiments.administration.PermissionsAwareExperimentRepository
-import pl.allegro.experiments.chi.chiserver.domain.experiments.administration.delete.DeleteExperimentCommand
-import pl.allegro.experiments.chi.chiserver.domain.experiments.administration.delete.DeleteExperimentException
+import pl.allegro.experiments.chi.chiserver.domain.experiments.administration.DeleteExperimentCommand
 import pl.allegro.experiments.chi.chiserver.domain.statistics.StatisticsRepository
 import pl.allegro.experiments.chi.chiserver.infrastructure.experiments.ExperimentsTestConfig
 import pl.allegro.experiments.chi.chiserver.infrastructure.experiments.FileBasedExperimentsRepository
@@ -76,6 +76,7 @@ class DeleteExperimentCommandIntegrationSpec extends BaseIntegrationSpec {
         deleteCommand.execute()
 
         then:
-        thrown DeleteExperimentException
+        ExperimentCommandException e = thrown()
+        e.message.startsWith("Experiment with statistics cannot be deleted")
     }
 }

@@ -1,38 +1,40 @@
-package pl.allegro.experiments.chi.chiserver.domain.experiments.administration.resume;
+package pl.allegro.experiments.chi.chiserver.domain.experiments.administration;
 
 import pl.allegro.experiments.chi.chiserver.domain.experiments.Experiment;
 import pl.allegro.experiments.chi.chiserver.domain.experiments.ExperimentsRepository;
-import pl.allegro.experiments.chi.chiserver.domain.experiments.administration.PermissionsAwareExperimentRepository;
 
 import java.util.Objects;
 
-public class ResumeExperimentCommand {
-    private final String experimentId;
+public class ProlongExperimentCommand {
     private final ExperimentsRepository experimentsRepository;
+    private final ProlongExperimentProperties prolongExperimentProperties;
     private final PermissionsAwareExperimentRepository permissionsAwareExperimentRepository;
+    private final String experimentId;
 
-    ResumeExperimentCommand(
-            String experimentId,
+    ProlongExperimentCommand(
             ExperimentsRepository experimentsRepository,
-            PermissionsAwareExperimentRepository permissionsAwareExperimentRepository) {
-        Objects.requireNonNull(experimentId);
+            ProlongExperimentProperties prolongExperimentProperties,
+            PermissionsAwareExperimentRepository permissionsAwareExperimentRepository,
+            String experimentId) {
         Objects.requireNonNull(experimentsRepository);
+        Objects.requireNonNull(prolongExperimentProperties);
         Objects.requireNonNull(permissionsAwareExperimentRepository);
+        Objects.requireNonNull(experimentId);
         this.experimentId = experimentId;
         this.experimentsRepository = experimentsRepository;
         this.permissionsAwareExperimentRepository = permissionsAwareExperimentRepository;
+        this.prolongExperimentProperties = prolongExperimentProperties;
     }
 
     public void execute() {
         Experiment experiment = permissionsAwareExperimentRepository.getExperimentOrException(experimentId);
         validate(experiment);
-        Experiment resumed = experiment.resume();
-        experimentsRepository.save(resumed);
+        experimentsRepository.save(experiment.prolong(prolongExperimentProperties.getExperimentAdditionalDays()));
     }
 
     private void validate(Experiment experiment) {
-        if (!experiment.isPaused()) {
-            throw new ResumeExperimentException(String.format("Experiment <%s> is not PAUSED.", experimentId));
+        if (!experiment.isActive()) {
+            throw new ExperimentCommandException("Experiment cant be prolonged if it is not ACTIVE");
         }
     }
 }

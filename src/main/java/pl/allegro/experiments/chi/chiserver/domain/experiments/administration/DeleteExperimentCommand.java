@@ -1,7 +1,8 @@
-package pl.allegro.experiments.chi.chiserver.domain.experiments.administration.delete;
+package pl.allegro.experiments.chi.chiserver.domain.experiments.administration;
 
 import pl.allegro.experiments.chi.chiserver.domain.experiments.Experiment;
 import pl.allegro.experiments.chi.chiserver.domain.experiments.ExperimentsRepository;
+import pl.allegro.experiments.chi.chiserver.domain.experiments.administration.ExperimentCommandException;
 import pl.allegro.experiments.chi.chiserver.domain.experiments.administration.PermissionsAwareExperimentRepository;
 import pl.allegro.experiments.chi.chiserver.domain.statistics.StatisticsRepository;
 
@@ -36,7 +37,7 @@ public class DeleteExperimentCommand {
 
     private void validate(Experiment experiment) {
         if (statisticsRepository.hasAnyStatistics(experiment)) {
-            throw new DeleteExperimentException("Experiment with statistics cannot be deleted: " + experimentId);
+            throw new ExperimentCommandException("Experiment with statistics cannot be deleted: " + experimentId);
         }
     }
 }

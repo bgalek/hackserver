@@ -5,8 +5,7 @@ import org.springframework.test.annotation.DirtiesContext
 import org.springframework.test.context.ContextConfiguration
 import pl.allegro.experiments.chi.chiserver.BaseIntegrationSpec
 import pl.allegro.experiments.chi.chiserver.domain.experiments.administration.AuthorizationException
-import pl.allegro.experiments.chi.chiserver.domain.experiments.administration.create.CreateExperimentCommand
-import pl.allegro.experiments.chi.chiserver.domain.experiments.administration.create.ExperimentCreationException
+import pl.allegro.experiments.chi.chiserver.domain.experiments.administration.CreateExperimentCommand
 import pl.allegro.experiments.chi.chiserver.domain.experiments.administration.create.ExperimentCreationRequest
 import pl.allegro.experiments.chi.chiserver.domain.User
 import pl.allegro.experiments.chi.chiserver.domain.experiments.ExperimentsRepository

@@ -5,6 +5,7 @@ import org.springframework.test.annotation.DirtiesContext
 import org.springframework.test.context.ContextConfiguration
 import pl.allegro.experiments.chi.chiserver.BaseIntegrationSpec
 import pl.allegro.experiments.chi.chiserver.domain.experiments.Experiment
+import pl.allegro.experiments.chi.chiserver.domain.experiments.administration.ExperimentCommandException
 import pl.allegro.experiments.chi.chiserver.domain.experiments.administration.ExperimentNotFoundException
 import pl.allegro.experiments.chi.chiserver.domain.experiments.administration.PermissionsAwareExperimentRepository
 import pl.allegro.experiments.chi.chiserver.domain.experiments.administration.pause.PauseExperimentException
@@ -60,7 +61,8 @@ class PauseExperimentCommandIntegrationSpec extends BaseIntegrationSpec implemen
         pauseCommand(endedExperiment().id).execute()
 
         then:
-        thrown PauseExperimentException
+        ExperimentCommandException e = thrown()
+        e.message.startsWith("Experiment is not ACTIVE")
     }
 
     def "should not pause experiment if it is has PAUSED status"() {
@@ -68,7 +70,9 @@ class PauseExperimentCommandIntegrationSpec extends BaseIntegrationSpec implemen
         pauseCommand(pausedExperiment().id).execute()
 
         then:
-        thrown PauseExperimentException
+        ExperimentCommandException e = thrown()
+        e.message.startsWith("Experiment is not ACTIVE")
+
     }
 
     def "should not pause experiment if it has DRAFT status"() {

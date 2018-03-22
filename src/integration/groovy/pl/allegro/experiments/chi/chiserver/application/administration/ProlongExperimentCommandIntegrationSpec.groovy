@@ -4,16 +4,12 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.test.annotation.DirtiesContext
 import org.springframework.test.context.ContextConfiguration
 import pl.allegro.experiments.chi.chiserver.BaseIntegrationSpec
-import pl.allegro.experiments.chi.chiserver.domain.experiments.Experiment
-import pl.allegro.experiments.chi.chiserver.domain.experiments.administration.create.CreateExperimentCommand
 import pl.allegro.experiments.chi.chiserver.domain.User
+import pl.allegro.experiments.chi.chiserver.domain.experiments.Experiment
 import pl.allegro.experiments.chi.chiserver.domain.experiments.ExperimentsRepository
-import pl.allegro.experiments.chi.chiserver.domain.experiments.administration.PermissionsAwareExperimentRepository
-import pl.allegro.experiments.chi.chiserver.domain.experiments.administration.prolong.ProlongExperimentCommand
-import pl.allegro.experiments.chi.chiserver.domain.experiments.administration.prolong.ProlongExperimentException
-import pl.allegro.experiments.chi.chiserver.domain.experiments.administration.prolong.ProlongExperimentProperties
-import pl.allegro.experiments.chi.chiserver.domain.experiments.administration.start.StartExperimentCommand
-import pl.allegro.experiments.chi.chiserver.domain.experiments.administration.start.StartExperimentProperties
+import pl.allegro.experiments.chi.chiserver.domain.experiments.administration.*
+import pl.allegro.experiments.chi.chiserver.domain.experiments.administration.ProlongExperimentCommand
+import pl.allegro.experiments.chi.chiserver.domain.experiments.administration.ProlongExperimentProperties
 import pl.allegro.experiments.chi.chiserver.infrastructure.experiments.ExperimentsTestConfig
 import pl.allegro.experiments.chi.chiserver.infrastructure.experiments.MutableUserProvider
 
@@ -80,7 +76,8 @@ class ProlongExperimentCommandIntegrationSpec extends BaseIntegrationSpec {
         prolongCommand.execute()
 
         then:
-        thrown ProlongExperimentException
+        ExperimentCommandException e = thrown()
+        e.message.startsWith("Experiment cant be prolonged")
     }
 
     def "should not prolong experiment when given number of days is negative or zero"() {

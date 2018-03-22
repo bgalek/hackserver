@@ -11,6 +11,7 @@ import createExperiment from './createExperiment'
 import stopExperiment from './stopExperiment'
 import pauseExperiment from './pauseExperiment'
 import resumeExperiment from './resumeExperiment'
+import updateExperimentDescriptions from './updateExperimentDescriptions'
 import prolongExperiment from './prolongExperiment'
 import user from './user'
 import {userPreferences} from './userPreferences'
@@ -37,6 +38,7 @@ export default new Vuex.Store({
     pauseExperiment,
     resumeExperiment,
     prolongExperiment,
+    updateExperimentDescriptions,
     user
   }
 })
