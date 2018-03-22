@@ -1,4 +1,4 @@
-package pl.allegro.experiments.chi.chiserver.domain.experiments.administration.create;
+package pl.allegro.experiments.chi.chiserver.domain.experiments.administration;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -92,7 +92,7 @@ public class ExperimentCreationRequest {
             if (percentage != null) {
                 int maxPercentageVariant = 100 / variantNames.size();
                 if (percentage > maxPercentageVariant) {
-                    throw new ExperimentCreationException("Percentage exceeds maximum value ( " + percentage + " > " + maxPercentageVariant + " )");
+                    throw new ExperimentCommandException("Percentage exceeds maximum value ( " + percentage + " > " + maxPercentageVariant + " )");
                 }
                 for (int i = 0; i < variantNames.size(); i++) {
                     experimentVariants.add(convertVariant(variantNames.get(i), i * maxPercentageVariant,i * maxPercentageVariant + percentage));
@@ -110,7 +110,7 @@ public class ExperimentCreationRequest {
                     .build();
 
         } catch (Exception e) {
-            throw new ExperimentCreationException("Cannot create experiment from request", e);
+            throw new ExperimentCommandException("Cannot create experiment from request", e);
         }
     }
 

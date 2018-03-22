@@ -5,7 +5,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import pl.allegro.experiments.chi.chiserver.domain.UserProvider;
 import pl.allegro.experiments.chi.chiserver.domain.experiments.ExperimentsRepository;
-import pl.allegro.experiments.chi.chiserver.domain.experiments.administration.create.ExperimentCreationRequest;
 import pl.allegro.experiments.chi.chiserver.domain.statistics.StatisticsRepository;
 
 @Service
@@ -85,6 +84,18 @@ public class CommandFactory {
                 permissionsAwareExperimentRepository,
                 experimentId,
                 statisticsRepository
+        );
+    }
+
+    public UpdateDescriptionsCommand updateDescriptionsCommand(String experimentId, UpdateExperimentProperties properties) {
+        Preconditions.checkNotNull(experimentId);
+        Preconditions.checkNotNull(properties);
+
+        return new UpdateDescriptionsCommand(
+                experimentId,
+                properties,
+                experimentsRepository,
+                permissionsAwareExperimentRepository
         );
     }
 }

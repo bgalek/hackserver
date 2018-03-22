@@ -7,7 +7,8 @@ import org.springframework.test.context.ContextConfiguration
 import pl.allegro.experiments.chi.chiserver.BaseIntegrationSpec
 import pl.allegro.experiments.chi.chiserver.domain.experiments.administration.AuthorizationException
 import pl.allegro.experiments.chi.chiserver.domain.experiments.administration.CreateExperimentCommand
-import pl.allegro.experiments.chi.chiserver.domain.experiments.administration.create.ExperimentCreationRequest
+import pl.allegro.experiments.chi.chiserver.domain.experiments.administration.ExperimentCommandException
+import pl.allegro.experiments.chi.chiserver.domain.experiments.administration.ExperimentCreationRequest
 import pl.allegro.experiments.chi.chiserver.domain.User
 import pl.allegro.experiments.chi.chiserver.domain.experiments.ExperimentsRepository
 import pl.allegro.experiments.chi.chiserver.infrastructure.InMemoryExperimentsRepository
@@ -59,7 +60,8 @@ class CreateExperimentCommandIntegrationSpec extends BaseIntegrationSpec {
         command.execute()
 
         then:
-        thrown(ExperimentCreationException)
+        ExperimentCommandException e = thrown()
+        e.message.endsWith("already exists")
     }
 
     def "should not create experiment when user is anonymous"() {
@@ -97,6 +99,7 @@ class CreateExperimentCommandIntegrationSpec extends BaseIntegrationSpec {
         command.execute()
 
         then:
-        thrown(ExperimentCreationException)
+        ExperimentCommandException e = thrown()
+        e.message == 'Cannot create experiment from request'
     }
 }

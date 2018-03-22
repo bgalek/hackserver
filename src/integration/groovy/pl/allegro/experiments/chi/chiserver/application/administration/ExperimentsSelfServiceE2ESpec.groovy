@@ -143,6 +143,20 @@ class ExperimentsSelfServiceE2ESpec extends BaseIntegrationSpec {
                 .hasStatus(ExperimentStatus.ACTIVE)
 
         when:
+        restTemplate.put(localUrl("/api/admin/experiments/${request.id}/update-descriptions"),
+            [
+                description: 'chi rulez',
+                documentLink: 'new link',
+                groups: ['group c'],
+            ], Map)
+
+        then:
+        def e = fetchExperiment(request.id).body
+        e.description == 'chi rulez'
+        e.documentLink == 'new link'
+        e.groups == ['group c']
+
+        when:
         restTemplate.put(localUrl("/api/admin/experiments/${request.id}/pause"), Map)
 
         then:

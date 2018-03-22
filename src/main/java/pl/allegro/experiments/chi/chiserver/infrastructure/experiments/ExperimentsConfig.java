@@ -73,7 +73,8 @@ public class ExperimentsConfig {
         Gauge<Integer> gaugeAll = () -> repo.getAll().size();
         metricRegistry.register(EXPERIMENTS_COUNT_ALL_METRIC, gaugeAll);
 
-        Gauge<Integer> gaugeLive = () -> repo.getAll().size();
+        Gauge<Integer> gaugeLive = () -> (int)repo.getAll().stream().count();
+
         metricRegistry.register(EXPERIMENTS_COUNT_LIVE_METRIC, gaugeLive);
         return repo;
     }

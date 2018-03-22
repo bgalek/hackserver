@@ -1,6 +1,6 @@
 package pl.allegro.experiments.chi.chiserver.application.administration
 
-import pl.allegro.experiments.chi.chiserver.domain.experiments.administration.create.ExperimentCreationRequest
+import pl.allegro.experiments.chi.chiserver.domain.experiments.administration.ExperimentCreationRequest
 
 class CommandTestUtils {
     static def simpleExperimentRequest(String id) {

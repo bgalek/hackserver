@@ -90,7 +90,7 @@
                     chips
                     append-icon=""
                     tags
-                    v-model="variants">
+                    v-model="variantNames">
                     <template slot="selection" slot-scope="data">
 
                       <v-chip
@@ -177,7 +177,7 @@
         variantsRules: [
           (v) => this.variantsUnique() || 'Slugified variant names must be unique.',
           (v) => this.slugifiedVariants.indexOf('') === -1 || 'Slugified variant name can not be empty.',
-          (v) => this.noOfVariants() > 1 || 'No variantNames. Seriously?'
+          (v) => this.noOfVariants() > 1 || 'No variants. Seriously?'
         ],
         experimentIdRules: [
           (v) => !!v || 'Experiment ID is required',

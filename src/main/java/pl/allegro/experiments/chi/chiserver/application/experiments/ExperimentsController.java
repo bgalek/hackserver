@@ -15,7 +15,7 @@ import pl.allegro.experiments.chi.chiserver.domain.experiments.administration.Ex
 import pl.allegro.experiments.chi.chiserver.domain.experiments.administration.ExperimentNotFoundException;
 import pl.allegro.experiments.chi.chiserver.domain.experiments.administration.audit.Auditor;
 import pl.allegro.experiments.chi.chiserver.domain.experiments.administration.audit.AuditLog;
-import pl.allegro.experiments.chi.chiserver.domain.experiments.administration.create.ExperimentCreationRequest;
+import pl.allegro.experiments.chi.chiserver.domain.experiments.administration.ExperimentCreationRequest;
 import pl.allegro.experiments.chi.chiserver.domain.experiments.administration.ProlongExperimentProperties;
 import pl.allegro.experiments.chi.chiserver.domain.experiments.administration.UpdateExperimentProperties;
 import pl.allegro.experiments.chi.chiserver.domain.experiments.administration.StartExperimentProperties;
@@ -24,7 +24,6 @@ import pl.allegro.tech.common.andamio.errors.ErrorsHolder;
 import pl.allegro.tech.common.andamio.errors.SimpleErrorsHolder;
 import pl.allegro.tech.common.andamio.metrics.MeteredEndpoint;
 
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 import static org.springframework.http.MediaType.APPLICATION_JSON_UTF8_VALUE;

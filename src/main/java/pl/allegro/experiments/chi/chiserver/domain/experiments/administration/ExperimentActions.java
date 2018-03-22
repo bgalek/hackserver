@@ -2,7 +2,6 @@ package pl.allegro.experiments.chi.chiserver.domain.experiments.administration;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import pl.allegro.experiments.chi.chiserver.domain.experiments.administration.create.ExperimentCreationRequest;
 
 @Service
 public class ExperimentActions {
@@ -31,7 +30,7 @@ public class ExperimentActions {
     }
 
     public void updateDescriptions(String experimentId, UpdateExperimentProperties properties) {
-        System.out.println( "req " + properties.toString());
+        commandFactory.updateDescriptionsCommand(experimentId, properties).execute();
     }
 
     public void stop(String experimentId) {
