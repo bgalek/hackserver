@@ -20,11 +20,11 @@ class FileBasedExperimentsRepositorySpec extends Specification {
         def experimentsRepository = newFileBasedExperimentsRepository('some-experiments.json')
 
         expect:
-        def hashExperiment = experimentsRepository.getExperiment("test_dev")
-        def regexpExperiment = experimentsRepository.getExperiment("cmuid_regexp")
-        def internalExperiment = experimentsRepository.getExperiment("internal_exp")
-        def timedExp = experimentsRepository.getExperiment("timed_internal_exp")
-        def phoneExperiment = experimentsRepository.getExperiment("cmuid_regexp_with_phone")
+        def hashExperiment = experimentsRepository.getExperiment("test_dev").get()
+        def regexpExperiment = experimentsRepository.getExperiment("cmuid_regexp").get()
+        def internalExperiment = experimentsRepository.getExperiment("internal_exp").get()
+        def timedExp = experimentsRepository.getExperiment("timed_internal_exp").get()
+        def phoneExperiment = experimentsRepository.getExperiment("cmuid_regexp_with_phone").get()
 
         with(phoneExperiment) {
             id == "cmuid_regexp_with_phone"
