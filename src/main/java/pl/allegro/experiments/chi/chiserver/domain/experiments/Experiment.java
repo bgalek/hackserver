@@ -63,9 +63,7 @@ public class Experiment {
     @Id
     @DiffInclude
     public String getId() {
-        ImmutableMap.of("k","v");
         return id;
-
     }
 
     public List<ExperimentVariant> getVariants() {
@@ -267,12 +265,12 @@ public class Experiment {
         }
 
         public Builder description(String description) {
-            this.description = description;
+            this.description = emptyToNull(description);
             return this;
         }
 
         public Builder documentLink(String documentLink) {
-            this.documentLink = documentLink;
+            this.documentLink = emptyToNull(documentLink);
             return this;
         }
 
@@ -330,6 +328,13 @@ public class Experiment {
                     editable,
                     origin,
                     explicitStatus);
+        }
+
+        public static String emptyToNull(String s) {
+            if (s != null && s.isEmpty()) {
+                return null;
+            }
+            return s;
         }
     }
 }
