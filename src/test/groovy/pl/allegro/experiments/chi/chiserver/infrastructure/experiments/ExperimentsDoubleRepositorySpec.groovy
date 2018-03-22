@@ -32,8 +32,8 @@ class ExperimentsDoubleRepositorySpec extends Specification {
         repo.save(experiment)
 
         then:
-        !fileRepo.getExperiment("1234")
-        mongoRepo.getExperiment("1234")
+        !fileRepo.getExperiment("1234").isPresent()
+        mongoRepo.getExperiment("1234").isPresent()
     }
 
     def "first repo should have priority when calling getById"() {
@@ -44,7 +44,7 @@ class ExperimentsDoubleRepositorySpec extends Specification {
         def repo = new ExperimentsDoubleRepository(fileRepo, mongoRepo)
 
         when:
-        def e = repo.getExperiment("1")
+        def e = repo.getExperiment("1").get()
 
         then:
         e.description == "from stash"
@@ -72,8 +72,8 @@ class ExperimentsDoubleRepositorySpec extends Specification {
         def repo = new ExperimentsDoubleRepository(fileRepo, mongoRepo)
 
         expect:
-        repo.getOrigin("1") == 'stash'
-        repo.getOrigin("2") == 'mongo'
+        repo.getOrigin("1") == ExperimentOrigin.STASH
+        repo.getOrigin("2") == ExperimentOrigin.MONGO
     }
 
     def "first repo should have priority when calling getAll"() {

@@ -12,6 +12,7 @@ import pl.allegro.experiments.chi.chiserver.domain.UserProvider
 import pl.allegro.experiments.chi.chiserver.domain.experiments.ExperimentStatus
 import pl.allegro.experiments.chi.chiserver.domain.experiments.ExperimentsRepository
 import pl.allegro.experiments.chi.chiserver.infrastructure.experiments.ExperimentsDoubleRepository
+import spock.lang.Unroll
 
 import java.time.ZonedDateTime
 
@@ -32,20 +33,19 @@ class ExperimentsSelfServiceE2ESpec extends BaseIntegrationSpec {
         }
     }
 
+    @Unroll
     def "should set editable flag depending on who ask for single experiment/multiple experiments"() {
         given:
         userProvider.user = new User('Author', [], true)
         def request = [
-                id              : UUID.randomUUID().toString(),
-                description     : "desc",
-                variants        : [
-                        [
-                                name      : "v1",
-                                predicates: [[type: "INTERNAL"]]
-                        ]
-                ],
-                groups          : ['group a', 'group b'],
-                reportingEnabled: true
+                id                  : UUID.randomUUID().toString(),
+                description         : "desc",
+                variantNames        : [],
+                internalVariantName : 'v1',
+                percentage          : null,
+                deviceClass         : null,
+                groups              : ['group a', 'group b'],
+                reportingEnabled    : true
         ]
         restTemplate.postForEntity(localUrl('/api/admin/experiments'), request, Map)
         userProvider.user = user
@@ -80,25 +80,15 @@ class ExperimentsSelfServiceE2ESpec extends BaseIntegrationSpec {
         userProvider.user = new User('Anonymous', [], true)
 
         def request = [
-                id              : "some2",
-                description     : "desc",
-                documentLink    : "https://vuetifyjs.com/vuetify/quick-start",
-                variants        : [
-                        [
-                                name      : "v1",
-                                predicates: [[type: "INTERNAL"]]
-                        ],
-                        [
-                                name      : "v2",
-                                predicates: [[type: "HASH", from: 17, to: 90]]
-                        ],
-                        [
-                                name      : "v3",
-                                predicates: [[type: "CMUID_REGEXP", regexp: "....[123]\$"], [type: "DEVICE_CLASS", device: "phone"]]
-                        ]
-                ],
-                groups          : ['group a', 'group b'],
-                reportingEnabled: true
+                id                      : 'some2',
+                description             : 'desc',
+                documentLink            : 'https://vuetifyjs.com/vuetify/quick-start',
+                variantNames            : ['v2', 'v3'],
+                internalVariantName     : 'v1',
+                percentage              : 10,
+                deviceClass             : 'phone',
+                groups                  : ['group a', 'group b'],
+                reportingEnabled        : true
         ]
 
         when:
@@ -112,12 +102,31 @@ class ExperimentsSelfServiceE2ESpec extends BaseIntegrationSpec {
         def responseSingle = restTemplate.getForEntity(localUrl("/api/admin/experiments/${request.id}/"), Map)
 
         then:
-        def expectedExperiment = request + [
-                author      : "Anonymous",
-                status      : "DRAFT",
-                measurements: [lastDayVisits: 0],
-                editable    : true,
-                origin      : 'mongo'
+        def expectedExperiment = [
+                id              : 'some2',
+                author          : 'Anonymous',
+                status          : 'DRAFT',
+                measurements    : [ lastDayVisits: 0 ],
+                editable        : true,
+                groups          : ['group a', 'group b'],
+                origin          : 'mongo',
+                description     : 'desc',
+                documentLink    : 'https://vuetifyjs.com/vuetify/quick-start',
+                reportingEnabled: true,
+                variants        : [
+                    [
+                        name: 'v1',
+                        predicates: [[ type: 'INTERNAL' ]]
+                    ],
+                    [
+                        name: 'v2',
+                        predicates: [[type: 'DEVICE_CLASS', device: 'phone'], [ type: 'HASH', from: 0, to: 10 ]]
+                    ],
+                    [
+                        name: 'v3',
+                        predicates: [[type: 'DEVICE_CLASS', device: 'phone'], [ type: 'HASH', from: 50, to: 60 ]]
+                    ]
+                ]
         ]
         responseSingle.body.variants == expectedExperiment.variants
         responseSingle.body == expectedExperiment

@@ -44,7 +44,7 @@ class ProlongExperimentCommandIntegrationSpec extends BaseIntegrationSpec {
         startCommand.execute()
 
         and:
-        experiment = experimentsRepository.getExperiment(experiment.id)
+        experiment = experimentsRepository.getExperiment(experiment.id).get()
 
         and:
         def prolongCommand = new ProlongExperimentCommand(
@@ -57,8 +57,8 @@ class ProlongExperimentCommandIntegrationSpec extends BaseIntegrationSpec {
         prolongCommand.execute()
 
         then:
-        experimentsRepository.getExperiment(experiment.id).activityPeriod.activeTo == experiment.activityPeriod.activeTo.plusDays(30)
-        experimentsRepository.getExperiment(experiment.id).activityPeriod.activeFrom == experiment.activityPeriod.activeFrom
+        experimentsRepository.getExperiment(experiment.id).get().activityPeriod.activeTo == experiment.activityPeriod.activeTo.plusDays(30)
+        experimentsRepository.getExperiment(experiment.id).get().activityPeriod.activeFrom == experiment.activityPeriod.activeFrom
     }
 
     def "should not prolong experiment if it is not ACTIVE"() {
@@ -96,6 +96,6 @@ class ProlongExperimentCommandIntegrationSpec extends BaseIntegrationSpec {
         mutableUserProvider.user = new User('Root', [], true)
         def command = new CreateExperimentCommand(experimentsRepository, mutableUserProvider, simpleExperimentRequest(id))
         command.execute()
-        return experimentsRepository.getExperiment(id)
+        return experimentsRepository.getExperiment(id).get()
     }
 }

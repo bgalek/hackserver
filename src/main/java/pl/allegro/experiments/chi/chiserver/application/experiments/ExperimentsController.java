@@ -71,7 +71,7 @@ public class ExperimentsController {
     @GetMapping(path = {"{experimentId}"})
     ResponseEntity<String> getExperiment(@PathVariable String experimentId) {
         logger.info("Single experiment request received");
-        return Optional.ofNullable(experimentsRepository.getExperiment(experimentId))
+        return experimentsRepository.getExperiment(experimentId)
                 .map(measurementsRepository::withMeasurements)
                 .map(permissionsRepository::withPermissions)
                 .map(e -> ResponseEntity.ok(jsonConverter.toJson(e)))

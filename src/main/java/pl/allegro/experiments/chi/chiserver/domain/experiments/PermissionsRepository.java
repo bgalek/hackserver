@@ -21,6 +21,6 @@ public class PermissionsRepository {
         Preconditions.checkNotNull(experiment);
         User currentUser = userProvider.getCurrentUser();
         return experiment.withEditableFlag(currentUser.isOwner(experiment))
-                .withOrigin(experimentsRepository.getOrigin(experiment.getId()));
+                .withOrigin(experimentsRepository.getOrigin(experiment.getId()).toString());
     }
 }

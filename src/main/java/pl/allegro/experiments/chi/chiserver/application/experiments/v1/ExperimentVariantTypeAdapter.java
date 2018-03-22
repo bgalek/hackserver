@@ -10,11 +10,6 @@ import java.util.List;
 import java.util.regex.Pattern;
 
 public class ExperimentVariantTypeAdapter implements JsonSerializer<ExperimentVariant>, JsonDeserializer<ExperimentVariant> {
-    private static final String CMUID_REGEXP_TYPE = "CMUID_REGEXP";
-    private static final String HASH_TYPE = "HASH";
-    private static final String INTERNAL_TYPE = "INTERNAL";
-    private static final String DEVICE_CLASS_TYPE = "DEVICE_CLASS";
-
     @Override
     public JsonElement serialize(ExperimentVariant src, Type typeOfSrc, JsonSerializationContext context) {
         JsonObject element = new JsonObject();
@@ -41,13 +36,13 @@ public class ExperimentVariantTypeAdapter implements JsonSerializer<ExperimentVa
 
     private Predicate deserializePredicate(JsonObject json) {
         String type = json.get("type").getAsString();
-        if (DEVICE_CLASS_TYPE.equals(type)) {
+        if (PredicateType.DEVICE_CLASS.toString().equals(type)) {
             return deserializeDevicePredicate(json);
-        } else if (HASH_TYPE.equals(type)) {
+        } else if (PredicateType.HASH.toString().equals(type)) {
             return deserializeHashPredicate(json);
-        } else if (CMUID_REGEXP_TYPE.equals(type)) {
+        } else if (PredicateType.CMUID_REGEXP.toString().equals(type)) {
             return deserializeCmuidPredicate(json);
-        } else if (INTERNAL_TYPE.equals(type)) {
+        } else if (PredicateType.INTERNAL.toString().equals(type)) {
             return deserializeInternalVariant(json);
         }
 

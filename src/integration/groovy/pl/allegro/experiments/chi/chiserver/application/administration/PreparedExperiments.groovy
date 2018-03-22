@@ -17,21 +17,21 @@ trait PreparedExperiments {
         def properties = new StartExperimentProperties(30)
         startExperimentCommand(experiment.id, properties)
                 .execute()
-        return experimentsRepository.getExperiment(experiment.id)
+        return experimentsRepository.getExperiment(experiment.id).get()
     }
 
     Experiment endedExperiment() {
         def experiment = startedExperiment()
         stopExperimentCommand(experiment.id)
                 .execute()
-        return experimentsRepository.getExperiment(experiment.id)
+        return experimentsRepository.getExperiment(experiment.id).get()
     }
 
     Experiment pausedExperiment() {
         def experiment = startedExperiment()
         pauseCommand(experiment.id)
                 .execute()
-        return experimentsRepository.getExperiment(experiment.id)
+        return experimentsRepository.getExperiment(experiment.id).get()
     }
 
     StartExperimentCommand startExperimentCommand(String experimentId, StartExperimentProperties properties) {
@@ -57,7 +57,7 @@ trait PreparedExperiments {
                 mutableUserProvider,
                 simpleExperimentRequest(id))
         command.execute()
-        experimentsRepository.getExperiment(id)
+        experimentsRepository.getExperiment(id).get()
     }
 
     PauseExperimentCommand pauseCommand(String experimentId) {

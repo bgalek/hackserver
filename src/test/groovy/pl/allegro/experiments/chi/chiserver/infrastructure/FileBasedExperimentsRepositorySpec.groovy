@@ -20,11 +20,11 @@ class FileBasedExperimentsRepositorySpec extends Specification {
         def experimentsRepository = newFileBasedExperimentsRepository('some-experiments.json')
 
         expect:
-        def hashExperiment = experimentsRepository.getExperiment("test_dev")
-        def regexpExperiment = experimentsRepository.getExperiment("cmuid_regexp")
-        def internalExperiment = experimentsRepository.getExperiment("internal_exp")
-        def timedExp = experimentsRepository.getExperiment("timed_internal_exp")
-        def phoneExperiment = experimentsRepository.getExperiment("cmuid_regexp_with_phone")
+        def hashExperiment = experimentsRepository.getExperiment("test_dev").get()
+        def regexpExperiment = experimentsRepository.getExperiment("cmuid_regexp").get()
+        def internalExperiment = experimentsRepository.getExperiment("internal_exp").get()
+        def timedExp = experimentsRepository.getExperiment("timed_internal_exp").get()
+        def phoneExperiment = experimentsRepository.getExperiment("cmuid_regexp_with_phone").get()
 
         with(phoneExperiment) {
             id == "cmuid_regexp_with_phone"
@@ -69,8 +69,10 @@ class FileBasedExperimentsRepositorySpec extends Specification {
 
     def "should remove experiments not existing in the source file"(){
         given:
-        def repo = new FileBasedExperimentsRepository('some-experiments.json',
-                { p -> new ClasspathContentLoader().localResource(p) }, new JsonConfig().jsonConverter(),
+        def repo = new FileBasedExperimentsRepository(
+                'some-experiments.json',
+                { p -> new ClasspathContentLoader().localResource(p) },
+                new JsonConfig().jsonConverter(),
                 [ExperimentFactory.simple50("obsolete", "vA")])
 
         expect:
@@ -78,6 +80,9 @@ class FileBasedExperimentsRepositorySpec extends Specification {
     }
 
     FileBasedExperimentsRepository newFileBasedExperimentsRepository(String jsonUrl) {
-        new FileBasedExperimentsRepository(jsonUrl, { p -> new ClasspathContentLoader().localResource(p) }, new JsonConfig().jsonConverter(), [])
+        new FileBasedExperimentsRepository(
+                jsonUrl,
+                { p -> new ClasspathContentLoader().localResource(p) },
+                new JsonConfig().jsonConverter(), [])
     }
 }

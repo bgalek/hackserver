@@ -41,7 +41,7 @@ class ResumeExperimentCommandIntegrationSpec extends BaseIntegrationSpec impleme
 
         when:
         resumeCommand.execute()
-        experiment = experimentsRepository.getExperiment(experiment.id)
+        experiment = experimentsRepository.getExperiment(experiment.id).get()
 
         then:
         experiment.isActive()
