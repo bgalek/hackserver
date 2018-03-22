@@ -25,6 +25,7 @@
       <h4 style="margin-top: 5px">Lifecycle actions</h4>
 
       <v-text-field
+             style="width: 200px"
              v-if="this.experiment.canBeStarted()"
              label="Duration days"
              v-model="durationDays"

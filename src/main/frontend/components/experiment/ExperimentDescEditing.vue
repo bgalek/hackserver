@@ -1,6 +1,6 @@
 <template>
   <v-form>
-    <v-container fluid style="margin: 0px; padding: 0px">
+    <v-container fluid style="margin: 0px; padding: 0px" text-xs-center>
       <v-layout row align-center>
 
         <v-flex xs1>

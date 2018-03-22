@@ -14,10 +14,10 @@
                 ref="createForm"
                 lazy-validation>
 
-            <v-container fluid style="margin: 0px; padding: 0px" >
+            <v-container fluid style="margin: 0px; padding: 0px" text-xs-center>
               <v-layout row align-center>
 
-                <v-flex xs1 >
+                <v-flex xs1>
                   <v-tooltip right >
                     <span>Unique ID used by Chi and other applications to identify your experiment. Keep it concise.</span>
                     <v-icon
@@ -26,7 +26,6 @@
                 </v-flex>
                 <v-flex xs11>
                   <v-text-field
-                    style="width: 90%"
                     v-model="experimentId"
                     label="Experiment ID"
                     :rules="experimentIdRules"
@@ -49,9 +48,9 @@
               </v-layout>
             </v-container>
 
-            <experiment-desc-editing v-model="descriptions"/>
+            <experiment-desc-editing v-model="descriptions" />
 
-            <v-container fluid style="margin: 0px; padding: 0px">
+            <v-container fluid style="margin: 0px; padding: 0px" text-xs-center>
 
               <v-layout row align-top>
 
