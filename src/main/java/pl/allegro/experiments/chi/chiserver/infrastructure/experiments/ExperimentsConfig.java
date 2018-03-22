@@ -73,17 +73,15 @@ public class ExperimentsConfig {
             CachedExperimentsRepository mongoExperimentsRepository,
             MetricRegistry metricRegistry) {
         ExperimentsRepository repo = new ExperimentsDoubleRepository(fileBasedExperimentsRepository, mongoExperimentsRepository);
-        Gauge<Integer> gaugeAll = () -> repo.getAll().size();
+        Gauge<Long> gaugeAll = () -> Integer.toUnsignedLong(repo.getAll().size());
         metricRegistry.register(EXPERIMENTS_COUNT_ALL_METRIC, gaugeAll);
 
-        Gauge<Integer> gaugeActive = () -> repo.getAll().stream()
-                .filter(Experiment::isActive)
-                .collect(Collectors.toList()).size();
+        Gauge<Long> gaugeActive = () -> repo.getAll().stream()
+                .filter(Experiment::isActive).count();
         metricRegistry.register(EXPERIMENTS_COUNT_ACTIVE_METRIC, gaugeActive);
 
-        Gauge<Integer> gaugeDraft = () -> repo.getAll().stream()
-                .filter(Experiment::isDraft)
-                .collect(Collectors.toList()).size();
+        Gauge<Long> gaugeDraft = () -> repo.getAll().stream()
+                .filter(Experiment::isDraft).count();
         metricRegistry.register(EXPERIMENTS_COUNT_DRAFT_METRIC, gaugeDraft);
         return repo;
     }
