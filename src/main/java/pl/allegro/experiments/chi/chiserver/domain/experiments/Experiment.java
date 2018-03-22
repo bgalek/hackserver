@@ -2,7 +2,6 @@ package pl.allegro.experiments.chi.chiserver.domain.experiments;
 
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableMap;
 import joptsimple.internal.Strings;
 import org.javers.core.metamodel.annotation.DiffInclude;
 import org.javers.core.metamodel.annotation.Id;
@@ -47,8 +46,8 @@ public class Experiment {
         Preconditions.checkNotNull(groups);
         this.id = id;
         this.variants = ImmutableList.copyOf(variants);
-        this.description = description;
-        this.documentLink = documentLink;
+        this.description = emptyToNull(description);
+        this.documentLink = emptyToNull(documentLink);
         this.author = author;
         this.groups = ImmutableList.copyOf(groups);
         this.reportingEnabled = reportingEnabled;
@@ -265,12 +264,12 @@ public class Experiment {
         }
 
         public Builder description(String description) {
-            this.description = emptyToNull(description);
+            this.description = description;
             return this;
         }
 
         public Builder documentLink(String documentLink) {
-            this.documentLink = emptyToNull(documentLink);
+            this.documentLink = documentLink;
             return this;
         }
 
@@ -329,12 +328,12 @@ public class Experiment {
                     origin,
                     explicitStatus);
         }
+    }
 
-        public static String emptyToNull(String s) {
-            if (s != null && s.isEmpty()) {
-                return null;
-            }
-            return s;
+    static String emptyToNull(String s) {
+        if (s != null && s.isEmpty()) {
+            return null;
         }
+        return s;
     }
 }

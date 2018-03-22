@@ -102,9 +102,6 @@
         </v-list>
       </v-menu>
 
-    </v-form>
-
-
     <div v-if="canRunOtherCommand">
       <h4 style="margin-top: 15px">Other actions</h4>
 
@@ -145,6 +142,7 @@
       </v-menu>
     </div>
 
+    </v-form>
   </chi-panel>
 </template>
 
@@ -288,27 +286,29 @@
       },
 
       updateDescriptions () {
-        this.closeDescriptions()
-        this.prepareToSend()
-        this.updateExperimentDescriptions({
-          data: {
-            description: this.descriptionsEditingResult.description,
-            groups: this.descriptionsEditingResult.groups,
-            documentLink: this.descriptionsEditingResult.documentLink
-          },
-          params: {
-            experimentId: this.experiment.id
-          }
-        }).then(response => {
-          this.afterSending()
-          this.getExperiment({params: {experimentId: this.experiment.id}})
-          this.commandOkMessage = 'Experiment  successfully updated'
-        }).catch(error => {
-          this.afterSending()
-          this.showError(error)
-        })
+        if (this.$refs.actionForm.validate()) {
+          this.closeDescriptions()
+          this.prepareToSend()
+          this.updateExperimentDescriptions({
+            data: {
+              description: this.descriptionsEditingResult.description,
+              groups: this.descriptionsEditingResult.groups,
+              documentLink: this.descriptionsEditingResult.documentLink
+            },
+            params: {
+              experimentId: this.experiment.id
+            }
+          }).then(response => {
+            this.afterSending()
+            this.getExperiment({params: {experimentId: this.experiment.id}})
+            this.commandOkMessage = 'Experiment  successfully updated'
+          }).catch(error => {
+            this.afterSending()
+            this.showError(error)
+          })
 
-        this.descriptionsMenuVisible = false
+          this.descriptionsMenuVisible = false
+        }
       },
 
       prolong () {
