@@ -11,6 +11,7 @@ import pl.allegro.experiments.chi.chiserver.domain.experiments.administration.Ex
 import pl.allegro.experiments.chi.chiserver.domain.experiments.administration.ExperimentCreationRequest
 import pl.allegro.experiments.chi.chiserver.domain.User
 import pl.allegro.experiments.chi.chiserver.domain.experiments.ExperimentsRepository
+import pl.allegro.experiments.chi.chiserver.domain.experiments.administration.ExperimentDefinitionException
 import pl.allegro.experiments.chi.chiserver.infrastructure.InMemoryExperimentsRepository
 import pl.allegro.experiments.chi.chiserver.infrastructure.experiments.ExperimentsTestConfig
 import pl.allegro.experiments.chi.chiserver.infrastructure.experiments.FileBasedExperimentsRepository
@@ -99,7 +100,7 @@ class CreateExperimentCommandIntegrationSpec extends BaseIntegrationSpec {
         command.execute()
 
         then:
-        ExperimentCommandException e = thrown()
-        e.message == 'Cannot create experiment from request'
+        ExperimentDefinitionException e = thrown()
+        e.message == 'Cannot create experiment from definition'
     }
 }

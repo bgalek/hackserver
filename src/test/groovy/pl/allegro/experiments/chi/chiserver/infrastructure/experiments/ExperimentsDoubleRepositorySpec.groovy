@@ -1,6 +1,7 @@
 package pl.allegro.experiments.chi.chiserver.infrastructure.experiments
 
 import pl.allegro.experiments.chi.chiserver.domain.experiments.Experiment
+import pl.allegro.experiments.chi.chiserver.domain.experiments.ExperimentDefinition
 import pl.allegro.experiments.chi.chiserver.domain.experiments.ExperimentVariant
 import pl.allegro.experiments.chi.chiserver.infrastructure.InMemoryExperimentsRepository
 import pl.allegro.experiments.chi.chiserver.utils.ExperimentFactory
@@ -26,10 +27,10 @@ class ExperimentsDoubleRepositorySpec extends Specification {
         def fileRepo = new InMemoryExperimentsRepository([])
         def mongoRepo = new InMemoryExperimentsRepository([])
         def repo = new ExperimentsDoubleRepository(fileRepo, mongoRepo)
-        def experiment = experiment("1234")
+        def definition = definition("1234")
 
         when:
-        repo.save(experiment)
+        repo.save(definition)
 
         then:
         !fileRepo.getExperiment("1234").isPresent()
@@ -48,20 +49,6 @@ class ExperimentsDoubleRepositorySpec extends Specification {
 
         then:
         e.description == "from stash"
-    }
-
-    def "should not allow to save when experiment is from stash"() {
-        given:
-        def fileRepo = new InMemoryExperimentsRepository([experiment("1", "from stash")])
-        def mongoRepo = new InMemoryExperimentsRepository([experiment("2", "from mongo")])
-
-        def repo = new ExperimentsDoubleRepository(fileRepo, mongoRepo)
-
-        when:
-        repo.save(experiment("1", 'from stash, v2'))
-
-        then:
-        thrown IllegalArgumentException
     }
 
     def "should show origin"() {
@@ -90,14 +77,28 @@ class ExperimentsDoubleRepositorySpec extends Specification {
         repo.all.find { it.id == "ambiguous" }.description == "from stash"
     }
 
-    Experiment experiment(id) {
+    ExperimentDefinition definition(id) {
+        definition(id, null)
+    }
+
+    ExperimentDefinition definition(id, description) {
+        ExperimentDefinition.builder()
+            .id(id)
+            .description(description)
+            .variantNames(["x"])
+            .percentage(10)
+            .build()
+    }
+
+    Experiment experiment(String id) {
         experiment(id, null)
     }
 
-    Experiment experiment(id, description) {
+    Experiment experiment(String id, String description) {
         List<ExperimentVariant> variants = [new ExperimentVariant("x", [])]
         return ExperimentFactory.experimentWithVariants(id, variants).mutate()
                 .description(description)
+                .definition(null)
                 .build()
 
     }

@@ -9,16 +9,10 @@ import org.springframework.web.bind.annotation.*;
 import pl.allegro.experiments.chi.chiserver.domain.experiments.ExperimentsRepository;
 import pl.allegro.experiments.chi.chiserver.domain.experiments.MeasurementsRepository;
 import pl.allegro.experiments.chi.chiserver.domain.experiments.PermissionsRepository;
-import pl.allegro.experiments.chi.chiserver.domain.experiments.administration.AuthorizationException;
-import pl.allegro.experiments.chi.chiserver.domain.experiments.administration.ExperimentActions;
-import pl.allegro.experiments.chi.chiserver.domain.experiments.administration.ExperimentCommandException;
-import pl.allegro.experiments.chi.chiserver.domain.experiments.administration.ExperimentNotFoundException;
-import pl.allegro.experiments.chi.chiserver.domain.experiments.administration.audit.Auditor;
+import pl.allegro.experiments.chi.chiserver.domain.experiments.administration.*;
 import pl.allegro.experiments.chi.chiserver.domain.experiments.administration.audit.AuditLog;
-import pl.allegro.experiments.chi.chiserver.domain.experiments.administration.ExperimentCreationRequest;
-import pl.allegro.experiments.chi.chiserver.domain.experiments.administration.ProlongExperimentProperties;
-import pl.allegro.experiments.chi.chiserver.domain.experiments.administration.UpdateExperimentProperties;
-import pl.allegro.experiments.chi.chiserver.domain.experiments.administration.StartExperimentProperties;
+import pl.allegro.experiments.chi.chiserver.domain.experiments.administration.audit.Auditor;
+import pl.allegro.experiments.chi.chiserver.infrastructure.experiments.MongoExperimentsMigrator;
 import pl.allegro.tech.common.andamio.errors.Error;
 import pl.allegro.tech.common.andamio.errors.ErrorsHolder;
 import pl.allegro.tech.common.andamio.errors.SimpleErrorsHolder;
@@ -32,14 +26,16 @@ import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 @RestController
 @RequestMapping(value = {"/api/admin/experiments"}, produces = {APPLICATION_JSON_VALUE, APPLICATION_JSON_UTF8_VALUE})
 public class ExperimentsController {
+    private static final Logger logger = LoggerFactory.getLogger(ExperimentsController.class);
+
     private final ExperimentsRepository experimentsRepository;
     private final MeasurementsRepository measurementsRepository;
     private final PermissionsRepository permissionsRepository;
     private ExperimentActions experimentActions;
     private final Gson jsonConverter;
     private final Auditor auditor;
+    private final MongoExperimentsMigrator migrator;
 
-    private static final Logger logger = LoggerFactory.getLogger(ExperimentsController.class);
 
     public ExperimentsController(
             ExperimentsRepository experimentsRepository,
@@ -47,13 +43,15 @@ public class ExperimentsController {
             PermissionsRepository permissionsRepository,
             ExperimentActions experimentActions,
             Gson jsonConverter,
-            Auditor auditor) {
+            Auditor auditor,
+            MongoExperimentsMigrator migrator) {
         this.experimentsRepository = experimentsRepository;
         this.measurementsRepository = measurementsRepository;
         this.permissionsRepository = permissionsRepository;
         this.experimentActions = experimentActions;
         this.jsonConverter = jsonConverter;
         this.auditor = auditor;
+        this.migrator = migrator;
     }
 
     @MeteredEndpoint
@@ -67,7 +65,16 @@ public class ExperimentsController {
     }
 
     @MeteredEndpoint
-    @GetMapping(path = {"{experimentId}"})
+    @GetMapping(path = {"/migration"})
+    ResponseEntity<String> migrateAllExperiments() {
+        logger.info("All experiments migration received");
+        String result = migrator.migrateAll();
+        logger.info(result);
+        return ResponseEntity.ok(result);
+    }
+
+    @MeteredEndpoint
+    @GetMapping(path = "{experimentId}")
     ResponseEntity<String> getExperiment(@PathVariable String experimentId) {
         logger.info("Single experiment request received");
         return experimentsRepository.getExperiment(experimentId)
@@ -78,7 +85,7 @@ public class ExperimentsController {
     }
 
     @MeteredEndpoint
-    @PostMapping(path = {""})
+    @PostMapping(path = "")
     ResponseEntity<String> addExperiment(@RequestBody ExperimentCreationRequest experimentCreationRequest) {
         logger.info("Experiment creation request received", experimentCreationRequest);
         experimentActions.create(experimentCreationRequest);
@@ -86,7 +93,7 @@ public class ExperimentsController {
     }
 
     @MeteredEndpoint
-    @PutMapping(path = {"{experimentId}/start"})
+    @PutMapping(path = "{experimentId}/start")
     ResponseEntity<String> startExperiment(
             @PathVariable String experimentId,
             @RequestBody StartExperimentProperties properties) {
@@ -96,7 +103,7 @@ public class ExperimentsController {
     }
 
     @MeteredEndpoint
-    @PutMapping(path = {"{experimentId}/prolong"})
+    @PutMapping(path = "{experimentId}/prolong")
     ResponseEntity<String> prolongExperiment(
             @PathVariable String experimentId,
             @RequestBody ProlongExperimentProperties properties) {
@@ -106,7 +113,7 @@ public class ExperimentsController {
     }
 
     @MeteredEndpoint
-    @PutMapping(path = {"{experimentId}/update-descriptions"})
+    @PutMapping(path = "{experimentId}/update-descriptions")
     ResponseEntity<String> updateExperimentDescriptions(
             @PathVariable String experimentId,
             @RequestBody UpdateExperimentProperties properties) {
@@ -116,7 +123,7 @@ public class ExperimentsController {
     }
 
     @MeteredEndpoint
-    @PutMapping(path = {"{experimentId}/stop"})
+    @PutMapping(path = "{experimentId}/stop")
     ResponseEntity<String> stopExperiment(@PathVariable String experimentId) {
         logger.info("Stop experiment request received: " + experimentId);
         experimentActions.stop(experimentId);
@@ -132,7 +139,7 @@ public class ExperimentsController {
     }
 
     @MeteredEndpoint
-    @PutMapping(path = {"{experimentId}/resume"})
+    @PutMapping(path = "{experimentId}/resume")
     ResponseEntity<String> resumeExperiment(@PathVariable String experimentId) {
         logger.info("Resume experiment request received: " + experimentId);
         experimentActions.resume(experimentId);
@@ -140,7 +147,7 @@ public class ExperimentsController {
     }
 
     @MeteredEndpoint
-    @DeleteMapping(path = {"{experimentId}"})
+    @DeleteMapping(path = "{experimentId}")
     ResponseEntity<String> deleteExperiment(@PathVariable String experimentId) {
         logger.info("Delete experiment request received: " + experimentId);
         experimentActions.delete(experimentId);
@@ -148,7 +155,7 @@ public class ExperimentsController {
     }
 
     @MeteredEndpoint
-    @GetMapping(path = {"{experimentId}/audit-log"})
+    @GetMapping(path = "{experimentId}/audit-log")
     ResponseEntity<String> getAuditLog(@PathVariable String experimentId) {
         logger.info("Audit log request received: " + experimentId);
         final AuditLog auditLog = auditor.getAuditLog(experimentId);

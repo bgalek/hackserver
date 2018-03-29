@@ -3,15 +3,11 @@ package pl.allegro.experiments.chi.chiserver.domain.experiments;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
 import joptsimple.internal.Strings;
-import org.javers.core.metamodel.annotation.DiffInclude;
-import org.javers.core.metamodel.annotation.Id;
-import org.javers.core.metamodel.annotation.TypeName;
 
 import java.time.LocalDateTime;
-import java.time.ZonedDateTime;
 import java.util.List;
+import java.util.Optional;
 
-@TypeName("Experiment")
 public class Experiment {
     private final String id;
     private final List<ExperimentVariant> variants;
@@ -26,6 +22,7 @@ public class Experiment {
     private final String origin;
     private final ExperimentStatus explicitStatus;
     private final ExperimentStatus status;
+    private final ExperimentDefinition definition;
 
     private Experiment(
             String id,
@@ -39,7 +36,8 @@ public class Experiment {
             ExperimentMeasurements measurements,
             Boolean editable,
             String origin,
-            ExperimentStatus explicitStatus) {
+            ExperimentStatus explicitStatus,
+            ExperimentDefinition definition) {
         Preconditions.checkArgument(!Strings.isNullOrEmpty(id));
         Preconditions.checkNotNull(variants);
         Preconditions.checkArgument(!variants.isEmpty());
@@ -57,10 +55,9 @@ public class Experiment {
         this.origin = origin;
         this.explicitStatus = explicitStatus;
         this.status = ExperimentStatus.of(explicitStatus, activityPeriod);
+        this.definition = definition;
     }
 
-    @Id
-    @DiffInclude
     public String getId() {
         return id;
     }
@@ -69,22 +66,18 @@ public class Experiment {
         return variants;
     }
 
-    @DiffInclude
     public String getDescription() {
         return description;
     }
 
-    @DiffInclude
     public String getDocumentLink() {
         return documentLink;
     }
 
-    @DiffInclude
     public String getAuthor() {
         return author;
     }
 
-    @DiffInclude
     public List<String> getGroups() {
         return groups;
     }
@@ -97,7 +90,6 @@ public class Experiment {
         return activityPeriod;
     }
 
-    @DiffInclude
     public LocalDateTime getActiveFrom() {
         if (activityPeriod == null) {
             return null;
@@ -105,7 +97,6 @@ public class Experiment {
         return activityPeriod.getActiveFrom().toLocalDateTime();
     }
 
-    @DiffInclude
     public LocalDateTime getActiveTo() {
         if (activityPeriod == null) {
             return null;
@@ -113,7 +104,6 @@ public class Experiment {
         return activityPeriod.getActiveTo().toLocalDateTime();
     }
 
-    @DiffInclude
     public ExperimentStatus getStatus() {
         return status;
     }
@@ -128,6 +118,10 @@ public class Experiment {
 
     public String getOrigin() {
         return origin;
+    }
+
+    public Optional<ExperimentDefinition> getDefinition() {
+        return Optional.ofNullable(definition);
     }
 
     @Override
@@ -164,43 +158,6 @@ public class Experiment {
         return !isEnded() && !isPaused();
     }
 
-    public Experiment start(long experimentDurationDays) {
-        final ZonedDateTime from = ZonedDateTime.now();
-        final ZonedDateTime to = from.plusDays(experimentDurationDays);
-        final ActivityPeriod newActivityPeriod = new ActivityPeriod(from, to);
-        return mutate()
-                .activityPeriod(newActivityPeriod)
-                .build();
-    }
-
-    public Experiment stop() {
-        final ActivityPeriod activityPeriod = this.activityPeriod.endNow();
-        return mutate()
-                .activityPeriod(activityPeriod)
-                .build();
-    }
-
-    public Experiment pause() {
-        return mutate()
-                .explicitStatus(ExperimentStatus.PAUSED)
-                .build();
-    }
-
-    public Experiment resume() {
-        return mutate()
-                .explicitStatus(null)
-                .build();
-    }
-
-    public Experiment prolong(long experimentAdditionalDays) {
-        final ZonedDateTime from = this.activityPeriod.getActiveFrom();
-        final ZonedDateTime to = this.activityPeriod.getActiveTo().plusDays(experimentAdditionalDays);
-        final ActivityPeriod newActivityPeriod = new ActivityPeriod(from, to);
-        return mutate()
-                .activityPeriod(newActivityPeriod)
-                .build();
-    }
-
     public Experiment withEditableFlag(boolean editable) {
         return mutate()
                 .editable(editable)
@@ -215,6 +172,7 @@ public class Experiment {
     }
 
     public Builder mutate() {
+
         return Builder.from(this);
     }
 
@@ -237,7 +195,8 @@ public class Experiment {
                     .measurements(other.measurements)
                     .editable(other.editable)
                     .origin(other.origin)
-                    .explicitStatus(other.explicitStatus);
+                    .explicitStatus(other.explicitStatus)
+                    .definition(other.definition);
         }
 
         private String id;
@@ -252,6 +211,7 @@ public class Experiment {
         private Boolean editable;
         private String origin;
         private ExperimentStatus explicitStatus;
+        private ExperimentDefinition definition;
 
         public Builder id(String id) {
             this.id = id;
@@ -313,6 +273,11 @@ public class Experiment {
             return this;
         }
 
+        public Builder definition(ExperimentDefinition definition) {
+            this.definition = definition;
+            return this;
+        }
+
         public Experiment build() {
             return new Experiment(
                     id,
@@ -326,7 +291,8 @@ public class Experiment {
                     measurements,
                     editable,
                     origin,
-                    explicitStatus);
+                    explicitStatus,
+                    definition);
         }
     }
 

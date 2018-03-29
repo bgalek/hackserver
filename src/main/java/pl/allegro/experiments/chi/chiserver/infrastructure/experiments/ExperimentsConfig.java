@@ -27,7 +27,6 @@ import pl.allegro.experiments.chi.chiserver.infrastructure.experiments.converter
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Configuration
 public class ExperimentsConfig {

@@ -4,6 +4,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.scheduling.annotation.Scheduled;
 import pl.allegro.experiments.chi.chiserver.domain.experiments.Experiment;
+import pl.allegro.experiments.chi.chiserver.domain.experiments.ExperimentDefinition;
 import pl.allegro.experiments.chi.chiserver.domain.experiments.ExperimentsRepository;
 
 import java.util.Collections;
@@ -47,8 +48,8 @@ public class CachedExperimentsRepository implements ExperimentsRepository {
     }
 
     @Override
-    public void save(Experiment experiment) {
-        delegate.save(experiment);
+    public void save(ExperimentDefinition experimentDefinition) {
+        delegate.save(experimentDefinition);
         secureRefresh();
     }
 

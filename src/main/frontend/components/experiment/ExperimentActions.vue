@@ -181,15 +181,11 @@
 
     methods: {
       canRunLifecycleCommand () {
-        return this.experiment.canRunLifecycleCommand()
-      },
-
-      canRunOtherCommand () {
-        return true
+        return this.experiment.definition.canRunLifecycleCommand()
       },
 
       canRunAnyCommand () {
-        return this.canRunLifecycleCommand() || this.canRunOtherCommand()
+        return this.canRunLifecycleCommand()
       },
 
       deleteMe () {
