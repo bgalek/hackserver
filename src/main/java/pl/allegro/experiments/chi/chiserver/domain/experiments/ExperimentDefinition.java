@@ -227,19 +227,12 @@ public class ExperimentDefinition {
     }
 
     private ExperimentVariant convertVariant(String variantName, int from, int to) {
-
         List<Predicate> predicates = new ArrayList<>();
-
+        predicates.add(new HashRangePredicate(new PercentageRange(from, to)));
         if (deviceClass != null) {
             predicates.add(new DeviceClassPredicate(deviceClass));
         }
-
-        predicates.add(new HashRangePredicate(new PercentageRange(from, to)));
-
-        return new ExperimentVariant(
-                variantName,
-                predicates
-        );
+        return new ExperimentVariant(variantName, predicates);
     }
 
     public Builder mutate() {

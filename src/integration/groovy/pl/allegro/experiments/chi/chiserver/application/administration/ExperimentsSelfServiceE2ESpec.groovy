@@ -120,11 +120,11 @@ class ExperimentsSelfServiceE2ESpec extends BaseIntegrationSpec {
                     ],
                     [
                         name: 'v2',
-                        predicates: [[type: 'DEVICE_CLASS', device: 'phone'], [ type: 'HASH', from: 0, to: 10 ]]
+                        predicates: [[ type: 'HASH', from: 0, to: 10 ], [type: 'DEVICE_CLASS', device: 'phone']]
                     ],
                     [
                         name: 'v3',
-                        predicates: [[type: 'DEVICE_CLASS', device: 'phone'], [ type: 'HASH', from: 50, to: 60 ]]
+                        predicates: [[ type: 'HASH', from: 50, to: 60 ], [type: 'DEVICE_CLASS', device: 'phone']]
                     ]
                 ],
                 definition: [
