@@ -1,5 +1,7 @@
 package pl.allegro.experiments.chi.chiserver.infrastructure.experiments;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.stereotype.Service;
 
@@ -10,6 +12,7 @@ import java.util.stream.Collectors;
 
 @Service
 public class MongoExperimentsMigrator {
+    private static final Logger logger = LoggerFactory.getLogger(MongoExperimentsMigrator.class);
     private static final String DEFINITIONS_COLLECTION = "experimentDefinitions";
     private static final String EXPERIMENTS_COLLECTION = "experiments";
 
@@ -36,37 +39,44 @@ public class MongoExperimentsMigrator {
         return "Successfully migrated " + collect.size() + " experiments ";
     }
 
-    private Map migrate(Map e) {
-        List variants = (List)e.get("variants");
+    private Map migrate(Map experimentMap) {
+        logger.info("Migrating {}", experimentMap.get("_id"));
+
+        List variants = (List)experimentMap.get("variants");
         Optional<Map> internal = variants.stream().filter(v -> findPredicate((Map) v, "INTERNAL").isPresent()).findAny();
         String internalName = (String)(internal.map(m -> m.get("name")).orElse(null));
         Optional<Map> hash = variants.stream().map(v -> findPredicate((Map) v, "HASH").orElse(null)).filter(x -> x!= null).findAny();
         Optional<Map> deviceClass = variants.stream().map(v -> findPredicate((Map) v, "DEVICE_CLASS").orElse(null)).filter(x -> x!= null).findAny();
 
         List names = (List)variants.stream()
+                .filter( variant -> !findPredicate((Map) variant, "INTERNAL").isPresent())
                 .map(v -> ((Map) v).get("name"))
-                .filter(v -> !v.equals(internalName))
                 .collect(Collectors.toList());
 
-        e.put("variantNames", names);
+        experimentMap.put("variantNames", names);
         internal.ifPresent( i -> {
-            e.put("internalVariantName", i.get("name"));
+            experimentMap.put("internalVariantName", internalName);
         });
         deviceClass.ifPresent(dc -> {
-            e.put("deviceClass", dc.get("device"));
+            experimentMap.put("deviceClass", dc.get("device"));
         });
         hash.ifPresent(h -> {
             int from = (Integer)h.get("from");
             int to = (Integer)h.get("to");
             int percentage = to - from;
+            if (names.isEmpty()) {
+                throw new RuntimeException("Empty list of variants in " +  experimentMap.get("_id"));
+            }
             int maxp = 100 / names.size();
             if (percentage > maxp) {
                 throw new RuntimeException("Percentage is too high, " + percentage + " > " + maxp);
             }
-            e.put("percentage", percentage);
+
+            experimentMap.put("percentage", percentage);
         });
-        e.remove("variants");
-        return e;
+
+        experimentMap.remove("variants");
+        return experimentMap;
     }
 
     private Optional<Map> findPredicate(Map variant, String type) {

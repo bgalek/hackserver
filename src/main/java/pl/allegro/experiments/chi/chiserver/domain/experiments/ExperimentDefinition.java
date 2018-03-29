@@ -283,7 +283,7 @@ public class ExperimentDefinition {
                     .build();
 
         } catch (Exception e) {
-            throw new ExperimentDefinitionException("Cannot create experiment from definition", e);
+            throw new ExperimentDefinitionException("Cannot create experiment from definition, id=" + this.id, e);
         }
     }
 

@@ -32,7 +32,7 @@ class PauseExperimentCommandIntegrationSpec extends BaseIntegrationSpec implemen
                 mutableUserProvider)
     }
 
-    def "should paused experiment"() {
+    def "should pause experiment"() {
         given:
         Experiment experiment = startedExperiment()
 
