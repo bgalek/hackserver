@@ -102,7 +102,7 @@
         </v-list>
       </v-menu>
 
-    <div>
+    <div v-if="canRunOtherCommand">
       <h4 style="margin-top: 15px">Other actions</h4>
 
       <v-menu :close-on-content-click="false"
@@ -181,11 +181,15 @@
 
     methods: {
       canRunLifecycleCommand () {
-        return this.experiment.definition.canRunLifecycleCommand()
+        return this.experiment.canRunLifecycleCommand()
+      },
+
+      canRunOtherCommand () {
+        return true
       },
 
       canRunAnyCommand () {
-        return true
+        return this.canRunLifecycleCommand() || this.canRunOtherCommand()
       },
 
       deleteMe () {
