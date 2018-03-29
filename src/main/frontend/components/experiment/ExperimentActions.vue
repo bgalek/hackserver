@@ -102,6 +102,7 @@
         </v-list>
       </v-menu>
 
+    <div>
       <h4 style="margin-top: 15px">Other actions</h4>
 
       <v-menu :close-on-content-click="false"
@@ -139,6 +140,7 @@
           </v-list-tile>
         </v-list>
       </v-menu>
+    </div>
 
     </v-form>
   </chi-panel>
@@ -183,7 +185,7 @@
       },
 
       canRunAnyCommand () {
-        return this.canRunLifecycleCommand()
+        return true
       },
 
       deleteMe () {
