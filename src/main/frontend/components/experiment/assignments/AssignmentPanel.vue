@@ -10,7 +10,7 @@
           :color="variant.color"
           :title="variant.name"
           redirect-label="Assign me"
-          :redirect-link="cookieBakerLink(experiment.id, variant.name)"
+          :redirect-link="cookieBakerLink(experiment.id, variant.name, false)"
         >
         </assignment-button>
 
@@ -20,7 +20,7 @@
           color="grey"
           title="Exclude me"
           redirect-label="Exclude me"
-          :redirect-link="cookieBakerLink(experiment.id, '-')"
+          :redirect-link="cookieBakerLink(experiment.id, '-', true)"
         >
         </assignment-button>
 
@@ -62,8 +62,8 @@
     },
 
     methods: {
-      cookieBakerLink (experimentId, variantName) {
-        return cookieBakerLink(experimentId, variantName)
+      cookieBakerLink (experimentId, variantName, preserveOther) {
+        return cookieBakerLink(experimentId, variantName, preserveOther)
       }
     }
   }
