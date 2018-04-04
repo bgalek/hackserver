@@ -68,82 +68,9 @@
                 </v-flex>
 
               </v-layout>
-              <v-layout row align-center>
-
-                <v-flex offset-xs1>
-                  <v-select
-                    v-bind:items="deviceClasses"
-                    v-model="selectedDeviceClass"
-                    label="Device class"
-                    item-value="text"
-                  ></v-select>
-                </v-flex>
-
-              </v-layout>
-              <v-layout row align-center>
-
-                <v-flex offset-xs1>
-                  <v-select
-                    label="Variants"
-                    :rules="variantsRules"
-                    chips
-                    append-icon=""
-                    tags
-                    v-model="variantNames">
-                    <template slot="selection" slot-scope="data">
-
-                      <v-chip
-                        v-if="data.item === baseVariant"
-                        :selected="data.selected"
-                        :disabled="true">
-                        <strong>{{ data.item }}</strong>&nbsp;
-                      </v-chip>
-
-                      <v-chip
-                        v-else
-                        close
-                        @input="removeVariant(data.item)"
-                        :selected="data.selected">
-                        <strong>{{ slugify(data.item) }}</strong>&nbsp;
-                      </v-chip>
-
-                    </template>
-                  </v-select>
-                </v-flex>
-
-              </v-layout>
-              <v-layout row align-center>
-
-                <v-flex offset-xs1>
-                  <v-slider
-                    v-model="percentPerVariant"
-                    thumb-label
-                    :label="parseInt(this.percentPerVariant) + '% per variant'"
-                    step="1"
-                    v-bind:max="maxPercentPerVariant"
-                    v-bind:min="1"
-                    ticks></v-slider>
-                </v-flex>
-
-              </v-layout>
-              <v-layout row align-center>
-
-                <v-flex xs1>
-                  <v-tooltip right>
-                    <span><b>Internal</b> means &mdash; available only in Allegro intranet.</span>
-                    <v-icon
-                      slot="activator">help_outline</v-icon>
-                  </v-tooltip>
-                </v-flex>
-                <v-flex xs11>
-                  <v-text-field
-                    v-model="selectedInternal"
-                    label="Internal variant"
-                  ></v-text-field>
-                </v-flex>
-
-              </v-layout>
             </v-container>
+
+            <experiment-variants-editing v-model="variants" />
 
             <v-btn @click="onSubmit" color="success">create</v-btn>
           </v-form>
@@ -158,6 +85,7 @@
 <script>
   import { mapActions } from 'vuex'
   import ExperimentDescEditing from './experiment/ExperimentDescEditing'
+  import ExperimentVariantsEditing from './experiment/ExperimentVariantsEditing'
 
   import _ from 'lodash'
 
@@ -173,11 +101,6 @@
 
       return {
         createFormValid: true,
-        variantsRules: [
-          (v) => this.variantsUnique() || 'Slugified variant names must be unique.',
-          (v) => this.slugifiedVariants.indexOf('') === -1 || 'Slugified variant name can not be empty.',
-          (v) => this.noOfVariants() > 1 || 'No variants. Seriously?'
-        ],
         experimentIdRules: [
           (v) => !!v || 'Experiment ID is required',
           (v) => this.isExperimentIdUnique(v) || 'Experiment ID must be unique.'
@@ -185,22 +108,14 @@
         baseVariant: baseVariant,
         experimentId: '',
         reportingEnabled: true,
-        selectedInternal: '',
-        variantNames: [baseVariant],
-        percentPerVariant: 1,
-        deviceClasses: ['all', 'phone', 'desktop', 'tablet'],
-        selectedDeviceClass: 'all',
         sendingDataToServer: false,
         errors: [],
-        descriptions: {}
+        descriptions: {},
+        variants: {}
       }
     },
 
     computed: {
-      maxPercentPerVariant () {
-        return 100 / this.variantNames.length
-      },
-
       showForm () {
         return !this.sendingDataToServer
       },
@@ -214,13 +129,14 @@
       },
 
       slugifiedVariants () {
-        return _.map(this.variantNames, v => this.slugify(v))
+        return _.map(this.value.variantNames, v => this.slugify(v))
       }
     },
 
     components: {
       ChiPanel,
-      ExperimentDescEditing
+      ExperimentDescEditing,
+      ExperimentVariantsEditing
     },
 
     methods: {
@@ -295,19 +211,10 @@
           groups: this.descriptions.groups,
           reportingEnabled: this.reportingEnabled,
           variantNames: this.slugifiedVariants,
-          internalVariantName: this.selectedInternal !== '' ? this.selectedInternal : null,
-          deviceClass: this.selectedDeviceClass !== 'all' ? this.selectedDeviceClass : null,
-          percentage: this.percentPerVariant
+          internalVariantName: this.variants.internalVariantName !== '' ? this.variants.internalVariantName : null,
+          deviceClass: this.variants.deviceClass !== 'all' ? this.variants.deviceClass : null,
+          percentage: this.variants.percentage
         }
-      },
-
-      removeVariant (variant) {
-        this.remove('variantNames', variant)
-      },
-
-      remove (arrayName, toRemove) {
-        this[arrayName].splice(this[arrayName].indexOf(toRemove), 1)
-        this[arrayName] = [...this[arrayName]]
       },
 
       ...mapActions(['createExperiment', 'getExperiments'])
