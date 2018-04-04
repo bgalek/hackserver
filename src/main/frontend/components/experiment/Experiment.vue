@@ -61,7 +61,6 @@
   export default {
     mounted () {
       this.getExperiment({ params: { experimentId: this.$route.params.experimentId } }).then(() => {
-        console.log('loading experiment "' + this.experiment.id + '" done')
         this.loadingExperimentDone = true
       })
 

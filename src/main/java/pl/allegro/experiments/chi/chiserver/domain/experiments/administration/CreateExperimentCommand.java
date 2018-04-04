@@ -7,18 +7,18 @@ import pl.allegro.experiments.chi.chiserver.domain.experiments.ExperimentsReposi
 import java.util.Objects;
 
 public class CreateExperimentCommand {
-    private final ExperimentsRepository experimentsRepository;
+    private final ExperimentsRepository experimentRepository;
     private final UserProvider userProvider;
     private final ExperimentCreationRequest experimentCreationRequest;
 
     CreateExperimentCommand(
-            ExperimentsRepository experimentsRepository,
+            ExperimentsRepository experimentRepository,
             UserProvider userProvider,
             ExperimentCreationRequest experimentCreationRequest) {
-        Objects.requireNonNull(experimentsRepository);
+        Objects.requireNonNull(experimentRepository);
         Objects.requireNonNull(userProvider);
         Objects.requireNonNull(experimentCreationRequest);
-        this.experimentsRepository = experimentsRepository;
+        this.experimentRepository = experimentRepository;
         this.userProvider = userProvider;
         this.experimentCreationRequest = experimentCreationRequest;
     }
@@ -28,9 +28,9 @@ public class CreateExperimentCommand {
         if (user.isAnonymous() && !user.isRoot()) {
             throw new AuthorizationException("Only logged in user can create experiment");
         }
-        if (experimentsRepository.getExperiment(experimentCreationRequest.getId()).isPresent()) {
+        if (experimentRepository.getExperiment(experimentCreationRequest.getId()).isPresent()) {
             throw new ExperimentCommandException("Experiment with id " + experimentCreationRequest.getId() + " already exists");
         }
-        experimentsRepository.save(experimentCreationRequest.toExperiment(user.getName()));
+        experimentRepository.save(experimentCreationRequest.toExperimentDefinition(user.getName()));
     }
 }

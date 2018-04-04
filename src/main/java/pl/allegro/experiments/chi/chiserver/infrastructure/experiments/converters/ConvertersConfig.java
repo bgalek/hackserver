@@ -41,21 +41,13 @@ public class ConvertersConfig {
     }
 
     @Bean
-    ExperimentVariantDeserializer experimentVariantDeserializer(PredicateDeserializer predicateDeserializer) {
-        return new ExperimentVariantDeserializer(predicateDeserializer);
-    }
-
-    @Bean
-    ExperimentSerializer experimentSerializer(
-            ExperimentVariantSerializer experimentVariantSerializer,
-            DateTimeSerializer dateTimeSerializer) {
-        return new ExperimentSerializer(experimentVariantSerializer, dateTimeSerializer);
+    ExperimentSerializer experimentSerializer(DateTimeSerializer dateTimeSerializer) {
+        return new ExperimentSerializer(dateTimeSerializer);
     }
 
     @Bean
     ExperimentDeserializer experimentDeserializer(
-            ExperimentVariantDeserializer experimentVariantDeserializer,
             ActivityPeriodDeserializer activityPeriodDeserializer) {
-        return new ExperimentDeserializer(experimentVariantDeserializer, activityPeriodDeserializer);
+        return new ExperimentDeserializer(activityPeriodDeserializer);
     }
 }

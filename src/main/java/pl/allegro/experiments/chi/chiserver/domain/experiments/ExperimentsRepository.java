@@ -5,7 +5,7 @@ import pl.allegro.experiments.chi.chiserver.infrastructure.experiments.Experimen
 public interface ExperimentsRepository extends ReadOnlyExperimentsRepository {
     void delete(String experimentId);
 
-    void save(Experiment experiment);
+    void save(ExperimentDefinition experiment);
 
     default ExperimentOrigin getOrigin(String experimentId) {
         return ExperimentOrigin.UNDEFINED;

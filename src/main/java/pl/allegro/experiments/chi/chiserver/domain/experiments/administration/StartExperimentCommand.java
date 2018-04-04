@@ -1,6 +1,7 @@
 package pl.allegro.experiments.chi.chiserver.domain.experiments.administration;
 
 import pl.allegro.experiments.chi.chiserver.domain.experiments.Experiment;
+import pl.allegro.experiments.chi.chiserver.domain.experiments.ExperimentDefinition;
 import pl.allegro.experiments.chi.chiserver.domain.experiments.ExperimentsRepository;
 
 import java.util.Objects;
@@ -29,7 +30,11 @@ public class StartExperimentCommand {
     public void execute() {
         Experiment experiment = permissionsAwareExperimentRepository.getExperimentOrException(experimentId);
         validate(experiment);
-        experimentsRepository.save(experiment.start(startExperimentProperties.getExperimentDurationDays()));
+        ExperimentDefinition started = experiment
+                .getDefinition()
+                .orElseThrow(() -> new UnsupportedOperationException("Missing experiment definition"))
+                .start(startExperimentProperties.getExperimentDurationDays());
+        experimentsRepository.save(started);
     }
 
     private void validate(Experiment experiment) {

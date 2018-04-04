@@ -2,6 +2,7 @@ package pl.allegro.experiments.chi.chiserver.infrastructure;
 
 import com.google.common.collect.ImmutableList;
 import pl.allegro.experiments.chi.chiserver.domain.experiments.Experiment;
+import pl.allegro.experiments.chi.chiserver.domain.experiments.ExperimentDefinition;
 import pl.allegro.experiments.chi.chiserver.domain.experiments.ExperimentsRepository;
 
 import java.util.*;
@@ -20,9 +21,13 @@ public class InMemoryExperimentsRepository implements ExperimentsRepository {
         return Optional.ofNullable(experiments.get(experimentId));
     }
 
-    @Override
     public void save(Experiment experiment) {
         experiments.put(experiment.getId(), experiment);
+    }
+
+    @Override
+    public void save(ExperimentDefinition experimentDefinition) {
+        experiments.put(experimentDefinition.getId(), experimentDefinition.toExperiment());
     }
 
     @Override

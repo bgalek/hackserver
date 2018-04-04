@@ -1,9 +1,8 @@
 package pl.allegro.experiments.chi.chiserver.domain.experiments.administration;
 
 import pl.allegro.experiments.chi.chiserver.domain.experiments.Experiment;
+import pl.allegro.experiments.chi.chiserver.domain.experiments.ExperimentDefinition;
 import pl.allegro.experiments.chi.chiserver.domain.experiments.ExperimentsRepository;
-import pl.allegro.experiments.chi.chiserver.domain.experiments.administration.ExperimentCommandException;
-import pl.allegro.experiments.chi.chiserver.domain.experiments.administration.PermissionsAwareExperimentRepository;
 
 import java.util.Objects;
 
@@ -27,8 +26,11 @@ public class ResumeExperimentCommand {
     public void execute() {
         Experiment experiment = permissionsAwareExperimentRepository.getExperimentOrException(experimentId);
         validate(experiment);
-        Experiment resumed = experiment.resume();
-        experimentsRepository.save(resumed);
+        ExperimentDefinition resumedDefinition = experiment
+                .getDefinition()
+                .orElseThrow(() -> new UnsupportedOperationException("Missing experiment definition"))
+                .resume();
+        experimentsRepository.save(resumedDefinition);
     }
 
     private void validate(Experiment experiment) {

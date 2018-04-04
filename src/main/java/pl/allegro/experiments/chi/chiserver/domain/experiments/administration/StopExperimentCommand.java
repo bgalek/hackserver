@@ -1,6 +1,7 @@
 package pl.allegro.experiments.chi.chiserver.domain.experiments.administration;
 
 import pl.allegro.experiments.chi.chiserver.domain.experiments.Experiment;
+import pl.allegro.experiments.chi.chiserver.domain.experiments.ExperimentDefinition;
 import pl.allegro.experiments.chi.chiserver.domain.experiments.ExperimentsRepository;
 
 import java.util.Objects;
@@ -25,7 +26,10 @@ public class StopExperimentCommand {
     public void execute() {
         Experiment experiment = permissionsAwareExperimentRepository.getExperimentOrException(experimentId);
         validate(experiment);
-        Experiment stoppedExperiment = experiment.stop();
+        ExperimentDefinition stoppedExperiment = experiment
+                .getDefinition()
+                .orElseThrow(() -> new UnsupportedOperationException("Experiment definition missing"))
+                .stop();
         experimentsRepository.save(stoppedExperiment);
     }
 

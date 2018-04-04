@@ -4,31 +4,30 @@ import com.mongodb.BasicDBObject;
 import com.mongodb.DBObject;
 import org.springframework.core.convert.converter.Converter;
 import pl.allegro.experiments.chi.chiserver.domain.experiments.Experiment;
+import pl.allegro.experiments.chi.chiserver.domain.experiments.ExperimentDefinition;
 import pl.allegro.experiments.chi.chiserver.domain.experiments.ExperimentStatus;
 
 import java.util.HashMap;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-public class ExperimentSerializer implements Converter<Experiment, DBObject> {
-    private final ExperimentVariantSerializer experimentVariantSerializer;
+public class ExperimentSerializer implements Converter<ExperimentDefinition, DBObject> {
     private final DateTimeSerializer dateTimeSerializer;
 
-    public ExperimentSerializer(
-            ExperimentVariantSerializer experimentVariantSerializer,
-            DateTimeSerializer dateTimeSerializer) {
-        this.experimentVariantSerializer = experimentVariantSerializer;
+    public ExperimentSerializer(DateTimeSerializer dateTimeSerializer) {
         this.dateTimeSerializer = dateTimeSerializer;
     }
 
     @Override
-    public DBObject convert(Experiment source) {
+    public DBObject convert(ExperimentDefinition source) {
         BasicDBObject result = new BasicDBObject();
 
         result.put("_id", source.getId());
-        result.put("variants", source.getVariants().stream()
-                .map(experimentVariantSerializer::convert)
-                .collect(Collectors.toList()));
+        result.put("variantNames", source.getVariantNames());
+        result.put("internalVariantName", source.getInternalVariantName().orElse(null));
+        result.put("deviceClass", source.getDeviceClass().orElse(null));
+        result.put("percentage", source.getPercentage().orElse(null));
+
         if (source.getDescription() != null) {
             result.put("description", source.getDescription());
         }

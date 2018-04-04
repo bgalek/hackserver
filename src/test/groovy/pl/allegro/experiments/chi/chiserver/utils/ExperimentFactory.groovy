@@ -3,6 +3,7 @@ package pl.allegro.experiments.chi.chiserver.utils
 import groovy.transform.CompileStatic
 import pl.allegro.experiments.chi.chiserver.domain.experiments.CmuidRegexpPredicate
 import pl.allegro.experiments.chi.chiserver.domain.experiments.Experiment
+import pl.allegro.experiments.chi.chiserver.domain.experiments.ExperimentDefinition
 import pl.allegro.experiments.chi.chiserver.domain.experiments.ExperimentVariant
 import pl.allegro.experiments.chi.chiserver.domain.experiments.HashRangePredicate
 import pl.allegro.experiments.chi.chiserver.domain.experiments.PercentageRange
@@ -39,6 +40,19 @@ class ExperimentFactory {
                 new ExperimentVariant("v2", []),
         ]
         return experimentWithVariants(id, variants)
+    }
+
+    static ExperimentDefinition definitionWithId(String id) {
+        return ExperimentDefinition.builder()
+                .id(id)
+                .variantNames(['base', 'v2'])
+                .percentage(10)
+                .description('description')
+                .documentLink('link')
+                .author('owner')
+                .reportingEnabled(true)
+                .groups([])
+                .build()
     }
 
    static Experiment experimentWithVariants(String id, List<ExperimentVariant> variants) {

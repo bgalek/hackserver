@@ -15,7 +15,10 @@ public class CommandFactory {
     private final StatisticsRepository statisticsRepository;
 
     @Autowired
-    public CommandFactory(ExperimentsRepository experimentsRepository, UserProvider userProvider, PermissionsAwareExperimentRepository permissionsAwareExperimentRepository, StatisticsRepository statisticsRepository) {
+    public CommandFactory(ExperimentsRepository experimentsRepository,
+                          UserProvider userProvider,
+                          PermissionsAwareExperimentRepository permissionsAwareExperimentRepository,
+                          StatisticsRepository statisticsRepository) {
         this.experimentsRepository = experimentsRepository;
         this.userProvider = userProvider;
         this.permissionsAwareExperimentRepository = permissionsAwareExperimentRepository;
