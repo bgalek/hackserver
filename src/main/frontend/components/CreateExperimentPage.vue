@@ -70,7 +70,7 @@
               </v-layout>
             </v-container>
 
-            <experiment-variants-editing v-model="variants" />
+            <experiment-variants-editing :allowModifyRegularVariants="true" v-model="variants" />
 
             <v-btn @click="onSubmit" color="success">create</v-btn>
           </v-form>
@@ -129,7 +129,7 @@
       },
 
       slugifiedVariants () {
-        return _.map(this.value.variantNames, v => this.slugify(v))
+        return _.map(this.variants.variantNames, v => this.slugify(v))
       }
     },
 
@@ -188,15 +188,6 @@
 
       notSending () {
         this.sendingDataToServer = false
-      },
-
-      noOfVariants () {
-        return this.slugifiedVariants.length + (this.value.internalVariantName !== '' ? 1 : 0)
-      },
-
-      variantsUnique () {
-        let distinctVariants = new Set(this.slugifiedVariants)
-        return (this.slugifiedVariants.length === distinctVariants.size)
       },
 
       isExperimentIdUnique () {

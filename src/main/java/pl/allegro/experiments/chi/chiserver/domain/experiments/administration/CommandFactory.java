@@ -101,4 +101,16 @@ public class CommandFactory {
                 permissionsAwareExperimentRepository
         );
     }
+
+    public UpdateVariantsCommand updateVariantsCommand(String experimentId, UpdateVariantsProperties properties) {
+        Preconditions.checkNotNull(experimentId);
+        Preconditions.checkNotNull(properties);
+
+        return new UpdateVariantsCommand(
+                experimentId,
+                properties,
+                experimentsRepository,
+                permissionsAwareExperimentRepository
+        );
+    }
 }

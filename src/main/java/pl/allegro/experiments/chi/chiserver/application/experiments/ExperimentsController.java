@@ -123,6 +123,16 @@ public class ExperimentsController {
     }
 
     @MeteredEndpoint
+    @PutMapping(path = "{experimentId}/update-variants")
+    ResponseEntity<String> updateExperimentVariants(
+            @PathVariable String experimentId,
+            @RequestBody UpdateVariantsProperties properties) {
+        logger.info("Update experiment variants request received: {}", experimentId, properties);
+        experimentActions.updateVariants(experimentId, properties);
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    @MeteredEndpoint
     @PutMapping(path = "{experimentId}/stop")
     ResponseEntity<String> stopExperiment(@PathVariable String experimentId) {
         logger.info("Stop experiment request received: " + experimentId);

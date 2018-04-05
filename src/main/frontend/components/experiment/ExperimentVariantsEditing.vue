@@ -34,6 +34,7 @@
           <v-select
             label="Variants"
             :rules="variantsRules"
+            :readonly="!allowModifyRegularVariants"
             chips
             append-icon=""
             tags
@@ -41,7 +42,7 @@
             <template slot="selection" slot-scope="data">
 
               <v-chip
-                v-if="data.item === baseVariant"
+                v-if="data.item === baseVariant || allowModifyRegularVariants === false"
                 :selected="data.selected"
                 :disabled="true">
                 <strong>{{ data.item }}</strong>&nbsp;
@@ -50,7 +51,7 @@
               <v-chip
                 v-else
                 close
-                @input="removeVariant(data.item)"
+                @input="removeVariantName(data.item)"
                 :selected="data.selected">
                 <strong>{{ slugify(data.item) }}</strong>&nbsp;
               </v-chip>
@@ -86,14 +87,21 @@
 </template>
 
 <script>
-  import {isUri} from 'valid-url'
+  import _ from 'lodash'
 
   export default {
-    props: ['variants'],
+    props: {
+      variants: {
+
+      },
+      allowModifyRegularVariants: {
+        default: false,
+        type: Boolean
+      }
+    },
 
     data () {
       const baseVariant = 'base'
-
       console.log('this', this)
       return {
         value: this.init(this.variants),
@@ -109,14 +117,12 @@
 
     methods: {
       init (variants) {
-        console.log('variants', variants)
         const value = {
           variantNames: (variants && Array.from(variants.variantNames)) || ['base'],
           percentage: (variants && variants.percentage) || 1,
           internalVariantName: variants && variants.internalVariantName,
           deviceClass: (variants && variants.deviceClass) || 'all'
         }
-        console.log('value', value)
         this.$emit('input', value)
         return value
       },
@@ -125,12 +131,19 @@
         this.$emit('input', this.value)
       },
 
-      isUrlValid (value) {
-        return isUri(value) !== undefined || !value
+      variantsUnique () {
+        let distinctVariants = new Set(this.slugifiedVariants)
+        return (this.slugifiedVariants.length === distinctVariants.size)
       },
 
       removeVariant (variant) {
         this.remove('variantNames', variant)
+      },
+
+      removeVariantName (variantName) {
+        const i = this.value.variantNames.indexOf(variantName)
+        this.value.variantNames = this.value.variantNames.splice(i, 1)
+        this.inputEntered()
       },
 
       remove (arrayName, toRemove) {
@@ -145,12 +158,18 @@
           .replace(/--+/g, '-')
           .replace(/^-+/, '')
           .replace(/-+$/, '')
+      },
+      noOfVariants () {
+        return this.slugifiedVariants.length + (this.value.internalVariantName !== '' ? 1 : 0)
       }
     },
 
     computed: {
       maxPercentPerVariant () {
         return 100 / this.value.variantNames.length
+      },
+      slugifiedVariants () {
+        return _.map(this.value.variantNames, v => this.slugify(v))
       }
     }
   }

@@ -114,31 +114,31 @@ class ExperimentsSelfServiceE2ESpec extends BaseIntegrationSpec {
                 documentLink    : 'https://vuetifyjs.com/vuetify/quick-start',
                 reportingEnabled: true,
                 variants        : [
-                    [
-                        name: 'v1',
-                        predicates: [[ type: 'INTERNAL' ]]
-                    ],
-                    [
-                        name: 'v2',
-                        predicates: [[ type: 'HASH', from: 0, to: 10 ], [type: 'DEVICE_CLASS', device: 'phone']]
-                    ],
-                    [
-                        name: 'v3',
-                        predicates: [[ type: 'HASH', from: 50, to: 60 ], [type: 'DEVICE_CLASS', device: 'phone']]
-                    ]
+                        [
+                                name: 'v1',
+                                predicates: [[ type: 'INTERNAL' ]]
+                        ],
+                        [
+                                name: 'v2',
+                                predicates: [[ type: 'HASH', from: 0, to: 10 ], [type: 'DEVICE_CLASS', device: 'phone']]
+                        ],
+                        [
+                                name: 'v3',
+                                predicates: [[ type: 'HASH', from: 50, to: 60 ], [type: 'DEVICE_CLASS', device: 'phone']]
+                        ]
                 ],
                 definition: [
-                    id              : 'some2',
-                    author          : 'Anonymous',
-                    status          : 'DRAFT',
-                    groups          : ['group a', 'group b'],
-                    description     : 'desc',
-                    documentLink    : 'https://vuetifyjs.com/vuetify/quick-start',
-                    reportingEnabled: true,
-                    variantNames:['v2', 'v3'],
-                    internalVariantName: 'v1',
-                    deviceClass: 'phone',
-                    percentage: 10
+                        id              : 'some2',
+                        author          : 'Anonymous',
+                        status          : 'DRAFT',
+                        groups          : ['group a', 'group b'],
+                        description     : 'desc',
+                        documentLink    : 'https://vuetifyjs.com/vuetify/quick-start',
+                        reportingEnabled: true,
+                        variantNames:['v2', 'v3'],
+                        internalVariantName: 'v1',
+                        deviceClass: 'phone',
+                        percentage: 10
                 ]
         ]
         responseSingle.body.definition == expectedExperiment.definition
@@ -158,17 +158,33 @@ class ExperimentsSelfServiceE2ESpec extends BaseIntegrationSpec {
 
         when:
         restTemplate.put(localUrl("/api/admin/experiments/${request.id}/update-descriptions"),
-            [
-                description: 'chi rulez',
-                documentLink: 'new link',
-                groups: ['group c'],
-            ], Map)
+                [
+                        description: 'chi rulez',
+                        documentLink: 'new link',
+                        groups: ['group c'],
+                ], Map)
 
         then:
         def e = fetchExperiment(request.id).body
         e.description == 'chi rulez'
         e.documentLink == 'new link'
         e.groups == ['group c']
+
+        when:
+        restTemplate.put(localUrl("/api/admin/experiments/${request.id}/update-variants"),
+                [
+                        percentage: 18,
+                        variantNames: ['a', 'b', 'c'],
+                        internalVariantName: 'internV',
+                        deviceClass: 'phone'
+                ], Map)
+
+        then:
+        def definition = fetchExperiment(request.id).body.definition
+        definition.percentage == 18
+        definition.internalVariantName == 'internV'
+        definition.variantNames == ['a', 'b', 'c']
+        definition.deviceClass == 'phone'
 
         when:
         restTemplate.put(localUrl("/api/admin/experiments/${request.id}/pause"), Map)

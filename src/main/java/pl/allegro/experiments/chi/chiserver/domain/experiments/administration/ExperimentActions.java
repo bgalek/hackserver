@@ -33,6 +33,10 @@ public class ExperimentActions {
         commandFactory.updateDescriptionsCommand(experimentId, properties).execute();
     }
 
+    public void updateVariants(String experimentId, UpdateVariantsProperties properties) {
+        commandFactory.updateVariantsCommand(experimentId, properties).execute();
+    }
+
     public void stop(String experimentId) {
         commandFactory.stopExperimentCommand(experimentId).execute();
     }

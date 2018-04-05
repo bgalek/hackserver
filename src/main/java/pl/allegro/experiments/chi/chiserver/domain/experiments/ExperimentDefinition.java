@@ -50,6 +50,8 @@ public class ExperimentDefinition {
         Preconditions.checkArgument(!Strings.isNullOrEmpty(id));
         Preconditions.checkNotNull(variantNames);
         Preconditions.checkNotNull(groups);
+        Preconditions.checkArgument(internalVariantName == null || !internalVariantName.isEmpty());
+        Preconditions.checkArgument(deviceClass == null || !deviceClass.isEmpty());
         this.id = id;
         this.variantNames = ImmutableList.copyOf(variantNames);
         this.internalVariantName = internalVariantName;

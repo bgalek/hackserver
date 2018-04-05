@@ -81,7 +81,6 @@
     props: ['experiment'],
 
     data () {
-      console.log('this', this)
       return {
         value: this.init(this.experiment),
         documentLinkRules: [
@@ -92,7 +91,6 @@
 
     methods: {
       init (experiment) {
-        console.log('experiment', experiment)
         const value = {
           documentLink: experiment && experiment.documentLink,
           groups: experiment && Array.from(experiment.groups),

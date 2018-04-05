@@ -113,7 +113,7 @@
         </v-btn>
 
         <v-list style="padding:15px; display: block;">
-          <experiment-variants-editing :experiment="experiment.definition"
+          <experiment-desc-editing :experiment="experiment"
                                    v-model="descriptionsEditingResult"
           />
 
@@ -131,11 +131,12 @@
               v-model="variantsMenuVisible">
         <v-btn color="gray" slot="activator" style="text-transform: none">
           Update variants
-          <v-icon right>format_align_left</v-icon>
+          <v-icon right>settings</v-icon>
         </v-btn>
 
         <v-list style="padding:15px; display: block;">
-          <experiment-variants-editing :variants="experiment"
+          <experiment-variants-editing :variants="experiment.definition"
+                                       :allowModifyRegularVariants="false"
                                    v-model="variantsEditingResult"
           />
 
@@ -360,9 +361,8 @@
             data: {
               percentage: this.variantsEditingResult.percentage,
               variantNames: this.variantsEditingResult.variantNames,
-              internalVariantName: this.variantsEditingResult.internalVariantName,
-              deviceClass: this.variantsEditingResult.deviceClass
-
+              internalVariantName: this.variantsEditingResult.internalVariantName !== '' ? this.variantsEditingResult.internalVariantName : null,
+              deviceClass: this.variantsEditingResult.deviceClass !== 'all' ? this.variantsEditingResult.deviceClass : null
             },
             params: {
               experimentId: this.experiment.id
