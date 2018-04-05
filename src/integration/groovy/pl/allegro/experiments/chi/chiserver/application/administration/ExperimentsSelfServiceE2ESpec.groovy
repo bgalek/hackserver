@@ -120,14 +120,28 @@ class ExperimentsSelfServiceE2ESpec extends BaseIntegrationSpec {
                     ],
                     [
                         name: 'v2',
-                        predicates: [[type: 'DEVICE_CLASS', device: 'phone'], [ type: 'HASH', from: 0, to: 10 ]]
+                        predicates: [[ type: 'HASH', from: 0, to: 10 ], [type: 'DEVICE_CLASS', device: 'phone']]
                     ],
                     [
                         name: 'v3',
-                        predicates: [[type: 'DEVICE_CLASS', device: 'phone'], [ type: 'HASH', from: 50, to: 60 ]]
+                        predicates: [[ type: 'HASH', from: 50, to: 60 ], [type: 'DEVICE_CLASS', device: 'phone']]
                     ]
+                ],
+                definition: [
+                    id              : 'some2',
+                    author          : 'Anonymous',
+                    status          : 'DRAFT',
+                    groups          : ['group a', 'group b'],
+                    description     : 'desc',
+                    documentLink    : 'https://vuetifyjs.com/vuetify/quick-start',
+                    reportingEnabled: true,
+                    variantNames:['v2', 'v3'],
+                    internalVariantName: 'v1',
+                    deviceClass: 'phone',
+                    percentage: 10
                 ]
         ]
+        responseSingle.body.definition == expectedExperiment.definition
         responseSingle.body.variants == expectedExperiment.variants
         responseSingle.body == expectedExperiment
         responseList.body.contains(expectedExperiment)

@@ -3,6 +3,7 @@ import _ from 'lodash'
 
 import ExperimentVariantModel from './experiment-variant'
 import ActivityPeriod from './activity-period'
+import ExperimentDefinitionModel from './experiment-definition'
 
 const ExperimentRecord = Record({
   id: null,
@@ -20,7 +21,8 @@ const ExperimentRecord = Record({
     lastDayVisits: 0
   }),
   editable: false,
-  origin: ''
+  origin: '',
+  definition: null
 })
 
 export default class ExperimentModel extends ExperimentRecord {
@@ -31,6 +33,7 @@ export default class ExperimentModel extends ExperimentRecord {
     experimentObject.hasBase = _.includes(_.map(experimentObject.variants, v => v.name), 'base')
     experimentObject.isMeasured = experimentObject.hasBase && experimentObject.reportingEnabled
     experimentObject.groups = List(experimentObject.groups)
+    experimentObject.definition = experimentObject.definition && new ExperimentDefinitionModel(experimentObject.definition)
     super(experimentObject)
   }
 
@@ -60,31 +63,27 @@ export default class ExperimentModel extends ExperimentRecord {
   }
 
   canBeStarted () {
-    return this.status === 'DRAFT'
+    return !!this.definition && this.definition.canBeStarted()
   }
 
   canBeStopped () {
-    return this.status === 'ACTIVE'
+    return !!this.definition && this.definition.canBeStopped()
   }
 
   canBePaused () {
-    return this.status === 'ACTIVE'
+    return !!this.definition && this.definition.canBePaused()
   }
 
   canBeResumed () {
-    return this.status === 'PAUSED'
+    return !!this.definition && this.definition.canBeResumed()
   }
 
   canBeProlonged () {
-    return this.status === 'ACTIVE'
+    return !!this.definition && this.definition.canBeProlonged()
   }
 
   canRunLifecycleCommand () {
-    return this.origin !== 'stash' &&
-      (this.canBeStarted() ||
-       this.canBeStopped() ||
-       this.canBePaused() ||
-       this.canBeResumed())
+    return !!this.definition && this.definition.canRunLifecycleCommand()
   }
 
   getBaseVariant () {

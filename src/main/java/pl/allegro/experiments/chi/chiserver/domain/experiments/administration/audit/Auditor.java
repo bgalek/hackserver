@@ -4,7 +4,7 @@ import org.javers.core.Javers;
 import org.javers.core.diff.Change;
 import org.javers.repository.jql.JqlQuery;
 import org.javers.repository.jql.QueryBuilder;
-import pl.allegro.experiments.chi.chiserver.domain.experiments.Experiment;
+import pl.allegro.experiments.chi.chiserver.domain.experiments.ExperimentDefinition;
 
 import java.time.ZoneId;
 import java.util.List;
@@ -20,7 +20,7 @@ public class Auditor {
 
     public AuditLog getAuditLog(String experimentId) {
         final JqlQuery query = QueryBuilder
-                .byInstanceId(experimentId, Experiment.class)
+                .byInstanceId(experimentId, ExperimentDefinition.class)
                 .withNewObjectChanges()
                 .build();
         final List<Change> allChanges = javers.findChanges(query);

@@ -1,6 +1,7 @@
 package pl.allegro.experiments.chi.chiserver.infrastructure.experiments;
 
 import pl.allegro.experiments.chi.chiserver.domain.experiments.Experiment;
+import pl.allegro.experiments.chi.chiserver.domain.experiments.ExperimentDefinition;
 import pl.allegro.experiments.chi.chiserver.domain.experiments.ExperimentsRepository;
 import pl.allegro.experiments.chi.chiserver.domain.experiments.ReadOnlyExperimentsRepository;
 
@@ -25,11 +26,11 @@ public class ExperimentsDoubleRepository implements ExperimentsRepository {
     }
 
     @Override
-    public void save(Experiment experiment) {
-        if (getOrigin(experiment.getId()).equals(ExperimentOrigin.STASH)) {
-            throw new IllegalArgumentException("experiment " + experiment.getId() + " is from stash");
+    public void save(ExperimentDefinition experimentDefinition) {
+        if (getOrigin(experimentDefinition.getId()).equals(ExperimentOrigin.STASH)) {
+            throw new IllegalArgumentException("experiment " + experimentDefinition.getId() + " is from stash");
         }
-        mongoExperimentsRepository.save(experiment);
+        mongoExperimentsRepository.save(experimentDefinition);
     }
 
     @Override

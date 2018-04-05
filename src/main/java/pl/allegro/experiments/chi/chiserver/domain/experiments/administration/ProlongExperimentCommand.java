@@ -1,6 +1,7 @@
 package pl.allegro.experiments.chi.chiserver.domain.experiments.administration;
 
 import pl.allegro.experiments.chi.chiserver.domain.experiments.Experiment;
+import pl.allegro.experiments.chi.chiserver.domain.experiments.ExperimentDefinition;
 import pl.allegro.experiments.chi.chiserver.domain.experiments.ExperimentsRepository;
 
 import java.util.Objects;
@@ -29,7 +30,12 @@ public class ProlongExperimentCommand {
     public void execute() {
         Experiment experiment = permissionsAwareExperimentRepository.getExperimentOrException(experimentId);
         validate(experiment);
-        experimentsRepository.save(experiment.prolong(prolongExperimentProperties.getExperimentAdditionalDays()));
+        ExperimentDefinition prolonged = experiment
+                .getDefinition()
+                .orElseThrow(() -> new UnsupportedOperationException("Missing experiment definition"))
+                .prolong(prolongExperimentProperties.getExperimentAdditionalDays());
+
+        experimentsRepository.save(prolonged);
     }
 
     private void validate(Experiment experiment) {

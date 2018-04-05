@@ -18,18 +18,18 @@ class MongoExperimentsIntegrationSpec extends BaseIntegrationSpec {
 
     def "should get simple experiments saved before"() {
         given:
-        def experiment = ExperimentFactory.experimentWithId("some")
+        def experiment = ExperimentFactory.definitionWithId("some")
 
         when:
         mongoExperimentsRepository.save(experiment)
 
         then:
-        mongoExperimentsRepository.getExperiment("some").get() == experiment
+        mongoExperimentsRepository.getExperiment('some').get().getDefinition().get() == experiment
     }
 
     def "should remove not experiments not tracked by javers"() {
         given:
-        def experiment = ExperimentFactory.experimentWithId("legacy-experiment")
+        def experiment = ExperimentFactory.definitionWithId("legacy-experiment")
         mongoTemplate.save(experiment, EXPERIMENTS_COLLECTION)
 
         when:

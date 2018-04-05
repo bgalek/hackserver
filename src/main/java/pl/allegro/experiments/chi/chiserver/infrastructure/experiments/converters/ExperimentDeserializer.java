@@ -3,33 +3,25 @@ package pl.allegro.experiments.chi.chiserver.infrastructure.experiments.converte
 import com.mongodb.BasicDBObject;
 import com.mongodb.DBObject;
 import org.springframework.core.convert.converter.Converter;
-import pl.allegro.experiments.chi.chiserver.domain.experiments.ActivityPeriod;
-import pl.allegro.experiments.chi.chiserver.domain.experiments.Experiment;
-import pl.allegro.experiments.chi.chiserver.domain.experiments.ExperimentStatus;
-import pl.allegro.experiments.chi.chiserver.domain.experiments.ExperimentVariant;
+import pl.allegro.experiments.chi.chiserver.domain.experiments.*;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
-public class ExperimentDeserializer implements Converter<DBObject, Experiment> {
-    private final ExperimentVariantDeserializer experimentVariantDeserializer;
+public class ExperimentDeserializer implements Converter<DBObject, ExperimentDefinition> {
     private final ActivityPeriodDeserializer activityPeriodDeserializer;
 
-    public ExperimentDeserializer(
-            ExperimentVariantDeserializer experimentVariantDeserializer,
-            ActivityPeriodDeserializer activityPeriodDeserializer) {
-        this.experimentVariantDeserializer = experimentVariantDeserializer;
+    public ExperimentDeserializer(ActivityPeriodDeserializer activityPeriodDeserializer) {
         this.activityPeriodDeserializer = activityPeriodDeserializer;
     }
 
     @Override
-    public Experiment convert(DBObject bson) {
+    public ExperimentDefinition convert(DBObject bson) {
         String id = (String) bson.get("_id");
-        List<DBObject> rawVariants = (List<DBObject>) bson.get("variants");
-        List<ExperimentVariant> variants = rawVariants.stream()
-                .map(experimentVariantDeserializer::convert)
-                .collect(Collectors.toList());
+        List<String> variantNames = (List<String>) bson.get("variantNames");
+        String internalVariantName = (String)bson.get("internalVariantName");
+        String deviceClass = (String)bson.get("deviceClass");
+        Integer percentage = (Integer)bson.get("percentage");
         String description = bson.get("description") != null ? (String) bson.get("description") : null;
         String documentLink = bson.get("documentLink") != null ? (String) bson.get("documentLink") : null;
         String author = bson.get("author") != null ? (String) bson.get("author") : null;
@@ -40,9 +32,13 @@ public class ExperimentDeserializer implements Converter<DBObject, Experiment> {
                 .orElse(null);
         Object rawExplicitStatus = bson.get("explicitStatus");
         ExperimentStatus explicitStatus = rawExplicitStatus != null ? ExperimentStatus.valueOf((String) rawExplicitStatus) : null;
-        return Experiment.builder()
+
+        return ExperimentDefinition.builder()
                 .id(id)
-                .variants(variants)
+                .variantNames(variantNames)
+                .internalVariantName(internalVariantName)
+                .percentage(percentage)
+                .deviceClass(deviceClass)
                 .description(description)
                 .documentLink(documentLink)
                 .author(author)

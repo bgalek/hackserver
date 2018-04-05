@@ -80,28 +80,15 @@ public class ExperimentCreationRequest {
     }
 
 
-    public Experiment toExperiment(String author) {
+    public ExperimentDefinition toExperimentDefinition(String author) {
         Preconditions.checkNotNull(author);
         try {
-            List<ExperimentVariant> experimentVariants = new ArrayList<>();
-
-            if (internalVariantName != null) {
-                experimentVariants.add(new ExperimentVariant(internalVariantName, ImmutableList.of(new InternalPredicate())));
-            }
-
-            if (percentage != null) {
-                int maxPercentageVariant = 100 / variantNames.size();
-                if (percentage > maxPercentageVariant) {
-                    throw new ExperimentCommandException("Percentage exceeds maximum value ( " + percentage + " > " + maxPercentageVariant + " )");
-                }
-                for (int i = 0; i < variantNames.size(); i++) {
-                    experimentVariants.add(convertVariant(variantNames.get(i), i * maxPercentageVariant,i * maxPercentageVariant + percentage));
-                }
-            }
-
-            return Experiment.builder()
+            return ExperimentDefinition.builder()
                     .id(this.id)
-                    .variants(experimentVariants)
+                    .variantNames(variantNames)
+                    .internalVariantName(internalVariantName)
+                    .percentage(percentage)
+                    .deviceClass(deviceClass)
                     .description(this.description)
                     .documentLink(this.documentLink)
                     .author(author)
@@ -112,22 +99,6 @@ public class ExperimentCreationRequest {
         } catch (Exception e) {
             throw new ExperimentCommandException("Cannot create experiment from request", e);
         }
-    }
-
-    private ExperimentVariant convertVariant(String variantName, int from, int to) {
-
-        List<Predicate> predicates = new ArrayList<>();
-
-        if (deviceClass != null) {
-            predicates.add(new DeviceClassPredicate(deviceClass));
-        }
-
-        predicates.add(new HashRangePredicate(new PercentageRange(from, to)));
-
-        return new ExperimentVariant(
-                variantName,
-                predicates
-        );
     }
 }
 

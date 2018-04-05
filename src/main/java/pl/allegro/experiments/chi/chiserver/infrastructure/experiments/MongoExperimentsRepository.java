@@ -5,6 +5,7 @@ import org.javers.core.Javers;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import pl.allegro.experiments.chi.chiserver.domain.UserProvider;
 import pl.allegro.experiments.chi.chiserver.domain.experiments.Experiment;
+import pl.allegro.experiments.chi.chiserver.domain.experiments.ExperimentDefinition;
 import pl.allegro.experiments.chi.chiserver.domain.experiments.ExperimentsRepository;
 
 import java.util.List;
@@ -12,7 +13,7 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 public class MongoExperimentsRepository implements ExperimentsRepository {
-    private static final String COLLECTION = "experiments";
+    private static final String COLLECTION = "experimentDefinitions";
     private final MongoTemplate mongoTemplate;
     private final ExperimentsMongoMetricsReporter experimentsMongoMetricsReporter;
     private final Javers javers;
@@ -32,38 +33,48 @@ public class MongoExperimentsRepository implements ExperimentsRepository {
     @Override
     public Optional<Experiment> getExperiment(String id) {
         Timer.Context context = experimentsMongoMetricsReporter.timerSingleExperiment();
-        Experiment experiment = mongoTemplate.findById(id, Experiment.class, COLLECTION);
+        ExperimentDefinition definition = mongoTemplate.findById(id, ExperimentDefinition.class, COLLECTION);
         context.close();
-        return Optional.ofNullable(experiment);
+        return Optional.ofNullable(definition).map(ExperimentDefinition::toExperiment);
     }
 
     @Override
     public void delete(String experimentId) {
-        Experiment experiment = getExperiment(experimentId).orElse(null);
+        ExperimentDefinition definition = getExperiment(experimentId)
+                .flatMap(Experiment::getDefinition)
+                .orElse(null);
         String username = userProvider.getCurrentUser().getName();
-        javers.getLatestSnapshot(experimentId, Experiment.class).ifPresent(it ->
-            javers.commitShallowDelete(username, experiment)
+        javers.getLatestSnapshot(experimentId, ExperimentDefinition.class).ifPresent(it ->
+            javers.commitShallowDelete(username, definition)
         );
-        mongoTemplate.remove(getExperiment(experimentId).orElse(null), COLLECTION);
+        mongoTemplate.remove(getExperiment(experimentId)
+                .flatMap(Experiment::getDefinition)
+                .orElse(null), COLLECTION);
     }
 
     @Override
-    public void save(Experiment experiment) {
+    public void save(ExperimentDefinition experimentDefinition) {
         String username = userProvider.getCurrentUser().getName();
-        javers.commit(username, experiment);
-        mongoTemplate.save(experiment, COLLECTION);
+        javers.commit(username, experimentDefinition);
+        mongoTemplate.save(experimentDefinition, COLLECTION);
     }
 
     @Override
     public List<Experiment> getAll() {
         Timer.Context context = experimentsMongoMetricsReporter.timerAllExperiments();
-        List<Experiment> experiments = mongoTemplate.findAll(Experiment.class, COLLECTION);
+        List<Experiment> experiments = mongoTemplate.
+                findAll(ExperimentDefinition.class, COLLECTION)
+                .stream()
+                .map(ExperimentDefinition::toExperiment)
+                .collect(Collectors.toList());
         context.close();
         return experiments;
     }
 
     @Override
     public List<Experiment> assignable() {
-        return getAll().stream().filter(Experiment::isAssignable).collect(Collectors.toList());
+        return getAll().stream()
+                .filter(Experiment::isAssignable)
+                .collect(Collectors.toList());
     }
 }
