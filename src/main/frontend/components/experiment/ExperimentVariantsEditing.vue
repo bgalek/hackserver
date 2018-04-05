@@ -42,7 +42,7 @@
             <template slot="selection" slot-scope="data">
 
               <v-chip
-                v-if="data.item === baseVariant || allowModifyRegularVariants === false"
+                v-if="allowDeleteVariant(data.item)"
                 :selected="data.selected"
                 :disabled="true">
                 <strong>{{ data.item }}</strong>&nbsp;
@@ -159,8 +159,13 @@
           .replace(/^-+/, '')
           .replace(/-+$/, '')
       },
+
       noOfVariants () {
         return this.slugifiedVariants.length + (this.value.internalVariantName !== '' ? 1 : 0)
+      },
+
+      allowDeleteVariant (variantName) {
+        return variantName === this.baseVariant || this.allowModifyRegularVariants === false
       }
     },
 
