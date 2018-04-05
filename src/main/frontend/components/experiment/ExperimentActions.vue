@@ -113,7 +113,7 @@
         </v-btn>
 
         <v-list style="padding:15px; display: block;">
-          <experiment-desc-editing :experiment="experiment"
+          <experiment-variants-editing :experiment="experiment.definition"
                                    v-model="descriptionsEditingResult"
           />
 
@@ -123,6 +123,28 @@
                  @click="updateDescriptions"
                  style="text-transform: none">
             Update descriptions of &nbsp;<b>{{ this.experiment.id }}</b>
+          </v-btn>
+        </v-list>
+      </v-menu>
+
+      <v-menu :close-on-content-click="false"
+              v-model="variantsMenuVisible">
+        <v-btn color="gray" slot="activator" style="text-transform: none">
+          Update variants
+          <v-icon right>format_align_left</v-icon>
+        </v-btn>
+
+        <v-list style="padding:15px; display: block;">
+          <experiment-variants-editing :variants="experiment"
+                                   v-model="variantsEditingResult"
+          />
+
+          <v-btn flat @click="closeVariants()">Cancel</v-btn>
+          <v-btn color="gray"
+                 :disabled="!variantsChanged()"
+                 @click="updateVariants"
+                 style="text-transform: none">
+            Update variants of &nbsp;<b>{{ this.experiment.id }}</b>
           </v-btn>
         </v-list>
       </v-menu>
@@ -148,6 +170,7 @@
 
 <script>
   import ExperimentDescEditing from './ExperimentDescEditing.vue'
+  import ExperimentVariantsEditing from './ExperimentVariantsEditing.vue'
   import ChiPanel from '../ChiPanel.vue'
   import { mapActions } from 'vuex'
 
@@ -156,13 +179,16 @@
 
     components: {
       ChiPanel,
-      ExperimentDescEditing
+      ExperimentDescEditing,
+      ExperimentVariantsEditing
     },
 
     data () {
       return {
         descriptionsMenuVisible: false,
         descriptionsEditingResult: {},
+        variantsMenuVisible: false,
+        variantsEditingResult: {},
         prolongMenuVisible: false,
         commandOkMessage: '',
         actionFormValid: true,
@@ -307,7 +333,50 @@
             this.showError(error)
           })
 
-          this.descriptionsMenuVisible = false
+          this.closeDescriptions()
+        }
+      },
+
+      closeVariants () {
+        this.variantsMenuVisible = false
+      },
+
+      variantsChanged () {
+        console.log('variantsChanged', this.variantsEditingResult, this.experiment)
+        if (this.experiment.definition) {
+          return this.variantsEditingResult.percentage !== this.experiment.definition.percentage ||
+            JSON.stringify(this.variantsEditingResult.variantNames) !== JSON.stringify(this.experiment.definition.variantNames) ||
+            this.variantsEditingResult.internalVariantName !== this.experiment.definition.internalVariantName ||
+            this.variantsEditingResult.deviceClass !== this.experiment.definition.deviceClass
+        }
+        return false
+      },
+
+      updateVariants () {
+        if (this.$refs.actionForm.validate()) {
+          this.closeVariants()
+          this.prepareToSend()
+          this.updateExperimentVariants({
+            data: {
+              percentage: this.variantsEditingResult.percentage,
+              variantNames: this.variantsEditingResult.variantNames,
+              internalVariantName: this.variantsEditingResult.internalVariantName,
+              deviceClass: this.variantsEditingResult.deviceClass
+
+            },
+            params: {
+              experimentId: this.experiment.id
+            }
+          }).then(response => {
+            this.afterSending()
+            this.getExperiment({params: {experimentId: this.experiment.id}})
+            this.commandOkMessage = 'Experiment successfully updated'
+          }).catch(error => {
+            this.afterSending()
+            this.showError(error)
+          })
+
+          this.closeVariants()
         }
       },
 
@@ -360,7 +429,8 @@
         'pauseExperiment',
         'resumeExperiment',
         'prolongExperiment',
-        'updateExperimentDescriptions'
+        'updateExperimentDescriptions',
+        'updateExperimentVariants'
       ])
     }
   }

@@ -103,7 +103,7 @@
           (v) => this.variantsUnique() || 'Slugified variant names must be unique.',
           (v) => this.slugifiedVariants.indexOf('') === -1 || 'Slugified variant name can not be empty.',
           (v) => this.noOfVariants() > 1 || 'No variants. Seriously?'
-        ],
+        ]
       }
     },
 
@@ -111,10 +111,10 @@
       init (variants) {
         console.log('variants', variants)
         const value = {
-          variantNames: variants && Array.from(variants.variantNames) || ['base'],
-          percentage: variants && variants.percentage || 1,
+          variantNames: (variants && Array.from(variants.variantNames)) || ['base'],
+          percentage: (variants && variants.percentage) || 1,
           internalVariantName: variants && variants.internalVariantName,
-          deviceClass: variants && variants.deviceClass || 'all'
+          deviceClass: (variants && variants.deviceClass) || 'all'
         }
         console.log('value', value)
         this.$emit('input', value)
@@ -145,7 +145,7 @@
           .replace(/--+/g, '-')
           .replace(/^-+/, '')
           .replace(/-+$/, '')
-      },
+      }
     },
 
     computed: {
