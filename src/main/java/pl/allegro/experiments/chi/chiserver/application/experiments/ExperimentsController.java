@@ -12,7 +12,6 @@ import pl.allegro.experiments.chi.chiserver.domain.experiments.PermissionsReposi
 import pl.allegro.experiments.chi.chiserver.domain.experiments.administration.*;
 import pl.allegro.experiments.chi.chiserver.domain.experiments.administration.audit.AuditLog;
 import pl.allegro.experiments.chi.chiserver.domain.experiments.administration.audit.Auditor;
-import pl.allegro.experiments.chi.chiserver.infrastructure.experiments.MongoExperimentsMigrator;
 import pl.allegro.tech.common.andamio.errors.Error;
 import pl.allegro.tech.common.andamio.errors.ErrorsHolder;
 import pl.allegro.tech.common.andamio.errors.SimpleErrorsHolder;
@@ -34,7 +33,6 @@ public class ExperimentsController {
     private ExperimentActions experimentActions;
     private final Gson jsonConverter;
     private final Auditor auditor;
-    private final MongoExperimentsMigrator migrator;
 
 
     public ExperimentsController(
@@ -43,15 +41,13 @@ public class ExperimentsController {
             PermissionsRepository permissionsRepository,
             ExperimentActions experimentActions,
             Gson jsonConverter,
-            Auditor auditor,
-            MongoExperimentsMigrator migrator) {
+            Auditor auditor) {
         this.experimentsRepository = experimentsRepository;
         this.measurementsRepository = measurementsRepository;
         this.permissionsRepository = permissionsRepository;
         this.experimentActions = experimentActions;
         this.jsonConverter = jsonConverter;
         this.auditor = auditor;
-        this.migrator = migrator;
     }
 
     @MeteredEndpoint
@@ -62,15 +58,6 @@ public class ExperimentsController {
                 .stream()
                 .map(permissionsRepository::withPermissions)
                 .collect(Collectors.toList()));
-    }
-
-    @MeteredEndpoint
-    @GetMapping(path = {"/migration"})
-    ResponseEntity<String> migrateAllExperiments() {
-        logger.info("All experiments migration received");
-        String result = migrator.migrateAll();
-        logger.info(result);
-        return ResponseEntity.ok(result);
     }
 
     @MeteredEndpoint
