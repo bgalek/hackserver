@@ -22,6 +22,7 @@ public class Experiment {
     private final String origin;
     private final ExperimentStatus explicitStatus;
     private final ExperimentStatus status;
+
     private final ExperimentDefinition definition;
 
     private Experiment(
@@ -64,6 +65,16 @@ public class Experiment {
 
     public List<ExperimentVariant> getVariants() {
         return variants;
+    }
+
+    public List<EventDefinition> getEventDefinitions() {
+        // TODO refactor
+        return definition.getReportingDefinition().getEventDefinitions();
+    }
+
+    public ReportingType type() {
+        // TODO refactor
+        return definition.getReportingDefinition().getType();
     }
 
     public String getDescription() {

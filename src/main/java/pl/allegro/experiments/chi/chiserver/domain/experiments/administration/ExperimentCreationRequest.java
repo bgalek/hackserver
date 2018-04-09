@@ -8,7 +8,9 @@ import pl.allegro.experiments.chi.chiserver.domain.experiments.*;
 
 import javax.validation.constraints.NotNull;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 
 public class ExperimentCreationRequest {
     @NotNull
@@ -22,6 +24,8 @@ public class ExperimentCreationRequest {
     private final String documentLink;
     private final List<String> groups;
     private final boolean reportingEnabled;
+    private final List<EventDefinition> eventDefinitions;
+    private final ReportingType reportingType;
 
     @JsonCreator
     public ExperimentCreationRequest(
@@ -33,9 +37,13 @@ public class ExperimentCreationRequest {
             @JsonProperty("description") String description,
             @JsonProperty("documentLink") String documentLink,
             @JsonProperty("groups") List<String> groups,
-            @JsonProperty("reportingEnabled") Boolean reportingEnabled) {
+            @JsonProperty("reportingEnabled") Boolean reportingEnabled,
+            @JsonProperty("eventDefinitions") List<EventDefinition> eventDefinitions,
+            @JsonProperty("reportingType") ReportingType reportingType) {
         Preconditions.checkNotNull(id);
         Preconditions.checkNotNull(variantNames);
+        Preconditions.checkNotNull(reportingType);
+        // missing percentage?
         this.id = id;
         this.variantNames = ImmutableList.copyOf(variantNames);
         this.internalVariantName = internalVariantName;
@@ -53,6 +61,8 @@ public class ExperimentCreationRequest {
         } else {
             this.reportingEnabled = reportingEnabled;
         }
+        this.eventDefinitions = Optional.ofNullable(eventDefinitions).orElse(null);
+        this.reportingType = reportingType;
     }
 
     public String getId() {
@@ -94,6 +104,7 @@ public class ExperimentCreationRequest {
                     .author(author)
                     .groups(this.groups)
                     .reportingEnabled(this.reportingEnabled)
+                    .reportingDefinition(reportingType.reportingDefinition(eventDefinitions))
                     .build();
 
         } catch (Exception e) {
