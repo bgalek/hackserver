@@ -112,6 +112,7 @@ class ExperimentReportingDefinitionE2E extends BaseIntegrationSpec {
                 null
         ]
     }
+
 }
 
 

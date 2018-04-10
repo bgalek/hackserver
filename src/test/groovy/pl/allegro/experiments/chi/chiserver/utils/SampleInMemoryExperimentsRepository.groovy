@@ -2,6 +2,7 @@ package pl.allegro.experiments.chi.chiserver.utils
 
 import groovy.transform.CompileStatic
 import pl.allegro.experiments.chi.chiserver.domain.experiments.Experiment
+import pl.allegro.experiments.chi.chiserver.domain.experiments.ExperimentDefinition
 import pl.allegro.experiments.chi.chiserver.domain.experiments.ExperimentVariant
 import pl.allegro.experiments.chi.chiserver.infrastructure.InMemoryExperimentsRepository
 import pl.allegro.experiments.chi.chiserver.utils.ExperimentFactory
@@ -15,6 +16,7 @@ class SampleInMemoryExperimentsRepository {
         Experiment experiment = ExperimentFactory.experimentWithId(TEST_EXPERIMENT_ID)
                 .mutate()
                 .reportingEnabled(true)
+                .definition(ExperimentFactory.backendReportingDefinition(TEST_EXPERIMENT_ID))
                 .build()
         Experiment experimentWithoutReporting = experiment.mutate()
                 .id(TEST_EXPERIMENT_ID_WITH_DISABLED_REPORTING)
