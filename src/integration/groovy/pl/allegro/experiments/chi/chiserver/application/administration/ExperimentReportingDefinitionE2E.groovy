@@ -1,6 +1,7 @@
 package pl.allegro.experiments.chi.chiserver.application.administration
 
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.test.annotation.DirtiesContext
 import org.springframework.web.client.RestTemplate
 import pl.allegro.experiments.chi.chiserver.BaseIntegrationSpec
 import pl.allegro.experiments.chi.chiserver.domain.User
@@ -9,6 +10,7 @@ import pl.allegro.experiments.chi.chiserver.domain.experiments.ExperimentsReposi
 import pl.allegro.experiments.chi.chiserver.infrastructure.experiments.ExperimentsDoubleRepository
 import spock.lang.Unroll
 
+@DirtiesContext
 class ExperimentReportingDefinitionE2E extends BaseIntegrationSpec {
 
     RestTemplate restTemplate = new RestTemplate()
@@ -31,7 +33,7 @@ class ExperimentReportingDefinitionE2E extends BaseIntegrationSpec {
         userProvider.user = new User('Anonymous', [], true)
 
         def request = [
-                id              : 'some2',
+                id              : experimentId,
                 variantNames    : ['v2'],
                 percentage      : 10,
                 reportingType   : reportingType,
@@ -46,15 +48,17 @@ class ExperimentReportingDefinitionE2E extends BaseIntegrationSpec {
         def responseSingle = restTemplate.getForEntity(localUrl("/api/admin/experiments/${request.id}/"), Map).body
 
         then:
-        responseList.find { it['id'] == 'some2' }['reportingType'] == reportingType
-        responseList.find { it['id'] == 'some2' }['eventDefinitions'] == expectedEventDefinitions
+        responseList.find { it['id'] == experimentId }['reportingType'] == expectedReportingType
+        responseList.find { it['id'] == experimentId }['eventDefinitions'] as Set == expectedEventDefinitions as Set
 
         and:
-        responseSingle['reportingType'] == reportingType
-        responseSingle['eventDefinitions'] == expectedEventDefinitions
+        responseSingle['reportingType'] == expectedReportingType
+        responseSingle['eventDefinitions'] as Set == expectedEventDefinitions as Set
 
         where:
-        reportingType << ['FRONTEND', 'GTM', 'BACKEND']
+        experimentId << ['e1', 'e2', 'e3', 'e4']
+        reportingType << ['FRONTEND', 'GTM', 'BACKEND', null]
+        expectedReportingType << ['FRONTEND', 'GTM', 'BACKEND', 'BACKEND']
         expectedEventDefinitions << [
                 [
                         [
@@ -68,22 +72,23 @@ class ExperimentReportingDefinitionE2E extends BaseIntegrationSpec {
                                 category: 'category2',
                                 value   : 'value2',
                                 action  : 'action2'
-                        ],
+                        ]
                 ],
                 [
                         [
                                 category: 'chiInteraction',
-                                action  : 'some2',
+                                action  : experimentId,
                                 label   : 'base',
                                 value   : ''
                         ],
                         [
                                 category: 'chiInteraction',
-                                action  : 'some2',
+                                action  : experimentId,
                                 label   : 'v2',
                                 value   : ''
-                        ],
+                        ]
                 ],
+                null,
                 null
         ]
 
@@ -102,6 +107,7 @@ class ExperimentReportingDefinitionE2E extends BaseIntegrationSpec {
                                 action  : 'action2'
                         ],
                 ],
+                null,
                 null,
                 null
         ]

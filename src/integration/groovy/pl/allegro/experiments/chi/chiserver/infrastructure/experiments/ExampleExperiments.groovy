@@ -8,7 +8,8 @@ trait ExampleExperiments {
           ],
           reportingEnabled: false,
           groups: [],
-          status: 'DRAFT'
+          status: 'DRAFT',
+          reportingType: 'BACKEND'
         ]
     }
 
@@ -21,7 +22,8 @@ trait ExampleExperiments {
           description: "Experiment description",
           author: "Experiment owner",
           groups: [],
-          status: 'DRAFT'
+          status: 'DRAFT',
+          reportingType: 'BACKEND'
         ]
     }
     Map cmuidRegexpExperiment() {
@@ -33,7 +35,8 @@ trait ExampleExperiments {
           description: "Experiment description",
           author: "Experiment owner",
           groups: [],
-          status: 'DRAFT'
+          status: 'DRAFT',
+          reportingType: 'BACKEND'
         ]
     }
 
@@ -45,7 +48,8 @@ trait ExampleExperiments {
           ],
           reportingEnabled: true,
           groups: [],
-          status: 'DRAFT'
+          status: 'DRAFT',
+          reportingType: 'BACKEND'
         ]
     }
 
@@ -58,7 +62,8 @@ trait ExampleExperiments {
          description: "Another one",
          author: "Someone",
          groups: [],
-         status: 'DRAFT'
+         status: 'DRAFT',
+         reportingType: 'BACKEND'
         ]
     }
 
@@ -73,7 +78,8 @@ trait ExampleExperiments {
           ],
           reportingEnabled: true,
           groups: [],
-          status: 'ACTIVE'
+          status: 'ACTIVE',
+          reportingType: 'BACKEND'
         ]
     }
 
@@ -88,7 +94,8 @@ trait ExampleExperiments {
           ],
           reportingEnabled: true,
           groups: [],
-          status: 'PLANNED'
+          status: 'PLANNED',
+          reportingType: 'BACKEND'
         ]
     }
 
@@ -103,7 +110,8 @@ trait ExampleExperiments {
           ],
           reportingEnabled: true,
           groups: [],
-          status: 'ENDED'
+          status: 'ENDED',
+          reportingType: 'BACKEND'
         ]
     }
 
@@ -118,7 +126,8 @@ trait ExampleExperiments {
           ],
           reportingEnabled: true,
           groups: [],
-          status: 'PAUSED'
+          status: 'PAUSED',
+          reportingType: 'BACKEND'
         ]
     }
 }

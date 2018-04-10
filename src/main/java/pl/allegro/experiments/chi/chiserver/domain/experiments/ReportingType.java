@@ -14,4 +14,8 @@ public enum ReportingType {
         }
         return ReportingDefinition.frontend(eventDefinitions);
     }
+
+    public static ReportingType getDefault() {
+        return BACKEND;
+    }
 }

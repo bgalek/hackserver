@@ -16,12 +16,20 @@ public class ReportingDefinitionDeserializer implements Converter<DBObject, Repo
 
     @Override
     public ReportingDefinition convert(DBObject source) {
-        return new ReportingDefinition(
-                ((List<DBObject>) source.get("eventDefinitions")).stream()
-                    .map(eventDefinitionDeserializer::convert)
-                    .collect(Collectors.toList()),
-                (boolean) source.get("gtm"),
-                (boolean) source.get("backendInteractionsEnabled")
-        );
+        if (source.get("eventDefinitions") != null) {
+            return new ReportingDefinition(
+                    ((List<DBObject>) source.get("eventDefinitions")).stream()
+                            .map(eventDefinitionDeserializer::convert)
+                            .collect(Collectors.toList()),
+                    (boolean) source.get("gtm"),
+                    (boolean) source.get("backendInteractionsEnabled")
+            );
+        } else {
+            return new ReportingDefinition(
+                    null,
+                    (boolean) source.get("gtm"),
+                    (boolean) source.get("backendInteractionsEnabled")
+            );
+        }
     }
 }

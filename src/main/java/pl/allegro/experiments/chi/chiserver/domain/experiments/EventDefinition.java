@@ -1,5 +1,8 @@
 package pl.allegro.experiments.chi.chiserver.domain.experiments;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import java.util.Optional;
 
 public class EventDefinition {
@@ -8,26 +11,31 @@ public class EventDefinition {
     private final String value;
     private final String label;
 
-    public EventDefinition(String category, String action, String value, String label) {
-        this.category = "".equals(category) ? null : category;
-        this.action = "".equals(action) ? null : action;
-        this.value = "".equals(value) ? null : value;
-        this.label = "".equals(label) ? null : label;
+    @JsonCreator
+    public EventDefinition(
+            @JsonProperty("category") String category,
+            @JsonProperty("action") String action,
+            @JsonProperty("value") String value,
+            @JsonProperty("label") String label) {
+        this.category = Optional.ofNullable(category).orElse("");
+        this.action = Optional.ofNullable(action).orElse("");
+        this.value = Optional.ofNullable(value).orElse("");
+        this.label = Optional.ofNullable(label).orElse("");
     }
 
-    public Optional<String> getCategory() {
-        return Optional.ofNullable(category);
+    public String getCategory() {
+        return category;
     }
 
-    public Optional<String> getAction() {
-        return Optional.ofNullable(action);
+    public String getAction() {
+        return action;
     }
 
-    public Optional<String> getValue() {
-        return Optional.ofNullable(value);
+    public String getValue() {
+        return value;
     }
 
-    public Optional<String> getLabel() {
-        return Optional.ofNullable(label);
+    public String getLabel() {
+        return label;
     }
 }

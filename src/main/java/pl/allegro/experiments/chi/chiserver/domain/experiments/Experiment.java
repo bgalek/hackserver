@@ -69,12 +69,29 @@ public class Experiment {
 
     public List<EventDefinition> getEventDefinitions() {
         // TODO refactor
-        return definition.getReportingDefinition().getEventDefinitions();
+        if (definition != null) {
+            return definition.getReportingDefinition().getEventDefinitions();
+        } else {
+            return ReportingDefinition.createDefault().getEventDefinitions();
+        }
     }
 
     public ReportingType getReportingType() {
         // TODO refactor
-        return definition.getReportingDefinition().getType();
+        if (definition != null) {
+            return definition.getReportingDefinition().getType();
+        } else {
+            return ReportingDefinition.createDefault().getType();
+        }
+    }
+
+    public ReportingDefinition getReportingDefinition() {
+        // TODO refactor
+        if (definition != null) {
+            return definition.getReportingDefinition();
+        } else {
+            return ReportingDefinition.createDefault();
+        }
     }
 
     public String getDescription() {

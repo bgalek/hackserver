@@ -40,7 +40,7 @@ class ExperimentsE2ESpec extends BaseIntegrationSpec implements ExampleExperimen
             throw new RuntimeException("We should test real repository, not the fake one")
         }
         WireMockUtils.teachWireMockJson("/experiments", '/some-experiments.json')
-        WireMockUtils.teachWireMockJson("/invalid-experiments",'/invalid-experiments.json')
+        WireMockUtils.teachWireMockJson("/invalid-experiments", '/invalid-experiments.json')
     }
 
     def "should return list of experiments loaded from the backing HTTP resource"() {
@@ -76,16 +76,18 @@ class ExperimentsE2ESpec extends BaseIntegrationSpec implements ExampleExperimen
         then:
         response.statusCode.value() == 200
         response.body == [
-                id               : 'cmuid_regexp',
-                variants         : [[name: 'v1', predicates: [[type: 'CMUID_REGEXP', regexp: '.*[0-3]$']]]],
-                reportingEnabled : true,
-                description      : "Experiment description",
-                author           : "Experiment owner",
-                measurements     : [lastDayVisits: 0],
-                groups           : [],
-                status           : 'DRAFT',
-                editable         : true,
-                origin           : 'stash'
+                id              : 'cmuid_regexp',
+                variants        : [[name: 'v1', predicates: [[type: 'CMUID_REGEXP', regexp: '.*[0-3]$']]]],
+                reportingEnabled: true,
+                description     : "Experiment description",
+                author          : "Experiment owner",
+                measurements    : [lastDayVisits: 0],
+                groups          : [],
+                status          : 'DRAFT',
+                editable        : true,
+                origin          : 'stash',
+                reportingType   : 'BACKEND'
+
         ]
     }
 
@@ -162,15 +164,15 @@ class ExperimentsE2ESpec extends BaseIntegrationSpec implements ExampleExperimen
         userProvider.user = new User('Anonymous', [], true)
 
         def request = [
-                id: "some2",
-                description: "desc",
-                variants: [
+                id              : "some2",
+                description     : "desc",
+                variants        : [
                         [
-                                name: "v1",
-                                predicates: [ [ type: "NOT_SUPPORTED_TYPE" ]]
+                                name      : "v1",
+                                predicates: [[type: "NOT_SUPPORTED_TYPE"]]
                         ]
                 ],
-                groups: [],
+                groups          : [],
                 reportingEnabled: true
         ]
 
@@ -188,14 +190,14 @@ class ExperimentsE2ESpec extends BaseIntegrationSpec implements ExampleExperimen
         userProvider.user = new User('Anonymous', [], true)
 
         def request = [
-                id: "some2",
-                description: "desc",
-                variants: [
+                id              : "some2",
+                description     : "desc",
+                variants        : [
                         [
-                                predicates: [ [ type: "INTERNAL" ]]
+                                predicates: [[type: "INTERNAL"]]
                         ]
                 ],
-                groups: [],
+                groups          : [],
                 reportingEnabled: true
         ]
 
@@ -213,15 +215,15 @@ class ExperimentsE2ESpec extends BaseIntegrationSpec implements ExampleExperimen
         userProvider.user = new User('Anonymous', [], true)
 
         def request = [
-                id: "some2",
-                description: "desc",
-                variants: [
+                id              : "some2",
+                description     : "desc",
+                variants        : [
                         [
-                                name: "v1",
-                                predicates: [ [ type: "HASH" ] ]
+                                name      : "v1",
+                                predicates: [[type: "HASH"]]
                         ]
                 ],
-                groups: [],
+                groups          : [],
                 reportingEnabled: true
         ]
 

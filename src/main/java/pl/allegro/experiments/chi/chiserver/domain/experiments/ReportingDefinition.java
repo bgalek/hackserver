@@ -1,10 +1,14 @@
 package pl.allegro.experiments.chi.chiserver.domain.experiments;
 
+import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
+import jdk.nashorn.internal.runtime.arrays.ArrayLikeIterator;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 public class ReportingDefinition {
     private final List<EventDefinition> eventDefinitions;
@@ -44,6 +48,21 @@ public class ReportingDefinition {
             return ReportingType.BACKEND;
         }
         return ReportingType.FRONTEND;
+    }
+
+    public ReportingDefinition withGtmEventDefinitionsIfGtm(ExperimentDefinition experimentDefinition) {
+        if (getType().equals(ReportingType.GTM)) {
+            List<String> variants = new ArrayList<>(experimentDefinition.getVariantNames());
+            variants.add("base");
+            return new ReportingDefinition(
+                    variants.stream()
+                            .map(v -> new EventDefinition("chiInteraction", experimentDefinition.getId(), null, v))
+                            .collect(Collectors.toList()),
+                    true,
+                    false
+            );
+        }
+        return this;
     }
 
     public static ReportingDefinition createDefault() {
