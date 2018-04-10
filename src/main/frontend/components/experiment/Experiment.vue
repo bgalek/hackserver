@@ -76,7 +76,6 @@
 
     data () {
       return {
-        allowDelete: false,
         loadingStatsDone: false,
         loadingExperimentDone: false,
         device: 'all',
@@ -126,7 +125,8 @@
           durationDays: Math.floor(stats.duration / (3600 * 24 * 1000)),
           device: stats.device,
           toDate: stats.toDate,
-          metrics: mappedMetrics.sort((x, y) => x.order - y.order)
+          metrics: mappedMetrics.sort((x, y) => x.order - y.order),
+          allowDelete: stats.metrics && stats.metrics.length === 0
         }
       },
 

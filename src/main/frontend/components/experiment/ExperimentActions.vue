@@ -19,152 +19,151 @@
 
     <v-form ref="actionForm"
             v-model="actionFormValid"
-            v-if="this.canRunLifecycleCommand()"
+
             lazy-validation>
+      <div v-if="this.canRunLifecycleCommand()">
+        <h4 style="margin-top: 5px">Lifecycle actions</h4>
 
-      <h4 style="margin-top: 5px">Lifecycle actions</h4>
+        <v-text-field
+               style="width: 200px"
+               v-if="this.experiment.canBeStarted()"
+               label="Duration days"
+               v-model="durationDays"
+               :rules="durationDaysRules"
+               required
+        ></v-text-field>
 
-      <v-text-field
-             style="width: 200px"
-             v-if="this.experiment.canBeStarted()"
-             label="Duration days"
-             v-model="durationDays"
-             :rules="durationDaysRules"
-             required
-      ></v-text-field>
-
-      <v-btn v-if="this.experiment.canBeStarted()"
-             color="green"
-             @click="start"
-             style="text-transform: none"
-             class="white--text">
-        Start experiment<v-icon right dark>play_arrow</v-icon>
-      </v-btn>
-
-      <v-menu :close-on-content-click="false"
-              v-model="prolongMenuVisible"
-              v-if="this.experiment.canBeProlonged()">
-        <v-btn color="gray" slot="activator" style="text-transform: none">
-          Prolong <v-icon right>alarm_add</v-icon>
+        <v-btn v-if="this.experiment.canBeStarted()"
+               color="green"
+               @click="start"
+               style="text-transform: none"
+               class="white--text">
+          Start experiment<v-icon right dark>play_arrow</v-icon>
         </v-btn>
 
-        <v-list style="padding:15px; display: block;">
-          <v-text-field
-                 label="Additional days"
-                 v-model="additionalDurationDays"
-                 :rules="durationDaysRules"
-                 required
-          ></v-text-field>
-
-          <v-btn flat @click="closeProlong()">Cancel</v-btn>
-          <v-btn color="gray"
-                 @click="prolong"
-                 style="text-transform: none">
-            Prolong experiment &nbsp;<b>{{ this.experiment.id }}</b>
+        <v-menu :close-on-content-click="false"
+                v-model="prolongMenuVisible"
+                v-if="this.experiment.canBeProlonged()">
+          <v-btn color="gray" slot="activator" style="text-transform: none">
+            Prolong <v-icon right>alarm_add</v-icon>
           </v-btn>
-        </v-list>
-      </v-menu>
 
-      <v-menu bottom offset-y
-              v-if="this.experiment.canBePaused()">
-        <v-btn color="gray" slot="activator" style="text-transform: none">
-          Pause<v-icon right>pause</v-icon>
-        </v-btn>
-        <v-list>
-          <v-list-tile @click="pause">
-            <v-list-tile-title>I really want to pause experiment <b>{{this.experiment.id}}</b></v-list-tile-title>
-          </v-list-tile>
-        </v-list>
-      </v-menu>
+          <v-list style="padding:15px; display: block;">
+            <v-text-field
+                   label="Additional days"
+                   v-model="additionalDurationDays"
+                   :rules="durationDaysRules"
+                   required
+            ></v-text-field>
 
-      <v-menu bottom offset-y
-              v-if="this.experiment.canBeResumed()">
-        <v-btn color="gray" slot="activator" style="text-transform: none">
-          Resume<v-icon right>play_arrow</v-icon>
-        </v-btn>
-        <v-list>
-          <v-list-tile @click="resume">
-            <v-list-tile-title>I really want to resume experiment <b>{{this.experiment.id}}</b></v-list-tile-title>
-          </v-list-tile>
-        </v-list>
-      </v-menu>
+            <v-btn flat @click="closeProlong()">Cancel</v-btn>
+            <v-btn color="gray"
+                   @click="prolong"
+                   style="text-transform: none">
+              Prolong experiment &nbsp;<b>{{ this.experiment.id }}</b>
+            </v-btn>
+          </v-list>
+        </v-menu>
 
-
-      <v-menu bottom offset-y
-              v-if="this.experiment.canBeStopped()">
-        <v-btn color="gray" slot="activator" style="text-transform: none">
-          Stop <v-icon right>stop</v-icon>
-        </v-btn>
-        <v-list>
-          <v-list-tile @click="stop">
-            <v-list-tile-title>I really want to stop experiment <b>{{this.experiment.id}}</b></v-list-tile-title>
-          </v-list-tile>
-        </v-list>
-      </v-menu>
-
-    <div v-if="canRunOtherCommand">
-      <h4 style="margin-top: 15px">Other actions</h4>
-
-      <v-menu :close-on-content-click="false"
-              v-model="descriptionsMenuVisible">
-        <v-btn color="gray" slot="activator" style="text-transform: none">
-          Update descriptions
-          <v-icon right>format_align_left</v-icon>
-        </v-btn>
-
-        <v-list style="padding:15px; display: block;">
-          <experiment-desc-editing :experiment="experiment"
-                                   v-model="descriptionsEditingResult"
-          />
-
-          <v-btn flat @click="closeDescriptions()">Cancel</v-btn>
-          <v-btn color="gray"
-                 :disabled="!descriptionsChanged()"
-                 @click="updateDescriptions"
-                 style="text-transform: none">
-            Update descriptions of &nbsp;<b>{{ this.experiment.id }}</b>
+        <v-menu bottom offset-y
+                v-if="this.experiment.canBePaused()">
+          <v-btn color="gray" slot="activator" style="text-transform: none">
+            Pause<v-icon right>pause</v-icon>
           </v-btn>
-        </v-list>
-      </v-menu>
+          <v-list>
+            <v-list-tile @click="pause">
+              <v-list-tile-title>I really want to pause experiment <b>{{this.experiment.id}}</b></v-list-tile-title>
+            </v-list-tile>
+          </v-list>
+        </v-menu>
 
-      <v-menu :close-on-content-click="false"
-              v-model="variantsMenuVisible">
-        <v-btn color="gray" slot="activator" style="text-transform: none">
-          Update variants
-          <v-icon right>settings</v-icon>
-        </v-btn>
-
-        <v-list style="padding:15px; display: block;">
-          <experiment-variants-editing :variants="experiment.definition"
-                                       :allowModifyRegularVariants="false"
-                                   v-model="variantsEditingResult"
-          />
-
-          <v-btn flat @click="closeVariants()">Cancel</v-btn>
-          <v-btn color="gray"
-                 :disabled="!variantsChanged()"
-                 @click="updateVariants"
-                 style="text-transform: none">
-            Update variants of &nbsp;<b>{{ this.experiment.id }}</b>
+        <v-menu bottom offset-y
+                v-if="this.experiment.canBeResumed()">
+          <v-btn color="gray" slot="activator" style="text-transform: none">
+            Resume<v-icon right>play_arrow</v-icon>
           </v-btn>
-        </v-list>
-      </v-menu>
+          <v-list>
+            <v-list-tile @click="resume">
+              <v-list-tile-title>I really want to resume experiment <b>{{this.experiment.id}}</b></v-list-tile-title>
+            </v-list-tile>
+          </v-list>
+        </v-menu>
 
-      <v-menu bottom offset-y
-              v-if="this.allowDelete">
-        <v-btn color="red" slot="activator" class="white--text" style="text-transform: none">
-          Delete experiment
-          <v-icon right>delete_forever</v-icon>
-        </v-btn>
-        <v-list>
-          <v-list-tile @click="deleteMe">
-            <v-list-tile-title>I really want to delete experiment <b>{{this.experiment.id}}</b></v-list-tile-title>
-            &nbsp;
-          </v-list-tile>
-        </v-list>
-      </v-menu>
-    </div>
 
+        <v-menu bottom offset-y
+                v-if="this.experiment.canBeStopped()">
+          <v-btn color="gray" slot="activator" style="text-transform: none">
+            Stop <v-icon right>stop</v-icon>
+          </v-btn>
+          <v-list>
+            <v-list-tile @click="stop">
+              <v-list-tile-title>I really want to stop experiment <b>{{this.experiment.id}}</b></v-list-tile-title>
+            </v-list-tile>
+          </v-list>
+        </v-menu>
+      </div>
+      <div v-if="canRunOtherCommand()">
+        <h4 style="margin-top: 15px">Other actions</h4>
+
+        <v-menu :close-on-content-click="false"
+                v-model="descriptionsMenuVisible">
+          <v-btn color="gray" slot="activator" style="text-transform: none">
+            Update descriptions
+            <v-icon right>format_align_left</v-icon>
+          </v-btn>
+
+          <v-list style="padding:15px; display: block;">
+            <experiment-desc-editing :experiment="experiment"
+                                     v-model="descriptionsEditingResult"
+            />
+
+            <v-btn flat @click="closeDescriptions()">Cancel</v-btn>
+            <v-btn color="gray"
+                   :disabled="!descriptionsChanged()"
+                   @click="updateDescriptions"
+                   style="text-transform: none">
+              Update descriptions of &nbsp;<b>{{ this.experiment.id }}</b>
+            </v-btn>
+          </v-list>
+        </v-menu>
+
+        <v-menu :close-on-content-click="false"
+                v-model="variantsMenuVisible">
+          <v-btn color="gray" slot="activator" style="text-transform: none">
+            Update variants
+            <v-icon right>settings</v-icon>
+          </v-btn>
+
+          <v-list style="padding:15px; display: block;">
+            <experiment-variants-editing :variants="experiment.definition"
+                                         :allowModifyRegularVariants="false"
+                                     v-model="variantsEditingResult"
+            />
+
+            <v-btn flat @click="closeVariants()">Cancel</v-btn>
+            <v-btn color="gray"
+                   :disabled="!variantsChanged()"
+                   @click="updateVariants"
+                   style="text-transform: none">
+              Update variants of &nbsp;<b>{{ this.experiment.id }}</b>
+            </v-btn>
+          </v-list>
+        </v-menu>
+
+        <v-menu bottom offset-y
+                v-if="this.allowDelete">
+          <v-btn color="red" slot="activator" class="white--text" style="text-transform: none">
+            Delete experiment
+            <v-icon right>delete_forever</v-icon>
+          </v-btn>
+          <v-list>
+            <v-list-tile @click="deleteMe">
+              <v-list-tile-title>I really want to delete experiment <b>{{this.experiment.id}}</b></v-list-tile-title>
+              &nbsp;
+            </v-list-tile>
+          </v-list>
+        </v-menu>
+      </div>
     </v-form>
   </chi-panel>
 </template>
@@ -212,6 +211,7 @@
       },
 
       canRunOtherCommand () {
+        console.log('can run other command')
         return true
       },
 
