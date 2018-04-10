@@ -92,7 +92,10 @@ class CreateExperimentCommandIntegrationSpec extends BaseIntegrationSpec {
                 '',
                 '',
                 [],
-                false)
+                false,
+                null,
+                null
+        )
 
         def command = new CreateExperimentCommand(experimentsRepository, mutableUserProvider, brokenRequest)
 

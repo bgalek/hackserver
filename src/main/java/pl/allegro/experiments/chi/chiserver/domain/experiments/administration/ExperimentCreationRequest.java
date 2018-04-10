@@ -42,7 +42,6 @@ public class ExperimentCreationRequest {
             @JsonProperty("reportingType") ReportingType reportingType) {
         Preconditions.checkNotNull(id);
         Preconditions.checkNotNull(variantNames);
-        Preconditions.checkNotNull(reportingType);
         // missing percentage?
         this.id = id;
         this.variantNames = ImmutableList.copyOf(variantNames);
@@ -89,7 +88,6 @@ public class ExperimentCreationRequest {
         return reportingEnabled;
     }
 
-
     public ExperimentDefinition toExperimentDefinition(String author) {
         Preconditions.checkNotNull(author);
         try {
@@ -104,7 +102,7 @@ public class ExperimentCreationRequest {
                     .author(author)
                     .groups(this.groups)
                     .reportingEnabled(this.reportingEnabled)
-                    .reportingDefinition(reportingType.reportingDefinition(eventDefinitions))
+                    .reportingDefinition(reportingType != null ? reportingType.reportingDefinition(eventDefinitions) : ReportingDefinition.createDefault())
                     .build();
 
         } catch (Exception e) {

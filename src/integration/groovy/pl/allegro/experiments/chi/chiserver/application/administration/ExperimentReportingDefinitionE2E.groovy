@@ -31,10 +31,10 @@ class ExperimentReportingDefinitionE2E extends BaseIntegrationSpec {
         userProvider.user = new User('Anonymous', [], true)
 
         def request = [
-                id               : 'some2',
-                variantNames     : ['v2'],
-                percentage       : 10,
-                reportingType    : reportingType,
+                id              : 'some2',
+                variantNames    : ['v2'],
+                percentage      : 10,
+                reportingType   : reportingType,
                 eventDefinitions: givenEventDefinitions
         ]
 
@@ -42,15 +42,15 @@ class ExperimentReportingDefinitionE2E extends BaseIntegrationSpec {
         restTemplate.postForEntity(localUrl('/api/admin/experiments'), request, Map)
 
         when:
-        def responseList = restTemplate.getForEntity(localUrl("/api/admin/experiments"), List)
-        def responseSingle = restTemplate.getForEntity(localUrl("/api/admin/experiments/${request.id}/"), Map)
+        def responseList = restTemplate.getForEntity(localUrl("/api/admin/experiments"), List).body
+        def responseSingle = restTemplate.getForEntity(localUrl("/api/admin/experiments/${request.id}/"), Map).body
 
         then:
-        responseList.find { it.id == 'some2' }.reportingType == reportingType
-        responseList.find { it.id == 'some2' }['eventDefinitions'] == expectedEventDefinitions
+        responseList.find { it['id'] == 'some2' }['reportingType'] == reportingType
+        responseList.find { it['id'] == 'some2' }['eventDefinitions'] == expectedEventDefinitions
 
         and:
-        responseSingle.reportingType == reportingType
+        responseSingle['reportingType'] == reportingType
         responseSingle['eventDefinitions'] == expectedEventDefinitions
 
         where:

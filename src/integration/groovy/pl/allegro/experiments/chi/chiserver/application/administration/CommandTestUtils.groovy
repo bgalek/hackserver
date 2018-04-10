@@ -6,6 +6,17 @@ class CommandTestUtils {
     static def simpleExperimentRequest(String id) {
         def variantNames = []
         def internalVariantName = "v1"
-        return new ExperimentCreationRequest(id, variantNames, internalVariantName, null, null, "simple description", "some link", ["group a", "group b"], true)
+        return new ExperimentCreationRequest(
+                id,
+                variantNames,
+                internalVariantName,
+                null,
+                null,
+                "simple description",
+                "some link",
+                ["group a", "group b"],
+                true,
+                null,
+                null)
     }
 }

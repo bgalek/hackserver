@@ -72,7 +72,7 @@ public class Experiment {
         return definition.getReportingDefinition().getEventDefinitions();
     }
 
-    public ReportingType type() {
+    public ReportingType getReportingType() {
         // TODO refactor
         return definition.getReportingDefinition().getType();
     }

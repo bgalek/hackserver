@@ -4,23 +4,28 @@ import com.google.common.collect.ImmutableList;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 
 public class ReportingDefinition {
     private final List<EventDefinition> eventDefinitions;
     private final boolean gtm; // domain?
     private final boolean backendInteractionsEnabled;
 
-    private ReportingDefinition(
+    public ReportingDefinition(
             List<EventDefinition> eventDefinitions,
             boolean gtm,
             boolean backendInteractionsEnabled) {
-        this.eventDefinitions = ImmutableList.copyOf(eventDefinitions);
+        if (eventDefinitions != null) {
+            this.eventDefinitions = ImmutableList.copyOf(eventDefinitions);
+        } else {
+            this.eventDefinitions = null;
+        }
         this.gtm = gtm;
         this.backendInteractionsEnabled = backendInteractionsEnabled;
     }
 
     public List<EventDefinition> getEventDefinitions() {
-        return ImmutableList.copyOf(eventDefinitions);
+        return Optional.ofNullable(eventDefinitions).map(ImmutableList::copyOf).orElse(null);
     }
 
     public boolean isGtm() {
@@ -41,7 +46,7 @@ public class ReportingDefinition {
         return ReportingType.FRONTEND;
     }
 
-    static ReportingDefinition createDefault() {
+    public static ReportingDefinition createDefault() {
         return ReportingDefinition.backend();
     }
 
@@ -50,7 +55,7 @@ public class ReportingDefinition {
     }
 
     static ReportingDefinition backend() {
-        return new ReportingDefinition(Collections.emptyList(), false, true);
+        return new ReportingDefinition(null, false, true);
     }
 
     static ReportingDefinition frontend(List<EventDefinition> eventDefinitions) {
