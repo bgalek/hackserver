@@ -5,8 +5,6 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonSerializationContext;
 import com.google.gson.JsonSerializer;
 import pl.allegro.experiments.chi.chiserver.domain.experiments.ExperimentDefinition;
-import pl.allegro.experiments.chi.chiserver.domain.experiments.ReportingDefinition;
-import pl.allegro.experiments.chi.chiserver.domain.experiments.ReportingType;
 
 import java.lang.reflect.Type;
 
@@ -34,7 +32,7 @@ public class ExperimentDefinitionTypeSerializer implements JsonSerializer<Experi
         jsonObject.add("status", context.serialize(experimentDefinition.getStatus()));
         jsonObject.add("reportingType", context.serialize(experimentDefinition.getReportingDefinition().getType()));
         jsonObject.add("eventDefinitions", context.serialize(experimentDefinition.getReportingDefinition()
-                .withGtmEventDefinitionsIfGtm(experimentDefinition)
+                .withImplicitEventDefinitionsIfGtm(experimentDefinition)
                 .getEventDefinitions()));
 
         return jsonObject;

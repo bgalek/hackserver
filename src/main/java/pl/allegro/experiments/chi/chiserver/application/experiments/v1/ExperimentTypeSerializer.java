@@ -32,14 +32,11 @@ public class ExperimentTypeSerializer implements JsonSerializer<Experiment> {
         jsonObject.add("origin", context.serialize(experiment.getOrigin()));
         jsonObject.add("definition", context.serialize(experiment.getDefinition().orElse(null)));
         jsonObject.add("reportingType", context.serialize(experiment.getReportingType()));
-        if (experiment.getDefinition().isPresent()) {
-            jsonObject.add("eventDefinitions", context.serialize(experiment.getReportingDefinition()
-                    .withGtmEventDefinitionsIfGtm(experiment.getDefinition().get())
-                    .getEventDefinitions()));
-        } else {
-            jsonObject.add("eventDefinitions", context.serialize(experiment.getEventDefinitions()));
-        }
-
+        jsonObject.add("eventDefinitions", context.serialize(experiment.getDefinition()
+                .map(experimentDefinition -> experimentDefinition.getReportingDefinition()
+                        .withImplicitEventDefinitionsIfGtm(experimentDefinition)
+                        .getEventDefinitions()
+                ).orElseGet(experiment::getEventDefinitions)));
         return jsonObject;
     }
 }

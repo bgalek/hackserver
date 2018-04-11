@@ -50,7 +50,7 @@ public class ReportingDefinition {
         return ReportingType.FRONTEND;
     }
 
-    public ReportingDefinition withGtmEventDefinitionsIfGtm(ExperimentDefinition experimentDefinition) {
+    public ReportingDefinition withImplicitEventDefinitionsIfGtm(ExperimentDefinition experimentDefinition) {
         if (getType().equals(ReportingType.GTM)) {
             List<String> variants = new ArrayList<>(experimentDefinition.getVariantNames());
             variants.add("base");

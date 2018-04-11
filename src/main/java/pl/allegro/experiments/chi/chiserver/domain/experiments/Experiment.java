@@ -71,7 +71,7 @@ public class Experiment {
         // TODO refactor
         if (definition != null) {
             return definition.getReportingDefinition().getEventDefinitions();
-        } else {
+        } else { // stash experiment or mongo experiment without reporting type
             return ReportingDefinition.createDefault().getEventDefinitions();
         }
     }
