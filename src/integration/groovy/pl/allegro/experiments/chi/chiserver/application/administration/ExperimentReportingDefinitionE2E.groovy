@@ -112,13 +112,6 @@ class ExperimentReportingDefinitionE2E extends BaseIntegrationSpec {
                 null
         ]
     }
-
-    def "should append default reporting type to stash experiments"() {
-    }
-
-    def "should append default reporting type to legacy mongo experiments"() {
-
-    }
 }
 
 
