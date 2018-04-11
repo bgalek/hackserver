@@ -133,7 +133,7 @@
       deleteItem (item) {
         const index = this.items.indexOf(item)
         this.items.splice(index, 1)
-        this.$emit('input', this.items)
+        this.$emit('eventDefinitionsChanged', this.items)
       },
 
       saveEditing () {
@@ -143,7 +143,7 @@
           this.items.push(this.editedItem)
         }
         this.close()
-        this.$emit('input', this.items)
+        this.$emit('eventDefinitionsChanged', this.items)
       }
     }
   }

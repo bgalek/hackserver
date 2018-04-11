@@ -104,7 +104,7 @@
                   </v-tooltip>
                 </v-flex>
                 <v-flex xs11>
-                  <experiment-event-filters :variants="variants.variantNames"></experiment-event-filters>
+                  <experiment-event-filters v-on:eventDefinitionsChanged="onEventDefinitionsChanged" :variants="variants.variantNames"></experiment-event-filters>
                 </v-flex>
 
               </v-layout>
@@ -152,7 +152,8 @@
         descriptions: {},
         variants: {},
         reportingType: 'BACKEND',
-        availableReportingTypes: ['BACKEND', 'FRONTEND', 'GTM']
+        availableReportingTypes: ['BACKEND', 'FRONTEND', 'GTM'],
+        eventDefinitions: []
       }
     },
 
@@ -182,6 +183,11 @@
     },
 
     methods: {
+      onEventDefinitionsChanged (newEventDefinitions) {
+        console.log(newEventDefinitions)
+        this.eventDefinitions = newEventDefinitions
+      },
+
       slugify (str) {
         return str.toString().toLowerCase()
           .replace(/\s+/g, '-')
