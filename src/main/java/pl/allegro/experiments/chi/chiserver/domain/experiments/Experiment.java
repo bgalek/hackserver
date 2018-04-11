@@ -67,31 +67,15 @@ public class Experiment {
         return variants;
     }
 
-    public List<EventDefinition> getEventDefinitions() {
-        // TODO refactor
-        if (definition != null) {
-            return definition.getReportingDefinition().getEventDefinitions();
-        } else { // stash experiment or mongo experiment without reporting type
-            return ReportingDefinition.createDefault().getEventDefinitions();
-        }
-    }
-
-    public ReportingType getReportingType() {
-        // TODO refactor
-        if (definition != null) {
-            return definition.getReportingDefinition().getType();
-        } else {
-            return ReportingDefinition.createDefault().getType();
-        }
-    }
-
     public ReportingDefinition getReportingDefinition() {
         // TODO refactor
-        if (definition != null) {
-            return definition.getReportingDefinition();
-        } else {
-            return ReportingDefinition.createDefault();
-        }
+        return getDefinition()
+                .map(ExperimentDefinition::getReportingDefinition)
+                .orElse(ReportingDefinition.createDefault()); // stash experiment or mongo experiment without reporting type
+    }
+
+    public boolean shouldSaveInteractions() {
+        return getReportingEnabled() && getReportingDefinition().isBackendInteractionsEnabled();
     }
 
     public String getDescription() {

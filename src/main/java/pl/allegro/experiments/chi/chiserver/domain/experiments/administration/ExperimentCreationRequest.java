@@ -24,8 +24,7 @@ public class ExperimentCreationRequest {
     private final String documentLink;
     private final List<String> groups;
     private final boolean reportingEnabled;
-    private final List<EventDefinition> eventDefinitions;
-    private final ReportingType reportingType;
+    private final ReportingDefinition reportingDefinition;
 
     @JsonCreator
     public ExperimentCreationRequest(
@@ -60,8 +59,10 @@ public class ExperimentCreationRequest {
         } else {
             this.reportingEnabled = reportingEnabled;
         }
-        this.eventDefinitions = Optional.ofNullable(eventDefinitions).orElse(null);
-        this.reportingType = reportingType;
+        this.reportingDefinition = Optional.ofNullable(reportingType)
+                .map(rt -> rt.reportingDefinition(eventDefinitions))
+                .orElse(ReportingDefinition.createDefault());
+
     }
 
     public String getId() {
@@ -102,7 +103,7 @@ public class ExperimentCreationRequest {
                     .author(author)
                     .groups(this.groups)
                     .reportingEnabled(this.reportingEnabled)
-                    .reportingDefinition(reportingType != null ? reportingType.reportingDefinition(eventDefinitions) : ReportingDefinition.createDefault())
+                    .reportingDefinition(this.reportingDefinition)
                     .build();
 
         } catch (Exception e) {
