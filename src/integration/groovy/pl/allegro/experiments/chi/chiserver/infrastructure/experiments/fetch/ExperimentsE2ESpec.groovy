@@ -86,8 +86,8 @@ class ExperimentsE2ESpec extends BaseIntegrationSpec implements ExampleExperimen
                 status          : 'DRAFT',
                 editable        : true,
                 origin          : 'stash',
-                reportingType   : 'BACKEND'
-
+                reportingType   : 'BACKEND',
+                eventDefinitions: []
         ]
     }
 

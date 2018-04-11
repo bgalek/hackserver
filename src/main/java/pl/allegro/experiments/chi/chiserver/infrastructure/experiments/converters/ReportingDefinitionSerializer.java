@@ -20,13 +20,9 @@ public class ReportingDefinitionSerializer implements Converter<ReportingDefinit
 
         result.put("gtm", source.isGtm());
         result.put("backendInteractionsEnabled", source.isBackendInteractionsEnabled());
-        if (source.getEventDefinitions() != null) {
-            result.put("eventDefinitions", source.getEventDefinitions().stream()
-                    .map(eventDefinitionSerializer::convert)
-                    .collect(Collectors.toList()));
-        } else {
-            result.put("eventDefinitions", null);
-        }
+        result.put("eventDefinitions", source.getEventDefinitions().stream()
+                .map(eventDefinitionSerializer::convert)
+                .collect(Collectors.toList()));
 
         return result;
     }

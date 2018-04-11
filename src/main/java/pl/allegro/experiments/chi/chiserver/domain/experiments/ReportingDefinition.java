@@ -2,12 +2,10 @@ package pl.allegro.experiments.chi.chiserver.domain.experiments;
 
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
-import jdk.nashorn.internal.runtime.arrays.ArrayLikeIterator;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 public class ReportingDefinition {
@@ -19,17 +17,14 @@ public class ReportingDefinition {
             List<EventDefinition> eventDefinitions,
             boolean gtm,
             boolean backendInteractionsEnabled) {
-        if (eventDefinitions != null) {
-            this.eventDefinitions = ImmutableList.copyOf(eventDefinitions);
-        } else {
-            this.eventDefinitions = null;
-        }
+        Preconditions.checkNotNull(eventDefinitions);
+        this.eventDefinitions = ImmutableList.copyOf(eventDefinitions);
         this.gtm = gtm;
         this.backendInteractionsEnabled = backendInteractionsEnabled;
     }
 
     public List<EventDefinition> getEventDefinitions() {
-        return Optional.ofNullable(eventDefinitions).map(ImmutableList::copyOf).orElse(null);
+        return ImmutableList.copyOf(eventDefinitions);
     }
 
     public boolean isGtm() {
@@ -70,11 +65,11 @@ public class ReportingDefinition {
     }
 
     static ReportingDefinition gtm() {
-        return new ReportingDefinition(null, true, false);
+        return new ReportingDefinition(Collections.emptyList(), true, false);
     }
 
     static ReportingDefinition backend() {
-        return new ReportingDefinition(null, false, true);
+        return new ReportingDefinition(Collections.emptyList(), false, true);
     }
 
     static ReportingDefinition frontend(List<EventDefinition> eventDefinitions) {

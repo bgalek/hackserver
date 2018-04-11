@@ -5,6 +5,7 @@ import org.springframework.core.convert.converter.Converter;
 import pl.allegro.experiments.chi.chiserver.domain.experiments.EventDefinition;
 import pl.allegro.experiments.chi.chiserver.domain.experiments.ReportingDefinition;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -22,7 +23,7 @@ public class ReportingDefinitionDeserializer implements Converter<DBObject, Repo
                 .map(rawEventDefinitions -> ((List<DBObject>) rawEventDefinitions).stream()
                         .map(eventDefinitionDeserializer::convert)
                         .collect(Collectors.toList()))
-                .orElse(null);
+                .orElse(Collections.emptyList());
 
         return new ReportingDefinition(
                 eventDefinitions,

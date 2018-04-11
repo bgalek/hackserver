@@ -114,6 +114,7 @@ class ExperimentsSelfServiceE2ESpec extends BaseIntegrationSpec {
                 documentLink    : 'https://vuetifyjs.com/vuetify/quick-start',
                 reportingEnabled: true,
                 reportingType   : 'BACKEND',
+                eventDefinitions: [],
                 variants        : [
                         [
                                 name      : 'v1',
@@ -140,7 +141,8 @@ class ExperimentsSelfServiceE2ESpec extends BaseIntegrationSpec {
                         internalVariantName: 'v1',
                         deviceClass        : 'phone',
                         percentage         : 10,
-                        reportingType      : 'BACKEND'
+                        reportingType      : 'BACKEND',
+                        eventDefinitions: []
                 ]
         ]
         responseSingle.body.definition == expectedExperiment.definition

@@ -88,8 +88,8 @@ class ExperimentReportingDefinitionE2E extends BaseIntegrationSpec {
                                 value   : ''
                         ]
                 ],
-                null,
-                null
+                [],
+                []
         ]
 
         givenEventDefinitions << [
@@ -113,6 +113,12 @@ class ExperimentReportingDefinitionE2E extends BaseIntegrationSpec {
         ]
     }
 
+    def "should append default reporting type to stash experiments"() {
+    }
+
+    def "should append default reporting type to legacy mongo experiments"() {
+
+    }
 }
 
 
