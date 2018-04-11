@@ -36,9 +36,8 @@ public class ExperimentDeserializer implements Converter<DBObject, ExperimentDef
                 .orElse(null);
         Object rawExplicitStatus = bson.get("explicitStatus");
         ExperimentStatus explicitStatus = rawExplicitStatus != null ? ExperimentStatus.valueOf((String) rawExplicitStatus) : null;
-        ReportingDefinition reportingDefinition = reportingDefinitionDeserializer.convert((DBObject) bson.get("reportingDefinition"));
 
-        return ExperimentDefinition.builder()
+        ExperimentDefinition.Builder result = ExperimentDefinition.builder()
                 .id(id)
                 .variantNames(variantNames)
                 .internalVariantName(internalVariantName)
@@ -50,8 +49,10 @@ public class ExperimentDeserializer implements Converter<DBObject, ExperimentDef
                 .groups(groups)
                 .reportingEnabled(reportingEnabled)
                 .activityPeriod(activityPeriod)
-                .explicitStatus(explicitStatus)
-                .reportingDefinition(reportingDefinition)
-                .build();
+                .explicitStatus(explicitStatus);
+        if (bson.get("reportingDefinition") != null) {
+            result.reportingDefinition(reportingDefinitionDeserializer.convert((DBObject) bson.get("reportingDefinition")));
+        }
+        return result.build();
     }
 }

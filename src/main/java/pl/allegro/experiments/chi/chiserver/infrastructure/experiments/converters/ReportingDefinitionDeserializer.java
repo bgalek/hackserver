@@ -2,9 +2,11 @@ package pl.allegro.experiments.chi.chiserver.infrastructure.experiments.converte
 
 import com.mongodb.DBObject;
 import org.springframework.core.convert.converter.Converter;
+import pl.allegro.experiments.chi.chiserver.domain.experiments.EventDefinition;
 import pl.allegro.experiments.chi.chiserver.domain.experiments.ReportingDefinition;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 public class ReportingDefinitionDeserializer implements Converter<DBObject, ReportingDefinition> {
@@ -16,20 +18,16 @@ public class ReportingDefinitionDeserializer implements Converter<DBObject, Repo
 
     @Override
     public ReportingDefinition convert(DBObject source) {
-        if (source.get("eventDefinitions") != null) {
-            return new ReportingDefinition(
-                    ((List<DBObject>) source.get("eventDefinitions")).stream()
-                            .map(eventDefinitionDeserializer::convert)
-                            .collect(Collectors.toList()),
-                    (boolean) source.get("gtm"),
-                    (boolean) source.get("backendInteractionsEnabled")
-            );
-        } else {
-            return new ReportingDefinition(
-                    null,
-                    (boolean) source.get("gtm"),
-                    (boolean) source.get("backendInteractionsEnabled")
-            );
-        }
+        List<EventDefinition> eventDefinitions = Optional.ofNullable(source.get("eventDefinitions"))
+                .map(rawEventDefinitions -> ((List<DBObject>) rawEventDefinitions).stream()
+                        .map(eventDefinitionDeserializer::convert)
+                        .collect(Collectors.toList()))
+                .orElse(null);
+
+        return new ReportingDefinition(
+                eventDefinitions,
+                (boolean) source.get("gtm"),
+                (boolean) source.get("backendInteractionsEnabled")
+        );
     }
 }
