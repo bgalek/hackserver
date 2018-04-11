@@ -72,6 +72,44 @@
 
             <experiment-variants-editing :allowModifyRegularVariants="true" v-model="variants" />
 
+            <v-container fluid style="margin: 0px; padding: 0px" text-xs-center>
+              <v-layout row align-top>
+
+                <v-flex xs1>
+                  <v-tooltip right>
+                    <span>experiment type blabla</span>
+                    <v-icon
+                      slot="activator">help_outline</v-icon>
+                  </v-tooltip>
+                </v-flex>
+                <v-flex xs11>
+                  <v-select
+                    :items="availableReportingTypes"
+                    v-model="reportingType"
+                    label="Reporting type"
+                  ></v-select>
+                </v-flex>
+
+              </v-layout>
+            </v-container>
+
+            <v-container fluid style="margin: 0px; padding: 0px" text-xs-center v-if="reportingType === 'FRONTEND'">
+              <v-layout row align-top>
+
+                <v-flex xs1>
+                  <v-tooltip right>
+                    <span>Blah blah blah events</span>
+                    <v-icon
+                      slot="activator">help_outline</v-icon>
+                  </v-tooltip>
+                </v-flex>
+                <v-flex xs11>
+                  <experiment-event-filters :variants="variants.variantNames"></experiment-event-filters>
+                </v-flex>
+
+              </v-layout>
+            </v-container>
+
             <v-btn @click="onSubmit" color="success">create</v-btn>
           </v-form>
         </chi-panel>
@@ -86,6 +124,7 @@
   import { mapActions } from 'vuex'
   import ExperimentDescEditing from './experiment/ExperimentDescEditing'
   import ExperimentVariantsEditing from './experiment/ExperimentVariantsEditing'
+  import ExperimentEventFilters from './experiment/ExperimentEventFilters'
 
   import _ from 'lodash'
 
@@ -111,7 +150,9 @@
         sendingDataToServer: false,
         errors: [],
         descriptions: {},
-        variants: {}
+        variants: {},
+        reportingType: 'BACKEND',
+        availableReportingTypes: ['BACKEND', 'FRONTEND', 'GTM']
       }
     },
 
@@ -136,7 +177,8 @@
     components: {
       ChiPanel,
       ExperimentDescEditing,
-      ExperimentVariantsEditing
+      ExperimentVariantsEditing,
+      ExperimentEventFilters
     },
 
     methods: {

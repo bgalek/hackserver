@@ -12,6 +12,13 @@
             <v-container grid-list-md>
               <v-layout wrap>
                 <v-flex xs12 sm6 md4>
+                  <v-select
+                    :items="variants"
+                    v-model="editedItem.variant"
+                    label="variant"
+                  ></v-select>
+                </v-flex>
+                <v-flex xs12 sm6 md4>
                   <v-text-field label="category" v-model="editedItem.category"></v-text-field>
                 </v-flex>
                 <v-flex xs12 sm6 md4>
@@ -47,6 +54,7 @@
         class="elevation-1"
       >
         <template slot="items" slot-scope="props">
+          <td>{{ props.item.variant }}</td>
           <td>{{ props.item.category }}</td>
           <td>{{ props.item.label }}</td>
           <td>{{ props.item.action }}</td>
@@ -68,13 +76,14 @@
 
 <script>
   export default {
-    props: ['experiment'],
+    props: ['variants'],
 
     data () {
       return {
         editing: false,
         editedItem: {},
         defaultItem: {
+          variant: 'base',
           category: '',
           label: '',
           action: '',
@@ -82,12 +91,13 @@
         },
         editedIndex: -1,
         headers: [
+          { text: 'Variant', value: 'variant', align: 'left', class: 'subheading', sortable: false },
           { text: 'Category', value: 'category', align: 'left', class: 'subheading', sortable: false },
           { text: 'Label', value: 'label', align: 'left', class: 'subheading', sortable: false },
           { text: 'Action', value: 'action', align: 'left', class: 'subheading', sortable: false },
           { text: 'Value', value: 'value', align: 'left', class: 'subheading', sortable: false }
         ],
-        items: this.init(this.experiment),
+        items: [],
         filterRules: [
           (v) => this.isUrlValid(v) || 'not a valid URL'
         ]
@@ -95,30 +105,6 @@
     },
 
     methods: {
-      sample () {
-        return [
-          {
-            category: '',
-            label: 'zażółć gęślą jaźń',
-            action: 'boxView',
-            value: 'zonk'
-          },
-          {
-            category: 'allegro.image.tiles',
-            label: 'Nowe USP B images desktop xlarge',
-            action: 'boxView',
-            value: ''
-          }
-        ]
-      },
-
-      init (experiment) {
-        const items = JSON.parse(JSON.stringify(this.sample())) // TODO init from experiment
-
-        this.$emit('input', items)
-        return items
-      },
-
       changed () {
         if (this.editedIndex === -1) {
           return true
