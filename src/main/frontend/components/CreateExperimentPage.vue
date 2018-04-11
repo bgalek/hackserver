@@ -104,7 +104,7 @@
                   </v-tooltip>
                 </v-flex>
                 <v-flex xs11>
-                  <experiment-event-filters v-on:eventDefinitionsChanged="onEventDefinitionsChanged" :variants="variants.variantNames"></experiment-event-filters>
+                  <experiment-event-filters v-on:eventDefinitionsChanged="onEventDefinitionsChanged"></experiment-event-filters>
                 </v-flex>
 
               </v-layout>
