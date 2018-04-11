@@ -184,8 +184,14 @@
 
     methods: {
       onEventDefinitionsChanged (newEventDefinitions) {
-        console.log(newEventDefinitions)
-        this.eventDefinitions = newEventDefinitions
+        this.eventDefinitions = newEventDefinitions.map(e => {
+          return {
+            label: e.label,
+            value: e.value,
+            action: e.action,
+            category: e.category
+          }
+        })
       },
 
       slugify (str) {
@@ -252,7 +258,9 @@
           variantNames: this.slugifiedVariants,
           internalVariantName: this.variants.internalVariantName !== '' ? this.variants.internalVariantName : null,
           deviceClass: this.variants.deviceClass !== 'all' ? this.variants.deviceClass : null,
-          percentage: this.variants.percentage
+          percentage: this.variants.percentage,
+          reportingType: this.reportingType,
+          eventDefinitions: this.eventDefinitions
         }
       },
 
