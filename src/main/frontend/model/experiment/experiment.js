@@ -99,5 +99,4 @@ export default class ExperimentModel extends ExperimentRecord {
   eventDefinitionsAvailable () {
     return this.definition && this.definition.reportingType === 'FRONTEND'
   }
-
 };
