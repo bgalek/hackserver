@@ -41,7 +41,6 @@ public class ExperimentCreationRequest {
             @JsonProperty("reportingType") ReportingType reportingType) {
         Preconditions.checkNotNull(id);
         Preconditions.checkNotNull(variantNames);
-        // missing percentage?
         this.id = id;
         this.variantNames = ImmutableList.copyOf(variantNames);
         this.internalVariantName = internalVariantName;
