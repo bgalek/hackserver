@@ -14,7 +14,9 @@ const ExperimentDefinitionRecord = Record({
   groups: [],
   activityPeriod: null,
   reportingEnabled: true,
-  status: ''
+  status: '',
+  reportingType: null,
+  eventDefinitions: []
 })
 
 export default class ExperimentDefinitionModel extends ExperimentDefinitionRecord {
@@ -22,6 +24,7 @@ export default class ExperimentDefinitionModel extends ExperimentDefinitionRecor
     experimentDefinitionObject = Object.assign({}, experimentDefinitionObject)
     experimentDefinitionObject.activityPeriod = experimentDefinitionObject.activityPeriod && new ActivityPeriod(experimentDefinitionObject.activityPeriod)
     experimentDefinitionObject.variantNames = List(experimentDefinitionObject.variantNames)
+    experimentDefinitionObject.eventDefinitions = experimentDefinitionObject.eventDefinitions
     experimentDefinitionObject.groups = List(experimentDefinitionObject.groups)
     super(experimentDefinitionObject)
   }

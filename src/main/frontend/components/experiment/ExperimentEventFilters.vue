@@ -1,6 +1,6 @@
 <template>
     <div>
-      <v-btn color="primary" class="mb-2" @click="newItem()">
+      <v-btn color="primary" class="mb-2" @click="newItem()" v-if="!readOnly">
         Add event
       </v-btn>
       <v-dialog v-model="editing" max-width="500px">
@@ -52,7 +52,7 @@
           <td>{{ props.item.action }}</td>
           <td>{{ props.item.value }}</td>
 
-          <td class="justify-center layout px-0">
+          <td class="justify-center layout px-0" v-if="!readOnly">
             <v-btn icon class="mx-0" @click="editItem(props.item)">
               <v-icon color="teal">edit</v-icon>
             </v-btn>
@@ -68,8 +68,10 @@
 
 <script>
   export default {
-
+    props: ['readOnly', 'initData'],
     data () {
+      const initial = this.initData || []
+      const readOnly = this.readOnly || false
       return {
         editing: false,
         editedItem: {},
@@ -86,10 +88,11 @@
           { text: 'Action', value: 'action', align: 'left', class: 'subheading', sortable: false },
           { text: 'Value', value: 'value', align: 'left', class: 'subheading', sortable: false }
         ],
-        items: [],
+        items: initial,
         filterRules: [
           (v) => this.isUrlValid(v) || 'not a valid URL'
-        ]
+        ],
+        readOnly: readOnly
       }
     },
 

@@ -95,4 +95,9 @@ export default class ExperimentModel extends ExperimentRecord {
       return this.getBaseVariant().deviceClass
     }
   }
+
+  eventDefinitionsAvailable () {
+    return this.definition && this.definition.reportingType === 'FRONTEND'
+  }
+
 };

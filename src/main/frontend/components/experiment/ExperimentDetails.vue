@@ -30,6 +30,7 @@
         <v-layout row>
             <experiment-status :experiment="experiment" :show-reporting-status="true"/>
         </v-layout>
+
     </v-flex>
     <v-flex xs6>
       <h3>Variants</h3>
@@ -48,21 +49,35 @@
           </v-list-tile>
         </template>
       </v-list>
+
     </v-flex>
     </v-layout>
+
+    <v-layout v-if="experiment.eventDefinitionsAvailable()">
+      <v-flex xs12>
+        <h3>Filters</h3>
+        <experiment-event-filters
+          :readOnly="true"
+          :initData="experiment.definition.eventDefinitions">
+        </experiment-event-filters>
+      </v-flex>
+    </v-layout>
+
   </chi-panel>
 </template>
 
 <script>
   import ChiPanel from '../ChiPanel'
   import ExperimentStatus from './ExperimentStatus'
+  import ExperimentEventFilters from './ExperimentEventFilters'
 
   export default {
     props: ['experiment'],
 
     components: {
       ExperimentStatus,
-      ChiPanel
+      ChiPanel,
+      ExperimentEventFilters
     },
 
     methods: {
