@@ -1,8 +1,7 @@
 package pl.allegro.experiments.chi.chiserver.infrastructure.experiments;
 
-import com.codahale.metrics.Gauge;
-import com.codahale.metrics.MetricRegistry;
 import com.google.gson.Gson;
+import io.micrometer.core.instrument.MeterRegistry;
 import org.javers.core.Javers;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.context.properties.ConfigurationProperties;
@@ -40,6 +39,9 @@ public class ExperimentsConfig {
             RestTemplate restTemplate,
             Gson jsonConverter) {
         HttpContentLoader httpContentLoader = new HttpContentLoader(restTemplate);
+
+        System.out.println("new FileBasedExperimentsRepository()");
+
         return new FileBasedExperimentsRepository(jsonUrl, httpContentLoader, jsonConverter, null);
     }
 
@@ -70,18 +72,18 @@ public class ExperimentsConfig {
     ExperimentsRepository experimentsRepository(
             FileBasedExperimentsRepository fileBasedExperimentsRepository,
             CachedExperimentsRepository mongoExperimentsRepository,
-            MetricRegistry metricRegistry) {
+            MeterRegistry metricRegistry) {
         ExperimentsRepository repo = new ExperimentsDoubleRepository(fileBasedExperimentsRepository, mongoExperimentsRepository);
-        Gauge<Long> gaugeAll = () -> Integer.toUnsignedLong(repo.getAll().size());
-        metricRegistry.register(EXPERIMENTS_COUNT_ALL_METRIC, gaugeAll);
 
-        Gauge<Long> gaugeActive = () -> repo.getAll().stream()
-                .filter(Experiment::isActive).count();
-        metricRegistry.register(EXPERIMENTS_COUNT_ACTIVE_METRIC, gaugeActive);
+        metricRegistry.gauge(EXPERIMENTS_COUNT_ALL_METRIC, repo,
+                r -> r.getAll().size());
 
-        Gauge<Long> gaugeDraft = () -> repo.getAll().stream()
-                .filter(Experiment::isDraft).count();
-        metricRegistry.register(EXPERIMENTS_COUNT_DRAFT_METRIC, gaugeDraft);
+        metricRegistry.gauge(EXPERIMENTS_COUNT_ACTIVE_METRIC, repo,
+                r -> r.getAll().stream().filter(Experiment::isActive).count());
+
+        metricRegistry.gauge(EXPERIMENTS_COUNT_DRAFT_METRIC, repo,
+                r -> r.getAll().stream().filter(Experiment::isDraft).count());
+
         return repo;
     }
 
@@ -105,7 +107,7 @@ public class ExperimentsConfig {
     }
 
     @Bean
-    ExperimentsMongoMetricsReporter experimentsMongoMetricsReporter(MetricRegistry metricRegistry) {
+    ExperimentsMongoMetricsReporter experimentsMongoMetricsReporter(MeterRegistry metricRegistry) {
         return new ExperimentsMongoMetricsReporter(metricRegistry);
     }
 
@@ -119,7 +121,7 @@ public class ExperimentsConfig {
     }
 
     @Bean
-    @ConfigurationProperties("chi.crisisManagement")
+    @ConfigurationProperties("chi.crisis-management")
     CrisisManagementProperties crisisManagementProperties() {
         return new CrisisManagementProperties();
     }

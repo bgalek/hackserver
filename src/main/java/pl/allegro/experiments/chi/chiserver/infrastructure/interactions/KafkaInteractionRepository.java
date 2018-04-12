@@ -3,7 +3,7 @@ package pl.allegro.experiments.chi.chiserver.infrastructure.interactions;
 import org.springframework.kafka.core.KafkaOperations;
 import pl.allegro.experiments.chi.chiserver.domain.interactions.Interaction;
 import pl.allegro.experiments.chi.chiserver.domain.interactions.InteractionRepository;
-import pl.allegro.tech.common.andamio.spring.avro.AvroConverter;
+import pl.allegro.tech.common.andamio.avro.AvroConverter;
 
 public class KafkaInteractionRepository implements InteractionRepository {
     private final KafkaOperations<String, byte[]> kafkaTemplate;

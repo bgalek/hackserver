@@ -1,8 +1,6 @@
 package pl.allegro.experiments.chi.chiserver.infrastructure.interactions;
 
-import com.codahale.metrics.Gauge;
-import com.codahale.metrics.MetricRegistry;
-import javassist.bytecode.ByteArray;
+import io.micrometer.core.instrument.MeterRegistry;
 import org.apache.kafka.clients.producer.ProducerConfig;
 import org.apache.kafka.common.Metric;
 import org.apache.kafka.common.serialization.ByteArraySerializer;
@@ -15,7 +13,7 @@ import org.springframework.kafka.core.DefaultKafkaProducerFactory;
 import org.springframework.kafka.core.KafkaTemplate;
 import pl.allegro.experiments.chi.chiserver.domain.interactions.InteractionRepository;
 import pl.allegro.tech.common.andamio.server.cloud.CloudMetadata;
-import pl.allegro.tech.common.andamio.spring.avro.AvroConverter;
+import pl.allegro.tech.common.andamio.avro.AvroConverter;
 
 import java.util.*;
 
@@ -46,16 +44,13 @@ public class KafkaConfig {
             CloudMetadata cloudMetadata,
             @Value("${interactions.kafka.batch-size}") int batchSize,
             @Value("${interactions.kafka.linger-ms}") int lingerMs,
-            MetricRegistry metricRegistry) {
+            MeterRegistry metricRegistry) {
         String bootstrapServer = cloudMetadata.getDatacenter().equals("dc5") ? bootstrapServersDc5 : bootstrapServersDc4;
-        KafkaTemplate<String, byte[]> kafkaTemplate = new KafkaTemplate<>(producerFactory(bootstrapServer, batchSize, lingerMs));
+        final KafkaTemplate<String, byte[]> kafkaTemplate = new KafkaTemplate<>(producerFactory(bootstrapServer, batchSize, lingerMs));
+
         metricsList.forEach(metricName ->
-                metricRegistry.register("kafka." + metricName, new Gauge<Double>() {
-                    @Override
-                    public Double getValue() {
-                        return getMetricValue(kafkaTemplate, metricName);
-                    }
-                })
+                metricRegistry.gauge("kafka." + metricName, metricName,
+                        mName -> getMetricValue(kafkaTemplate, metricName ) )
         );
 
         return kafkaTemplate;

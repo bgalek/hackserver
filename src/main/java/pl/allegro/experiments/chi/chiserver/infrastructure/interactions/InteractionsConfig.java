@@ -1,6 +1,6 @@
 package pl.allegro.experiments.chi.chiserver.infrastructure.interactions;
 
-import com.codahale.metrics.MetricRegistry;
+import io.micrometer.core.instrument.MeterRegistry;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import pl.allegro.experiments.chi.chiserver.domain.experiments.ExperimentsRepository;
@@ -24,7 +24,7 @@ class InteractionsConfig {
     }
 
     @Bean
-    InteractionsMetricsReporter interactionsMetricsReporter(MetricRegistry metricRegistry) {
+    InteractionsMetricsReporter interactionsMetricsReporter(MeterRegistry metricRegistry) {
         return new InteractionsMetricsReporter(metricRegistry);
     }
 }

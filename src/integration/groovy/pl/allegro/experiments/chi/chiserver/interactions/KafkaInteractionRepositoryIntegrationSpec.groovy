@@ -18,7 +18,7 @@ import pl.allegro.experiments.chi.chiserver.domain.interactions.Interaction
 import pl.allegro.experiments.chi.chiserver.domain.interactions.InteractionRepository
 import pl.allegro.experiments.chi.chiserver.infrastructure.interactions.KafkaConfig
 import pl.allegro.tech.common.andamio.server.cloud.CloudMetadata
-import pl.allegro.tech.common.andamio.spring.avro.AvroConverter
+import pl.allegro.tech.common.andamio.avro.AvroConverter
 import spock.lang.Shared
 
 import java.time.Instant
