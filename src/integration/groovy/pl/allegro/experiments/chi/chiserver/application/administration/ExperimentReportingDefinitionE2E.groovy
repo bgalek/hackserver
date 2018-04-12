@@ -10,7 +10,6 @@ import pl.allegro.experiments.chi.chiserver.domain.experiments.ExperimentsReposi
 import pl.allegro.experiments.chi.chiserver.infrastructure.experiments.ExperimentsDoubleRepository
 import spock.lang.Unroll
 
-@DirtiesContext
 class ExperimentReportingDefinitionE2E extends BaseIntegrationSpec {
 
     RestTemplate restTemplate = new RestTemplate()
@@ -177,7 +176,7 @@ class ExperimentReportingDefinitionE2E extends BaseIntegrationSpec {
         responseSingle['eventDefinitions'] as Set == expectedEventDefinitions as Set
 
         where:
-        experimentId << ['e1', 'e2', 'e3', 'e4']
+        experimentId << ['e5', 'e6', 'e7', 'e8']
         reportingType << ['FRONTEND', 'GTM', 'BACKEND', null]
         expectedReportingType << ['FRONTEND', 'GTM', 'BACKEND', 'BACKEND']
         expectedEventDefinitions << [
