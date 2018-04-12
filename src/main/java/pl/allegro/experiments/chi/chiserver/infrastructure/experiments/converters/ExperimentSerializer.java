@@ -51,7 +51,7 @@ public class ExperimentSerializer implements Converter<ExperimentDefinition, DBO
         }
         ExperimentStatus experimentStatus = source.getStatus().explicitOrNull();
         result.put("explicitStatus", experimentStatus != null ? experimentStatus.toString() : null);
-        result.put("reportingDefinition", reportingDefinitionSerializer.convert(source.getReportingDefinition()));
+        result.put("reportingDefinition", reportingDefinitionSerializer.convert(source.getReportingDefinitionToSave()));
         return result;
     }
 }

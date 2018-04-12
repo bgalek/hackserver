@@ -140,9 +140,7 @@ class ExperimentsSelfServiceE2ESpec extends BaseIntegrationSpec {
                         variantNames       : ['v2', 'v3'],
                         internalVariantName: 'v1',
                         deviceClass        : 'phone',
-                        percentage         : 10,
-                        reportingType      : 'BACKEND',
-                        eventDefinitions: []
+                        percentage         : 10
                 ]
         ]
         responseSingle.body.definition == expectedExperiment.definition

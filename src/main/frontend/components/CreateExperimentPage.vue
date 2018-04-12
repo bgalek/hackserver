@@ -77,7 +77,9 @@
 
                 <v-flex xs1>
                   <v-tooltip right>
-                    <span>experiment type blabla</span>
+                    <span>If you are going to experiment using Opbox and you want to filter user interactions- use FRONTEND.
+                    If you are going to experiment using GTM- pick GTM. Otherwise pick BACKEND.
+                      You can find detailed info here: https://rtd.allegrogroup.com/docs/chi/pl/latest/reporting/</span>
                     <v-icon
                       slot="activator">help_outline</v-icon>
                   </v-tooltip>
@@ -98,7 +100,7 @@
 
                 <v-flex xs1>
                   <v-tooltip right>
-                    <span>Blah blah blah events</span>
+                    <span>Chi will use specified NGA events to filter user interactions. You can find detailed info here: https://rtd.allegrogroup.com/docs/chi/pl/latest/reporting/</span>
                     <v-icon
                       slot="activator">help_outline</v-icon>
                   </v-tooltip>

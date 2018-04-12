@@ -86,6 +86,10 @@ public class ExperimentDefinition {
 
     @DiffInclude
     public ReportingDefinition getReportingDefinition() {
+        return reportingDefinition.withImplicitEventDefinitionsIfGtm(this);
+    }
+
+    public ReportingDefinition getReportingDefinitionToSave() {
         return reportingDefinition;
     }
 
