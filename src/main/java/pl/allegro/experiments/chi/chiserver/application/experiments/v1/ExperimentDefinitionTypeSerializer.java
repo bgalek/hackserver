@@ -30,9 +30,6 @@ public class ExperimentDefinitionTypeSerializer implements JsonSerializer<Experi
         jsonObject.add("activityPeriod", context.serialize(experimentDefinition.getActivityPeriod()));
         jsonObject.add("editable", context.serialize(experimentDefinition.getEditable()));
         jsonObject.add("status", context.serialize(experimentDefinition.getStatus()));
-        jsonObject.add("reportingType", context.serialize(experimentDefinition.getReportingDefinition().getType()));
-        jsonObject.add("eventDefinitions", context.serialize(experimentDefinition.getReportingDefinition()
-                .getEventDefinitions()));
 
         return jsonObject;
     }

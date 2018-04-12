@@ -32,7 +32,7 @@
         </v-layout>
         <h3>Reporting type</h3>
         <v-chip outline disabled :color="'black'">
-          {{ experiment.reportingType() }}
+          {{ experiment.reportingType }}
         </v-chip>
     </v-flex>
     <v-flex xs6>
@@ -61,7 +61,7 @@
         <h3>Filters</h3>
         <experiment-event-filters
           :readOnly="true"
-          :initData="experiment.definition.eventDefinitions.toArray()">
+          :initData="experiment.eventDefinitions.toArray()">
         </experiment-event-filters>
       </v-flex>
     </v-layout>
