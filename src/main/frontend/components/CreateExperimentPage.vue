@@ -103,7 +103,7 @@
                       slot="activator">help_outline</v-icon>
                   </v-tooltip>
                 </v-flex>
-                <v-flex xs11>
+                <v-flex xs11 text-xs-left>
                   <experiment-event-filters v-on:eventDefinitionsChanged="onEventDefinitionsChanged"></experiment-event-filters>
                 </v-flex>
 
