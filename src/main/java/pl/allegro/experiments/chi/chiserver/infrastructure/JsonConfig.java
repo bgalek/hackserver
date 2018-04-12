@@ -18,6 +18,7 @@ class JsonConfig {
     Gson jsonConverter() {
         return new GsonBuilder()
                 .registerTypeAdapter(Experiment.class, new ExperimentTypeDeserializer())
+                .registerTypeAdapter(ClientExperiment.class, new ClientExperimentTypeSerializer())
                 .registerTypeAdapter(Experiment.class, new ExperimentTypeSerializer())
                 .registerTypeAdapter(ExperimentDefinition.class, new ExperimentDefinitionTypeSerializer())
                 .registerTypeAdapter(HashRangePredicate.class, new HashRangePredicateSerializer())

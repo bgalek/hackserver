@@ -9,6 +9,7 @@ import org.springframework.web.client.RestTemplate
 import pl.allegro.experiments.chi.chiserver.BaseIntegrationSpec
 import pl.allegro.experiments.chi.chiserver.domain.UserProvider
 import pl.allegro.experiments.chi.chiserver.domain.experiments.ExperimentsRepository
+import pl.allegro.experiments.chi.chiserver.infrastructure.experiments.ExampleClientExperiments
 import pl.allegro.experiments.chi.chiserver.infrastructure.experiments.ExampleExperiments
 import pl.allegro.experiments.chi.chiserver.infrastructure.experiments.ExperimentsDoubleRepository
 import pl.allegro.experiments.chi.chiserver.infrastructure.experiments.FileBasedExperimentsRepository
@@ -57,6 +58,6 @@ class CrisisManagementE2ESpec extends BaseIntegrationSpec implements ExampleExpe
             response.body.size() == 1
 
         and:
-            response.body.contains(internalExperiment())
+            response.body.contains(ExampleClientExperiments.internalExperiment())
     }
 }

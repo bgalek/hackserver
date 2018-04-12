@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import pl.allegro.experiments.chi.chiserver.domain.experiments.ExperimentsRepository;
+import pl.allegro.experiments.chi.chiserver.infrastructure.ClientExperiment;
 import pl.allegro.tech.common.andamio.metrics.MeteredEndpoint;
 
 import java.util.stream.Collectors;
@@ -37,6 +38,8 @@ class ClientExperimentsControllerV2 {
         return jsonConverter.toJson(experimentsRepository
                 .assignable()
                 .stream()
-                .filter(crisisManagementFilter::filter).collect(Collectors.toList()));
+                .filter(crisisManagementFilter::filter)
+                .map(it -> new ClientExperiment(it))
+                .collect(Collectors.toList()));
     }
 }

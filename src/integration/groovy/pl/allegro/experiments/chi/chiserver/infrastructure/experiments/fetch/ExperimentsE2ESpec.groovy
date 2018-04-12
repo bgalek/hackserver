@@ -12,6 +12,7 @@ import pl.allegro.experiments.chi.chiserver.BaseIntegrationSpec
 import pl.allegro.experiments.chi.chiserver.domain.User
 import pl.allegro.experiments.chi.chiserver.domain.UserProvider
 import pl.allegro.experiments.chi.chiserver.domain.experiments.ExperimentsRepository
+import pl.allegro.experiments.chi.chiserver.infrastructure.experiments.ExampleClientExperiments
 import pl.allegro.experiments.chi.chiserver.infrastructure.experiments.ExampleExperiments
 import pl.allegro.experiments.chi.chiserver.infrastructure.experiments.ExperimentsDoubleRepository
 import pl.allegro.experiments.chi.chiserver.infrastructure.experiments.FileBasedExperimentsRepository
@@ -43,27 +44,6 @@ class ExperimentsE2ESpec extends BaseIntegrationSpec implements ExampleExperimen
         WireMockUtils.teachWireMockJson("/invalid-experiments", '/invalid-experiments.json')
     }
 
-    def "should return list of experiments loaded from the backing HTTP resource"() {
-        given:
-        fileBasedExperimentsRepository.jsonUrl = WireMockUtils.resourceUrl('/experiments', wireMock)
-        fileBasedExperimentsRepository.secureRefresh()
-
-        when:
-        def response = restTemplate.getForEntity(localUrl('/api/experiments'), List)
-
-        then:
-        response.statusCode.value() == 200
-        response.body.size() == 7
-
-        and:
-        response.body.contains(internalExperiment())
-        response.body.contains(plannedExperiment())
-        response.body.contains(cmuidRegexpExperiment())
-        response.body.contains(hashVariantExperiment())
-        response.body.contains(sampleExperiment())
-        response.body.contains(timeboundExperiment())
-    }
-
     def "should return single of experiment loaded from the backing HTTP resource"() {
         given:
         userProvider.user = new User('Anonymous', [], true)
@@ -91,7 +71,7 @@ class ExperimentsE2ESpec extends BaseIntegrationSpec implements ExampleExperimen
         ]
     }
 
-    def "should return list of overridable experiments in version 2"() {
+    def "should return list of assignable experiments in API v.2 for Cient"() {
         given:
         fileBasedExperimentsRepository.jsonUrl = WireMockUtils.resourceUrl('/experiments', wireMock)
         fileBasedExperimentsRepository.secureRefresh()
@@ -104,13 +84,13 @@ class ExperimentsE2ESpec extends BaseIntegrationSpec implements ExampleExperimen
         response.body.size() == 7
 
         and:
-        response.body.contains(internalExperiment())
-        response.body.contains(plannedExperiment())
-        response.body.contains(cmuidRegexpExperiment())
-        response.body.contains(hashVariantExperiment())
-        response.body.contains(sampleExperiment())
-        response.body.contains(timeboundExperiment())
-        !response.body.contains(experimentFromThePast())
+        response.body.contains(ExampleClientExperiments.internalExperiment())
+        response.body.contains(ExampleClientExperiments.plannedExperiment())
+        response.body.contains(ExampleClientExperiments.cmuidRegexpExperiment())
+        response.body.contains(ExampleClientExperiments.hashVariantExperiment())
+        response.body.contains(ExampleClientExperiments.sampleExperiment())
+        response.body.contains(ExampleClientExperiments.timeboundExperiment())
+        !response.body.contains(ExampleClientExperiments.experimentFromThePast())
     }
 
     def "should return all experiments as measured for admin"() {
