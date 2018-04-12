@@ -101,6 +101,6 @@ export default class ExperimentModel extends ExperimentRecord {
   }
 
   reportingType () {
-    return this.definition && this.definition.reportingType
+    return (this.definition && this.definition.reportingType) || 'BACKEND'
   }
 };
