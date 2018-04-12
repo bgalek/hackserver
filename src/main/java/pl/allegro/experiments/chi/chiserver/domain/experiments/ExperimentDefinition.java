@@ -308,6 +308,7 @@ public class ExperimentDefinition {
                     .reportingEnabled(other.reportingEnabled)
                     .activityPeriod(other.activityPeriod)
                     .editable(other.editable)
+                    .reportingDefinition(other.reportingDefinition)
                     .explicitStatus(other.explicitStatus);
         }
 

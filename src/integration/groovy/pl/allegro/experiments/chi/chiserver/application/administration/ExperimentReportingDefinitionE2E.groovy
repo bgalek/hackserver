@@ -112,6 +112,127 @@ class ExperimentReportingDefinitionE2E extends BaseIntegrationSpec {
                 null
         ]
     }
+
+    @Unroll
+    def "should preserve #reportingType reporting definition after using commands"() {
+        given:
+        userProvider.user = new User('Anonymous', [], true)
+
+        def request = [
+                id              : experimentId,
+                variantNames    : ['v2'],
+                percentage      : 10,
+                reportingType   : reportingType,
+                eventDefinitions: givenEventDefinitions
+        ]
+
+        and:
+        restTemplate.postForEntity(localUrl('/api/admin/experiments'), request, Map)
+
+        and:
+        def startRequest = [
+                experimentDurationDays: 30
+        ]
+        restTemplate.put(localUrl("/api/admin/experiments/${request.id}/start"), startRequest, Map)
+
+        and:
+        restTemplate.put(localUrl("/api/admin/experiments/${request.id}/update-descriptions"),
+                [
+                        description : 'chi rulez',
+                        documentLink: 'new link',
+                        groups      : ['group c'],
+                ], Map)
+
+        and:
+        restTemplate.put(localUrl("/api/admin/experiments/${request.id}/update-variants"),
+                [
+                        percentage         : 18,
+                        variantNames       : ['v2'],
+                        internalVariantName: 'internV',
+                        deviceClass        : 'phone'
+                ], Map)
+
+        and:
+        restTemplate.put(localUrl("/api/admin/experiments/${request.id}/pause"), Map)
+
+        and:
+        restTemplate.put(localUrl("/api/admin/experiments/${request.id}/resume"), Map)
+
+        and:
+        restTemplate.put(localUrl("/api/admin/experiments/${request.id}/prolong"), [experimentAdditionalDays: 30], Map)
+
+        and:
+        restTemplate.put(localUrl("/api/admin/experiments/${request.id}/stop"), Map)
+
+        when:
+        def responseList = restTemplate.getForEntity(localUrl("/api/admin/experiments"), List).body
+        def responseSingle = restTemplate.getForEntity(localUrl("/api/admin/experiments/${request.id}/"), Map).body
+
+        then:
+        responseList.find { it['id'] == experimentId }['reportingType'] == expectedReportingType
+        responseList.find { it['id'] == experimentId }['eventDefinitions'] as Set == expectedEventDefinitions as Set
+
+        and:
+        responseSingle['reportingType'] == expectedReportingType
+        responseSingle['eventDefinitions'] as Set == expectedEventDefinitions as Set
+
+        where:
+        experimentId << ['e1', 'e2', 'e3', 'e4']
+        reportingType << ['FRONTEND', 'GTM', 'BACKEND', null]
+        expectedReportingType << ['FRONTEND', 'GTM', 'BACKEND', 'BACKEND']
+        expectedEventDefinitions << [
+                [
+                        [
+                                label   : 'label1',
+                                category: 'category1',
+                                value   : 'value1',
+                                action  : 'action1'
+                        ],
+                        [
+                                label   : 'label2',
+                                category: 'category2',
+                                value   : 'value2',
+                                action  : 'action2'
+                        ]
+                ],
+                [
+                        [
+                                category: 'chiInteraction',
+                                action  : experimentId,
+                                label   : 'base',
+                                value   : ''
+                        ],
+                        [
+                                category: 'chiInteraction',
+                                action  : experimentId,
+                                label   : 'v2',
+                                value   : ''
+                        ]
+                ],
+                [],
+                []
+        ]
+
+        givenEventDefinitions << [
+                [
+                        [
+                                label   : 'label1',
+                                category: 'category1',
+                                value   : 'value1',
+                                action  : 'action1'
+                        ],
+                        [
+                                label   : 'label2',
+                                category: 'category2',
+                                value   : 'value2',
+                                action  : 'action2'
+                        ],
+                ],
+                null,
+                null,
+                null
+        ]
+    }
 }
 
 
