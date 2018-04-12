@@ -30,7 +30,10 @@
         <v-layout row>
             <experiment-status :experiment="experiment" :show-reporting-status="true"/>
         </v-layout>
-
+        <h3>Reporting type</h3>
+        <v-chip outline disabled :color="'black'">
+          {{ experiment.reportingType() }}
+        </v-chip>
     </v-flex>
     <v-flex xs6>
       <h3>Variants</h3>
@@ -58,7 +61,7 @@
         <h3>Filters</h3>
         <experiment-event-filters
           :readOnly="true"
-          :initData="experiment.definition.eventDefinitions">
+          :initData="experiment.definition.eventDefinitions.toArray()">
         </experiment-event-filters>
       </v-flex>
     </v-layout>
