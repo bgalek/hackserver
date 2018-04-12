@@ -10,7 +10,7 @@ import java.util.stream.Collectors;
 
 public class ReportingDefinition {
     private final List<EventDefinition> eventDefinitions;
-    private final boolean gtm; // domain?
+    private final boolean gtm;
     private final boolean backendInteractionsEnabled;
 
     public ReportingDefinition(

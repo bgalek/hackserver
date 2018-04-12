@@ -34,7 +34,6 @@ public class ExperimentTypeSerializer implements JsonSerializer<Experiment> {
         jsonObject.add("reportingType", context.serialize(experiment.getReportingDefinition().getType()));
         jsonObject.add("eventDefinitions", context.serialize(experiment.getDefinition()
                 .map(experimentDefinition -> experimentDefinition.getReportingDefinition()
-                        .withImplicitEventDefinitionsIfGtm(experimentDefinition)
                         .getEventDefinitions()
                 ).orElseGet(() -> experiment.getReportingDefinition().getEventDefinitions())));
         return jsonObject;
