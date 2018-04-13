@@ -54,6 +54,10 @@ export default class ExperimentDefinitionModel extends ExperimentDefinitionRecor
     return this.status === 'ACTIVE'
   }
 
+  canChangeVariants () {
+    return this.status !== 'ENDED'
+  }
+
   canRunLifecycleCommand () {
     return this.canBeStarted() ||
       this.canBeStopped() ||
