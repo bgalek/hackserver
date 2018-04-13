@@ -21,6 +21,7 @@ public class Auditor {
     public AuditLog getAuditLog(String experimentId) {
         final JqlQuery query = QueryBuilder
                 .byInstanceId(experimentId, ExperimentDefinition.class)
+                .withChildValueObjects()
                 .withNewObjectChanges()
                 .build();
         final List<Change> allChanges = javers.findChanges(query);

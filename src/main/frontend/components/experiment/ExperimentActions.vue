@@ -128,6 +128,7 @@
         </v-menu>
 
         <v-menu :close-on-content-click="false"
+                v-if="this.experiment.definition.canChangeVariants()"
                 v-model="variantsMenuVisible">
           <v-btn color="gray" slot="activator" style="text-transform: none">
             Update variants
