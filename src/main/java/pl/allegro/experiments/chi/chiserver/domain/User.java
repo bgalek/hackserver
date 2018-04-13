@@ -3,6 +3,7 @@ package pl.allegro.experiments.chi.chiserver.domain;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
 import pl.allegro.experiments.chi.chiserver.domain.experiments.Experiment;
+import pl.allegro.experiments.chi.chiserver.domain.experiments.ExperimentDefinition;
 
 import java.util.List;
 
@@ -32,7 +33,7 @@ public class User {
         return isRoot;
     }
 
-    public boolean isOwner(Experiment experiment) {
+    public boolean isOwner(ExperimentDefinition experiment) {
         Preconditions.checkNotNull(experiment);
         return isRoot || groups.stream().anyMatch(g -> experiment.getGroups().contains(g)) || isAuthor(experiment);
     }
@@ -41,7 +42,7 @@ public class User {
         return name.equals(ANONYMOUS);
     }
 
-    private boolean isAuthor(Experiment experiment) {
+    private boolean isAuthor(ExperimentDefinition experiment) {
         return experiment.getAuthor() != null && experiment.getAuthor().equals(name);
     }
 }

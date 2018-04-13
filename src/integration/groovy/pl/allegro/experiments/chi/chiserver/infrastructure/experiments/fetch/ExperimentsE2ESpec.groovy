@@ -57,15 +57,16 @@ class ExperimentsE2ESpec extends BaseIntegrationSpec implements ExampleExperimen
         response.statusCode.value() == 200
         response.body == [
                 id              : 'cmuid_regexp',
-                variants        : [[name: 'v1', predicates: [[type: 'CMUID_REGEXP', regexp: '.*[0-3]$']]]],
+                renderedVariants: [[name: 'v1', predicates: [[type: 'CMUID_REGEXP', regexp: '.*[0-3]$']]]],
+                variantNames    : ['v1'],
                 reportingEnabled: true,
                 description     : "Experiment description",
                 author          : "Experiment owner",
                 measurements    : [lastDayVisits: 0],
                 groups          : [],
                 status          : 'DRAFT',
-                editable        : true,
-                origin          : 'stash',
+                editable        : false,
+                origin          : 'STASH',
                 reportingType   : 'BACKEND',
                 eventDefinitions: []
         ]
@@ -99,29 +100,23 @@ class ExperimentsE2ESpec extends BaseIntegrationSpec implements ExampleExperimen
         fileBasedExperimentsRepository.jsonUrl = WireMockUtils.resourceUrl('/experiments', wireMock)
         fileBasedExperimentsRepository.secureRefresh()
 
-        def editableMeasuredExperiment = { ex -> ex << [measurements: [lastDayVisits: 0], editable: true, origin: 'stash'] }
-
         when:
         def response = restTemplate.getForEntity(localUrl('/api/admin/experiments'), List)
 
         then:
-        def expectedExperiments = [
-                internalExperiment(),
-                plannedExperiment(),
-                cmuidRegexpExperiment(),
-                cmuidRegexpWithPhoneExperiment(),
-                hashVariantExperiment(),
-                sampleExperiment(),
-                timeboundExperiment(),
-                experimentFromThePast(),
-                pausedExperiment()
-        ].collect { editableMeasuredExperiment(it) }
         response.statusCode.value() == 200
-        response.body.size() == expectedExperiments.size()
+        response.body.size() == 9
 
         and:
-        //response.body.findAll{ it["id"] == "cmuid_with_phone"}
-        response.body.containsAll(expectedExperiments)
+        response.body.contains(internalExperiment())
+        response.body.contains(plannedExperiment())
+        response.body.contains(cmuidRegexpExperiment())
+        response.body.contains(cmuidRegexpWithPhoneExperiment())
+        response.body.contains(hashVariantExperiment())
+        response.body.contains(sampleExperiment())
+        response.body.contains(timeboundExperiment())
+        response.body.contains(experimentFromThePast())
+        response.body.contains(pausedExperiment())
     }
 
     def "should return last valid list when file is corrupted"() {

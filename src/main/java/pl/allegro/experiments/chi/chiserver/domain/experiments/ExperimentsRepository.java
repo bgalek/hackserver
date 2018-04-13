@@ -7,6 +7,7 @@ public interface ExperimentsRepository extends ReadOnlyExperimentsRepository {
 
     void save(ExperimentDefinition experiment);
 
+    @Deprecated
     default ExperimentOrigin getOrigin(String experimentId) {
         return ExperimentOrigin.UNDEFINED;
     }

@@ -6,18 +6,13 @@ import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import pl.allegro.experiments.chi.chiserver.domain.experiments.Experiment;
 import pl.allegro.experiments.chi.chiserver.domain.experiments.ExperimentMeasurements;
 import pl.allegro.experiments.chi.chiserver.domain.experiments.MeasurementsRepository;
 import pl.allegro.experiments.chi.chiserver.infrastructure.druid.DruidClient;
 import pl.allegro.experiments.chi.chiserver.infrastructure.druid.DruidException;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 import java.util.concurrent.TimeUnit;
-import java.util.stream.Collectors;
 
 public class DruidMeasurementsRepository implements MeasurementsRepository {
     private static final Logger logger = LoggerFactory.getLogger(DruidMeasurementsRepository.class);
@@ -27,7 +22,6 @@ public class DruidMeasurementsRepository implements MeasurementsRepository {
     private final DruidClient druid;
     private final Gson jsonConverter;
     private final String datasource;
-    private Map<String, Integer> lastDayVisits;
     private final Supplier<Map<String, Integer>> lastDayVisitsCache;
 
     DruidMeasurementsRepository(
@@ -37,40 +31,25 @@ public class DruidMeasurementsRepository implements MeasurementsRepository {
         this.druid = druid;
         this.jsonConverter = jsonConverter;
         this.datasource = datasource;
-        this.lastDayVisits = new HashMap<>();
         this.lastDayVisitsCache = Suppliers.memoizeWithExpiration(() -> {
             try {
-                lastDayVisits = queryLastDayVisits();
+                return queryLastDayVisits();
             } catch (DruidException e) {
                 logger.warn("Error while trying to query Druid for last day visits", e);
+                return Collections.emptyMap();
             }
-            return lastDayVisits;
         }, CACHE_EXPIRE_DURATION_MINUTES, TimeUnit.MINUTES);
     }
 
-    private Experiment asMeasuredExperiment(Experiment experiment, Map<String, Integer> lastDayVisits) {
-        if (lastDayVisits == null) {
-            lastDayVisits = this.lastDayVisits;
-        }
-        Integer lastDayVisitsNullable = lastDayVisits.get(experiment.getId());
-        ExperimentMeasurements measurements = new ExperimentMeasurements(lastDayVisitsNullable != null ? lastDayVisitsNullable : 0);
-        return experiment.mutate()
-                .measurements(measurements)
-                .origin(null)
-                .build();
+    private ExperimentMeasurements createExperimentMeasurements(String expId, Map<String, Integer> lastDayVisits) {
+        Integer lastDayVisitsNullable = lastDayVisits.get(expId);
+
+        return new ExperimentMeasurements(lastDayVisitsNullable != null ? lastDayVisitsNullable : 0);
     }
 
     @Override
-    public Experiment withMeasurements(Experiment experiment) {
-        return asMeasuredExperiment(experiment, null);
-    }
-
-    @Override
-    public List<Experiment> withMeasurements(List<Experiment> experiments) {
-        Map<String, Integer> lastDayVisits = lastDayVisitsCache.get();
-        return experiments.stream()
-                .map(it -> asMeasuredExperiment(it, lastDayVisits))
-                .collect(Collectors.toList());
+    public ExperimentMeasurements getMeasurements(String experimentId) {
+        return new ExperimentMeasurements(lastDayVisitsCache.get().get(experimentId));
     }
 
     private Map<String, Integer> queryLastDayVisits() {

@@ -8,6 +8,7 @@ import pl.allegro.experiments.chi.chiserver.domain.experiments.Experiment;
 
 import java.lang.reflect.Type;
 
+@Deprecated
 public class ExperimentTypeSerializer implements JsonSerializer<Experiment> {
 
     @Override

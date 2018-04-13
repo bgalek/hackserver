@@ -4,6 +4,7 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import pl.allegro.experiments.chi.chiserver.application.experiments.AdminExperiment;
 import pl.allegro.experiments.chi.chiserver.application.experiments.v1.*;
 import pl.allegro.experiments.chi.chiserver.domain.experiments.*;
 
@@ -19,8 +20,7 @@ class JsonConfig {
         return new GsonBuilder()
                 .registerTypeAdapter(Experiment.class, new ExperimentTypeDeserializer())
                 .registerTypeAdapter(ClientExperiment.class, new ClientExperimentTypeSerializer())
-                .registerTypeAdapter(Experiment.class, new ExperimentTypeSerializer())
-                .registerTypeAdapter(ExperimentDefinition.class, new ExperimentDefinitionTypeSerializer())
+                .registerTypeAdapter(AdminExperiment.class, new AdminExperimentTypeSerializer())
                 .registerTypeAdapter(HashRangePredicate.class, new HashRangePredicateSerializer())
                 .registerTypeAdapter(CmuidRegexpPredicate.class, new CmuidRegexpPredicateSerializer())
                 .registerTypeAdapter(InternalPredicate.class, new InternalPredicateSerializer())

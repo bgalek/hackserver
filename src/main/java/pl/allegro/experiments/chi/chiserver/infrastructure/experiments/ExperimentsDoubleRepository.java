@@ -53,6 +53,7 @@ public class ExperimentsDoubleRepository implements ExperimentsRepository {
         return merged;
     }
 
+    @Deprecated
     @Override
     public ExperimentOrigin getOrigin(String experimentId) {
         if (readOnlyExperimentsRepository.getExperiment(experimentId).isPresent()) {
