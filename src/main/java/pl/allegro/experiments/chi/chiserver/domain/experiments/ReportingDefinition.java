@@ -47,11 +47,9 @@ public class ReportingDefinition {
 
     public ReportingDefinition withImplicitEventDefinitionsIfGtm(ExperimentDefinition experimentDefinition) {
         if (getType().equals(ReportingType.GTM)) {
-            List<String> variants = new ArrayList<>(experimentDefinition.getVariantNames());
-            variants.add("base");
             return new ReportingDefinition(
-                    variants.stream()
-                            .map(v -> new EventDefinition("chiInteraction", experimentDefinition.getId(), null, v, null))
+                    experimentDefinition.getVariantNames().stream()
+                            .map(v -> new EventDefinition("chiInteraction", experimentDefinition.getId(), null, v))
                             .collect(Collectors.toList()),
                     true,
                     false

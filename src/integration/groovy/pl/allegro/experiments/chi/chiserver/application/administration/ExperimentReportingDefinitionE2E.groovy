@@ -112,12 +112,6 @@ class ExperimentReportingDefinitionE2E extends BaseIntegrationSpec {
                         [
                                 category: 'chiInteraction',
                                 action  : experimentId,
-                                label   : 'base',
-                                value   : ''
-                        ],
-                        [
-                                category: 'chiInteraction',
-                                action  : experimentId,
                                 label   : 'v2',
                                 value   : ''
                         ]
