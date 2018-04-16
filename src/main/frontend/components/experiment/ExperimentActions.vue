@@ -115,7 +115,7 @@
           <v-list style="padding:15px; display: block;">
             <experiment-desc-editing :experiment="experiment"
                                      v-model="descriptionsEditingResult"
-            />
+            ></experiment-desc-editing>
 
             <v-btn flat @click="closeDescriptions()">Cancel</v-btn>
             <v-btn color="gray"
@@ -128,7 +128,7 @@
         </v-menu>
 
         <v-menu :close-on-content-click="false"
-                v-if="this.experiment.definition.canChangeVariants()"
+                v-if="canChangeVariants()"
                 v-model="variantsMenuVisible">
           <v-btn color="gray" slot="activator" style="text-transform: none">
             Update variants
@@ -139,7 +139,7 @@
             <experiment-variants-editing :variants="experiment.definition"
                                          :allowModifyRegularVariants="false"
                                      v-model="variantsEditingResult"
-            />
+            ></experiment-variants-editing>
 
             <v-btn flat @click="closeVariants()">Cancel</v-btn>
             <v-btn color="gray"
@@ -174,6 +174,7 @@
   import ExperimentVariantsEditing from './ExperimentVariantsEditing.vue'
   import ChiPanel from '../ChiPanel.vue'
   import { mapActions } from 'vuex'
+  import { slugify } from '../../utils/slugify'
 
   export default {
     props: ['experiment', 'allowDelete'],
@@ -218,6 +219,13 @@
 
       canRunAnyCommand () {
         return this.canRunLifecycleCommand() || this.canRunOtherCommand()
+      },
+
+      canChangeVariants () {
+        if (this.experiment.definition) {
+          return this.experiment.definition.canChangeVariants()
+        }
+        return false
       },
 
       deleteMe () {
@@ -344,12 +352,11 @@
       },
 
       variantsChanged () {
-        console.log('variantsChanged', this.variantsEditingResult, this.experiment)
         if (this.experiment.definition) {
           return this.variantsEditingResult.percentage !== this.experiment.definition.percentage ||
             JSON.stringify(this.variantsEditingResult.variantNames) !== JSON.stringify(this.experiment.definition.variantNames) ||
-            this.variantsEditingResult.internalVariantName !== this.experiment.definition.internalVariantName ||
-            this.variantsEditingResult.deviceClass !== this.experiment.definition.deviceClass
+            slugify(this.variantsEditingResult.internalVariantName) !== slugify(this.experiment.definition.internalVariantName) ||
+            (this.variantsEditingResult.deviceClass || 'all') !== (this.experiment.definition.deviceClass || 'all')
         }
         return false
       },
@@ -358,11 +365,12 @@
         if (this.$refs.actionForm.validate()) {
           this.closeVariants()
           this.prepareToSend()
+          this.variantsEditingResult.internalVariantName = this.variantsEditingResult.internalVariantName !== '' ? slugify(this.variantsEditingResult.internalVariantName) : null
           this.updateExperimentVariants({
             data: {
               percentage: this.variantsEditingResult.percentage,
               variantNames: this.variantsEditingResult.variantNames,
-              internalVariantName: this.variantsEditingResult.internalVariantName !== '' ? this.variantsEditingResult.internalVariantName : null,
+              internalVariantName: this.variantsEditingResult.internalVariantName,
               deviceClass: this.variantsEditingResult.deviceClass !== 'all' ? this.variantsEditingResult.deviceClass : null
             },
             params: {

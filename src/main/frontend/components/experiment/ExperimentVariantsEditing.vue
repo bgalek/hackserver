@@ -88,6 +88,7 @@
 
 <script>
   import _ from 'lodash'
+  import { slugify } from '../../utils/slugify'
 
   export default {
     props: {
@@ -151,21 +152,16 @@
         this[arrayName] = [...this[arrayName]]
       },
 
-      slugify (str) {
-        return str.toString().toLowerCase()
-          .replace(/\s+/g, '-')
-          .replace(/[^\w-]+/g, '')
-          .replace(/--+/g, '-')
-          .replace(/^-+/, '')
-          .replace(/-+$/, '')
-      },
-
       noOfVariants () {
         return this.slugifiedVariants.length + (this.value.internalVariantName !== '' ? 1 : 0)
       },
 
       allowDeleteVariant (variantName) {
         return variantName === this.baseVariant || this.allowModifyRegularVariants === false
+      },
+
+      slugify (str) {
+        return slugify(str)
       }
     },
 
@@ -174,7 +170,7 @@
         return 100 / this.value.variantNames.length
       },
       slugifiedVariants () {
-        return _.map(this.value.variantNames, v => this.slugify(v))
+        return _.map(this.value.variantNames, v => slugify(v))
       }
     }
   }
