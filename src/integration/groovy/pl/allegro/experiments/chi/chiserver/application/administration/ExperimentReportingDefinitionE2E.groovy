@@ -99,13 +99,15 @@ class ExperimentReportingDefinitionE2E extends BaseIntegrationSpec {
                                 label   : 'label1',
                                 category: 'category1',
                                 value   : 'value1',
-                                action  : 'action1'
+                                action  : 'action1',
+                                boxName : 'b1'
                         ],
                         [
                                 label   : 'label2',
                                 category: 'category2',
                                 value   : 'value2',
-                                action  : 'action2'
+                                action  : 'action2',
+                                boxName : 'b2'
                         ]
                 ],
                 [
@@ -113,7 +115,8 @@ class ExperimentReportingDefinitionE2E extends BaseIntegrationSpec {
                                 category: 'chiInteraction',
                                 action  : experimentId,
                                 label   : 'v2',
-                                value   : ''
+                                value   : '',
+                                boxName : ''
                         ]
                 ],
                 [],
@@ -126,13 +129,15 @@ class ExperimentReportingDefinitionE2E extends BaseIntegrationSpec {
                                 label   : 'label1',
                                 category: 'category1',
                                 value   : 'value1',
-                                action  : 'action1'
+                                action  : 'action1',
+                                boxName : 'b1'
                         ],
                         [
                                 label   : 'label2',
                                 category: 'category2',
                                 value   : 'value2',
-                                action  : 'action2'
+                                action  : 'action2',
+                                boxName : 'b2'
                         ],
                 ],
                 null,
