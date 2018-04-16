@@ -49,7 +49,7 @@ public class ReportingDefinition {
         if (getType().equals(ReportingType.GTM)) {
             return new ReportingDefinition(
                     experimentDefinition.getVariantNames().stream()
-                            .map(v -> new EventDefinition("chiInteraction", experimentDefinition.getId(), null, v))
+                            .map(v -> new EventDefinition("chiInteraction", experimentDefinition.getId(), null, v, null))
                             .collect(Collectors.toList()),
                     true,
                     false

@@ -27,7 +27,7 @@ public class DbMigrateTool {
        experimentsRepository.getExperiment("test-ulubionej-kategorii-na-stronie-gwnej")
        .flatMap(e -> e.getDefinition())
        .ifPresent(e -> {
-           //if (e.getReportingDefinition().getType() != ReportingType.FRONTEND) {
+           if (e.getReportingDefinition().getType() != ReportingType.FRONTEND) {
                logger.info("updating test-ulubionej-kategorii-na-stronie-gwnej ...");
 
                ReportingDefinition newDef = ReportingDefinition.frontend(
@@ -37,7 +37,7 @@ public class DbMigrateTool {
                experimentsRepository.save(e.updateReportingDefinition(newDef));
 
                logger.info("experiment updated");
-           //}
+           }
        });
     }
 
