@@ -220,6 +220,11 @@ public class ExperimentDefinition {
                 .build();
     }
 
+    public ExperimentDefinition updateReportingDefinition(ReportingDefinition reportingDefinition) {
+        Preconditions.checkArgument(reportingDefinition != null);
+        return mutate().reportingDefinition(reportingDefinition).build();
+    }
+
     public ExperimentDefinition prolong(long experimentAdditionalDays) {
         final ZonedDateTime from = this.activityPeriod.getActiveFrom();
         final ZonedDateTime to = this.activityPeriod.getActiveTo().plusDays(experimentAdditionalDays);

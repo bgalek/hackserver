@@ -51,7 +51,7 @@ public class ReportingDefinition {
             variants.add("base");
             return new ReportingDefinition(
                     variants.stream()
-                            .map(v -> new EventDefinition("chiInteraction", experimentDefinition.getId(), null, v))
+                            .map(v -> new EventDefinition("chiInteraction", experimentDefinition.getId(), null, v, null))
                             .collect(Collectors.toList()),
                     true,
                     false
@@ -72,7 +72,7 @@ public class ReportingDefinition {
         return new ReportingDefinition(Collections.emptyList(), false, true);
     }
 
-    static ReportingDefinition frontend(List<EventDefinition> eventDefinitions) {
+    public static ReportingDefinition frontend(List<EventDefinition> eventDefinitions) {
         return new ReportingDefinition(eventDefinitions, false, false);
     }
 }

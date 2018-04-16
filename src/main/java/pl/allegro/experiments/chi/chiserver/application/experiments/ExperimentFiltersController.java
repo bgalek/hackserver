@@ -8,9 +8,12 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import pl.allegro.tech.common.andamio.metrics.MeteredEndpoint;
 
+import java.util.Collections;
+
 import static org.springframework.http.MediaType.APPLICATION_JSON_UTF8_VALUE;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
+@Deprecated
 @RestController
 @RequestMapping(value = {"/api/admin/experiment-filters"}, produces = {APPLICATION_JSON_VALUE, APPLICATION_JSON_UTF8_VALUE})
 public class ExperimentFiltersController {

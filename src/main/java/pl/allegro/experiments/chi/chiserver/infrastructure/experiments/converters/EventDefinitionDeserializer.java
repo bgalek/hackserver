@@ -12,7 +12,8 @@ public class EventDefinitionDeserializer implements Converter<DBObject, EventDef
                 (String) source.get("category"),
                 (String) source.get("action"),
                 (String) source.get("value"),
-                (String) source.get("label")
+                (String) source.get("label"),
+                (String) source.get("boxName")
         );
     }
 }

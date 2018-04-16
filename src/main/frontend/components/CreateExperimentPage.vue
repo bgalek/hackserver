@@ -52,7 +52,7 @@
 
             <v-container fluid style="margin: 0px; padding: 0px" text-xs-center>
 
-              <v-layout row align-top>
+              <v-layout row align-top v-if="false">
 
                 <v-flex xs1>
                   <v-tooltip right>
@@ -77,9 +77,16 @@
 
                 <v-flex xs1>
                   <v-tooltip right>
-                    <span>If you are going to experiment using Opbox and you want to filter user interactions- use FRONTEND.
-                    If you are going to experiment using GTM- pick GTM. Otherwise pick BACKEND.
-                      You can find detailed info here: https://rtd.allegrogroup.com/docs/chi/pl/latest/reporting/</span>
+                    <span>
+                      If you are going to experiment using Opbox and you want to filter
+                      users' interactions by defining NGA events &mdash;
+                      pick FRONTEND.
+                      <br/>
+                      If you are going to experiment using GTM &mdash; pick GTM.
+                      Otherwise, pick BACKEND.
+                      <br/>
+                      You can find detailed info here: https://rtd.allegrogroup.com/docs/chi/pl/latest/reporting/
+                    </span>
                     <v-icon
                       slot="activator">help_outline</v-icon>
                   </v-tooltip>
@@ -106,7 +113,10 @@
                   </v-tooltip>
                 </v-flex>
                 <v-flex xs11 text-xs-left>
-                  <experiment-event-filters v-on:eventDefinitionsChanged="onEventDefinitionsChanged"></experiment-event-filters>
+                  <experiment-event-filters
+                    v-on:eventDefinitionsChanged="onEventDefinitionsChanged"
+                    :read-only="false">
+                  </experiment-event-filters>
                 </v-flex>
 
               </v-layout>
@@ -186,14 +196,7 @@
 
     methods: {
       onEventDefinitionsChanged (newEventDefinitions) {
-        this.eventDefinitions = newEventDefinitions.map(e => {
-          return {
-            label: e.label,
-            value: e.value,
-            action: e.action,
-            category: e.category
-          }
-        })
+        this.eventDefinitions = JSON.parse(JSON.stringify(newEventDefinitions))
       },
 
       slugify (str) {

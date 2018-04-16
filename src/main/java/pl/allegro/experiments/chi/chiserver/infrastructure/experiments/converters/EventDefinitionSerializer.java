@@ -14,6 +14,7 @@ public class EventDefinitionSerializer implements Converter<EventDefinition, DBO
         result.put("value", source.getValue());
         result.put("action", source.getAction());
         result.put("label", source.getLabel());
+        result.put("boxName", source.getBoxName());
 
         return result;
     }
