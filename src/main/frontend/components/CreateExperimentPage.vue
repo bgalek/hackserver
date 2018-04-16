@@ -196,14 +196,7 @@
 
     methods: {
       onEventDefinitionsChanged (newEventDefinitions) {
-        this.eventDefinitions = newEventDefinitions.map(e => {
-          return {
-            label: e.label,
-            value: e.value,
-            action: e.action,
-            category: e.category
-          }
-        })
+        this.eventDefinitions = JSON.parse(JSON.stringify(newEventDefinitions))
       },
 
       onSubmit () {
