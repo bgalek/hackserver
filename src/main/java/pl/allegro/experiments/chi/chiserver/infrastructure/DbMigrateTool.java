@@ -24,14 +24,20 @@ public class DbMigrateTool {
     public void action() throws Exception {
        logger.info("running DbMigrateTool");
 
-       experimentsRepository.getExperiment("test-ulubionej-kategorii-na-stronie-gwnej")
+       String eName = "structure-navigation-electronics";
+
+       experimentsRepository.getExperiment(eName)
        .flatMap(e -> e.getDefinition())
        .ifPresent(e -> {
            if (e.getReportingDefinition().getType() != ReportingType.FRONTEND) {
-               logger.info("updating test-ulubionej-kategorii-na-stronie-gwnej ...");
+               logger.info("updating " + eName + "...");
 
                ReportingDefinition newDef = ReportingDefinition.frontend(
-                       Arrays.asList(new EventDefinition(null, "boxView", null, null, "reco__carousel"))
+                       Arrays.asList(new EventDefinition(null, "boxView", null, null, "Navigation 2 - above - Kopia od 16.04"),
+                                     new EventDefinition(null, "boxView", null, null, "Navigation 2 - below - Kopia od 16.04"),
+                                     new EventDefinition(null, "boxView", null, null, "Navigation 1 - above - Kopia od 16.04"),
+                                     new EventDefinition(null, "boxView", null, null, "Navigation 1 - below - Kopia od 16.04"),
+                                     new EventDefinition(null, "boxView", null, null, "Showcase Rotator"))
                );
 
                experimentsRepository.save(e.updateReportingDefinition(newDef));
