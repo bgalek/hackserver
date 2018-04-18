@@ -42,7 +42,7 @@ public class ExperimentCreationRequest {
         Preconditions.checkArgument(id != null, "experiment id is null");
         Preconditions.checkArgument(variantNames != null, "experiment variantNames are null");
         Preconditions.checkArgument(percentage != null, "experiment percentage is null");
-        Preconditions.checkArgument(percentage > 0, "experiment percentage <= 0");
+        Preconditions.checkArgument(percentage >= 0, "experiment percentage < 0");
         this.id = id;
         this.variantNames = ImmutableList.copyOf(variantNames);
         this.internalVariantName = internalVariantName;

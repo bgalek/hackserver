@@ -16,7 +16,6 @@ public class FileBasedExperimentsRepositoryRefresher {
     @Scheduled(fixedDelay = REFRESH_RATE_IN_SECONDS * 1_000,
             initialDelay = REFRESH_RATE_IN_SECONDS * 1_000)
     public void refresh() {
-        System.out.println ("loading experiments from File ...");
         experimentsRepository.secureRefresh();
     }
 }
