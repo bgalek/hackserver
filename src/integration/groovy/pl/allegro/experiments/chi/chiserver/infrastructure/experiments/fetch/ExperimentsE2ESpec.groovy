@@ -12,6 +12,7 @@ import pl.allegro.experiments.chi.chiserver.BaseIntegrationSpec
 import pl.allegro.experiments.chi.chiserver.domain.User
 import pl.allegro.experiments.chi.chiserver.domain.UserProvider
 import pl.allegro.experiments.chi.chiserver.domain.experiments.ExperimentsRepository
+import pl.allegro.experiments.chi.chiserver.infrastructure.experiments.ExampleClientExperiments
 import pl.allegro.experiments.chi.chiserver.infrastructure.experiments.ExampleExperiments
 import pl.allegro.experiments.chi.chiserver.infrastructure.experiments.ExperimentsDoubleRepository
 import pl.allegro.experiments.chi.chiserver.infrastructure.experiments.FileBasedExperimentsRepository
@@ -40,28 +41,7 @@ class ExperimentsE2ESpec extends BaseIntegrationSpec implements ExampleExperimen
             throw new RuntimeException("We should test real repository, not the fake one")
         }
         WireMockUtils.teachWireMockJson("/experiments", '/some-experiments.json')
-        WireMockUtils.teachWireMockJson("/invalid-experiments",'/invalid-experiments.json')
-    }
-
-    def "should return list of experiments loaded from the backing HTTP resource"() {
-        given:
-        fileBasedExperimentsRepository.jsonUrl = WireMockUtils.resourceUrl('/experiments', wireMock)
-        fileBasedExperimentsRepository.secureRefresh()
-
-        when:
-        def response = restTemplate.getForEntity(localUrl('/api/experiments'), List)
-
-        then:
-        response.statusCode.value() == 200
-        response.body.size() == 7
-
-        and:
-        response.body.contains(internalExperiment())
-        response.body.contains(plannedExperiment())
-        response.body.contains(cmuidRegexpExperiment())
-        response.body.contains(hashVariantExperiment())
-        response.body.contains(sampleExperiment())
-        response.body.contains(timeboundExperiment())
+        WireMockUtils.teachWireMockJson("/invalid-experiments", '/invalid-experiments.json')
     }
 
     def "should return single of experiment loaded from the backing HTTP resource"() {
@@ -76,20 +56,22 @@ class ExperimentsE2ESpec extends BaseIntegrationSpec implements ExampleExperimen
         then:
         response.statusCode.value() == 200
         response.body == [
-                id               : 'cmuid_regexp',
-                variants         : [[name: 'v1', predicates: [[type: 'CMUID_REGEXP', regexp: '.*[0-3]$']]]],
-                reportingEnabled : true,
-                description      : "Experiment description",
-                author           : "Experiment owner",
-                measurements     : [lastDayVisits: 0],
-                groups           : [],
-                status           : 'DRAFT',
-                editable         : true,
-                origin           : 'stash'
+                id              : 'cmuid_regexp',
+                variants        : [[name: 'v1', predicates: [[type: 'CMUID_REGEXP', regexp: '.*[0-3]$']]]],
+                reportingEnabled: true,
+                description     : "Experiment description",
+                author          : "Experiment owner",
+                measurements    : [lastDayVisits: 0],
+                groups          : [],
+                status          : 'DRAFT',
+                editable        : true,
+                origin          : 'stash',
+                reportingType   : 'BACKEND',
+                eventDefinitions: []
         ]
     }
 
-    def "should return list of overridable experiments in version 2"() {
+    def "should return list of assignable experiments in API v.2 for Cient"() {
         given:
         fileBasedExperimentsRepository.jsonUrl = WireMockUtils.resourceUrl('/experiments', wireMock)
         fileBasedExperimentsRepository.secureRefresh()
@@ -102,13 +84,13 @@ class ExperimentsE2ESpec extends BaseIntegrationSpec implements ExampleExperimen
         response.body.size() == 7
 
         and:
-        response.body.contains(internalExperiment())
-        response.body.contains(plannedExperiment())
-        response.body.contains(cmuidRegexpExperiment())
-        response.body.contains(hashVariantExperiment())
-        response.body.contains(sampleExperiment())
-        response.body.contains(timeboundExperiment())
-        !response.body.contains(experimentFromThePast())
+        response.body.contains(ExampleClientExperiments.internalExperiment())
+        response.body.contains(ExampleClientExperiments.plannedExperiment())
+        response.body.contains(ExampleClientExperiments.cmuidRegexpExperiment())
+        response.body.contains(ExampleClientExperiments.hashVariantExperiment())
+        response.body.contains(ExampleClientExperiments.sampleExperiment())
+        response.body.contains(ExampleClientExperiments.timeboundExperiment())
+        !response.body.contains(ExampleClientExperiments.experimentFromThePast())
     }
 
     def "should return all experiments as measured for admin"() {
@@ -162,15 +144,15 @@ class ExperimentsE2ESpec extends BaseIntegrationSpec implements ExampleExperimen
         userProvider.user = new User('Anonymous', [], true)
 
         def request = [
-                id: "some2",
-                description: "desc",
-                variants: [
+                id              : "some2",
+                description     : "desc",
+                variants        : [
                         [
-                                name: "v1",
-                                predicates: [ [ type: "NOT_SUPPORTED_TYPE" ]]
+                                name      : "v1",
+                                predicates: [[type: "NOT_SUPPORTED_TYPE"]]
                         ]
                 ],
-                groups: [],
+                groups          : [],
                 reportingEnabled: true
         ]
 
@@ -188,14 +170,14 @@ class ExperimentsE2ESpec extends BaseIntegrationSpec implements ExampleExperimen
         userProvider.user = new User('Anonymous', [], true)
 
         def request = [
-                id: "some2",
-                description: "desc",
-                variants: [
+                id              : "some2",
+                description     : "desc",
+                variants        : [
                         [
-                                predicates: [ [ type: "INTERNAL" ]]
+                                predicates: [[type: "INTERNAL"]]
                         ]
                 ],
-                groups: [],
+                groups          : [],
                 reportingEnabled: true
         ]
 
@@ -213,15 +195,15 @@ class ExperimentsE2ESpec extends BaseIntegrationSpec implements ExampleExperimen
         userProvider.user = new User('Anonymous', [], true)
 
         def request = [
-                id: "some2",
-                description: "desc",
-                variants: [
+                id              : "some2",
+                description     : "desc",
+                variants        : [
                         [
-                                name: "v1",
-                                predicates: [ [ type: "HASH" ] ]
+                                name      : "v1",
+                                predicates: [[type: "HASH"]]
                         ]
                 ],
-                groups: [],
+                groups          : [],
                 reportingEnabled: true
         ]
 

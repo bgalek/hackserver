@@ -10,9 +10,13 @@ import java.util.Optional;
 
 public class ExperimentDeserializer implements Converter<DBObject, ExperimentDefinition> {
     private final ActivityPeriodDeserializer activityPeriodDeserializer;
+    private final ReportingDefinitionDeserializer reportingDefinitionDeserializer;
 
-    public ExperimentDeserializer(ActivityPeriodDeserializer activityPeriodDeserializer) {
+    public ExperimentDeserializer(
+            ActivityPeriodDeserializer activityPeriodDeserializer,
+            ReportingDefinitionDeserializer reportingDefinitionDeserializer) {
         this.activityPeriodDeserializer = activityPeriodDeserializer;
+        this.reportingDefinitionDeserializer = reportingDefinitionDeserializer;
     }
 
     @Override
@@ -33,7 +37,7 @@ public class ExperimentDeserializer implements Converter<DBObject, ExperimentDef
         Object rawExplicitStatus = bson.get("explicitStatus");
         ExperimentStatus explicitStatus = rawExplicitStatus != null ? ExperimentStatus.valueOf((String) rawExplicitStatus) : null;
 
-        return ExperimentDefinition.builder()
+        ExperimentDefinition.Builder result = ExperimentDefinition.builder()
                 .id(id)
                 .variantNames(variantNames)
                 .internalVariantName(internalVariantName)
@@ -45,7 +49,10 @@ public class ExperimentDeserializer implements Converter<DBObject, ExperimentDef
                 .groups(groups)
                 .reportingEnabled(reportingEnabled)
                 .activityPeriod(activityPeriod)
-                .explicitStatus(explicitStatus)
-                .build();
+                .explicitStatus(explicitStatus);
+        if (bson.get("reportingDefinition") != null) {
+            result.reportingDefinition(reportingDefinitionDeserializer.convert((DBObject) bson.get("reportingDefinition")));
+        }
+        return result.build();
     }
 }

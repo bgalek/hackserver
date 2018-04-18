@@ -33,6 +33,8 @@ public class ExperimentDefinition {
     private final ExperimentStatus explicitStatus;
     private final ExperimentStatus status;
 
+    private final ReportingDefinition reportingDefinition;
+
     private ExperimentDefinition(
             String id,
             List<String> variantNames,
@@ -46,9 +48,11 @@ public class ExperimentDefinition {
             boolean reportingEnabled,
             ActivityPeriod activityPeriod,
             Boolean editable,
-            ExperimentStatus explicitStatus) {
+            ExperimentStatus explicitStatus,
+            ReportingDefinition reportingDefinition) {
         Preconditions.checkArgument(!Strings.isNullOrEmpty(id));
         Preconditions.checkNotNull(variantNames);
+        Preconditions.checkNotNull(reportingDefinition);
         Preconditions.checkNotNull(groups);
         Preconditions.checkArgument(internalVariantName == null || !internalVariantName.isEmpty());
         Preconditions.checkArgument(deviceClass == null || !deviceClass.isEmpty());
@@ -66,6 +70,7 @@ public class ExperimentDefinition {
         this.editable = editable;
         this.explicitStatus = explicitStatus;
         this.status = ExperimentStatus.of(explicitStatus, activityPeriod);
+        this.reportingDefinition = reportingDefinition;
     }
 
     @Id
@@ -77,6 +82,15 @@ public class ExperimentDefinition {
     @DiffInclude
     public List<String> getVariantNames() {
         return variantNames;
+    }
+
+    @DiffInclude
+    public ReportingDefinition getReportingDefinition() {
+        return reportingDefinition.withImplicitEventDefinitionsIfGtm(this);
+    }
+
+    public ReportingDefinition getReportingDefinitionToSave() {
+        return reportingDefinition;
     }
 
     @DiffInclude
@@ -206,6 +220,11 @@ public class ExperimentDefinition {
                 .build();
     }
 
+    public ExperimentDefinition updateReportingDefinition(ReportingDefinition reportingDefinition) {
+        Preconditions.checkArgument(reportingDefinition != null);
+        return mutate().reportingDefinition(reportingDefinition).build();
+    }
+
     public ExperimentDefinition prolong(long experimentAdditionalDays) {
         final ZonedDateTime from = this.activityPeriod.getActiveFrom();
         final ZonedDateTime to = this.activityPeriod.getActiveTo().plusDays(experimentAdditionalDays);
@@ -298,6 +317,7 @@ public class ExperimentDefinition {
                     .reportingEnabled(other.reportingEnabled)
                     .activityPeriod(other.activityPeriod)
                     .editable(other.editable)
+                    .reportingDefinition(other.reportingDefinition)
                     .explicitStatus(other.explicitStatus);
         }
 
@@ -315,6 +335,7 @@ public class ExperimentDefinition {
         private Boolean editable;
         private String origin;
         private ExperimentStatus explicitStatus;
+        private ReportingDefinition reportingDefinition = ReportingDefinition.createDefault();
 
         public Builder id(String id) {
             this.id = id;
@@ -323,6 +344,11 @@ public class ExperimentDefinition {
 
         public Builder variantNames(List<String> variantNames) {
             this.variantNames = variantNames;
+            return this;
+        }
+
+        public Builder reportingDefinition(ReportingDefinition reportingDefinition) {
+            this.reportingDefinition = reportingDefinition;
             return this;
         }
 
@@ -400,7 +426,8 @@ public class ExperimentDefinition {
                     reportingEnabled,
                     activityPeriod,
                     editable,
-                    explicitStatus);
+                    explicitStatus,
+                    reportingDefinition);
         }
     }
 

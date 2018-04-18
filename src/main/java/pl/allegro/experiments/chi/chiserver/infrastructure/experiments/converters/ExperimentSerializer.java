@@ -13,9 +13,13 @@ import java.util.stream.Collectors;
 
 public class ExperimentSerializer implements Converter<ExperimentDefinition, DBObject> {
     private final DateTimeSerializer dateTimeSerializer;
+    private final ReportingDefinitionSerializer reportingDefinitionSerializer;
 
-    public ExperimentSerializer(DateTimeSerializer dateTimeSerializer) {
+    public ExperimentSerializer(
+            DateTimeSerializer dateTimeSerializer,
+            ReportingDefinitionSerializer reportingDefinitionSerializer) {
         this.dateTimeSerializer = dateTimeSerializer;
+        this.reportingDefinitionSerializer = reportingDefinitionSerializer;
     }
 
     @Override
@@ -47,6 +51,7 @@ public class ExperimentSerializer implements Converter<ExperimentDefinition, DBO
         }
         ExperimentStatus experimentStatus = source.getStatus().explicitOrNull();
         result.put("explicitStatus", experimentStatus != null ? experimentStatus.toString() : null);
+        result.put("reportingDefinition", reportingDefinitionSerializer.convert(source.getReportingDefinitionToSave()));
         return result;
     }
 }

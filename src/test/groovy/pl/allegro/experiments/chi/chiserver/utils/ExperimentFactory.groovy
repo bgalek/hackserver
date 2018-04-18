@@ -1,6 +1,7 @@
 package pl.allegro.experiments.chi.chiserver.utils
 
 import groovy.transform.CompileStatic
+import pl.allegro.experiments.chi.chiserver.application.experiments.v1.ExperimentVariantTypeAdapter
 import pl.allegro.experiments.chi.chiserver.domain.experiments.CmuidRegexpPredicate
 import pl.allegro.experiments.chi.chiserver.domain.experiments.Experiment
 import pl.allegro.experiments.chi.chiserver.domain.experiments.ExperimentDefinition
@@ -8,8 +9,10 @@ import pl.allegro.experiments.chi.chiserver.domain.experiments.ExperimentVariant
 import pl.allegro.experiments.chi.chiserver.domain.experiments.HashRangePredicate
 import pl.allegro.experiments.chi.chiserver.domain.experiments.PercentageRange
 import pl.allegro.experiments.chi.chiserver.domain.experiments.Predicate
+import pl.allegro.experiments.chi.chiserver.domain.experiments.ReportingDefinition
 
 import java.util.regex.Pattern
+import java.util.stream.Collectors
 
 @CompileStatic
 class ExperimentFactory {
@@ -34,11 +37,24 @@ class ExperimentFactory {
         return experimentWithVariants(id, variants)
     }
 
-    static Experiment experimentWithId(String id) {
-        List<ExperimentVariant> variants = [
+    static ExperimentDefinition backendReportingDefinition(String id) {
+        ExperimentDefinition.builder()
+            .id(id)
+            .variantNames(variants().collect{it -> it.getName()})
+            .groups([])
+            .reportingDefinition(ReportingDefinition.createDefault())
+            .build()
+    }
+
+    static List<ExperimentVariant> variants() {
+        [
                 new ExperimentVariant("base", []),
-                new ExperimentVariant("v2", []),
+                new ExperimentVariant("v2", [])
         ]
+    }
+
+    static Experiment experimentWithId(String id) {
+        List<ExperimentVariant> variants = variants()
         return experimentWithVariants(id, variants)
     }
 

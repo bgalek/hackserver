@@ -22,6 +22,7 @@ public class Experiment {
     private final String origin;
     private final ExperimentStatus explicitStatus;
     private final ExperimentStatus status;
+
     private final ExperimentDefinition definition;
 
     private Experiment(
@@ -64,6 +65,17 @@ public class Experiment {
 
     public List<ExperimentVariant> getVariants() {
         return variants;
+    }
+
+    public ReportingDefinition getReportingDefinition() {
+        // TODO refactor
+        return getDefinition()
+                .map(ExperimentDefinition::getReportingDefinition)
+                .orElse(ReportingDefinition.createDefault()); // stash experiment or mongo experiment without reporting type
+    }
+
+    public boolean shouldSaveInteractions() {
+        return getReportingEnabled() && getReportingDefinition().isBackendInteractionsEnabled();
     }
 
     public String getDescription() {

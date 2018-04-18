@@ -8,7 +8,9 @@ import pl.allegro.experiments.chi.chiserver.domain.experiments.*;
 
 import javax.validation.constraints.NotNull;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 
 public class ExperimentCreationRequest {
     @NotNull
@@ -22,6 +24,7 @@ public class ExperimentCreationRequest {
     private final String documentLink;
     private final List<String> groups;
     private final boolean reportingEnabled;
+    private final ReportingDefinition reportingDefinition;
 
     @JsonCreator
     public ExperimentCreationRequest(
@@ -33,7 +36,9 @@ public class ExperimentCreationRequest {
             @JsonProperty("description") String description,
             @JsonProperty("documentLink") String documentLink,
             @JsonProperty("groups") List<String> groups,
-            @JsonProperty("reportingEnabled") Boolean reportingEnabled) {
+            @JsonProperty("reportingEnabled") Boolean reportingEnabled,
+            @JsonProperty("eventDefinitions") List<EventDefinition> eventDefinitions,
+            @JsonProperty("reportingType") ReportingType reportingType) {
         Preconditions.checkNotNull(id);
         Preconditions.checkNotNull(variantNames);
         this.id = id;
@@ -53,6 +58,10 @@ public class ExperimentCreationRequest {
         } else {
             this.reportingEnabled = reportingEnabled;
         }
+        this.reportingDefinition = Optional.ofNullable(reportingType)
+                .map(rt -> rt.reportingDefinition(eventDefinitions))
+                .orElse(ReportingDefinition.createDefault());
+
     }
 
     public String getId() {
@@ -79,7 +88,6 @@ public class ExperimentCreationRequest {
         return reportingEnabled;
     }
 
-
     public ExperimentDefinition toExperimentDefinition(String author) {
         Preconditions.checkNotNull(author);
         try {
@@ -94,6 +102,7 @@ public class ExperimentCreationRequest {
                     .author(author)
                     .groups(this.groups)
                     .reportingEnabled(this.reportingEnabled)
+                    .reportingDefinition(this.reportingDefinition)
                     .build();
 
         } catch (Exception e) {

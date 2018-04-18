@@ -22,7 +22,9 @@ const ExperimentRecord = Record({
   }),
   editable: false,
   origin: '',
-  definition: null
+  definition: null,
+  reportingType: null,
+  eventDefinitions: []
 })
 
 export default class ExperimentModel extends ExperimentRecord {
@@ -34,6 +36,7 @@ export default class ExperimentModel extends ExperimentRecord {
     experimentObject.isMeasured = experimentObject.hasBase && experimentObject.reportingEnabled
     experimentObject.groups = List(experimentObject.groups)
     experimentObject.definition = experimentObject.definition && new ExperimentDefinitionModel(experimentObject.definition)
+    experimentObject.eventDefinitions = List(experimentObject.eventDefinitions)
     super(experimentObject)
   }
 
@@ -94,5 +97,9 @@ export default class ExperimentModel extends ExperimentRecord {
     if (this.getBaseVariant()) {
       return this.getBaseVariant().deviceClass
     }
+  }
+
+  eventDefinitionsAvailable () {
+    return this.reportingType === 'FRONTEND'
   }
 };

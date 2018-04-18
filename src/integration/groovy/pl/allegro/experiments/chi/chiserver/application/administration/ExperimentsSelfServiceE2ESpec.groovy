@@ -38,14 +38,14 @@ class ExperimentsSelfServiceE2ESpec extends BaseIntegrationSpec {
         given:
         userProvider.user = new User('Author', [], true)
         def request = [
-                id                  : UUID.randomUUID().toString(),
-                description         : "desc",
-                variantNames        : [],
-                internalVariantName : 'v1',
-                percentage          : null,
-                deviceClass         : null,
-                groups              : ['group a', 'group b'],
-                reportingEnabled    : true
+                id                 : UUID.randomUUID().toString(),
+                description        : "desc",
+                variantNames       : [],
+                internalVariantName: 'v1',
+                percentage         : null,
+                deviceClass        : null,
+                groups             : ['group a', 'group b'],
+                reportingEnabled   : true
         ]
         restTemplate.postForEntity(localUrl('/api/admin/experiments'), request, Map)
         userProvider.user = user
@@ -80,15 +80,15 @@ class ExperimentsSelfServiceE2ESpec extends BaseIntegrationSpec {
         userProvider.user = new User('Anonymous', [], true)
 
         def request = [
-                id                      : 'some2',
-                description             : 'desc',
-                documentLink            : 'https://vuetifyjs.com/vuetify/quick-start',
-                variantNames            : ['v2', 'v3'],
-                internalVariantName     : 'v1',
-                percentage              : 10,
-                deviceClass             : 'phone',
-                groups                  : ['group a', 'group b'],
-                reportingEnabled        : true
+                id                 : 'some2',
+                description        : 'desc',
+                documentLink       : 'https://vuetifyjs.com/vuetify/quick-start',
+                variantNames       : ['v2', 'v3'],
+                internalVariantName: 'v1',
+                percentage         : 10,
+                deviceClass        : 'phone',
+                groups             : ['group a', 'group b'],
+                reportingEnabled   : true
         ]
 
         when:
@@ -106,39 +106,41 @@ class ExperimentsSelfServiceE2ESpec extends BaseIntegrationSpec {
                 id              : 'some2',
                 author          : 'Anonymous',
                 status          : 'DRAFT',
-                measurements    : [ lastDayVisits: 0 ],
+                measurements    : [lastDayVisits: 0],
                 editable        : true,
                 groups          : ['group a', 'group b'],
                 origin          : 'mongo',
                 description     : 'desc',
                 documentLink    : 'https://vuetifyjs.com/vuetify/quick-start',
                 reportingEnabled: true,
+                reportingType   : 'BACKEND',
+                eventDefinitions: [],
                 variants        : [
-                    [
-                            name: 'v1',
-                            predicates: [[ type: 'INTERNAL' ]]
-                    ],
-                    [
-                            name: 'v2',
-                            predicates: [[ type: 'HASH', from: 0, to: 10 ], [type: 'DEVICE_CLASS', device: 'phone']]
-                    ],
-                    [
-                            name: 'v3',
-                            predicates: [[ type: 'HASH', from: 50, to: 60 ], [type: 'DEVICE_CLASS', device: 'phone']]
-                    ]
+                        [
+                                name      : 'v1',
+                                predicates: [[type: 'INTERNAL']]
+                        ],
+                        [
+                                name      : 'v2',
+                                predicates: [[type: 'HASH', from: 0, to: 10], [type: 'DEVICE_CLASS', device: 'phone']]
+                        ],
+                        [
+                                name      : 'v3',
+                                predicates: [[type: 'HASH', from: 50, to: 60], [type: 'DEVICE_CLASS', device: 'phone']]
+                        ]
                 ],
-                definition: [
-                    id              : 'some2',
-                    author          : 'Anonymous',
-                    status          : 'DRAFT',
-                    groups          : ['group a', 'group b'],
-                    description     : 'desc',
-                    documentLink    : 'https://vuetifyjs.com/vuetify/quick-start',
-                    reportingEnabled: true,
-                    variantNames:['v2', 'v3'],
-                    internalVariantName: 'v1',
-                    deviceClass: 'phone',
-                    percentage: 10
+                definition      : [
+                        id                 : 'some2',
+                        author             : 'Anonymous',
+                        status             : 'DRAFT',
+                        groups             : ['group a', 'group b'],
+                        description        : 'desc',
+                        documentLink       : 'https://vuetifyjs.com/vuetify/quick-start',
+                        reportingEnabled   : true,
+                        variantNames       : ['v2', 'v3'],
+                        internalVariantName: 'v1',
+                        deviceClass        : 'phone',
+                        percentage         : 10
                 ]
         ]
         responseSingle.body.definition == expectedExperiment.definition
@@ -158,11 +160,11 @@ class ExperimentsSelfServiceE2ESpec extends BaseIntegrationSpec {
 
         when:
         restTemplate.put(localUrl("/api/admin/experiments/${request.id}/update-descriptions"),
-            [
-                    description: 'chi rulez',
-                    documentLink: 'new link',
-                    groups: ['group c'],
-            ], Map)
+                [
+                        description : 'chi rulez',
+                        documentLink: 'new link',
+                        groups      : ['group c'],
+                ], Map)
 
         then:
         def e = fetchExperiment(request.id).body
@@ -172,12 +174,12 @@ class ExperimentsSelfServiceE2ESpec extends BaseIntegrationSpec {
 
         when:
         restTemplate.put(localUrl("/api/admin/experiments/${request.id}/update-variants"),
-            [
-                    percentage: 18,
-                    variantNames: ['a', 'b', 'c'],
-                    internalVariantName: 'internV',
-                    deviceClass: 'phone'
-            ], Map)
+                [
+                        percentage         : 18,
+                        variantNames       : ['a', 'b', 'c'],
+                        internalVariantName: 'internV',
+                        deviceClass        : 'phone'
+                ], Map)
 
         then:
         def definition = fetchExperiment(request.id).body.definition

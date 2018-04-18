@@ -2,6 +2,7 @@ package pl.allegro.experiments.chi.chiserver.infrastructure.experiments.converte
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import pl.allegro.experiments.chi.chiserver.domain.experiments.ReportingDefinition;
 
 @Configuration
 public class ConvertersConfig {
@@ -41,13 +42,36 @@ public class ConvertersConfig {
     }
 
     @Bean
-    ExperimentSerializer experimentSerializer(DateTimeSerializer dateTimeSerializer) {
-        return new ExperimentSerializer(dateTimeSerializer);
+    ExperimentSerializer experimentSerializer(
+            DateTimeSerializer dateTimeSerializer,
+            ReportingDefinitionSerializer reportingDefinitionSerializer) {
+        return new ExperimentSerializer(dateTimeSerializer, reportingDefinitionSerializer);
     }
 
     @Bean
     ExperimentDeserializer experimentDeserializer(
-            ActivityPeriodDeserializer activityPeriodDeserializer) {
-        return new ExperimentDeserializer(activityPeriodDeserializer);
+            ActivityPeriodDeserializer activityPeriodDeserializer,
+            ReportingDefinitionDeserializer reportingDefinitionDeserializer) {
+        return new ExperimentDeserializer(activityPeriodDeserializer, reportingDefinitionDeserializer);
+    }
+
+    @Bean
+    EventDefinitionDeserializer eventDefinitionDeserializer() {
+        return new EventDefinitionDeserializer();
+    }
+
+    @Bean
+    EventDefinitionSerializer eventDefinitionSerializer() {
+        return new EventDefinitionSerializer();
+    }
+
+    @Bean
+    ReportingDefinitionSerializer reportingDefinitionSerializer(EventDefinitionSerializer eventDefinitionSerializer) {
+        return new ReportingDefinitionSerializer(eventDefinitionSerializer);
+    }
+
+    @Bean
+    ReportingDefinitionDeserializer reportingDefinitionDeserializer(EventDefinitionDeserializer eventDefinitionDeserializer) {
+        return new ReportingDefinitionDeserializer(eventDefinitionDeserializer);
     }
 }

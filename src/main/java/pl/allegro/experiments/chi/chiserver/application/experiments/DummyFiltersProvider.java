@@ -8,16 +8,12 @@ import static org.javers.common.collections.Lists.asList;
 /**
  * TODO this is a POC
  */
+@Deprecated
 class DummyFiltersProvider {
 
     List<ExperimentFilterDefinition> provide() {
         return asList(
-            new ExperimentFilterDefinition("test-dev", "", "boxView", "zażółć gęślą jaźń", ""),
-            new ExperimentFilterDefinition("test-ulubionej-kategorii-na-stronie-gwnej", "", "boxView", "reco__carousel", ""),
-            new ExperimentFilterDefinition("everything-up-to-10", "", "boxView", "Nowe USP B images desktop xlarge", "allegro.image.tiles"),
-            new ExperimentFilterDefinition("everything-up-to-10", "", "boxView", "Nowe USP B images desktop small", "allegro.image.tiles"),
-            new ExperimentFilterDefinition("everything-up-to-10", "", "boxView", "Nowe USP B images desktop medium", "allegro.image.tiles"),
-            new ExperimentFilterDefinition("everything-up-to-10", "", "boxView", "Nowe USP B images desktop large", "allegro.image.tiles")
+            new ExperimentFilterDefinition("test-ulubionej-kategorii-na-stronie-gwnej", "", "boxView", "reco__carousel", "")
             );
     }
 

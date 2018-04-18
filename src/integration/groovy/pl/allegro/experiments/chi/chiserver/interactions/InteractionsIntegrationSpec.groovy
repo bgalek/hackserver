@@ -10,7 +10,11 @@ import org.springframework.test.context.ContextConfiguration
 import org.springframework.web.client.HttpClientErrorException
 import org.springframework.web.client.RestTemplate
 import pl.allegro.experiments.chi.chiserver.BaseIntegrationSpec
+import pl.allegro.experiments.chi.chiserver.domain.User
+import pl.allegro.experiments.chi.chiserver.domain.UserProvider
+import pl.allegro.experiments.chi.chiserver.domain.experiments.ExperimentsRepository
 import pl.allegro.experiments.chi.chiserver.domain.interactions.InteractionConverter
+import pl.allegro.experiments.chi.chiserver.infrastructure.experiments.ExperimentsDoubleRepository
 import pl.allegro.experiments.chi.chiserver.infrastructure.interactions.InMemoryInteractionRepository
 import spock.lang.Unroll
 
@@ -26,7 +30,13 @@ class InteractionsIntegrationSpec extends BaseIntegrationSpec {
     @Autowired
     InteractionConverter interactionConverter
 
+    @Autowired
+    UserProvider userProvider
+
     RestTemplate restTemplate = new RestTemplate()
+
+    @Autowired
+    ExperimentsRepository experimentsRepository
 
     def "should save interactions"() {
         given:
@@ -125,13 +135,66 @@ class InteractionsIntegrationSpec extends BaseIntegrationSpec {
 
     }
 
-    HttpHeaders headers() {
-        HttpHeaders headers = new HttpHeaders()
-        headers.setContentType(MediaType.APPLICATION_JSON_UTF8)
-        headers
-    }
+    @Unroll
+    def "should save interactions depending on reporting type"() {
+        given:
+        userProvider.user = new User('Anonymous', [], true)
 
-    HttpEntity httpJsonEntity(String jsonBody) {
-        new HttpEntity<String>(jsonBody, headers())
+        def request = [
+                id              : experimentId,
+                variantNames    : ['v2'],
+                percentage      : 10,
+                reportingType   : reportingType,
+                eventDefinitions: eventDefinitions,
+                reportingEnabled: true
+        ]
+
+        and:
+        restTemplate.postForEntity(localUrl('/api/admin/experiments'), request, Map)
+
+        and:
+        String interactionsJson = JsonOutput.toJson([
+                [
+                        "userId"         : "someUserId123",
+                        "userCmId"       : "someUserCmId123",
+                        "experimentId"   : experimentId,
+                        "variantName"    : "v2",
+                        "internal"       : false,
+                        "deviceClass"    : "iphone",
+                        "interactionDate": "1970-01-01T00:00:00Z",
+                        "appId"          : "a"
+                ]
+        ])
+
+        when:
+        restTemplate.exchange(localUrl('/api/interactions/v1/'),
+                HttpMethod.POST, httpJsonEntity(interactionsJson), Void.class)
+
+        then:
+        def interactions = interactionConverter.fromJson(interactionsJson)
+        inMemoryInteractionRepository.interactionSaved(interactions[0]) == shouldReport
+
+        where:
+        experimentId << ['e1', 'e2', 'e3']
+        reportingType << ['FRONTEND', 'GTM', 'BACKEND']
+        shouldReport << [false, false, true]
+        eventDefinitions << [
+                [
+                        [
+                                label   : 'label1',
+                                category: 'category1',
+                                value   : 'value1',
+                                action  : 'action1'
+                        ],
+                        [
+                                label   : 'label2',
+                                category: 'category2',
+                                value   : 'value2',
+                                action  : 'action2'
+                        ],
+                ],
+                null,
+                null
+        ]
     }
 }

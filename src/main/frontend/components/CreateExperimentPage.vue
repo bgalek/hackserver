@@ -52,7 +52,7 @@
 
             <v-container fluid style="margin: 0px; padding: 0px" text-xs-center>
 
-              <v-layout row align-top>
+              <v-layout row align-top v-if="false">
 
                 <v-flex xs1>
                   <v-tooltip right>
@@ -72,6 +72,56 @@
 
             <experiment-variants-editing :allowModifyRegularVariants="true" v-model="variants" />
 
+            <v-container fluid style="margin: 0px; padding: 0px" text-xs-center>
+              <v-layout row align-top>
+
+                <v-flex xs1>
+                  <v-tooltip right>
+                    <span>
+                      If you are going to experiment using Opbox and you want to filter
+                      users' interactions by defining NGA events &mdash;
+                      pick FRONTEND.
+                      <br/>
+                      If you are going to experiment using GTM &mdash; pick GTM.
+                      Otherwise, pick BACKEND.
+                      <br/>
+                      You can find detailed info here: https://rtd.allegrogroup.com/docs/chi/pl/latest/reporting/
+                    </span>
+                    <v-icon
+                      slot="activator">help_outline</v-icon>
+                  </v-tooltip>
+                </v-flex>
+                <v-flex xs11>
+                  <v-select
+                    :items="availableReportingTypes"
+                    v-model="reportingType"
+                    label="Reporting type"
+                  ></v-select>
+                </v-flex>
+
+              </v-layout>
+            </v-container>
+
+            <v-container fluid style="margin: 0px; padding: 0px" text-xs-center v-if="reportingType === 'FRONTEND'">
+              <v-layout row align-top>
+
+                <v-flex xs1>
+                  <v-tooltip right>
+                    <span>Chi will use specified NGA events to filter user interactions. You can find detailed info here: https://rtd.allegrogroup.com/docs/chi/pl/latest/reporting/</span>
+                    <v-icon
+                      slot="activator">help_outline</v-icon>
+                  </v-tooltip>
+                </v-flex>
+                <v-flex xs11 text-xs-left>
+                  <experiment-event-filters
+                    v-on:eventDefinitionsChanged="onEventDefinitionsChanged"
+                    :read-only="false">
+                  </experiment-event-filters>
+                </v-flex>
+
+              </v-layout>
+            </v-container>
+
             <v-btn @click="onSubmit" color="success">create</v-btn>
           </v-form>
         </chi-panel>
@@ -86,6 +136,7 @@
   import { mapActions } from 'vuex'
   import ExperimentDescEditing from './experiment/ExperimentDescEditing'
   import ExperimentVariantsEditing from './experiment/ExperimentVariantsEditing'
+  import ExperimentEventFilters from './experiment/ExperimentEventFilters'
 
   import _ from 'lodash'
 
@@ -111,7 +162,10 @@
         sendingDataToServer: false,
         errors: [],
         descriptions: {},
-        variants: {}
+        variants: {},
+        reportingType: 'BACKEND',
+        availableReportingTypes: ['BACKEND', 'FRONTEND', 'GTM'],
+        eventDefinitions: []
       }
     },
 
@@ -136,10 +190,15 @@
     components: {
       ChiPanel,
       ExperimentDescEditing,
-      ExperimentVariantsEditing
+      ExperimentVariantsEditing,
+      ExperimentEventFilters
     },
 
     methods: {
+      onEventDefinitionsChanged (newEventDefinitions) {
+        this.eventDefinitions = JSON.parse(JSON.stringify(newEventDefinitions))
+      },
+
       slugify (str) {
         return str.toString().toLowerCase()
           .replace(/\s+/g, '-')
@@ -204,7 +263,9 @@
           variantNames: this.slugifiedVariants,
           internalVariantName: this.variants.internalVariantName !== '' ? this.variants.internalVariantName : null,
           deviceClass: this.variants.deviceClass !== 'all' ? this.variants.deviceClass : null,
-          percentage: this.variants.percentage
+          percentage: this.variants.percentage,
+          reportingType: this.reportingType,
+          eventDefinitions: this.eventDefinitions
         }
       },
 

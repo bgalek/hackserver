@@ -19,6 +19,6 @@ class InteractionsIntegrationTestConfig {
     @Primary
     @Bean
     InMemoryExperimentsRepository experimentsRepository() {
-        return SampleInMemoryExperimentsRepository.createSampleRepository();
+        return SampleInMemoryExperimentsRepository.createSampleRepository()
     }
 }
