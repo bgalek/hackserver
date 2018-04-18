@@ -4,7 +4,7 @@
         Add event
       </v-btn>
       <v-dialog v-model="editing" max-width="500px">
-        <v-form v-model="eventDefinitionValid">
+        <v-form v-model="eventDefinitionValid" ref="eventDefinitionForm">
         <v-card>
           <v-card-title>
             <span class="headline">Event definition</span>
@@ -14,20 +14,28 @@
               <v-layout wrap>
                 <v-flex xs12 sm6 md4>
                   <v-text-field label="boxName" v-model="editedItem.boxName"
-                                :rules="filterRules">
-                  </v-text-field>
+                                :rules="filterRules"
+                  ></v-text-field>
                 </v-flex>
                 <v-flex xs12 sm6 md4>
-                  <v-text-field label="category" v-model="editedItem.category"></v-text-field>
+                  <v-text-field label="category" v-model="editedItem.category"
+                                :rules="filterRules"
+                  ></v-text-field>
                 </v-flex>
                 <v-flex xs12 sm6 md4>
-                  <v-text-field label="label" v-model="editedItem.label"></v-text-field>
+                  <v-text-field label="label" v-model="editedItem.label"
+                                :rules="filterRules"
+                  ></v-text-field>
                 </v-flex>
                 <v-flex xs12 sm6 md4>
-                  <v-text-field label="action" v-model="editedItem.action"></v-text-field>
+                  <v-text-field label="action" v-model="editedItem.action"
+                                :rules="filterRules"
+                  ></v-text-field>
                 </v-flex>
                 <v-flex xs12 sm6 md4>
-                  <v-text-field label="value" v-model="editedItem.value"></v-text-field>
+                  <v-text-field label="value" v-model="editedItem.value"
+                                :rules="filterRules"
+                  ></v-text-field>
                 </v-flex>
               </v-layout>
             </v-container>
@@ -152,13 +160,15 @@
       },
 
       saveEditing () {
-        if (this.editedIndex > -1) {
-          Object.assign(this.items[this.editedIndex], this.editedItem)
-        } else {
-          this.items.push(this.editedItem)
+        if (this.$refs.eventDefinitionForm.validate()) {
+          if (this.editedIndex > -1) {
+            Object.assign(this.items[this.editedIndex], this.editedItem)
+          } else {
+            this.items.push(this.editedItem)
+          }
+          this.close()
+          this.$emit('eventDefinitionsChanged', this.items)
         }
-        this.close()
-        this.$emit('eventDefinitionsChanged', this.items)
       }
     }
   }

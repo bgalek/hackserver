@@ -74,12 +74,12 @@
         <v-flex xs11>
           <v-text-field
             v-model="value.internalVariantName"
+            :rules="internalVariantNameRules"
             label="Internal variant"
           ></v-text-field>
         </v-flex>
 
       </v-layout>
-
 
     </v-container>
 
@@ -88,6 +88,8 @@
 
 <script>
   import _ from 'lodash'
+  import { slugify } from '../../utils/slugify'
+  import { startsOrEndsWithSpace } from '../../utils/startsOrEndsWithSpace'
 
   export default {
     props: {
@@ -111,6 +113,9 @@
           (v) => this.variantsUnique() || 'Slugified variant names must be unique.',
           (v) => this.slugifiedVariants.indexOf('') === -1 || 'Slugified variant name can not be empty.',
           (v) => this.noOfVariants() > 1 || 'No variants. Seriously?'
+        ],
+        internalVariantNameRules: [
+          (v) => !startsOrEndsWithSpace(v) || 'Do not start nor end variant name with space'
         ]
       }
     },
@@ -151,21 +156,16 @@
         this[arrayName] = [...this[arrayName]]
       },
 
-      slugify (str) {
-        return str.toString().toLowerCase()
-          .replace(/\s+/g, '-')
-          .replace(/[^\w-]+/g, '')
-          .replace(/--+/g, '-')
-          .replace(/^-+/, '')
-          .replace(/-+$/, '')
-      },
-
       noOfVariants () {
         return this.slugifiedVariants.length + (this.value.internalVariantName !== '' ? 1 : 0)
       },
 
       allowDeleteVariant (variantName) {
         return variantName === this.baseVariant || this.allowModifyRegularVariants === false
+      },
+
+      slugify (str) {
+        return slugify(str)
       }
     },
 
@@ -174,7 +174,7 @@
         return 100 / this.value.variantNames.length
       },
       slugifiedVariants () {
-        return _.map(this.value.variantNames, v => this.slugify(v))
+        return _.map(this.value.variantNames, v => slugify(v))
       }
     }
   }
