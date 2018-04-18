@@ -6,14 +6,14 @@ import pl.allegro.experiments.chi.chiserver.domain.experiments.ExperimentDefinit
 import pl.allegro.experiments.chi.chiserver.domain.experiments.ExperimentsRepository;
 
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
 public class InMemoryExperimentsRepository implements ExperimentsRepository {
-    private final Map<String, Experiment> experiments;
+    private final Map<String, Experiment> experiments = new ConcurrentHashMap<>();
 
     public InMemoryExperimentsRepository(Collection<Experiment> experiments) {
-        this.experiments = experiments.stream()
-                .collect(Collectors.toMap(Experiment::getId, e -> e));
+        experiments.forEach(e -> this.experiments.put(e.getId(),e));
     }
 
     @Override

@@ -165,46 +165,19 @@ class ExperimentsE2ESpec extends BaseIntegrationSpec implements ExampleExperimen
         ex.statusCode.value() == 400
     }
 
-    def "should return BAD_REQUEST when predicate has no name"() {
+    def "should return BAD_REQUEST when no percentage"() {
         given:
         userProvider.user = new User('Anonymous', [], true)
 
         def request = [
-                id              : "some2",
-                description     : "desc",
-                variants        : [
-                        [
-                                predicates: [[type: "INTERNAL"]]
-                        ]
-                ],
-                groups          : [],
-                reportingEnabled: true
-        ]
-
-        when:
-        HttpEntity<Map> entity = new HttpEntity<Map>(request)
-        restTemplate.exchange(localUrl('/api/admin/experiments'), HttpMethod.POST, entity, String)
-
-        then:
-        def ex = thrown(HttpClientErrorException)
-        ex.statusCode.value() == 400
-    }
-
-    def "should return BAD_REQUEST when predicate has no required properties"() {
-        given:
-        userProvider.user = new User('Anonymous', [], true)
-
-        def request = [
-                id              : "some2",
-                description     : "desc",
-                variants        : [
-                        [
-                                name      : "v1",
-                                predicates: [[type: "HASH"]]
-                        ]
-                ],
-                groups          : [],
-                reportingEnabled: true
+                id                 : UUID.randomUUID().toString(),
+                description        : "desc",
+                variantNames       : [],
+                internalVariantName: 'v1',
+                percentage         : null,
+                deviceClass        : null,
+                groups             : ['group a', 'group b'],
+                reportingEnabled   : true
         ]
 
         when:

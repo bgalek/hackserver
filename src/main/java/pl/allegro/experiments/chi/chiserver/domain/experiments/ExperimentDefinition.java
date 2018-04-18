@@ -272,7 +272,7 @@ public class ExperimentDefinition {
                 experimentVariants.add(new ExperimentVariant(internalVariantName, ImmutableList.of(new InternalPredicate())));
             }
 
-            if (percentage != null) {
+            if (percentage != null && !variantNames.isEmpty()) {
                 int maxPercentageVariant = 100 / variantNames.size();
                 if (percentage > maxPercentageVariant) {
                     throw new ExperimentDefinitionException("Percentage exceeds maximum value ( " + percentage + " > " + maxPercentageVariant + " )");
