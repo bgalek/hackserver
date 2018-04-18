@@ -40,8 +40,6 @@ public class ExperimentsConfig {
             Gson jsonConverter) {
         HttpContentLoader httpContentLoader = new HttpContentLoader(restTemplate);
 
-        System.out.println("new FileBasedExperimentsRepository()");
-
         return new FileBasedExperimentsRepository(jsonUrl, httpContentLoader, jsonConverter, null);
     }
 
