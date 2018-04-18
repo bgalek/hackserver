@@ -51,7 +51,7 @@
         :headers="headers"
         :items="items"
         hide-actions
-        class="elevation-1"
+         light
       >
         <template slot="items" slot-scope="props">
           <td>{{ props.item.boxName }}</td>

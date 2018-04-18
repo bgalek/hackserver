@@ -64,7 +64,7 @@
       </v-flex>
 
       <v-flex xs7 v-if="experiment.eventDefinitionsAvailable()">
-        <h4>NGA event definitions</h4>
+        <h3>NGA event definitions</h3>
         <experiment-event-filters
           :readOnly="true"
           :initData="experiment.eventDefinitions.toArray()">
