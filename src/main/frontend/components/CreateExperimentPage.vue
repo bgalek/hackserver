@@ -137,7 +137,7 @@
   import ExperimentDescEditing from './experiment/ExperimentDescEditing'
   import ExperimentVariantsEditing from './experiment/ExperimentVariantsEditing'
   import ExperimentEventFilters from './experiment/ExperimentEventFilters'
-
+  import { slugify } from '../utils/slugify'
   import _ from 'lodash'
 
   import ChiPanel from './ChiPanel.vue'
@@ -179,11 +179,11 @@
       },
 
       experimentIdSlug () {
-        return this.slugify(this.experimentId)
+        return slugify(this.experimentId)
       },
 
       slugifiedVariants () {
-        return _.map(this.variants.variantNames, v => this.slugify(v))
+        return _.map(this.variants.variantNames, v => slugify(v))
       }
     },
 
@@ -197,15 +197,6 @@
     methods: {
       onEventDefinitionsChanged (newEventDefinitions) {
         this.eventDefinitions = JSON.parse(JSON.stringify(newEventDefinitions))
-      },
-
-      slugify (str) {
-        return str.toString().toLowerCase()
-          .replace(/\s+/g, '-')
-          .replace(/[^\w-]+/g, '')
-          .replace(/--+/g, '-')
-          .replace(/^-+/, '')
-          .replace(/-+$/, '')
       },
 
       onSubmit () {

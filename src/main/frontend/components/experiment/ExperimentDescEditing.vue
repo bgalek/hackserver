@@ -13,6 +13,7 @@
         <v-flex xs11>
           <v-text-field
             v-model="value.description"
+            :rules="stringsRules"
             label="Description"
             v-on:input="inputEntered()">
           ></v-text-field>
@@ -56,7 +57,8 @@
               append-icon=""
               tags
               v-on:input="inputEntered()"
-              v-model="value.groups">
+              v-model="value.groups"
+              :rules="groupsRules">
               <template slot="selection" slot-scope="data">
                 <v-chip
                   close
@@ -75,7 +77,8 @@
 </template>
 
 <script>
-  import {isUri} from 'valid-url'
+  import { isUri } from 'valid-url'
+  import { startsOrEndsWithSpace } from '../../utils/startsOrEndsWithSpace'
 
   export default {
     props: ['experiment'],
@@ -84,7 +87,14 @@
       return {
         value: this.init(this.experiment),
         documentLinkRules: [
-          (v) => this.isUrlValid(v) || 'not a valid URL'
+          (v) => this.isUrlValid(v) || 'not a valid URL',
+          (v) => !startsOrEndsWithSpace(v) || 'Do not start nor end url with space'
+        ],
+        stringsRules: [
+          (v) => !startsOrEndsWithSpace(v) || 'Do not start nor end string with space'
+        ],
+        groupsRules: [
+          (v) => v.filter(x => startsOrEndsWithSpace(x)).length === 0 || 'Do not start nor end group name with space'
         ]
       }
     },
