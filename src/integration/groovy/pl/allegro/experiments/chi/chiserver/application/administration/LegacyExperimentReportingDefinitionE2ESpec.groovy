@@ -1,6 +1,6 @@
 package pl.allegro.experiments.chi.chiserver.application.administration
 
-import com.mongodb.DBObject
+import org.bson.Document
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
@@ -65,7 +65,7 @@ class LegacyExperimentReportingDefinitionE2ESpec extends BaseIntegrationSpec {
         }
 
         @Override
-        DBObject convert(ReportingDefinition source) {
+        Document convert(ReportingDefinition source) {
             return null
         }
     }
