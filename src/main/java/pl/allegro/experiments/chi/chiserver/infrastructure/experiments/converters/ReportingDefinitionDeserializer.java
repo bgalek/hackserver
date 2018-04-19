@@ -1,6 +1,6 @@
 package pl.allegro.experiments.chi.chiserver.infrastructure.experiments.converters;
 
-import com.mongodb.DBObject;
+import org.bson.Document;
 import org.springframework.core.convert.converter.Converter;
 import pl.allegro.experiments.chi.chiserver.domain.experiments.EventDefinition;
 import pl.allegro.experiments.chi.chiserver.domain.experiments.ReportingDefinition;
@@ -10,7 +10,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-public class ReportingDefinitionDeserializer implements Converter<DBObject, ReportingDefinition> {
+public class ReportingDefinitionDeserializer implements Converter<Document, ReportingDefinition> {
     private final EventDefinitionDeserializer eventDefinitionDeserializer;
 
     public ReportingDefinitionDeserializer(EventDefinitionDeserializer eventDefinitionDeserializer) {
@@ -18,9 +18,9 @@ public class ReportingDefinitionDeserializer implements Converter<DBObject, Repo
     }
 
     @Override
-    public ReportingDefinition convert(DBObject source) {
+    public ReportingDefinition convert(Document source) {
         List<EventDefinition> eventDefinitions = Optional.ofNullable(source.get("eventDefinitions"))
-                .map(rawEventDefinitions -> ((List<DBObject>) rawEventDefinitions).stream()
+                .map(rawEventDefinitions -> ((List<Document>) rawEventDefinitions).stream()
                         .map(eventDefinitionDeserializer::convert)
                         .collect(Collectors.toList()))
                 .orElse(Collections.emptyList());
