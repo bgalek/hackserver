@@ -35,7 +35,7 @@ public class ExperimentDefinition {
 
     private final ReportingDefinition reportingDefinition;
 
-    ExperimentDefinition(
+    public ExperimentDefinition(
             String id,
             List<String> variantNames,
             String internalVariantName,
