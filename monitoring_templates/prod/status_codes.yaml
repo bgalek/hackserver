@@ -9,9 +9,9 @@ channels:
 sources:
   graphite:
     http_500_rate:
-      metric: sumSeries(stats.experiments.chi.chi-server.*.*.*.*.500.m1_rate)
+      metric: sumSeries(stats.experiments.chi.chi-server.*.api.*.*.*.500.m1_rate)
     http_503_rate:
-      metric: sumSeries(stats.experiments.chi.chi-server.*.*.*.*.503.m5_rate)
+      metric: sumSeries(stats.experiments.chi.chi-server.*.api.*.*.*.503.m5_rate)
 
 checks:
   last_500_rate:
