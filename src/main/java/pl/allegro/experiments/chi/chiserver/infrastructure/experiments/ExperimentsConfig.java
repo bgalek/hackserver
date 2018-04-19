@@ -9,7 +9,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.convert.converter.Converter;
 import org.springframework.data.mongodb.core.MongoTemplate;
-import org.springframework.data.mongodb.core.convert.CustomConversions;
+import org.springframework.data.mongodb.core.convert.MongoCustomConversions;
 import org.springframework.web.client.RestTemplate;
 import pl.allegro.experiments.chi.chiserver.application.experiments.AllEnabledCrisisManagementFilter;
 import pl.allegro.experiments.chi.chiserver.application.experiments.CrisisManagementFilter;
@@ -44,7 +44,7 @@ public class ExperimentsConfig {
     }
 
     @Bean
-    CustomConversions customConversions(
+    MongoCustomConversions customConversions(
             DateTimeSerializer dateTimeSerializer,
             DateTimeDeserializer dateTimeDeserializer,
             ExperimentSerializer experimentSerializer,
@@ -54,7 +54,7 @@ public class ExperimentsConfig {
         converters.add(dateTimeSerializer);
         converters.add(experimentSerializer);
         converters.add(experimentDeserializer);
-        return new CustomConversions(converters);
+        return new MongoCustomConversions(converters);
     }
 
     @Bean
