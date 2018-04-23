@@ -128,7 +128,7 @@
         </v-menu>
 
         <v-menu :close-on-content-click="false"
-                v-if="this.experiment.definition.canChangeVariants()"
+                v-if="this.experiment.canChangeVariants()"
                 v-model="variantsMenuVisible">
           <v-btn color="gray" slot="activator" style="text-transform: none">
             Update variants
@@ -136,7 +136,7 @@
           </v-btn>
 
           <v-list style="padding:15px; display: block;">
-            <experiment-variants-editing :variants="experiment.definition"
+            <experiment-variants-editing :variants="experiment"
                                          :allowModifyRegularVariants="false"
                                      v-model="variantsEditingResult"
             />
@@ -345,11 +345,11 @@
 
       variantsChanged () {
         console.log('variantsChanged', this.variantsEditingResult, this.experiment)
-        if (this.experiment.definition) {
-          return this.variantsEditingResult.percentage !== this.experiment.definition.percentage ||
-            JSON.stringify(this.variantsEditingResult.variantNames) !== JSON.stringify(this.experiment.definition.variantNames) ||
-            this.variantsEditingResult.internalVariantName !== this.experiment.definition.internalVariantName ||
-            this.variantsEditingResult.deviceClass !== this.experiment.definition.deviceClass
+        if (this.experiment.origin === 'MONGO') {
+          return this.variantsEditingResult.percentage !== this.experiment.percentage ||
+            JSON.stringify(this.variantsEditingResult.variantNames) !== JSON.stringify(this.experiment.variantNames) ||
+            this.variantsEditingResult.internalVariantName !== this.experiment.internalVariantName ||
+            this.variantsEditingResult.deviceClass !== this.experiment.deviceClass
         }
         return false
       },
