@@ -1,17 +1,14 @@
 package pl.allegro.experiments.chi.chiserver.infrastructure.experiments.converters;
 
-import com.mongodb.BasicDBObject;
-import com.mongodb.DBObject;
+import org.bson.Document;
 import org.springframework.core.convert.converter.Converter;
-import pl.allegro.experiments.chi.chiserver.domain.experiments.Experiment;
 import pl.allegro.experiments.chi.chiserver.domain.experiments.ExperimentDefinition;
 import pl.allegro.experiments.chi.chiserver.domain.experiments.ExperimentStatus;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.stream.Collectors;
 
-public class ExperimentSerializer implements Converter<ExperimentDefinition, DBObject> {
+public class ExperimentSerializer implements Converter<ExperimentDefinition, Document> {
     private final DateTimeSerializer dateTimeSerializer;
     private final ReportingDefinitionSerializer reportingDefinitionSerializer;
 
@@ -23,8 +20,8 @@ public class ExperimentSerializer implements Converter<ExperimentDefinition, DBO
     }
 
     @Override
-    public DBObject convert(ExperimentDefinition source) {
-        BasicDBObject result = new BasicDBObject();
+    public Document convert(ExperimentDefinition source) {
+        Document result = new Document();
 
         result.put("_id", source.getId());
         result.put("variantNames", source.getVariantNames());

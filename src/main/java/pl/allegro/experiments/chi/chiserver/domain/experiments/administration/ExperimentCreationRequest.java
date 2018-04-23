@@ -39,8 +39,10 @@ public class ExperimentCreationRequest {
             @JsonProperty("reportingEnabled") Boolean reportingEnabled,
             @JsonProperty("eventDefinitions") List<EventDefinition> eventDefinitions,
             @JsonProperty("reportingType") ReportingType reportingType) {
-        Preconditions.checkNotNull(id);
-        Preconditions.checkNotNull(variantNames);
+        Preconditions.checkArgument(id != null, "experiment id is null");
+        Preconditions.checkArgument(variantNames != null, "experiment variantNames are null");
+        Preconditions.checkArgument(percentage != null, "experiment percentage is null");
+        Preconditions.checkArgument(percentage >= 0, "experiment percentage < 0");
         this.id = id;
         this.variantNames = ImmutableList.copyOf(variantNames);
         this.internalVariantName = internalVariantName;

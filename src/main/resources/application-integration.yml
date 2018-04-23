@@ -1,10 +1,6 @@
 security:
   enabled: false
 
-chi:
-  experiments:
-    file: ""
-
 server:
   shutdown:
     delay:

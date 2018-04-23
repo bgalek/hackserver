@@ -1,19 +1,19 @@
 package pl.allegro.experiments.chi.chiserver.infrastructure.experiments.converters;
 
-import com.mongodb.BasicDBObject;
-import com.mongodb.DBObject;
+import org.bson.Document;
 import org.springframework.core.convert.converter.Converter;
 import pl.allegro.experiments.chi.chiserver.domain.experiments.EventDefinition;
 
-public class EventDefinitionSerializer implements Converter<EventDefinition, DBObject> {
+public class EventDefinitionSerializer implements Converter<EventDefinition, Document> {
     @Override
-    public DBObject convert(EventDefinition source) {
-        BasicDBObject result = new BasicDBObject();
+    public Document convert(EventDefinition source) {
+        Document result = new Document();
 
         result.put("category", source.getCategory());
         result.put("value", source.getValue());
         result.put("action", source.getAction());
         result.put("label", source.getLabel());
+        result.put("boxName", source.getBoxName());
 
         return result;
     }

@@ -1,14 +1,13 @@
 package pl.allegro.experiments.chi.chiserver.infrastructure.experiments.converters;
 
-import com.mongodb.BasicDBObject;
-import com.mongodb.DBObject;
+import org.bson.Document;
 import org.springframework.core.convert.converter.Converter;
 import pl.allegro.experiments.chi.chiserver.domain.experiments.*;
 
 import java.util.List;
 import java.util.Optional;
 
-public class ExperimentDeserializer implements Converter<DBObject, ExperimentDefinition> {
+public class ExperimentDeserializer implements Converter<Document, ExperimentDefinition> {
     private final ActivityPeriodDeserializer activityPeriodDeserializer;
     private final ReportingDefinitionDeserializer reportingDefinitionDeserializer;
 
@@ -20,7 +19,7 @@ public class ExperimentDeserializer implements Converter<DBObject, ExperimentDef
     }
 
     @Override
-    public ExperimentDefinition convert(DBObject bson) {
+    public ExperimentDefinition convert(Document bson) {
         String id = (String) bson.get("_id");
         List<String> variantNames = (List<String>) bson.get("variantNames");
         String internalVariantName = (String)bson.get("internalVariantName");
@@ -32,7 +31,7 @@ public class ExperimentDeserializer implements Converter<DBObject, ExperimentDef
         List<String> groups = bson.get("groups") != null ? (List<String>) bson.get("groups") : null;
         boolean reportingEnabled = bson.get("reportingEnabled") != null ? (boolean) bson.get("reportingEnabled") : null; // wroc
         ActivityPeriod activityPeriod = Optional.ofNullable(bson.get("activityPeriod"))
-                .map(a -> activityPeriodDeserializer.convert((BasicDBObject)a))
+                .map(a -> activityPeriodDeserializer.convert((Document)a))
                 .orElse(null);
         Object rawExplicitStatus = bson.get("explicitStatus");
         ExperimentStatus explicitStatus = rawExplicitStatus != null ? ExperimentStatus.valueOf((String) rawExplicitStatus) : null;
@@ -51,7 +50,7 @@ public class ExperimentDeserializer implements Converter<DBObject, ExperimentDef
                 .activityPeriod(activityPeriod)
                 .explicitStatus(explicitStatus);
         if (bson.get("reportingDefinition") != null) {
-            result.reportingDefinition(reportingDefinitionDeserializer.convert((DBObject) bson.get("reportingDefinition")));
+            result.reportingDefinition(reportingDefinitionDeserializer.convert((Document) bson.get("reportingDefinition")));
         }
         return result.build();
     }

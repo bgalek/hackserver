@@ -1,6 +1,6 @@
 package pl.allegro.experiments.chi.chiserver.infrastructure.interactions;
 
-import com.codahale.metrics.MetricRegistry;
+import io.micrometer.core.instrument.MeterRegistry;
 import com.github.slugify.Slugify;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
@@ -11,14 +11,14 @@ import java.util.List;
 import java.util.concurrent.ExecutionException;
 
 public class InteractionsMetricsReporter {
-    private final MetricRegistry metricRegistry;
+    private final MeterRegistry meterRegistry;
     private final Slugify slugify;
     private final LoadingCache slugCache;
     private final static String RECEIVED_INTERACTIONS = "interactions.received";
     private final static String IGNORED_INTERACTIONS = "interactions.ignored";
 
-    public InteractionsMetricsReporter(MetricRegistry metricRegistry) {
-        this.metricRegistry = metricRegistry;
+    public InteractionsMetricsReporter(MeterRegistry metricRegistry) {
+        this.meterRegistry = metricRegistry;
         this.slugify = new Slugify();
         this.slugCache = CacheBuilder.newBuilder()
                 .maximumSize(1000)
@@ -32,18 +32,18 @@ public class InteractionsMetricsReporter {
 
     public void meterIgnored(int ignored) {
         if (ignored > 0) {
-            metricRegistry.meter(IGNORED_INTERACTIONS).mark(ignored);
+            meterRegistry.counter(IGNORED_INTERACTIONS).increment(ignored);
         }
     }
 
     public void meterReceived(List<Interaction> interactions) {
-        metricRegistry.meter(RECEIVED_INTERACTIONS + ".all").mark(interactions.size());
+        meterRegistry.counter(RECEIVED_INTERACTIONS + ".all").increment(interactions.size());
         interactions.forEach(it -> {
             String appId = it.getAppId();
             try {
                 appId = (String)slugCache.get(appId != null ? appId : "");
                 String experiment = (String)slugCache.get(it.getExperimentId() + "-" + it.getVariantName());
-                metricRegistry.meter(RECEIVED_INTERACTIONS + "." + appId + "." + experiment).mark();
+                meterRegistry.counter(RECEIVED_INTERACTIONS + "." + appId + "." + experiment).increment();
             } catch (ExecutionException e) {}
         });
     }

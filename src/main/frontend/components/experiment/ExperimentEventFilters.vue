@@ -1,9 +1,10 @@
 <template>
-    <div>
+    <div style="width: 85%; padding: 10px;">
       <v-btn color="primary" class="mb-2" @click="newItem()" v-if="!readOnly">
         Add event
       </v-btn>
       <v-dialog v-model="editing" max-width="500px">
+        <v-form v-model="eventDefinitionValid" ref="eventDefinitionForm">
         <v-card>
           <v-card-title>
             <span class="headline">Event definition</span>
@@ -12,16 +13,29 @@
             <v-container grid-list-md>
               <v-layout wrap>
                 <v-flex xs12 sm6 md4>
-                  <v-text-field label="category" v-model="editedItem.category"></v-text-field>
+                  <v-text-field label="boxName" v-model="editedItem.boxName"
+                                :rules="filterRules"
+                  ></v-text-field>
                 </v-flex>
                 <v-flex xs12 sm6 md4>
-                  <v-text-field label="label" v-model="editedItem.label"></v-text-field>
+                  <v-text-field label="category" v-model="editedItem.category"
+                                :rules="filterRules"
+                  ></v-text-field>
                 </v-flex>
                 <v-flex xs12 sm6 md4>
-                  <v-text-field label="action" v-model="editedItem.action"></v-text-field>
+                  <v-text-field label="label" v-model="editedItem.label"
+                                :rules="filterRules"
+                  ></v-text-field>
                 </v-flex>
                 <v-flex xs12 sm6 md4>
-                  <v-text-field label="value" v-model="editedItem.value"></v-text-field>
+                  <v-text-field label="action" v-model="editedItem.action"
+                                :rules="filterRules"
+                  ></v-text-field>
+                </v-flex>
+                <v-flex xs12 sm6 md4>
+                  <v-text-field label="value" v-model="editedItem.value"
+                                :rules="filterRules"
+                  ></v-text-field>
                 </v-flex>
               </v-layout>
             </v-container>
@@ -38,15 +52,17 @@
 
           </v-card-actions>
         </v-card>
+        </v-form>
       </v-dialog>
 
       <v-data-table
         :headers="headers"
         :items="items"
         hide-actions
-        class="elevation-1"
+         light
       >
         <template slot="items" slot-scope="props">
+          <td>{{ props.item.boxName }}</td>
           <td>{{ props.item.category }}</td>
           <td>{{ props.item.label }}</td>
           <td>{{ props.item.action }}</td>
@@ -71,11 +87,12 @@
     props: ['readOnly', 'initData'],
     data () {
       const initial = this.initData || []
-      const readOnly = this.readOnly || false
       return {
+        eventDefinitionValid: true,
         editing: false,
         editedItem: {},
         defaultItem: {
+          boxName: '',
           category: '',
           label: '',
           action: '',
@@ -83,20 +100,34 @@
         },
         editedIndex: -1,
         headers: [
-          { text: 'Category', value: 'category', align: 'left', class: 'subheading', sortable: false },
-          { text: 'Label', value: 'label', align: 'left', class: 'subheading', sortable: false },
-          { text: 'Action', value: 'action', align: 'left', class: 'subheading', sortable: false },
-          { text: 'Value', value: 'value', align: 'left', class: 'subheading', sortable: false }
+          { text: 'BoxName', value: 'boxName', align: 'left', sortable: false },
+          { text: 'Category', value: 'category', align: 'left', sortable: false },
+          { text: 'Label', value: 'label', align: 'left', sortable: false },
+          { text: 'Action', value: 'action', align: 'left', sortable: false },
+          { text: 'Value', value: 'value', align: 'left', sortable: false }
         ],
         items: initial,
         filterRules: [
-          (v) => this.isUrlValid(v) || 'not a valid URL'
-        ],
-        readOnly: readOnly
+          (v) => this.containsNo(v, '*') || 'no *',
+          (v) => this.containsNo(v, '?') || 'no ?',
+          (v) => this.containsNo(v, '%') || 'no %',
+          (v) => this.containsNo(v, '\'') || 'no \'',
+          (v) => this.containsNo(v, '/') || 'no /',
+          (v) => this.containsNo(v, '\\') || 'no \\',
+          (v) => this.containsNo(v, '"') || 'no "'
+        ]
       }
     },
 
     methods: {
+      containsNo (str, char) {
+        if (!str) {
+          return true
+        }
+
+        return str.indexOf(char) === -1
+      },
+
       changed () {
         if (this.editedIndex === -1) {
           return true
@@ -129,13 +160,15 @@
       },
 
       saveEditing () {
-        if (this.editedIndex > -1) {
-          Object.assign(this.items[this.editedIndex], this.editedItem)
-        } else {
-          this.items.push(this.editedItem)
+        if (this.$refs.eventDefinitionForm.validate()) {
+          if (this.editedIndex > -1) {
+            Object.assign(this.items[this.editedIndex], this.editedItem)
+          } else {
+            this.items.push(this.editedItem)
+          }
+          this.close()
+          this.$emit('eventDefinitionsChanged', this.items)
         }
-        this.close()
-        this.$emit('eventDefinitionsChanged', this.items)
       }
     }
   }

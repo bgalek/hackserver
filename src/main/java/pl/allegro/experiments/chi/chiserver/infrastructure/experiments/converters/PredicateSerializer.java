@@ -1,18 +1,14 @@
 package pl.allegro.experiments.chi.chiserver.infrastructure.experiments.converters;
 
-import com.mongodb.BasicDBObject;
-import com.mongodb.DBObject;
+import org.bson.Document;
 import org.springframework.core.convert.converter.Converter;
 import pl.allegro.experiments.chi.chiserver.domain.experiments.*;
 
-import java.util.HashMap;
-import java.util.Map;
-
-public class PredicateSerializer implements Converter<Predicate, DBObject> {
+public class PredicateSerializer implements Converter<Predicate, Document> {
 
     @Override
-    public DBObject convert(Predicate source) {
-        BasicDBObject result = new BasicDBObject();
+    public Document convert(Predicate source) {
+        Document result = new Document();
 
         if (source instanceof HashRangePredicate) {
             HashRangePredicate predicate = (HashRangePredicate) source;
@@ -33,6 +29,6 @@ public class PredicateSerializer implements Converter<Predicate, DBObject> {
             throw new UnsupportedOperationException("Can't serialize " + source.getClass().getName());
         }
 
-        return new BasicDBObject(result);
+        return new Document(result);
     }
 }

@@ -1,8 +1,8 @@
 package pl.allegro.experiments.chi.chiserver.infrastructure.druid;
 
 import org.springframework.http.HttpStatus;
-import pl.allegro.tech.common.andamio.errors.spring.LogLevel;
-import pl.allegro.tech.common.andamio.errors.spring.MappableToErrorResponse;
+import pl.allegro.tech.common.andamio.spring.errors.LogLevel;
+import pl.allegro.tech.common.andamio.spring.errors.MappableToErrorResponse;
 
 public class DruidException extends RuntimeException implements MappableToErrorResponse {
     DruidException(String message, Throwable cause) {

@@ -1,6 +1,6 @@
 package pl.allegro.experiments.chi.chiserver.infrastructure.experiments;
 
-import com.codahale.metrics.Timer;
+import io.micrometer.core.instrument.Timer;
 import org.javers.core.Javers;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import pl.allegro.experiments.chi.chiserver.domain.UserProvider;
@@ -32,9 +32,10 @@ public class MongoExperimentsRepository implements ExperimentsRepository {
 
     @Override
     public Optional<Experiment> getExperiment(String id) {
-        Timer.Context context = experimentsMongoMetricsReporter.timerSingleExperiment();
-        ExperimentDefinition definition = mongoTemplate.findById(id, ExperimentDefinition.class, COLLECTION);
-        context.close();
+        Timer timer = experimentsMongoMetricsReporter.timerSingleExperiment();
+
+        ExperimentDefinition definition = timer.record(
+            () -> mongoTemplate.findById(id, ExperimentDefinition.class, COLLECTION));
         return Optional.ofNullable(definition).map(ExperimentDefinition::toExperiment);
     }
 
@@ -61,13 +62,14 @@ public class MongoExperimentsRepository implements ExperimentsRepository {
 
     @Override
     public List<Experiment> getAll() {
-        Timer.Context context = experimentsMongoMetricsReporter.timerAllExperiments();
-        List<Experiment> experiments = mongoTemplate.
-                findAll(ExperimentDefinition.class, COLLECTION)
-                .stream()
-                .map(ExperimentDefinition::toExperiment)
-                .collect(Collectors.toList());
-        context.close();
+        Timer timer = experimentsMongoMetricsReporter.timerAllExperiments();
+
+        List<Experiment> experiments = timer.record(() ->
+            mongoTemplate.findAll(ExperimentDefinition.class, COLLECTION)
+                         .stream()
+                         .map(ExperimentDefinition::toExperiment)
+                         .collect(Collectors.toList())
+        );
         return experiments;
     }
 

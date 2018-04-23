@@ -38,7 +38,7 @@ security:
 chi:
   experiments:
     file: "http://assets-chi.qxlint/chi-server/experiments-test.json"
-  crisisManagement:
+  crisis-management:
     enabled: false
     whitelist: metrum
 

@@ -42,7 +42,7 @@ class ExperimentsSelfServiceE2ESpec extends BaseIntegrationSpec {
                 description        : "desc",
                 variantNames       : [],
                 internalVariantName: 'v1',
-                percentage         : null,
+                percentage         : 1,
                 deviceClass        : null,
                 groups             : ['group a', 'group b'],
                 reportingEnabled   : true

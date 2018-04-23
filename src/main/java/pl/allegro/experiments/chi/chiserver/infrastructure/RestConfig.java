@@ -3,8 +3,8 @@ package pl.allegro.experiments.chi.chiserver.infrastructure;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.client.RestTemplate;
-import pl.allegro.tech.common.andamio.spring.client.OkHttpClientConfig;
-import pl.allegro.tech.common.andamio.spring.client.RestTemplateFactory;
+import pl.allegro.tech.common.andamio.spring.core.client.OkHttpClientConfig;
+import pl.allegro.tech.common.andamio.spring.core.client.RestTemplateFactory;
 
 @Configuration
 public class RestConfig {

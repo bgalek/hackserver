@@ -1,4 +1,3 @@
-
 export function cookieBakerHost () {
   let host = {
     'chi.allegrogroup.com': 'allegro.pl'

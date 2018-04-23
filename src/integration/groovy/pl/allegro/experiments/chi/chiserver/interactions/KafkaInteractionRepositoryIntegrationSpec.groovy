@@ -1,6 +1,6 @@
 package pl.allegro.experiments.chi.chiserver.interactions
 
-import com.codahale.metrics.MetricRegistry
+import io.micrometer.core.instrument.simple.SimpleMeterRegistry
 import org.apache.commons.lang3.builder.EqualsBuilder
 import org.apache.kafka.clients.consumer.ConsumerRecord
 import org.springframework.beans.factory.annotation.Autowired
@@ -18,7 +18,7 @@ import pl.allegro.experiments.chi.chiserver.domain.interactions.Interaction
 import pl.allegro.experiments.chi.chiserver.domain.interactions.InteractionRepository
 import pl.allegro.experiments.chi.chiserver.infrastructure.interactions.KafkaConfig
 import pl.allegro.tech.common.andamio.server.cloud.CloudMetadata
-import pl.allegro.tech.common.andamio.spring.avro.AvroConverter
+import pl.allegro.tech.common.andamio.avro.AvroConverter
 import spock.lang.Shared
 
 import java.time.Instant
@@ -141,7 +141,7 @@ class KafkaInteractionRepositoryIntegrationSpec extends BaseIntegrationSpec {
                 cloudMetadata,
                 1,
                 10,
-                new MetricRegistry()
+                new SimpleMeterRegistry()
         )
         kafkaConfig.kafkaInteractionRepository(kafkaTemplate, avroConverter, TOPIC)
     }

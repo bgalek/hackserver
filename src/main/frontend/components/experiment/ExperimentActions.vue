@@ -115,7 +115,7 @@
           <v-list style="padding:15px; display: block;">
             <experiment-desc-editing :experiment="experiment"
                                      v-model="descriptionsEditingResult"
-            />
+            ></experiment-desc-editing>
 
             <v-btn flat @click="closeDescriptions()">Cancel</v-btn>
             <v-btn color="gray"
@@ -139,7 +139,7 @@
             <experiment-variants-editing :variants="experiment"
                                          :allowModifyRegularVariants="false"
                                      v-model="variantsEditingResult"
-            />
+            ></experiment-variants-editing>
 
             <v-btn flat @click="closeVariants()">Cancel</v-btn>
             <v-btn color="gray"
@@ -174,6 +174,7 @@
   import ExperimentVariantsEditing from './ExperimentVariantsEditing.vue'
   import ChiPanel from '../ChiPanel.vue'
   import { mapActions } from 'vuex'
+  import { slugify } from '../../utils/slugify'
 
   export default {
     props: ['experiment', 'allowDelete'],
@@ -344,12 +345,11 @@
       },
 
       variantsChanged () {
-        console.log('variantsChanged', this.variantsEditingResult, this.experiment)
         if (this.experiment.origin === 'MONGO') {
           return this.variantsEditingResult.percentage !== this.experiment.percentage ||
             JSON.stringify(this.variantsEditingResult.variantNames) !== JSON.stringify(this.experiment.variantNames) ||
-            this.variantsEditingResult.internalVariantName !== this.experiment.internalVariantName ||
-            this.variantsEditingResult.deviceClass !== this.experiment.deviceClass
+            slugify(this.variantsEditingResult.internalVariantName) !== slugify(this.experiment.internalVariantName) ||
+            (this.variantsEditingResult.deviceClass || 'all') !== (this.experiment.deviceClass || 'all')
         }
         return false
       },
@@ -358,11 +358,12 @@
         if (this.$refs.actionForm.validate()) {
           this.closeVariants()
           this.prepareToSend()
+          this.variantsEditingResult.internalVariantName = this.variantsEditingResult.internalVariantName !== '' ? slugify(this.variantsEditingResult.internalVariantName) : null
           this.updateExperimentVariants({
             data: {
               percentage: this.variantsEditingResult.percentage,
               variantNames: this.variantsEditingResult.variantNames,
-              internalVariantName: this.variantsEditingResult.internalVariantName !== '' ? this.variantsEditingResult.internalVariantName : null,
+              internalVariantName: this.variantsEditingResult.internalVariantName,
               deviceClass: this.variantsEditingResult.deviceClass !== 'all' ? this.variantsEditingResult.deviceClass : null
             },
             params: {

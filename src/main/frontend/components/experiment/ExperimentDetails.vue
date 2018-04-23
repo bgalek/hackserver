@@ -1,7 +1,7 @@
 <template>
   <chi-panel title="Details">
     <v-layout>
-    <v-flex xs6>
+    <v-flex xs5>
         <h3>Description</h3>
         {{ experiment.description || '-'}}
 
@@ -11,31 +11,30 @@
       </a>
       <div v-else>-</div>
 
-      <h3>Author</h3>
+      <h3 class="mt-2">Author</h3>
       {{ experiment.author }}
 
       <h3>Authorized groups</h3>
        {{ experiment.groups.join(', ') || '-' }}
 
-        <div v-if="experiment.activityPeriod">
-          <h3>Activity period</h3>
-          <v-layout row>
-            <v-flex xs2>From: </v-flex><v-flex xs9>{{ experiment.fromDateString() }}</v-flex>
-          </v-layout>
-          <v-layout row>
-            <v-flex xs2>To: </v-flex><v-flex xs9>{{ experiment.toDateString() }}</v-flex>
-          </v-layout>
-        </div>
-        <h3>Status</h3>
+      <div v-if="experiment.activityPeriod">
+        <h3 class="mt-2">Activity period</h3>
+        <v-layout row>
+          <v-flex xs2>From: </v-flex><v-flex xs9>{{ experiment.fromDateString() }}</v-flex>
+        </v-layout>
+        <v-layout row>
+          <v-flex xs2>To: </v-flex><v-flex xs9>{{ experiment.toDateString() }}</v-flex>
+        </v-layout>
+      </div>
+
+        <h3 class="mt-2">Status</h3>
         <v-layout row>
             <experiment-status :experiment="experiment" :show-reporting-status="true"/>
         </v-layout>
-        <h3>Reporting type</h3>
-        <v-chip outline disabled :color="'black'">
-          {{ experiment.reportingType }}
-        </v-chip>
+
     </v-flex>
-    <v-flex xs6>
+
+    <v-flex xs7>
       <h3>Variants</h3>
 
       <v-list>
@@ -56,13 +55,21 @@
     </v-flex>
     </v-layout>
 
-    <v-layout v-if="experiment.eventDefinitionsAvailable()">
-      <v-flex xs12>
-        <h3>Filters</h3>
+    <v-layout row class="mt-2">
+      <v-flex xs5>
+        <h3>Reporting type</h3>
+        <v-chip outline disabled :color="'black'">
+          {{ experiment.reportingType }}
+        </v-chip>
+      </v-flex>
+
+      <v-flex xs7 v-if="experiment.eventDefinitionsAvailable()">
+        <h3>NGA event definitions</h3>
         <experiment-event-filters
           :readOnly="true"
           :initData="experiment.eventDefinitions.toArray()">
         </experiment-event-filters>
+
       </v-flex>
     </v-layout>
 

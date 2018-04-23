@@ -220,6 +220,11 @@ public class ExperimentDefinition {
                 .build();
     }
 
+    public ExperimentDefinition updateReportingDefinition(ReportingDefinition reportingDefinition) {
+        Preconditions.checkArgument(reportingDefinition != null);
+        return mutate().reportingDefinition(reportingDefinition).build();
+    }
+
     public ExperimentDefinition prolong(long experimentAdditionalDays) {
         final ZonedDateTime from = this.activityPeriod.getActiveFrom();
         final ZonedDateTime to = this.activityPeriod.getActiveTo().plusDays(experimentAdditionalDays);
@@ -268,7 +273,7 @@ public class ExperimentDefinition {
                 experimentVariants.add(new ExperimentVariant(internalVariantName, ImmutableList.of(new InternalPredicate())));
             }
 
-            if (percentage != null) {
+            if (percentage != null && !variantNames.isEmpty()) {
                 int maxPercentageVariant = 100 / variantNames.size();
                 if (percentage > maxPercentageVariant) {
                     throw new ExperimentDefinitionException("Percentage exceeds maximum value ( " + percentage + " > " + maxPercentageVariant + " )");

@@ -10,7 +10,7 @@ class CommandTestUtils {
                 id,
                 variantNames,
                 internalVariantName,
-                null,
+                1,
                 null,
                 "simple description",
                 "some link",

@@ -1,13 +1,12 @@
 package pl.allegro.experiments.chi.chiserver.infrastructure.experiments.converters;
 
-import com.mongodb.BasicDBObject;
-import com.mongodb.DBObject;
+import org.bson.Document;
 import org.springframework.core.convert.converter.Converter;
 import pl.allegro.experiments.chi.chiserver.domain.experiments.ReportingDefinition;
 
 import java.util.stream.Collectors;
 
-public class ReportingDefinitionSerializer implements Converter<ReportingDefinition, DBObject> {
+public class ReportingDefinitionSerializer implements Converter<ReportingDefinition, Document> {
     private final EventDefinitionSerializer eventDefinitionSerializer;
 
     public ReportingDefinitionSerializer(EventDefinitionSerializer eventDefinitionSerializer) {
@@ -15,8 +14,8 @@ public class ReportingDefinitionSerializer implements Converter<ReportingDefinit
     }
 
     @Override
-    public DBObject convert(ReportingDefinition source) {
-        BasicDBObject result = new BasicDBObject();
+    public Document convert(ReportingDefinition source) {
+        Document result = new Document();
 
         result.put("gtm", source.isGtm());
         result.put("backendInteractionsEnabled", source.isBackendInteractionsEnabled());

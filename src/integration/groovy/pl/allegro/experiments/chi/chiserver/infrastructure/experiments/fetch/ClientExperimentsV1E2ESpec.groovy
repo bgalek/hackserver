@@ -10,7 +10,7 @@ import pl.allegro.experiments.chi.chiserver.domain.experiments.ExperimentsReposi
 import pl.allegro.experiments.chi.chiserver.infrastructure.experiments.FileBasedExperimentsRepository
 import spock.lang.Shared
 
-@DirtiesContext
+//@DirtiesContext
 class ClientExperimentsV1E2ESpec extends BaseIntegrationSpec {
 
     @ClassRule
