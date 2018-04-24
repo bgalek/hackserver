@@ -8,6 +8,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageConversionException;
 import org.springframework.web.bind.annotation.*;
 import pl.allegro.experiments.chi.chiserver.domain.UserProvider;
+import pl.allegro.experiments.chi.chiserver.domain.experiments.EventDefinition;
 import pl.allegro.experiments.chi.chiserver.domain.experiments.Experiment;
 import pl.allegro.experiments.chi.chiserver.domain.experiments.ExperimentsRepository;
 import pl.allegro.experiments.chi.chiserver.domain.experiments.MeasurementsRepository;
@@ -19,6 +20,7 @@ import pl.allegro.tech.common.andamio.errors.ErrorsHolder;
 import pl.allegro.tech.common.andamio.errors.SimpleErrorsHolder;
 import pl.allegro.tech.common.andamio.metrics.MeteredEndpoint;
 
+import java.util.List;
 import java.util.stream.Collectors;
 
 import static org.springframework.http.MediaType.APPLICATION_JSON_UTF8_VALUE;
@@ -119,6 +121,16 @@ public class ExperimentsController {
             @RequestBody UpdateVariantsProperties properties) {
         logger.info("Update experiment variants request received: {}", experimentId, properties);
         experimentActions.updateVariants(experimentId, properties);
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    @MeteredEndpoint
+    @PutMapping(path = "{experimentId}/update-event-definitions")
+    ResponseEntity<String> updateExperimentEventDefinitions(
+            @PathVariable String experimentId,
+            @RequestBody List<EventDefinition> eventDefinitions) {
+        logger.info("Update experiment event definitions request received: {}", experimentId, eventDefinitions);
+        experimentActions.updateExperimentEventDefinitions(experimentId, eventDefinitions);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 

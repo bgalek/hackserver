@@ -2,6 +2,9 @@ package pl.allegro.experiments.chi.chiserver.domain.experiments.administration;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import pl.allegro.experiments.chi.chiserver.domain.experiments.EventDefinition;
+
+import java.util.List;
 
 @Service
 public class ExperimentActions {
@@ -35,6 +38,10 @@ public class ExperimentActions {
 
     public void updateVariants(String experimentId, UpdateVariantsProperties properties) {
         commandFactory.updateVariantsCommand(experimentId, properties).execute();
+    }
+
+    public void updateExperimentEventDefinitions(String experimentId, List<EventDefinition> eventDefinitions) {
+        commandFactory.updateExperimentEventDefinitionsCommand(experimentId, eventDefinitions).execute();
     }
 
     public void stop(String experimentId) {
