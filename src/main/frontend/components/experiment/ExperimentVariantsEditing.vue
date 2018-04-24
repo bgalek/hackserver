@@ -73,9 +73,24 @@
         </v-flex>
         <v-flex xs11>
           <v-text-field
-            v-model="value.internalVariantName"
             :rules="internalVariantNameRules"
+            v-model="value.internalVariantName"
+            @input="onInternalVariantNameChange"
             label="Internal variant"
+          ></v-text-field>
+        </v-flex>
+
+      </v-layout>
+
+      <v-layout row align-center>
+
+        <v-flex offset-xs1>
+          <v-text-field
+            style="width: 300px"
+            v-model="value.slugifiedInternalVariantName"
+            label="Final internal variant name"
+            :readonly="true"
+            :disabled="true"
           ></v-text-field>
         </v-flex>
 
@@ -126,6 +141,7 @@
           variantNames: (variants && Array.from(variants.variantNames)) || ['base'],
           percentage: (variants && variants.percentage) || 1,
           internalVariantName: variants && variants.internalVariantName,
+          slugifiedInternalVariantName: variants && this.slugify(variants.internalVariantName),
           deviceClass: (variants && variants.deviceClass) || 'all'
         }
         this.$emit('input', value)
@@ -166,16 +182,24 @@
 
       slugify (str) {
         return slugify(str)
+      },
+
+      onInternalVariantNameChange (event) {
+        this.value.slugifiedInternalVariantName = this.slugify(event)
       }
+
     },
 
     computed: {
       maxPercentPerVariant () {
         return 100 / this.value.variantNames.length
       },
+
       slugifiedVariants () {
         return _.map(this.value.variantNames, v => slugify(v))
       }
+
     }
+
   }
 </script>

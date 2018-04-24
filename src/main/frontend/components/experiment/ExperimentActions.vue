@@ -358,7 +358,7 @@
         if (this.$refs.actionForm.validate()) {
           this.closeVariants()
           this.prepareToSend()
-          this.variantsEditingResult.internalVariantName = this.variantsEditingResult.internalVariantName !== '' ? slugify(this.variantsEditingResult.internalVariantName) : null
+          this.variantsEditingResult.internalVariantName = this.variantsEditingResult.internalVariantName !== '' ? this.variantsEditingResult.slugifiedInternalVariantName : null
           this.updateExperimentVariants({
             data: {
               percentage: this.variantsEditingResult.percentage,
