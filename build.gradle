@@ -41,7 +41,6 @@ scmVersion {
 }
 
 sourceCompatibility = 10
-targetCompatibility = 10
 
 project.group = 'pl.allegro.experiments.chi'
 project.version = scmVersion.version
@@ -120,6 +119,11 @@ integrationTest {
         exceptionFormat = 'full'
     }
 }
+test {
+    afterTest { desc, result ->
+        logger.quiet "Executing test ${desc.name} [${desc.className}] with result: ${result.resultType}"
+    }
+}
 
 axionPublishing {
     repositories {
@@ -131,5 +135,5 @@ axionPublishing {
 }
 
 task wrapper(type: Wrapper) {
-    gradleVersion = '4.1'
+    gradleVersion = '4.7'
 }
