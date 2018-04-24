@@ -62,9 +62,10 @@ class KafkaInteractionRepositoryIntegrationSpec extends BaseIntegrationSpec {
     }
 
     def setup() {
-        Map consumerProperties = KafkaTestUtils.consumerProps("sender", "false", embeddedKafka)
+        Map<String, Object> consumerProps = KafkaTestUtils.consumerProps("sampleRawConsumer", "false", embeddedKafka);
+        consumerProps.put("auto.offset.reset", "earliest");
 
-        def consumerFactory = new DefaultKafkaConsumerFactory(consumerProperties)
+        def consumerFactory = new DefaultKafkaConsumerFactory(consumerProps)
 
         def containerProperties = new ContainerProperties(TOPIC)
 

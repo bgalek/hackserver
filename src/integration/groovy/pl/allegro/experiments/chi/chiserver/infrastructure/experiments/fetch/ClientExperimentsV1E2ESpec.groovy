@@ -26,8 +26,8 @@ class ClientExperimentsV1E2ESpec extends BaseIntegrationSpec {
     ExperimentsRepository experimentsRepository
 
     def setup() {
-        WireMockUtils.teachWireMockJson("/experiments", '/some-experiments.json')
-        WireMockUtils.teachWireMockJson("/invalid-experiments",'/invalid-experiments.json')
+        WireMockUtils.teachWireMockJson("/experiments", 'some-experiments.json')
+        WireMockUtils.teachWireMockJson("/invalid-experiments",'invalid-experiments.json')
     }
 
     def "should return list of active experiments in version 1"() {

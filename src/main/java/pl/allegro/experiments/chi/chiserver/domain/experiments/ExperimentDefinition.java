@@ -163,7 +163,7 @@ public class ExperimentDefinition {
         if (this == o) return true;
         if (o == null || !(o instanceof ExperimentDefinition)) return false;
 
-        ExperimentDefinition that = (ExperimentDefinition) o;
+        final var that = (ExperimentDefinition) o;
         return id.equals(that.id);
     }
 
@@ -193,9 +193,9 @@ public class ExperimentDefinition {
     }
 
     public ExperimentDefinition start(long experimentDurationDays) {
-        final ZonedDateTime from = ZonedDateTime.now();
-        final ZonedDateTime to = from.plusDays(experimentDurationDays);
-        final ActivityPeriod newActivityPeriod = new ActivityPeriod(from, to);
+        final var from = ZonedDateTime.now();
+        final var to = from.plusDays(experimentDurationDays);
+        final var newActivityPeriod = new ActivityPeriod(from, to);
         return mutate()
                 .activityPeriod(newActivityPeriod)
                 .build();
@@ -226,9 +226,9 @@ public class ExperimentDefinition {
     }
 
     public ExperimentDefinition prolong(long experimentAdditionalDays) {
-        final ZonedDateTime from = this.activityPeriod.getActiveFrom();
-        final ZonedDateTime to = this.activityPeriod.getActiveTo().plusDays(experimentAdditionalDays);
-        final ActivityPeriod newActivityPeriod = new ActivityPeriod(from, to);
+        final var from = activityPeriod.getActiveFrom();
+        final var to = activityPeriod.getActiveTo().plusDays(experimentAdditionalDays);
+        final var newActivityPeriod = new ActivityPeriod(from, to);
         return mutate()
                 .activityPeriod(newActivityPeriod)
                 .build();
@@ -248,7 +248,7 @@ public class ExperimentDefinition {
     }
 
     private ExperimentVariant convertVariant(String variantName, int from, int to) {
-        List<Predicate> predicates = new ArrayList<>();
+        final var predicates = new ArrayList<Predicate>();
         predicates.add(new HashRangePredicate(new PercentageRange(from, to)));
         if (deviceClass != null) {
             predicates.add(new DeviceClassPredicate(deviceClass));
@@ -266,7 +266,7 @@ public class ExperimentDefinition {
 
     public Experiment toExperiment() {
         try {
-            List<ExperimentVariant> experimentVariants = new ArrayList<>();
+            final var experimentVariants = new ArrayList<ExperimentVariant>();
 
             if (internalVariantName != null) {
                 experimentVariants.add(new ExperimentVariant(internalVariantName, ImmutableList.of(new InternalPredicate())));
@@ -283,15 +283,15 @@ public class ExperimentDefinition {
             }
 
             return Experiment.builder()
-                    .id(this.id)
+                    .id(id)
                     .variants(experimentVariants)
-                    .description(this.description)
-                    .documentLink(this.documentLink)
-                    .author(this.author)
-                    .groups(this.groups)
-                    .reportingEnabled(this.reportingEnabled)
-                    .activityPeriod(this.activityPeriod)
-                    .explicitStatus(this.explicitStatus)
+                    .description(description)
+                    .documentLink(documentLink)
+                    .author(author)
+                    .groups(groups)
+                    .reportingEnabled(reportingEnabled)
+                    .activityPeriod(activityPeriod)
+                    .explicitStatus(explicitStatus)
                     .origin(ExperimentOrigin.MONGO.toString())
                     .definition(this)
                     .build();

@@ -40,8 +40,8 @@ class ExperimentsE2ESpec extends BaseIntegrationSpec implements ExampleExperimen
         if (!experimentsRepository instanceof ExperimentsDoubleRepository) {
             throw new RuntimeException("We should test real repository, not the fake one")
         }
-        WireMockUtils.teachWireMockJson("/experiments", '/some-experiments.json')
-        WireMockUtils.teachWireMockJson("/invalid-experiments", '/invalid-experiments.json')
+        WireMockUtils.teachWireMockJson("/experiments", 'some-experiments.json')
+        WireMockUtils.teachWireMockJson("/invalid-experiments", 'invalid-experiments.json')
     }
 
     def "should return single of experiment loaded from the backing HTTP resource"() {

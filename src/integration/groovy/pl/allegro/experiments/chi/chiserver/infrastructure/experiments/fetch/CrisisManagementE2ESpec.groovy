@@ -41,8 +41,8 @@ class CrisisManagementE2ESpec extends BaseIntegrationSpec implements ExampleExpe
         if (!experimentsRepository instanceof ExperimentsDoubleRepository) {
             throw new RuntimeException("We should test real repository, not the fake one")
         }
-        WireMockUtils.teachWireMockJson("/experiments", '/some-experiments.json')
-        WireMockUtils.teachWireMockJson("/invalid-experiments",'/invalid-experiments.json')
+        WireMockUtils.teachWireMockJson("/experiments", 'some-experiments.json')
+        WireMockUtils.teachWireMockJson("/invalid-experiments",'invalid-experiments.json')
     }
 
     def "should return only experiments listed on whitelist"() {

@@ -15,7 +15,7 @@ class WireMockUtils {
     }
 
     static String getResourceAsString(String resourceName) {
-        this.getClass().getResource(resourceName).text
+        this.getClassLoader().getResource(resourceName).text
     }
 
     static String resourceUrl(String endpoint, wireMock) {
