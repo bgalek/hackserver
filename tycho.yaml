@@ -53,6 +53,7 @@ deploy:
     - lbaas:
         vip: "chi-server_chi-dev.allegrogroup.com_80"
     - marathon:
+        jvmVersion: 10
         command: "{{ name }}-{{ version }}/bin/{{ name }} -e dev -p $PORT0"
         port_count: 2
         url: http://marathon-dev.qxlint/
@@ -74,6 +75,7 @@ deploy:
     - lbaas:
         vip: "chi-server_chi-test.allegrogroup.com_80"
     - marathon:
+        jvmVersion: 10
         command: "{{ name }}-{{ version }}/bin/{{ name }} -e test -p $PORT0"
         port_count: 2
         url: http://marathon-test.qxlint/
@@ -95,6 +97,7 @@ deploy:
     - lbaas:
         vip: "chi-server_chi.allegrogroup.com_80"
     - marathon:
+        jvmVersion: 10
         command: "{{ name }}-{{ version }}/bin/{{ name }} -e prod -p $PORT0"
         url: http://marathon.qxlint/
         user: pd_prod
