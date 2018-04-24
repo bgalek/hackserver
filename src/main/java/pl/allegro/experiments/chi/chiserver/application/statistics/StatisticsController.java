@@ -45,7 +45,7 @@ public class StatisticsController {
             return new ResponseEntity<String>(HttpStatus.NOT_FOUND);
         }
 
-        LocalDate lastDate = statisticsRepository.lastStatisticsDate(experiment);
+        LocalDate lastDate = statisticsRepository.lastStatisticsDate(experimentId);
         if (lastDate == null) {
             return new ResponseEntity<String>(HttpStatus.NO_CONTENT);
         }
@@ -55,7 +55,7 @@ public class StatisticsController {
         }
 
         return ResponseEntity.ok(jsonConverter.toJson(
-                statisticsRepository.experimentStatistics(experiment, lastDate, device)
+                statisticsRepository.experimentStatistics(experimentId, lastDate, device)
         ));
     }
 }

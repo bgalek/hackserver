@@ -1,13 +1,11 @@
 package pl.allegro.experiments.chi.chiserver.domain.statistics;
 
-import pl.allegro.experiments.chi.chiserver.domain.experiments.Experiment;
-
 import java.time.LocalDate;
 
 public interface StatisticsRepository {
-    ExperimentStatistics experimentStatistics(Experiment experiment, LocalDate localDate, String device);
+    ExperimentStatistics experimentStatistics(String experimentId, LocalDate localDate, String device);
 
-    LocalDate lastStatisticsDate(Experiment experiment);
+    LocalDate lastStatisticsDate(String experimentId);
 
-    boolean hasAnyStatistics(Experiment experiment);
+    boolean hasAnyStatistics(String experimentId);
 }
