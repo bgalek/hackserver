@@ -179,6 +179,29 @@ class ExperimentsSelfServiceE2ESpec extends BaseIntegrationSpec {
         definition.variantNames == ['a', 'b', 'c']
         definition.deviceClass == 'phone'
 
+//        when:
+//        restTemplate.put(localUrl("/api/admin/experiments/${request.id}/update-event-definitions"),
+//                [
+//                        [
+//                            boxName: 'b1',
+//                            category: 'c1',
+//                            label: 'l1',
+//                            value: 'v1'
+//                        ]
+//                ], Map)
+//
+//        then:
+//        definition = fetchExperiment(request.id).body
+//        definition.reportingDefinition.eventDefinitions == [
+//                [
+//                        boxName: 'b1',
+//                        category: 'c1',
+//                        label: 'l1',
+//                        value: 'v1'
+//                ]
+//        ]
+
+
         when:
         restTemplate.put(localUrl("/api/admin/experiments/${request.id}/pause"), Map)
 

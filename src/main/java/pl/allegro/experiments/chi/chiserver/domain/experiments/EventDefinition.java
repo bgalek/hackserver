@@ -3,6 +3,7 @@ package pl.allegro.experiments.chi.chiserver.domain.experiments;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+import java.util.Objects;
 import java.util.Optional;
 
 public class EventDefinition {
@@ -44,5 +45,22 @@ public class EventDefinition {
 
     public String getBoxName() {
         return this.boxName;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        EventDefinition that = (EventDefinition) o;
+        return Objects.equals(category, that.category) &&
+                Objects.equals(action, that.action) &&
+                Objects.equals(value, that.value) &&
+                Objects.equals(label, that.label) &&
+                Objects.equals(boxName, that.boxName);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(category, action, value, label, boxName);
     }
 }
