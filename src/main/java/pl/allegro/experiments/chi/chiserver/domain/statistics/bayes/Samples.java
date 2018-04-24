@@ -4,16 +4,9 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.common.base.Preconditions;
 
-import java.math.BigDecimal;
-import java.util.List;
-
 public class Samples {
     private double[] values;
     private int[] counts;
-
-    public Samples(List<BigDecimal> values, List<Integer> counts) {
-        this( values.stream().map(BigDecimal::doubleValue).mapToDouble(Double::doubleValue).toArray(), counts.stream().mapToInt(Integer::intValue).toArray());
-    }
 
     @JsonCreator
     public Samples(@JsonProperty("values") double[] values, @JsonProperty("counts") int[] counts) {

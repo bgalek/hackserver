@@ -56,7 +56,7 @@ public class BayesianStatisticsController {
             }
         }
 
-        return bayesianStatisticsRepository.experimentStatistics(experimentId, toDate, device)
+        return bayesianStatisticsRepository.experimentStatistics(experimentId, device, toDate)
                 .map(s -> ResponseEntity.ok(jsonConverter.toJson(s)))
                 .orElse(ResponseEntity.notFound().build());
     }
@@ -64,7 +64,6 @@ public class BayesianStatisticsController {
     @MeteredEndpoint
     @PostMapping(value = "/statistics", consumes = {APPLICATION_JSON_VALUE, APPLICATION_JSON_UTF8_VALUE})
     ResponseEntity postStatistics(@RequestBody BayesianExperimentStatistics stats) {
-
        bayesianStatisticsRepository.save(stats);
        return ResponseEntity.ok().build();
     }

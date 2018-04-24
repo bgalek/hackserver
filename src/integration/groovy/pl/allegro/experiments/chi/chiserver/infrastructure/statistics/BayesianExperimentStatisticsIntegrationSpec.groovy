@@ -18,8 +18,8 @@ class BayesianExperimentStatisticsIntegrationSpec extends BaseIntegrationSpec {
     def "should save and return bayesian statistics"() {
         given:
         def bayesianStats = [
-                new VariantBayesianStatistics ('base', new Samples([0.1, 0.2, 0.3], [1, 2, 3])),
-                new VariantBayesianStatistics ('variant1', new Samples([0.2, 0.2, 0.2], [1, 1, 1]))
+                new VariantBayesianStatistics ('base', samples([0.1, 0.2, 0.3], [1, 2, 3])),
+                new VariantBayesianStatistics ('variant1', samples([0.2, 0.2, 0.2], [1, 1, 1]))
         ]
         def stats = [
             experimentId: 'experiment1',
@@ -31,7 +31,7 @@ class BayesianExperimentStatisticsIntegrationSpec extends BaseIntegrationSpec {
         mongoTemplate.save(stats, MongoBayesianStatisticsRepository.COLLECTION)
 
         when:
-        def result = bayesianStatisticsRepository.experimentStatistics('experiment1', '2018-04-01', 'all').get()
+        def result = bayesianStatisticsRepository.experimentStatistics('experiment1', 'all', '2018-04-01').get()
 
         then:
         result.device == 'all'
@@ -41,5 +41,9 @@ class BayesianExperimentStatisticsIntegrationSpec extends BaseIntegrationSpec {
         result.variantBayesianStatistics[0].samples.counts == bayesianStats[0].samples.counts
         result.variantBayesianStatistics[1].samples.values == bayesianStats[1].samples.values
         result.variantBayesianStatistics[1].samples.counts == bayesianStats[1].samples.counts
+    }
+
+    def samples(List<BigDecimal> values, List<Integer> counts) {
+        new Samples(values as double [], counts as int[])
     }
 }

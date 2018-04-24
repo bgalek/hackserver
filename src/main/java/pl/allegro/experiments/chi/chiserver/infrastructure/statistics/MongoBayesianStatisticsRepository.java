@@ -24,15 +24,9 @@ public class MongoBayesianStatisticsRepository implements BayesianStatisticsRepo
     }
 
     @Override
-    public Optional<BayesianExperimentStatistics> experimentStatistics(String experimentId, String toDate, String device) {
+    public Optional<BayesianExperimentStatistics> experimentStatistics(String experimentId, String device, String toDate) {
         Timer timer = experimentsMongoMetricsReporter.timerReadBayesianExperimentStatistics();
-        Query query = new Query();
-
-        query.addCriteria(Criteria.where("experimentId").is(experimentId));
-        query.addCriteria(Criteria.where("toDate").is(toDate));
-        query.addCriteria(Criteria.where("device").is(device));
-
-        BayesianExperimentStatistics result = mongoTemplate.findOne(query, BayesianExperimentStatistics.class, COLLECTION);
+        BayesianExperimentStatistics result = mongoTemplate.findOne(query(experimentId, device, toDate), BayesianExperimentStatistics.class, COLLECTION);
         timer.close();
         return Optional.ofNullable(result);
     }
@@ -40,7 +34,24 @@ public class MongoBayesianStatisticsRepository implements BayesianStatisticsRepo
     @Override
     public void save(BayesianExperimentStatistics experimentStatistics) {
         Timer timer = experimentsMongoMetricsReporter.timerWriteBayesianExperimentStatistics();
+
+        removeExistingStats(experimentStatistics.getExperimentId(), experimentStatistics.getDevice(), experimentStatistics.getToDate());
+
         mongoTemplate.save(experimentStatistics, COLLECTION);
         timer.close();
+    }
+
+    private void removeExistingStats(String experimentId, String device, String toDate) {
+        mongoTemplate.remove(query(experimentId, device, toDate));
+    }
+
+    private Query query(String experimentId, String device, String toDate) {
+        Query query = new Query();
+
+        query.addCriteria(Criteria.where("experimentId").is(experimentId));
+        query.addCriteria(Criteria.where("toDate").is(toDate));
+        query.addCriteria(Criteria.where("device").is(device));
+
+        return query;
     }
 }

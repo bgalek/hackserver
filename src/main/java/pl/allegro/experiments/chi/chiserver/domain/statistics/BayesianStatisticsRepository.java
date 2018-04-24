@@ -5,7 +5,7 @@ import pl.allegro.experiments.chi.chiserver.domain.statistics.bayes.BayesianExpe
 import java.util.Optional;
 
 public interface BayesianStatisticsRepository {
-    Optional<BayesianExperimentStatistics> experimentStatistics(String experimentId, String toDate, String device);
+    Optional<BayesianExperimentStatistics> experimentStatistics(String experimentId, String device, String toDate);
 
     void save(BayesianExperimentStatistics experimentStatistics);
 }
