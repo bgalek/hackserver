@@ -109,13 +109,13 @@ class ExperimentsSelfServiceE2ESpec extends BaseIntegrationSpec {
                 measurements    : [lastDayVisits: 0],
                 editable        : true,
                 groups          : ['group a', 'group b'],
-                origin          : 'mongo',
+                origin          : 'MONGO',
                 description     : 'desc',
                 documentLink    : 'https://vuetifyjs.com/vuetify/quick-start',
                 reportingEnabled: true,
                 reportingType   : 'BACKEND',
                 eventDefinitions: [],
-                variants        : [
+                renderedVariants        : [
                         [
                                 name      : 'v1',
                                 predicates: [[type: 'INTERNAL']]
@@ -129,19 +129,10 @@ class ExperimentsSelfServiceE2ESpec extends BaseIntegrationSpec {
                                 predicates: [[type: 'HASH', from: 50, to: 60], [type: 'DEVICE_CLASS', device: 'phone']]
                         ]
                 ],
-                definition      : [
-                        id                 : 'some2',
-                        author             : 'Anonymous',
-                        status             : 'DRAFT',
-                        groups             : ['group a', 'group b'],
-                        description        : 'desc',
-                        documentLink       : 'https://vuetifyjs.com/vuetify/quick-start',
-                        reportingEnabled   : true,
-                        variantNames       : ['v2', 'v3'],
-                        internalVariantName: 'v1',
-                        deviceClass        : 'phone',
-                        percentage         : 10
-                ]
+                variantNames       : ['v2', 'v3'],
+                internalVariantName: 'v1',
+                deviceClass        : 'phone',
+                percentage         : 10
         ]
         responseSingle.body.definition == expectedExperiment.definition
         responseSingle.body.variants == expectedExperiment.variants
@@ -182,7 +173,7 @@ class ExperimentsSelfServiceE2ESpec extends BaseIntegrationSpec {
                 ], Map)
 
         then:
-        def definition = fetchExperiment(request.id).body.definition
+        def definition = fetchExperiment(request.id).body
         definition.percentage == 18
         definition.internalVariantName == 'internV'
         definition.variantNames == ['a', 'b', 'c']

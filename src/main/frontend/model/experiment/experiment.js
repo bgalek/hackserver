@@ -3,7 +3,6 @@ import _ from 'lodash'
 
 import ExperimentVariantModel from './experiment-variant'
 import ActivityPeriod from './activity-period'
-import ExperimentDefinitionModel from './experiment-definition'
 
 const ExperimentRecord = Record({
   id: null,
@@ -24,18 +23,22 @@ const ExperimentRecord = Record({
   origin: '',
   definition: null,
   reportingType: null,
-  eventDefinitions: []
+  eventDefinitions: [],
+  percentage: null,
+  internalVariantName: null,
+  variantNames: [],
+  deviceClass: null
 })
 
 export default class ExperimentModel extends ExperimentRecord {
   constructor (experimentObject) {
     experimentObject = Object.assign({}, experimentObject)
     experimentObject.activityPeriod = experimentObject.activityPeriod && new ActivityPeriod(experimentObject.activityPeriod)
-    experimentObject.variants = List(experimentObject.variants).map((variant, i) => new ExperimentVariantModel(variant, i)).toArray()
+    experimentObject.variants = List(experimentObject.renderedVariants).map((variant, i) => new ExperimentVariantModel(variant, i)).toArray()
     experimentObject.hasBase = _.includes(_.map(experimentObject.variants, v => v.name), 'base')
     experimentObject.isMeasured = experimentObject.hasBase && experimentObject.reportingEnabled
     experimentObject.groups = List(experimentObject.groups)
-    experimentObject.definition = experimentObject.definition && new ExperimentDefinitionModel(experimentObject.definition)
+    experimentObject.variantNames = List(experimentObject.variantNames)
     experimentObject.eventDefinitions = List(experimentObject.eventDefinitions)
     super(experimentObject)
   }
@@ -53,40 +56,8 @@ export default class ExperimentModel extends ExperimentRecord {
     }
   }
 
-  fromDateString () {
-    return this.activityPeriod && this.activityPeriod.fromDateString()
-  }
-
-  toDateString () {
-    return this.activityPeriod && this.activityPeriod.toDateString()
-  }
-
   groupsInfo () {
     return this.groups.join(', ')
-  }
-
-  canBeStarted () {
-    return !!this.definition && this.definition.canBeStarted()
-  }
-
-  canBeStopped () {
-    return !!this.definition && this.definition.canBeStopped()
-  }
-
-  canBePaused () {
-    return !!this.definition && this.definition.canBePaused()
-  }
-
-  canBeResumed () {
-    return !!this.definition && this.definition.canBeResumed()
-  }
-
-  canBeProlonged () {
-    return !!this.definition && this.definition.canBeProlonged()
-  }
-
-  canRunLifecycleCommand () {
-    return !!this.definition && this.definition.canRunLifecycleCommand()
   }
 
   getBaseVariant () {
@@ -101,5 +72,44 @@ export default class ExperimentModel extends ExperimentRecord {
 
   eventDefinitionsAvailable () {
     return this.reportingType === 'FRONTEND'
+  }
+
+  fromDateString () {
+    return this.activityPeriod && this.activityPeriod.fromDateString()
+  }
+
+  toDateString () {
+    return this.activityPeriod && this.activityPeriod.toDateString()
+  }
+
+  canBeStarted () {
+    return this.origin === 'MONGO' && this.status === 'DRAFT'
+  }
+
+  canBeStopped () {
+    return this.origin === 'MONGO' && this.status === 'ACTIVE'
+  }
+
+  canBePaused () {
+    return this.origin === 'MONGO' && this.status === 'ACTIVE'
+  }
+
+  canBeResumed () {
+    return this.origin === 'MONGO' && this.status === 'PAUSED'
+  }
+
+  canBeProlonged () {
+    return this.origin === 'MONGO' && this.status === 'ACTIVE'
+  }
+
+  canChangeVariants () {
+    return this.origin === 'MONGO' && this.status !== 'ENDED'
+  }
+
+  canRunLifecycleCommand () {
+    return this.canBeStarted() ||
+      this.canBeStopped() ||
+      this.canBePaused() ||
+      this.canBeResumed()
   }
 };

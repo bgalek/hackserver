@@ -8,6 +8,10 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
+/**
+ * Is it a ClientExperiment? Or maybe StashExperimentDefinition?
+ */
+@Deprecated
 public class Experiment {
     private final String id;
     private final List<ExperimentVariant> variants;
@@ -118,6 +122,10 @@ public class Experiment {
 
     public ExperimentStatus getStatus() {
         return status;
+    }
+
+    public ExperimentStatus getExplicitStatus() {
+        return this.explicitStatus;
     }
 
     public ExperimentMeasurements getMeasurements() {

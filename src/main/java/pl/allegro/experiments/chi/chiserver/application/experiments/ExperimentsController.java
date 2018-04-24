@@ -7,9 +7,10 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageConversionException;
 import org.springframework.web.bind.annotation.*;
+import pl.allegro.experiments.chi.chiserver.domain.UserProvider;
+import pl.allegro.experiments.chi.chiserver.domain.experiments.Experiment;
 import pl.allegro.experiments.chi.chiserver.domain.experiments.ExperimentsRepository;
 import pl.allegro.experiments.chi.chiserver.domain.experiments.MeasurementsRepository;
-import pl.allegro.experiments.chi.chiserver.domain.experiments.PermissionsRepository;
 import pl.allegro.experiments.chi.chiserver.domain.experiments.administration.*;
 import pl.allegro.experiments.chi.chiserver.domain.experiments.administration.audit.AuditLog;
 import pl.allegro.experiments.chi.chiserver.domain.experiments.administration.audit.Auditor;
@@ -30,34 +31,35 @@ public class ExperimentsController {
 
     private final ExperimentsRepository experimentsRepository;
     private final MeasurementsRepository measurementsRepository;
-    private final PermissionsRepository permissionsRepository;
     private ExperimentActions experimentActions;
     private final Gson jsonConverter;
     private final Auditor auditor;
+    private final UserProvider userProvider;
 
 
     public ExperimentsController(
             ExperimentsRepository experimentsRepository,
             MeasurementsRepository measurementsRepository,
-            PermissionsRepository permissionsRepository,
             ExperimentActions experimentActions,
             Gson jsonConverter,
-            Auditor auditor) {
+            Auditor auditor,
+            UserProvider userProvider) {
         this.experimentsRepository = experimentsRepository;
         this.measurementsRepository = measurementsRepository;
-        this.permissionsRepository = permissionsRepository;
         this.experimentActions = experimentActions;
         this.jsonConverter = jsonConverter;
         this.auditor = auditor;
+        this.userProvider = userProvider;
     }
 
     @MeteredEndpoint
     @GetMapping(path = {""})
     String allExperiments() {
         logger.info("All experiments request received");
-        return jsonConverter.toJson(measurementsRepository.withMeasurements(experimentsRepository.getAll())
-                .stream()
-                .map(permissionsRepository::withPermissions)
+        return jsonConverter.toJson(
+                 experimentsRepository.getAll().stream()
+                .map(this::toAdminExperiment)
+                .map(it -> it.withMeasurements(measurementsRepository.getMeasurements(it.getId())))
                 .collect(Collectors.toList()));
     }
 
@@ -66,8 +68,8 @@ public class ExperimentsController {
     ResponseEntity<String> getExperiment(@PathVariable String experimentId) {
         logger.info("Single experiment request received");
         return experimentsRepository.getExperiment(experimentId)
-                .map(measurementsRepository::withMeasurements)
-                .map(permissionsRepository::withPermissions)
+                .map(this::toAdminExperiment)
+                .map(it -> it.withMeasurements(measurementsRepository.getMeasurements(it.getId())))
                 .map(e -> ResponseEntity.ok(jsonConverter.toJson(e)))
                 .orElse(new ResponseEntity<>(HttpStatus.NOT_FOUND));
     }
@@ -197,5 +199,10 @@ public class ExperimentsController {
                 .build();
 
         return new ResponseEntity<>(new SimpleErrorsHolder(error), HttpStatus.BAD_REQUEST);
+    }
+
+    private AdminExperiment toAdminExperiment(Experiment experiment) {
+        return experiment.getDefinition().map(it -> new AdminExperiment(it, userProvider.getCurrentUser()))
+                .orElse(new AdminExperiment(experiment));
     }
 }

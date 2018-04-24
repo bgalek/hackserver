@@ -128,7 +128,7 @@
         </v-menu>
 
         <v-menu :close-on-content-click="false"
-                v-if="canChangeVariants()"
+                v-if="this.experiment.canChangeVariants()"
                 v-model="variantsMenuVisible">
           <v-btn color="gray" slot="activator" style="text-transform: none">
             Update variants
@@ -136,7 +136,7 @@
           </v-btn>
 
           <v-list style="padding:15px; display: block;">
-            <experiment-variants-editing :variants="experiment.definition"
+            <experiment-variants-editing :variants="experiment"
                                          :allowModifyRegularVariants="false"
                                      v-model="variantsEditingResult"
             ></experiment-variants-editing>
@@ -219,13 +219,6 @@
 
       canRunAnyCommand () {
         return this.canRunLifecycleCommand() || this.canRunOtherCommand()
-      },
-
-      canChangeVariants () {
-        if (this.experiment.definition) {
-          return this.experiment.definition.canChangeVariants()
-        }
-        return false
       },
 
       deleteMe () {
@@ -352,11 +345,11 @@
       },
 
       variantsChanged () {
-        if (this.experiment.definition) {
-          return this.variantsEditingResult.percentage !== this.experiment.definition.percentage ||
-            JSON.stringify(this.variantsEditingResult.variantNames) !== JSON.stringify(this.experiment.definition.variantNames) ||
-            slugify(this.variantsEditingResult.internalVariantName) !== slugify(this.experiment.definition.internalVariantName) ||
-            (this.variantsEditingResult.deviceClass || 'all') !== (this.experiment.definition.deviceClass || 'all')
+        if (this.experiment.origin === 'MONGO') {
+          return this.variantsEditingResult.percentage !== this.experiment.percentage ||
+            JSON.stringify(this.variantsEditingResult.variantNames) !== JSON.stringify(this.experiment.variantNames) ||
+            slugify(this.variantsEditingResult.internalVariantName) !== slugify(this.experiment.internalVariantName) ||
+            (this.variantsEditingResult.deviceClass || 'all') !== (this.experiment.deviceClass || 'all')
         }
         return false
       },
@@ -365,7 +358,7 @@
         if (this.$refs.actionForm.validate()) {
           this.closeVariants()
           this.prepareToSend()
-          this.variantsEditingResult.internalVariantName = this.variantsEditingResult.internalVariantName !== '' ? slugify(this.variantsEditingResult.internalVariantName) : null
+          this.variantsEditingResult.internalVariantName = this.variantsEditingResult.internalVariantName !== '' ? this.variantsEditingResult.slugifiedInternalVariantName : null
           this.updateExperimentVariants({
             data: {
               percentage: this.variantsEditingResult.percentage,

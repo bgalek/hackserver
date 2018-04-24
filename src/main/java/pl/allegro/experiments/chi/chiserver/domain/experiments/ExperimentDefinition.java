@@ -125,7 +125,7 @@ public class ExperimentDefinition {
     }
 
     @DiffInclude
-    public boolean getReportingEnabled() {
+    public boolean isReportingEnabled() {
         return reportingEnabled;
     }
 
@@ -264,6 +264,7 @@ public class ExperimentDefinition {
         return new Builder();
     }
 
+    @Deprecated
     public Experiment toExperiment() {
         try {
             final var experimentVariants = new ArrayList<ExperimentVariant>();

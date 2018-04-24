@@ -24,7 +24,7 @@ public class PermissionsAwareExperimentRepository {
         return experimentsRepository.getExperiment(experimentId)
                 .map(e -> {
                     User user = userProvider.getCurrentUser();
-                    if (!user.isOwner(e)) {
+                    if (!e.getDefinition().isPresent() || !user.isOwner(e.getDefinition().get())) {
                         throw new AuthorizationException("User has no permission to edit experiment: " + experimentId);
                     }
                     return e;
