@@ -1,5 +1,5 @@
 <template>
-    <div style="width: 85%; padding: 10px;">
+    <div>
       <v-btn color="primary" class="mb-2" @click="newItem()" v-if="!readOnly">
         Add event
       </v-btn>
