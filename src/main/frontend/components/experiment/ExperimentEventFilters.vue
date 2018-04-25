@@ -123,7 +123,7 @@
 
     watch: {
       initData (newValue) {
-        this.items = newValue;
+        this.items = newValue
       }
     },
 
