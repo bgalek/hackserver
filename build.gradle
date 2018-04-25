@@ -7,7 +7,8 @@ buildscript {
                 andamio:     '2.0.0',
                 springKafka: '2.1.5.RELEASE',
                 spock:       '1.1-groovy-2.4',
-                groovy:      '2.4.15'
+                groovy:      '2.4.15',
+                jaxb:        '2.3.0'
         ]
     }
 
@@ -67,15 +68,18 @@ dependencies {
     compile 'com.squareup.okhttp3:okhttp:3.9.1'
     compile 'com.github.slugify:slugify:2.1.12'
 
-    testCompile group: 'org.springframework.boot', name: 'spring-boot-properties-migrator', version: versions.springBoot
+    //dependencies missing on Java 10 jre
+    compile "javax.activation:activation:1.1.1"
+    compile "javax.xml.bind:jaxb-api:$versions.jaxb"
+    compile "com.sun.xml.bind:jaxb-core:$versions.jaxb"
+    compile "com.sun.xml.bind:jaxb-impl:$versions.jaxb"
 
+    testCompile group: 'org.springframework.boot', name: 'spring-boot-properties-migrator', version: versions.springBoot
     testCompile group: 'cglib', name: 'cglib-nodep', version: '3.2.6'
     testCompile group: 'org.objenesis', name: 'objenesis', version: '1.2'
     testCompile group: 'com.github.tomakehurst', name: 'wiremock', version: '2.1.11'
-
     testCompile group: 'org.spockframework', name: 'spock-core', version: versions.spock
     testCompile group: 'org.codehaus.groovy', name: 'groovy-all', version: versions.groovy
-
     testCompile group: 'com.jayway.jsonpath', name: 'json-path', version: '2.4.0'
     testCompile group: 'org.spockframework', name: 'spock-spring', version: versions.spock
     testCompile group: 'org.springframework.boot', name: 'spring-boot-starter-test', version: versions.springBoot
