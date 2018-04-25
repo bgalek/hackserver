@@ -58,6 +58,7 @@
       <v-data-table
         :headers="headers"
         :items="items"
+        :key="initData"
         hide-actions
          light
       >
@@ -85,6 +86,7 @@
 <script>
   export default {
     props: ['readOnly', 'initData'],
+
     data () {
       const initial = this.initData || []
       return {
@@ -116,6 +118,12 @@
           (v) => this.containsNo(v, '\\') || 'no \\',
           (v) => this.containsNo(v, '"') || 'no "'
         ]
+      }
+    },
+
+    watch: {
+      initData (newValue) {
+        this.items = newValue;
       }
     },
 

@@ -7,6 +7,7 @@
 
         <experiment-details
           :experiment="experiment"
+          :event-definitions="eventDefinitions"
           v-if="loadingExperimentDone"
         ></experiment-details>
 
@@ -93,6 +94,7 @@
 
     computed: mapState({
       experiment: state => state.experiment.experiment,
+      eventDefinitions: state => state.experiment.experiment.eventDefinitions.toArray(),
       error: state => state.experiment.error.experiment,
       pending: state => state.experiment.pending.experiment,
       experimentId: state => state.experiment.experiment.id,

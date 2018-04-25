@@ -106,6 +106,10 @@ export default class ExperimentModel extends ExperimentRecord {
     return this.origin === 'MONGO' && this.status !== 'ENDED'
   }
 
+  canChangeEventDefinitions () {
+    return this.reportingType === 'FRONTEND' && this.status !== 'ENDED'
+  }
+
   canRunLifecycleCommand () {
     return this.canBeStarted() ||
       this.canBeStopped() ||
