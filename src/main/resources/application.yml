@@ -68,3 +68,9 @@ druid:
   apiHost: druidbroker-nga-test.allegrogroup.com
   experimentsCube: chi_experiments_test
   experimentsStatsCube: chi_experiments_stats_test
+
+status:
+  endpoints:
+    whitelist:
+      resources:
+        - GET
