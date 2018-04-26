@@ -43,7 +43,7 @@ public class MongoBayesianStatisticsRepository implements BayesianStatisticsRepo
     }
 
     private void removeExistingStats(String experimentId, String device, String toDate) {
-        mongoTemplate.remove(query(experimentId, device, toDate));
+        mongoTemplate.findAllAndRemove(query(experimentId, device, toDate), BayesianExperimentStatistics.class, COLLECTION);
     }
 
     private Query query(String experimentId, String device, String toDate) {
