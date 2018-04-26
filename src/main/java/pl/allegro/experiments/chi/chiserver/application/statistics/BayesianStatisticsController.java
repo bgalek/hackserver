@@ -39,26 +39,16 @@ public class BayesianStatisticsController {
     @GetMapping("/statistics/{experimentId}")
     ResponseEntity<String> experimentsStatistics(
             @PathVariable String experimentId,
-            @RequestParam(value = "device", required = false) String device,
-            @RequestParam(value = "toDate", required = false) String toDate) {
+            @RequestParam(value = "device", required = false, defaultValue = "all") final String device,
+            @RequestParam(value = "toDate", required = false) final String toDate) {
         logger.info("Experiment bayesian statistics request received {} device {} toDate {}", experimentId, device, toDate);
 
-        if (device == null) {
-            device = "all";
-        }
-
-        if (toDate == null) {
-            toDate = Optional.ofNullable(statisticsRepository.lastStatisticsDate(experimentId))
-                    .map(LocalDate::toString)
-                    .orElse(null);
-            if (toDate == null) {
-                return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-            }
-        }
-
-        return bayesianStatisticsRepository.experimentStatistics(experimentId, device, toDate)
-                .map(s -> ResponseEntity.ok(jsonConverter.toJson(s)))
-                .orElse(ResponseEntity.notFound().build());
+        return Optional.ofNullable(statisticsRepository.lastStatisticsDate(experimentId))
+                .map(LocalDate::toString)
+                .map(date -> bayesianStatisticsRepository.experimentStatistics(experimentId, device, date)
+                        .map(s -> ResponseEntity.ok(jsonConverter.toJson(s)))
+                        .orElse(ResponseEntity.notFound().build()))
+                .orElse(new ResponseEntity<>(HttpStatus.NO_CONTENT));
     }
 
     @MeteredEndpoint

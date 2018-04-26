@@ -26,19 +26,20 @@ public class MongoBayesianStatisticsRepository implements BayesianStatisticsRepo
     @Override
     public Optional<BayesianExperimentStatistics> experimentStatistics(String experimentId, String device, String toDate) {
         Timer timer = experimentsMongoMetricsReporter.timerReadBayesianExperimentStatistics();
-        BayesianExperimentStatistics result = mongoTemplate.findOne(query(experimentId, device, toDate), BayesianExperimentStatistics.class, COLLECTION);
-        timer.close();
-        return Optional.ofNullable(result);
+        try {
+            return Optional.ofNullable(timer.wrap(() -> mongoTemplate.findOne(query(experimentId, device, toDate), BayesianExperimentStatistics.class, COLLECTION)).call());
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
     }
 
     @Override
     public void save(BayesianExperimentStatistics experimentStatistics) {
         Timer timer = experimentsMongoMetricsReporter.timerWriteBayesianExperimentStatistics();
-
-        removeExistingStats(experimentStatistics.getExperimentId(), experimentStatistics.getDevice(), experimentStatistics.getToDate());
-
-        mongoTemplate.save(experimentStatistics, COLLECTION);
-        timer.close();
+        timer.record(() -> {
+            removeExistingStats(experimentStatistics.getExperimentId(), experimentStatistics.getDevice(), experimentStatistics.getToDate());
+            mongoTemplate.save(experimentStatistics, COLLECTION);
+        });
     }
 
     private void removeExistingStats(String experimentId, String device, String toDate) {
