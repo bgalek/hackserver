@@ -84,6 +84,8 @@
 </template>
 
 <script>
+  import {startsOrEndsWithSpace} from '../../utils/startsOrEndsWithSpace'
+
   export default {
     props: ['readOnly', 'initData'],
 
@@ -116,7 +118,8 @@
           (v) => this.containsNo(v, '\'') || 'no \'',
           (v) => this.containsNo(v, '/') || 'no /',
           (v) => this.containsNo(v, '\\') || 'no \\',
-          (v) => this.containsNo(v, '"') || 'no "'
+          (v) => this.containsNo(v, '"') || 'no "',
+          (v) => !startsOrEndsWithSpace(v) || 'Do not start nor end variant name with space'
         ]
       }
     },
