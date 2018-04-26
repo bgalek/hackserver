@@ -1,9 +1,13 @@
 package pl.allegro.experiments.chi.chiserver.infrastructure.statistics;
 
+import com.mongodb.client.result.DeleteResult;
 import io.micrometer.core.instrument.Timer;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
+import pl.allegro.experiments.chi.chiserver.application.statistics.BayesianStatisticsController;
 import pl.allegro.experiments.chi.chiserver.domain.statistics.BayesianStatisticsRepository;
 import pl.allegro.experiments.chi.chiserver.domain.statistics.bayes.BayesianExperimentStatistics;
 import pl.allegro.experiments.chi.chiserver.infrastructure.experiments.ExperimentsMongoMetricsReporter;
@@ -11,6 +15,7 @@ import pl.allegro.experiments.chi.chiserver.infrastructure.experiments.Experimen
 import java.util.Optional;
 
 public class MongoBayesianStatisticsRepository implements BayesianStatisticsRepository {
+    private static final Logger logger = LoggerFactory.getLogger(MongoBayesianStatisticsRepository.class);
 
     private static final String COLLECTION = "bayesianExperimentStatistics";
     private final MongoTemplate mongoTemplate;
@@ -41,13 +46,14 @@ public class MongoBayesianStatisticsRepository implements BayesianStatisticsRepo
                     .map(old -> old.updateVariants(experimentStatistics))
                     .orElse(experimentStatistics);
             // TODO: replace with upsert 
-            removeExistingStats(experimentStatistics.getExperimentId(), experimentStatistics.getDevice(), experimentStatistics.getToDate());
+            removeExistingStats(merged.getExperimentId(), merged.getDevice(), merged.getToDate());
             mongoTemplate.save(merged, COLLECTION);
         });
     }
 
     private void removeExistingStats(String experimentId, String device, String toDate) {
-        mongoTemplate.findAllAndRemove(query(experimentId, device, toDate), BayesianExperimentStatistics.class, COLLECTION);
+        DeleteResult remove = mongoTemplate.remove(query(experimentId, device, toDate), BayesianExperimentStatistics.class, COLLECTION);
+        logger.info("Removed {} documents", remove.getDeletedCount());
     }
 
     private Query query(String experimentId, String device, String toDate) {
