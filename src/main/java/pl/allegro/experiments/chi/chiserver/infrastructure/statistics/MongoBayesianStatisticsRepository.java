@@ -37,13 +37,12 @@ public class MongoBayesianStatisticsRepository implements BayesianStatisticsRepo
     public void save(BayesianExperimentStatistics experimentStatistics) {
         Timer timer = experimentsMongoMetricsReporter.timerWriteBayesianExperimentStatistics();
         timer.record(() -> {
-            removeExistingStats(experimentStatistics.getExperimentId(), experimentStatistics.getDevice(), experimentStatistics.getToDate());
-            mongoTemplate.save(experimentStatistics, COLLECTION);
-        });
-    }
+            BayesianExperimentStatistics merged = this.experimentStatistics(experimentStatistics.getExperimentId(), experimentStatistics.getDevice(), experimentStatistics.getToDate())
+                    .map(old -> old.updateVariants(experimentStatistics))
+                    .orElse(experimentStatistics);
 
-    private void removeExistingStats(String experimentId, String device, String toDate) {
-        mongoTemplate.findAllAndRemove(query(experimentId, device, toDate), BayesianExperimentStatistics.class, COLLECTION);
+            mongoTemplate.save(merged, COLLECTION);
+        });
     }
 
     private Query query(String experimentId, String device, String toDate) {

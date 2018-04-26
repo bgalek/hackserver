@@ -5,6 +5,8 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.common.base.Preconditions;
 
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 public class BayesianExperimentStatistics {
     private final String experimentId;
@@ -42,6 +44,19 @@ public class BayesianExperimentStatistics {
 
     public List<VariantBayesianStatistics> getVariantBayesianStatistics() {
         return variantBayesianStatistics;
+    }
+
+    public BayesianExperimentStatistics updateVariants(BayesianExperimentStatistics statsWithNewVariants) {
+        Preconditions.checkArgument(this.experimentId.equals(statsWithNewVariants.experimentId));
+        Preconditions.checkArgument(this.device.equals(statsWithNewVariants.device));
+        Preconditions.checkArgument(this.toDate.equals(statsWithNewVariants.toDate));
+
+        Map<String, VariantBayesianStatistics> oldVariants = this.variantBayesianStatistics.stream().collect(Collectors.toMap(VariantBayesianStatistics::getVariantName, e -> e));
+        Map<String, VariantBayesianStatistics> newVariants = statsWithNewVariants.variantBayesianStatistics.stream().collect(Collectors.toMap(VariantBayesianStatistics::getVariantName, e -> e));
+
+        oldVariants.putAll(newVariants);
+
+        return new BayesianExperimentStatistics(experimentId, toDate, device, oldVariants.entrySet().stream().map(Map.Entry::getValue).collect(Collectors.toList()));
     }
 
     @Override
