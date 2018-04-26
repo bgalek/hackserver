@@ -194,8 +194,7 @@ class ExperimentsSelfServiceE2ESpec extends BaseIntegrationSpec {
                 ], List)
 
         then:
-        def definition2 = fetchExperiment(request.id).body
-        definition2.eventDefinitions == [
+        fetchExperiment(request.id).body.eventDefinitions == [
                 [
                         boxName: 'b1',
                         action: 'a1',
