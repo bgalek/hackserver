@@ -1,13 +1,15 @@
 <template>
   <v-container v-if="this.show()">
     <h3>Results based on bayesian analysis</h3>
-
+    <br/>
+    <h4>Visits conversion histogram</h4>
     <v-layout row>
       <v-spacer></v-spacer>
       <variant-selector
         :experiment="experiment"
         :selectedVariantName="this.variantName"
         @variantNameChanged="updateVariantName"
+        :showBase="false"
       ></variant-selector>
     </v-layout>
     <bayesian-histogram-chart
@@ -20,6 +22,7 @@
 <script>
   import BayesianHistogramChart from './BayesianHistogramChart'
   import VariantSelector from './VariantSelector'
+  import experiment from "../../../store/experiment";
 
   export default {
     props: ['experiment', 'bayesianStatistics'],
@@ -31,7 +34,7 @@
 
     data () {
       return {
-        variantName: ''
+        variantName: this.experiment.variants.find(v => v.name !== 'base').name
       }
     },
 

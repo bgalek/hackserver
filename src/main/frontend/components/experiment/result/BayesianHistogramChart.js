@@ -13,25 +13,33 @@ export default {
 
   methods: {
     printHistogram (histogramData) {
+      console.log(histogramData.values)
       this.renderChart({
-        labels: histogramData.values,
+        labels: histogramData.values.map(v => v.toFixed(2)),
         datasets: [
           {
             label: '',
-            backgroundColor: histogramData.values.map(v => v < 0 ? 'red' : 'green'),
+            backgroundColor: histogramData.values.map(v => v < 0 ? '#e62e00' : '#00b300'),
             data: histogramData.counts
           }
         ]
       },
       {
+        legend: {
+          display: false
+        },
         responsive: true,
+        maintainAspectRatio: false,
         scales: {
           xAxes: [{
             gridLines: {
               display: false
             },
-            barPercentage: 1.01,
-            categoryPercentage: 1.01
+            barPercentage: 1.11,
+            categoryPercentage: 1.11,
+            ticks: {
+              autoskip: true
+            }
           }],
           yAxes: [{
             ticks: {
