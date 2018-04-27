@@ -25,7 +25,7 @@
         return this.selectedVariantName || this.getVariantNames().find()
       },
 
-      getVariantNames() {
+      getVariantNames () {
         return this.experiment.variants.map(v => v.name).filter(n => this.showBase || n !== 'base')
       }
     },

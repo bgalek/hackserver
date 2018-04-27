@@ -22,7 +22,6 @@
 <script>
   import BayesianHistogramChart from './BayesianHistogramChart'
   import VariantSelector from './VariantSelector'
-  import experiment from "../../../store/experiment";
 
   export default {
     props: ['experiment', 'bayesianStatistics'],
