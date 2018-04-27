@@ -4,7 +4,6 @@ import com.google.common.collect.ImmutableMap;
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
-import pl.allegro.experiments.chi.chiserver.domain.experiments.Experiment;
 import pl.allegro.experiments.chi.chiserver.domain.statistics.ExperimentStatistics;
 import pl.allegro.experiments.chi.chiserver.domain.statistics.StatisticsRepository;
 import pl.allegro.experiments.chi.chiserver.domain.statistics.VariantStatistics;
@@ -34,12 +33,12 @@ public class DruidStatisticsRepository implements StatisticsRepository {
     }
 
     @Override
-    public boolean hasAnyStatistics(Experiment experiment) {
-        return lastStatisticsDate(experiment) != null;
+    public boolean hasAnyStatistics(String experimentId) {
+        return lastStatisticsDate(experimentId) != null;
     }
 
     @Override
-    public LocalDate lastStatisticsDate(Experiment experiment) {
+    public LocalDate lastStatisticsDate(String experimentId) {
         String queryBody = "{\n" +
                 "\"queryType\": \"timeBoundary\",\n" +
                 "          \"dataSource\": \"" + this.datasource + "\",\n" +
@@ -47,7 +46,7 @@ public class DruidStatisticsRepository implements StatisticsRepository {
                 "          \"filter\": {\n" +
                 "            \"type\": \"selector\",\n" +
                 "              \"dimension\": \"experiment_id\",\n" +
-                "              \"value\": \"" + experiment.getId() + "\"\n" +
+                "              \"value\": \"" + experimentId + "\"\n" +
                 "            }\n" +
                 "          }\n" +
                 "        }\n";
@@ -62,7 +61,7 @@ public class DruidStatisticsRepository implements StatisticsRepository {
     }
 
     @Override
-    public ExperimentStatistics experimentStatistics(Experiment experiment, LocalDate toDate, String device) {
+    public ExperimentStatistics experimentStatistics(String experimentId, LocalDate toDate, String device) {
         String intervals = oneDayIntervals(toDate);
         String query = "\n" +
                 "            {\n" +
@@ -76,7 +75,7 @@ public class DruidStatisticsRepository implements StatisticsRepository {
                 "                  {\n" +
                 "                    \"type\": \"selector\",\n" +
                 "                    \"dimension\": \"experiment_id\",\n" +
-                "                    \"value\": \"" + experiment.getId() + "\"\n" +
+                "                    \"value\": \"" + experimentId + "\"\n" +
                 "                  },\n" +
                 "                  {\n" +
                 "                    \"type\": \"selector\",\n" +
@@ -115,7 +114,7 @@ public class DruidStatisticsRepository implements StatisticsRepository {
                 "              ]\n" +
                 "            }\n";
         String druidResponse = druid.query(query);
-        return parseStatistics(druidResponse, experiment.getId(), toDate, device);
+        return parseStatistics(druidResponse, experimentId, toDate, device);
     }
 
     private ExperimentStatistics parseStatistics(
