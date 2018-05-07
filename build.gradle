@@ -141,8 +141,6 @@ test {
     testLogging {
         exceptionFormat = 'full'
     }
-    dependsOn drivers.collect { tasks["${it}Test"] }
-    enabled = false
 }
 
 tasks.withType(Test) {
@@ -161,6 +159,8 @@ integrationTest {
     testLogging {
         exceptionFormat = 'full'
     }
+    dependsOn drivers.collect { tasks["${it}Test"] }
+    enabled = false
 }
 test {
     afterTest { desc, result ->
