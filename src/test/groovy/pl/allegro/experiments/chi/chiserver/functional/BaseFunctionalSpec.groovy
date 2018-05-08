@@ -20,16 +20,13 @@ import pl.allegro.experiments.chi.chiserver.domain.UserProvider
 @ContextConfiguration
 abstract class BaseFunctionalSpec extends GebSpec {
 
-    def setup() {
-        getBrowser().setBaseUrl(localUrl(""))
-    }
-
     @Value('${local.server.port}')
     protected int port
 
-    protected String localUrl(String endpoint) {
-        return "http://localhost:$port$endpoint"
+    def setup() {
+        getBrowser().setBaseUrl("http://localhost:$port")
     }
+
 }
 
 @Configuration
