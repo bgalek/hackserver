@@ -20,11 +20,12 @@
             v-if="loadingExperimentDone"
             :experiment="experiment"
           ></result-table>
-          <div slot="footer">
-            Read the χ Docs about <a href="https://rtd.allegrogroup.com/docs/chi/pl/latest/chi_metrics/">metrics</a>
-            and how to understand
-            <a href="https://rtd.allegrogroup.com/docs/chi/pl/latest/results/">p-Value</a>.
-          </div>
+
+          <bayesian-result
+            v-if="loadingExperimentDone"
+            :experiment="experiment"
+            :bayesianStatistics="bayesianStatistics"
+          ></bayesian-result>
         </chi-panel>
 
         <experiment-actions
@@ -53,6 +54,7 @@
 
   import AssignmentPanel from './assignments/AssignmentPanel.vue'
   import ResultTable from './result/ResultTable.vue'
+  import BayesianResult from './result/BayesianResult.vue'
   import ExperimentDetails from './ExperimentDetails.vue'
   import ExperimentActions from './ExperimentActions.vue'
   import ChiPanel from '../ChiPanel.vue'
@@ -73,11 +75,18 @@
         this.allowDelete = false
         this.loadingStatsDone = true
       })
+
+      this.loadExperimentBayesianResult('all', this.$route.params.experimentId).then(() => {
+        this.loadingBayesianResultDone = true
+      }).catch(() => {
+        this.loadingBayesianResultDone = true
+      })
     },
 
     data () {
       return {
         loadingStatsDone: false,
+        loadingBayesianResultDone: false,
         loadingExperimentDone: false,
         device: 'all',
         metricOrder: {
@@ -132,6 +141,10 @@
         }
       },
 
+      bayesianStatistics (state) {
+        return state.bayesianStatistics.bayesianStatistics.variantBayesianStatistics || { }
+      },
+
       experimentStatisticsError: state => state.experimentStatistics.error.experimentStatistics,
       experimentStatisticsPending: state => state.experimentStatistics.pending.experimentStatistics
     }),
@@ -142,11 +155,12 @@
       ResultTable,
       ExperimentDetails,
       ChiPanel,
-      ExperimentActions
+      ExperimentActions,
+      BayesianResult
     },
 
     methods: {
-      ...mapActions(['getExperiment', 'getExperimentStatistics']),
+      ...mapActions(['getExperiment', 'getExperimentStatistics', 'getBayesianStatistics']),
 
       loadExperimentStatistics (device, experimentId) {
         return this.getExperimentStatistics({
@@ -157,8 +171,18 @@
         })
       },
 
+      loadExperimentBayesianResult (device, experimentId) {
+        return this.getBayesianStatistics({
+          params: {
+            experimentId,
+            device
+          }
+        })
+      },
+
       onDeviceChanged ({device}) {
         this.loadExperimentStatistics(device, this.experiment.id)
+        this.loadExperimentBayesianResult(device, this.experiment.id)
       }
     }
   }

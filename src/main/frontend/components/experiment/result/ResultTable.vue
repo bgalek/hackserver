@@ -1,18 +1,6 @@
 <template>
   <v-container>
     <v-layout row>
-      <p v-if="experimentStatistics.durationDays > 0">
-        <v-tooltip right>
-          <span slot="activator">
-          Data calculated on
-          <span id="toDate">{{ experimentStatistics.toDate }}</span>
-          for
-          <v-chip outline color="black">{{ experimentStatistics.durationDays }}</v-chip>
-          days.
-          </span>
-          <span>Metrics and statistics are calculated for period: experiment start to {{ experimentStatistics.toDate }}</span>
-        </v-tooltip>
-      </p>
 
       <v-spacer></v-spacer>
 
@@ -22,6 +10,21 @@
         @settingsChanged="updateQueryParams"
       ></result-table-settings>
     </v-layout>
+
+    <h3>Results based on statistical hypothesis testing</h3>
+
+    <p v-if="experimentStatistics.durationDays > 0">
+      <v-tooltip right>
+          <span slot="activator">
+          Data calculated on
+          <span id="toDate">{{ experimentStatistics.toDate }}</span>
+          for
+          <v-chip outline color="black">{{ experimentStatistics.durationDays }}</v-chip>
+          days.
+          </span>
+        <span>Metrics and statistics are calculated for period: experiment start to {{ experimentStatistics.toDate }}</span>
+      </v-tooltip>
+    </p>
 
     <div v-if="experimentStatistics.metrics">
       <div v-for="metric in experimentStatistics.metrics" :key="metric.order">
@@ -85,6 +88,12 @@
       <v-progress-circular v-if="experimentStatisticsPending" indeterminate :size="70" :width="7"
                            color="purple"></v-progress-circular>
     </p>
+
+    <div slot="footer">
+      Read the χ Docs about <a href="https://rtd.allegrogroup.com/docs/chi/pl/latest/chi_metrics/">metrics</a>
+      and how to understand
+      <a href="https://rtd.allegrogroup.com/docs/chi/pl/latest/results/">p-Value</a>.
+    </div>
 
   </v-container>
 
