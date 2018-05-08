@@ -160,7 +160,6 @@ integrationTest {
         exceptionFormat = 'full'
     }
     dependsOn drivers.collect { tasks["${it}Test"] }
-    enabled = false
 }
 test {
     afterTest { desc, result ->
@@ -179,4 +178,16 @@ axionPublishing {
 
 task wrapper(type: Wrapper) {
     gradleVersion = '4.7'
+}
+
+tasks.withType(Test) {
+    maxHeapSize = "1g"
+    jvmArgs '-XX:MaxMetaspaceSize=128m'
+    testLogging {
+        exceptionFormat = 'full'
+    }
+}
+
+tasks.withType(GroovyCompile) {
+    groovyOptions.forkOptions.memoryMaximumSize = '256m'
 }
