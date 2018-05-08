@@ -3,8 +3,13 @@ package pl.allegro.experiments.chi.chiserver.functional
 import geb.spock.GebSpec
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.boot.test.context.SpringBootTest
+import org.springframework.context.annotation.Bean
+import org.springframework.context.annotation.Configuration
+import org.springframework.context.annotation.Primary
 import org.springframework.test.context.ContextConfiguration
 import pl.allegro.experiments.chi.chiserver.AppRunner
+import pl.allegro.experiments.chi.chiserver.domain.User
+import pl.allegro.experiments.chi.chiserver.domain.UserProvider
 
 @SpringBootTest(
         classes = [
@@ -24,5 +29,20 @@ abstract class BaseFunctionalSpec extends GebSpec {
 
     protected String localUrl(String endpoint) {
         return "http://localhost:$port$endpoint"
+    }
+}
+
+@Configuration
+class LoggedInAsRootTestConfig {
+
+    @Primary
+    @Bean
+    UserProvider mutableUserProvider() {
+        return new UserProvider() {
+            @Override
+            User getCurrentUser() {
+                return new User("Anonymous", [], true)
+            }
+        }
     }
 }

@@ -10,7 +10,7 @@ buildscript {
                 groovy        : '2.4.15',
                 jaxb          : '2.3.0',
                 geb           : '2.1',
-                chromeDriver  : '2.32',
+                chromeDriver  : '2.37',
                 chromeSelenium: '3.11.0'
         ]
 
@@ -137,12 +137,6 @@ processResources {
     }
 }
 
-test {
-    testLogging {
-        exceptionFormat = 'full'
-    }
-}
-
 tasks.withType(Test) {
     maxHeapSize = "1g"
     jvmArgs '-XX:MaxMetaspaceSize=128m'
@@ -159,11 +153,16 @@ integrationTest {
     testLogging {
         exceptionFormat = 'full'
     }
-    dependsOn drivers.collect { tasks["${it}Test"] }
 }
+
 test {
+    dependsOn drivers.collect { tasks["${it}Test"] }
+
     afterTest { desc, result ->
         logger.quiet "Executing test ${desc.name} [${desc.className}] with result: ${result.resultType}"
+    }
+    testLogging {
+        exceptionFormat = 'full'
     }
 }
 
@@ -176,16 +175,16 @@ axionPublishing {
     apply()
 }
 
-task wrapper(type: Wrapper) {
-    gradleVersion = '4.7'
-}
-
 tasks.withType(Test) {
     maxHeapSize = "1g"
     jvmArgs '-XX:MaxMetaspaceSize=128m'
     testLogging {
         exceptionFormat = 'full'
     }
+}
+
+task wrapper(type: Wrapper) {
+    gradleVersion = '4.7'
 }
 
 tasks.withType(GroovyCompile) {
