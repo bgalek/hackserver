@@ -4,7 +4,7 @@ buildscript {
         versions = [
                 jackson       : '2.9.5',
                 springBoot    : '2.0.0.RELEASE',
-                andamio       : '2.0.0',
+                andamio       : '2.0.4',
                 springKafka   : '2.1.5.RELEASE',
                 spock         : '1.1-groovy-2.4',
                 groovy        : '2.4.15',
@@ -175,18 +175,6 @@ axionPublishing {
     apply()
 }
 
-tasks.withType(Test) {
-    maxHeapSize = "1g"
-    jvmArgs '-XX:MaxMetaspaceSize=128m'
-    testLogging {
-        exceptionFormat = 'full'
-    }
-}
-
 task wrapper(type: Wrapper) {
     gradleVersion = '4.7'
-}
-
-tasks.withType(GroovyCompile) {
-    groovyOptions.forkOptions.memoryMaximumSize = '256m'
 }

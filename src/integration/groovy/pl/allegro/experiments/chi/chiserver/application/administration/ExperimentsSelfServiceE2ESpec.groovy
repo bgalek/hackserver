@@ -88,7 +88,9 @@ class ExperimentsSelfServiceE2ESpec extends BaseIntegrationSpec {
                 percentage         : 10,
                 deviceClass        : 'phone',
                 groups             : ['group a', 'group b'],
-                reportingEnabled   : true
+                reportingEnabled   : true,
+                reportingType: 'FRONTEND',
+                eventDefinitions: []
         ]
 
         when:
@@ -113,7 +115,7 @@ class ExperimentsSelfServiceE2ESpec extends BaseIntegrationSpec {
                 description     : 'desc',
                 documentLink    : 'https://vuetifyjs.com/vuetify/quick-start',
                 reportingEnabled: true,
-                reportingType   : 'BACKEND',
+                reportingType   : 'FRONTEND',
                 eventDefinitions: [],
                 renderedVariants        : [
                         [
@@ -178,6 +180,29 @@ class ExperimentsSelfServiceE2ESpec extends BaseIntegrationSpec {
         definition.internalVariantName == 'internV'
         definition.variantNames == ['a', 'b', 'c']
         definition.deviceClass == 'phone'
+
+        when:
+        restTemplate.put(localUrl("/api/admin/experiments/${request.id}/update-event-definitions"),
+                [
+                        [
+                            boxName: 'b1',
+                            action: 'a1',
+                            category: 'c1',
+                            label: 'l1',
+                            value: 'v1'
+                        ]
+                ], List)
+
+        then:
+        fetchExperiment(request.id).body.eventDefinitions == [
+                [
+                        boxName: 'b1',
+                        action: 'a1',
+                        category: 'c1',
+                        label: 'l1',
+                        value: 'v1'
+                ]
+        ]
 
         when:
         restTemplate.put(localUrl("/api/admin/experiments/${request.id}/pause"), Map)

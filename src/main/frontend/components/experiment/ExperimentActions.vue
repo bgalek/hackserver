@@ -151,6 +151,30 @@
           </v-list>
         </v-menu>
 
+        <v-menu :close-on-content-click="false"
+                :close-on-click="false"
+                v-if="this.experiment.canChangeEventDefinitions()"
+                v-model="eventDefinitionsMenuVisible">
+          <v-btn color="gray" slot="activator" style="text-transform: none">
+            Update NGA event definitions
+            <v-icon right>visibility</v-icon>
+          </v-btn>
+
+          <v-list style="padding:15px; display: block;">
+            <experiment-event-filters
+              :readOnly="false"
+              :initData="eventDefinitionsEditingResult">
+            </experiment-event-filters>
+
+            <v-btn flat @click="closeEventDefinitions()">Cancel</v-btn>
+            <v-btn color="gray"
+                   @click="updateEventDefinitions"
+                   style="text-transform: none">
+              Update NGA event definitions of &nbsp;<b>{{ this.experiment.id }}</b>
+            </v-btn>
+          </v-list>
+        </v-menu>
+
         <v-menu bottom offset-y
                 v-if="this.allowDelete">
           <v-btn color="red" slot="activator" class="white--text" style="text-transform: none">
@@ -172,6 +196,7 @@
 <script>
   import ExperimentDescEditing from './ExperimentDescEditing.vue'
   import ExperimentVariantsEditing from './ExperimentVariantsEditing.vue'
+  import ExperimentEventFilters from './ExperimentEventFilters'
   import ChiPanel from '../ChiPanel.vue'
   import { mapActions } from 'vuex'
   import { slugify } from '../../utils/slugify'
@@ -182,7 +207,8 @@
     components: {
       ChiPanel,
       ExperimentDescEditing,
-      ExperimentVariantsEditing
+      ExperimentVariantsEditing,
+      ExperimentEventFilters
     },
 
     data () {
@@ -190,7 +216,9 @@
         descriptionsMenuVisible: false,
         descriptionsEditingResult: {},
         variantsMenuVisible: false,
+        eventDefinitionsMenuVisible: false,
         variantsEditingResult: {},
+        eventDefinitionsEditingResult: this.experiment.eventDefinitions.toArray(),
         prolongMenuVisible: false,
         commandOkMessage: '',
         actionFormValid: true,
@@ -344,6 +372,10 @@
         this.variantsMenuVisible = false
       },
 
+      closeEventDefinitions () {
+        this.eventDefinitionsMenuVisible = false
+      },
+
       variantsChanged () {
         if (this.experiment.origin === 'MONGO') {
           return this.variantsEditingResult.percentage !== this.experiment.percentage ||
@@ -379,6 +411,28 @@
           })
 
           this.closeVariants()
+        }
+      },
+
+      updateEventDefinitions () {
+        if (this.$refs.actionForm.validate()) {
+          this.closeEventDefinitions()
+          this.prepareToSend()
+          this.updateExperimentEventDefinitions({
+            data: this.eventDefinitionsEditingResult,
+            params: {
+              experimentId: this.experiment.id
+            }
+          }).then(response => {
+            this.afterSending()
+            this.getExperiment({params: {experimentId: this.experiment.id}})
+            this.commandOkMessage = 'Experiment successfully updated'
+          }).catch(error => {
+            this.afterSending()
+            this.showError(error)
+          })
+
+          this.closeEventDefinitions()
         }
       },
 
@@ -432,7 +486,8 @@
         'resumeExperiment',
         'prolongExperiment',
         'updateExperimentDescriptions',
-        'updateExperimentVariants'
+        'updateExperimentVariants',
+        'updateExperimentEventDefinitions'
       ])
     }
   }

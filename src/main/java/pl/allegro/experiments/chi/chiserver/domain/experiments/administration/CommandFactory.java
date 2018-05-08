@@ -4,8 +4,11 @@ import com.google.common.base.Preconditions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import pl.allegro.experiments.chi.chiserver.domain.UserProvider;
+import pl.allegro.experiments.chi.chiserver.domain.experiments.EventDefinition;
 import pl.allegro.experiments.chi.chiserver.domain.experiments.ExperimentsRepository;
 import pl.allegro.experiments.chi.chiserver.domain.statistics.StatisticsRepository;
+
+import java.util.List;
 
 @Service
 public class CommandFactory {
@@ -111,6 +114,17 @@ public class CommandFactory {
                 properties,
                 experimentsRepository,
                 permissionsAwareExperimentRepository
+        );
+    }
+
+    public UpdateExperimentEventDefinitionsCommand updateExperimentEventDefinitionsCommand(
+            String experimentId,
+            List<EventDefinition> eventDefinitions) {
+        return new UpdateExperimentEventDefinitionsCommand(
+                experimentId,
+                experimentsRepository,
+                permissionsAwareExperimentRepository,
+                eventDefinitions
         );
     }
 }

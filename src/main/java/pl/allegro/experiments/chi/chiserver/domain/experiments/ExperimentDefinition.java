@@ -5,6 +5,7 @@ import com.google.common.collect.ImmutableList;
 import joptsimple.internal.Strings;
 import org.javers.core.metamodel.annotation.DiffInclude;
 import org.javers.core.metamodel.annotation.Id;
+import org.javers.core.metamodel.annotation.PropertyName;
 import org.javers.core.metamodel.annotation.TypeName;
 import pl.allegro.experiments.chi.chiserver.domain.experiments.administration.ExperimentDefinitionException;
 import pl.allegro.experiments.chi.chiserver.infrastructure.experiments.ExperimentOrigin;
@@ -22,7 +23,7 @@ public class ExperimentDefinition {
     private final List<String> variantNames;
     private final String internalVariantName;
     private final Integer percentage;
-    private final String deviceClass;
+    private final DeviceClass deviceClass;
     private final String description;
     private final String documentLink;
     private final String author;
@@ -40,7 +41,7 @@ public class ExperimentDefinition {
             List<String> variantNames,
             String internalVariantName,
             Integer percentage,
-            String deviceClass,
+            DeviceClass deviceClass,
             String description,
             String documentLink,
             String author,
@@ -54,8 +55,8 @@ public class ExperimentDefinition {
         Preconditions.checkNotNull(variantNames);
         Preconditions.checkNotNull(reportingDefinition);
         Preconditions.checkNotNull(groups);
+        Preconditions.checkNotNull(deviceClass);
         Preconditions.checkArgument(internalVariantName == null || !internalVariantName.isEmpty());
-        Preconditions.checkArgument(deviceClass == null || !deviceClass.isEmpty());
         this.id = id;
         this.variantNames = ImmutableList.copyOf(variantNames);
         this.internalVariantName = internalVariantName;
@@ -101,8 +102,11 @@ public class ExperimentDefinition {
         return Optional.ofNullable(percentage);
     }
 
+    public DeviceClass getDeviceClass() { return deviceClass; }
+
     @DiffInclude
-    public Optional<String> getDeviceClass() { return Optional.ofNullable(deviceClass); }
+    @PropertyName("deviceClass")
+    Optional<String> getDeviceClassLegacyFormat() { return Optional.ofNullable(deviceClass.toJsonString()); }
 
     @DiffInclude
     public String getDescription() {
@@ -250,8 +254,8 @@ public class ExperimentDefinition {
     private ExperimentVariant convertVariant(String variantName, int from, int to) {
         final var predicates = new ArrayList<Predicate>();
         predicates.add(new HashRangePredicate(new PercentageRange(from, to)));
-        if (deviceClass != null) {
-            predicates.add(new DeviceClassPredicate(deviceClass));
+        if (DeviceClass.all != deviceClass) {
+            predicates.add(new DeviceClassPredicate(deviceClass.name()));
         }
         return new ExperimentVariant(variantName, predicates);
     }
@@ -326,7 +330,7 @@ public class ExperimentDefinition {
         private List<String> variantNames;
         private String internalVariantName;
         private Integer percentage;
-        private String deviceClass;
+        private DeviceClass deviceClass = DeviceClass.all;
         private String description;
         private String documentLink;
         private String author;
@@ -359,6 +363,11 @@ public class ExperimentDefinition {
         }
 
         public Builder deviceClass(String deviceClass) {
+            this.deviceClass = DeviceClass.fromString(deviceClass);
+            return this;
+        }
+
+        public Builder deviceClass(DeviceClass deviceClass) {
             this.deviceClass = deviceClass;
             return this;
         }

@@ -56,7 +56,7 @@ class UpdateVariantsCommandIntegrationSpec extends BaseIntegrationSpec {
 
         then:
         def updated = experimentsRepository.getExperiment(experiment.id).get()
-        updated.definition.get().deviceClass.get() == 'phone'
+        updated.definition.get().deviceClass.name() == 'phone'
         updated.definition.get().internalVariantName.get() == 'iname'
         updated.definition.get().variantNames == ['va', 'vb']
         updated.definition.get().percentage.get() == 13

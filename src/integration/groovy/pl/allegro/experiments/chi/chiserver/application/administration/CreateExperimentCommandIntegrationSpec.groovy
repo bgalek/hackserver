@@ -103,7 +103,6 @@ class CreateExperimentCommandIntegrationSpec extends BaseIntegrationSpec {
         command.execute()
 
         then:
-        ExperimentDefinitionException e = thrown()
-        e.message == 'Cannot create experiment from definition, id=x'
+        ExperimentCommandException e = thrown()
     }
 }
