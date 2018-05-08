@@ -330,7 +330,7 @@ public class ExperimentDefinition {
         private List<String> variantNames;
         private String internalVariantName;
         private Integer percentage;
-        private DeviceClass deviceClass;
+        private DeviceClass deviceClass = DeviceClass.all;
         private String description;
         private String documentLink;
         private String author;
