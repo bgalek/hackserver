@@ -1,28 +1,50 @@
 package pl.allegro.experiments.chi.chiserver.functional
 
 import geb.Page
+import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.test.context.ContextConfiguration
+import pl.allegro.experiments.chi.chiserver.domain.User
+import pl.allegro.experiments.chi.chiserver.domain.UserProvider
+import pl.allegro.experiments.chi.chiserver.infrastructure.experiments.ExperimentsTestConfig
 
 class CreateExperimentPage extends Page {
-    static url = "/experiments/create"
+
+    static url = "#/experiments/create"
+
+    static content = {
+        createExperiment {
+            String experimentId = UUID.randomUUID().toString()
+            $("#experimentIdFormField").value(experimentId)
+            $("#internalVariantFormField").value(UUID.randomUUID().toString())
+            $("#createExperimentFormSubmitButton").click()
+            experimentId
+        }
+
+        successfullyRedirectedToExperimentDetails (wait: true) {
+            localUrl, experimentId ->
+                browser.currentUrl == localUrl("/#/experiments/$experimentId")
+        }
+    }
 }
 
+@ContextConfiguration(classes = [ExperimentsTestConfig])
 class CreateExperimentSpec extends BaseFunctionalSpec {
 
-    def "should create experiment"() {
+    @Autowired
+    UserProvider userProvider
+
+    def "should redirect to experiment details after creating experiment"() {
         given:
         to CreateExperimentPage
 
         and:
-        $("#experimentIdFormField").value(UUID.randomUUID().toString())
-
-        and:
-        $("#internalVariantFormField").value(UUID.randomUUID().toString())
+        userProvider.user = new User('Author', [], true)
 
         when:
-        $("#createExperimentFormSubmitButton").click()
+        String experimentId = createExperiment
 
         then:
-        true
+        successfullyRedirectedToExperimentDetails({ localUrl(it) }, experimentId)
 
     }
 }
