@@ -106,7 +106,7 @@ public class ExperimentDefinition {
 
     @DiffInclude
     @PropertyName("deviceClass")
-    String getDeviceClassLegacyFormat() { return deviceClass.toJsonString(); }
+    Optional<String> getDeviceClassLegacyFormat() { return Optional.ofNullable(deviceClass.toJsonString()); }
 
     @DiffInclude
     public String getDescription() {
