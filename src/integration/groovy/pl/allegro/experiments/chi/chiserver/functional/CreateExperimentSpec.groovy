@@ -15,8 +15,11 @@ class CreateExperimentSpec extends BaseFunctionalSpec {
         and:
         $("#experimentIdFormField").value(UUID.randomUUID().toString())
 
+        and:
+        $("#internalVariantFormField").value(UUID.randomUUID().toString())
+
         when:
-        ""
+        $("#createExperimentFormSubmitButton").click()
 
         then:
         true

@@ -123,7 +123,10 @@
               </v-layout>
             </v-container>
 
-            <v-btn @click="onSubmit" color="success">create</v-btn>
+            <v-btn
+
+              @click="onSubmit"
+              color="success">create</v-btn>
           </v-form>
         </chi-panel>
         <v-progress-linear v-if="showProgress" v-bind:indeterminate="true"></v-progress-linear>
