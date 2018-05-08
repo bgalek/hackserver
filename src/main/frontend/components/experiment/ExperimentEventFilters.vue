@@ -1,5 +1,5 @@
 <template>
-    <div style="width: 85%; padding: 10px;">
+    <div>
       <v-btn color="primary" class="mb-2" @click="newItem()" v-if="!readOnly">
         Add event
       </v-btn>
@@ -58,6 +58,7 @@
       <v-data-table
         :headers="headers"
         :items="items"
+        :key="initData"
         hide-actions
          light
       >
@@ -83,8 +84,11 @@
 </template>
 
 <script>
+  import {startsOrEndsWithSpace} from '../../utils/startsOrEndsWithSpace'
+
   export default {
     props: ['readOnly', 'initData'],
+
     data () {
       const initial = this.initData || []
       return {
@@ -114,8 +118,15 @@
           (v) => this.containsNo(v, '\'') || 'no \'',
           (v) => this.containsNo(v, '/') || 'no /',
           (v) => this.containsNo(v, '\\') || 'no \\',
-          (v) => this.containsNo(v, '"') || 'no "'
+          (v) => this.containsNo(v, '"') || 'no "',
+          (v) => !startsOrEndsWithSpace(v) || 'no spaces in the beginning or end'
         ]
+      }
+    },
+
+    watch: {
+      initData (newValue) {
+        this.items = newValue
       }
     },
 

@@ -42,7 +42,8 @@
           <v-list-tile>
             <v-list-tile-content>
               <v-badge>
-                <v-chip :color="v.color+' lighten-2'" small :key="v.name" :disabled="true">
+                <v-chip :color="v.color+' lighten-2'"
+                        small :key="v.name" :disabled="true">
                   {{ v.name }}
                 </v-chip>
                 {{ v.predicatesInfo }}
@@ -67,7 +68,7 @@
         <h3>NGA event definitions</h3>
         <experiment-event-filters
           :readOnly="true"
-          :initData="experiment.eventDefinitions.toArray()">
+          :initData="eventDefinitions">
         </experiment-event-filters>
 
       </v-flex>
@@ -82,15 +83,12 @@
   import ExperimentEventFilters from './ExperimentEventFilters'
 
   export default {
-    props: ['experiment'],
+    props: ['experiment', 'eventDefinitions'],
 
     components: {
       ExperimentStatus,
       ChiPanel,
       ExperimentEventFilters
-    },
-
-    methods: {
     }
   }
 </script>
