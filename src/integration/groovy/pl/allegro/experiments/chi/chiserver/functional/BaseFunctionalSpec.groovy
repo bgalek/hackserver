@@ -10,6 +10,8 @@ import org.springframework.test.context.ContextConfiguration
 import pl.allegro.experiments.chi.chiserver.AppRunner
 import pl.allegro.experiments.chi.chiserver.domain.User
 import pl.allegro.experiments.chi.chiserver.domain.UserProvider
+import pl.allegro.experiments.chi.chiserver.domain.experiments.ExperimentsRepository
+import pl.allegro.experiments.chi.chiserver.utils.SampleInMemoryExperimentsRepository
 
 @SpringBootTest(
         classes = [
@@ -41,5 +43,11 @@ class LoggedInAsRootTestConfig {
                 return new User("Anonymous", [], true)
             }
         }
+    }
+
+    @Primary
+    @Bean
+    ExperimentsRepository experimentsRepository() {
+        return SampleInMemoryExperimentsRepository.createSampleRepository();
     }
 }

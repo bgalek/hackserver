@@ -10,11 +10,10 @@ buildscript {
                 groovy        : '2.4.15',
                 jaxb          : '2.3.0',
                 geb           : '2.1',
-                chromeDriver  : '2.37',
                 chromeSelenium: '3.11.0'
         ]
 
-        drivers = ["chrome", "chromeHeadless"]
+        drivers = ["chromeHeadless"]
     }
 
     repositories {
@@ -34,8 +33,6 @@ plugins {
     id "com.moowork.node" version "1.2.0"
     id 'maven-publish'
     id 'pl.allegro.tech.build.axion-release' version '1.7.2'
-    id "com.energizedwork.webdriver-binaries" version "1.4"
-    id "com.energizedwork.idea-base" version "1.4"
 }
 
 apply plugin: 'axion'
@@ -92,13 +89,9 @@ dependencies {
     testCompile group: 'org.springframework.boot', name: 'spring-boot-starter-test', version: versions.springBoot
     testCompile group: 'org.springframework.kafka', name: 'spring-kafka-test', version: versions.springKafka
     testCompile group: 'com.github.fakemongo', name: 'fongo', version: '2.2.0-RC1'
+
     testCompile group: 'org.gebish', name: 'geb-spock', version: versions.geb
     testCompile group: 'org.seleniumhq.selenium', name: 'selenium-chrome-driver', version: versions.chromeSelenium
-
-}
-
-webdriverBinaries {
-    chromedriver versions.chromeDriver
 }
 
 drivers.each { driver ->
@@ -138,8 +131,6 @@ processResources {
 }
 
 tasks.withType(Test) {
-    maxHeapSize = "1g"
-    jvmArgs '-XX:MaxMetaspaceSize=128m'
     testLogging {
         exceptionFormat = 'full'
     }
@@ -150,17 +141,20 @@ tasks.withType(GroovyCompile) {
 }
 
 integrationTest {
+    maxHeapSize = "1g"
+    jvmArgs '-XX:MaxMetaspaceSize=512m'
+    dependsOn drivers.collect { tasks["${it}Test"] }
+
     testLogging {
         exceptionFormat = 'full'
     }
 }
 
 test {
-    dependsOn drivers.collect { tasks["${it}Test"] }
-
     afterTest { desc, result ->
         logger.quiet "Executing test ${desc.name} [${desc.className}] with result: ${result.resultType}"
     }
+
     testLogging {
         exceptionFormat = 'full'
     }
