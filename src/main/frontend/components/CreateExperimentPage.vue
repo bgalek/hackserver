@@ -26,6 +26,7 @@
                 </v-flex>
                 <v-flex xs11>
                   <v-text-field
+                    id="experimentIdFormField"
                     v-model="experimentId"
                     label="Experiment ID"
                     :rules="experimentIdRules"
