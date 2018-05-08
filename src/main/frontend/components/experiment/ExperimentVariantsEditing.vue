@@ -119,12 +119,12 @@
 
     data () {
       const baseVariant = 'base'
-      console.log('this', this)
       return {
         value: this.init(this.variants),
         deviceClasses: ['all', 'phone', 'desktop', 'tablet'],
         baseVariant: baseVariant,
         variantsRules: [
+          (v) => this.baseVariantPresent() || 'base variant is mandatory',
           (v) => this.variantsUnique() || 'Slugified variant names must be unique.',
           (v) => this.slugifiedVariants.indexOf('') === -1 || 'Slugified variant name can not be empty.',
           (v) => this.noOfVariants() > 1 || 'No variants. Seriously?'
@@ -172,8 +172,17 @@
         this[arrayName] = [...this[arrayName]]
       },
 
+      baseVariantPresent () {
+        return this.value.variantNames.indexOf('base') !== -1
+      },
+
       noOfVariants () {
-        return this.slugifiedVariants.length + (this.value.internalVariantName !== '' ? 1 : 0)
+        return this.slugifiedVariants.length + (this.internalVariantSet() ? 1 : 0)
+      },
+
+      internalVariantSet () {
+        const slugified = this.slugify(this.value.internalVariantName)
+        return !!slugified && slugified !== ''
       },
 
       allowDeleteVariant (variantName) {

@@ -15,7 +15,7 @@ export default {
     printHistogram (histogramData) {
       console.log(histogramData.values)
       this.renderChart({
-        labels: histogramData.values.map(v => v.toFixed(2)),
+        labels: histogramData.values.map(v => v.toFixed(3)),
         datasets: [
           {
             label: '',

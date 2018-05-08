@@ -9,10 +9,12 @@ import org.springframework.web.bind.annotation.*;
 import pl.allegro.experiments.chi.chiserver.domain.statistics.BayesianStatisticsRepository;
 import pl.allegro.experiments.chi.chiserver.domain.statistics.StatisticsRepository;
 import pl.allegro.experiments.chi.chiserver.domain.statistics.bayes.BayesianExperimentStatistics;
+import pl.allegro.experiments.chi.chiserver.domain.statistics.bayes.VariantBayesianStatistics;
 import pl.allegro.tech.common.andamio.metrics.MeteredEndpoint;
 
 import java.time.LocalDate;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import static org.springframework.http.MediaType.APPLICATION_JSON_UTF8_VALUE;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
@@ -54,7 +56,9 @@ public class BayesianStatisticsController {
     @MeteredEndpoint
     @PostMapping(value = "/statistics", consumes = {APPLICATION_JSON_VALUE, APPLICATION_JSON_UTF8_VALUE})
     ResponseEntity postStatistics(@RequestBody BayesianExperimentStatistics stats) {
-       bayesianStatisticsRepository.save(stats);
-       return ResponseEntity.ok().build();
+        String variants = String.join(",", stats.getVariantBayesianStatistics().stream().map(VariantBayesianStatistics::getVariantName).collect(Collectors.toList()));
+        logger.info("Bayesian stats received: {} device {} toDate {} variants {}", stats.getExperimentId(), stats.getDevice(), stats.getToDate(), variants);
+        bayesianStatisticsRepository.save(stats);
+        return ResponseEntity.ok().build();
     }
 }
