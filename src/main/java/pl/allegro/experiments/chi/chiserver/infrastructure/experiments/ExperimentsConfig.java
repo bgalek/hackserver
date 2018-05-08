@@ -17,8 +17,8 @@ import pl.allegro.experiments.chi.chiserver.application.experiments.WhitelistCri
 import pl.allegro.experiments.chi.chiserver.domain.UserProvider;
 import pl.allegro.experiments.chi.chiserver.domain.experiments.Experiment;
 import pl.allegro.experiments.chi.chiserver.domain.experiments.ExperimentsRepository;
-import pl.allegro.experiments.chi.chiserver.domain.experiments.MeasurementsRepository;
-import pl.allegro.experiments.chi.chiserver.infrastructure.druid.DruidClient;
+import pl.allegro.experiments.chi.chiserver.domain.statistics.MeasurementsRepository;
+import pl.allegro.experiments.chi.chiserver.infrastructure.statistics.DruidClient;
 import pl.allegro.experiments.chi.chiserver.infrastructure.experiments.converters.DateTimeDeserializer;
 import pl.allegro.experiments.chi.chiserver.infrastructure.experiments.converters.DateTimeSerializer;
 import pl.allegro.experiments.chi.chiserver.infrastructure.experiments.converters.ExperimentDeserializer;

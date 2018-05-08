@@ -7,7 +7,6 @@ import com.google.gson.JsonElement;
 import pl.allegro.experiments.chi.chiserver.domain.statistics.ExperimentStatistics;
 import pl.allegro.experiments.chi.chiserver.domain.statistics.StatisticsRepository;
 import pl.allegro.experiments.chi.chiserver.domain.statistics.VariantStatistics;
-import pl.allegro.experiments.chi.chiserver.infrastructure.druid.DruidClient;
 
 import java.time.Duration;
 import java.time.LocalDate;
@@ -16,7 +15,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 
-import static pl.allegro.experiments.chi.chiserver.infrastructure.druid.DruidClient.oneDayIntervals;
+import static pl.allegro.experiments.chi.chiserver.infrastructure.statistics.DruidClient.oneDayIntervals;
 
 public class DruidStatisticsRepository implements StatisticsRepository {
     private final DruidClient druid;

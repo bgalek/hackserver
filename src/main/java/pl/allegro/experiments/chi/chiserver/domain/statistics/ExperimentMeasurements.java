@@ -1,4 +1,4 @@
-package pl.allegro.experiments.chi.chiserver.domain.experiments;
+package pl.allegro.experiments.chi.chiserver.domain.statistics;
 
 public class ExperimentMeasurements {
     private final int lastDayVisits;

@@ -1,4 +1,4 @@
-package pl.allegro.experiments.chi.chiserver.infrastructure.druid;
+package pl.allegro.experiments.chi.chiserver.infrastructure.statistics;
 
 import org.springframework.http.HttpStatus;
 import pl.allegro.tech.common.andamio.spring.errors.LogLevel;

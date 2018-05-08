@@ -3,7 +3,6 @@ package pl.allegro.experiments.chi.chiserver.domain.experiments;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
 import joptsimple.internal.Strings;
-
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
@@ -21,7 +20,6 @@ public class Experiment {
     private final List<String> groups;
     private final boolean reportingEnabled;
     private final ActivityPeriod activityPeriod;
-    private final ExperimentMeasurements measurements;
     private final Boolean editable;
     private final String origin;
     private final ExperimentStatus explicitStatus;
@@ -38,7 +36,6 @@ public class Experiment {
             List<String> groups,
             boolean reportingEnabled,
             ActivityPeriod activityPeriod,
-            ExperimentMeasurements measurements,
             Boolean editable,
             String origin,
             ExperimentStatus explicitStatus,
@@ -55,7 +52,6 @@ public class Experiment {
         this.groups = ImmutableList.copyOf(groups);
         this.reportingEnabled = reportingEnabled;
         this.activityPeriod = activityPeriod;
-        this.measurements = measurements;
         this.editable = editable;
         this.origin = origin;
         this.explicitStatus = explicitStatus;
@@ -128,18 +124,6 @@ public class Experiment {
         return this.explicitStatus;
     }
 
-    public ExperimentMeasurements getMeasurements() {
-        return measurements;
-    }
-
-    public Boolean getEditable() {
-        return editable;
-    }
-
-    public String getOrigin() {
-        return origin;
-    }
-
     public Optional<ExperimentDefinition> getDefinition() {
         return Optional.ofNullable(definition);
     }
@@ -178,19 +162,6 @@ public class Experiment {
         return !isEnded() && !isPaused();
     }
 
-    public Experiment withEditableFlag(boolean editable) {
-        return mutate()
-                .editable(editable)
-                .build();
-    }
-
-    public Experiment withOrigin(String origin) {
-        Preconditions.checkNotNull(origin);
-        return mutate()
-                .origin(origin)
-                .build();
-    }
-
     public Builder mutate() {
 
         return Builder.from(this);
@@ -212,7 +183,6 @@ public class Experiment {
                     .groups(other.groups)
                     .reportingEnabled(other.reportingEnabled)
                     .activityPeriod(other.activityPeriod)
-                    .measurements(other.measurements)
                     .editable(other.editable)
                     .origin(other.origin)
                     .explicitStatus(other.explicitStatus)
@@ -227,7 +197,6 @@ public class Experiment {
         private List<String> groups;
         private boolean reportingEnabled;
         private ActivityPeriod activityPeriod;
-        private ExperimentMeasurements measurements;
         private Boolean editable;
         private String origin;
         private ExperimentStatus explicitStatus;
@@ -273,11 +242,6 @@ public class Experiment {
             return this;
         }
 
-        public Builder measurements(ExperimentMeasurements measurements) {
-            this.measurements = measurements;
-            return this;
-        }
-
         public Builder editable(Boolean editable) {
             this.editable = editable;
             return this;
@@ -308,7 +272,6 @@ public class Experiment {
                     groups,
                     reportingEnabled,
                     activityPeriod,
-                    measurements,
                     editable,
                     origin,
                     explicitStatus,

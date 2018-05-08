@@ -2,7 +2,6 @@ package pl.allegro.experiments.chi.chiserver.application.experiments.v1;
 
 import com.google.gson.*;
 import com.google.gson.reflect.TypeToken;
-import pl.allegro.experiments.chi.chiserver.application.JsonObjectGetters;
 import pl.allegro.experiments.chi.chiserver.domain.experiments.*;
 
 import java.lang.reflect.Type;
@@ -34,8 +33,6 @@ public class ExperimentTypeDeserializer implements JsonDeserializer<Experiment> 
 
         List<ExperimentVariant> variants = deserializeVariants(json, context);
 
-        ExperimentMeasurements measurements = json.get("measurements") != null ? deserializeExperimentMeasurements(json, context) : null;
-
         JsonElement rawExperimentStatus = json.get("explicitStatus");
         ExperimentStatus experimentStatus = rawExperimentStatus != null ? ExperimentStatus.valueOf(rawExperimentStatus.getAsString()) : null;
 
@@ -54,7 +51,6 @@ public class ExperimentTypeDeserializer implements JsonDeserializer<Experiment> 
                 .groups(new ArrayList<>())
                 .reportingEnabled(reported)
                 .activityPeriod(activityPeriod)
-                .measurements(measurements)
                 .explicitStatus(experimentStatus)
                 .build();
     }
@@ -62,10 +58,5 @@ public class ExperimentTypeDeserializer implements JsonDeserializer<Experiment> 
     private List<ExperimentVariant> deserializeVariants(JsonObject json, JsonDeserializationContext context) {
         Type listOfVariantsType = new TypeToken<ArrayList<ExperimentVariant>>(){}.getType();
         return context.deserialize(json.get("variants"), listOfVariantsType);
-    }
-
-    private ExperimentMeasurements deserializeExperimentMeasurements(JsonObject json, JsonDeserializationContext context) {
-        Type measurementsType = new TypeToken<ExperimentMeasurements>(){}.getType();
-        return context.deserialize(json.get("measurements"), measurementsType);
     }
 }

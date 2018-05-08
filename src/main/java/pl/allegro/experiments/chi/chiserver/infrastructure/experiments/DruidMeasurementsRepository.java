@@ -6,10 +6,10 @@ import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import pl.allegro.experiments.chi.chiserver.domain.experiments.ExperimentMeasurements;
-import pl.allegro.experiments.chi.chiserver.domain.experiments.MeasurementsRepository;
-import pl.allegro.experiments.chi.chiserver.infrastructure.druid.DruidClient;
-import pl.allegro.experiments.chi.chiserver.infrastructure.druid.DruidException;
+import pl.allegro.experiments.chi.chiserver.domain.statistics.ExperimentMeasurements;
+import pl.allegro.experiments.chi.chiserver.domain.statistics.MeasurementsRepository;
+import pl.allegro.experiments.chi.chiserver.infrastructure.statistics.DruidClient;
+import pl.allegro.experiments.chi.chiserver.infrastructure.statistics.DruidException;
 
 import java.util.*;
 import java.util.concurrent.TimeUnit;
@@ -17,7 +17,7 @@ import java.util.concurrent.TimeUnit;
 public class DruidMeasurementsRepository implements MeasurementsRepository {
     private static final Logger logger = LoggerFactory.getLogger(DruidMeasurementsRepository.class);
     private static final int DRUID_QUERY_TIMEOUT_MS = 2000;
-    private static final long CACHE_EXPIRE_DURATION_MINUTES = 30L;
+    private static final long CACHE_EXPIRE_DURATION_MINUTES = 10L;
 
     private final DruidClient druid;
     private final Gson jsonConverter;
@@ -41,18 +41,13 @@ public class DruidMeasurementsRepository implements MeasurementsRepository {
         }, CACHE_EXPIRE_DURATION_MINUTES, TimeUnit.MINUTES);
     }
 
-    private ExperimentMeasurements createExperimentMeasurements(String expId, Map<String, Integer> lastDayVisits) {
-        Integer lastDayVisitsNullable = lastDayVisits.get(expId);
-
-        return new ExperimentMeasurements(lastDayVisitsNullable != null ? lastDayVisitsNullable : 0);
-    }
-
     @Override
     public ExperimentMeasurements getMeasurements(String experimentId) {
         return new ExperimentMeasurements(lastDayVisitsCache.get().get(experimentId));
     }
 
     private Map<String, Integer> queryLastDayVisits() {
+        logger.info("Querying Druid for last day visits... ");
         String query = "{\n" +
                 "            \"queryType\": \"topN\",\n" +
                 "            \"dataSource\": \"" + this.datasource + "\",\n" +

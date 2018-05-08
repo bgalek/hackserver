@@ -3,6 +3,8 @@ package pl.allegro.experiments.chi.chiserver.application.experiments;
 import com.google.common.base.Preconditions;
 import pl.allegro.experiments.chi.chiserver.domain.User;
 import pl.allegro.experiments.chi.chiserver.domain.experiments.*;
+import pl.allegro.experiments.chi.chiserver.domain.statistics.BayesianHorizontalEqualizer;
+import pl.allegro.experiments.chi.chiserver.domain.statistics.ExperimentMeasurements;
 import pl.allegro.experiments.chi.chiserver.infrastructure.ClientExperiment;
 import pl.allegro.experiments.chi.chiserver.infrastructure.experiments.ExperimentOrigin;
 
@@ -16,6 +18,7 @@ public class AdminExperiment {
     private final boolean editable;
     private final ClientExperiment clientExperiment;
     private ExperimentMeasurements experimentMeasurements;
+    private BayesianHorizontalEqualizer bayesianHorizontalEqualizer;
 
     public AdminExperiment(Experiment legacyDefinition) {
         experimentDefinition = fromLegacyDefinition(legacyDefinition);
@@ -32,6 +35,7 @@ public class AdminExperiment {
     }
 
     private static ExperimentDefinition fromLegacyDefinition(Experiment legacyDefinition) {
+
         return ExperimentDefinition.builder()
                 .id(legacyDefinition.getId())
                 .activityPeriod(legacyDefinition.getActivityPeriod())
@@ -43,6 +47,7 @@ public class AdminExperiment {
                 .reportingEnabled(legacyDefinition.getReportingEnabled())
                 .reportingDefinition(ReportingDefinition.createDefault())
                 .explicitStatus(legacyDefinition.getExplicitStatus())
+                .deviceClass(DeviceClass.all)
                 .build();
     }
 
@@ -81,7 +86,7 @@ public class AdminExperiment {
     }
 
     public Optional<String> getDeviceClass() {
-        return this.experimentDefinition.getDeviceClass();
+        return Optional.ofNullable(this.experimentDefinition.getDeviceClass().toJsonString());
     }
 
     public String getDescription() {
