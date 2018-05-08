@@ -119,7 +119,7 @@
           (v) => this.containsNo(v, '/') || 'no /',
           (v) => this.containsNo(v, '\\') || 'no \\',
           (v) => this.containsNo(v, '"') || 'no "',
-          (v) => !startsOrEndsWithSpace(v) || 'Do not start nor end variant name with space'
+          (v) => !startsOrEndsWithSpace(v) || 'no spaces in the beginning or end'
         ]
       }
     },
