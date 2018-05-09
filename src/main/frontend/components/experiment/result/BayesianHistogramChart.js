@@ -58,7 +58,7 @@ export default {
         tooltips: {
           callbacks: {
             title: function (item, data) {
-              if (item[0].xLabel.startsWith("-")) {
+              if (item[0].xLabel.startsWith('-')) {
                 return `Probability of decrease by ${item[0].xLabel} or more`
               } else {
                 return `Probability of increase by ${item[0].xLabel} or more`
