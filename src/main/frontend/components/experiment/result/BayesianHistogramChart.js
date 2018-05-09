@@ -13,25 +13,30 @@ export default {
 
   methods: {
     printHistogram (histogramData) {
-      console.log(histogramData.values)
       this.renderChart({
-        labels: histogramData.values.map(v => v.toFixed(3)),
+        labels: histogramData.values.map(x => `${(x * 100.0).toFixed(2)}%`),
         datasets: [
           {
-            label: '',
-            backgroundColor: histogramData.values.map(v => v < 0 ? '#e62e00' : '#00b300'),
-            data: histogramData.counts
+            label: histogramData.labels[100],
+            backgroundColor: new Array(200).fill('#e62e00'),
+            data: histogramData.counts.slice(0, 100).concat(new Array(100).fill(0))
+          },
+          {
+            label: histogramData.labels[101],
+            backgroundColor: new Array(200).fill('#00b300'),
+            data: new Array(100).fill(0).concat(histogramData.counts.slice(100, 200))
           }
         ]
       },
       {
         legend: {
-          display: false
+          display: true
         },
         responsive: true,
         maintainAspectRatio: false,
         scales: {
           xAxes: [{
+            stacked: true,
             gridLines: {
               display: false
             },
@@ -49,6 +54,21 @@ export default {
         },
         hover: {
           mode: 'x'
+        },
+        tooltips: {
+          callbacks: {
+            title: function (item, data) {
+              if (item[0].xLabel.startsWith('-')) {
+                return `Probability of decrease by ${item[0].xLabel} or more`
+              } else {
+                return `Probability of increase by ${item[0].xLabel} or more`
+              }
+            },
+            label: function (item, data) {
+              return histogramData.labels[item.index]
+            }
+
+          }
         }
       })
     }
