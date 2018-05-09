@@ -1,5 +1,7 @@
 import { Bar } from 'vue-chartjs'
 
+const RADIUS = 100
+
 export default {
   extends: Bar,
 
@@ -17,14 +19,14 @@ export default {
         labels: histogramData.values.map(x => `${(x * 100.0).toFixed(2)}%`),
         datasets: [
           {
-            label: histogramData.labels[100],
-            backgroundColor: new Array(200).fill('#e62e00'),
-            data: histogramData.counts.slice(0, 100).concat(new Array(100).fill(0))
+            label: histogramData.labels[RADIUS-1],
+            backgroundColor: new Array(RADIUS * 2).fill('#e62e00'),
+            data: histogramData.counts.slice(0, RADIUS).concat(new Array(RADIUS).fill(0))
           },
           {
-            label: histogramData.labels[101],
-            backgroundColor: new Array(200).fill('#00b300'),
-            data: new Array(100).fill(0).concat(histogramData.counts.slice(100, 200))
+            label: histogramData.labels[RADIUS],
+            backgroundColor: new Array(RADIUS * 2).fill('#00b300'),
+            data: new Array(RADIUS).fill(0).concat(histogramData.counts.slice(RADIUS, RADIUS * 2))
           }
         ]
       },
