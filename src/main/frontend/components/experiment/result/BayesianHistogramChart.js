@@ -19,7 +19,7 @@ export default {
         labels: histogramData.values.map(x => `${(x * 100.0).toFixed(2)}%`),
         datasets: [
           {
-            label: histogramData.labels[RADIUS-1],
+            label: histogramData.labels[RADIUS - 1],
             backgroundColor: new Array(RADIUS * 2).fill('#e62e00'),
             data: histogramData.counts.slice(0, RADIUS).concat(new Array(RADIUS).fill(0))
           },
