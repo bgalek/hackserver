@@ -4,32 +4,37 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.common.base.Preconditions;
 
+import java.util.Arrays;
+import java.util.List;
+
 public class Samples {
-    private double[] values;
-    private int[] counts;
-    private String[] labels;
+    private List<Double> values;
+    private List<Integer> counts;
+    private List<String> labels;
 
     @JsonCreator
-    public Samples(@JsonProperty("values") double[] values,
-                   @JsonProperty("counts") int[] counts,
+    public Samples(@JsonProperty("values") Double[] values,
+                   @JsonProperty("counts") Integer[] counts,
                    @JsonProperty("labels") String[] labels) {
         Preconditions.checkNotNull(values, "values should not be null");
         Preconditions.checkNotNull(counts, "counts should not be null");
         Preconditions.checkNotNull(labels, "labels should not be null");
         Preconditions.checkArgument(values.length == counts.length, "values and counts should be the same length");
         Preconditions.checkArgument(labels.length == counts.length, "labels and counts should be the same length");
-        this.values = values;
-        this.counts = counts;
-        this.labels = labels;
+        this.values = List.of(values);
+        this.counts = List.of(counts);
+        this.labels = List.of(labels);
     }
 
-    public double[] getValues() {
+    public List<Double> getValues() {
         return values;
     }
 
-    public int[] getCounts() {
+    public List<Integer> getCounts() {
         return counts;
     }
 
-    public String[] getLabels() { return labels; }
+    public List<String> getLabels() {
+        return labels;
+    }
 }

@@ -2,15 +2,16 @@ package pl.allegro.experiments.chi.chiserver.domain.statistics;
 
 import com.google.common.base.Preconditions;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
 
 public class EqualizerBar {
     private final String variantName; //nullable
-    private final List<Double> improvingProbabilities;
-    private final List<Double> worseningProbabilities;
+    private final List<BigDecimal> improvingProbabilities;
+    private final List<BigDecimal> worseningProbabilities;
 
-    public EqualizerBar(String variantName, List<Double> improvingProbabilities, List<Double> worseningProbabilities) {
+    public EqualizerBar(String variantName, List<BigDecimal> improvingProbabilities, List<BigDecimal> worseningProbabilities) {
         Preconditions.checkNotNull(improvingProbabilities);
         Preconditions.checkNotNull(worseningProbabilities);
         Preconditions.checkState(improvingProbabilities.size() == worseningProbabilities.size());
@@ -24,11 +25,11 @@ public class EqualizerBar {
         return Optional.ofNullable(variantName);
     }
 
-    public List<Double> getImprovingProbabilities() {
+    public List<BigDecimal> getImprovingProbabilities() {
         return improvingProbabilities;
     }
 
-    public List<Double> getWorseningProbabilities() {
+    public List<BigDecimal> getWorseningProbabilities() {
         return worseningProbabilities;
     }
 }
