@@ -6,6 +6,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import pl.allegro.experiments.chi.chiserver.domain.experiments.DeviceClass;
+import pl.allegro.experiments.chi.chiserver.domain.statistics.BayesianEqualizersRepository;
 import pl.allegro.experiments.chi.chiserver.domain.statistics.BayesianStatisticsRepository;
 import pl.allegro.experiments.chi.chiserver.domain.statistics.StatisticsRepository;
 import pl.allegro.experiments.chi.chiserver.domain.statistics.bayes.BayesianExperimentStatistics;
@@ -27,30 +29,53 @@ public class BayesianStatisticsController {
 
     private final Gson jsonConverter;
     private final BayesianStatisticsRepository bayesianStatisticsRepository;
+    private final BayesianEqualizersRepository bayesianEqualizersRepository;
     private final StatisticsRepository statisticsRepository;
 
     public BayesianStatisticsController(Gson jsonConverter,
                                         BayesianStatisticsRepository bayesianStatisticsRepository,
-                                        StatisticsRepository statisticsRepository) {
+                                        StatisticsRepository statisticsRepository,
+                                        BayesianEqualizersRepository bayesianEqualizersRepository) {
         this.jsonConverter = jsonConverter;
         this.bayesianStatisticsRepository = bayesianStatisticsRepository;
         this.statisticsRepository = statisticsRepository;
+        this.bayesianEqualizersRepository = bayesianEqualizersRepository;
+    }
+
+    @MeteredEndpoint
+    @GetMapping("/verticalEqualizer/{experimentId}")
+    ResponseEntity<String> verticalEqualizer(
+            @PathVariable String experimentId,
+            @RequestParam(value = "device", required = false) final String device) {
+
+        DeviceClass usedDeviceClass = DeviceClass.fromString(device);
+        LocalDate lastStatisticsDate = statisticsRepository.lastStatisticsDate(experimentId);
+        logger.info("request for bayesian verticalEqualizer received, experimentId: {}, device: {}, toDate: {} ", experimentId, usedDeviceClass, lastStatisticsDate);
+
+        if (lastStatisticsDate == null) {
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        }
+
+        return bayesianEqualizersRepository.getVerticalEqualizer(experimentId, usedDeviceClass, lastStatisticsDate)
+                .map(s -> ResponseEntity.ok(jsonConverter.toJson(s)))
+                .orElse(ResponseEntity.notFound().build());
     }
 
     @MeteredEndpoint
     @GetMapping("/statistics/{experimentId}")
     ResponseEntity<String> experimentsStatistics(
             @PathVariable String experimentId,
-            @RequestParam(value = "device", required = false, defaultValue = "all") final String device,
-            @RequestParam(value = "toDate", required = false) final String toDate) {
-        logger.info("Experiment bayesian statistics request received {} device {} toDate {}", experimentId, device, toDate);
+            @RequestParam(value = "device", required = false, defaultValue = "all") final String device) {
+        LocalDate lastStatisticsDate = statisticsRepository.lastStatisticsDate(experimentId);
+        logger.info("request for bayesian histogram received, experimentId: {}, device: {}, toDate: {} ", experimentId, device, lastStatisticsDate);
 
-        return Optional.ofNullable(statisticsRepository.lastStatisticsDate(experimentId))
-                .map(LocalDate::toString)
-                .map(date -> bayesianStatisticsRepository.experimentStatistics(experimentId, device, date)
+        if (lastStatisticsDate == null) {
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        }
+
+        return bayesianStatisticsRepository.experimentStatistics(experimentId, device, lastStatisticsDate.toString())
                         .map(s -> ResponseEntity.ok(jsonConverter.toJson(s)))
-                        .orElse(ResponseEntity.notFound().build()))
-                .orElse(new ResponseEntity<>(HttpStatus.NO_CONTENT));
+                        .orElse(ResponseEntity.notFound().build());
     }
 
     @MeteredEndpoint
