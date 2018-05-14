@@ -7,28 +7,28 @@ import java.util.Optional;
 
 public class EqualizerBar {
     private final String variantName; //nullable
-    private final List<Double> improveProbabilities;
-    private final List<Double> worsenProbabilities;
+    private final List<Double> improvingProbabilities;
+    private final List<Double> worseningProbabilities;
 
-    public EqualizerBar(String variantName, List<Double> improveProbabilities, List<Double> worsenProbabilities) {
-        Preconditions.checkNotNull(improveProbabilities);
-        Preconditions.checkNotNull(worsenProbabilities);
-        Preconditions.checkState(improveProbabilities.size() == worsenProbabilities.size());
+    public EqualizerBar(String variantName, List<Double> improvingProbabilities, List<Double> worseningProbabilities) {
+        Preconditions.checkNotNull(improvingProbabilities);
+        Preconditions.checkNotNull(worseningProbabilities);
+        Preconditions.checkState(improvingProbabilities.size() == worseningProbabilities.size());
 
         this.variantName = variantName;
-        this.improveProbabilities = List.copyOf(improveProbabilities);
-        this.worsenProbabilities = List.copyOf(worsenProbabilities);
+        this.improvingProbabilities = List.copyOf(improvingProbabilities);
+        this.worseningProbabilities = List.copyOf(worseningProbabilities);
     }
 
     public Optional<String> getVariantName() {
         return Optional.ofNullable(variantName);
     }
 
-    public List<Double> getImproveProbabilities() {
-        return improveProbabilities;
+    public List<Double> getImprovingProbabilities() {
+        return improvingProbabilities;
     }
 
-    public List<Double> getWorsenProbabilities() {
-        return worsenProbabilities;
+    public List<Double> getWorseningProbabilities() {
+        return worseningProbabilities;
     }
 }
