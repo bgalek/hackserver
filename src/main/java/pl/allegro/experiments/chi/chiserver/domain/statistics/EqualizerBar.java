@@ -8,16 +8,16 @@ import java.util.Optional;
 public class EqualizerBar {
     private final String variantName; //nullable
     private final List<Double> improveProbabilities;
-    private final List<Double> impairProbabilities;
+    private final List<Double> worsenProbabilities;
 
-    public EqualizerBar(String variantName, List<Double> improveProbabilities, List<Double> impairProbabilities) {
+    public EqualizerBar(String variantName, List<Double> improveProbabilities, List<Double> worsenProbabilities) {
         Preconditions.checkNotNull(improveProbabilities);
-        Preconditions.checkNotNull(impairProbabilities);
-        Preconditions.checkState(improveProbabilities.size() == impairProbabilities.size());
+        Preconditions.checkNotNull(worsenProbabilities);
+        Preconditions.checkState(improveProbabilities.size() == worsenProbabilities.size());
 
         this.variantName = variantName;
         this.improveProbabilities = List.copyOf(improveProbabilities);
-        this.impairProbabilities = List.copyOf(impairProbabilities);
+        this.worsenProbabilities = List.copyOf(worsenProbabilities);
     }
 
     public Optional<String> getVariantName() {
@@ -28,7 +28,7 @@ public class EqualizerBar {
         return improveProbabilities;
     }
 
-    public List<Double> getImpairProbabilities() {
-        return impairProbabilities;
+    public List<Double> getWorsenProbabilities() {
+        return worsenProbabilities;
     }
 }
