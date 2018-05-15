@@ -1,12 +1,12 @@
 <template>
   <v-container>
-
-    <h4>Visits conversion equalizer</h4>
-    <bayesian-equalizer-chart v-if="this.showEqualizer()"
-      :equalizerData="this.getEqualizerData()"
-    ></bayesian-equalizer-chart>
-
     <h3>Results based on bayesian analysis</h3>
+    <br/>
+    <h4>Visits conversion equalizer</h4>
+    <br/>
+    <bayesian-equalizer-chart v-if="this.showEqualizer()"
+                              :equalizerData="this.getEqualizerData()"
+    ></bayesian-equalizer-chart>
     <br/>
     <h4>Visits conversion histogram</h4>
     <v-layout row v-if="this.show()">
