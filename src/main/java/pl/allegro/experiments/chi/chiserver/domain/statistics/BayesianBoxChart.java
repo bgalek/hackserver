@@ -3,12 +3,12 @@ package pl.allegro.experiments.chi.chiserver.domain.statistics;
 import com.google.common.base.Preconditions;
 import pl.allegro.experiments.chi.chiserver.domain.experiments.DeviceClass;
 
-public abstract class BayesianEqualizer {
+public abstract class BayesianBoxChart {
     private final String experimentId;
     private final DeviceClass deviceClass;
     private final double boxSize;
 
-    public BayesianEqualizer(String experimentId, DeviceClass deviceClass, double boxSize) {
+    public BayesianBoxChart(String experimentId, DeviceClass deviceClass, double boxSize) {
         Preconditions.checkNotNull(experimentId);
         Preconditions.checkNotNull(deviceClass);
         Preconditions.checkArgument(boxSize > 0);

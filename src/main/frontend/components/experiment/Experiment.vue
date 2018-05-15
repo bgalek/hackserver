@@ -24,7 +24,7 @@
           <bayesian-result
             v-if="loadingExperimentDone"
             :experiment="experiment"
-            :bayesianStatistics="bayesianStatistics"
+            :bayesianHistograms="bayesianHistograms"
             :bayesianEqualizer="bayesianEqualizer"
           ></bayesian-result>
         </chi-panel>
@@ -149,8 +149,8 @@
         }
       },
 
-      bayesianStatistics (state) {
-        return state.bayesianStatistics.bayesianStatistics.variantBayesianStatistics || { }
+      bayesianHistograms (state) {
+        return state.bayesianHistograms.bayesianHistograms.histograms || { }
       },
 
       bayesianEqualizer (state) {
@@ -172,7 +172,7 @@
     },
 
     methods: {
-      ...mapActions(['getExperiment', 'getExperimentStatistics', 'getBayesianStatistics', 'getBayesianEqualizer']),
+      ...mapActions(['getExperiment', 'getExperimentStatistics', 'getBayesianHistograms', 'getBayesianEqualizer']),
 
       loadExperimentStatistics (device, experimentId) {
         return this.getExperimentStatistics({
@@ -184,7 +184,7 @@
       },
 
       loadExperimentBayesianResult (device, experimentId) {
-        return this.getBayesianStatistics({
+        return this.getBayesianHistograms({
           params: {
             experimentId,
             device

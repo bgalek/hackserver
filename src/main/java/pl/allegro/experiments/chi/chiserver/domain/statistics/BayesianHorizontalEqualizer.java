@@ -5,7 +5,7 @@ import pl.allegro.experiments.chi.chiserver.domain.experiments.DeviceClass;
 import pl.allegro.experiments.chi.chiserver.domain.statistics.bayes.BayesianExperimentStatistics;
 
 
-public class BayesianHorizontalEqualizer extends BayesianEqualizer{
+public class BayesianHorizontalEqualizer extends BayesianBoxChart {
     private final EqualizerBar joinedBar;
 
     public BayesianHorizontalEqualizer(BayesianExperimentStatistics experimentStatistics) {

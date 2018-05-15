@@ -31,7 +31,7 @@
   import VariantSelector from './VariantSelector'
 
   export default {
-    props: ['experiment', 'bayesianStatistics', 'bayesianEqualizer'],
+    props: ['experiment', 'bayesianHistograms', 'bayesianEqualizer'],
 
     components: {
       BayesianHistogramChart,
@@ -47,8 +47,8 @@
 
     methods: {
       getHistogramData (variantName) {
-        let found = this.bayesianStatistics && this.bayesianStatistics.find(x => x.variantName === variantName)
-        return found && found.samples
+        let found = this.bayesianHistograms && this.bayesianHistograms.find(x => x.variantName === variantName)
+        return found
       },
 
       getEqualizerData () {
@@ -60,11 +60,11 @@
       },
 
       show () {
-        return this.bayesianStatistics && this.bayesianStatistics.length > 0
+        return this.bayesianHistograms && this.bayesianHistograms.length > 0
       },
 
       showHistogram () {
-        return this.bayesianStatistics && this.bayesianStatistics.length > 0
+        return this.bayesianHistograms && this.bayesianHistograms.length > 0
       },
 
       showEqualizer () {

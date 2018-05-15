@@ -1,9 +1,14 @@
 package pl.allegro.experiments.chi.chiserver.domain.statistics.bayes;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import pl.allegro.experiments.chi.chiserver.domain.statistics.EqualizerBar;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 public class VariantBayesianStatistics {
     private final String variantName;
@@ -13,12 +18,12 @@ public class VariantBayesianStatistics {
 
     public VariantBayesianStatistics(String variantName,
                                      Samples samples,
-                                     int outliersLeft,
-                                     int outliersRight) {
+                                     Integer outliersLeft,
+                                     Integer outliersRight) {
         this.variantName = variantName;
         this.samples = samples;
-        this.outliersLeft = outliersLeft;
-        this.outliersRight = outliersRight;
+        this.outliersLeft = outliersLeft == null ? 0 : outliersLeft;
+        this.outliersRight = outliersRight == null ? 0 : outliersRight;
     }
 
     public String getVariantName() {
@@ -29,15 +34,13 @@ public class VariantBayesianStatistics {
         return samples;
     }
 
-    @JsonIgnore
-    public List<Sample> getSamplesAsList() {
+    List<Sample> getSamplesAsList() {
         List<Sample> result = new ArrayList<>();
 
         for(int i=0; i<samples.getValues().size(); i++) {
             result.add(new Sample(
                             samples.getValues().get(i),
-                            samples.getCounts().get(i),
-                            "//TODO"
+                            samples.getCounts().get(i)
                     ));
         }
 
@@ -48,6 +51,40 @@ public class VariantBayesianStatistics {
         return samples.getCounts().stream().mapToInt(Integer::intValue).sum() + outliersLeft + outliersRight;
     }
 
+    public List<BigDecimal> calculateImprovingProbabilities(double boxSize, int boxesCount) {
+        int samplesCount = allCount();
+        List<Sample> samples = getSamplesAsList();
+
+        return IntStream.range(0, boxesCount).mapToObj(box -> {
+                    double thres = boxSize * box;
+
+                    int samplesInBox = samples.stream()
+                            .filter(s -> s.getValue() >= thres)
+                            .mapToInt(s -> s.getCount()).sum();
+
+                    return toRatio(samplesInBox, samplesCount);
+                }).collect(Collectors.toList());
+    }
+
+    public List<BigDecimal> calculateWorseningProbabilities(double boxSize, int boxesCount) {
+        int samplesCount = allCount();
+        List<Sample> samples = getSamplesAsList();
+
+        return IntStream.range(0, boxesCount).mapToObj(box -> {
+                    double thres = -1 * boxSize * (boxesCount-box);
+
+                    int samplesInBox = samples.stream()
+                            .filter(s -> s.getValue() <= thres)
+                            .mapToInt(s -> s.getCount()).sum();
+
+                    return toRatio(samplesInBox, samplesCount);
+                }).collect(Collectors.toList());
+    }
+
+    private static BigDecimal toRatio(int sampleCount, int allCount) {
+        return BigDecimal.valueOf(sampleCount / (double) allCount).setScale(4, RoundingMode.HALF_DOWN);
+    }
+
     public int getOutliersLeft() {
         return outliersLeft;
     }
@@ -56,15 +93,13 @@ public class VariantBayesianStatistics {
         return outliersRight;
     }
 
-    public static class Sample {
+    static class Sample {
         private final double value;
         private final int count;
-        private final String label;
 
-        public Sample(double value, int count, String label) {
+        public Sample(double value, int count) {
             this.value = value;
             this.count = count;
-            this.label = label;
         }
 
         public double getValue() {
@@ -73,10 +108,6 @@ public class VariantBayesianStatistics {
 
         public int getCount() {
             return count;
-        }
-
-        public String getLabel() {
-            return label;
         }
     }
 }
