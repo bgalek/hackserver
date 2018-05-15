@@ -83,7 +83,7 @@ class BayesianExperimentStatisticsIntegrationSpec extends BaseIntegrationSpec {
         result.toDate == '2018-04-01'
         result.variantBayesianStatistics.size() == 2
 
-        def varianta = result.variantBayesianStatistics[0]
+        def varianta = result.variantBayesianStatistics[1]
         varianta.variantName == 'variant-a'
         varianta.samples.values == [-0.2, -0.1, 0.1, 0.2]
         varianta.samples.counts == [100,  200,  250, 150]
@@ -91,13 +91,13 @@ class BayesianExperimentStatisticsIntegrationSpec extends BaseIntegrationSpec {
         varianta.outliersRight == 122
         varianta.allCount() == 100 + 200 + 250 + 150 + 10 + 122
 
-        def variantc = result.variantBayesianStatistics[1]
+        def variantc = result.variantBayesianStatistics[0]
         variantc.variantName == 'variant-c'
         variantc.samples.values == [-0.1, -0.2, 0.3, 0.6]
         variantc.samples.counts == [10,  200,  250, 1]
         variantc.outliersLeft == 10
         variantc.outliersRight == 122
-        variantc.allCount() == 100 + 200 + 250 + 150 + 10 + 122
+        variantc.allCount() == 593
     }
 
     String bayesFromPyspark(String expId) {
