@@ -25,21 +25,29 @@ export default {
           scales: {
             xAxes: [{
               stacked: true,
-              gridLines: {
-                display: false
-              },
               barPercentage: 0.9,
               barThickness: 50,
               categoryPercentage: 0.9,
               ticks: {
                 autoskip: true
+              },
+              gridLines: {
+                display: false
               }
             }],
             yAxes: [{
               stacked: true,
               ticks: {
+                display: true,
                 min: -10,
-                max: 10
+                max: 10,
+                callback: function (value, index, values) {
+                  let sign = value > 0 ? '+' : ''
+                  return `${sign}${equalizerData.boxSize * value * 100.0}%`
+                }
+              },
+              gridLines: {
+                display: true
               }
             }]
           },
