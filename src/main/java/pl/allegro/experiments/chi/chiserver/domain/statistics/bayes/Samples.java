@@ -2,6 +2,8 @@ package pl.allegro.experiments.chi.chiserver.domain.statistics.bayes;
 
 import com.google.common.base.Preconditions;
 
+import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 
 public class Samples {
@@ -14,11 +16,10 @@ public class Samples {
                    List<String> labels) {
         Preconditions.checkNotNull(values, "values should not be null");
         Preconditions.checkNotNull(counts, "counts should not be null");
-        Preconditions.checkNotNull(labels, "labels should not be null");
         Preconditions.checkArgument(values.size() == counts.size(), "values and counts should be the same length");
         this.values = List.copyOf(values);
         this.counts = List.copyOf(counts);
-        this.labels = List.copyOf(labels);
+        this.labels = labels == null ? Collections.emptyList() : List.copyOf(labels);
     }
 
     public List<Double> getValues() {
