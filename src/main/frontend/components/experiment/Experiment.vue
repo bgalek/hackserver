@@ -25,6 +25,7 @@
             v-if="loadingExperimentDone"
             :experiment="experiment"
             :bayesianStatistics="bayesianStatistics"
+            :bayesianEqualizer="bayesianEqualizer"
           ></bayesian-result>
         </chi-panel>
 
@@ -81,12 +82,19 @@
       }).catch(() => {
         this.loadingBayesianResultDone = true
       })
+
+      this.loadExperimentBayesianEqualizerResult('all', this.$route.params.experimentId).then(() => {
+        this.loadingBayesianEqualizerResultDone = true
+      }).catch(() => {
+        this.loadingBayesianEqualizerResultDone = true
+      })
     },
 
     data () {
       return {
         loadingStatsDone: false,
         loadingBayesianResultDone: false,
+        loadingBayesianEqualizerResultDone: false,
         loadingExperimentDone: false,
         device: 'all',
         metricOrder: {
@@ -145,6 +153,10 @@
         return state.bayesianStatistics.bayesianStatistics.variantBayesianStatistics || { }
       },
 
+      bayesianEqualizer (state) {
+        return state.bayesianEqualizer.bayesianEqualizer || { }
+      },
+
       experimentStatisticsError: state => state.experimentStatistics.error.experimentStatistics,
       experimentStatisticsPending: state => state.experimentStatistics.pending.experimentStatistics
     }),
@@ -160,7 +172,7 @@
     },
 
     methods: {
-      ...mapActions(['getExperiment', 'getExperimentStatistics', 'getBayesianStatistics']),
+      ...mapActions(['getExperiment', 'getExperimentStatistics', 'getBayesianStatistics', 'getBayesianEqualizer']),
 
       loadExperimentStatistics (device, experimentId) {
         return this.getExperimentStatistics({
@@ -180,9 +192,19 @@
         })
       },
 
+      loadExperimentBayesianEqualizerResult (device, experimentId) {
+        return this.getBayesianEqualizer({
+          params: {
+            experimentId,
+            device
+          }
+        })
+      },
+
       onDeviceChanged ({device}) {
         this.loadExperimentStatistics(device, this.experiment.id)
         this.loadExperimentBayesianResult(device, this.experiment.id)
+        this.loadExperimentBayesianEqualizerResult(device, this.experiment.id)
       }
     }
   }
