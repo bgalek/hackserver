@@ -37,7 +37,7 @@ public class VariantBayesianStatistics {
             result.add(new Sample(
                             samples.getValues().get(i),
                             samples.getCounts().get(i),
-                            samples.getLabels().get(i)
+                            "//TODO"
                     ));
         }
 

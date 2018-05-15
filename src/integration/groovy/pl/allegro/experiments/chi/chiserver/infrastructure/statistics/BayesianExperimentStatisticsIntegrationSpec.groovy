@@ -1,6 +1,5 @@
 package pl.allegro.experiments.chi.chiserver.infrastructure.statistics
 
-import com.google.gson.Gson
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.data.mongodb.core.MongoTemplate
 import org.springframework.http.HttpEntity
