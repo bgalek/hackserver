@@ -1,7 +1,5 @@
 package pl.allegro.experiments.chi.chiserver.domain.statistics.bayes;
 
-import com.fasterxml.jackson.annotation.JsonCreator;
-import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.common.base.Preconditions;
 
 import java.util.List;
@@ -14,11 +12,10 @@ public class BayesianExperimentStatistics {
     private final String device;
     private final List<VariantBayesianStatistics> variantBayesianStatistics;
 
-    @JsonCreator
-    public BayesianExperimentStatistics(@JsonProperty("experimentId") String experimentId,
-                                        @JsonProperty("toDate") String toDate,
-                                        @JsonProperty("device") String device,
-                                        @JsonProperty("variantBayesianStatistics") List<VariantBayesianStatistics> variantBayesianStatistics) {
+    public BayesianExperimentStatistics(String experimentId,
+                                        String toDate,
+                                        String device,
+                                        List<VariantBayesianStatistics> variantBayesianStatistics) {
         Preconditions.checkNotNull(experimentId, "experimentId cannot be null");
         Preconditions.checkNotNull(toDate, "toDate cannot be null");
         Preconditions.checkNotNull(device, "device cannot be null");

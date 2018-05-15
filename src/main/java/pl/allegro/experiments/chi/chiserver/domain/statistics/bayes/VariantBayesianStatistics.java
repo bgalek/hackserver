@@ -1,8 +1,6 @@
 package pl.allegro.experiments.chi.chiserver.domain.statistics.bayes;
 
-import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonProperty;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -10,12 +8,17 @@ import java.util.List;
 public class VariantBayesianStatistics {
     private final String variantName;
     private final Samples samples;
+    private int outliersLeft;
+    private int outliersRight;
 
-    @JsonCreator
-    public VariantBayesianStatistics(@JsonProperty("variantName") String variantName,
-                                     @JsonProperty("samples") Samples samples) {
+    public VariantBayesianStatistics(String variantName,
+                                     Samples samples,
+                                     int outliersLeft,
+                                     int outliersRight) {
         this.variantName = variantName;
         this.samples = samples;
+        this.outliersLeft = outliersLeft;
+        this.outliersRight = outliersRight;
     }
 
     public String getVariantName() {
@@ -42,7 +45,15 @@ public class VariantBayesianStatistics {
     }
 
     public int allCount() {
-        return samples.getCounts().stream().mapToInt(Integer::intValue).sum();
+        return samples.getCounts().stream().mapToInt(Integer::intValue).sum() + outliersLeft + outliersRight;
+    }
+
+    public int getOutliersLeft() {
+        return outliersLeft;
+    }
+
+    public int getOutliersRight() {
+        return outliersRight;
     }
 
     public static class Sample {

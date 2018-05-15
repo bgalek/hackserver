@@ -80,10 +80,12 @@ public class BayesianStatisticsController {
 
     @MeteredEndpoint
     @PostMapping(value = "/statistics", consumes = {APPLICATION_JSON_VALUE, APPLICATION_JSON_UTF8_VALUE})
-    ResponseEntity postStatistics(@RequestBody BayesianExperimentStatistics stats) {
-        String variants = String.join(",", stats.getVariantBayesianStatistics().stream().map(VariantBayesianStatistics::getVariantName).collect(Collectors.toList()));
-        logger.info("Bayesian stats received: {} device {} toDate {} variants {}", stats.getExperimentId(), stats.getDevice(), stats.getToDate(), variants);
-        bayesianStatisticsRepository.save(stats);
+    ResponseEntity postStatistics(@RequestBody String stats) {
+        BayesianExperimentStatistics bayesianExperimentStatistics = jsonConverter.fromJson(stats, BayesianExperimentStatistics.class);
+
+        String variants = String.join(",", bayesianExperimentStatistics.getVariantBayesianStatistics().stream().map(VariantBayesianStatistics::getVariantName).collect(Collectors.toList()));
+        logger.info("Bayesian stats received: {} device {} toDate {} variants {}", bayesianExperimentStatistics.getExperimentId(), bayesianExperimentStatistics.getDevice(), bayesianExperimentStatistics.getToDate(), variants);
+        bayesianStatisticsRepository.save(bayesianExperimentStatistics);
         return ResponseEntity.ok().build();
     }
 }

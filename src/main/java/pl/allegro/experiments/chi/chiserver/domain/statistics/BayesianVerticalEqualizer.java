@@ -25,7 +25,6 @@ public class BayesianVerticalEqualizer extends BayesianEqualizer{
                 DeviceClass.fromString(experimentStatistics.getDevice()),
                 BOX_SIZE,
                 experimentStatistics.getVariantBayesianStatistics().stream()
-                        .filter(it -> !it.getVariantName().equals("base")) //?? why base here
                         .map(BayesianVerticalEqualizer::toBar)
                         .collect(Collectors.toList()));
     }

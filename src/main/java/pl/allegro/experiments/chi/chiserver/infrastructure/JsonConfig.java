@@ -7,6 +7,8 @@ import org.springframework.context.annotation.Configuration;
 import pl.allegro.experiments.chi.chiserver.application.experiments.AdminExperiment;
 import pl.allegro.experiments.chi.chiserver.application.experiments.v1.*;
 import pl.allegro.experiments.chi.chiserver.domain.experiments.*;
+import pl.allegro.experiments.chi.chiserver.domain.statistics.bayes.BayesianExperimentStatistics;
+import pl.allegro.experiments.chi.chiserver.domain.statistics.bayes.VariantBayesianStatistics;
 
 import java.time.Duration;
 import java.time.LocalDate;
@@ -18,6 +20,8 @@ class JsonConfig {
     @Bean
     Gson jsonConverter() {
         return new GsonBuilder()
+                .registerTypeAdapter(BayesianExperimentStatistics.class, new BayesianExperimentStatisticsDeserializer())
+                .registerTypeAdapter(VariantBayesianStatistics.class, new VariantBayesianStatisticsDeserializer())
                 .registerTypeAdapter(Experiment.class, new ExperimentTypeDeserializer())
                 .registerTypeAdapter(ClientExperiment.class, new ClientExperimentTypeSerializer())
                 .registerTypeAdapter(AdminExperiment.class, new AdminExperimentTypeSerializer())
