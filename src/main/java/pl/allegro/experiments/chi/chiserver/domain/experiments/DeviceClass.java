@@ -1,9 +1,9 @@
 package pl.allegro.experiments.chi.chiserver.domain.experiments;
 
-import java.util.Optional;
-
 public enum DeviceClass {
+    //TODO remove phone or smartphone
     phone,
+    smartphone,
     desktop,
     tablet,
     all;

@@ -1,6 +1,7 @@
 package pl.allegro.experiments.chi.chiserver.domain.statistics;
 
 import com.google.common.base.Preconditions;
+import com.google.common.collect.Lists;
 import com.google.common.collect.Streams;
 import pl.allegro.experiments.chi.chiserver.domain.experiments.DeviceClass;
 import pl.allegro.experiments.chi.chiserver.domain.statistics.bayes.BayesianExperimentStatistics;
@@ -37,7 +38,7 @@ public class BayesianHistograms extends BayesianBoxChart {
         List<BigDecimal> improvingProbabilities = statistics.calculateImprovingProbabilities(BOX_SIZE, MAX_BOX);
         List<BigDecimal> worseningProbabilities = statistics.calculateWorseningProbabilities(BOX_SIZE, MAX_BOX);
 
-        Stream<BigDecimal> allProbabilities = Streams.concat(worseningProbabilities.stream(), improvingProbabilities.stream());
+        Stream<BigDecimal> allProbabilities = Streams.concat(Lists.reverse(worseningProbabilities).stream(), improvingProbabilities.stream());
 
         return new VariantHistogram(
                 statistics.getVariantName(),

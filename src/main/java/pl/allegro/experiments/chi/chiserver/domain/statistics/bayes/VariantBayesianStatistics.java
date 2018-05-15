@@ -1,8 +1,5 @@
 package pl.allegro.experiments.chi.chiserver.domain.statistics.bayes;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import pl.allegro.experiments.chi.chiserver.domain.statistics.EqualizerBar;
-
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.ArrayList;
@@ -59,10 +56,10 @@ public class VariantBayesianStatistics {
                     double thres = boxSize * box;
 
                     int samplesInBox = samples.stream()
-                            .filter(s -> s.getValue() >= thres)
-                            .mapToInt(s -> s.getCount()).sum();
-
-                    return toRatio(samplesInBox, samplesCount);
+                            .filter(s -> s.getValue() > thres)
+                            .mapToInt(Sample::getCount)
+                            .sum();
+                    return toRatio(samplesInBox + outliersRight, samplesCount);
                 }).collect(Collectors.toList());
     }
 
@@ -71,13 +68,14 @@ public class VariantBayesianStatistics {
         List<Sample> samples = getSamplesAsList();
 
         return IntStream.range(0, boxesCount).mapToObj(box -> {
-                    double thres = -1 * boxSize * (boxesCount-box);
+                    double thres = -1 * boxSize * box;
 
                     int samplesInBox = samples.stream()
-                            .filter(s -> s.getValue() <= thres)
-                            .mapToInt(s -> s.getCount()).sum();
+                            .filter(s -> s.getValue() < thres)
+                            .mapToInt(Sample::getCount)
+                            .sum();
 
-                    return toRatio(samplesInBox, samplesCount);
+                    return toRatio(samplesInBox + outliersLeft, samplesCount);
                 }).collect(Collectors.toList());
     }
 

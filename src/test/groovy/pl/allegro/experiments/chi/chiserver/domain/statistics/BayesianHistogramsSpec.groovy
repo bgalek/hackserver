@@ -19,11 +19,11 @@ class BayesianHistogramsSpec extends Specification {
         histogram.values == givenStatsVariantA.samples.values
         histogram.counts == givenStatsVariantA.samples.counts
 
-        histogram.labels[0] == "0.00%"
-        histogram.labels[89] == "7.34%"
-        histogram.labels[99] == "20.30%"
-        histogram.labels[100] == "79.56%"
-        histogram.labels[109] == "60.93%"
-        histogram.labels[199] == "0.00%"
+        histogram.labels[0] == "0.01%"
+        histogram.labels[89] == "7.35%"
+        histogram.labels[99] == "20.31%"
+        histogram.labels[100] == "79.69%"
+        histogram.labels[109] == "61.05%"
+        histogram.labels[199] == "0.12%"
     }
 }
