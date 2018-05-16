@@ -1,4 +1,4 @@
-package pl.allegro.experiments.chi.chiserver.functional
+package pl.allegro.experiments.chi.chiserver.ui
 
 import geb.spock.GebSpec
 import org.springframework.beans.factory.annotation.Value
@@ -20,7 +20,7 @@ import pl.allegro.experiments.chi.chiserver.utils.SampleInMemoryExperimentsRepos
         properties = "application.environment=integration",
         webEnvironment=SpringBootTest.WebEnvironment.RANDOM_PORT)
 @ContextConfiguration
-abstract class BaseFunctionalSpec extends GebSpec {
+abstract class BaseUiSpec extends GebSpec {
 
     @Value('${local.server.port}')
     protected int port
@@ -31,7 +31,6 @@ abstract class BaseFunctionalSpec extends GebSpec {
 
 }
 
-@Configuration
 class LoggedInAsRootTestConfig {
 
     @Primary

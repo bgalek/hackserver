@@ -1,4 +1,4 @@
-package pl.allegro.experiments.chi.chiserver.functional
+package pl.allegro.experiments.chi.chiserver.ui
 
 import geb.Page
 import org.springframework.test.context.ContextConfiguration
@@ -25,7 +25,7 @@ class CreateExperimentPage extends Page {
 }
 
 @ContextConfiguration(classes = [LoggedInAsRootTestConfig])
-class CreateExperimentSpec extends BaseFunctionalSpec {
+class CreateExperimentSpec extends BaseUiSpec {
 
     def "should redirect to experiment details after creating experiment"() {
         given:
