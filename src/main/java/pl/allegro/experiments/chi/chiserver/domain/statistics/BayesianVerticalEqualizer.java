@@ -14,7 +14,7 @@ public class BayesianVerticalEqualizer extends BayesianBoxChart {
     private final List<EqualizerBar> bars;
 
     private static final double BOX_SIZE = 0.01;
-    private static final int MAX_BOX = 5;
+    private static final int MAX_BOX_RADIUS = 5;
 
     public BayesianVerticalEqualizer(BayesianExperimentStatistics experimentStatistics) {
 
@@ -34,12 +34,16 @@ public class BayesianVerticalEqualizer extends BayesianBoxChart {
 
     private static EqualizerBar toBar(VariantBayesianStatistics statistics) {
         return new EqualizerBar(statistics.getVariantName(),
-                statistics.calculateImprovingProbabilities(BOX_SIZE, MAX_BOX),
-                statistics.calculateWorseningProbabilities(BOX_SIZE, MAX_BOX));
+                statistics.calculateImprovingProbabilities(BOX_SIZE, MAX_BOX_RADIUS),
+                statistics.calculateWorseningProbabilities(BOX_SIZE, MAX_BOX_RADIUS));
     }
 
     private static BigDecimal toRatio(int sampleCount, int allCount) {
         return BigDecimal.valueOf(sampleCount / (double) allCount).setScale(4, RoundingMode.HALF_DOWN);
+    }
+
+    public int getBoxRadius() {
+        return bars.get(0).getImprovingProbabilities().size();
     }
 
     public List<EqualizerBar> getBars() {
