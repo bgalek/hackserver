@@ -1,11 +1,11 @@
 package pl.allegro.experiments.chi.chiserver.domain.statistics.bayes;
 
+import com.google.common.collect.Lists;
+
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
-import java.util.stream.IntStream;
 
 public class VariantBayesianStatistics {
     private final String variantName;
@@ -51,32 +51,39 @@ public class VariantBayesianStatistics {
     public List<BigDecimal> calculateImprovingProbabilities(double boxSize, int boxesCount) {
         int samplesCount = allCount();
         List<Sample> samples = getSamplesAsList();
-
-        return IntStream.range(0, boxesCount).mapToObj(box -> {
-                    double thres = boxSize * box;
-
-                    int samplesInBox = samples.stream()
-                            .filter(s -> s.getValue() > thres)
-                            .mapToInt(Sample::getCount)
-                            .sum();
-                    return toRatio(samplesInBox + outliersRight, samplesCount);
-                }).collect(Collectors.toList());
+        List<BigDecimal> result = new ArrayList<>();
+        int sum = outliersRight;
+        int box = boxesCount - 1;
+        int index = samples.size() - 1;
+        while (box >= 0) {
+            double thres = boxSize * box;
+            while (samples.get(index).getValue() > thres) {
+                sum += samples.get(index).getCount();
+                index --;
+            }
+            result.add(toRatio(sum, samplesCount));
+            box --;
+        }
+        return Lists.reverse(result);
     }
 
     public List<BigDecimal> calculateWorseningProbabilities(double boxSize, int boxesCount) {
         int samplesCount = allCount();
         List<Sample> samples = getSamplesAsList();
-
-        return IntStream.range(0, boxesCount).mapToObj(box -> {
-                    double thres = -1 * boxSize * box;
-
-                    int samplesInBox = samples.stream()
-                            .filter(s -> s.getValue() < thres)
-                            .mapToInt(Sample::getCount)
-                            .sum();
-
-                    return toRatio(samplesInBox + outliersLeft, samplesCount);
-                }).collect(Collectors.toList());
+        List<BigDecimal> result = new ArrayList<>();
+        int sum = outliersLeft;
+        int box = boxesCount - 1;
+        int index = 0;
+        while (box >= 0) {
+            double thres = -1 * boxSize * box;
+            while (samples.get(index).getValue() < thres) {
+                sum += samples.get(index).getCount();
+                index ++;
+            }
+            result.add(toRatio(sum, samplesCount));
+            box --;
+        }
+        return Lists.reverse(result);
     }
 
     private static BigDecimal toRatio(int sampleCount, int allCount) {

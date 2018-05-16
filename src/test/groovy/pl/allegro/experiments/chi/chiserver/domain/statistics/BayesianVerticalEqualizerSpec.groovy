@@ -16,8 +16,9 @@ class BayesianVerticalEqualizerSpec extends Specification {
         def bar = equalizer.bars.find{it.variantName.get() == "test-a" }
 
         bar.improvingProbabilities[0] + bar.worseningProbabilities[0] == 1.0
-        bar.improvingProbabilities == [0.7000, 0.4000, 0.3000, 0.3000, 0.3000]
         bar.worseningProbabilities == [0.3000, 0.1000, 0.1000, 0.1000, 0.1000]
+        bar.improvingProbabilities == [0.7000, 0.4000, 0.3000, 0.3000, 0.3000]
+
     }
 
     def "should build Vertical Equalizer from raw Bayesian stats"(){
