@@ -1,27 +1,32 @@
 <template>
-  <v-container>
+  <v-container v-if="this.show()">
     <h3>Results based on bayesian analysis</h3>
     <br/>
-    <h4>Visits conversion equalizer</h4>
+    <v-container v-if="this.showEqualizer()">
+      <h4>Visits conversion equalizer</h4>
+      <br/>
+      <bayesian-equalizer-chart v-if="this.showEqualizer()"
+                                :equalizerData="this.getEqualizerData()"
+                                :height="250"
+      ></bayesian-equalizer-chart>
     <br/>
-    <bayesian-equalizer-chart v-if="this.showEqualizer()"
-                              :equalizerData="this.getEqualizerData()"
-    ></bayesian-equalizer-chart>
-    <br/>
-    <h4>Visits conversion histogram</h4>
-    <v-layout row v-if="this.show()">
-      <v-spacer></v-spacer>
-      <variant-selector
-        :experiment="experiment"
-        :selectedVariantName="this.variantName"
-        @variantNameChanged="updateVariantName"
-        :showBase="false"
-      ></variant-selector>
-    </v-layout>
-    <bayesian-histogram-chart v-if="this.showHistogram()"
-      :histogramData="this.getHistogramData(this.variantName)"
-    >
-    </bayesian-histogram-chart>
+    </v-container>
+    <v-container v-if="this.showHistogram()">
+      <h4>Visits conversion histogram</h4>
+      <v-layout row>
+        <v-spacer></v-spacer>
+        <variant-selector
+          :experiment="experiment"
+          :selectedVariantName="this.variantName"
+          @variantNameChanged="updateVariantName"
+          :showBase="false"
+        ></variant-selector>
+      </v-layout>
+      <bayesian-histogram-chart v-if="this.showHistogram()"
+        :histogramData="this.getHistogramData(this.variantName)"
+      >
+      </bayesian-histogram-chart>
+    </v-container>
   </v-container>
 </template>
 
@@ -68,7 +73,6 @@
       },
 
       showEqualizer () {
-        console.log('this.bayesianEqualizer', this.bayesianEqualizer)
         return this.bayesianEqualizer && this.bayesianEqualizer.bars && this.bayesianEqualizer.bars.length > 0
       }
     }
