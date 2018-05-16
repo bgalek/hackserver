@@ -37,7 +37,7 @@ public class DruidStatisticsRepository implements StatisticsRepository {
     }
 
     @Override
-    public LocalDate lastStatisticsDate(String experimentId) {
+    public Optional<LocalDate> lastStatisticsDate(String experimentId) {
         String queryBody = "{\n" +
                 "\"queryType\": \"timeBoundary\",\n" +
                 "          \"dataSource\": \"" + this.datasource + "\",\n" +
@@ -49,14 +49,14 @@ public class DruidStatisticsRepository implements StatisticsRepository {
                 "            }\n" +
                 "          }\n" +
                 "        }\n";
-        return Optional.of(queryBody)
+        return Optional.ofNullable(queryBody)
                 .map(druid::query)
                 .map(it -> jsonConverter.fromJson(it, JsonArray.class))
                 .map(it -> it.size() > 0 ? it.get(0) : null)
                 .map(it -> it.getAsJsonObject().get("result").getAsJsonObject().get("maxTime").getAsString())
                 .map(it -> it.substring(0, 10))
-                .map(it -> LocalDate.parse(it, DateTimeFormatter.ofPattern("yyyy-MM-dd")))
-                .orElse(null);
+                .map(it -> LocalDate.parse(it, DateTimeFormatter.ofPattern("yyyy-MM-dd")));
+
     }
 
     @Override

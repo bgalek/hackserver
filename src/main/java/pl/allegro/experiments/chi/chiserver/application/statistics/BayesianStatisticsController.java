@@ -46,18 +46,11 @@ public class BayesianStatisticsController {
     ResponseEntity<String> verticalEqualizer(
             @PathVariable String experimentId,
             @RequestParam(value = "device", required = false) final String device) {
-
-        DeviceClass usedDeviceClass = DeviceClass.fromString(device);
-        LocalDate lastStatisticsDate = statisticsRepository.lastStatisticsDate(experimentId);
-        logger.info("request for bayesian VerticalEqualizer received, experimentId: {}, device: {}, toDate: {} ", experimentId, usedDeviceClass, lastStatisticsDate);
-
-        if (lastStatisticsDate == null) {
-            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-        }
-
-        return bayesianChartsRepository.getVerticalEqualizer(experimentId, usedDeviceClass, lastStatisticsDate)
-                .map(s -> ResponseEntity.ok(jsonConverter.toJson(s)))
-                .orElse(ResponseEntity.notFound().build());
+        return statisticsRepository.lastStatisticsDate(experimentId)
+                .map( lastStatisticsDate -> bayesianChartsRepository.getVerticalEqualizer(experimentId, DeviceClass.fromString(device), lastStatisticsDate)
+                        .map(s -> ResponseEntity.ok(jsonConverter.toJson(s)))
+                        .orElse(ResponseEntity.notFound().build()))
+                .orElse(new ResponseEntity<>(HttpStatus.NO_CONTENT));
     }
 
     @MeteredEndpoint
@@ -65,18 +58,10 @@ public class BayesianStatisticsController {
     ResponseEntity<String> experimentsStatistics(
             @PathVariable String experimentId,
             @RequestParam(value = "device", required = false) final String device) {
-
-        DeviceClass usedDeviceClass = DeviceClass.fromString(device);
-        LocalDate lastStatisticsDate = statisticsRepository.lastStatisticsDate(experimentId);
-        logger.info("request for bayesian Histograms received, experimentId: {}, device: {}, toDate: {} ", experimentId, usedDeviceClass, lastStatisticsDate);
-
-        if (lastStatisticsDate == null) {
-            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-        }
-
-        return bayesianChartsRepository.getHistograms(experimentId, usedDeviceClass, lastStatisticsDate)
+        return statisticsRepository.lastStatisticsDate(experimentId).map(lastStatisticsDate -> bayesianChartsRepository.getHistograms(experimentId, DeviceClass.fromString(device), lastStatisticsDate)
                 .map(s -> ResponseEntity.ok(jsonConverter.toJson(s)))
-                .orElse(ResponseEntity.notFound().build());
+                .orElse(ResponseEntity.notFound().build()))
+                .orElse(new ResponseEntity<>(HttpStatus.NO_CONTENT));
     }
 
     @MeteredEndpoint
