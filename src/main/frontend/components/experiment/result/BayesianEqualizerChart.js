@@ -1,7 +1,5 @@
 import { Bar } from 'vue-chartjs'
 
-const RADIUS = 8
-
 export default {
   extends: Bar,
 
@@ -15,7 +13,9 @@ export default {
 
   methods: {
     printEqualizer (equalizerData) {
-      this.renderChart(this.equalizerDataToDataSets(equalizerData),
+      const boxesUp = Math.max(...equalizerData.bars.map(x => x.improvingProbabilities.length))
+      const RADIUS = Math.max(boxesUp, ...equalizerData.bars.map(x => x.worseningProbabilities.length))
+      this.renderChart(this.equalizerDataToDataSets(equalizerData, RADIUS),
         {
           legend: {
             display: false
@@ -39,8 +39,8 @@ export default {
               stacked: true,
               ticks: {
                 display: true,
-                min: -10,
-                max: 10,
+                min: -1 * RADIUS,
+                max: 1 * RADIUS,
                 callback: function (value, index, values) {
                   let sign = value > 0 ? '+' : ''
                   return `${sign}${equalizerData.boxSize * value * 100.0}%`
@@ -72,7 +72,7 @@ export default {
                   p = equalizerData.bars[item.index].improvingProbabilities[item.datasetIndex - RADIUS]
                 }
                 if (p > 0) {
-                  return `${p * 100.0}%`
+                  return `${(p * 100.0).toFixed(2)}%`
                 } else {
                   return '~0%'
                 }
@@ -82,8 +82,7 @@ export default {
         })
     },
 
-    equalizerDataToDataSets (equalizerData) {
-      console.log('equalizerDataToDataSets', equalizerData)
+    equalizerDataToDataSets (equalizerData, RADIUS) {
       const labels = equalizerData.bars.map(v => v.variantName)
       const pluses = labels.map(() => 1)
       const minuses = labels.map(() => -1)

@@ -8,8 +8,8 @@
         <v-btn flat value="desktop">
           Desktop
         </v-btn>
-        <v-btn flat value="smartphone">
-          Smartphone
+        <v-btn flat value="phone">
+          Phone
         </v-btn>
         <v-btn flat value="tablet">
           Tablet
@@ -33,12 +33,8 @@
       calcInitialDeviceClass () {
         const baseClass = this.experiment.getBaseDeviceClass()
 
-        if (baseClass === 'desktop' || baseClass === 'tablet') {
+        if (baseClass === 'desktop' || baseClass === 'tablet' || baseClass === 'phone') {
           return baseClass
-        }
-
-        if (baseClass === 'phone') {
-          return 'smartphone'
         }
 
         return 'all'
