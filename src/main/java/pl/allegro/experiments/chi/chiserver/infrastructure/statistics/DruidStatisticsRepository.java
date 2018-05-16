@@ -33,7 +33,7 @@ public class DruidStatisticsRepository implements StatisticsRepository {
 
     @Override
     public boolean hasAnyStatistics(String experimentId) {
-        return lastStatisticsDate(experimentId) != null;
+        return lastStatisticsDate(experimentId).isPresent();
     }
 
     @Override
@@ -49,7 +49,7 @@ public class DruidStatisticsRepository implements StatisticsRepository {
                 "            }\n" +
                 "          }\n" +
                 "        }\n";
-        return Optional.ofNullable(queryBody)
+        return Optional.of(queryBody)
                 .map(druid::query)
                 .map(it -> jsonConverter.fromJson(it, JsonArray.class))
                 .map(it -> it.size() > 0 ? it.get(0) : null)

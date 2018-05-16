@@ -12,7 +12,8 @@ import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-public class BayesianHistograms extends BayesianBoxChart {
+public class BayesianHistograms {
+    private final BayesianChartMetadata metadata;
     private final List<VariantHistogram> histograms;
     private static final double BOX_SIZE = 0.001;
     private static final int MAX_BOX = 100;
@@ -26,9 +27,14 @@ public class BayesianHistograms extends BayesianBoxChart {
                         .collect(Collectors.toList()));
     }
 
-    BayesianHistograms(String experimentId, DeviceClass deviceClass, double boxSize, List<VariantHistogram> histograms) {
-        super(experimentId, deviceClass, boxSize);
-        this.histograms = List.copyOf(histograms);
+    private BayesianHistograms(BayesianChartMetadata metadata, List<VariantHistogram> histograms) {
+        this.metadata = metadata;
+        this.histograms = histograms;
+    }
+
+    private BayesianHistograms(String experimentId, DeviceClass deviceClass, double boxSize, List<VariantHistogram> histograms) {
+        this(new BayesianChartMetadata(experimentId, deviceClass, boxSize), histograms);
+
     }
 
     private static VariantHistogram toHistogram(VariantBayesianStatistics statistics) {
@@ -51,5 +57,9 @@ public class BayesianHistograms extends BayesianBoxChart {
 
     public List<VariantHistogram> getVariantHistograms() {
         return histograms;
+    }
+
+    public BayesianChartMetadata getMetadata() {
+        return metadata;
     }
 }

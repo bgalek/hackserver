@@ -9,25 +9,22 @@ import java.math.RoundingMode;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class BayesianVerticalEqualizer extends BayesianBoxChart {
+public class BayesianVerticalEqualizer {
+    private final BayesianChartMetadata metadata;
     private final List<EqualizerBar> bars;
 
     private static final double BOX_SIZE = 0.01;
     private static final int MAX_BOX_RADIUS = 5;
 
     public BayesianVerticalEqualizer(BayesianExperimentStatistics experimentStatistics) {
-
-        this(experimentStatistics.getExperimentId(),
-            DeviceClass.fromString(experimentStatistics.getDevice()),
-            BOX_SIZE,
-            experimentStatistics.getVariantBayesianStatistics().stream()
-                        .map(BayesianVerticalEqualizer::toBar)
-                        .collect(Collectors.toList()));
+        this(new BayesianChartMetadata(experimentStatistics.getExperimentId(), DeviceClass.fromString(experimentStatistics.getDevice()),BOX_SIZE), experimentStatistics.getVariantBayesianStatistics().stream()
+                .map(BayesianVerticalEqualizer::toBar)
+                .collect(Collectors.toList()));
     }
 
-    BayesianVerticalEqualizer(String experimentId, DeviceClass deviceClass, double boxSize, List<EqualizerBar> bars) {
-        super(experimentId, deviceClass, boxSize);
+    private BayesianVerticalEqualizer(BayesianChartMetadata metadata, List<EqualizerBar> bars) {
         Preconditions.checkNotNull(bars);
+        this.metadata = metadata;
         this.bars = List.copyOf(bars);
     }
 
@@ -47,5 +44,9 @@ public class BayesianVerticalEqualizer extends BayesianBoxChart {
 
     public List<EqualizerBar> getBars() {
         return bars;
+    }
+
+    public BayesianChartMetadata getMetadata() {
+        return metadata;
     }
 }

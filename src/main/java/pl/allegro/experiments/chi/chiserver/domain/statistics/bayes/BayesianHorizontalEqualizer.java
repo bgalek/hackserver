@@ -7,13 +7,13 @@ import pl.allegro.experiments.chi.chiserver.domain.statistics.EqualizerBar;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 
-
-public class BayesianHorizontalEqualizer extends BayesianBoxChart {
+public class BayesianHorizontalEqualizer {
+    private final BayesianChartMetadata metadata;
     private final EqualizerBar joinedBar;
 
     public BayesianHorizontalEqualizer(BayesianVerticalEqualizer verticalEqualizer) {
-        this(verticalEqualizer.getExperimentId(), verticalEqualizer.getDeviceClass(),
-             verticalEqualizer.getBoxSize(), toJoinedBar(verticalEqualizer));
+        this(new BayesianChartMetadata(verticalEqualizer.getMetadata().getExperimentId(), verticalEqualizer.getMetadata().getDeviceClass(),
+             verticalEqualizer.getMetadata().getBoxSize()), toJoinedBar(verticalEqualizer));
     }
 
     private static EqualizerBar toJoinedBar(BayesianVerticalEqualizer verticalEqualizer) {
@@ -40,10 +40,14 @@ public class BayesianHorizontalEqualizer extends BayesianBoxChart {
         return new EqualizerBar(null, improvingProbabilities, worseningProbabilities);
     }
 
-    BayesianHorizontalEqualizer(String experimentId, DeviceClass deviceClass, double boxSize, EqualizerBar joinedBar) {
-        super(experimentId, deviceClass, boxSize);
+    BayesianHorizontalEqualizer(BayesianChartMetadata metadata, EqualizerBar joinedBar) {
         Preconditions.checkNotNull(joinedBar);
+        this.metadata = metadata;
         this.joinedBar = joinedBar;
+    }
+
+    BayesianHorizontalEqualizer(String experimentId, DeviceClass deviceClass, double boxSize, EqualizerBar joinedBar) {
+        this(new BayesianChartMetadata(experimentId, deviceClass, boxSize), joinedBar);
     }
 
     public EqualizerBar getJoinedBar() {
@@ -52,5 +56,9 @@ public class BayesianHorizontalEqualizer extends BayesianBoxChart {
 
     public int getBoxRadius() {
         return joinedBar.getImprovingProbabilities().size();
+    }
+
+    public BayesianChartMetadata getMetadata() {
+        return metadata;
     }
 }
