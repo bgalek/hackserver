@@ -7,20 +7,63 @@ import spock.lang.Specification
 
 class BayesianVerticalEqualizerSpec extends Specification {
 
-    def "should build Vertical Equalizer from raw Bayesian stats"(){
-      when:
-      def equalizer = new BayesianVerticalEqualizer(sampleStats())
+    def "should build simple Vertical Equalizer from raw Bayesian stats"() {
+        when:
+        def equalizer = new BayesianVerticalEqualizer(stats())
 
-      then:
-      equalizer.bars.size() == 2
-      def bar = equalizer.bars.find{it.variantName.get() == "test-a" }
+        then:
+        equalizer.bars.size() == 2
+        def bar = equalizer.bars.find{it.variantName.get() == "test-a" }
+
+        bar.improvingProbabilities[0] + bar.worseningProbabilities[0] == 1.0
+        bar.improvingProbabilities == [0.7000, 0.4000, 0.3000, 0.3000, 0.3000]
+        bar.worseningProbabilities == [0.3000, 0.1000, 0.1000, 0.1000, 0.1000]
+    }
+
+    def "should build Vertical Equalizer from raw Bayesian stats"(){
+        when:
+        def equalizer = new BayesianVerticalEqualizer(sampleStats())
+
+        then:
+        equalizer.bars.size() == 2
+        def bar = equalizer.bars.find{it.variantName.get() == "test-a" }
 
       bar.improvingProbabilities[0] + bar.worseningProbabilities[0] == 1.0
       bar.improvingProbabilities == [0.7969, 0.5866, 0.3506, 0.1636, 0.0577]
       bar.worseningProbabilities == [0.2031, 0.0735, 0.0191, 0.0035, 0.0006]
     }
 
-    static BayesianExperimentStatistics sampleStats() {
+    static BayesianExperimentStatistics stats() {
+        def json = """
+{
+    "experimentId" : "ux-404-new",
+    "toDate" : "2018-05-13",
+    "device" : "desktop",
+    "variantBayesianStatistics" : [ 
+        {
+            "variantName" : "test-a",
+            "outliersLeft": 1,
+            "outliersRight": 3,
+            "samples" : {
+                "values" : [ -0.02, -0.01, 0.01, 0.02 ],
+                "counts" : [ 0, 2, 3, 1 ]        
+            }
+        }, 
+        {
+            "variantName" : "test-b",
+            "samples" : {
+                "values" : [ -0.02, -0.01, 0.01, 0.02 ],
+                "counts" : [ 1, 2, 4, 3 ]        
+            }
+        }
+    ]
+}
+"""
+        Gson gson = new GsonBuilder().create()
+        gson.fromJson(json, BayesianExperimentStatistics)
+    }
+
+        static BayesianExperimentStatistics sampleStats() {
         def sampleJson =
         """
 {
