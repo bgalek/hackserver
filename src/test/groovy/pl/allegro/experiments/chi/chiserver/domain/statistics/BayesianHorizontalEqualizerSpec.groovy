@@ -4,6 +4,7 @@ import pl.allegro.experiments.chi.chiserver.domain.experiments.DeviceClass
 import pl.allegro.experiments.chi.chiserver.domain.statistics.bayes.BayesianChartMetadata
 import pl.allegro.experiments.chi.chiserver.domain.statistics.bayes.BayesianHorizontalEqualizer
 import pl.allegro.experiments.chi.chiserver.domain.statistics.bayes.BayesianVerticalEqualizer
+import pl.allegro.experiments.chi.chiserver.domain.statistics.bayes.EqualizerBar
 import spock.lang.Specification
 
 class BayesianHorizontalEqualizerSpec extends Specification {
