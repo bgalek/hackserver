@@ -64,8 +64,15 @@ public class MongoBayesianStatisticsRepository implements BayesianStatisticsRepo
 
         query.addCriteria(Criteria.where("experimentId").is(experimentId));
         query.addCriteria(Criteria.where("toDate").is(toDate));
-        query.addCriteria(Criteria.where("device").is(device));
+        query.addCriteria(Criteria.where("device").is(phoneMapping(device)));
 
         return query;
+    }
+
+    private String phoneMapping(String device) {
+        if ("phone".equals(device)) {
+            return "smartphone";
+        }
+        return device;
     }
 }

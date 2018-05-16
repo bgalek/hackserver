@@ -4,10 +4,10 @@ const appState = {
   state: {
     diffSign: -1,
     metrics: ['tx_visit', 'gmv'],
-    devices: ['desktop', 'smarphone', 'tablet', 'all'],
+    devices: ['desktop', 'smartphone', 'tablet', 'all'],
     metricValueForDevice: {
       'desktop': 0.1,
-      'phone': 0.2,
+      'smartphone': 0.2,
       'tablet': 0.3,
       'all': 0.4
     },
