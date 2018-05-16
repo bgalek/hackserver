@@ -5,7 +5,8 @@ import experiments from './experiments'
 import experiment from './experiment'
 import experimentAuditLog from './experimentAuditLog'
 import experimentStatistics from './experimentStatistics'
-import bayesianStatistics from './bayesianStatistics'
+import bayesianHistograms from './bayesianHistograms'
+import bayesianEqualizer from './bayesianEqualizer'
 import deleteExperiment from './deleteExperiment'
 import startExperiment from './startExperiment'
 import createExperiment from './createExperiment'
@@ -33,7 +34,8 @@ export default new Vuex.Store({
     experiments,
     experimentAuditLog,
     experimentStatistics,
-    bayesianStatistics,
+    bayesianHistograms,
+    bayesianEqualizer,
     createExperiment,
     startExperiment,
     deleteExperiment,

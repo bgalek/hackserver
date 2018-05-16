@@ -1,7 +1,5 @@
 package pl.allegro.experiments.chi.chiserver.domain.experiments;
 
-import java.util.Optional;
-
 public enum DeviceClass {
     phone,
     desktop,
@@ -11,6 +9,8 @@ public enum DeviceClass {
     public static DeviceClass fromString(String deviceClass) {
         if (deviceClass == null || deviceClass.isEmpty()) {
             return all;
+        } else if ("smartphone".equals(deviceClass)) {
+            return phone;
         }
         return valueOf(deviceClass.toLowerCase());
     }

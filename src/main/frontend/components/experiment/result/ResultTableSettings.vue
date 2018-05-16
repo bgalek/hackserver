@@ -1,7 +1,7 @@
 <template>
-  <v-card flat class="ma-0 pa-0">
-    <v-card-text class="ma-0 pa-0">
-      <v-btn-toggle v-model="device" row mandatory class="ma-0 pa-0">
+  <v-card flat className="ma-0 pa-0">
+    <v-card-text className="ma-0 pa-0">
+      <v-btn-toggle v-model="device" row mandatory className="ma-0 pa-0">
         <v-btn flat value="all">
           All
         </v-btn>

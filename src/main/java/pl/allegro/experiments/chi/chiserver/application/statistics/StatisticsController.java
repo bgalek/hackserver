@@ -11,8 +11,6 @@ import pl.allegro.experiments.chi.chiserver.domain.experiments.ExperimentsReposi
 import pl.allegro.experiments.chi.chiserver.domain.statistics.StatisticsRepository;
 import pl.allegro.tech.common.andamio.metrics.MeteredEndpoint;
 
-import java.time.LocalDate;
-
 import static org.springframework.http.MediaType.APPLICATION_JSON_UTF8_VALUE;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
@@ -38,24 +36,15 @@ public class StatisticsController {
     @GetMapping("/statistics/{experimentId}")
     ResponseEntity<String> experimentsStatistics(
             @PathVariable String experimentId,
-            @RequestParam(value = "device", required = false) String device) {
+            @RequestParam(value = "device", required = false, defaultValue = "all") String device) {
         logger.debug("Experiment statistics request received");
         Experiment experiment = experimentsRepository.getExperiment(experimentId).orElse(null);
         if (experiment == null) {
-            return new ResponseEntity<String>(HttpStatus.NOT_FOUND);
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
 
-        LocalDate lastDate = statisticsRepository.lastStatisticsDate(experimentId);
-        if (lastDate == null) {
-            return new ResponseEntity<String>(HttpStatus.NO_CONTENT);
-        }
-
-        if (device == null) {
-            device = "all";
-        }
-
-        return ResponseEntity.ok(jsonConverter.toJson(
-                statisticsRepository.experimentStatistics(experimentId, lastDate, device)
-        ));
+        return statisticsRepository.lastStatisticsDate(experimentId)
+                .map(lastDate -> ResponseEntity.ok(jsonConverter.toJson(statisticsRepository.experimentStatistics(experimentId, lastDate, device))))
+                .orElse(new ResponseEntity<>(HttpStatus.NO_CONTENT));
     }
 }

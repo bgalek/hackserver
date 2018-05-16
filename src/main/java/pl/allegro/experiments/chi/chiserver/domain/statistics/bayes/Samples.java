@@ -1,35 +1,27 @@
 package pl.allegro.experiments.chi.chiserver.domain.statistics.bayes;
 
-import com.fasterxml.jackson.annotation.JsonCreator;
-import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.common.base.Preconditions;
 
-public class Samples {
-    private double[] values;
-    private int[] counts;
-    private String[] labels;
+import java.util.List;
 
-    @JsonCreator
-    public Samples(@JsonProperty("values") double[] values,
-                   @JsonProperty("counts") int[] counts,
-                   @JsonProperty("labels") String[] labels) {
+public class Samples {
+    private List<Double> values;
+    private List<Integer> counts;
+
+    public Samples(List<Double> values,
+                   List<Integer> counts) {
         Preconditions.checkNotNull(values, "values should not be null");
         Preconditions.checkNotNull(counts, "counts should not be null");
-        Preconditions.checkNotNull(labels, "labels should not be null");
-        Preconditions.checkArgument(values.length == counts.length, "values and counts should be the same length");
-        Preconditions.checkArgument(labels.length == counts.length, "labels and counts should be the same length");
-        this.values = values;
-        this.counts = counts;
-        this.labels = labels;
+        Preconditions.checkArgument(values.size() == counts.size(), "values and counts should be the same length");
+        this.values = List.copyOf(values);
+        this.counts = List.copyOf(counts);
     }
 
-    public double[] getValues() {
+    public List<Double> getValues() {
         return values;
     }
 
-    public int[] getCounts() {
+    public List<Integer> getCounts() {
         return counts;
     }
-
-    public String[] getLabels() { return labels; }
 }

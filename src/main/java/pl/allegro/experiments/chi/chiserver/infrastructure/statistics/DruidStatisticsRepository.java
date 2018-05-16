@@ -33,11 +33,11 @@ public class DruidStatisticsRepository implements StatisticsRepository {
 
     @Override
     public boolean hasAnyStatistics(String experimentId) {
-        return lastStatisticsDate(experimentId) != null;
+        return lastStatisticsDate(experimentId).isPresent();
     }
 
     @Override
-    public LocalDate lastStatisticsDate(String experimentId) {
+    public Optional<LocalDate> lastStatisticsDate(String experimentId) {
         String queryBody = "{\n" +
                 "\"queryType\": \"timeBoundary\",\n" +
                 "          \"dataSource\": \"" + this.datasource + "\",\n" +
@@ -55,8 +55,8 @@ public class DruidStatisticsRepository implements StatisticsRepository {
                 .map(it -> it.size() > 0 ? it.get(0) : null)
                 .map(it -> it.getAsJsonObject().get("result").getAsJsonObject().get("maxTime").getAsString())
                 .map(it -> it.substring(0, 10))
-                .map(it -> LocalDate.parse(it, DateTimeFormatter.ofPattern("yyyy-MM-dd")))
-                .orElse(null);
+                .map(it -> LocalDate.parse(it, DateTimeFormatter.ofPattern("yyyy-MM-dd")));
+
     }
 
     @Override

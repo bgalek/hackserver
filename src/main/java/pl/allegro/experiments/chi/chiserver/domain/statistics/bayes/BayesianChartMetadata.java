@@ -1,20 +1,20 @@
-package pl.allegro.experiments.chi.chiserver.domain.statistics;
+package pl.allegro.experiments.chi.chiserver.domain.statistics.bayes;
 
 import com.google.common.base.Preconditions;
 import pl.allegro.experiments.chi.chiserver.domain.experiments.DeviceClass;
 
-public abstract class BayesianEqualizer {
+public class BayesianChartMetadata {
     private final String experimentId;
     private final DeviceClass deviceClass;
-    private final double diffStepSize;      //percent
+    private final double boxSize;
 
-    public BayesianEqualizer(String experimentId, DeviceClass deviceClass, double diffStepSize) {
+    public BayesianChartMetadata(String experimentId, DeviceClass deviceClass, double boxSize) {
         Preconditions.checkNotNull(experimentId);
         Preconditions.checkNotNull(deviceClass);
-        Preconditions.checkArgument(diffStepSize > 0);
+        Preconditions.checkArgument(boxSize > 0);
         this.experimentId = experimentId;
         this.deviceClass = deviceClass;
-        this.diffStepSize = diffStepSize;
+        this.boxSize = boxSize;
     }
 
     public String getExperimentId() {
@@ -25,7 +25,7 @@ public abstract class BayesianEqualizer {
         return deviceClass;
     }
 
-    public double getDiffStepSize() {
-        return diffStepSize;
+    public double getBoxSize() {
+        return boxSize;
     }
 }

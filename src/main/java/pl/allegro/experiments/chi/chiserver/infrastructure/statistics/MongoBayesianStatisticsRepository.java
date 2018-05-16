@@ -9,8 +9,7 @@ import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Repository;
-import pl.allegro.experiments.chi.chiserver.application.statistics.BayesianStatisticsController;
-import pl.allegro.experiments.chi.chiserver.domain.statistics.BayesianStatisticsRepository;
+import pl.allegro.experiments.chi.chiserver.domain.statistics.bayes.BayesianStatisticsRepository;
 import pl.allegro.experiments.chi.chiserver.domain.statistics.bayes.BayesianExperimentStatistics;
 import pl.allegro.experiments.chi.chiserver.infrastructure.experiments.ExperimentsMongoMetricsReporter;
 
@@ -65,8 +64,15 @@ public class MongoBayesianStatisticsRepository implements BayesianStatisticsRepo
 
         query.addCriteria(Criteria.where("experimentId").is(experimentId));
         query.addCriteria(Criteria.where("toDate").is(toDate));
-        query.addCriteria(Criteria.where("device").is(device));
+        query.addCriteria(Criteria.where("device").is(phoneMapping(device)));
 
         return query;
+    }
+
+    private String phoneMapping(String device) {
+        if ("phone".equals(device)) {
+            return "smartphone";
+        }
+        return device;
     }
 }
