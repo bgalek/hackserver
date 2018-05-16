@@ -43,7 +43,7 @@ export default {
                 max: 1 * RADIUS,
                 callback: function (value, index, values) {
                   let sign = value > 0 ? '+' : ''
-                  return `${sign}${equalizerData.boxSize * value * 100.0}%`
+                  return `${sign}${equalizerData.metadata.boxSize * value * 100.0}%`
                 }
               },
               gridLines: {
@@ -59,9 +59,9 @@ export default {
             callbacks: {
               title: function (item, data) {
                 if (item[0].datasetIndex < RADIUS) {
-                  return `Probability of decrease by ${(item[0].datasetIndex * equalizerData.boxSize) * 100.0}% or more`
+                  return `Probability of decrease by ${(item[0].datasetIndex * equalizerData.metadata.boxSize) * 100.0}% or more`
                 } else {
-                  return `Probability of increase by ${((item[0].datasetIndex - RADIUS) * equalizerData.boxSize) * 100.0}% or more`
+                  return `Probability of increase by ${((item[0].datasetIndex - RADIUS) * equalizerData.metadata.boxSize) * 100.0}% or more`
                 }
               },
               label: function (item, data) {
