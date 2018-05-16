@@ -1,15 +1,15 @@
 <template>
-  <v-card flat class="ma-0 pa-0">
-    <v-card-text class="ma-0 pa-0">
-      <v-btn-toggle v-model="device" row mandatory class="ma-0 pa-0">
+  <v-card flat className="ma-0 pa-0">
+    <v-card-text className="ma-0 pa-0">
+      <v-btn-toggle v-model="device" row mandatory className="ma-0 pa-0">
         <v-btn flat value="all">
           All
         </v-btn>
         <v-btn flat value="desktop">
           Desktop
         </v-btn>
-        <v-btn flat value="phone">
-          Phone
+        <v-btn flat value="smartphone">
+          Smartphone
         </v-btn>
         <v-btn flat value="tablet">
           Tablet
@@ -33,8 +33,12 @@
       calcInitialDeviceClass () {
         const baseClass = this.experiment.getBaseDeviceClass()
 
-        if (baseClass === 'desktop' || baseClass === 'tablet' || baseClass === 'phone') {
+        if (baseClass === 'desktop' || baseClass === 'tablet') {
           return baseClass
+        }
+
+        if (baseClass === 'phone') {
+          return 'smartphone'
         }
 
         return 'all'
