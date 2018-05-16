@@ -9,6 +9,8 @@ public enum DeviceClass {
     public static DeviceClass fromString(String deviceClass) {
         if (deviceClass == null || deviceClass.isEmpty()) {
             return all;
+        } else if ("smartphone".equals(deviceClass)) {
+            return phone;
         }
         return valueOf(deviceClass.toLowerCase());
     }
