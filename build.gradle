@@ -2,14 +2,18 @@ buildscript {
 
     ext {
         versions = [
-                jackson   :  '2.9.5',
-                springBoot:  '2.0.0.RELEASE',
-                andamio:     '2.0.4',
-                springKafka: '2.1.5.RELEASE',
-                spock:       '1.1-groovy-2.4',
-                groovy:      '2.4.15',
-                jaxb:        '2.3.0'
+                jackson       : '2.9.5',
+                springBoot    : '2.0.0.RELEASE',
+                andamio       : '2.0.4',
+                springKafka   : '2.1.5.RELEASE',
+                spock         : '1.1-groovy-2.4',
+                groovy        : '2.4.15',
+                jaxb          : '2.3.0',
+                geb           : '2.1',
+                chromeSelenium: '3.11.0'
         ]
+
+        drivers = ["chromeHeadless"]
     }
 
     repositories {
@@ -85,6 +89,20 @@ dependencies {
     testCompile group: 'org.springframework.boot', name: 'spring-boot-starter-test', version: versions.springBoot
     testCompile group: 'org.springframework.kafka', name: 'spring-kafka-test', version: versions.springKafka
     testCompile group: 'com.github.fakemongo', name: 'fongo', version: '2.2.0-RC1'
+
+    testCompile group: 'org.gebish', name: 'geb-spock', version: versions.geb
+    testCompile group: 'org.seleniumhq.selenium', name: 'selenium-chrome-driver', version: versions.chromeSelenium
+}
+
+drivers.each { driver ->
+    task "${driver}Test"(type: Test) {
+        group JavaBasePlugin.VERIFICATION_GROUP
+
+        outputs.upToDateWhen { false }  // Always run tests
+
+        systemProperty "geb.build.reportsDir", reporting.file("geb/$name")
+        systemProperty "geb.env", driver
+    }
 }
 
 mainClassName = 'pl.allegro.experiments.chi.chiserver.AppRunner'
@@ -107,25 +125,38 @@ task frontendBuild(type: YarnTask) {
 
 processResources {
     dependsOn frontendBuild
-    from ('public/') {
+    from('public/') {
         into 'public'
     }
 }
 
-test {
+tasks.withType(Test) {
     testLogging {
         exceptionFormat = 'full'
     }
 }
 
+tasks.withType(GroovyCompile) {
+    groovyOptions.forkOptions.memoryMaximumSize = '256m'
+}
+
 integrationTest {
+    maxHeapSize = "1g"
+    jvmArgs '-XX:MaxMetaspaceSize=512m'
+    dependsOn drivers.collect { tasks["${it}Test"] }
+
     testLogging {
         exceptionFormat = 'full'
     }
 }
+
 test {
     afterTest { desc, result ->
         logger.quiet "Executing test ${desc.name} [${desc.className}] with result: ${result.resultType}"
+    }
+
+    testLogging {
+        exceptionFormat = 'full'
     }
 }
 

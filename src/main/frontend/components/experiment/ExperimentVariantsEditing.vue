@@ -73,6 +73,7 @@
         </v-flex>
         <v-flex xs11>
           <v-text-field
+            id="internalVariantFormField"
             :rules="internalVariantNameRules"
             v-model="value.internalVariantName"
             @input="onInternalVariantNameChange"

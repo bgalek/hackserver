@@ -26,6 +26,7 @@
                 </v-flex>
                 <v-flex xs11>
                   <v-text-field
+                    id="experimentIdFormField"
                     v-model="experimentId"
                     label="Experiment ID"
                     :rules="experimentIdRules"
@@ -122,7 +123,10 @@
               </v-layout>
             </v-container>
 
-            <v-btn @click="onSubmit" color="success">create</v-btn>
+            <v-btn
+              id="createExperimentFormSubmitButton"
+              @click="onSubmit"
+              color="success">create</v-btn>
           </v-form>
         </chi-panel>
         <v-progress-linear v-if="showProgress" v-bind:indeterminate="true"></v-progress-linear>
