@@ -7,7 +7,7 @@ import org.springframework.http.HttpHeaders
 import org.springframework.http.MediaType
 import org.springframework.web.client.RestTemplate
 import pl.allegro.experiments.chi.chiserver.BaseIntegrationSpec
-import pl.allegro.experiments.chi.chiserver.domain.statistics.BayesianStatisticsRepository
+import pl.allegro.experiments.chi.chiserver.domain.statistics.bayes.BayesianStatisticsRepository
 import pl.allegro.experiments.chi.chiserver.domain.statistics.bayes.BayesianExperimentStatistics
 
 class BayesianExperimentStatisticsIntegrationSpec extends BaseIntegrationSpec {

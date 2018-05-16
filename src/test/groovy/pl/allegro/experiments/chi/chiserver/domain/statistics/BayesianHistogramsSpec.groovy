@@ -1,5 +1,6 @@
 package pl.allegro.experiments.chi.chiserver.domain.statistics
 
+import pl.allegro.experiments.chi.chiserver.domain.statistics.bayes.BayesianHistograms
 import spock.lang.Specification
 
 class BayesianHistogramsSpec extends Specification {

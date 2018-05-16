@@ -1,4 +1,4 @@
-package pl.allegro.experiments.chi.chiserver.domain.statistics;
+package pl.allegro.experiments.chi.chiserver.domain.statistics.bayes;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;

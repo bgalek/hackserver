@@ -3,7 +3,7 @@ package pl.allegro.experiments.chi.chiserver.application.experiments;
 import com.google.common.base.Preconditions;
 import pl.allegro.experiments.chi.chiserver.domain.User;
 import pl.allegro.experiments.chi.chiserver.domain.experiments.*;
-import pl.allegro.experiments.chi.chiserver.domain.statistics.BayesianHorizontalEqualizer;
+import pl.allegro.experiments.chi.chiserver.domain.statistics.bayes.BayesianHorizontalEqualizer;
 import pl.allegro.experiments.chi.chiserver.domain.statistics.ExperimentMeasurements;
 import pl.allegro.experiments.chi.chiserver.infrastructure.ClientExperiment;
 import pl.allegro.experiments.chi.chiserver.infrastructure.experiments.ExperimentOrigin;

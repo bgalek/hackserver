@@ -1,6 +1,8 @@
 package pl.allegro.experiments.chi.chiserver.domain.statistics
 
 import pl.allegro.experiments.chi.chiserver.domain.experiments.DeviceClass
+import pl.allegro.experiments.chi.chiserver.domain.statistics.bayes.BayesianHorizontalEqualizer
+import pl.allegro.experiments.chi.chiserver.domain.statistics.bayes.BayesianVerticalEqualizer
 import spock.lang.Specification
 
 class BayesianHorizontalEqualizerSpec extends Specification {

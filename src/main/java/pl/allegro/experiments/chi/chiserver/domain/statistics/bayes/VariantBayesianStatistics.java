@@ -6,6 +6,8 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 public class VariantBayesianStatistics {
     private final String variantName;
@@ -31,18 +33,12 @@ public class VariantBayesianStatistics {
         return samples;
     }
 
-    List<Sample> getSamplesAsList() {
-        List<Sample> result = new ArrayList<>();
-
-        for(int i=0; i<samples.getValues().size(); i++) {
-            result.add(new Sample(
-                            samples.getValues().get(i),
-                            samples.getCounts().get(i)
-                    ));
-        }
-
-        return List.copyOf(result);
+    private List<Sample> getSamplesAsList() {
+        return IntStream.range(0, Math.min(samples.getValues().size(), samples.getCounts().size()))
+                .mapToObj(i -> new Sample(samples.getValues().get(i), samples.getCounts().get(i)))
+                .collect(Collectors.toList());
     }
+
 
     public int allCount() {
         return samples.getCounts().stream().mapToInt(Integer::intValue).sum() + outliersLeft + outliersRight;

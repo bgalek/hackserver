@@ -3,6 +3,7 @@ package pl.allegro.experiments.chi.chiserver.domain.statistics
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import pl.allegro.experiments.chi.chiserver.domain.statistics.bayes.BayesianExperimentStatistics
+import pl.allegro.experiments.chi.chiserver.domain.statistics.bayes.BayesianVerticalEqualizer
 import spock.lang.Specification
 
 class BayesianVerticalEqualizerSpec extends Specification {
