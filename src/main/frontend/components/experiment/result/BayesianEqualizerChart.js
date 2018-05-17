@@ -30,7 +30,7 @@ export default {
               barThickness: 50,
               categoryPercentage: 0.9,
               ticks: {
-                autoskip: false
+                autoskip: true
               },
               gridLines: {
                 display: false

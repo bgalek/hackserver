@@ -31,7 +31,7 @@ export default {
               barPercentage: 1.0,
               categoryPercentage: 1.0,
               ticks: {
-                autoskip: false
+                autoskip: true
               },
               gridLines: {
                 display: false
