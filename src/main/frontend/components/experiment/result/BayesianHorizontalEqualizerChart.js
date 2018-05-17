@@ -1,8 +1,7 @@
-import { Bar } from 'vue-chartjs'
-import { equalizerDataToDataSets } from './equalizerDataToDataSets'
+import { HorizontalBar } from 'vue-chartjs'
 
 export default {
-  extends: Bar,
+  extends: HorizontalBar,
 
   props: ['equalizerData'],
 
@@ -16,7 +15,7 @@ export default {
     printEqualizer (equalizerData) {
       const boxesUp = Math.max(...equalizerData.bars.map(x => x.improvingProbabilities.length))
       const RADIUS = Math.max(boxesUp, ...equalizerData.bars.map(x => x.worseningProbabilities.length))
-      this.renderChart(equalizerDataToDataSets(equalizerData, RADIUS),
+      this.renderChart(this.equalizerDataToDataSets(equalizerData, RADIUS),
         {
           legend: {
             display: false
@@ -25,21 +24,22 @@ export default {
           maintainAspectRatio: false,
           scales: {
             xAxes: [{
+              display: false,
               stacked: true,
-              barPercentage: 0.9,
-              barThickness: 50,
-              categoryPercentage: 0.9,
+              barPercentage: 1.0,
+              categoryPercentage: 1.0,
               ticks: {
-                autoskip: true
+                autoskip: false
               },
               gridLines: {
                 display: false
               }
             }],
             yAxes: [{
+              display: false,
               stacked: true,
               ticks: {
-                display: true,
+                display: false,
                 min: -1 * RADIUS,
                 max: RADIUS,
                 callback: function (value, index, values) {
@@ -48,7 +48,7 @@ export default {
                 }
               },
               gridLines: {
-                display: true
+                display: false
               }
             }]
           },
@@ -56,7 +56,7 @@ export default {
             mode: 'x'
           },
           tooltips: {
-            enabled: true,
+            enabled: false,
             callbacks: {
               title: function (item, data) {
                 if (item[0].datasetIndex < RADIUS) {
