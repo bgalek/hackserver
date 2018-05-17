@@ -5,6 +5,7 @@ import io.micrometer.core.instrument.Timer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
@@ -32,10 +33,10 @@ public class MongoBayesianStatisticsRepository implements BayesianStatisticsRepo
     }
 
     @Override
-    public Optional<BayesianExperimentStatistics> experimentStatistics(String experimentId, String device, String toDate) {
+    public Optional<BayesianExperimentStatistics> experimentStatistics(String experimentId, String device) {
         Timer timer = experimentsMongoMetricsReporter.timerReadBayesianExperimentStatistics();
         try {
-            return Optional.ofNullable(timer.wrap(() -> mongoTemplate.findOne(query(experimentId, device, toDate), BayesianExperimentStatistics.class, COLLECTION)).call());
+            return Optional.ofNullable(timer.wrap(() -> mongoTemplate.findOne(query(experimentId, device), BayesianExperimentStatistics.class, COLLECTION)).call());
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
@@ -45,26 +46,26 @@ public class MongoBayesianStatisticsRepository implements BayesianStatisticsRepo
     public void save(BayesianExperimentStatistics experimentStatistics) {
         Timer timer = experimentsMongoMetricsReporter.timerWriteBayesianExperimentStatistics();
         timer.record(() -> {
-            BayesianExperimentStatistics merged = this.experimentStatistics(experimentStatistics.getExperimentId(), experimentStatistics.getDevice(), experimentStatistics.getToDate())
+            BayesianExperimentStatistics merged = this.experimentStatistics(experimentStatistics.getExperimentId(), experimentStatistics.getDevice())
                     .map(old -> old.updateVariants(experimentStatistics))
                     .orElse(experimentStatistics);
             // TODO: replace with upsert 
-            removeExistingStats(merged.getExperimentId(), merged.getDevice(), merged.getToDate());
+            removeExistingStats(merged.getExperimentId(), merged.getDevice());
             mongoTemplate.save(merged, COLLECTION);
         });
     }
 
-    private void removeExistingStats(String experimentId, String device, String toDate) {
-        DeleteResult remove = mongoTemplate.remove(query(experimentId, device, toDate), BayesianExperimentStatistics.class, COLLECTION);
+    private void removeExistingStats(String experimentId, String device) {
+        DeleteResult remove = mongoTemplate.remove(query(experimentId, device), BayesianExperimentStatistics.class, COLLECTION);
         logger.info("Removed {} documents", remove.getDeletedCount());
     }
 
-    private Query query(String experimentId, String device, String toDate) {
+    private Query query(String experimentId, String device) {
         Query query = new Query();
 
         query.addCriteria(Criteria.where("experimentId").is(experimentId));
-        query.addCriteria(Criteria.where("toDate").is(toDate));
         query.addCriteria(Criteria.where("device").is(phoneMapping(device)));
+        query.with(new Sort(Sort.Direction.DESC, "toDate"));
 
         return query;
     }

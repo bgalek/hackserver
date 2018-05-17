@@ -36,7 +36,7 @@ class BayesianExperimentStatisticsIntegrationSpec extends BaseIntegrationSpec {
 
         when:
         BayesianExperimentStatistics result =
-                bayesianStatisticsRepository.experimentStatistics(expId, 'all', '2018-04-01').get()
+                bayesianStatisticsRepository.experimentStatistics(expId, 'all').get()
 
         then:
         result.device == 'all'
@@ -75,7 +75,7 @@ class BayesianExperimentStatisticsIntegrationSpec extends BaseIntegrationSpec {
         
         when:
         BayesianExperimentStatistics result =
-                bayesianStatisticsRepository.experimentStatistics(expId, 'all', '2018-04-01').get()
+                bayesianStatisticsRepository.experimentStatistics(expId, 'all').get()
 
         then:
         result.device == 'all'
