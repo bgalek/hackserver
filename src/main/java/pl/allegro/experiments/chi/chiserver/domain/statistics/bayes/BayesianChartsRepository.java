@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import pl.allegro.experiments.chi.chiserver.domain.experiments.DeviceClass;
 
+import java.util.Objects;
 import java.util.Optional;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
@@ -65,6 +66,21 @@ public class BayesianChartsRepository {
         public StatsKey(String experimentId, DeviceClass deviceClass) {
             this.experimentId = experimentId;
             this.deviceClass = deviceClass;
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) return true;
+            if (o == null || getClass() != o.getClass()) return false;
+            StatsKey statsKey = (StatsKey) o;
+            return Objects.equals(
+                    experimentId, statsKey.experimentId) &&
+                    deviceClass == statsKey.deviceClass;
+        }
+
+        @Override
+        public int hashCode() {
+            return Objects.hash(experimentId, deviceClass);
         }
     }
 }
