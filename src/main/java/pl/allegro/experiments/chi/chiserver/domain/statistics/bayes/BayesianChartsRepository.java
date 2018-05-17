@@ -20,13 +20,18 @@ public class BayesianChartsRepository {
     }
 
     public Optional<BayesianVerticalEqualizer> getVerticalEqualizer(String experimentId, DeviceClass deviceClass) {
-        logger.info("query for bayesian VerticalEqualizer, experimentId: {}, device: {} ", experimentId, deviceClass);
+        logger.info("query for bayesian VerticalEqualizer, experimentId: {}, device: {}", experimentId, deviceClass);
         return bayesianStatisticsRepository.experimentStatistics(experimentId, deviceClass.name())
               .map(BayesianVerticalEqualizer::new);
     }
 
+    public Optional<BayesianHorizontalEqualizer> getHorizontalEqualizer(String experimentId, DeviceClass deviceClass) {
+        logger.info("query for bayesian HorizontalEqualizer, experimentId: {}, device: {}", experimentId, deviceClass);
+        return getVerticalEqualizer(experimentId, deviceClass).map(BayesianHorizontalEqualizer::new);
+    }
+
     public Optional<BayesianHistograms> getHistograms(String experimentId, DeviceClass deviceClass) {
-        logger.info("query for bayesian Histograms, experimentId: {}, device: {}, toDate: {} ", experimentId, deviceClass);
+        logger.info("query for bayesian Histograms, experimentId: {}, device: {}", experimentId, deviceClass);
         return bayesianStatisticsRepository.experimentStatistics(experimentId, deviceClass.name())
                 .map(BayesianHistograms::new);
     }

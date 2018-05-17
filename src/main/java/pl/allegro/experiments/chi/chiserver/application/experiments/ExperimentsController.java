@@ -8,6 +8,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageConversionException;
 import org.springframework.web.bind.annotation.*;
 import pl.allegro.experiments.chi.chiserver.domain.UserProvider;
+import pl.allegro.experiments.chi.chiserver.domain.experiments.DeviceClass;
 import pl.allegro.experiments.chi.chiserver.domain.experiments.EventDefinition;
 import pl.allegro.experiments.chi.chiserver.domain.experiments.Experiment;
 import pl.allegro.experiments.chi.chiserver.domain.experiments.ExperimentsRepository;
@@ -15,6 +16,7 @@ import pl.allegro.experiments.chi.chiserver.domain.statistics.MeasurementsReposi
 import pl.allegro.experiments.chi.chiserver.domain.experiments.administration.*;
 import pl.allegro.experiments.chi.chiserver.domain.experiments.administration.audit.AuditLog;
 import pl.allegro.experiments.chi.chiserver.domain.experiments.administration.audit.Auditor;
+import pl.allegro.experiments.chi.chiserver.domain.statistics.bayes.BayesianChartsRepository;
 import pl.allegro.tech.common.andamio.errors.Error;
 import pl.allegro.tech.common.andamio.errors.ErrorsHolder;
 import pl.allegro.tech.common.andamio.errors.SimpleErrorsHolder;
@@ -33,6 +35,7 @@ public class ExperimentsController {
 
     private final ExperimentsRepository experimentsRepository;
     private final MeasurementsRepository measurementsRepository;
+    private final BayesianChartsRepository bayesianChartsRepository;
     private ExperimentActions experimentActions;
     private final Gson jsonConverter;
     private final Auditor auditor;
@@ -45,13 +48,15 @@ public class ExperimentsController {
             ExperimentActions experimentActions,
             Gson jsonConverter,
             Auditor auditor,
-            UserProvider userProvider) {
+            UserProvider userProvider,
+            BayesianChartsRepository bayesianChartsRepository) {
         this.experimentsRepository = experimentsRepository;
         this.measurementsRepository = measurementsRepository;
         this.experimentActions = experimentActions;
         this.jsonConverter = jsonConverter;
         this.auditor = auditor;
         this.userProvider = userProvider;
+        this.bayesianChartsRepository = bayesianChartsRepository;
     }
 
     @MeteredEndpoint
@@ -62,6 +67,7 @@ public class ExperimentsController {
                  experimentsRepository.getAll().stream()
                 .map(this::toAdminExperiment)
                 .map(it -> it.withMeasurements(measurementsRepository.getMeasurements(it.getId())))
+                .map(it -> it.withHorizontalEqualizer(bayesianChartsRepository.getHorizontalEqualizer(it.getId(), DeviceClass.all).orElse(null)))
                 .collect(Collectors.toList()));
     }
 
