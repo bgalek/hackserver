@@ -51,6 +51,11 @@ public class AdminExperiment {
                 .build();
     }
 
+    public AdminExperiment withHorizontalEqualizer(BayesianHorizontalEqualizer equalizer) {
+        this.bayesianHorizontalEqualizer = equalizer;
+        return this;
+    }
+
     public AdminExperiment withMeasurements(ExperimentMeasurements experimentMeasurements) {
         Preconditions.checkState(this.experimentMeasurements == null);
         this.experimentMeasurements = experimentMeasurements;
@@ -87,6 +92,10 @@ public class AdminExperiment {
 
     public Optional<String> getDeviceClass() {
         return Optional.ofNullable(this.experimentDefinition.getDeviceClass().toJsonString());
+    }
+
+    public BayesianHorizontalEqualizer getBayesianHorizontalEqualizer() {
+        return bayesianHorizontalEqualizer;
     }
 
     public String getDescription() {
