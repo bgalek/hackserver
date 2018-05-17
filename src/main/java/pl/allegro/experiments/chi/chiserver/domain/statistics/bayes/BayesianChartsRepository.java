@@ -22,7 +22,7 @@ public class BayesianChartsRepository {
 
     LoadingCache<StatsKey, Optional<BayesianExperimentStatistics>> statsCache = CacheBuilder.newBuilder()
             .maximumSize(10_000)
-            .expireAfterWrite(1, TimeUnit.MINUTES)
+            .expireAfterWrite(10, TimeUnit.MINUTES)
             .build(
                     new CacheLoader<>() {
                         public Optional<BayesianExperimentStatistics> load(StatsKey key) {
