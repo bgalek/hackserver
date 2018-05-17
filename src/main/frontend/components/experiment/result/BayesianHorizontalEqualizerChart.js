@@ -1,5 +1,5 @@
 import { HorizontalBar } from 'vue-chartjs'
-import { equalizerDataToDataSets } from "./equalizerDataToDataSets";
+import { equalizerDataToDataSets } from './equalizerDataToDataSets'
 
 export default {
   extends: HorizontalBar,
@@ -8,13 +8,12 @@ export default {
 
   mounted () {
     if (this.equalizerData) {
-      this.printEqualizer({ bars : [ this.equalizerData.joinedBar ], metadata: this.equalizerData.metadata })
+      this.printEqualizer({ bars: [ this.equalizerData.joinedBar ], metadata: this.equalizerData.metadata })
     }
   },
 
   methods: {
     printEqualizer (equalizerData) {
-      console.log('printEqualizer', equalizerData)
       const boxesUp = Math.max(...equalizerData.bars.map(x => x.improvingProbabilities.length))
       const RADIUS = Math.max(boxesUp, ...equalizerData.bars.map(x => x.worseningProbabilities.length))
       this.renderChart(equalizerDataToDataSets(equalizerData, RADIUS),

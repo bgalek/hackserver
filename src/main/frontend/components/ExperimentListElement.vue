@@ -43,7 +43,7 @@
         return this.$router.push(`/experiments/${experimentId}`)
       },
 
-      showEqualizer(experiment) {
+      showEqualizer (experiment) {
         return experiment.bayesianEqualizer !== null
       }
     }
