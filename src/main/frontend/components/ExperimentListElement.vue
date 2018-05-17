@@ -17,7 +17,7 @@
                                              :equalizerData="experiment.bayesianEqualizer"
                                              :height="20" :width="200"
         ></bayesian-horizontal-equalizer-chart>
-        &nbsp;&nbsp;
+        &nbsp;&nbsp;&nbsp;&nbsp;
         <experiment-status :experiment="experiment" :show-reporting-status="false"/>
       </div>
     </v-list-tile-action>
