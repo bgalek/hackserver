@@ -21,6 +21,6 @@ class BayesianHorizontalEqualizerSpec extends Specification {
         equalizer.metadata.boxSize == 0.1
         equalizer.boxRadius == 3
         equalizer.joinedBar.improvingProbabilities == [0.3, 0.2, 0.8]
-        equalizer.joinedBar.worseningProbabilities == [0.0, 0.4, 0.0]
+        equalizer.joinedBar.worseningProbabilities == [0.1, 0.5, 0.1]
     }
 }
