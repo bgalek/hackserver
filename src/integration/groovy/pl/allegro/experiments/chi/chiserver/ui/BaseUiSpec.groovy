@@ -4,7 +4,6 @@ import geb.spock.GebSpec
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.context.annotation.Bean
-import org.springframework.context.annotation.Configuration
 import org.springframework.context.annotation.Primary
 import org.springframework.test.context.ContextConfiguration
 import pl.allegro.experiments.chi.chiserver.AppRunner
@@ -12,6 +11,11 @@ import pl.allegro.experiments.chi.chiserver.domain.User
 import pl.allegro.experiments.chi.chiserver.domain.UserProvider
 import pl.allegro.experiments.chi.chiserver.domain.experiments.ExperimentsRepository
 import pl.allegro.experiments.chi.chiserver.utils.SampleInMemoryExperimentsRepository
+
+import java.lang.annotation.ElementType
+import java.lang.annotation.Retention
+import java.lang.annotation.RetentionPolicy
+import java.lang.annotation.Target
 
 @SpringBootTest(
         classes = [
@@ -28,7 +32,6 @@ abstract class BaseUiSpec extends GebSpec {
     def setup() {
         getBrowser().setBaseUrl("http://localhost:$port")
     }
-
 }
 
 class LoggedInAsRootTestConfig {
@@ -49,4 +52,9 @@ class LoggedInAsRootTestConfig {
     ExperimentsRepository experimentsRepository() {
         return SampleInMemoryExperimentsRepository.createSampleRepository();
     }
+}
+
+@Target([ElementType.TYPE, ElementType.METHOD])
+@Retention(RetentionPolicy.RUNTIME)
+@interface UiTest {
 }

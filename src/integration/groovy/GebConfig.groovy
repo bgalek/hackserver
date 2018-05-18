@@ -7,6 +7,7 @@ waiting {
 
 driver = {
     ChromeOptions o = new ChromeOptions()
+
     if (System.getenv('bamboo_working_directory') != null) {
         o.addArguments(
                 'headless',
