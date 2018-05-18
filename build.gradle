@@ -33,11 +33,6 @@ plugins {
     id "com.moowork.node" version "1.2.0"
     id 'maven-publish'
     id 'pl.allegro.tech.build.axion-release' version '1.7.2'
-    id "com.energizedwork.webdriver-binaries" version "1.4"
-}
-
-webdriverBinaries {
-    chromedriver '2.37'
 }
 
 apply plugin: 'axion'
