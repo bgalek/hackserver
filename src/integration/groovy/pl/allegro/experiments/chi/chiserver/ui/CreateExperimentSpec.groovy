@@ -2,7 +2,7 @@ package pl.allegro.experiments.chi.chiserver.ui
 
 import geb.Page
 import org.springframework.test.context.ContextConfiguration
-import spock.lang.Ignore
+
 
 class CreateExperimentPage extends Page {
 
@@ -26,9 +26,9 @@ class CreateExperimentPage extends Page {
 }
 
 @ContextConfiguration(classes = [LoggedInAsRootTestConfig])
-@Ignore
 class CreateExperimentSpec extends BaseUiSpec {
 
+    @UiTest
     def "should redirect to experiment details after creating experiment"() {
         given:
         to CreateExperimentPage

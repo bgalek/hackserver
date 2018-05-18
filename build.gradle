@@ -146,6 +146,7 @@ tasks.withType(GroovyCompile) {
 }
 
 integrationTest {
+    systemProperty 'spock.configuration', 'SpockConfiguration.groovy'
     maxHeapSize = "1g"
     jvmArgs '-XX:MaxMetaspaceSize=512m'
     dependsOn drivers.collect { tasks["${it}Test"] }
