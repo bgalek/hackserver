@@ -33,6 +33,9 @@ public class AdminExperimentTypeSerializer implements JsonSerializer<AdminExperi
         jsonObject.add("reportingType", context.serialize(src.getReportingType()));
         jsonObject.add("eventDefinitions", context.serialize(src.getEventDefinitions()));
         jsonObject.add("measurements", context.serialize(src.getMeasurements()));
+        if (src.getBayesianHorizontalEqualizer() != null) {
+            jsonObject.add("bayesianEqualizer", context.serialize(src.getBayesianHorizontalEqualizer()));
+        }
 
         return jsonObject;
     }

@@ -1,5 +1,4 @@
 import { Bar } from 'vue-chartjs'
-
 const RADIUS = 100
 
 export default {

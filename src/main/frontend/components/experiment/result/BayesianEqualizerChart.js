@@ -1,4 +1,5 @@
 import { Bar } from 'vue-chartjs'
+import { equalizerDataToDataSets } from './equalizerDataToDataSets'
 
 export default {
   extends: Bar,
@@ -15,7 +16,7 @@ export default {
     printEqualizer (equalizerData) {
       const boxesUp = Math.max(...equalizerData.bars.map(x => x.improvingProbabilities.length))
       const RADIUS = Math.max(boxesUp, ...equalizerData.bars.map(x => x.worseningProbabilities.length))
-      this.renderChart(this.equalizerDataToDataSets(equalizerData, RADIUS),
+      this.renderChart(equalizerDataToDataSets(equalizerData, RADIUS),
         {
           legend: {
             display: false
@@ -29,7 +30,7 @@ export default {
               barThickness: 50,
               categoryPercentage: 0.9,
               ticks: {
-                autoskip: true
+                autoskip: false
               },
               gridLines: {
                 display: false
@@ -40,7 +41,7 @@ export default {
               ticks: {
                 display: true,
                 min: -1 * RADIUS,
-                max: 1 * RADIUS,
+                max: RADIUS,
                 callback: function (value, index, values) {
                   let sign = value > 0 ? '+' : ''
                   return `${sign}${equalizerData.metadata.boxSize * value * 100.0}%`
@@ -80,65 +81,6 @@ export default {
             }
           }
         })
-    },
-
-    equalizerDataToDataSets (equalizerData, RADIUS) {
-      const labels = equalizerData.bars.map(v => v.variantName)
-      const pluses = labels.map(() => 1)
-      const minuses = labels.map(() => -1)
-
-      let datasets = new Array(RADIUS).fill({
-        label: '',
-        backgroundColor: new Array(labels.length).fill('#eeeeee'),
-        hoverBackgroundColor: new Array(labels.length).fill('#eeeeee'),
-        borderColor: '#000000',
-        borderWidth: 1,
-        data: minuses
-      }).concat(new Array(RADIUS).fill({
-        label: '',
-        backgroundColor: new Array(labels.length).fill('#eeeeee'),
-        hoverBackgroundColor: new Array(labels.length).fill('#eeeeee'),
-        borderColor: '#000000',
-        borderWidth: 1,
-        data: pluses
-      })).map(x => Object.assign({}, x))
-
-      equalizerData.bars.forEach((v, vidx) => {
-        v.improvingProbabilities.forEach((diff, idx) => {
-          const i = RADIUS + idx
-          datasets[i].backgroundColor = datasets[i].backgroundColor.slice(0)
-          datasets[i].backgroundColor[vidx] = this.probabilityToColor(diff, 'green')
-          datasets[i].hoverBackgroundColor = datasets[i].backgroundColor
-        })
-        v.worseningProbabilities.forEach((diff, idx) => {
-          const i = idx
-          datasets[i].backgroundColor = datasets[i].backgroundColor.slice(0)
-          datasets[i].backgroundColor[vidx] = this.probabilityToColor(diff, 'red')
-          datasets[i].hoverBackgroundColor = datasets[i].backgroundColor
-        })
-      })
-
-      return {
-        labels,
-        datasets
-      }
-    },
-
-    probabilityToColor (probability, color) {
-      const steps = [0.9, 0.75, 0.50, 0.25]
-      const gray = '#eeeeee'
-      const green = ['#00b300', '#6fc06f', '#b6dfb6', '#d7edd8']
-      const red = ['#e62e00', '#ef8779', '#f9cac1', '#ecd3cc']
-      const index = steps.findIndex(x => probability >= x)
-      if (index === -1) {
-        return gray
-      }
-      if (color === 'red') {
-        return red[index]
-      } else if (color === 'green') {
-        return green[index]
-      }
-      return gray
     }
   },
 

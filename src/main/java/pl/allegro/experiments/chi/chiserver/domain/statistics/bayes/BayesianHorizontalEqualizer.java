@@ -31,7 +31,7 @@ public class BayesianHorizontalEqualizer {
             worseningProbabilities.add(
                 verticalEqualizer.getBars().stream()
                             .map(b -> b.getWorseningProbabilities().get(idx))
-                            .min(BigDecimal::compareTo).orElse(BigDecimal.ZERO)
+                            .max(BigDecimal::compareTo).orElse(BigDecimal.ZERO)
             );
 
         }
