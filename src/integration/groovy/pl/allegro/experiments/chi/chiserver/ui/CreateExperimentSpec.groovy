@@ -27,7 +27,6 @@ class CreateExperimentPage extends Page {
 }
 
 @ContextConfiguration(classes = [LoggedInAsRootTestConfig])
-@Ignore
 class CreateExperimentSpec extends BaseUiSpec {
 
     @UiTest
