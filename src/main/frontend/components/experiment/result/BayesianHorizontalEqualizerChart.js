@@ -57,16 +57,5 @@ export default {
           }
         })
     }
-  },
-
-  watch: {
-    equalizerData (equalizerData) {
-      if (this.$data._chart) {
-        this.$data._chart.destroy()
-      }
-      if (equalizerData) {
-        this.printEqualizer(equalizerData)
-      }
-    }
   }
 }
