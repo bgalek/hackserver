@@ -7,8 +7,9 @@
       <br/>
       <bayesian-equalizer-chart v-if="this.showEqualizer()"
                                 :equalizerData="this.getEqualizerData()"
-                                :height="250"
+
       ></bayesian-equalizer-chart>
+      <v-spacer></v-spacer>
     <br/>
     </v-container>
     <v-container v-if="this.showHistogram()">
