@@ -22,6 +22,7 @@ import pl.allegro.tech.common.andamio.errors.ErrorsHolder;
 import pl.allegro.tech.common.andamio.errors.SimpleErrorsHolder;
 import pl.allegro.tech.common.andamio.metrics.MeteredEndpoint;
 
+import javax.ws.rs.POST;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -179,6 +180,15 @@ public class ExperimentsController {
         final AuditLog auditLog = auditor.getAuditLog(experimentId);
         final String body = jsonConverter.toJson(auditLog);
         return ResponseEntity.ok(body);
+    }
+
+    @MeteredEndpoint
+    @PostMapping(path = "groups")
+    ResponseEntity<String> createExperimentGroup(
+            @RequestBody ExperimentGroupCreationRequest experimentGroupCreationRequest) {
+        logger.info("Experiment group creation request received", experimentGroupCreationRequest);
+        experimentActions.createExperimentGroup(experimentGroupCreationRequest);
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 
     @ExceptionHandler(AuthorizationException.class)
