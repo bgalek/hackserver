@@ -8,7 +8,7 @@
 
 <script>
   export default {
-    props: ['selectedDevice','where'],
+    props: ['selectedDevice', 'where'],
 
     data () {
       return {
@@ -16,19 +16,19 @@
       }
     },
 
-    updated() {
-      console.log('-- DeviceSelector.'+this.where+' : i am updated to ' , this.selectedDevice)
+    updated () {
+      console.log('-- DeviceSelector.' + this.where + ' : i am updated to ', this.selectedDevice)
     },
 
     methods: {
       init () {
-        console.log("this.selectedDevice", this.selectedDevice)
+        console.log('this.selectedDevice', this.selectedDevice)
         return this.labels().findIndex(it => it === this.selectedDevice).toString()
       },
 
-      labels() {
+      labels () {
         return ['all', 'desktop', 'smartphone', 'tablet']
-      },
+      }
     },
 
     watch: {
@@ -36,6 +36,10 @@
         this.$emit('deviceChanged', {
           device: this.labels()[value]
         })
+      },
+
+      selectedDevice (value) {
+        this.value = this.labels().findIndex(it => it === value).toString()
       }
     }
   }

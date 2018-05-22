@@ -176,9 +176,9 @@
       BayesianResult
     },
 
-    updated() {
+    updated () {
       console.log('Experiment: i am updated!')
-      console.log("props.selectedDevice", this.selectedDevice)
+      console.log('props.selectedDevice', this.selectedDevice)
     },
 
     methods: {
@@ -212,7 +212,7 @@
       },
 
       onDeviceChanged (device) {
-        console.log("onDeviceChanged.device",device)
+        console.log('onDeviceChanged.device', device)
 
         this.loadExperimentStatistics(device.device, this.experiment.id)
         this.loadExperimentBayesianResult(device.device, this.experiment.id)

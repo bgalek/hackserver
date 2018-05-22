@@ -54,8 +54,8 @@
       DeviceSelector
     },
 
-    updated() {
-      console.log('- BayesianResult: i am updated to ' , this.selectedDevice)
+    updated () {
+      console.log('- BayesianResult: i am updated to ', this.selectedDevice)
     },
 
     data () {
@@ -87,7 +87,7 @@
       },
 
       deviceChanged ({device}) {
-        console.log("deviceChangedOnBayesian")
+        console.log('deviceChangedOnBayesian')
         this.$emit('deviceChangedOnBayesian', {
           device: device,
           where: 'Bayesian'

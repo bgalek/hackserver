@@ -122,7 +122,7 @@
       }
     },
 
-    updated() {
+    updated () {
       console.log('- ResultTable:  i am updated to ', this.selectedDevice)
     },
 
@@ -304,7 +304,7 @@
       },
 
       deviceChanged ({device}) {
-        console.log("!! deviceChangedOnStats")
+        console.log('!! deviceChangedOnStats')
         this.$emit('deviceChangedOnStats', {
           device: device,
           where: 'Stats'
