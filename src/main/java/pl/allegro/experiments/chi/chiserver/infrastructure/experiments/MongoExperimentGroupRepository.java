@@ -6,7 +6,10 @@ import pl.allegro.experiments.chi.chiserver.domain.UserProvider;
 import pl.allegro.experiments.chi.chiserver.domain.experiments.groups.ExperimentGroup;
 import pl.allegro.experiments.chi.chiserver.domain.experiments.groups.ExperimentGroupRepository;
 
+import java.util.HashSet;
+import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 public class MongoExperimentGroupRepository implements ExperimentGroupRepository {
 
@@ -39,5 +42,20 @@ public class MongoExperimentGroupRepository implements ExperimentGroupRepository
     @Override
     public boolean exists(String id) {
         return get(id).isPresent();
+    }
+
+    @Override
+    public boolean experimentHasGroup(String experimentId) {
+        List<ExperimentGroup> groups = all();
+        Set<String> experimentsWithGroup = new HashSet<>();
+        for (ExperimentGroup group: groups) {
+            experimentsWithGroup.addAll(group.getExperiments());
+        }
+        return experimentsWithGroup.contains(experimentId);
+    }
+
+    @Override
+    public List<ExperimentGroup> all() {
+        return mongoTemplate.findAll(ExperimentGroup.class, COLLECTION);
     }
 }

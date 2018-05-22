@@ -242,7 +242,34 @@ class ExperimentGroupE2ESpec extends BaseIntegrationSpec {
     }
 
     def "should not create experiment group if one of experiments is in another group"() {
+        given:
+        userProvider.user = new User('Author', [], true)
+        String groupId1 = UUID.randomUUID().toString()
+        String groupId2 = UUID.randomUUID().toString()
 
+        and:
+        String experimentId1 = UUID.randomUUID().toString()
+        String experimentId2 = UUID.randomUUID().toString()
+        String experimentId3 = UUID.randomUUID().toString()
+        createDraftExperiment(experimentId1)
+        createDraftExperiment(experimentId2)
+        createDraftExperiment(experimentId3)
+
+        and:
+        restTemplate.postForEntity(localUrl('/api/admin/experiments/groups'), [
+                id: groupId1,
+                experiments: [experimentId1, experimentId2]
+        ], Map)
+
+        when:
+        restTemplate.postForEntity(localUrl('/api/admin/experiments/groups'), [
+                id: groupId2,
+                experiments: [experimentId1, experimentId3]
+        ], Map)
+
+        then:
+        def ex = thrown(HttpClientErrorException)
+        ex.statusCode == HttpStatus.BAD_REQUEST
     }
 
     def startExperiment(String experimentId) {

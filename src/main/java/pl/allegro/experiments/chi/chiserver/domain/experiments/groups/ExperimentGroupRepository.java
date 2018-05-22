@@ -1,5 +1,6 @@
 package pl.allegro.experiments.chi.chiserver.domain.experiments.groups;
 
+import java.util.List;
 import java.util.Optional;
 
 public interface ExperimentGroupRepository {
@@ -8,4 +9,8 @@ public interface ExperimentGroupRepository {
     Optional<ExperimentGroup> get(String id);
 
     boolean exists(String id);
+
+    boolean experimentHasGroup(String experimentId);
+
+    List<ExperimentGroup> all();
 }
