@@ -1,11 +1,9 @@
 <template>
   <v-container>
 
-    {{ this.selectedDevice }}
     <device-selector
       @deviceChanged="deviceChanged"
       :selectedDevice="selectedDevice"
-      where="Stats"
     ></device-selector>
 
     <p v-if="experimentStatistics.durationDays > 0">
@@ -120,10 +118,6 @@
           'gmv': (it) => this.formatCurrency(it, 'PLN')
         }
       }
-    },
-
-    updated () {
-      console.log('- ResultTable:  i am updated to ', this.selectedDevice)
     },
 
     methods: {
@@ -304,10 +298,8 @@
       },
 
       deviceChanged ({device}) {
-        console.log('!! deviceChangedOnStats')
         this.$emit('deviceChangedOnStats', {
-          device: device,
-          where: 'Stats'
+          device: device
         })
       }
     }

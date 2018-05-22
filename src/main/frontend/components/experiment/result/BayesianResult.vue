@@ -1,12 +1,15 @@
 <template>
   <v-container style="padding: 0px 10px 10px 10px">
 
-    {{ this.selectedDevice }}
     <device-selector
       @deviceChanged="deviceChanged"
       :selectedDevice="selectedDevice"
-      where="Bayes"
     ></device-selector>
+
+    <p v-if="this.showHistogram() && this.histogramsToDate">
+      Data calculated on
+      <b>{{ this.histogramsToDate }}</b>.
+    </p>
 
     <v-container v-if="this.showEqualizer()">
       <h4>Visits conversion equalizer</h4>
@@ -54,19 +57,17 @@
       DeviceSelector
     },
 
-    updated () {
-      console.log('- BayesianResult: i am updated to ', this.selectedDevice)
-    },
-
     data () {
       return {
+        histogramsToDate: this.bayesianHistograms.metadata.toDate,
+        histograms: this.bayesianHistograms.histograms,
         variantName: this.experiment.variants.find(v => v.name !== 'base').name
       }
     },
 
     methods: {
       getHistogramData (variantName) {
-        let found = this.bayesianHistograms && this.bayesianHistograms.find(x => x.variantName === variantName)
+        let found = this.histograms && this.histograms.find(x => x.variantName === variantName)
         return found
       },
 
@@ -79,7 +80,7 @@
       },
 
       showHistogram () {
-        return this.bayesianHistograms && this.bayesianHistograms.length > 0
+        return this.histograms && this.histograms.length > 0
       },
 
       showEqualizer () {
@@ -87,10 +88,8 @@
       },
 
       deviceChanged ({device}) {
-        console.log('deviceChangedOnBayesian')
         this.$emit('deviceChangedOnBayesian', {
-          device: device,
-          where: 'Bayesian'
+          device: device
         })
       }
     }
