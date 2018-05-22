@@ -11,19 +11,24 @@
           v-if="loadingExperimentDone"
         ></experiment-details>
 
-        <chi-panel title="Metrics & Statistics">
+        <chi-panel title="Statistical hypothesis testing">
           <result-table
-            @deviceChanged="onDeviceChanged"
+            @deviceChangedOnStats="onDeviceChanged"
             :experimentStatistics="experimentStatistics"
             :experimentStatisticsError="experimentStatisticsError"
             :experimentStatisticsPending="experimentStatisticsPending"
             v-if="loadingExperimentDone"
             :experiment="experiment"
+            :selectedDevice="selectedDevice"
           ></result-table>
+        </chi-panel>
 
+        <chi-panel title="Bayesian analysis">
           <bayesian-result
+            @deviceChangedOnBayesian="onDeviceChanged"
             v-if="loadingExperimentDone"
             :experiment="experiment"
+            :selectedDevice="selectedDevice"
             :bayesianHistograms="bayesianHistograms"
             :bayesianEqualizer="bayesianEqualizer"
           ></bayesian-result>
@@ -92,11 +97,11 @@
 
     data () {
       return {
+        selectedDevice: 'tablet',
         loadingStatsDone: false,
         loadingBayesianResultDone: false,
         loadingBayesianEqualizerResultDone: false,
         loadingExperimentDone: false,
-        device: 'all',
         metricOrder: {
           'tx_visit': 1,
           'tx_avg': 2,
@@ -171,6 +176,11 @@
       BayesianResult
     },
 
+    updated() {
+      console.log('Experiment: i am updated!')
+      console.log("props.selectedDevice", this.selectedDevice)
+    },
+
     methods: {
       ...mapActions(['getExperiment', 'getExperimentStatistics', 'getBayesianHistograms', 'getBayesianEqualizer']),
 
@@ -201,10 +211,28 @@
         })
       },
 
-      onDeviceChanged ({device}) {
-        this.loadExperimentStatistics(device, this.experiment.id)
-        this.loadExperimentBayesianResult(device, this.experiment.id)
-        this.loadExperimentBayesianEqualizerResult(device, this.experiment.id)
+      onDeviceChanged (device) {
+        console.log("onDeviceChanged.device",device)
+
+        this.loadExperimentStatistics(device.device, this.experiment.id)
+        this.loadExperimentBayesianResult(device.device, this.experiment.id)
+        this.loadExperimentBayesianEqualizerResult(device.device, this.experiment.id)
+
+        this.selectedDevice = device.device
+      },
+
+      calcInitialDevice (experiment) {
+        const baseClass = experiment.getBaseDeviceClass()
+
+        if (baseClass === 'desktop' || baseClass === 'tablet') {
+          return baseClass
+        }
+
+        if (baseClass === 'phone') {
+          return 'smartphone'
+        }
+
+        return 'all'
       }
     }
   }

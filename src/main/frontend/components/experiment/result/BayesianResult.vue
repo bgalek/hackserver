@@ -1,7 +1,13 @@
 <template>
-  <v-container v-if="this.show()">
-    <h3>Results based on bayesian analysis</h3>
-    <br/>
+  <v-container style="padding: 0px 10px 10px 10px">
+
+    {{ this.selectedDevice }}
+    <device-selector
+      @deviceChanged="deviceChanged"
+      :selectedDevice="selectedDevice"
+      where="Bayes"
+    ></device-selector>
+
     <v-container v-if="this.showEqualizer()">
       <h4>Visits conversion equalizer</h4>
       <br/>
@@ -12,6 +18,7 @@
       <v-spacer></v-spacer>
     <br/>
     </v-container>
+
     <v-container v-if="this.showHistogram()">
       <h4>Visits conversion histogram</h4>
       <v-layout row>
@@ -32,17 +39,23 @@
 </template>
 
 <script>
+  import DeviceSelector from './DeviceSelector'
   import BayesianHistogramChart from './BayesianHistogramChart'
   import BayesianEqualizerChart from './BayesianEqualizerChart'
   import VariantSelector from './VariantSelector'
 
   export default {
-    props: ['experiment', 'bayesianHistograms', 'bayesianEqualizer'],
+    props: ['experiment', 'bayesianHistograms', 'bayesianEqualizer', 'selectedDevice'],
 
     components: {
       BayesianHistogramChart,
       BayesianEqualizerChart,
-      VariantSelector
+      VariantSelector,
+      DeviceSelector
+    },
+
+    updated() {
+      console.log('- BayesianResult: i am updated to ' , this.selectedDevice)
     },
 
     data () {
@@ -65,16 +78,20 @@
         this.variantName = variantName
       },
 
-      show () {
-        return this.bayesianHistograms && this.bayesianHistograms.length > 0
-      },
-
       showHistogram () {
         return this.bayesianHistograms && this.bayesianHistograms.length > 0
       },
 
       showEqualizer () {
         return this.bayesianEqualizer && this.bayesianEqualizer.bars && this.bayesianEqualizer.bars.length > 0
+      },
+
+      deviceChanged ({device}) {
+        console.log("deviceChangedOnBayesian")
+        this.$emit('deviceChangedOnBayesian', {
+          device: device,
+          where: 'Bayesian'
+        })
       }
     }
   }
