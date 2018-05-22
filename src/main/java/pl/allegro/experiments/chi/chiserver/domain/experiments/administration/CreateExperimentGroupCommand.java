@@ -46,6 +46,9 @@ public class CreateExperimentGroupCommand {
     }
 
     private ExperimentGroup create(String id, List<String> experiments) {
+        if (experiments.size() < 2) {
+            throw new ExperimentCommandException("Cannot create group with less than 2 experiments");
+        }
         int numberOfStartedExperiments = experiments.stream()
                 .map(experimentsRepository::getExperiment)
                 .map(e -> !e.get().getStatus().equals(ExperimentStatus.DRAFT))

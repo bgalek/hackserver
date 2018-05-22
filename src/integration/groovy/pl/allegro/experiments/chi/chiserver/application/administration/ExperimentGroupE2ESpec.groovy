@@ -24,15 +24,21 @@ class ExperimentGroupE2ESpec extends BaseIntegrationSpec {
         userProvider.user = new User('Author', [], true)
         String groupId = UUID.randomUUID().toString()
 
+        and:
+        String experimentId1 = UUID.randomUUID().toString()
+        String experimentId2 = UUID.randomUUID().toString()
+        createDraftExperiment(experimentId1)
+        createDraftExperiment(experimentId2)
+
         when:
         restTemplate.postForEntity(localUrl('/api/admin/experiments/groups'), [
                 id: groupId,
-                experiments: ['e1', 'e2']
+                experiments: [experimentId1, experimentId2]
         ], Map)
 
         then:
         Map createdGroup = restTemplate.getForEntity(localUrl("/api/admin/experiments/groups/${groupId}"), Map).body
-        createdGroup.experiments == ['e1', 'e2']
+        createdGroup.experiments == [experimentId1, experimentId2]
         createdGroup.id == groupId
     }
 
@@ -44,8 +50,10 @@ class ExperimentGroupE2ESpec extends BaseIntegrationSpec {
         and:
         String experimentId1 = UUID.randomUUID().toString()
         String experimentId2 = UUID.randomUUID().toString()
-        createStartedExperiment(experimentId1)
-        createStartedExperiment(experimentId2)
+        createDraftExperiment(experimentId1)
+        createDraftExperiment(experimentId2)
+        startExperiment(experimentId1)
+        startExperiment(experimentId2)
 
         when:
         restTemplate.postForEntity(localUrl('/api/admin/experiments/groups'), [
@@ -58,7 +66,29 @@ class ExperimentGroupE2ESpec extends BaseIntegrationSpec {
         ex.statusCode == HttpStatus.BAD_REQUEST
     }
 
-    def "should not create experiment group if one of provided experiment names does not exist"() {
+    def "should not create experiment group if it contains less than 2 elements"() {
+        given:
+        userProvider.user = new User('Author', [], true)
+        String groupId = UUID.randomUUID().toString()
+
+        and:
+        experiments.forEach({e -> createDraftExperiment(e)})
+
+        when:
+        restTemplate.postForEntity(localUrl('/api/admin/experiments/groups'), [
+                id: groupId,
+                experiments: experiments
+        ], Map)
+
+        then:
+        def ex = thrown(HttpClientErrorException)
+        ex.statusCode == HttpStatus.BAD_REQUEST
+
+        where:
+        experiments << [[], [UUID.randomUUID().toString()]]
+    }
+
+    def "should not create experiment group if one of provided experiments does not exist"() {
 
     }
 
@@ -74,7 +104,14 @@ class ExperimentGroupE2ESpec extends BaseIntegrationSpec {
 
     }
 
-    def createStartedExperiment(String experimentId) {
+    def startExperiment(String experimentId) {
+        def startRequest = [
+                experimentDurationDays: 30
+        ]
+        restTemplate.put(localUrl("/api/admin/experiments/${experimentId}/start"), startRequest, Map)
+    }
+
+    def createDraftExperiment(String experimentId) {
         def request = [
                 id                 : experimentId,
                 description        : 'desc',
@@ -89,9 +126,5 @@ class ExperimentGroupE2ESpec extends BaseIntegrationSpec {
                 eventDefinitions: []
         ]
         restTemplate.postForEntity(localUrl('/api/admin/experiments'), request, Map)
-        def startRequest = [
-                experimentDurationDays: 30
-        ]
-        restTemplate.put(localUrl("/api/admin/experiments/${experimentId}/start"), startRequest, Map)
     }
 }
