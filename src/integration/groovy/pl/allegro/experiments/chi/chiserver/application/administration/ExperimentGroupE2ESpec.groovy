@@ -196,10 +196,17 @@ class ExperimentGroupE2ESpec extends BaseIntegrationSpec {
 
         and:
         String experimentId1 = UUID.randomUUID().toString()
+        String experimentId2 = UUID.randomUUID().toString()
+
         createDraftExperiment(experimentId1)
-
-        and:
-
+        def request = [
+                id              : experimentId2,
+                variantNames    : ['v2'],
+                percentage      : 10,
+                reportingType   : 'FRONTEND',
+                eventDefinitions: []
+        ]
+        restTemplate.postForEntity(localUrl('/api/admin/experiments'), request, Map)
 
         when:
         restTemplate.postForEntity(localUrl('/api/admin/experiments/groups'), [
@@ -208,9 +215,8 @@ class ExperimentGroupE2ESpec extends BaseIntegrationSpec {
         ], Map)
 
         then:
-        Map createdGroup = restTemplate.getForEntity(localUrl("/api/admin/experiments/groups/${groupId}"), Map).body
-        createdGroup.experiments == [experimentId1, experimentId2]
-        createdGroup.id == groupId
+        def ex = thrown(HttpClientErrorException)
+        ex.statusCode == HttpStatus.BAD_REQUEST
     }
 
     def "should not create experiment group if there is no enough percentage space"() {
