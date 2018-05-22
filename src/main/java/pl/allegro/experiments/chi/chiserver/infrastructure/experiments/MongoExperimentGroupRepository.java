@@ -35,4 +35,9 @@ public class MongoExperimentGroupRepository implements ExperimentGroupRepository
     public Optional<ExperimentGroup> get(String id) {
         return Optional.ofNullable(mongoTemplate.findById(id, ExperimentGroup.class, COLLECTION));
     }
+
+    @Override
+    public boolean exists(String id) {
+        return get(id).isPresent();
+    }
 }

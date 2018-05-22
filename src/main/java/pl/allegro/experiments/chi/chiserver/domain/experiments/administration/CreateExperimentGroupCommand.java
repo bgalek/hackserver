@@ -6,6 +6,7 @@ import pl.allegro.experiments.chi.chiserver.domain.experiments.ExperimentStatus;
 import pl.allegro.experiments.chi.chiserver.domain.experiments.ExperimentsRepository;
 import pl.allegro.experiments.chi.chiserver.domain.experiments.groups.ExperimentGroup;
 import pl.allegro.experiments.chi.chiserver.domain.experiments.groups.ExperimentGroupRepository;
+import pl.allegro.experiments.chi.chiserver.infrastructure.experiments.ExperimentOrigin;
 
 import java.util.List;
 import java.util.Objects;
@@ -46,6 +47,11 @@ public class CreateExperimentGroupCommand {
     }
 
     private ExperimentGroup create(String id, List<String> experiments) {
+        // legacy mongo experiments
+        if (experimentGroupRepository.exists(id)) {
+            throw new ExperimentCommandException("Provided group name is not unique");
+        }
+
         if (experiments.size() < 2) {
             throw new ExperimentCommandException("Cannot create group with less than 2 experiments");
         }
@@ -69,8 +75,22 @@ public class CreateExperimentGroupCommand {
             throw new ExperimentCommandException("Cannot create group with more than 1 active experiment");
         }
 
+        int numberOfStashExperiments = experiments.stream()
+                .map(experimentsRepository::getExperiment)
+                .map(e -> experimentsRepository.getOrigin(e.get().getId()))
+                .mapToInt(origin -> origin.equals(ExperimentOrigin.STASH) ? 1 : 0)
+                .sum();
+
+        if (numberOfStashExperiments != 0) {
+            throw new ExperimentCommandException("Cannot create group with stash experiments");
+        }
+
         ExperimentGroup experimentGroup = new ExperimentGroup(id, UUID.randomUUID().toString(), experiments);
         experimentGroupRepository.save(experimentGroup);
         return experimentGroup;
+    }
+
+    private boolean enoughPercentageSpace(List<String> experiments) {
+        return true;
     }
 }
