@@ -4,6 +4,7 @@ import pl.allegro.experiments.chi.chiserver.domain.User;
 import pl.allegro.experiments.chi.chiserver.domain.UserProvider;
 import pl.allegro.experiments.chi.chiserver.domain.experiments.ExperimentStatus;
 import pl.allegro.experiments.chi.chiserver.domain.experiments.ExperimentsRepository;
+import pl.allegro.experiments.chi.chiserver.domain.experiments.ReportingType;
 import pl.allegro.experiments.chi.chiserver.domain.experiments.groups.ExperimentGroup;
 import pl.allegro.experiments.chi.chiserver.domain.experiments.groups.ExperimentGroupRepository;
 import pl.allegro.experiments.chi.chiserver.infrastructure.experiments.ExperimentOrigin;
@@ -83,6 +84,17 @@ public class CreateExperimentGroupCommand {
 
         if (numberOfStashExperiments != 0) {
             throw new ExperimentCommandException("Cannot create group with stash experiments");
+        }
+
+        int numberOfBackendExperiments = experiments.stream()
+                .map(experimentsRepository::getExperiment)
+                .map(e -> e.get())
+                .map(e -> e.getReportingDefinition().getType())
+                .mapToInt(reportingType -> reportingType.equals(ReportingType.BACKEND) ? 1 : 0)
+                .sum();
+
+        if (numberOfBackendExperiments != experiments.size()) {
+            throw new ExperimentCommandException("Cannot create group if one of the experiments is not BACKEND");
         }
 
         ExperimentGroup experimentGroup = new ExperimentGroup(id, UUID.randomUUID().toString(), experiments);

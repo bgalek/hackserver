@@ -190,7 +190,27 @@ class ExperimentGroupE2ESpec extends BaseIntegrationSpec {
     }
 
     def "should not create experiment group if one of experiments is not BACKEND"() {
+        given:
+        userProvider.user = new User('Author', [], true)
+        String groupId = UUID.randomUUID().toString()
 
+        and:
+        String experimentId1 = UUID.randomUUID().toString()
+        createDraftExperiment(experimentId1)
+
+        and:
+
+
+        when:
+        restTemplate.postForEntity(localUrl('/api/admin/experiments/groups'), [
+                id: groupId,
+                experiments: [experimentId1, experimentId2]
+        ], Map)
+
+        then:
+        Map createdGroup = restTemplate.getForEntity(localUrl("/api/admin/experiments/groups/${groupId}"), Map).body
+        createdGroup.experiments == [experimentId1, experimentId2]
+        createdGroup.id == groupId
     }
 
     def "should not create experiment group if there is no enough percentage space"() {
