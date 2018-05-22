@@ -49,6 +49,16 @@ public class CreateExperimentGroupCommand {
         if (experiments.size() < 2) {
             throw new ExperimentCommandException("Cannot create group with less than 2 experiments");
         }
+
+        int experimentsFound = experiments.stream()
+                .map(experimentsRepository::getExperiment)
+                .mapToInt(eo -> eo.map(e -> 1).orElse(0))
+                .sum();
+
+        if (experimentsFound != experiments.size()) {
+            throw new ExperimentCommandException("Cannot create group if not all experiments exist");
+        }
+
         int numberOfStartedExperiments = experiments.stream()
                 .map(experimentsRepository::getExperiment)
                 .map(e -> !e.get().getStatus().equals(ExperimentStatus.DRAFT))
