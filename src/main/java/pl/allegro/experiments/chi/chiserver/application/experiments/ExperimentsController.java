@@ -12,6 +12,7 @@ import pl.allegro.experiments.chi.chiserver.domain.experiments.DeviceClass;
 import pl.allegro.experiments.chi.chiserver.domain.experiments.EventDefinition;
 import pl.allegro.experiments.chi.chiserver.domain.experiments.Experiment;
 import pl.allegro.experiments.chi.chiserver.domain.experiments.ExperimentsRepository;
+import pl.allegro.experiments.chi.chiserver.domain.experiments.groups.ExperimentGroupRepository;
 import pl.allegro.experiments.chi.chiserver.domain.statistics.MeasurementsRepository;
 import pl.allegro.experiments.chi.chiserver.domain.experiments.administration.*;
 import pl.allegro.experiments.chi.chiserver.domain.experiments.administration.audit.AuditLog;
@@ -41,7 +42,7 @@ public class ExperimentsController {
     private final Gson jsonConverter;
     private final Auditor auditor;
     private final UserProvider userProvider;
-
+    private final ExperimentGroupRepository experimentGroupRepository;
 
     public ExperimentsController(
             ExperimentsRepository experimentsRepository,
@@ -50,7 +51,8 @@ public class ExperimentsController {
             Gson jsonConverter,
             Auditor auditor,
             UserProvider userProvider,
-            BayesianChartsRepository bayesianChartsRepository) {
+            BayesianChartsRepository bayesianChartsRepository,
+            ExperimentGroupRepository experimentGroupRepository) {
         this.experimentsRepository = experimentsRepository;
         this.measurementsRepository = measurementsRepository;
         this.experimentActions = experimentActions;
@@ -58,6 +60,7 @@ public class ExperimentsController {
         this.auditor = auditor;
         this.userProvider = userProvider;
         this.bayesianChartsRepository = bayesianChartsRepository;
+        this.experimentGroupRepository = experimentGroupRepository;
     }
 
     @MeteredEndpoint
@@ -189,6 +192,16 @@ public class ExperimentsController {
         logger.info("Experiment group creation request received", experimentGroupCreationRequest);
         experimentActions.createExperimentGroup(experimentGroupCreationRequest);
         return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    @MeteredEndpoint
+    @GetMapping(path = "groups/{groupId}")
+    ResponseEntity<String> getExperimentGroup(@PathVariable String groupId) {
+        logger.info("Single experiment group request received");
+        return experimentGroupRepository.get(groupId)
+                .map(jsonConverter::toJson)
+                .map(ResponseEntity::ok)
+                .orElse(new ResponseEntity<>(HttpStatus.NOT_FOUND));
     }
 
     @ExceptionHandler(AuthorizationException.class)

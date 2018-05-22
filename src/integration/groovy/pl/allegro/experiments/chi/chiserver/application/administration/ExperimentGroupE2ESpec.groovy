@@ -5,7 +5,6 @@ import org.springframework.web.client.RestTemplate
 import pl.allegro.experiments.chi.chiserver.BaseIntegrationSpec
 import pl.allegro.experiments.chi.chiserver.domain.User
 import pl.allegro.experiments.chi.chiserver.domain.UserProvider
-import pl.allegro.experiments.chi.chiserver.domain.experiments.groups.ExperimentGroup
 import pl.allegro.experiments.chi.chiserver.domain.experiments.groups.ExperimentGroupRepository
 
 class ExperimentGroupE2ESpec extends BaseIntegrationSpec {
@@ -30,14 +29,14 @@ class ExperimentGroupE2ESpec extends BaseIntegrationSpec {
         ], Map)
 
         then:
-        ExperimentGroup createdGroup = experimentGroupRepository.get(groupId).get()
+        Map createdGroup = restTemplate.getForEntity(localUrl("/api/admin/experiments/groups/${groupId}"), Map).body
         createdGroup.experiments == ['e1', 'e2']
         createdGroup.id == groupId
-        createdGroup.nameSpace != null
     }
 
     def "should not create experiment group if contains more than 1 active experiment"() {
-
+        given:
+        userProvider.user = new User()
     }
 
     def "should not create experiment group if group name is not unique"() {
