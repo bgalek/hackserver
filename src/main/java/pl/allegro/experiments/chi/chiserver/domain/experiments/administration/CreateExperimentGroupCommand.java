@@ -2,6 +2,7 @@ package pl.allegro.experiments.chi.chiserver.domain.experiments.administration;
 
 import pl.allegro.experiments.chi.chiserver.domain.User;
 import pl.allegro.experiments.chi.chiserver.domain.UserProvider;
+import pl.allegro.experiments.chi.chiserver.domain.experiments.ExperimentStatus;
 import pl.allegro.experiments.chi.chiserver.domain.experiments.ExperimentsRepository;
 import pl.allegro.experiments.chi.chiserver.domain.experiments.groups.ExperimentGroup;
 import pl.allegro.experiments.chi.chiserver.domain.experiments.groups.ExperimentGroupRepository;
@@ -45,6 +46,16 @@ public class CreateExperimentGroupCommand {
     }
 
     private ExperimentGroup create(String id, List<String> experiments) {
+        int numberOfStartedExperiments = experiments.stream()
+                .map(experimentsRepository::getExperiment)
+                .map(e -> !e.get().getStatus().equals(ExperimentStatus.DRAFT))
+                .mapToInt(experimentIsNotDraft -> experimentIsNotDraft ? 1 : 0)
+                .sum();
+
+        if (numberOfStartedExperiments > 1) {
+            throw new ExperimentCommandException("Cannot create group with more than 1 active experiment");
+        }
+
         ExperimentGroup experimentGroup = new ExperimentGroup(id, UUID.randomUUID().toString(), experiments);
         experimentGroupRepository.save(experimentGroup);
         return experimentGroup;
