@@ -97,12 +97,40 @@ public class CreateExperimentGroupCommand {
             throw new ExperimentCommandException("Cannot create group if one of the experiments is not BACKEND");
         }
 
+        if (!enoughPercentageSpace(experiments)) {
+            throw new ExperimentCommandException("Cannot create group there is no enough percentage space");
+        }
+
         ExperimentGroup experimentGroup = new ExperimentGroup(id, UUID.randomUUID().toString(), experiments);
         experimentGroupRepository.save(experimentGroup);
         return experimentGroup;
     }
 
     private boolean enoughPercentageSpace(List<String> experiments) {
-        return true;
+        int maxBasePercentage = experiments.stream()
+                .map(experimentsRepository::getExperiment)
+                .map(e -> e.get())
+                .map(e -> e.getDefinition()
+                        .get()
+                        .getPercentage()
+                        .get())
+                .max(Integer::compare)
+                .get();
+        int percentageSum = experiments.stream()
+                .map(experimentsRepository::getExperiment)
+                .map(e -> e.get())
+                .mapToInt(e -> {
+                    int percentage = e.getDefinition()
+                            .get()
+                            .getPercentage()
+                            .get();
+                    int numberOfVariantsDifferentThanBase = e.getDefinition()
+                            .get()
+                            .getVariantNames()
+                            .size() - 1;
+                    return numberOfVariantsDifferentThanBase * percentage;
+                }).sum();
+
+        return maxBasePercentage + percentageSum <= 100;
     }
 }

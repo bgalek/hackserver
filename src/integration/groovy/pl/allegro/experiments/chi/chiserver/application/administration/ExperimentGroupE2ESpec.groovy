@@ -90,7 +90,7 @@ class ExperimentGroupE2ESpec extends BaseIntegrationSpec {
         ex.statusCode == HttpStatus.BAD_REQUEST
     }
 
-    def "should not create experiment group if it contains less than 2 elements"() {
+    def "should not create experiment group if contains less than 2 experiments"() {
         given:
         userProvider.user = new User('Author', [], true)
         String groupId = UUID.randomUUID().toString()
@@ -219,8 +219,26 @@ class ExperimentGroupE2ESpec extends BaseIntegrationSpec {
         ex.statusCode == HttpStatus.BAD_REQUEST
     }
 
-    def "should not create experiment group if there is no enough percentage space"() {
+    def "should not create experiment group if there is not enough percentage space"() {
+        given:
+        userProvider.user = new User('Author', [], true)
+        String groupId = UUID.randomUUID().toString()
 
+        and:
+        String experimentId1 = UUID.randomUUID().toString()
+        String experimentId2 = UUID.randomUUID().toString()
+        createDraftExperiment(experimentId1, 33)
+        createDraftExperiment(experimentId2, 34)
+
+        when:
+        restTemplate.postForEntity(localUrl('/api/admin/experiments/groups'), [
+                id: groupId,
+                experiments: [experimentId1, experimentId2]
+        ], Map)
+
+        then:
+        def ex = thrown(HttpClientErrorException)
+        ex.statusCode == HttpStatus.BAD_REQUEST
     }
 
     def "should not create experiment group if one of experiments is in another group"() {
@@ -234,19 +252,18 @@ class ExperimentGroupE2ESpec extends BaseIntegrationSpec {
         restTemplate.put(localUrl("/api/admin/experiments/${experimentId}/start"), startRequest, Map)
     }
 
-    def createDraftExperiment(String experimentId) {
+    def createDraftExperiment(String experimentId, int percentage=10) {
         def request = [
                 id                 : experimentId,
                 description        : 'desc',
                 documentLink       : 'https://vuetifyjs.com/vuetify/quick-start',
-                variantNames       : ['v2', 'v3'],
-                internalVariantName: 'v1',
-                percentage         : 10,
+                variantNames       : ['base', 'v3'],
+                internalVariantName: 'v3',
+                percentage         : percentage,
                 deviceClass        : 'phone',
                 groups             : ['group a', 'group b'],
                 reportingEnabled   : true,
-                reportingType: 'FRONTEND',
-                eventDefinitions: []
+                reportingType: 'BACKEND'
         ]
         restTemplate.postForEntity(localUrl('/api/admin/experiments'), request, Map)
     }
