@@ -18,10 +18,8 @@ public class BayesianHistograms {
     private static final int MAX_BOX = 100;
 
     public BayesianHistograms(BayesianExperimentStatistics experimentStatistics) {
-        this(experimentStatistics.getExperimentId(),
-                DeviceClass.fromString(experimentStatistics.getDevice()),
-                BOX_SIZE,
-                experimentStatistics.getVariantBayesianStatistics().stream()
+        this(new BayesianChartMetadata(experimentStatistics,BOX_SIZE),
+             experimentStatistics.getVariantBayesianStatistics().stream()
                         .map(BayesianHistograms::toHistogram)
                         .collect(Collectors.toList()));
     }
@@ -29,11 +27,6 @@ public class BayesianHistograms {
     private BayesianHistograms(BayesianChartMetadata metadata, List<VariantHistogram> histograms) {
         this.metadata = metadata;
         this.histograms = histograms;
-    }
-
-    private BayesianHistograms(String experimentId, DeviceClass deviceClass, double boxSize, List<VariantHistogram> histograms) {
-        this(new BayesianChartMetadata(experimentId, deviceClass, boxSize), histograms);
-
     }
 
     private static VariantHistogram toHistogram(VariantBayesianStatistics statistics) {

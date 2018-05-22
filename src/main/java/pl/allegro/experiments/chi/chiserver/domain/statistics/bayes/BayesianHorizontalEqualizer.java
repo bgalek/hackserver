@@ -11,8 +11,11 @@ public class BayesianHorizontalEqualizer {
     private final EqualizerBar joinedBar;
 
     public BayesianHorizontalEqualizer(BayesianVerticalEqualizer verticalEqualizer) {
-        this(new BayesianChartMetadata(verticalEqualizer.getMetadata().getExperimentId(), verticalEqualizer.getMetadata().getDeviceClass(),
-             verticalEqualizer.getMetadata().getBoxSize()), toJoinedBar(verticalEqualizer));
+        this(new BayesianChartMetadata(
+             verticalEqualizer.getMetadata().getExperimentId(),
+             verticalEqualizer.getMetadata().getDeviceClass(),
+             verticalEqualizer.getMetadata().getBoxSize(),
+             verticalEqualizer.getMetadata().getToDate()), toJoinedBar(verticalEqualizer));
     }
 
     private static EqualizerBar toJoinedBar(BayesianVerticalEqualizer verticalEqualizer) {
@@ -43,10 +46,6 @@ public class BayesianHorizontalEqualizer {
         Preconditions.checkNotNull(joinedBar);
         this.metadata = metadata;
         this.joinedBar = joinedBar;
-    }
-
-    BayesianHorizontalEqualizer(String experimentId, DeviceClass deviceClass, double boxSize, EqualizerBar joinedBar) {
-        this(new BayesianChartMetadata(experimentId, deviceClass, boxSize), joinedBar);
     }
 
     public EqualizerBar getJoinedBar() {

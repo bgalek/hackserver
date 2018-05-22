@@ -8,7 +8,7 @@
 
 <script>
   export default {
-    props: ['selectedDevice', 'where'],
+    props: ['selectedDevice'],
 
     data () {
       return {
@@ -16,13 +16,8 @@
       }
     },
 
-    updated () {
-      console.log('-- DeviceSelector.' + this.where + ' : i am updated to ', this.selectedDevice)
-    },
-
     methods: {
       init () {
-        console.log('this.selectedDevice', this.selectedDevice)
         return this.labels().findIndex(it => it === this.selectedDevice).toString()
       },
 
@@ -39,7 +34,7 @@
       },
 
       selectedDevice (value) {
-        this.value = this.labels().findIndex(it => it === value).toString()
+        this.value = this.init()
       }
     }
   }

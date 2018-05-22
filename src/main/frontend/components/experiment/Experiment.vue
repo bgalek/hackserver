@@ -26,7 +26,7 @@
         <chi-panel title="Bayesian analysis">
           <bayesian-result
             @deviceChangedOnBayesian="onDeviceChanged"
-            v-if="loadingExperimentDone"
+            v-if="loadingExperimentDone && loadingBayesianResultDone"
             :experiment="experiment"
             :selectedDevice="selectedDevice"
             :bayesianHistograms="bayesianHistograms"
@@ -71,6 +71,7 @@
     mounted () {
       this.getExperiment({ params: { experimentId: this.$route.params.experimentId } }).then(() => {
         this.loadingExperimentDone = true
+        this.selectedDevice = this.calcInitialDevice(this.experiment)
       })
 
       this.loadExperimentStatistics('all', this.$route.params.experimentId).then(() => {
@@ -97,7 +98,7 @@
 
     data () {
       return {
-        selectedDevice: 'tablet',
+        selectedDevice: '',
         loadingStatsDone: false,
         loadingBayesianResultDone: false,
         loadingBayesianEqualizerResultDone: false,
@@ -155,7 +156,7 @@
       },
 
       bayesianHistograms (state) {
-        return state.bayesianHistograms.bayesianHistograms.histograms || { }
+        return state.bayesianHistograms.bayesianHistograms || { }
       },
 
       bayesianEqualizer (state) {
@@ -174,11 +175,6 @@
       ChiPanel,
       ExperimentActions,
       BayesianResult
-    },
-
-    updated () {
-      console.log('Experiment: i am updated!')
-      console.log('props.selectedDevice', this.selectedDevice)
     },
 
     methods: {
@@ -212,8 +208,6 @@
       },
 
       onDeviceChanged (device) {
-        console.log('onDeviceChanged.device', device)
-
         this.loadExperimentStatistics(device.device, this.experiment.id)
         this.loadExperimentBayesianResult(device.device, this.experiment.id)
         this.loadExperimentBayesianEqualizerResult(device.device, this.experiment.id)
