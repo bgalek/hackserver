@@ -85,6 +85,32 @@ class ExperimentCommandsExperimentGroupE2ESpec extends BaseIntegrationSpec {
         ex.statusCode == HttpStatus.BAD_REQUEST
     }
 
+    def "should set experiment as list head when starting"() {
+        given:
+        userProvider.user = new User('Author', [], true)
+        String groupId = UUID.randomUUID().toString()
+
+        and:
+        String experimentId1 = UUID.randomUUID().toString()
+        String experimentId2 = UUID.randomUUID().toString()
+        createDraftExperiment(experimentId1)
+        createDraftExperiment(experimentId2)
+        startExperiment(experimentId2)
+
+        and:
+        restTemplate.postForEntity(localUrl('/api/admin/experiments/groups'), [
+                id: groupId,
+                experiments: [experimentId1, experimentId2]
+        ], Map)
+
+        when:
+        startExperiment(experimentId1)
+
+        then:
+        Map group = restTemplate.getForEntity(localUrl("/api/admin/experiments/groups/${groupId}"), Map).body
+        group.experiments == [experimentId2, experimentId1]
+    }
+
     // todo remove duplication
     def startExperiment(String experimentId) {
         def startRequest = [

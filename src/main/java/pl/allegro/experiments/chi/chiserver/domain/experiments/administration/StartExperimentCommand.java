@@ -3,6 +3,8 @@ package pl.allegro.experiments.chi.chiserver.domain.experiments.administration;
 import pl.allegro.experiments.chi.chiserver.domain.experiments.Experiment;
 import pl.allegro.experiments.chi.chiserver.domain.experiments.ExperimentDefinition;
 import pl.allegro.experiments.chi.chiserver.domain.experiments.ExperimentsRepository;
+import pl.allegro.experiments.chi.chiserver.domain.experiments.groups.ExperimentGroup;
+import pl.allegro.experiments.chi.chiserver.domain.experiments.groups.ExperimentGroupRepository;
 
 import java.util.Objects;
 
@@ -11,20 +13,24 @@ public class StartExperimentCommand {
     private final StartExperimentProperties startExperimentProperties;
     private final PermissionsAwareExperimentRepository permissionsAwareExperimentRepository;
     private final String experimentId;
+    private final ExperimentGroupRepository experimentGroupRepository;
 
     StartExperimentCommand(
             ExperimentsRepository experimentsRepository,
             StartExperimentProperties startExperimentProperties,
             PermissionsAwareExperimentRepository permissionsAwareExperimentRepository,
+            ExperimentGroupRepository experimentGroupRepository,
             String experimentId) {
         Objects.requireNonNull(experimentsRepository);
         Objects.requireNonNull(startExperimentProperties);
         Objects.requireNonNull(permissionsAwareExperimentRepository);
+        Objects.requireNonNull(experimentGroupRepository);
         Objects.requireNonNull(experimentId);
         this.experimentsRepository = experimentsRepository;
         this.startExperimentProperties = startExperimentProperties;
         this.permissionsAwareExperimentRepository = permissionsAwareExperimentRepository;
         this.experimentId = experimentId;
+        this.experimentGroupRepository = experimentGroupRepository;
     }
 
     public void execute() {
@@ -34,6 +40,12 @@ public class StartExperimentCommand {
                 .getDefinition()
                 .orElseThrow(() -> new UnsupportedOperationException("Missing experiment definition"))
                 .start(startExperimentProperties.getExperimentDurationDays());
+        experimentGroupRepository.getExperimentGroup(experimentId)
+                .map(experimentGroup -> {
+                    experimentGroupRepository
+                            .save(experimentGroup.withExperimentMovedToHeadPosition(experimentId));
+                    return null;
+                });
         experimentsRepository.save(started);
     }
 

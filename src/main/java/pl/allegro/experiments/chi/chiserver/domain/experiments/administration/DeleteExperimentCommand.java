@@ -3,12 +3,10 @@ package pl.allegro.experiments.chi.chiserver.domain.experiments.administration;
 import pl.allegro.experiments.chi.chiserver.domain.experiments.Experiment;
 import pl.allegro.experiments.chi.chiserver.domain.experiments.ExperimentStatus;
 import pl.allegro.experiments.chi.chiserver.domain.experiments.ExperimentsRepository;
-import pl.allegro.experiments.chi.chiserver.domain.experiments.groups.ExperimentGroup;
 import pl.allegro.experiments.chi.chiserver.domain.experiments.groups.ExperimentGroupRepository;
 import pl.allegro.experiments.chi.chiserver.domain.statistics.StatisticsRepository;
 
 import java.util.Objects;
-import java.util.Optional;
 
 // todo refactor
 public class DeleteExperimentCommand {
@@ -38,7 +36,7 @@ public class DeleteExperimentCommand {
     public void execute() {
         Experiment experiment = permissionsAwareExperimentRepository.getExperimentOrException(experimentId);
 
-        if (experimentGroupRepository.experimentHasGroup(experimentId) &&
+        if (experimentGroupRepository.experimentInGroup(experimentId) &&
                 !experiment.getStatus().equals(ExperimentStatus.DRAFT)) {
             throw new ExperimentCommandException("Non DRAFT experiment bound to group cannot be deleted");
         }

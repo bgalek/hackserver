@@ -10,7 +10,7 @@ public interface ExperimentGroupRepository {
 
     boolean exists(String id);
 
-    boolean experimentHasGroup(String experimentId);
+    boolean experimentInGroup(String experimentId);
 
     List<ExperimentGroup> all();
 

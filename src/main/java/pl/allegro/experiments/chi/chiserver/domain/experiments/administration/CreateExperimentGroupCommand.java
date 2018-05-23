@@ -102,7 +102,7 @@ public class CreateExperimentGroupCommand {
             throw new ExperimentCommandException("Cannot create group there is no enough percentage space");
         }
 
-        if (experiments.stream().anyMatch(e -> experimentGroupRepository.experimentHasGroup(e))) {
+        if (experiments.stream().anyMatch(e -> experimentGroupRepository.experimentInGroup(e))) {
             throw new ExperimentCommandException("Cannot create group is one of the experiments is in another group");
         }
 

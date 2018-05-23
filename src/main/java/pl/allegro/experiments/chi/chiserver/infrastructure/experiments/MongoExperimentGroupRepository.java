@@ -45,7 +45,7 @@ public class MongoExperimentGroupRepository implements ExperimentGroupRepository
     }
 
     @Override
-    public boolean experimentHasGroup(String experimentId) {
+    public boolean experimentInGroup(String experimentId) {
         List<ExperimentGroup> groups = all();
         Set<String> experimentsWithGroup = new HashSet<>();
         for (ExperimentGroup group: groups) {

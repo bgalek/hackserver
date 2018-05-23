@@ -272,6 +272,10 @@ class ExperimentGroupE2ESpec extends BaseIntegrationSpec {
         ex.statusCode == HttpStatus.BAD_REQUEST
     }
 
+    def "should set group name space to ACTIVE experiment"() {
+
+    }
+
     def startExperiment(String experimentId) {
         def startRequest = [
                 experimentDurationDays: 30

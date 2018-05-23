@@ -46,6 +46,7 @@ public class CommandFactory {
                 experimentsRepository,
                 properties,
                 permissionsAwareExperimentRepository,
+                experimentGroupRepository,
                 experimentId
         );
     }

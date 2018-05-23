@@ -2,6 +2,7 @@ package pl.allegro.experiments.chi.chiserver.domain.experiments.groups;
 
 import com.google.common.collect.ImmutableList;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -39,5 +40,15 @@ public class ExperimentGroup {
         return new ExperimentGroup(id, nameSpace, experiments.stream()
                 .filter(e -> !e.equals(experimentId))
                 .collect(Collectors.toList()));
+    }
+
+    public ExperimentGroup withExperimentMovedToHeadPosition(String experimentId) {
+        return withRemovedExperiment(experimentId).withAppendedExperiment(experimentId);
+    }
+
+    private ExperimentGroup withAppendedExperiment(String experimentId) {
+        List<String> extendedExperiments = new ArrayList<>(experiments);
+        extendedExperiments.add(experimentId);
+        return new ExperimentGroup(id, nameSpace, extendedExperiments);
     }
 }
