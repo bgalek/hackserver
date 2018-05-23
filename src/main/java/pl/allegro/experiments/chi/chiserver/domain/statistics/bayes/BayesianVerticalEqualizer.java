@@ -16,7 +16,7 @@ public class BayesianVerticalEqualizer {
     private static final int MAX_BOX_RADIUS = 5;
 
     public BayesianVerticalEqualizer(BayesianExperimentStatistics experimentStatistics) {
-        this(new BayesianChartMetadata(experimentStatistics.getExperimentId(), DeviceClass.fromString(experimentStatistics.getDevice()),BOX_SIZE), experimentStatistics.getVariantBayesianStatistics().stream()
+        this(new BayesianChartMetadata(experimentStatistics, BOX_SIZE), experimentStatistics.getVariantBayesianStatistics().stream()
                 .map(BayesianVerticalEqualizer::toBar)
                 .collect(Collectors.toList()));
     }
