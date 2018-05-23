@@ -93,7 +93,8 @@ public class CommandFactory {
                 experimentsRepository,
                 permissionsAwareExperimentRepository,
                 experimentId,
-                statisticsRepository
+                statisticsRepository,
+                experimentGroupRepository
         );
     }
 

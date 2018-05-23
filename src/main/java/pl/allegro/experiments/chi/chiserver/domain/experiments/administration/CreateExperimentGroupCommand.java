@@ -13,6 +13,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
 
+// todo refactor
 public class CreateExperimentGroupCommand {
     private final ExperimentGroupRepository experimentGroupRepository;
     private final ExperimentsRepository experimentsRepository;

@@ -3,6 +3,7 @@ package pl.allegro.experiments.chi.chiserver.domain.experiments.groups;
 import com.google.common.collect.ImmutableList;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class ExperimentGroup {
     private final String id;
@@ -28,5 +29,15 @@ public class ExperimentGroup {
 
     public List<String> getExperiments() {
         return experiments;
+    }
+
+    public boolean contains(String experimentId) {
+        return experiments.contains(experimentId);
+    }
+
+    public ExperimentGroup withRemovedExperiment(String experimentId) {
+        return new ExperimentGroup(id, nameSpace, experiments.stream()
+                .filter(e -> !e.equals(experimentId))
+                .collect(Collectors.toList()));
     }
 }

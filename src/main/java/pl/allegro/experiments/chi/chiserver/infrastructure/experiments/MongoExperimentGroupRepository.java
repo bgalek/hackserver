@@ -58,4 +58,15 @@ public class MongoExperimentGroupRepository implements ExperimentGroupRepository
     public List<ExperimentGroup> all() {
         return mongoTemplate.findAll(ExperimentGroup.class, COLLECTION);
     }
+
+    @Override
+    public Optional<ExperimentGroup> getExperimentGroup(String experimentId) {
+        List<ExperimentGroup> groups = all();
+        for (ExperimentGroup group: groups) {
+            if (group.contains(experimentId)) {
+                return Optional.of(group);
+            }
+        }
+        return Optional.empty();
+    }
 }

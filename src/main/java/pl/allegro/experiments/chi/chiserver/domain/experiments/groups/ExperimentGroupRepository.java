@@ -13,4 +13,6 @@ public interface ExperimentGroupRepository {
     boolean experimentHasGroup(String experimentId);
 
     List<ExperimentGroup> all();
+
+    Optional<ExperimentGroup> getExperimentGroup(String experimentId);
 }
