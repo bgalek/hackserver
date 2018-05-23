@@ -111,6 +111,39 @@ class ExperimentCommandsExperimentGroupE2ESpec extends BaseIntegrationSpec {
         group.experiments == [experimentId2, experimentId1]
     }
 
+    // todo remove in next sprint
+    def "should not change variants of experiment bound to group"() {
+        given:
+        userProvider.user = new User('Author', [], true)
+        String groupId = UUID.randomUUID().toString()
+
+        and:
+        String experimentId1 = UUID.randomUUID().toString()
+        String experimentId2 = UUID.randomUUID().toString()
+        createDraftExperiment(experimentId1)
+        createDraftExperiment(experimentId2)
+        startExperiment(experimentId1)
+
+        and:
+        restTemplate.postForEntity(localUrl('/api/admin/experiments/groups'), [
+                id: groupId,
+                experiments: [experimentId1, experimentId2]
+        ], Map)
+
+        when:
+        restTemplate.put(localUrl("/api/admin/experiments/${experimentId1}/update-variants"),
+                [
+                        percentage         : 18,
+                        variantNames       : ['a', 'b', 'c'],
+                        internalVariantName: 'internV',
+                        deviceClass        : 'phone'
+                ], Map)
+
+        then:
+        def ex = thrown(HttpClientErrorException)
+        ex.statusCode == HttpStatus.BAD_REQUEST
+    }
+
     // todo remove duplication
     def startExperiment(String experimentId) {
         def startRequest = [

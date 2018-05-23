@@ -8,6 +8,7 @@ import pl.allegro.experiments.chi.chiserver.domain.User
 import pl.allegro.experiments.chi.chiserver.domain.experiments.Experiment
 import pl.allegro.experiments.chi.chiserver.domain.experiments.administration.*
 import pl.allegro.experiments.chi.chiserver.domain.experiments.administration.StopExperimentCommand
+import pl.allegro.experiments.chi.chiserver.domain.experiments.groups.ExperimentGroupRepository
 import pl.allegro.experiments.chi.chiserver.infrastructure.experiments.ExperimentsTestConfig
 import pl.allegro.experiments.chi.chiserver.infrastructure.experiments.MongoExperimentsRepository
 import pl.allegro.experiments.chi.chiserver.infrastructure.experiments.MutableUserProvider
@@ -21,6 +22,9 @@ class StopExperimentCommandIntegrationSpec extends BaseIntegrationSpec {
 
     @Autowired
     MongoExperimentsRepository experimentsRepository
+
+    @Autowired
+    ExperimentGroupRepository experimentGroupRepository
 
     @Autowired
     MutableUserProvider mutableUserProvider
@@ -72,6 +76,7 @@ class StopExperimentCommandIntegrationSpec extends BaseIntegrationSpec {
                 experimentsRepository,
                 new StartExperimentProperties(30),
                 permissionsAwareExperimentGetter,
+                experimentGroupRepository,
                 experiment.id)
         startCommand.execute()
         return experimentsRepository.getExperiment(experiment.id).get()

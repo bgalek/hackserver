@@ -17,6 +17,7 @@ import pl.allegro.experiments.chi.chiserver.domain.experiments.administration.St
 import pl.allegro.experiments.chi.chiserver.domain.experiments.administration.StartExperimentProperties
 import pl.allegro.experiments.chi.chiserver.domain.experiments.administration.StopExperimentCommand
 import pl.allegro.experiments.chi.chiserver.domain.experiments.administration.UpdateExperimentEventDefinitionsCommand
+import pl.allegro.experiments.chi.chiserver.domain.experiments.groups.ExperimentGroupRepository
 import pl.allegro.experiments.chi.chiserver.infrastructure.experiments.ExperimentsTestConfig
 import pl.allegro.experiments.chi.chiserver.infrastructure.experiments.MutableUserProvider
 
@@ -28,6 +29,9 @@ class UpdateEventDefinitionsCommandIntegrationSpec extends BaseIntegrationSpec {
 
     @Autowired
     ExperimentsRepository experimentsRepository
+
+    @Autowired
+    ExperimentGroupRepository experimentGroupRepository
 
     @Autowired
     MutableUserProvider mutableUserProvider
@@ -74,6 +78,7 @@ class UpdateEventDefinitionsCommandIntegrationSpec extends BaseIntegrationSpec {
                 experimentsRepository,
                 new StartExperimentProperties(30),
                 permissionsAwareExperimentGetter,
+                experimentGroupRepository,
                 experiment.id)
         startCommand.execute()
 

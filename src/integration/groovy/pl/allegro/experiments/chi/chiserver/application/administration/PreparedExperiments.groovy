@@ -39,6 +39,7 @@ trait PreparedExperiments {
                 experimentsRepository,
                 properties,
                 permissionsAwareExperimentGetter,
+                experimentGroupRepository,
                 experimentId)
     }
 
