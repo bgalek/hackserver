@@ -37,7 +37,7 @@ public class ClientExperimentsControllerV1 {
     @MeteredEndpoint
     @GetMapping(path = {"/v1"})
     String experiments() {
-        logger.info("Client V1 experiments request received");
+        logger.debug("Client V1 experiments request received");
         return jsonConverterV1.toJson(experimentsRepository
                 .assignable()
                 .stream()
