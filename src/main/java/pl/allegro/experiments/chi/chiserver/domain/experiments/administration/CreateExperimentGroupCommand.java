@@ -106,9 +106,19 @@ public class CreateExperimentGroupCommand {
             throw new ExperimentCommandException("Cannot create group is one of the experiments is in another group");
         }
 
-        ExperimentGroup experimentGroup = new ExperimentGroup(id, UUID.randomUUID().toString(), experiments);
-        experimentGroupRepository.save(experimentGroup);
-        return experimentGroup;
+        return new ExperimentGroup(
+                id,
+                experiments.stream()
+                        .map(experimentsRepository::getExperiment)
+                        .filter(experiment ->
+                            experiment.isPresent() &&
+                                    !experiment.get().getStatus().equals(ExperimentStatus.DRAFT)
+                        ).map(experiment -> experiment.get())
+                        .findFirst()
+                        .map(experiment -> experiment.getId())
+                        .orElse(UUID.randomUUID().toString())
+                ,
+                experiments);
     }
 
     private boolean enoughPercentageSpace(List<String> experiments) {

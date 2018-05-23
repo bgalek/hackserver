@@ -16,7 +16,7 @@ import pl.allegro.experiments.chi.chiserver.infrastructure.experiments.FileBased
 import pl.allegro.experiments.chi.chiserver.infrastructure.experiments.fetch.WireMockUtils
 import spock.lang.Shared
 
-class ExperimentGroupE2ESpec extends BaseIntegrationSpec {
+class CreateExperimentGroupE2ESpec extends BaseIntegrationSpec {
 
     @ClassRule
     @Shared
@@ -273,7 +273,26 @@ class ExperimentGroupE2ESpec extends BaseIntegrationSpec {
     }
 
     def "should set group name space to ACTIVE experiment"() {
+        given:
+        userProvider.user = new User('Author', [], true)
+        String groupId = UUID.randomUUID().toString()
 
+        and:
+        String experimentId1 = UUID.randomUUID().toString()
+        String experimentId2 = UUID.randomUUID().toString()
+        createDraftExperiment(experimentId1)
+        createDraftExperiment(experimentId2)
+        startExperiment(experimentId1)
+
+        when:
+        restTemplate.postForEntity(localUrl('/api/admin/experiments/groups'), [
+                id: groupId,
+                experiments: [experimentId1, experimentId2]
+        ], Map)
+
+        then:
+        Map createdGroup = restTemplate.getForEntity(localUrl("/api/admin/experiments/groups/${groupId}"), Map).body
+        createdGroup.nameSpace == experimentId1
     }
 
     def startExperiment(String experimentId) {
