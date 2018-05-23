@@ -1,6 +1,7 @@
 package pl.allegro.experiments.chi.chiserver.domain.experiments.administration;
 
 import pl.allegro.experiments.chi.chiserver.domain.experiments.Experiment;
+import pl.allegro.experiments.chi.chiserver.domain.experiments.ExperimentStatus;
 import pl.allegro.experiments.chi.chiserver.domain.experiments.ExperimentsRepository;
 import pl.allegro.experiments.chi.chiserver.domain.experiments.groups.ExperimentGroup;
 import pl.allegro.experiments.chi.chiserver.domain.experiments.groups.ExperimentGroupRepository;
@@ -35,13 +36,18 @@ public class DeleteExperimentCommand {
     }
 
     public void execute() {
+        Experiment experiment = permissionsAwareExperimentRepository.getExperimentOrException(experimentId);
+
+        if (experimentGroupRepository.experimentHasGroup(experimentId) &&
+                !experiment.getStatus().equals(ExperimentStatus.DRAFT)) {
+            throw new ExperimentCommandException("Non DRAFT experiment bound to group cannot be deleted");
+        }
         experimentGroupRepository.getExperimentGroup(experimentId)
                 .map(experimentGroup -> {
                     experimentGroupRepository.save(experimentGroup.withRemovedExperiment(experimentId));
                     return null;
                 });
 
-        Experiment experiment = permissionsAwareExperimentRepository.getExperimentOrException(experimentId);
         validate(experiment.getId());
         experimentsRepository.delete(experiment.getId());
     }

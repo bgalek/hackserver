@@ -59,8 +59,30 @@ class ExperimentCommandsExperimentGroupE2ESpec extends BaseIntegrationSpec {
         ex.statusCode == HttpStatus.NOT_FOUND
     }
 
-    def "should not delete experiment when it is in group and it is not DRAFT"() {
+    def "should not delete non DRAFT experiment bound to group"() {
+        given:
+        userProvider.user = new User('Author', [], true)
+        String groupId = UUID.randomUUID().toString()
 
+        and:
+        String experimentId1 = UUID.randomUUID().toString()
+        String experimentId2 = UUID.randomUUID().toString()
+        createDraftExperiment(experimentId1)
+        createDraftExperiment(experimentId2)
+        startExperiment(experimentId1)
+
+        and:
+        restTemplate.postForEntity(localUrl('/api/admin/experiments/groups'), [
+                id: groupId,
+                experiments: [experimentId1, experimentId2]
+        ], Map)
+
+        when:
+        restTemplate.delete(localUrl("/api/admin/experiments/${experimentId1}"))
+
+        then:
+        def ex = thrown(HttpClientErrorException)
+        ex.statusCode == HttpStatus.BAD_REQUEST
     }
 
     // todo remove duplication
