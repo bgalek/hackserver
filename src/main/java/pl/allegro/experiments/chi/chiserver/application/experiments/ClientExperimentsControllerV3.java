@@ -36,7 +36,7 @@ class ClientExperimentsControllerV3 {
     }
 
     @MeteredEndpoint
-    @GetMapping(path = {"/v3"})
+    @GetMapping(path = {"/v3", ""})
     String experiments() {
         return jsonConverter.toJson(experimentsRepository
                 .assignable()
