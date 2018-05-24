@@ -12,6 +12,7 @@
         </v-flex>
         <v-flex xs11>
           <v-text-field
+            id="experimentDescriptionFormField"
             v-model="value.description"
             :rules="stringsRules"
             label="Description"
@@ -24,6 +25,7 @@
 
         <v-flex offset-xs1>
           <v-text-field
+            id="experimentDocumentationLinkFormField"
             v-model="value.documentLink"
             :rules="documentLinkRules"
             v-on:input="inputEntered()"
@@ -51,6 +53,7 @@
           </v-flex>
           <v-flex xs11>
             <v-select
+              id="experimentAuthorizationGroupsFormField"
               label="Authorization groups"
               slot="activator"
               chips

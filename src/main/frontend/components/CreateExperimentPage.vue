@@ -51,26 +51,6 @@
 
             <experiment-desc-editing v-model="descriptions" />
 
-            <v-container fluid style="margin: 0px; padding: 0px" text-xs-center>
-
-              <v-layout row align-top v-if="false">
-
-                <v-flex xs1>
-                  <v-tooltip right>
-                    <span>Disable <b>reporting</b> if don't want this experiment to be measured by Chi.</span>
-                    <v-icon
-                      slot="activator">help_outline</v-icon>
-                  </v-tooltip>
-                </v-flex>
-                <v-flex xs11>
-                  <v-switch
-                    label="Reporting" v-model="reportingEnabled" slot="activator">
-                  </v-switch>
-                </v-flex>
-
-              </v-layout>
-            </v-container>
-
             <experiment-variants-editing :allowModifyRegularVariants="true" v-model="variants" />
 
             <v-container fluid style="margin: 0px; padding: 0px" text-xs-center>
