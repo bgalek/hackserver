@@ -38,7 +38,6 @@ class ClientExperimentsV1E2ESpec extends BaseIntegrationSpec {
 
         then:
         response.statusCode.value() == 200
-        response.body.size() == 7
 
         and:
         response.body.contains(internalExperiment())

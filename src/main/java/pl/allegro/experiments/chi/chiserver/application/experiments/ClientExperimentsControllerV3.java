@@ -1,8 +1,6 @@
 package pl.allegro.experiments.chi.chiserver.application.experiments;
 
 import com.google.gson.Gson;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -16,15 +14,13 @@ import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping(value = {"/api/experiments"}, produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_JSON_UTF8_VALUE})
-class ClientExperimentsControllerV2 {
+class ClientExperimentsControllerV3 {
     private final ExperimentsRepository experimentsRepository;
     private final Gson jsonConverter;
     private final CrisisManagementFilter crisisManagementFilter;
     private final ExperimentGroupRepository experimentGroupRepository;
 
-    private static final Logger logger = LoggerFactory.getLogger(ClientExperimentsControllerV2.class);
-
-    ClientExperimentsControllerV2(
+    ClientExperimentsControllerV3(
             ExperimentsRepository experimentsRepository,
             Gson jsonConverter,
             CrisisManagementFilter crisisManagementFilter,
@@ -36,14 +32,12 @@ class ClientExperimentsControllerV2 {
     }
 
     @MeteredEndpoint
-    @GetMapping(path = {"/v2", ""})
+    @GetMapping(path = {"/v3", ""})
     String experiments() {
-        logger.info("Client experiments request received");
         return jsonConverter.toJson(experimentsRepository
                 .assignable()
                 .stream()
                 .filter(crisisManagementFilter::filter)
-                .filter(experiment -> !experimentGroupRepository.experimentInGroup(experiment.getId()))
                 .map(it -> new ClientExperiment(it))
                 .collect(Collectors.toList()));
     }

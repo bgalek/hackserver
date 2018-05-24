@@ -82,7 +82,6 @@ class ExperimentsE2ESpec extends BaseIntegrationSpec implements ExampleExperimen
 
         then:
         response.statusCode.value() == 200
-        response.body.size() == 7
 
         and:
         response.body.contains(ExampleClientExperiments.internalExperiment())
@@ -105,7 +104,6 @@ class ExperimentsE2ESpec extends BaseIntegrationSpec implements ExampleExperimen
 
         then:
         response.statusCode.value() == 200
-        response.body.size() == 9
 
         and:
         response.body.contains(internalExperiment())
@@ -131,7 +129,15 @@ class ExperimentsE2ESpec extends BaseIntegrationSpec implements ExampleExperimen
 
         then:
         response.statusCode.value() == 200
-        response.body.size() == 7
+        response.body.contains(internalExperiment())
+        response.body.contains(plannedExperiment())
+        response.body.contains(cmuidRegexpExperiment())
+        response.body.contains(cmuidRegexpWithPhoneExperiment())
+        response.body.contains(hashVariantExperiment())
+        response.body.contains(sampleExperiment())
+        response.body.contains(timeboundExperiment())
+        response.body.contains(experimentFromThePast())
+        response.body.contains(pausedExperiment())
     }
 
     def "should return BAD_REQUEST when predicate type is incorrect"() {
