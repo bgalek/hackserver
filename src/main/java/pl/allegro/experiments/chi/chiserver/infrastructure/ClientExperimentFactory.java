@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+// todo refactor/optimize
 public class ClientExperimentFactory {
     private final ExperimentGroupRepository experimentGroupRepository;
     private final ExperimentsRepository experimentsRepository;
@@ -19,15 +20,15 @@ public class ClientExperimentFactory {
         this.experimentsRepository = experimentsRepository;
     }
 
-    public Optional<ClientExperiment> fromGroupedExperiment(ExperimentDefinition experimentDefinition) {
-        // is assignable
-        return experimentGroupRepository.getExperimentGroup(experimentDefinition.getId())
+    public Optional<ClientExperiment> fromGroupedExperiment(ExperimentDefinition assignableExperiment) {
+        // is assignable ?
+        return experimentGroupRepository.getExperimentGroup(assignableExperiment.getId())
                 .map(experimentGroup -> {
                     int percentageRangeStart = 0;
                     int maxBasePercentage = -1;
 
                     for (String experimentId: experimentGroup.getExperiments()) {
-                        if (!experimentId.equals(experimentDefinition.getId())) {
+                        if (!experimentId.equals(assignableExperiment.getId())) {
                             ExperimentDefinition currentExperiment = experimentsRepository.getExperiment(experimentId)
                                     .get()
                                     .getDefinition()
@@ -42,23 +43,23 @@ public class ClientExperimentFactory {
                                     .filter(v -> !v.equals("base"))
                                     .count();
                             maxBasePercentage = Integer.max(maxBasePercentage, currentExperimentPercentage);
-                            percentageRangeStart = (int) numberOfNonBaseVariants * currentExperimentPercentage;
+                            percentageRangeStart += (int) numberOfNonBaseVariants * currentExperimentPercentage;
                         } else {
                             List<ExperimentVariant> variants = new ArrayList<>();
-                            for (String variantName: experimentDefinition.getVariantNames()) {
+                            for (String variantName: assignableExperiment.getVariantNames()) {
                                 List<Predicate> variantPredicates = new ArrayList<>();
-                                if (experimentDefinition.getInternalVariantName().isPresent()
-                                        && experimentDefinition.getInternalVariantName().get().equals(variantName)) {
+                                if (assignableExperiment.getInternalVariantName().isPresent()
+                                        && assignableExperiment.getInternalVariantName().get().equals(variantName)) {
                                     variantPredicates.add(new InternalPredicate());
                                 }
 
                                 List<PercentageRange> ranges = new ArrayList<>();
                                 if (variantName.equals("base")) {
-                                    maxBasePercentage = Integer.max(maxBasePercentage, experimentDefinition.getPercentage().get());
+                                    maxBasePercentage = Integer.max(maxBasePercentage, assignableExperiment.getPercentage().get());
                                     ranges.add(new PercentageRange(100 - maxBasePercentage, 100));
                                 } else {
-                                    ranges.add(new PercentageRange(percentageRangeStart, percentageRangeStart + experimentDefinition.getPercentage().get()));
-                                    percentageRangeStart += experimentDefinition.getPercentage().get();
+                                    ranges.add(new PercentageRange(percentageRangeStart, percentageRangeStart + assignableExperiment.getPercentage().get()));
+                                    percentageRangeStart += assignableExperiment.getPercentage().get();
                                 }
                                 variantPredicates.add(new ShredHashRangePredicate(ranges, experimentGroup.getNameSpace()));
                                 variants.add(new ExperimentVariant(variantName, variantPredicates));
@@ -66,9 +67,9 @@ public class ClientExperimentFactory {
                             return new ClientExperiment(
                                     experimentId,
                                     variants,
-                                    experimentDefinition.isReportingEnabled(),
-                                    experimentDefinition.getActivityPeriod(),
-                                    experimentDefinition.getStatus()
+                                    assignableExperiment.isReportingEnabled(),
+                                    assignableExperiment.getActivityPeriod(),
+                                    assignableExperiment.getStatus()
                             );
                         }
                     }
