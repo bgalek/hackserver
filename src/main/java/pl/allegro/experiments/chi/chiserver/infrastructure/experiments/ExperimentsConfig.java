@@ -19,6 +19,7 @@ import pl.allegro.experiments.chi.chiserver.domain.experiments.Experiment;
 import pl.allegro.experiments.chi.chiserver.domain.experiments.ExperimentsRepository;
 import pl.allegro.experiments.chi.chiserver.domain.experiments.groups.ExperimentGroupRepository;
 import pl.allegro.experiments.chi.chiserver.domain.statistics.MeasurementsRepository;
+import pl.allegro.experiments.chi.chiserver.infrastructure.ClientExperimentFactory;
 import pl.allegro.experiments.chi.chiserver.infrastructure.statistics.DruidClient;
 import pl.allegro.experiments.chi.chiserver.infrastructure.experiments.converters.DateTimeDeserializer;
 import pl.allegro.experiments.chi.chiserver.infrastructure.experiments.converters.DateTimeSerializer;
@@ -131,5 +132,12 @@ public class ExperimentsConfig {
             Javers javers,
             UserProvider userProvider) {
         return new MongoExperimentGroupRepository(mongoTemplate, javers, userProvider);
+    }
+
+    @Bean
+    ClientExperimentFactory clientExperimentFactory(
+            ExperimentGroupRepository experimentGroupRepository,
+            ExperimentsRepository experimentsRepository) {
+        return new ClientExperimentFactory(experimentGroupRepository, experimentsRepository);
     }
 }

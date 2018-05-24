@@ -7,6 +7,7 @@ import org.springframework.context.annotation.Configuration;
 import pl.allegro.experiments.chi.chiserver.application.experiments.AdminExperiment;
 import pl.allegro.experiments.chi.chiserver.application.experiments.v1.*;
 import pl.allegro.experiments.chi.chiserver.domain.experiments.*;
+import pl.allegro.experiments.chi.chiserver.domain.experiments.groups.ShredHashRangePredicate;
 import pl.allegro.experiments.chi.chiserver.domain.statistics.bayes.BayesianExperimentStatistics;
 import pl.allegro.experiments.chi.chiserver.domain.statistics.bayes.VariantBayesianStatistics;
 
@@ -27,6 +28,7 @@ class JsonConfig {
                 .registerTypeAdapter(AdminExperiment.class, new AdminExperimentTypeSerializer())
                 .registerTypeAdapter(HashRangePredicate.class, new HashRangePredicateSerializer())
                 .registerTypeAdapter(CmuidRegexpPredicate.class, new CmuidRegexpPredicateSerializer())
+                .registerTypeAdapter(ShredHashRangePredicate.class, new ShredHashRangePredicateSerializer())
                 .registerTypeAdapter(InternalPredicate.class, new InternalPredicateSerializer())
                 .registerTypeAdapter(DeviceClassPredicate.class, new DeviceClassPredicateSerializer())
                 .registerTypeAdapter(ExperimentVariant.class, new ExperimentVariantTypeAdapter())

@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.RestController;
 import pl.allegro.experiments.chi.chiserver.domain.experiments.ExperimentsRepository;
 import pl.allegro.experiments.chi.chiserver.domain.experiments.groups.ExperimentGroupRepository;
 import pl.allegro.experiments.chi.chiserver.infrastructure.ClientExperiment;
+import pl.allegro.experiments.chi.chiserver.infrastructure.ClientExperimentFactory;
 import pl.allegro.tech.common.andamio.metrics.MeteredEndpoint;
 
 import java.util.stream.Collectors;
@@ -19,26 +20,31 @@ class ClientExperimentsControllerV3 {
     private final Gson jsonConverter;
     private final CrisisManagementFilter crisisManagementFilter;
     private final ExperimentGroupRepository experimentGroupRepository;
+    private final ClientExperimentFactory clientExperimentFactory;
 
     ClientExperimentsControllerV3(
             ExperimentsRepository experimentsRepository,
             Gson jsonConverter,
             CrisisManagementFilter crisisManagementFilter,
-            ExperimentGroupRepository experimentGroupRepository) {
+            ExperimentGroupRepository experimentGroupRepository,
+            ClientExperimentFactory clientExperimentFactory) {
         this.experimentsRepository = experimentsRepository;
         this.jsonConverter = jsonConverter;
         this.crisisManagementFilter = crisisManagementFilter;
         this.experimentGroupRepository = experimentGroupRepository;
+        this.clientExperimentFactory = clientExperimentFactory;
     }
 
     @MeteredEndpoint
-    @GetMapping(path = {"/v3", ""})
+    @GetMapping(path = {"/v3"})
     String experiments() {
         return jsonConverter.toJson(experimentsRepository
                 .assignable()
                 .stream()
                 .filter(crisisManagementFilter::filter)
-                .map(it -> new ClientExperiment(it))
+                .map(it -> !experimentGroupRepository.experimentInGroup(it.getId())
+                            ? new ClientExperiment(it) : clientExperimentFactory.fromGroupedExperiment(it.getDefinition().get()).get()
+                )
                 .collect(Collectors.toList()));
     }
 }
