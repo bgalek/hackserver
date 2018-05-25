@@ -108,7 +108,7 @@ export default class ExperimentModel extends ExperimentRecord {
   }
 
   canChangeVariants () {
-    return this.origin === 'MONGO' && this.status !== 'ENDED'
+    return this.origin === 'MONGO' && this.status !== 'ENDED' && this.experimentGroup == null
   }
 
   canChangeEventDefinitions () {
