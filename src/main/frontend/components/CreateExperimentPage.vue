@@ -128,16 +128,21 @@
 
                 <v-flex xs1>
                   <v-tooltip right>
-                    <span>You can create pair of exclusive experiments. Experiments in pair will not interfere with each other.</span>
+                    <span>You can create group of exclusive experiments. Experiments in group will not interfere with each other.</span>
                     <v-icon
                       slot="activator">help_outline</v-icon>
                   </v-tooltip>
                 </v-flex>
                 <v-flex xs11 text-xs-left>
                   <v-text-field
-                    id="pairWithExperiment"
-                    v-model="pairWithExperiment"
-                    label="Pair with"
+                    id="groupWithExperiment"
+                    v-model="groupWithExperiment"
+                    label="Group with"
+                  ></v-text-field>
+                  <v-text-field
+                    id="experimentGroupName"
+                    v-model="experimentGroupName"
+                    label="Group name"
                   ></v-text-field>
                 </v-flex>
 
@@ -191,7 +196,8 @@
         reportingType: 'BACKEND',
         availableReportingTypes: ['BACKEND', 'FRONTEND', 'GTM'],
         eventDefinitions: [],
-        pairWithExperiment: null
+        groupWithExperiment: null,
+        experimentGroupName: null
       }
     },
 
@@ -230,7 +236,8 @@
         this.cleanErrors()
 
         if (this.$refs.createForm.validate()) {
-          this.createExperiment({data: this.getExperimentDataToSend()}).then(response => {
+          let createExperimentMethod = !this.isGroupedExperiment() ? this.createExperiment : this.createGroupedExperiment
+          createExperimentMethod({data: this.getExperimentDataToSend()}).then(response => {
             this.notSending()
             this.$router.push('/experiments/' + this.experimentIdSlug)
           }).catch(error => {
@@ -270,8 +277,12 @@
         return _.find(this.$store.state.experiments.experiments, e => e.id === this.experimentIdSlug) === undefined
       },
 
+      isGroupedExperiment () {
+        return this.groupWithExperiment != null && this.experimentGroupName != null
+      },
+
       getExperimentDataToSend () {
-        return {
+        let experimentCreationRequest = {
           id: this.experimentIdSlug,
           description: this.descriptions.description,
           documentLink: this.descriptions.documentLink,
@@ -284,9 +295,22 @@
           reportingType: this.reportingType,
           eventDefinitions: this.eventDefinitions
         }
+
+        if (!this.isGroupedExperiment()) {
+          return experimentCreationRequest
+        } else {
+          return {
+            experimentCreationRequest: experimentCreationRequest,
+            experimentGroupCreationRequest: {
+              id: this.experimentGroupName,
+              experiments: [this.experimentIdSlug, this.groupWithExperiment]
+            }
+          }
+        }
+
       },
 
-      ...mapActions(['createExperiment', 'getExperiments'])
+      ...mapActions(['createExperiment', 'getExperiments', 'createGroupedExperiment'])
 
     }
   }

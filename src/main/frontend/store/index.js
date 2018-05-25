@@ -10,6 +10,7 @@ import bayesianEqualizer from './bayesianEqualizer'
 import deleteExperiment from './deleteExperiment'
 import startExperiment from './startExperiment'
 import createExperiment from './createExperiment'
+import createGroupedExperiment from './createGroupedExperiment'
 import stopExperiment from './stopExperiment'
 import pauseExperiment from './pauseExperiment'
 import resumeExperiment from './resumeExperiment'
@@ -37,6 +38,7 @@ export default new Vuex.Store({
     bayesianHistograms,
     bayesianEqualizer,
     createExperiment,
+    createGroupedExperiment,
     startExperiment,
     deleteExperiment,
     userPreferences,
