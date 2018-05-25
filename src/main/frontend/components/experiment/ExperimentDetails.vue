@@ -5,6 +5,9 @@
         <h3>Description</h3>
         {{ experiment.description || '-'}}
 
+      <h3>Experiment group</h3>
+      {{experiment.experimentGroup || '-'}}
+
       <h3>Documentation link</h3>
       <a v-if=" experiment.documentLink !== '' " :href="experiment.documentLink">
         {{ experiment.documentLink }}

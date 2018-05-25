@@ -28,7 +28,8 @@ const ExperimentRecord = Record({
   percentage: null,
   internalVariantName: null,
   variantNames: [],
-  deviceClass: null
+  deviceClass: null,
+  experimentGroup: null
 })
 
 export default class ExperimentModel extends ExperimentRecord {
@@ -41,6 +42,9 @@ export default class ExperimentModel extends ExperimentRecord {
     experimentObject.groups = List(experimentObject.groups)
     experimentObject.variantNames = List(experimentObject.variantNames)
     experimentObject.eventDefinitions = List(experimentObject.eventDefinitions)
+    if (experimentObject.experimentGroup != null) {
+      experimentObject.experimentGroup = experimentObject.experimentGroup.id
+    }
     super(experimentObject)
   }
 

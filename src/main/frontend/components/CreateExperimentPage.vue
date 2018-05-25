@@ -133,6 +133,7 @@
                       slot="activator">help_outline</v-icon>
                   </v-tooltip>
                 </v-flex>
+
                 <v-flex xs11 text-xs-left>
                   <v-text-field
                     id="groupWithExperiment"
