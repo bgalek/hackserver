@@ -219,6 +219,13 @@ public class ExperimentsController {
                 .orElse(new ResponseEntity<>(HttpStatus.NOT_FOUND));
     }
 
+    @MeteredEndpoint
+    @GetMapping(path = "groups")
+    String getExperimentGroups() {
+        logger.info("All experiment group request received");
+        return jsonConverter.toJson(experimentGroupRepository.all());
+    }
+
     @ExceptionHandler(AuthorizationException.class)
     ResponseEntity<ErrorsHolder> handle(AuthorizationException exception) {
         logger.error("Command error: " + exception.getClass().getSimpleName() + "cause: " + exception.getMessage());

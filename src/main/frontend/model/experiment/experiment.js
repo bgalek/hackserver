@@ -108,11 +108,22 @@ export default class ExperimentModel extends ExperimentRecord {
   }
 
   canChangeVariants () {
-    return this.origin === 'MONGO' && this.status !== 'ENDED' && this.experimentGroup == null
+    return this.origin === 'MONGO' && this.status !== 'ENDED' && !this.isInGroup()
   }
 
   canChangeEventDefinitions () {
     return this.reportingType === 'FRONTEND' && this.status !== 'ENDED'
+  }
+
+  isInGroup () {
+    return this.experimentGroup != null
+  }
+
+  canBeGrouped () {
+    return !this.isInGroup() &&
+      this.origin === 'MONGO' &&
+      this.reportingType === 'BACKEND' &&
+      this.status === 'DRAFT'
   }
 
   canRunLifecycleCommand () {

@@ -2,6 +2,7 @@ import Vue from 'vue'
 import Vuex from 'vuex'
 
 import experiments from './experiments'
+import experimentGroups from './experimentGroups'
 import experiment from './experiment'
 import experimentAuditLog from './experimentAuditLog'
 import experimentStatistics from './experimentStatistics'
@@ -33,6 +34,7 @@ export default new Vuex.Store({
   modules: {
     experiment,
     experiments,
+    experimentGroups,
     experimentAuditLog,
     experimentStatistics,
     bayesianHistograms,

@@ -135,15 +135,18 @@
                 </v-flex>
 
                 <v-flex xs11 text-xs-left>
-                  <v-text-field
+                  <v-select
                     id="groupWithExperiment"
+                    :items="experimentsThatCanBeGrouped"
                     v-model="groupWithExperiment"
                     label="Group with"
-                  ></v-text-field>
+                    single-line
+                  ></v-select>
                   <v-text-field
                     id="experimentGroupName"
                     v-model="experimentGroupName"
                     label="Group name"
+                    :rules="experimentGroupIdRules"
                   ></v-text-field>
                 </v-flex>
 
@@ -164,7 +167,7 @@
 </template>
 
 <script>
-  import { mapActions } from 'vuex'
+  import { mapState, mapActions } from 'vuex'
   import ExperimentDescEditing from './experiment/ExperimentDescEditing'
   import ExperimentVariantsEditing from './experiment/ExperimentVariantsEditing'
   import ExperimentEventFilters from './experiment/ExperimentEventFilters'
@@ -176,16 +179,19 @@
   export default {
     mounted () {
       this.getExperiments()
+      this.getExperimentGroups()
     },
 
     data () {
       const baseVariant = 'base'
-
       return {
         createFormValid: true,
         experimentIdRules: [
           (v) => !!v || 'Experiment ID is required',
           (v) => this.isExperimentIdUnique(v) || 'Experiment ID must be unique.'
+        ],
+        experimentGroupIdRules: [
+          (v) => this.isExperimentGroupIdUnique(v) || 'Experiment group ID must be unique.'
         ],
         baseVariant: baseVariant,
         experimentId: '',
@@ -203,6 +209,12 @@
     },
 
     computed: {
+      ...mapState({
+        experimentsThatCanBeGrouped: state => state.experiments.experiments
+          .filter((e, index, array) => { return e.canBeGrouped() })
+          .map((e, index, array) => { return e.id })
+      }),
+
       showForm () {
         return !this.sendingDataToServer
       },
@@ -278,6 +290,10 @@
         return _.find(this.$store.state.experiments.experiments, e => e.id === this.experimentIdSlug) === undefined
       },
 
+      isExperimentGroupIdUnique () {
+        return _.find(this.$store.state.experimentGroups.experimentGroups, e => e === this.experimentGroupName) === undefined
+      },
+
       isGroupedExperiment () {
         return this.groupWithExperiment != null && this.experimentGroupName != null
       },
@@ -309,7 +325,12 @@
           }
         }
       },
-      ...mapActions(['createExperiment', 'getExperiments', 'createGroupedExperiment'])
+      ...mapActions([
+        'createExperiment',
+        'getExperiments',
+        'createGroupedExperiment',
+        'getExperimentGroups'
+      ])
     }
   }
 </script>
