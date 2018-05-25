@@ -72,6 +72,9 @@ public class ExperimentsController {
                 .map(this::toAdminExperiment)
                 .map(it -> it.withMeasurements(measurementsRepository.getMeasurements(it.getId())))
                 .map(it -> it.withHorizontalEqualizer(bayesianChartsRepository.getHorizontalEqualizer(it.getId(), DeviceClass.all).orElse(null)))
+                .map(it -> experimentGroupRepository.getExperimentGroup(it.getId())
+                        .map(g -> it.withExperimentGroup(g))
+                        .orElse(it))
                 .collect(Collectors.toList()));
     }
 
@@ -82,6 +85,9 @@ public class ExperimentsController {
         return experimentsRepository.getExperiment(experimentId)
                 .map(this::toAdminExperiment)
                 .map(it -> it.withMeasurements(measurementsRepository.getMeasurements(it.getId())))
+                .map(it -> experimentGroupRepository.getExperimentGroup(it.getId())
+                        .map(g -> it.withExperimentGroup(g))
+                        .orElse(it))
                 .map(e -> ResponseEntity.ok(jsonConverter.toJson(e)))
                 .orElse(new ResponseEntity<>(HttpStatus.NOT_FOUND));
     }

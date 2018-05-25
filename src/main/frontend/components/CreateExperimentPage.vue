@@ -307,11 +307,8 @@
             }
           }
         }
-
       },
-
       ...mapActions(['createExperiment', 'getExperiments', 'createGroupedExperiment'])
-
     }
   }
 </script>

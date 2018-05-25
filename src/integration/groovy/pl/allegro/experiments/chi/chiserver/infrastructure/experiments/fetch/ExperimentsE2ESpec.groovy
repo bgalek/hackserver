@@ -189,4 +189,78 @@ class ExperimentsE2ESpec extends BaseIntegrationSpec implements ExampleExperimen
         def ex = thrown(HttpClientErrorException)
         ex.statusCode.value() == 400
     }
+
+    def "should append experiment group if experiment is in group"() {
+        given:
+        userProvider.user = new User('Anonymous', [], true)
+
+        String experimentId1 = UUID.randomUUID().toString()
+        String experimentId2 = UUID.randomUUID().toString()
+        String groupId = UUID.randomUUID().toString()
+
+        createDraftExperiment(experimentId2)
+        startExperiment(experimentId2)
+
+        and:
+        def pairedExperimentCreationRequest = [
+                experimentCreationRequest: [
+                        id                 : experimentId1,
+                        description        : 'desc',
+                        documentLink       : 'https://vuetifyjs.com/vuetify/quick-start',
+                        variantNames       : ['base', 'v2', 'v3'],
+                        internalVariantName: 'v1',
+                        percentage         : 10,
+                        deviceClass        : 'phone',
+                        groups             : ['group a', 'group b'],
+                        reportingEnabled   : true,
+                        reportingType: 'BACKEND'
+                ],
+                experimentGroupCreationRequest: [
+                        id: groupId,
+                        experiments: [experimentId1, experimentId2]
+                ]
+        ]
+
+        when:
+        restTemplate.postForEntity(localUrl('/api/admin/experiments/create-paired-experiment'), pairedExperimentCreationRequest, Map)
+
+        then:
+        restTemplate.getForEntity(localUrl("/api/admin/experiments/${experimentId1}/"), Map)
+                .body['experimentGroup'] == [
+                    id: groupId,
+                    experiments: [experimentId1, experimentId2],
+                    nameSpace: experimentId2
+                ]
+
+        restTemplate.getForEntity(localUrl("/api/admin/experiments"), List).body
+                .find({it -> it.id == experimentId1})['experimentGroup'] == [
+                    id: groupId,
+                    experiments: [experimentId1, experimentId2],
+                    nameSpace: experimentId2
+                ]
+    }
+
+    // todo remove duplication
+    def createDraftExperiment(String experimentId, int percentage=10) {
+        def request = [
+                id                 : experimentId,
+                description        : 'desc',
+                documentLink       : 'https://vuetifyjs.com/vuetify/quick-start',
+                variantNames       : ['base', 'v3'],
+                internalVariantName: 'v3',
+                percentage         : percentage,
+                deviceClass        : 'phone',
+                groups             : ['group a', 'group b'],
+                reportingEnabled   : true,
+                reportingType: 'BACKEND'
+        ]
+        restTemplate.postForEntity(localUrl('/api/admin/experiments'), request, Map)
+    }
+
+    def startExperiment(String experimentId) {
+        def startRequest = [
+                experimentDurationDays: 30
+        ]
+        restTemplate.put(localUrl("/api/admin/experiments/${experimentId}/start"), startRequest, Map)
+    }
 }
