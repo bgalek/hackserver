@@ -123,6 +123,27 @@
               </v-layout>
             </v-container>
 
+            <v-container fluid style="margin: 0px; padding: 0px" text-xs-center v-if="reportingType === 'BACKEND'">
+              <v-layout row align-top>
+
+                <v-flex xs1>
+                  <v-tooltip right>
+                    <span>You can create pair of exclusive experiments. Experiments in pair will not interfere with each other.</span>
+                    <v-icon
+                      slot="activator">help_outline</v-icon>
+                  </v-tooltip>
+                </v-flex>
+                <v-flex xs11 text-xs-left>
+                  <v-text-field
+                    id="pairWithExperiment"
+                    v-model="pairWithExperiment"
+                    label="Pair with"
+                  ></v-text-field>
+                </v-flex>
+
+              </v-layout>
+            </v-container>
+
             <v-btn
               id="createExperimentFormSubmitButton"
               @click="onSubmit"
@@ -169,7 +190,8 @@
         variants: {},
         reportingType: 'BACKEND',
         availableReportingTypes: ['BACKEND', 'FRONTEND', 'GTM'],
-        eventDefinitions: []
+        eventDefinitions: [],
+        pairWithExperiment: null
       }
     },
 

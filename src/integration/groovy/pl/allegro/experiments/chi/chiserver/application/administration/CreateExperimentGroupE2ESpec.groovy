@@ -295,6 +295,7 @@ class CreateExperimentGroupE2ESpec extends BaseIntegrationSpec {
         createdGroup.nameSpace == experimentId1
     }
 
+    // todo remove duplication
     def startExperiment(String experimentId) {
         def startRequest = [
                 experimentDurationDays: 30

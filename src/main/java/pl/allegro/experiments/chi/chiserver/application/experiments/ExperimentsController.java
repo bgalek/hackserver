@@ -95,6 +95,15 @@ public class ExperimentsController {
     }
 
     @MeteredEndpoint
+    @PostMapping(path = "create-paired-experiment")
+    ResponseEntity<String> createPairedExperiment(
+            @RequestBody PairedExperimentCreationRequest pairedExperimentCreationRequest) {
+        logger.info("Paired experiment creation request received", pairedExperimentCreationRequest);
+        experimentActions.createPairedExperiment(pairedExperimentCreationRequest);
+        return new ResponseEntity<>(HttpStatus.CREATED);
+    }
+
+    @MeteredEndpoint
     @PutMapping(path = "{experimentId}/start")
     ResponseEntity<String> startExperiment(
             @PathVariable String experimentId,

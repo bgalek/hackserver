@@ -143,4 +143,14 @@ public class CommandFactory {
                 experimentGroupCreationRequest
         );
     }
+
+    public CreatePairedExperimentCommand createPairedExperimentCommand(
+            PairedExperimentCreationRequest pairedExperimentCreationRequest) {
+        return new CreatePairedExperimentCommand(
+                createExperimentCommand(pairedExperimentCreationRequest.getExperimentCreationRequest()),
+                createExperimentGroupCommand(pairedExperimentCreationRequest.getExperimentGroupCreationRequest()),
+                deleteExperimentCommand(pairedExperimentCreationRequest.getExperimentCreationRequest().getId())
+        );
+
+    }
 }
