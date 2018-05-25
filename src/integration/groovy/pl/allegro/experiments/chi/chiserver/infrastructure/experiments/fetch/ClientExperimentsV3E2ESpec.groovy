@@ -475,14 +475,6 @@ class ClientExperimentsV3E2ESpec extends BaseIntegrationSpec {
 
     }
 
-    // todo remove duplication
-    def startExperiment(String experimentId) {
-        def startRequest = [
-                experimentDurationDays: 30
-        ]
-        restTemplate.put(localUrl("/api/admin/experiments/${experimentId}/start"), startRequest, Map)
-    }
-
     def createDraftExperiment(String experimentId, List<String> variants, int percentage=10) {
         def request = [
                 id                 : experimentId,

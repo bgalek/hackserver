@@ -168,21 +168,4 @@ class CreatePairedExperimentE2ESpec extends BaseIntegrationSpec {
         ex = thrown(HttpClientErrorException)
         ex.statusCode == HttpStatus.NOT_FOUND
     }
-
-    // todo remove duplication
-    def createDraftExperiment(String experimentId, int percentage=10) {
-        def request = [
-                id                 : experimentId,
-                description        : 'desc',
-                documentLink       : 'https://vuetifyjs.com/vuetify/quick-start',
-                variantNames       : ['base', 'v3'],
-                internalVariantName: 'v3',
-                percentage         : percentage,
-                deviceClass        : 'phone',
-                groups             : ['group a', 'group b'],
-                reportingEnabled   : true,
-                reportingType: 'BACKEND'
-        ]
-        restTemplate.postForEntity(localUrl('/api/admin/experiments'), request, Map)
-    }
 }

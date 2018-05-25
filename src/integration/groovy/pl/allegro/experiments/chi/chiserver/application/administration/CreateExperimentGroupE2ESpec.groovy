@@ -294,28 +294,4 @@ class CreateExperimentGroupE2ESpec extends BaseIntegrationSpec {
         Map createdGroup = restTemplate.getForEntity(localUrl("/api/admin/experiments/groups/${groupId}"), Map).body
         createdGroup.nameSpace == experimentId1
     }
-
-    // todo remove duplication
-    def startExperiment(String experimentId) {
-        def startRequest = [
-                experimentDurationDays: 30
-        ]
-        restTemplate.put(localUrl("/api/admin/experiments/${experimentId}/start"), startRequest, Map)
-    }
-
-    def createDraftExperiment(String experimentId, int percentage=10) {
-        def request = [
-                id                 : experimentId,
-                description        : 'desc',
-                documentLink       : 'https://vuetifyjs.com/vuetify/quick-start',
-                variantNames       : ['base', 'v3'],
-                internalVariantName: 'v3',
-                percentage         : percentage,
-                deviceClass        : 'phone',
-                groups             : ['group a', 'group b'],
-                reportingEnabled   : true,
-                reportingType: 'BACKEND'
-        ]
-        restTemplate.postForEntity(localUrl('/api/admin/experiments'), request, Map)
-    }
 }
