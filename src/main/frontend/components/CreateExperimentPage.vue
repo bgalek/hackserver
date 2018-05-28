@@ -123,7 +123,9 @@
               </v-layout>
             </v-container>
 
-            <v-container fluid style="margin: 0px; padding: 0px" text-xs-center v-if="reportingType === 'BACKEND'">
+            <v-container
+              v-if="reportingType === 'BACKEND'"
+              fluid style="margin: 0px; padding: 0px" text-xs-center>
               <v-layout row align-top>
 
                 <v-flex xs1>
@@ -135,14 +137,21 @@
                 </v-flex>
 
                 <v-flex xs11 text-xs-left>
+                  <v-switch
+                    label="Group together with another experiment"
+                    v-model="createGroupFlag"
+                  ></v-switch>
                   <v-select
+                    v-if="createGroupFlag"
                     id="groupWithExperiment"
                     :items="experimentsThatCanBeGrouped"
                     v-model="groupWithExperiment"
                     label="Group with"
+                    :rules="groupWithExperimentRules"
                     single-line
                   ></v-select>
                   <v-text-field
+                    v-if="createGroupFlag"
                     id="experimentGroupName"
                     v-model="experimentGroupName"
                     label="Group name"
@@ -191,7 +200,11 @@
           (v) => this.isExperimentIdUnique(v) || 'Experiment ID must be unique.'
         ],
         experimentGroupIdRules: [
-          (v) => this.isExperimentGroupIdUnique(v) || 'Experiment group ID must be unique.'
+          (v) => this.isExperimentGroupIdUnique(v) || 'Experiment group ID must be unique.',
+          (v) => !!v || 'Experiment group ID is required'
+        ],
+        groupWithExperimentRules: [
+          (v) => !!v || 'Pick experiment that you want to group with new experiment.'
         ],
         baseVariant: baseVariant,
         experimentId: '',
@@ -204,7 +217,8 @@
         availableReportingTypes: ['BACKEND', 'FRONTEND', 'GTM'],
         eventDefinitions: [],
         groupWithExperiment: null,
-        experimentGroupName: null
+        experimentGroupName: null,
+        createGroupFlag: false
       }
     },
 
