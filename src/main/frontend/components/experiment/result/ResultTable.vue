@@ -1,29 +1,16 @@
 <template>
   <v-container>
-    <v-layout row>
 
-      <v-spacer></v-spacer>
-
-      <result-table-settings
-        v-if="experiment.reportingEnabled"
-        :experiment="experiment"
-        @settingsChanged="updateQueryParams"
-      ></result-table-settings>
-    </v-layout>
-
-    <h3>Results based on statistical hypothesis testing</h3>
+    <device-selector
+      @deviceChanged="deviceChanged"
+      :selectedDevice="selectedDevice"
+    ></device-selector>
 
     <p v-if="experimentStatistics.durationDays > 0">
-      <v-tooltip right>
-          <span slot="activator">
           Data calculated on
           <span id="toDate">{{ experimentStatistics.toDate }}</span>
           for
-          <v-chip outline color="black">{{ experimentStatistics.durationDays }}</v-chip>
-          days.
-          </span>
-        <span>Metrics and statistics are calculated for period: experiment start to {{ experimentStatistics.toDate }}</span>
-      </v-tooltip>
+          <b>{{ experimentStatistics.durationDays }}</b> days.
     </p>
 
     <div v-if="experimentStatistics.metrics">
@@ -102,13 +89,13 @@
 <script>
   import {mapActions} from 'vuex'
   import PivotLink from '../../PivotLink.vue'
-  import ResultTableSettings from './ResultTableSettings.vue'
+  import DeviceSelector from './DeviceSelector'
 
   export default {
-    props: ['experiment', 'experimentStatistics', 'experimentStatisticsError', 'experimentStatisticsPending'],
+    props: ['experiment', 'experimentStatistics', 'experimentStatisticsError', 'experimentStatisticsPending', 'selectedDevice'],
 
     components: {
-      PivotLink, ResultTableSettings
+      PivotLink, DeviceSelector
     },
 
     data () {
@@ -310,8 +297,8 @@
         return this.formatAsPercent(diff / baseValue)
       },
 
-      updateQueryParams ({device}) {
-        this.$emit('deviceChanged', {
+      deviceChanged ({device}) {
+        this.$emit('deviceChangedOnStats', {
           device: device
         })
       }

@@ -11,7 +11,7 @@ class BayesianHorizontalEqualizerSpec extends Specification {
 
     def "should build Horizontal Equalizer from Vertical Equalizer"(){
         when:
-        def vEqualizer = new BayesianVerticalEqualizer(new BayesianChartMetadata("ex1", DeviceClass.phone, 0.1), [
+        def vEqualizer = new BayesianVerticalEqualizer(new BayesianChartMetadata("ex1", DeviceClass.phone, 0.1, "2013-12-12"), [
                 new EqualizerBar("variant-a",[0.2, 0.0, 0.8], [0.1, 0.5, 0.0]),
                 new EqualizerBar("variant-a",[0.3, 0.2, 0.4], [0.0, 0.4, 0.1]),
         ])

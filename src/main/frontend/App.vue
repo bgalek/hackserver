@@ -47,9 +47,10 @@
       </v-fade-transition>
     </v-content>
 
-    <v-footer color="blue" app>
-      <span class="white--text">&copy; {{ new Date().getFullYear() }}</span>
+    <!--
+    <v-footer app color="blue">
     </v-footer>
+    -->
   </v-app>
 </template>
 

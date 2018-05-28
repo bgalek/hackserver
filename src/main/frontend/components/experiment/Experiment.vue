@@ -11,19 +11,24 @@
           v-if="loadingExperimentDone"
         ></experiment-details>
 
-        <chi-panel title="Metrics & Statistics">
+        <chi-panel title="Statistical hypothesis testing">
           <result-table
-            @deviceChanged="onDeviceChanged"
+            @deviceChangedOnStats="onDeviceChanged"
             :experimentStatistics="experimentStatistics"
             :experimentStatisticsError="experimentStatisticsError"
             :experimentStatisticsPending="experimentStatisticsPending"
             v-if="loadingExperimentDone"
             :experiment="experiment"
+            :selectedDevice="selectedDevice"
           ></result-table>
+        </chi-panel>
 
+        <chi-panel title="Bayesian analysis">
           <bayesian-result
-            v-if="loadingExperimentDone"
+            @deviceChangedOnBayesian="onDeviceChanged"
+            v-if="loadingExperimentDone && loadingBayesianResultDone"
             :experiment="experiment"
+            :selectedDevice="selectedDevice"
             :bayesianHistograms="bayesianHistograms"
             :bayesianEqualizer="bayesianEqualizer"
           ></bayesian-result>
@@ -66,6 +71,7 @@
     mounted () {
       this.getExperiment({ params: { experimentId: this.$route.params.experimentId } }).then(() => {
         this.loadingExperimentDone = true
+        this.selectedDevice = this.calcInitialDevice(this.experiment)
       })
 
       this.loadExperimentStatistics('all', this.$route.params.experimentId).then(() => {
@@ -92,11 +98,11 @@
 
     data () {
       return {
+        selectedDevice: '',
         loadingStatsDone: false,
         loadingBayesianResultDone: false,
         loadingBayesianEqualizerResultDone: false,
         loadingExperimentDone: false,
-        device: 'all',
         metricOrder: {
           'tx_visit': 1,
           'tx_avg': 2,
@@ -150,7 +156,7 @@
       },
 
       bayesianHistograms (state) {
-        return state.bayesianHistograms.bayesianHistograms.histograms || { }
+        return state.bayesianHistograms.bayesianHistograms || { }
       },
 
       bayesianEqualizer (state) {
@@ -201,10 +207,26 @@
         })
       },
 
-      onDeviceChanged ({device}) {
-        this.loadExperimentStatistics(device, this.experiment.id)
-        this.loadExperimentBayesianResult(device, this.experiment.id)
-        this.loadExperimentBayesianEqualizerResult(device, this.experiment.id)
+      onDeviceChanged (device) {
+        this.loadExperimentStatistics(device.device, this.experiment.id)
+        this.loadExperimentBayesianResult(device.device, this.experiment.id)
+        this.loadExperimentBayesianEqualizerResult(device.device, this.experiment.id)
+
+        this.selectedDevice = device.device
+      },
+
+      calcInitialDevice (experiment) {
+        const baseClass = experiment.getBaseDeviceClass()
+
+        if (baseClass === 'desktop' || baseClass === 'tablet') {
+          return baseClass
+        }
+
+        if (baseClass === 'phone') {
+          return 'smartphone'
+        }
+
+        return 'all'
       }
     }
   }
