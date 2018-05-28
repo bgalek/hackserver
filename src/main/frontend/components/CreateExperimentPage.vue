@@ -204,7 +204,7 @@
           (v) => !!v || 'Experiment group ID is required'
         ],
         groupWithExperimentRules: [
-          (v) => !!v || 'Pick experiment that you want to group with new experiment.'
+          (v) => !!v || 'Pick experiment you want to group together with new experiment.'
         ],
         baseVariant: baseVariant,
         experimentId: '',
