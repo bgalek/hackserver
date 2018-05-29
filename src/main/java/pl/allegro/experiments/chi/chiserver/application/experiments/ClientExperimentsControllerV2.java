@@ -43,7 +43,7 @@ class ClientExperimentsControllerV2 {
                 .assignable()
                 .stream()
                 .filter(crisisManagementFilter::filter)
-                .filter(experiment -> !experimentGroupRepository.experimentInGroup(experiment.getId()))
+//                .filter(experiment -> !experimentGroupRepository.experimentInGroup(experiment.getId()))
                 .map(it -> new ClientExperiment(it))
                 .collect(Collectors.toList()));
     }

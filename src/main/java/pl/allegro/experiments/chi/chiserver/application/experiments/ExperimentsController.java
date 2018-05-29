@@ -23,7 +23,6 @@ import pl.allegro.tech.common.andamio.errors.ErrorsHolder;
 import pl.allegro.tech.common.andamio.errors.SimpleErrorsHolder;
 import pl.allegro.tech.common.andamio.metrics.MeteredEndpoint;
 
-import javax.ws.rs.POST;
 import java.util.List;
 import java.util.stream.Collectors;
 
