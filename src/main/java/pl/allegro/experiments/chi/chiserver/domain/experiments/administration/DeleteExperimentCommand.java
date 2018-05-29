@@ -8,7 +8,6 @@ import pl.allegro.experiments.chi.chiserver.domain.statistics.StatisticsReposito
 
 import java.util.Objects;
 
-// todo refactor
 public class DeleteExperimentCommand {
     private final ExperimentsRepository experimentsRepository;
     private final PermissionsAwareExperimentRepository permissionsAwareExperimentRepository;
@@ -36,23 +35,23 @@ public class DeleteExperimentCommand {
 
     public void execute() {
         Experiment experiment = permissionsAwareExperimentRepository.getExperimentOrException(experimentId);
+        validate(experiment);
 
-        if (experimentGroupRepository.experimentInGroup(experimentId) &&
-                !experiment.getStatus().equals(ExperimentStatus.DRAFT)) {
-            throw new ExperimentCommandException("Non DRAFT experiment bound to group cannot be deleted");
-        }
         experimentGroupRepository.getExperimentGroup(experimentId)
                 .ifPresent(experimentGroup ->
                     experimentGroupRepository.save(experimentGroup.withRemovedExperiment(experimentId))
                 );
 
-        validate(experiment.getId());
         experimentsRepository.delete(experiment.getId());
     }
 
-    private void validate(String experimentId) {
+    private void validate(Experiment experiment) {
         if (statisticsRepository.hasAnyStatistics(experimentId)) {
             throw new ExperimentCommandException("Experiment with statistics cannot be deleted: " + experimentId);
+        }
+        if (experimentGroupRepository.experimentInGroup(experimentId) &&
+                !experiment.getStatus().equals(ExperimentStatus.DRAFT)) {
+            throw new ExperimentCommandException("Non DRAFT experiment bound to group cannot be deleted");
         }
     }
 }
