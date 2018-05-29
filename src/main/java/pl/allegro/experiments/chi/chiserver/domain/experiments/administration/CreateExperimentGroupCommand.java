@@ -13,7 +13,6 @@ import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
 
-// todo refactor
 public class CreateExperimentGroupCommand {
     private final ExperimentGroupRepository experimentGroupRepository;
     private final ExperimentsRepository experimentsRepository;
@@ -49,62 +48,23 @@ public class CreateExperimentGroupCommand {
     }
 
     private ExperimentGroup create(String id, List<String> experiments) {
-        // legacy mongo experiments
-        if (experimentGroupRepository.exists(id)) {
-            throw new ExperimentCommandException("Provided group name is not unique");
-        }
+        // legacy mongo experiments are not supported
 
-        if (experiments.size() < 2) {
-            throw new ExperimentCommandException("Cannot create group with less than 2 experiments");
-        }
+        checkIfGroupNameIsUnique(id);
 
-        int experimentsFound = experiments.stream()
-                .map(experimentsRepository::getExperiment)
-                .mapToInt(eo -> eo.map(e -> 1).orElse(0))
-                .sum();
+        checkIfGroupContainsAtLeast2Experiments(experiments);
 
-        if (experimentsFound != experiments.size()) {
-            throw new ExperimentCommandException("Cannot create group if not all experiments exist");
-        }
+        checkIfAllExperimentsInGroupExist(experiments);
 
-        int numberOfStartedExperiments = experiments.stream()
-                .map(experimentsRepository::getExperiment)
-                .map(e -> !e.get().getStatus().equals(ExperimentStatus.DRAFT))
-                .mapToInt(experimentIsNotDraft -> experimentIsNotDraft ? 1 : 0)
-                .sum();
+        checkIfGroupContainsMax1ActiveExperiment(experiments);
 
-        if (numberOfStartedExperiments > 1) {
-            throw new ExperimentCommandException("Cannot create group with more than 1 active experiment");
-        }
+        checkIfGroupDoesNotContainsStashExperiments(experiments);
 
-        int numberOfStashExperiments = experiments.stream()
-                .map(experimentsRepository::getExperiment)
-                .map(e -> experimentsRepository.getOrigin(e.get().getId()))
-                .mapToInt(origin -> origin.equals(ExperimentOrigin.STASH) ? 1 : 0)
-                .sum();
+        checkIfAllExperimentsInGroupAreBackend(experiments);
 
-        if (numberOfStashExperiments != 0) {
-            throw new ExperimentCommandException("Cannot create group with stash experiments");
-        }
+        checkIfGroupHasEnoughPercentageSpaceForAllExperiments(experiments);
 
-        int numberOfBackendExperiments = experiments.stream()
-                .map(experimentsRepository::getExperiment)
-                .map(e -> e.get())
-                .map(e -> e.getReportingDefinition().getType())
-                .mapToInt(reportingType -> reportingType.equals(ReportingType.BACKEND) ? 1 : 0)
-                .sum();
-
-        if (numberOfBackendExperiments != experiments.size()) {
-            throw new ExperimentCommandException("Cannot create group if one of the experiments is not BACKEND");
-        }
-
-        if (!enoughPercentageSpace(experiments)) {
-            throw new ExperimentCommandException("Cannot create group there is no enough percentage space");
-        }
-
-        if (experiments.stream().anyMatch(e -> experimentGroupRepository.experimentInGroup(e))) {
-            throw new ExperimentCommandException("Cannot create group is one of the experiments is in another group");
-        }
+        checkIfAllExperimentsHaveNoGroup(experiments);
 
         return new ExperimentGroup(
                 id,
@@ -119,6 +79,78 @@ public class CreateExperimentGroupCommand {
                         .orElse(UUID.randomUUID().toString())
                 ,
                 experiments);
+    }
+
+    private void checkIfAllExperimentsHaveNoGroup(List<String> experiments) {
+        if (experiments.stream().anyMatch(e -> experimentGroupRepository.experimentInGroup(e))) {
+            throw new ExperimentCommandException("Cannot create group is one of the experiments is in another group");
+        }
+    }
+
+    private void checkIfGroupHasEnoughPercentageSpaceForAllExperiments(List<String> experiments) {
+        if (!enoughPercentageSpace(experiments)) {
+            throw new ExperimentCommandException("Cannot create group there is no enough percentage space");
+        }
+    }
+
+    private void checkIfAllExperimentsInGroupAreBackend(List<String> experiments) {
+        int numberOfBackendExperiments = experiments.stream()
+                .map(experimentsRepository::getExperiment)
+                .map(e -> e.get())
+                .map(e -> e.getReportingDefinition().getType())
+                .mapToInt(reportingType -> reportingType.equals(ReportingType.BACKEND) ? 1 : 0)
+                .sum();
+
+        if (numberOfBackendExperiments != experiments.size()) {
+            throw new ExperimentCommandException("Cannot create group if one of the experiments is not BACKEND");
+        }
+    }
+
+    private void checkIfGroupDoesNotContainsStashExperiments(List<String> experiments) {
+        int numberOfStashExperiments = experiments.stream()
+                .map(experimentsRepository::getExperiment)
+                .map(e -> experimentsRepository.getOrigin(e.get().getId()))
+                .mapToInt(origin -> origin.equals(ExperimentOrigin.STASH) ? 1 : 0)
+                .sum();
+
+        if (numberOfStashExperiments != 0) {
+            throw new ExperimentCommandException("Cannot create group with stash experiments");
+        }
+    }
+
+    private void checkIfGroupContainsMax1ActiveExperiment(List<String> experiments) {
+        int numberOfStartedExperiments = experiments.stream()
+                .map(experimentsRepository::getExperiment)
+                .map(e -> !e.get().getStatus().equals(ExperimentStatus.DRAFT))
+                .mapToInt(experimentIsNotDraft -> experimentIsNotDraft ? 1 : 0)
+                .sum();
+
+        if (numberOfStartedExperiments > 1) {
+            throw new ExperimentCommandException("Cannot create group with more than 1 active experiment");
+        }
+    }
+
+    private void checkIfGroupNameIsUnique(String id) {
+        if (experimentGroupRepository.exists(id)) {
+            throw new ExperimentCommandException("Provided group name is not unique");
+        }
+    }
+
+    private void checkIfGroupContainsAtLeast2Experiments(List<String> experiments) {
+        if (experiments.size() < 2) {
+            throw new ExperimentCommandException("Cannot create group with less than 2 experiments");
+        }
+    }
+
+    private void checkIfAllExperimentsInGroupExist(List<String> experiments) {
+        boolean allExperimentsExist = experiments.stream()
+                .map(experimentsRepository::getExperiment)
+                .mapToInt(eo -> eo.map(e -> 1).orElse(0))
+                .sum() == experiments.size();
+
+        if (!allExperimentsExist) {
+            throw new ExperimentCommandException("Cannot create group if not all experiments exist");
+        }
     }
 
     private boolean enoughPercentageSpace(List<String> experiments) {

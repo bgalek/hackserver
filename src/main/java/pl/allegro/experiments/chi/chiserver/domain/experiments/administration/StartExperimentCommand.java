@@ -41,11 +41,10 @@ public class StartExperimentCommand {
                 .orElseThrow(() -> new UnsupportedOperationException("Missing experiment definition"))
                 .start(startExperimentProperties.getExperimentDurationDays());
         experimentGroupRepository.getExperimentGroup(experimentId)
-                .map(experimentGroup -> {
+                .ifPresent(experimentGroup ->
                     experimentGroupRepository
-                            .save(experimentGroup.withExperimentMovedToHeadPosition(experimentId));
-                    return null;
-                });
+                            .save(experimentGroup.withExperimentMovedToHeadPosition(experimentId))
+                );
         experimentsRepository.save(started);
     }
 

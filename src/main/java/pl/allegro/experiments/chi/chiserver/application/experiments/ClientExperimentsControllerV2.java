@@ -12,7 +12,6 @@ import pl.allegro.experiments.chi.chiserver.domain.experiments.groups.Experiment
 import pl.allegro.experiments.chi.chiserver.infrastructure.ClientExperiment;
 import pl.allegro.tech.common.andamio.metrics.MeteredEndpoint;
 
-import java.util.List;
 import java.util.stream.Collectors;
 
 @RestController

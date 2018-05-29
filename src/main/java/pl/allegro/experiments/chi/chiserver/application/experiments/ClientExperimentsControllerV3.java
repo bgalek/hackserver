@@ -1,6 +1,8 @@
 package pl.allegro.experiments.chi.chiserver.application.experiments;
 
 import com.google.gson.Gson;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -22,6 +24,8 @@ class ClientExperimentsControllerV3 {
     private final ExperimentGroupRepository experimentGroupRepository;
     private final ClientExperimentFactory clientExperimentFactory;
 
+    private static final Logger logger = LoggerFactory.getLogger(ClientExperimentsControllerV3.class);
+
     ClientExperimentsControllerV3(
             ExperimentsRepository experimentsRepository,
             Gson jsonConverter,
@@ -38,6 +42,8 @@ class ClientExperimentsControllerV3 {
     @MeteredEndpoint
     @GetMapping(path = {"/v3", ""})
     String experiments() {
+        logger.debug("Client V3 experiments request received");
+
         return jsonConverter.toJson(experimentsRepository
                 .assignable()
                 .stream()

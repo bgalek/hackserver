@@ -26,6 +26,7 @@ public class DeleteExperimentCommand {
         Objects.requireNonNull(permissionsAwareExperimentRepository);
         Objects.requireNonNull(experimentId);
         Objects.requireNonNull(statisticsRepository);
+        Objects.requireNonNull(experimentGroupRepository);
         this.experimentsRepository = experimentsRepository;
         this.permissionsAwareExperimentRepository = permissionsAwareExperimentRepository;
         this.experimentId = experimentId;
@@ -41,10 +42,9 @@ public class DeleteExperimentCommand {
             throw new ExperimentCommandException("Non DRAFT experiment bound to group cannot be deleted");
         }
         experimentGroupRepository.getExperimentGroup(experimentId)
-                .map(experimentGroup -> {
-                    experimentGroupRepository.save(experimentGroup.withRemovedExperiment(experimentId));
-                    return null;
-                });
+                .ifPresent(experimentGroup ->
+                    experimentGroupRepository.save(experimentGroup.withRemovedExperiment(experimentId))
+                );
 
         validate(experiment.getId());
         experimentsRepository.delete(experiment.getId());
