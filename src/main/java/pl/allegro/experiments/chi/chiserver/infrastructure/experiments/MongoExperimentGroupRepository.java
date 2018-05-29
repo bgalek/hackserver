@@ -61,12 +61,8 @@ public class MongoExperimentGroupRepository implements ExperimentGroupRepository
 
     @Override
     public Optional<ExperimentGroup> getExperimentGroup(String experimentId) {
-        List<ExperimentGroup> groups = all();
-        for (ExperimentGroup group: groups) {
-            if (group.contains(experimentId)) {
-                return Optional.of(group);
-            }
-        }
-        return Optional.empty();
+        return all().stream()
+                .filter(group -> group.contains(experimentId))
+                .findFirst();
     }
 }

@@ -134,7 +134,7 @@ public class ExperimentsConfig {
         return new CachedExperimentGroupRepository(new MongoExperimentGroupRepository(mongoTemplate, javers, userProvider));
     }
 
-    // todo move to package above
+    // todo move to package above ?
     @Bean
     ClientExperimentFactory clientExperimentFactory(
             ExperimentGroupRepository experimentGroupRepository,
