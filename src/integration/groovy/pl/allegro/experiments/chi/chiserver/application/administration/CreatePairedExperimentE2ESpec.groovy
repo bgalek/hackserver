@@ -8,6 +8,8 @@ import pl.allegro.experiments.chi.chiserver.BaseIntegrationSpec
 import pl.allegro.experiments.chi.chiserver.domain.User
 import pl.allegro.experiments.chi.chiserver.domain.UserProvider
 import pl.allegro.experiments.chi.chiserver.domain.experiments.ExperimentsRepository
+import pl.allegro.experiments.chi.chiserver.domain.experiments.groups.ExperimentGroupRepository
+import pl.allegro.experiments.chi.chiserver.infrastructure.experiments.CachedExperimentGroupRepository
 import pl.allegro.experiments.chi.chiserver.infrastructure.experiments.ExperimentsDoubleRepository
 
 class CreatePairedExperimentE2ESpec extends BaseIntegrationSpec {
@@ -17,11 +19,17 @@ class CreatePairedExperimentE2ESpec extends BaseIntegrationSpec {
     ExperimentsRepository experimentsRepository
 
     @Autowired
+    ExperimentGroupRepository experimentGroupRepository
+
+    @Autowired
     UserProvider userProvider
 
     def setup() {
         if (!experimentsRepository instanceof ExperimentsDoubleRepository) {
             throw new RuntimeException("We should test real repository, not the fake one")
+        }
+        if (!experimentGroupRepository instanceof CachedExperimentGroupRepository) {
+            throw new RuntimeException("We should test cached repository")
         }
     }
 

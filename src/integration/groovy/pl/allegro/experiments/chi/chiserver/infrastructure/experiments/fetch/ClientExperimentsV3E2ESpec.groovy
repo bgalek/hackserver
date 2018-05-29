@@ -9,6 +9,7 @@ import pl.allegro.experiments.chi.chiserver.domain.User
 import pl.allegro.experiments.chi.chiserver.domain.UserProvider
 import pl.allegro.experiments.chi.chiserver.domain.experiments.ExperimentsRepository
 import pl.allegro.experiments.chi.chiserver.domain.experiments.groups.ExperimentGroupRepository
+import pl.allegro.experiments.chi.chiserver.infrastructure.experiments.CachedExperimentGroupRepository
 import pl.allegro.experiments.chi.chiserver.infrastructure.experiments.FileBasedExperimentsRepository
 import spock.lang.Shared
 import spock.lang.Unroll
@@ -32,6 +33,12 @@ class ClientExperimentsV3E2ESpec extends BaseIntegrationSpec {
 
     @Autowired
     UserProvider userProvider
+
+    def setup() {
+        if (!experimentGroupRepository instanceof CachedExperimentGroupRepository) {
+            throw new RuntimeException("We should test cached repository")
+        }
+    }
 
     @Unroll
     def "should ignore grouped experiments in client api version #apiVersion"() {

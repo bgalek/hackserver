@@ -12,6 +12,7 @@ import pl.allegro.experiments.chi.chiserver.domain.experiments.groups.Experiment
 import pl.allegro.experiments.chi.chiserver.infrastructure.ClientExperiment;
 import pl.allegro.tech.common.andamio.metrics.MeteredEndpoint;
 
+import java.util.List;
 import java.util.stream.Collectors;
 
 @RestController
@@ -39,11 +40,12 @@ class ClientExperimentsControllerV2 {
     @GetMapping(path = {"/v2"})
     String experiments() {
         logger.debug("Client V2 experiments request received");
+
         return jsonConverter.toJson(experimentsRepository
                 .assignable()
                 .stream()
                 .filter(crisisManagementFilter::filter)
-//                .filter(experiment -> !experimentGroupRepository.experimentInGroup(experiment.getId()))
+                .filter(experiment -> !experimentGroupRepository.experimentInGroup(experiment.getId()))
                 .map(it -> new ClientExperiment(it))
                 .collect(Collectors.toList()));
     }

@@ -11,6 +11,7 @@ import pl.allegro.experiments.chi.chiserver.domain.User
 import pl.allegro.experiments.chi.chiserver.domain.UserProvider
 import pl.allegro.experiments.chi.chiserver.domain.experiments.ExperimentsRepository
 import pl.allegro.experiments.chi.chiserver.domain.experiments.groups.ExperimentGroupRepository
+import pl.allegro.experiments.chi.chiserver.infrastructure.experiments.CachedExperimentGroupRepository
 import pl.allegro.experiments.chi.chiserver.infrastructure.experiments.ExperimentsDoubleRepository
 import pl.allegro.experiments.chi.chiserver.infrastructure.experiments.FileBasedExperimentsRepository
 import pl.allegro.experiments.chi.chiserver.infrastructure.experiments.fetch.WireMockUtils
@@ -39,6 +40,10 @@ class CreateExperimentGroupE2ESpec extends BaseIntegrationSpec {
     def setup() {
         if (!experimentsRepository instanceof ExperimentsDoubleRepository) {
             throw new RuntimeException("We should test real repository, not the fake one")
+        }
+
+        if (!experimentGroupRepository instanceof CachedExperimentGroupRepository) {
+            throw new RuntimeException("We should test cached repository")
         }
         WireMockUtils.teachWireMockJson("/experiments", 'some-experiments.json')
     }

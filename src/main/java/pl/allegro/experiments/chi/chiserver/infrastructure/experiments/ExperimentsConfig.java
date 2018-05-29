@@ -127,11 +127,11 @@ public class ExperimentsConfig {
     }
 
     @Bean
-    ExperimentGroupRepository experimentGroupRepository(
+    ExperimentGroupRepository cachedExperimentGroupRepository(
             MongoTemplate mongoTemplate,
             Javers javers,
             UserProvider userProvider) {
-        return new MongoExperimentGroupRepository(mongoTemplate, javers, userProvider);
+        return new CachedExperimentGroupRepository(new MongoExperimentGroupRepository(mongoTemplate, javers, userProvider));
     }
 
     // todo move to package above
