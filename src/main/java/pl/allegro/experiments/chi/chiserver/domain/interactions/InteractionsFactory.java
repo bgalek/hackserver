@@ -30,13 +30,16 @@ public class InteractionsFactory {
         Preconditions.checkNotNull(json);
         try {
             List<Interaction> interactions = interactionConverter.fromJson(json);
-            List<Interaction> filtered = interactions.stream().filter(i ->
-                experimentsRepository.getExperiment(i.getExperimentId())
-                        .map(Experiment::shouldSaveInteractions)
-                        .orElse(false)
+            return interactions.stream().filter(i -> {
+                    var isGood = experimentsRepository.getExperiment(i.getExperimentId())
+                                .map(Experiment::shouldSaveInteractions)
+                                .orElse(false);
+                    if (!isGood) {
+                        interactionsMetricsReporter.meterIgnored(i);
+                    }
+                    return isGood;
+                }
             ).collect(Collectors.toList());
-            interactionsMetricsReporter.meterIgnored(interactions.size() - filtered.size());
-            return filtered;
         } catch (Exception e) {
             throw new InvalidFormatException("Cant deserialize Interaction. Invalid format.");
         }
