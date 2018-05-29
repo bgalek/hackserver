@@ -56,7 +56,7 @@ public class CreateExperimentGroupCommand {
 
         checkIfAllExperimentsInGroupExist(experiments);
 
-        checkIfGroupContainsMax1ActiveExperiment(experiments);
+        checkIfGroupContainsMax1NonDraftExperiment(experiments);
 
         checkIfGroupDoesNotContainsStashExperiments(experiments);
 
@@ -66,19 +66,19 @@ public class CreateExperimentGroupCommand {
 
         checkIfAllExperimentsHaveNoGroup(experiments);
 
-        return new ExperimentGroup(
-                id,
-                experiments.stream()
-                        .map(experimentsRepository::getExperiment)
-                        .filter(experiment ->
-                            experiment.isPresent() &&
-                                    !experiment.get().getStatus().equals(ExperimentStatus.DRAFT)
-                        ).map(experiment -> experiment.get())
-                        .findFirst()
-                        .map(experiment -> experiment.getId())
-                        .orElse(UUID.randomUUID().toString())
-                ,
-                experiments);
+        return new ExperimentGroup(id, getNameSpace(experiments), experiments);
+    }
+
+    private String getNameSpace(List<String> experiments) {
+        return experiments.stream()
+                .map(experimentsRepository::getExperiment)
+                .filter(experiment ->
+                    experiment.isPresent() &&
+                            !experiment.get().getStatus().equals(ExperimentStatus.DRAFT)
+                ).map(experiment -> experiment.get())
+                .findFirst()
+                .map(experiment -> experiment.getId())
+                .orElse(UUID.randomUUID().toString());
     }
 
     private void checkIfAllExperimentsHaveNoGroup(List<String> experiments) {
@@ -118,14 +118,14 @@ public class CreateExperimentGroupCommand {
         }
     }
 
-    private void checkIfGroupContainsMax1ActiveExperiment(List<String> experiments) {
-        int numberOfStartedExperiments = experiments.stream()
+    private void checkIfGroupContainsMax1NonDraftExperiment(List<String> experiments) {
+        int numberOfNonDraftExperiments = experiments.stream()
                 .map(experimentsRepository::getExperiment)
                 .map(e -> !e.get().getStatus().equals(ExperimentStatus.DRAFT))
                 .mapToInt(experimentIsNotDraft -> experimentIsNotDraft ? 1 : 0)
                 .sum();
 
-        if (numberOfStartedExperiments > 1) {
+        if (numberOfNonDraftExperiments > 1) {
             throw new ExperimentCommandException("Cannot create group with more than 1 active experiment");
         }
     }
