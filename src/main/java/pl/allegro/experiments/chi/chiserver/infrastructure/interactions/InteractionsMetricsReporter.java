@@ -5,6 +5,7 @@ import com.github.slugify.Slugify;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
+import org.springframework.util.StringUtils;
 import pl.allegro.experiments.chi.chiserver.domain.interactions.Interaction;
 
 import java.util.List;
@@ -30,10 +31,8 @@ public class InteractionsMetricsReporter {
                 });
     }
 
-    public void meterIgnored(int ignored) {
-        if (ignored > 0) {
-            meterRegistry.counter(IGNORED_INTERACTIONS).increment(ignored);
-        }
+    public void meterIgnored(Interaction interaction) {
+        meterRegistry.counter(IGNORED_INTERACTIONS + "."+interaction.getExperimentId()).increment();
     }
 
     public void meterReceived(List<Interaction> interactions) {
