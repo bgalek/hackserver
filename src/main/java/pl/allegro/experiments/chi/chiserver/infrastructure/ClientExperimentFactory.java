@@ -1,5 +1,6 @@
 package pl.allegro.experiments.chi.chiserver.infrastructure;
 
+import com.google.common.base.Preconditions;
 import pl.allegro.experiments.chi.chiserver.domain.experiments.*;
 import pl.allegro.experiments.chi.chiserver.domain.experiments.groups.ExperimentGroupRepository;
 import pl.allegro.experiments.chi.chiserver.domain.experiments.groups.ShredHashRangePredicate;
@@ -21,7 +22,8 @@ public class ClientExperimentFactory {
     }
 
     public Optional<ClientExperiment> fromGroupedExperiment(ExperimentDefinition assignableExperiment) {
-        // is assignable ?
+        Preconditions.checkArgument(assignableExperiment.isAssignable());
+
         return experimentGroupRepository.getExperimentGroup(assignableExperiment.getId())
                 .map(experimentGroup -> {
                     int percentageRangeStart = 0;
