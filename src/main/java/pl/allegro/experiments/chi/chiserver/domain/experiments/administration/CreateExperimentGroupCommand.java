@@ -36,7 +36,7 @@ public class CreateExperimentGroupCommand {
 
     public void execute() {
         User user = userProvider.getCurrentUser();
-        if (user.isAnonymous() && !user.isRoot()) {
+        if (user.isAnonymous()) {
             throw new AuthorizationException("Only logged in user can create experiment group");
         }
 

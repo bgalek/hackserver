@@ -1,5 +1,4 @@
 import Vapi from 'vuex-rest-api'
-import _ from 'lodash'
 
 export default new Vapi({
   baseURL: '/api',
