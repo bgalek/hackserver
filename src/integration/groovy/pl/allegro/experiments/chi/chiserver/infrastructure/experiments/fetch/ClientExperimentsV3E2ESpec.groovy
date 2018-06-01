@@ -1,36 +1,22 @@
 package pl.allegro.experiments.chi.chiserver.infrastructure.experiments.fetch
 
-import com.github.tomakehurst.wiremock.junit.WireMockRule
-import org.junit.ClassRule
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.http.ResponseEntity
 import org.springframework.web.client.RestTemplate
 import pl.allegro.experiments.chi.chiserver.BaseIntegrationSpec
 import pl.allegro.experiments.chi.chiserver.application.administration.RenderedExperimentVariantsBuilder
 import pl.allegro.experiments.chi.chiserver.domain.User
 import pl.allegro.experiments.chi.chiserver.domain.UserProvider
-import pl.allegro.experiments.chi.chiserver.domain.experiments.ExperimentsRepository
 import pl.allegro.experiments.chi.chiserver.domain.experiments.groups.ExperimentGroupRepository
 import pl.allegro.experiments.chi.chiserver.infrastructure.experiments.CachedExperimentGroupRepository
-import pl.allegro.experiments.chi.chiserver.infrastructure.experiments.FileBasedExperimentsRepository
-import spock.lang.Shared
 import spock.lang.Unroll
 
 import static pl.allegro.experiments.chi.chiserver.application.administration.RenderedExperimentVariantsBuilder.Range.rangeOf
 
 class ClientExperimentsV3E2ESpec extends BaseIntegrationSpec {
 
-    @ClassRule
-    @Shared
-    public WireMockRule wireMock = new WireMockRule(port)
-
     @Autowired
     ExperimentGroupRepository experimentGroupRepository
-
-    @Autowired
-    FileBasedExperimentsRepository fileBasedExperimentsRepository
-
-    @Autowired
-    ExperimentsRepository experimentsRepository
 
     RestTemplate restTemplate = new RestTemplate()
 
@@ -40,6 +26,14 @@ class ClientExperimentsV3E2ESpec extends BaseIntegrationSpec {
     def setup() {
         if (!experimentGroupRepository instanceof CachedExperimentGroupRepository) {
             throw new RuntimeException("We should test cached repository")
+        }
+        ResponseEntity.metaClass.experimentVariants << { String experimentId ->
+            getBody().find {e -> e.id == experimentId}.variants
+        }
+        ResponseEntity.metaClass.numberOfExperimentsPresent << { List<String> experimentIds ->
+            getBody().stream()
+                    .filter({e -> e.id in experimentIds})
+                    .count()
         }
     }
 
@@ -70,10 +64,7 @@ class ClientExperimentsV3E2ESpec extends BaseIntegrationSpec {
         def response = restTemplate.getForEntity(localUrl("/api/experiments/${apiVersion}"), List)
 
         then:
-        !response.body.stream()
-                .filter({e -> e.id in experiments})
-                .findAny()
-                .isPresent()
+        response.numberOfExperimentsPresent(experiments) == 0
 
         where:
         apiVersion << ['v1', 'v2']
@@ -105,18 +96,16 @@ class ClientExperimentsV3E2ESpec extends BaseIntegrationSpec {
         def response = restTemplate.getForEntity(localUrl("/api/experiments/v3"), List)
 
         then:
-        response.body.stream()
-                .filter({e -> e.id in experiments})
-                .count() == 2
+        response.numberOfExperimentsPresent(experiments) == 2
 
         and:
-        response.body.find {e -> e.id == experimentId1}.variants == RenderedExperimentVariantsBuilder.builder()
+        response.experimentVariants(experimentId1) == RenderedExperimentVariantsBuilder.builder()
                 .addVariant('base', experimentId1, [rangeOf(90, 100)])
                 .addVariant('v1', experimentId1, [rangeOf(0, 10)])
                 .build()
 
         and:
-        response.body.find {e -> e.id == experimentId2}.variants == RenderedExperimentVariantsBuilder.builder()
+        response.experimentVariants(experimentId2) == RenderedExperimentVariantsBuilder.builder()
                 .addVariant('base', experimentId1, [rangeOf(90, 100)])
                 .addVariant('v2', experimentId1, [rangeOf(10, 20)])
                 .build()
@@ -154,9 +143,7 @@ class ClientExperimentsV3E2ESpec extends BaseIntegrationSpec {
         def response = restTemplate.getForEntity(localUrl("/api/experiments/v3"), List)
 
         then:
-        response.body.stream()
-                .filter({e -> e.id in experiments})
-                .count() == 0
+        response.numberOfExperimentsPresent(experiments) == 0
     }
 
     def "should not ignore DRAFT experiments when rendering grouped experiments"() {
@@ -182,12 +169,10 @@ class ClientExperimentsV3E2ESpec extends BaseIntegrationSpec {
         def response = restTemplate.getForEntity(localUrl("/api/experiments/v3"), List)
 
         then:
-        response.body.stream()
-                .filter({e -> e.id in experiments})
-                .count() == 2
+        response.numberOfExperimentsPresent(experiments) == 2
 
         and:
-        response.body.find {e -> e.id == experimentId1}.variants == RenderedExperimentVariantsBuilder.builder()
+        response.experimentVariants(experimentId1) == RenderedExperimentVariantsBuilder.builder()
                 .addVariant('base', experimentId1, [rangeOf(90, 100)])
                 .addVariant('v1', experimentId1, [rangeOf(0, 10)])
                 .build()
@@ -242,121 +227,102 @@ class ClientExperimentsV3E2ESpec extends BaseIntegrationSpec {
         def response = restTemplate.getForEntity(localUrl("/api/experiments/v3"), List)
 
         then:
-        response.body.stream()
-                .filter({e -> e.id in experiments})
-                .count() == 4
+        response.numberOfExperimentsPresent(experiments) == 4
 
         and:
-        response.body.find {e -> e.id == experiment1}.variants == expectedExperiment1State
+        response.experimentVariants(experiment1) == expectedExperiment1State
 
         when:
         startExperiment(experiment2)
         response = restTemplate.getForEntity(localUrl("/api/experiments/v3"), List)
 
         then:
-        response.body.stream()
-                .filter({e -> e.id in experiments})
-                .count() == 4
+        response.numberOfExperimentsPresent(experiments) == 4
 
         and:
-        response.body.find {e -> e.id == experiment1}.variants == expectedExperiment1State
-        response.body.find {e -> e.id == experiment2}.variants == expectedExperiment2State
+        response.experimentVariants(experiment1) == expectedExperiment1State
+        response.experimentVariants(experiment2) == expectedExperiment2State
 
         when:
         startExperiment(experiment3)
         response = restTemplate.getForEntity(localUrl("/api/experiments/v3"), List)
 
         then:
-        response.body.stream()
-                .filter({e -> e.id in experiments})
-                .count() == 4
+        response.numberOfExperimentsPresent(experiments) == 4
 
         and:
-        response.body.find {e -> e.id == experiment1}.variants == expectedExperiment1State
-        response.body.find {e -> e.id == experiment2}.variants == expectedExperiment2State
-        response.body.find {e -> e.id == experiment3}.variants == expectedExperiment3State
+        response.experimentVariants(experiment1) == expectedExperiment1State
+        response.experimentVariants(experiment2) == expectedExperiment2State
+        response.experimentVariants(experiment3) == expectedExperiment3State
 
         when:
         startExperiment(experiment4)
         response = restTemplate.getForEntity(localUrl("/api/experiments/v3"), List)
 
         then:
-        response.body.stream()
-                .filter({e -> e.id in experiments})
-                .count() == 4
+        response.numberOfExperimentsPresent(experiments) == 4
 
         and:
-        response.body.find {e -> e.id == experiment1}.variants == expectedExperiment1State
-        response.body.find {e -> e.id == experiment2}.variants == expectedExperiment2State
-        response.body.find {e -> e.id == experiment3}.variants == expectedExperiment3State
-        response.body.find {e -> e.id == experiment4}.variants == expectedExperiment4State
+        response.experimentVariants(experiment1) == expectedExperiment1State
+        response.experimentVariants(experiment2) == expectedExperiment2State
+        response.experimentVariants(experiment3) == expectedExperiment3State
+        response.experimentVariants(experiment4) == expectedExperiment4State
 
         when:
         restTemplate.put(localUrl("/api/admin/experiments/${experiment2}/pause"), Map)
         response = restTemplate.getForEntity(localUrl("/api/experiments/v3"), List)
 
         then:
-        response.body.stream()
-                .filter({e -> e.id in experiments})
-                .count() == 3
+        response.numberOfExperimentsPresent(experiments) == 3
 
         and:
-        response.body.find {e -> e.id == experiment1}.variants == expectedExperiment1State
-        response.body.find {e -> e.id == experiment3}.variants == expectedExperiment3State
-        response.body.find {e -> e.id == experiment4}.variants == expectedExperiment4State
+        response.experimentVariants(experiment1) == expectedExperiment1State
+        response.experimentVariants(experiment3) == expectedExperiment3State
+        response.experimentVariants(experiment4) == expectedExperiment4State
 
         when:
         restTemplate.put(localUrl("/api/admin/experiments/${experiment3}/stop"), Map)
         response = restTemplate.getForEntity(localUrl("/api/experiments/v3"), List)
 
         then:
-        response.body.stream()
-                .filter({e -> e.id in experiments})
-                .count() == 2
+        response.numberOfExperimentsPresent(experiments) == 2
 
         and:
-        response.body.find {e -> e.id == experiment1}.variants == expectedExperiment1State
-        response.body.find {e -> e.id == experiment4}.variants == expectedExperiment4State
+        response.experimentVariants(experiment1) == expectedExperiment1State
+        response.experimentVariants(experiment4) == expectedExperiment4State
 
         when:
         restTemplate.put(localUrl("/api/admin/experiments/${experiment1}/pause"), Map)
         response = restTemplate.getForEntity(localUrl("/api/experiments/v3"), List)
 
         then:
-        response.body.stream()
-                .filter({e -> e.id in experiments})
-                .count() == 1
+        response.numberOfExperimentsPresent(experiments) == 1
 
         and:
-        response.body.find {e -> e.id == experiment4}.variants == expectedExperiment4State
+        response.experimentVariants(experiment4) == expectedExperiment4State
 
         when:
         restTemplate.put(localUrl("/api/admin/experiments/${experiment1}/resume"), Map)
         response = restTemplate.getForEntity(localUrl("/api/experiments/v3"), List)
 
         then:
-        response.body.stream()
-                .filter({e -> e.id in experiments})
-                .count() == 2
+        response.numberOfExperimentsPresent(experiments) == 2
 
         and:
-        response.body.find {e -> e.id == experiment1}.variants == expectedExperiment1State
-        response.body.find {e -> e.id == experiment4}.variants == expectedExperiment4State
+        response.experimentVariants(experiment1) == expectedExperiment1State
+        response.experimentVariants(experiment4) == expectedExperiment4State
 
         when:
         restTemplate.put(localUrl("/api/admin/experiments/${experiment2}/resume"), Map)
         response = restTemplate.getForEntity(localUrl("/api/experiments/v3"), List)
 
         then:
-        response.body.stream()
-                .filter({e -> e.id in experiments})
-                .count() == 3
+        response.numberOfExperimentsPresent(experiments) == 3
 
         and:
-        response.body.find {e -> e.id == experiment1}.variants == expectedExperiment1State
-        response.body.find {e -> e.id == experiment2}.variants == expectedExperiment2State
-        response.body.find {e -> e.id == experiment4}.variants == expectedExperiment4State
-
+        response.experimentVariants(experiment1) == expectedExperiment1State
+        response.experimentVariants(experiment2) == expectedExperiment2State
+        response.experimentVariants(experiment4) == expectedExperiment4State
     }
 
     def createDraftExperiment(String experimentId, List<String> variants, int percentage=10) {
