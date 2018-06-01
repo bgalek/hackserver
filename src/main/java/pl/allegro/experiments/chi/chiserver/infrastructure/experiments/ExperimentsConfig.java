@@ -130,7 +130,8 @@ public class ExperimentsConfig {
     ExperimentGroupRepository cachedExperimentGroupRepository(
             MongoTemplate mongoTemplate,
             Javers javers,
-            UserProvider userProvider) {
-        return new CachedExperimentGroupRepository(new MongoExperimentGroupRepository(mongoTemplate, javers, userProvider));
+            UserProvider userProvider,
+            ExperimentsMongoMetricsReporter metrics) {
+        return new CachedExperimentGroupRepository(new MongoExperimentGroupRepository(mongoTemplate, javers, userProvider, metrics));
     }
 }

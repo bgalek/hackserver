@@ -15,21 +15,26 @@ class MongoExperimentGroupRepository implements ExperimentGroupRepository {
     private final MongoTemplate mongoTemplate;
     private final Javers javers;
     private final UserProvider userProvider;
+    private final ExperimentsMongoMetricsReporter metrics;
 
     MongoExperimentGroupRepository(
             MongoTemplate mongoTemplate,
             Javers javers,
-            UserProvider userProvider) {
+            UserProvider userProvider,
+            ExperimentsMongoMetricsReporter metrics) {
         this.mongoTemplate = mongoTemplate;
         this.javers = javers;
         this.userProvider = userProvider;
+        this.metrics = metrics;
     }
 
     @Override
     public void save(ExperimentGroup experimentGroup) {
-        String username = userProvider.getCurrentUser().getName();
-        javers.commit(username, experimentGroup);
-        mongoTemplate.save(experimentGroup, COLLECTION);
+        metrics.timerSaveExperimentGroup().record(() -> {
+            String username = userProvider.getCurrentUser().getName();
+            javers.commit(username, experimentGroup);
+            mongoTemplate.save(experimentGroup, COLLECTION);
+        });
     }
 
     @Override
@@ -49,7 +54,8 @@ class MongoExperimentGroupRepository implements ExperimentGroupRepository {
 
     @Override
     public List<ExperimentGroup> all() {
-        return mongoTemplate.findAll(ExperimentGroup.class, COLLECTION);
+        return metrics.timerAllExperimentGroups().record(() ->
+                mongoTemplate.findAll(ExperimentGroup.class, COLLECTION));
     }
 
     @Override
