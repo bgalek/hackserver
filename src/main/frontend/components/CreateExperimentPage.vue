@@ -139,21 +139,21 @@
                 <v-flex xs11 text-xs-left>
                   <v-switch
                     label="Group together with another experiment"
-                    v-model="createGroupFlag"
+                    v-model="experimentGroup.createGroupFlag"
                   ></v-switch>
                   <v-select
-                    v-if="createGroupFlag"
+                    v-if="experimentGroup.createGroupFlag"
                     id="groupWithExperiment"
                     :items="experimentsThatCanBeGrouped"
-                    v-model="groupWithExperiment"
+                    v-model="experimentGroup.groupWithExperiment"
                     label="Group with"
                     :rules="groupWithExperimentRules"
                     single-line
                   ></v-select>
                   <v-text-field
-                    v-if="createGroupFlag"
+                    v-if="experimentGroup.createGroupFlag"
                     id="experimentGroupName"
-                    v-model="experimentGroupName"
+                    v-model="experimentGroup.experimentGroupName"
                     label="Group name"
                     :rules="experimentGroupIdRules"
                   ></v-text-field>
@@ -216,9 +216,11 @@
         reportingType: 'BACKEND',
         availableReportingTypes: ['BACKEND', 'FRONTEND', 'GTM'],
         eventDefinitions: [],
-        groupWithExperiment: null,
-        experimentGroupName: null,
-        createGroupFlag: false
+        experimentGroup: {
+          groupWithExperiment: null,
+          experimentGroupName: null,
+          createGroupFlag: false
+        }
       }
     },
 
@@ -305,11 +307,11 @@
       },
 
       isExperimentGroupIdUnique () {
-        return _.find(this.$store.state.experimentGroups.experimentGroups, e => e === this.experimentGroupName) === undefined
+        return _.find(this.$store.state.experimentGroups.experimentGroups, e => e === this.experimentGroup.experimentGroupName) === undefined
       },
 
       isGroupedExperiment () {
-        return this.groupWithExperiment != null && this.experimentGroupName != null
+        return this.experimentGroup.groupWithExperiment != null && this.experimentGroup.experimentGroupName != null
       },
 
       getExperimentDataToSend () {
@@ -333,8 +335,8 @@
           return {
             experimentCreationRequest: experimentCreationRequest,
             experimentGroupCreationRequest: {
-              id: this.experimentGroupName,
-              experiments: [this.experimentIdSlug, this.groupWithExperiment]
+              id: this.experimentGroup.experimentGroupName,
+              experiments: [this.experimentIdSlug, this.experimentGroup.groupWithExperiment]
             }
           }
         }
