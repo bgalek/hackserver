@@ -265,7 +265,7 @@
         this.cleanErrors()
 
         if (this.$refs.createForm.validate()) {
-          let createExperimentMethod = !this.isGroupedExperiment() ? this.createExperiment : this.createGroupedExperiment
+          let createExperimentMethod = this.shouldBeGrouped() ? this.createGroupedExperiment : this.createExperiment
           createExperimentMethod({data: this.getExperimentDataToSend()}).then(response => {
             this.notSending()
             this.$router.push('/experiments/' + this.experimentIdSlug)
@@ -310,7 +310,7 @@
         return _.find(this.$store.state.experimentGroups.experimentGroups, e => e === this.experimentGroup.experimentGroupName) === undefined
       },
 
-      isGroupedExperiment () {
+      shouldBeGrouped () {
         return this.experimentGroup.groupWithExperiment != null && this.experimentGroup.experimentGroupName != null
       },
 
@@ -329,9 +329,7 @@
           eventDefinitions: this.eventDefinitions
         }
 
-        if (!this.isGroupedExperiment()) {
-          return experimentCreationRequest
-        } else {
+        if (this.shouldBeGrouped()) {
           return {
             experimentCreationRequest: experimentCreationRequest,
             experimentGroupCreationRequest: {
@@ -339,6 +337,8 @@
               experiments: [this.experimentIdSlug, this.experimentGroup.groupWithExperiment]
             }
           }
+        } else {
+          return experimentCreationRequest
         }
       },
       ...mapActions([

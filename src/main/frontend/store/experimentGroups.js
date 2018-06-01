@@ -11,6 +11,6 @@ export default new Vapi({
   property: 'experimentGroups',
   path: '/admin/experiments/groups',
   onSuccess: (state, payload) => {
-    state.experimentGroups = _.map(payload.data, (experimentGroupData) => experimentGroupData.id)
+    state.experimentGroups = payload.data.map(e => e.id)
   }
 }).getStore()
