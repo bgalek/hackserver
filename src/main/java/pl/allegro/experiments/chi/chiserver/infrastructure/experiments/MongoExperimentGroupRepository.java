@@ -6,19 +6,17 @@ import pl.allegro.experiments.chi.chiserver.domain.UserProvider;
 import pl.allegro.experiments.chi.chiserver.domain.experiments.groups.ExperimentGroup;
 import pl.allegro.experiments.chi.chiserver.domain.experiments.groups.ExperimentGroupRepository;
 
-import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
-import java.util.Set;
 
-public class MongoExperimentGroupRepository implements ExperimentGroupRepository {
+class MongoExperimentGroupRepository implements ExperimentGroupRepository {
 
     private static final String COLLECTION = "experimentGroups";
     private final MongoTemplate mongoTemplate;
     private final Javers javers;
     private final UserProvider userProvider;
 
-    public MongoExperimentGroupRepository(
+    MongoExperimentGroupRepository(
             MongoTemplate mongoTemplate,
             Javers javers,
             UserProvider userProvider) {
@@ -36,22 +34,17 @@ public class MongoExperimentGroupRepository implements ExperimentGroupRepository
 
     @Override
     public Optional<ExperimentGroup> get(String id) {
-        return Optional.ofNullable(mongoTemplate.findById(id, ExperimentGroup.class, COLLECTION));
+        throw new UnsupportedOperationException("MongoExperimentGroupRepository.get not implemented");
     }
 
     @Override
     public boolean exists(String id) {
-        return get(id).isPresent();
+        throw new UnsupportedOperationException("MongoExperimentGroupRepository.exists not implemented");
     }
 
     @Override
     public boolean experimentInGroup(String experimentId) {
-        List<ExperimentGroup> groups = all();
-        Set<String> experimentsWithGroup = new HashSet<>();
-        for (ExperimentGroup group: groups) {
-            experimentsWithGroup.addAll(group.getExperiments());
-        }
-        return experimentsWithGroup.contains(experimentId);
+        throw new UnsupportedOperationException("MongoExperimentGroupRepository.experimentInGroup not implemented");
     }
 
     @Override
@@ -61,8 +54,6 @@ public class MongoExperimentGroupRepository implements ExperimentGroupRepository
 
     @Override
     public Optional<ExperimentGroup> getExperimentGroup(String experimentId) {
-        return all().stream()
-                .filter(group -> group.contains(experimentId))
-                .findFirst();
+        throw new UnsupportedOperationException("MongoExperimentGroupRepository.getExperimentGroup not implemented");
     }
 }

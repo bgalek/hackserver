@@ -84,12 +84,13 @@ class ExperimentsE2ESpec extends BaseIntegrationSpec implements ExampleExperimen
         response.statusCode.value() == 200
 
         and:
-        response.body.contains(ExampleClientExperiments.internalExperiment())
-        response.body.contains(ExampleClientExperiments.plannedExperiment())
-        response.body.contains(ExampleClientExperiments.cmuidRegexpExperiment())
-        response.body.contains(ExampleClientExperiments.hashVariantExperiment())
-        response.body.contains(ExampleClientExperiments.sampleExperiment())
-        response.body.contains(ExampleClientExperiments.timeboundExperiment())
+        response.body.containsAll(
+                ExampleClientExperiments.internalExperiment(),
+                ExampleClientExperiments.cmuidRegexpExperiment(),
+                ExampleClientExperiments.plannedExperiment(),
+                ExampleClientExperiments.hashVariantExperiment(),
+                ExampleClientExperiments.sampleExperiment(),
+                ExampleClientExperiments.timeboundExperiment())
         !response.body.contains(ExampleClientExperiments.experimentFromThePast())
     }
 
@@ -106,15 +107,16 @@ class ExperimentsE2ESpec extends BaseIntegrationSpec implements ExampleExperimen
         response.statusCode.value() == 200
 
         and:
-        response.body.contains(internalExperiment())
-        response.body.contains(plannedExperiment())
-        response.body.contains(cmuidRegexpExperiment())
-        response.body.contains(cmuidRegexpWithPhoneExperiment())
-        response.body.contains(hashVariantExperiment())
-        response.body.contains(sampleExperiment())
-        response.body.contains(timeboundExperiment())
-        response.body.contains(experimentFromThePast())
-        response.body.contains(pausedExperiment())
+        response.body.containsAll(
+                internalExperiment(),
+                plannedExperiment(),
+                cmuidRegexpExperiment(),
+                cmuidRegexpWithPhoneExperiment(),
+                hashVariantExperiment(),
+                sampleExperiment(),
+                timeboundExperiment(),
+                experimentFromThePast(),
+                pausedExperiment())
     }
 
     def "should return last valid list when file is corrupted"() {
@@ -131,14 +133,15 @@ class ExperimentsE2ESpec extends BaseIntegrationSpec implements ExampleExperimen
         response.statusCode.value() == 200
 
         and:
-        response.body.contains(ExampleClientExperiments.internalExperiment())
-        response.body.contains(ExampleClientExperiments.plannedExperiment())
-        response.body.contains(ExampleClientExperiments.cmuidRegexpExperiment())
-        response.body.contains(ExampleClientExperiments.hashVariantExperiment())
-        response.body.contains(ExampleClientExperiments.sampleExperiment())
-        response.body.contains(ExampleClientExperiments.timeboundExperiment())
-        response.body.contains(ExampleClientExperiments.cmuidRegexpWithPhoneExperiment())
-    }
+        response.body.containsAll(
+                ExampleClientExperiments.internalExperiment(),
+                ExampleClientExperiments.plannedExperiment(),
+                ExampleClientExperiments.cmuidRegexpExperiment(),
+                ExampleClientExperiments.hashVariantExperiment(),
+                ExampleClientExperiments.sampleExperiment(),
+                ExampleClientExperiments.timeboundExperiment(),
+                ExampleClientExperiments.cmuidRegexpWithPhoneExperiment())
+        }
 
     def "should return BAD_REQUEST when predicate type is incorrect"() {
         given:

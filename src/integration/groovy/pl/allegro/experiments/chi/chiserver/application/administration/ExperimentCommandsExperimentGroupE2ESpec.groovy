@@ -47,7 +47,7 @@ class ExperimentCommandsExperimentGroupE2ESpec extends BaseIntegrationSpec {
         when:
         restTemplate.delete(localUrl("/api/admin/experiments/${experimentId1}"))
 
-        then: // group size less than 2?
+        then:
         Map group = restTemplate.getForEntity(localUrl("/api/admin/experiments/groups/${groupId}"), Map).body
         group.experiments == [experimentId2]
 

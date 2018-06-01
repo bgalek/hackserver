@@ -42,7 +42,7 @@ export default class ExperimentModel extends ExperimentRecord {
     experimentObject.groups = List(experimentObject.groups)
     experimentObject.variantNames = List(experimentObject.variantNames)
     experimentObject.eventDefinitions = List(experimentObject.eventDefinitions)
-    if (experimentObject.experimentGroup != null) {
+    if (experimentObject.experimentGroup) {
       experimentObject.experimentGroup = experimentObject.experimentGroup.id
     }
     super(experimentObject)
@@ -116,7 +116,7 @@ export default class ExperimentModel extends ExperimentRecord {
   }
 
   isInGroup () {
-    return this.experimentGroup != null
+    return this.experimentGroup
   }
 
   canBeGrouped () {
