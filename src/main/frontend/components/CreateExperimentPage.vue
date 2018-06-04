@@ -148,6 +148,7 @@
                     v-model="experimentGroup.groupWithExperiment"
                     label="Group with"
                     :rules="groupWithExperimentRules"
+                    :autocomplete="true"
                     single-line
                   ></v-select>
                   <v-text-field
@@ -229,6 +230,7 @@
         experimentsThatCanBeGrouped: state => state.experiments.experiments
           .filter((e, index, array) => { return e.canBeGrouped() })
           .map((e, index, array) => { return e.id })
+          .sort()
       }),
 
       showForm () {

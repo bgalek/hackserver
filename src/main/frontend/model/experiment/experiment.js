@@ -123,7 +123,7 @@ export default class ExperimentModel extends ExperimentRecord {
     return !this.isInGroup() &&
       this.origin === 'MONGO' &&
       this.reportingType === 'BACKEND' &&
-      this.status === 'DRAFT'
+      ['DRAFT', 'ACTIVE'].includes(this.status)
   }
 
   canRunLifecycleCommand () {
