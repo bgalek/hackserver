@@ -22,6 +22,9 @@ class CreateExperimentPage extends Page {
         experimentId
     }
 
+    String pushTheCreateButton(){
+        $("#createExperimentFormSubmitButton").click()
+    }
     void waitForPageLoad() {
         waitFor {$("#experimentIdFormField").displayed}
     }
@@ -34,8 +37,7 @@ class CreateExperimentSpec extends BaseUiSpec {
     def "should redirect to experiment details after creating experiment"() {
 
         given:
-        browser.clearCookies()
-        to ManageExperimentPage
+        to CreateExperimentPage
 
         and:
         waitForPageLoad()
@@ -45,5 +47,22 @@ class CreateExperimentSpec extends BaseUiSpec {
 
         then:
         successfullyRedirectedToExperimentDetails(experimentId)
+    }
+    def "should block redirect when required fields are not filled"() {
+
+        given:
+        to CreateExperimentPage
+
+        and:
+        waitForPageLoad()
+
+        when:
+        pushTheCreateButton()
+
+        then:
+        assert $("div:nth-child(1) > div.flex.xs11 > div > div.input-group__details > div").text() == "Experiment ID is required"
+
+        and:
+        assert $("div:nth-child(3) > div > div > div.input-group__details > div").text() == "No variants. Seriously?"
     }
 }

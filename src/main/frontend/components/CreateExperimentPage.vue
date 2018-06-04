@@ -11,7 +11,7 @@
           </v-alert>
 
           <v-form v-model="createFormValid"
-                ref="createForm"
+                  ref="createForm"
                 lazy-validation>
 
             <v-container fluid style="margin: 0px; padding: 0px" text-xs-center>
