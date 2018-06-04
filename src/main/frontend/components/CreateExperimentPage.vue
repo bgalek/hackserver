@@ -38,6 +38,7 @@
 
                 <v-flex offset-xs1>
                   <v-text-field
+                    id="experimentIdSlug"
                     style="width: 300px"
                     v-model="experimentIdSlug"
                     label="Final Experiment ID"

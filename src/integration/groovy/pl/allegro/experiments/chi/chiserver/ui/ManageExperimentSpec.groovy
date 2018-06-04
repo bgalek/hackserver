@@ -3,7 +3,7 @@ package pl.allegro.experiments.chi.chiserver.ui
 import geb.Page
 import org.springframework.test.context.ContextConfiguration
 
-class CreateExperimentPage extends Page {
+class ManageExperimentPage extends Page {
 
     static url = "#/experiments/create"
 
@@ -28,7 +28,7 @@ class CreateExperimentPage extends Page {
 }
 
 @ContextConfiguration(classes = [LoggedInAsRootTestConfig])
-class CreateExperimentSpec extends BaseUiSpec {
+class ManageExperimentSpec extends BaseUiSpec {
 
     @UiTest
     def "should redirect to experiment details after creating experiment"() {
