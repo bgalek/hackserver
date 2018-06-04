@@ -50,8 +50,8 @@ public class DeleteExperimentCommand {
             throw new ExperimentCommandException("Experiment with statistics cannot be deleted: " + experimentId);
         }
         if (experimentGroupRepository.experimentInGroup(experimentId) &&
-                !experiment.getStatus().equals(ExperimentStatus.DRAFT)) {
-            throw new ExperimentCommandException("Non DRAFT experiment bound to group cannot be deleted");
+                !experiment.isDraft()) {
+            throw new ExperimentCommandException("Non-DRAFT experiment bounded to a group can not be deleted");
         }
     }
 }

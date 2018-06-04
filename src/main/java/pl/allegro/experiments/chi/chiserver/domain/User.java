@@ -42,6 +42,10 @@ public class User {
         return name.equals(ANONYMOUS);
     }
 
+    public boolean isLoggedIn() {
+        return !isAnonymous() || isRoot();
+    }
+
     private boolean isAuthor(ExperimentDefinition experiment) {
         return experiment.getAuthor() != null && experiment.getAuthor().equals(name);
     }
