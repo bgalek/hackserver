@@ -12,7 +12,7 @@ public class ExperimentGroupDeserializer implements Converter<Document, Experime
     public ExperimentGroup convert(Document source) {
         return new ExperimentGroup(
                 (String) source.get("id"),
-                (String) source.get("nameSpace"),
+                (String) source.get("salt"),
                 (List<String>) source.get("experiments")
         );
     }

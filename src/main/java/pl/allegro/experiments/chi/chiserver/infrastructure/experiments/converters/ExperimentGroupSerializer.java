@@ -12,7 +12,7 @@ public class ExperimentGroupSerializer implements Converter<ExperimentGroup, Doc
 
         result.put("experiments", source.getExperiments());
         result.put("id", source.getId());
-        result.put("nameSpace", source.getNameSpace());
+        result.put("salt", source.getSalt());
 
         return result;
     }

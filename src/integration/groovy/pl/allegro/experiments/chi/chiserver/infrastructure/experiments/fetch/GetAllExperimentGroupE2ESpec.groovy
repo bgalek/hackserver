@@ -36,7 +36,7 @@ class GetAllExperimentGroupE2ESpec extends BaseIntegrationSpec {
         then:
         allGroups.find({g -> g.id == groupId}) == [
                 id: groupId,
-                nameSpace: experimentId1,
+                salt: experimentId1,
                 experiments: [experimentId1, experimentId2]
         ]
     }

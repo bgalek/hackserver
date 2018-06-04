@@ -15,7 +15,7 @@ public class ExperimentGroupTypeSerializer implements JsonSerializer<ExperimentG
         JsonObject result = new JsonObject();
 
         result.addProperty("id", src.getId());
-        result.addProperty("nameSpace", src.getNameSpace());
+        result.addProperty("salt", src.getSalt());
         result.add("experiments", context.serialize(src.getExperiments()));
         return result;
     }

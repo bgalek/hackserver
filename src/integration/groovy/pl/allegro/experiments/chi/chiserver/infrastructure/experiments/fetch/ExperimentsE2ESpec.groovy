@@ -232,14 +232,14 @@ class ExperimentsE2ESpec extends BaseIntegrationSpec implements ExampleExperimen
                 .body['experimentGroup'] == [
                     id: groupId,
                     experiments: [experimentId1, experimentId2],
-                    nameSpace: experimentId2
+                    salt: experimentId2
                 ]
 
         restTemplate.getForEntity(localUrl("/api/admin/experiments"), List).body
                 .find({it -> it.id == experimentId1})['experimentGroup'] == [
                     id: groupId,
                     experiments: [experimentId1, experimentId2],
-                    nameSpace: experimentId2
+                    salt: experimentId2
                 ]
     }
 }

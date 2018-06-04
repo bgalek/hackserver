@@ -63,7 +63,7 @@ public class ClientExperimentFactory {
                                     ranges.add(new PercentageRange(percentageRangeStart, percentageRangeStart + assignableExperiment.getPercentage().get()));
                                     percentageRangeStart += assignableExperiment.getPercentage().get();
                                 }
-                                variantPredicates.add(new ShredHashRangePredicate(ranges, experimentGroup.getNameSpace()));
+                                variantPredicates.add(new ShredHashRangePredicate(ranges, experimentGroup.getSalt()));
                                 variants.add(new ExperimentVariant(variantName, variantPredicates));
                             }
                             return new ClientExperiment(

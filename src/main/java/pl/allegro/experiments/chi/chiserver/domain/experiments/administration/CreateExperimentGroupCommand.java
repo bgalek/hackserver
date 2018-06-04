@@ -12,6 +12,7 @@ import pl.allegro.experiments.chi.chiserver.infrastructure.experiments.Experimen
 import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 public class CreateExperimentGroupCommand {
     private final ExperimentGroupRepository experimentGroupRepository;
@@ -60,21 +61,19 @@ public class CreateExperimentGroupCommand {
 
         checkIfGroupDoesNotContainsStashExperiments(experiments);
 
-        checkIfAllExperimentsInGroupAreBackend(experiments);
-
         checkIfGroupHasEnoughPercentageSpaceForAllExperiments(experiments);
 
         checkIfAllExperimentsHaveNoGroup(experiments);
 
-        return new ExperimentGroup(id, getNameSpace(experiments), experiments);
+        return new ExperimentGroup(id, getSalt(experiments), experiments);
     }
 
-    private String getNameSpace(List<String> experiments) {
+    private String getSalt(List<String> experiments) {
         return experiments.stream()
                 .map(experimentsRepository::getExperiment)
                 .filter(experiment ->
                     experiment.isPresent() &&
-                            !experiment.get().getStatus().equals(ExperimentStatus.DRAFT)
+                            !experiment.get().isDraft()
                 ).map(experiment -> experiment.get())
                 .findFirst()
                 .map(experiment -> experiment.getId())
@@ -83,7 +82,7 @@ public class CreateExperimentGroupCommand {
 
     private void checkIfAllExperimentsHaveNoGroup(List<String> experiments) {
         if (experiments.stream().anyMatch(e -> experimentGroupRepository.experimentInGroup(e))) {
-            throw new ExperimentCommandException("Cannot create group is one of the experiments is in another group");
+            throw new ExperimentCommandException("Cannot create group if one of the experiments is in another group");
         }
     }
 
@@ -93,27 +92,13 @@ public class CreateExperimentGroupCommand {
         }
     }
 
-    private void checkIfAllExperimentsInGroupAreBackend(List<String> experiments) {
-        int numberOfBackendExperiments = experiments.stream()
-                .map(experimentsRepository::getExperiment)
-                .map(e -> e.get())
-                .map(e -> e.getReportingDefinition().getType())
-                .mapToInt(reportingType -> reportingType.equals(ReportingType.BACKEND) ? 1 : 0)
-                .sum();
-
-        if (numberOfBackendExperiments != experiments.size()) {
-            throw new ExperimentCommandException("Cannot create group if one of the experiments is not BACKEND");
-        }
-    }
-
     private void checkIfGroupDoesNotContainsStashExperiments(List<String> experiments) {
-        int numberOfStashExperiments = experiments.stream()
+        boolean stashExperimentPresent = experiments.stream()
                 .map(experimentsRepository::getExperiment)
                 .map(e -> experimentsRepository.getOrigin(e.get().getId()))
-                .mapToInt(origin -> origin.equals(ExperimentOrigin.STASH) ? 1 : 0)
-                .sum();
+                .anyMatch(origin -> origin.equals(ExperimentOrigin.STASH));
 
-        if (numberOfStashExperiments != 0) {
+        if (stashExperimentPresent) {
             throw new ExperimentCommandException("Cannot create group with stash experiments");
         }
     }
@@ -154,30 +139,10 @@ public class CreateExperimentGroupCommand {
     }
 
     private boolean enoughPercentageSpace(List<String> experiments) {
-        int maxBasePercentage = experiments.stream()
+        return ExperimentGroup.enoughPercentageSpace(experiments.stream()
                 .map(experimentsRepository::getExperiment)
-                .map(e -> e.get())
-                .map(e -> e.getDefinition()
-                        .get()
-                        .getPercentage()
-                        .get())
-                .max(Integer::compare)
-                .get();
-        int percentageSum = experiments.stream()
-                .map(experimentsRepository::getExperiment)
-                .map(e -> e.get())
-                .mapToInt(e -> {
-                    int percentage = e.getDefinition()
-                            .get()
-                            .getPercentage()
-                            .get();
-                    int numberOfVariantsDifferentThanBase = e.getDefinition()
-                            .get()
-                            .getVariantNames()
-                            .size() - 1;
-                    return numberOfVariantsDifferentThanBase * percentage;
-                }).sum();
-
-        return maxBasePercentage + percentageSum <= 100;
+                .map(e -> e.get().getDefinition().get())
+                .collect(Collectors.toList())
+        );
     }
 }

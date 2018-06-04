@@ -194,36 +194,6 @@ class CreateExperimentGroupE2ESpec extends BaseIntegrationSpec {
         ex.statusCode == HttpStatus.BAD_REQUEST
     }
 
-    def "should not create experiment group if one of experiments is not BACKEND"() {
-        given:
-        userProvider.user = new User('Author', [], true)
-        String groupId = UUID.randomUUID().toString()
-
-        and:
-        String experimentId1 = UUID.randomUUID().toString()
-        String experimentId2 = UUID.randomUUID().toString()
-
-        createDraftExperiment(experimentId1)
-        def request = [
-                id              : experimentId2,
-                variantNames    : ['v2'],
-                percentage      : 10,
-                reportingType   : 'FRONTEND',
-                eventDefinitions: []
-        ]
-        restTemplate.postForEntity(localUrl('/api/admin/experiments'), request, Map)
-
-        when:
-        restTemplate.postForEntity(localUrl('/api/admin/experiments/groups'), [
-                id: groupId,
-                experiments: [experimentId1, experimentId2]
-        ], Map)
-
-        then:
-        def ex = thrown(HttpClientErrorException)
-        ex.statusCode == HttpStatus.BAD_REQUEST
-    }
-
     def "should not create experiment group if there is not enough percentage space"() {
         given:
         userProvider.user = new User('Author', [], true)
@@ -297,6 +267,6 @@ class CreateExperimentGroupE2ESpec extends BaseIntegrationSpec {
 
         then:
         Map createdGroup = restTemplate.getForEntity(localUrl("/api/admin/experiments/groups/${groupId}"), Map).body
-        createdGroup.nameSpace == experimentId1
+        createdGroup.salt == experimentId1
     }
 }
