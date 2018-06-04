@@ -17,6 +17,7 @@ import java.util.stream.Collectors;
 public class CreateExperimentGroupCommand {
     private final ExperimentGroupRepository experimentGroupRepository;
     private final ExperimentsRepository experimentsRepository;
+    private final PermissionsAwareExperimentRepository permissionsAwareExperimentRepository;
     private final UserProvider userProvider;
     private final ExperimentGroupCreationRequest experimentGroupCreationRequest;
 
@@ -24,15 +25,18 @@ public class CreateExperimentGroupCommand {
             ExperimentGroupRepository experimentGroupRepository,
             ExperimentsRepository experimentsRepository,
             UserProvider userProvider,
-            ExperimentGroupCreationRequest experimentGroupCreationRequest) {
+            ExperimentGroupCreationRequest experimentGroupCreationRequest,
+            PermissionsAwareExperimentRepository permissionsAwareExperimentRepository) {
         Objects.requireNonNull(experimentGroupRepository);
         Objects.requireNonNull(userProvider);
         Objects.requireNonNull(experimentsRepository);
         Objects.requireNonNull(experimentGroupCreationRequest);
+        Objects.requireNonNull(permissionsAwareExperimentRepository);
         this.experimentGroupRepository = experimentGroupRepository;
         this.userProvider = userProvider;
         this.experimentsRepository = experimentsRepository;
         this.experimentGroupCreationRequest = experimentGroupCreationRequest;
+        this.permissionsAwareExperimentRepository = permissionsAwareExperimentRepository;
     }
 
     public void execute() {
@@ -60,6 +64,8 @@ public class CreateExperimentGroupCommand {
         checkIfGroupContainsMax1NonDraftExperiment(experiments);
 
         checkIfGroupDoesNotContainsStashExperiments(experiments);
+
+        permissionsAwareExperimentRepository.checkIfUserHasPermissionsToAllExperiments(experiments);
 
         checkIfGroupHasEnoughPercentageSpaceForAllExperiments(experiments);
 

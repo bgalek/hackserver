@@ -6,6 +6,8 @@ import pl.allegro.experiments.chi.chiserver.domain.UserProvider;
 import pl.allegro.experiments.chi.chiserver.domain.experiments.Experiment;
 import pl.allegro.experiments.chi.chiserver.domain.experiments.ExperimentsRepository;
 
+import java.util.List;
+
 public class PermissionsAwareExperimentRepository {
     private final ExperimentsRepository experimentsRepository;
     private final UserProvider userProvider;
@@ -29,5 +31,9 @@ public class PermissionsAwareExperimentRepository {
                     }
                     return e;
                 }).orElseThrow(() -> new ExperimentNotFoundException("Experiment not found: " + experimentId));
+    }
+
+    void checkIfUserHasPermissionsToAllExperiments(List<String> experiments) {
+        experiments.forEach(this::getExperimentOrException);
     }
 }

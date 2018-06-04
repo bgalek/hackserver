@@ -35,7 +35,7 @@ class CreatePairedExperimentE2ESpec extends BaseIntegrationSpec {
 
     def "should create paired experiment"() {
         given:
-        userProvider.user = new User('Anonymous', [], true)
+        userProvider.user = new User('Root', [], true)
 
         String experimentId1 = UUID.randomUUID().toString()
         String experimentId2 = UUID.randomUUID().toString()
@@ -77,7 +77,7 @@ class CreatePairedExperimentE2ESpec extends BaseIntegrationSpec {
 
     def "should not create paired experiment if cannot create group"() {
         given:
-        userProvider.user = new User('Anonymous', [], true)
+        userProvider.user = new User('Root', [], true)
 
         String experimentId1 = UUID.randomUUID().toString()
         String unknownExperimentId = UUID.randomUUID().toString()
@@ -127,7 +127,7 @@ class CreatePairedExperimentE2ESpec extends BaseIntegrationSpec {
 
     def "should not create paired experiment if cannot create experiment"() {
         given:
-        userProvider.user = new User('Anonymous', [], true)
+        userProvider.user = new User('Root', [], true)
 
         String experimentId1 = UUID.randomUUID().toString()
         String experimentId2 = UUID.randomUUID().toString()

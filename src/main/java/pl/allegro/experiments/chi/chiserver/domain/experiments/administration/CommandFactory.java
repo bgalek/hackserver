@@ -140,7 +140,8 @@ public class CommandFactory {
                 experimentGroupRepository,
                 experimentsRepository,
                 userProvider,
-                experimentGroupCreationRequest
+                experimentGroupCreationRequest,
+                permissionsAwareExperimentRepository
         );
     }
 
