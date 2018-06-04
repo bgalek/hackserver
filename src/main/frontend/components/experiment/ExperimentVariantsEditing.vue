@@ -32,6 +32,7 @@
 
         <v-flex offset-xs1>
           <v-select
+            id="experimentVariants"
             label="Variants"
             :rules="variantsRules"
             :readonly="!allowModifyRegularVariants"
