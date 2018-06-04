@@ -122,7 +122,7 @@ export default class ExperimentModel extends ExperimentRecord {
   canBeGrouped () {
     return !this.isInGroup() &&
       this.origin === 'MONGO' &&
-      this.reportingType === 'BACKEND' &&
+      ['BACKEND', 'FRONTEND', 'GTM'].includes(this.reportingType) &&
       ['DRAFT', 'ACTIVE'].includes(this.status)
   }
 
