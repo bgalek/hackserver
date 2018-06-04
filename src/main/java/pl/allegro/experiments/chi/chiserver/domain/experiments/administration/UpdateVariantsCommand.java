@@ -28,7 +28,7 @@ public class UpdateVariantsCommand {
     public void execute() {
         Experiment experiment = permissionsAwareExperimentRepository.getExperimentOrException(experimentId);
         if (experimentGroupRepository.experimentInGroup(experimentId)) {
-            throw new ExperimentCommandException("Cannot change variants of experiment bounded to group");
+            throw new ExperimentCommandException("Can not change variants of experiment bounded to a group");
         }
         ExperimentDefinition mutated = experiment.getDefinition()
                 .orElseThrow(() -> new UnsupportedOperationException("Missing experiment definition"))
