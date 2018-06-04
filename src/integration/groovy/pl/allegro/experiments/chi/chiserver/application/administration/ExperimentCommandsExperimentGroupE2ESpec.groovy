@@ -85,7 +85,7 @@ class ExperimentCommandsExperimentGroupE2ESpec extends BaseIntegrationSpec {
         ex.statusCode == HttpStatus.BAD_REQUEST
     }
 
-    def "should set experiment as list head when starting"() {
+    def "should set experiment as list tail when starting"() {
         given:
         userProvider.user = new User('Author', [], true)
         String groupId = UUID.randomUUID().toString()

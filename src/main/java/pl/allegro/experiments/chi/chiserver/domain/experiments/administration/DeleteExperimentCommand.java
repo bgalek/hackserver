@@ -39,7 +39,7 @@ public class DeleteExperimentCommand {
 
         experimentGroupRepository.getExperimentGroup(experimentId)
                 .ifPresent(experimentGroup ->
-                    experimentGroupRepository.save(experimentGroup.withRemovedExperiment(experimentId))
+                    experimentGroupRepository.save(experimentGroup.removeExperiment(experimentId))
                 );
 
         experimentsRepository.delete(experiment.getId());

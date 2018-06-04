@@ -3,7 +3,6 @@ package pl.allegro.experiments.chi.chiserver.domain.experiments.administration;
 import pl.allegro.experiments.chi.chiserver.domain.experiments.Experiment;
 import pl.allegro.experiments.chi.chiserver.domain.experiments.ExperimentDefinition;
 import pl.allegro.experiments.chi.chiserver.domain.experiments.ExperimentsRepository;
-import pl.allegro.experiments.chi.chiserver.domain.experiments.groups.ExperimentGroup;
 import pl.allegro.experiments.chi.chiserver.domain.experiments.groups.ExperimentGroupRepository;
 
 import java.util.Objects;
@@ -43,7 +42,7 @@ public class StartExperimentCommand {
         experimentGroupRepository.getExperimentGroup(experimentId)
                 .ifPresent(experimentGroup ->
                     experimentGroupRepository
-                            .save(experimentGroup.withExperimentMovedToHeadPosition(experimentId))
+                            .save(experimentGroup.moveExperimentToTail(experimentId))
                 );
         experimentsRepository.save(started);
     }

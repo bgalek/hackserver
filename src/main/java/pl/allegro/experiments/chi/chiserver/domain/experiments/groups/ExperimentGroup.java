@@ -36,17 +36,17 @@ public class ExperimentGroup {
         return experiments.contains(experimentId);
     }
 
-    public ExperimentGroup withRemovedExperiment(String experimentId) {
+    public ExperimentGroup removeExperiment(String experimentId) {
         return new ExperimentGroup(id, nameSpace, experiments.stream()
                 .filter(e -> !e.equals(experimentId))
                 .collect(Collectors.toList()));
     }
 
-    public ExperimentGroup withExperimentMovedToHeadPosition(String experimentId) {
-        return withRemovedExperiment(experimentId).withAppendedExperiment(experimentId);
+    public ExperimentGroup moveExperimentToTail(String experimentId) {
+        return removeExperiment(experimentId).addExperiment(experimentId);
     }
 
-    private ExperimentGroup withAppendedExperiment(String experimentId) {
+    private ExperimentGroup addExperiment(String experimentId) {
         List<String> extendedExperiments = new ArrayList<>(experiments);
         extendedExperiments.add(experimentId);
         return new ExperimentGroup(id, nameSpace, extendedExperiments);
