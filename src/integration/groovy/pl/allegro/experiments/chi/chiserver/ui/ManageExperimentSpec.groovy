@@ -20,7 +20,7 @@ class ManageExperimentPage extends Page {
 class ManageExperimentSpec extends BaseUiSpec {
 
     @UiTest
-    def "should redirect to experiment details after creating experiment"() {
+    def "should redirect to experiment details after creating experiment "() {
 
         given:
         to ManageExperimentPage
