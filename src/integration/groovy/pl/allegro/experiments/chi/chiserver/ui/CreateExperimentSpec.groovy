@@ -48,7 +48,7 @@ class CreateExperimentSpec extends BaseUiSpec {
         then:
         successfullyRedirectedToExperimentDetails(experimentId)
     }
-    def "should block redirect when required fields are not filled"() {
+    def "should show validation statements after create experiment without required fields"() {
 
         given:
         to CreateExperimentPage
