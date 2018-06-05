@@ -38,6 +38,7 @@
 
                 <v-flex offset-xs1>
                   <v-text-field
+                    id="experimentIdSlug"
                     style="width: 300px"
                     v-model="experimentIdSlug"
                     label="Final Experiment ID"
@@ -50,26 +51,6 @@
             </v-container>
 
             <experiment-desc-editing v-model="descriptions" />
-
-            <v-container fluid style="margin: 0px; padding: 0px" text-xs-center>
-
-              <v-layout row align-top v-if="false">
-
-                <v-flex xs1>
-                  <v-tooltip right>
-                    <span>Disable <b>reporting</b> if don't want this experiment to be measured by Chi.</span>
-                    <v-icon
-                      slot="activator">help_outline</v-icon>
-                  </v-tooltip>
-                </v-flex>
-                <v-flex xs11>
-                  <v-switch
-                    label="Reporting" v-model="reportingEnabled" slot="activator">
-                  </v-switch>
-                </v-flex>
-
-              </v-layout>
-            </v-container>
 
             <experiment-variants-editing :allowModifyRegularVariants="true" v-model="variants" />
 
@@ -92,7 +73,7 @@
                       slot="activator">help_outline</v-icon>
                   </v-tooltip>
                 </v-flex>
-                <v-flex xs11>
+                <v-flex xs11 id="reportingTypeDropdown">
                   <v-select
                     :items="availableReportingTypes"
                     v-model="reportingType"
