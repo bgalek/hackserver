@@ -129,7 +129,7 @@
 
                 <v-flex xs1>
                   <v-tooltip right>
-                    <span>You can create group of exclusive experiments. Experiments in group will not interfere with each other.</span>
+                    <span>You can create a group of mutually exclusive experiments. Experiments in group will not interfere with each other. Useful when you have many experiments in the same area of the system.</span>
                     <v-icon
                       slot="activator">help_outline</v-icon>
                   </v-tooltip>

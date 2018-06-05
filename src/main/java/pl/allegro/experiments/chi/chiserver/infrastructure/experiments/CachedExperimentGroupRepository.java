@@ -16,7 +16,7 @@ import java.util.Optional;
 
 public class CachedExperimentGroupRepository implements ExperimentGroupRepository {
     private List<ExperimentGroup> experimentGroups;
-    private Map<String, ExperimentGroup> experimentGroupMap;
+    private Map<String, ExperimentGroup> experimentGroupsByExperimentId;
     private final MongoExperimentGroupRepository delegate;
     private static final long REFRESH_RATE_IN_SECONDS = 1;
     private static final Logger logger = LoggerFactory.getLogger(CachedExperimentGroupRepository.class);
@@ -51,7 +51,7 @@ public class CachedExperimentGroupRepository implements ExperimentGroupRepositor
     private void refresh() {
         metrics.timerAllExperimentGroups().record(() ->
                 experimentGroups = delegate.findAll());
-        experimentGroupMap = buildExperimentGroupMap(experimentGroups);
+        experimentGroupsByExperimentId = buildExperimentGroupMap(experimentGroups);
     }
 
     private Map<String, ExperimentGroup> buildExperimentGroupMap(List<ExperimentGroup> experimentGroups) {
@@ -93,11 +93,11 @@ public class CachedExperimentGroupRepository implements ExperimentGroupRepositor
 
     @Override
     public List<ExperimentGroup> findAll() {
-        return ImmutableList.copyOf(experimentGroups);
+        return List.copyOf(experimentGroups);
     }
 
     @Override
     public Optional<ExperimentGroup> findByExperimentId(String experimentId) {
-        return Optional.ofNullable(experimentGroupMap.get(experimentId));
+        return Optional.ofNullable(experimentGroupsByExperimentId.get(experimentId));
     }
 }
