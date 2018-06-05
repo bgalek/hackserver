@@ -7,8 +7,8 @@ import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import pl.allegro.experiments.chi.chiserver.domain.experiments.ExperimentStatus;
 import pl.allegro.experiments.chi.chiserver.domain.experiments.ExperimentsRepository;
+import pl.allegro.experiments.chi.chiserver.domain.experiments.groups.ExperimentGroupRepository;
 import pl.allegro.tech.common.andamio.metrics.MeteredEndpoint;
 
 import java.util.stream.Collectors;
@@ -22,16 +22,19 @@ public class ClientExperimentsControllerV1 {
     private final ExperimentsRepository experimentsRepository;
     private final Gson jsonConverterV1;
     private final CrisisManagementFilter crisisManagementFilter;
+    private final ExperimentGroupRepository experimentGroupRepository;
 
     private static final Logger logger = LoggerFactory.getLogger(ClientExperimentsControllerV1.class);
 
     public ClientExperimentsControllerV1(
             ExperimentsRepository experimentsRepository,
             Gson jsonConverterV1,
-            CrisisManagementFilter crisisManagementFilter) {
+            CrisisManagementFilter crisisManagementFilter,
+            ExperimentGroupRepository experimentGroupRepository) {
         this.experimentsRepository = experimentsRepository;
         this.jsonConverterV1 = jsonConverterV1;
         this.crisisManagementFilter = crisisManagementFilter;
+        this.experimentGroupRepository = experimentGroupRepository;
     }
 
     @MeteredEndpoint
@@ -41,6 +44,8 @@ public class ClientExperimentsControllerV1 {
         return jsonConverterV1.toJson(experimentsRepository
                 .assignable()
                 .stream()
-                .filter(crisisManagementFilter::filter).collect(Collectors.toList()));
+                .filter(crisisManagementFilter::filter)
+                .filter(experiment -> !experimentGroupRepository.experimentInGroup(experiment.getId()))
+                .collect(Collectors.toList()));
     }
 }

@@ -82,15 +82,15 @@ class ExperimentsE2ESpec extends BaseIntegrationSpec implements ExampleExperimen
 
         then:
         response.statusCode.value() == 200
-        response.body.size() == 7
 
         and:
-        response.body.contains(ExampleClientExperiments.internalExperiment())
-        response.body.contains(ExampleClientExperiments.plannedExperiment())
-        response.body.contains(ExampleClientExperiments.cmuidRegexpExperiment())
-        response.body.contains(ExampleClientExperiments.hashVariantExperiment())
-        response.body.contains(ExampleClientExperiments.sampleExperiment())
-        response.body.contains(ExampleClientExperiments.timeboundExperiment())
+        response.body.containsAll(
+                ExampleClientExperiments.internalExperiment(),
+                ExampleClientExperiments.cmuidRegexpExperiment(),
+                ExampleClientExperiments.plannedExperiment(),
+                ExampleClientExperiments.hashVariantExperiment(),
+                ExampleClientExperiments.sampleExperiment(),
+                ExampleClientExperiments.timeboundExperiment())
         !response.body.contains(ExampleClientExperiments.experimentFromThePast())
     }
 
@@ -105,18 +105,18 @@ class ExperimentsE2ESpec extends BaseIntegrationSpec implements ExampleExperimen
 
         then:
         response.statusCode.value() == 200
-        response.body.size() == 9
 
         and:
-        response.body.contains(internalExperiment())
-        response.body.contains(plannedExperiment())
-        response.body.contains(cmuidRegexpExperiment())
-        response.body.contains(cmuidRegexpWithPhoneExperiment())
-        response.body.contains(hashVariantExperiment())
-        response.body.contains(sampleExperiment())
-        response.body.contains(timeboundExperiment())
-        response.body.contains(experimentFromThePast())
-        response.body.contains(pausedExperiment())
+        response.body.containsAll(
+                internalExperiment(),
+                plannedExperiment(),
+                cmuidRegexpExperiment(),
+                cmuidRegexpWithPhoneExperiment(),
+                hashVariantExperiment(),
+                sampleExperiment(),
+                timeboundExperiment(),
+                experimentFromThePast(),
+                pausedExperiment())
     }
 
     def "should return last valid list when file is corrupted"() {
@@ -131,8 +131,17 @@ class ExperimentsE2ESpec extends BaseIntegrationSpec implements ExampleExperimen
 
         then:
         response.statusCode.value() == 200
-        response.body.size() == 7
-    }
+
+        and:
+        response.body.containsAll(
+                ExampleClientExperiments.internalExperiment(),
+                ExampleClientExperiments.plannedExperiment(),
+                ExampleClientExperiments.cmuidRegexpExperiment(),
+                ExampleClientExperiments.hashVariantExperiment(),
+                ExampleClientExperiments.sampleExperiment(),
+                ExampleClientExperiments.timeboundExperiment(),
+                ExampleClientExperiments.cmuidRegexpWithPhoneExperiment())
+        }
 
     def "should return BAD_REQUEST when predicate type is incorrect"() {
         given:
@@ -182,5 +191,53 @@ class ExperimentsE2ESpec extends BaseIntegrationSpec implements ExampleExperimen
         then:
         def ex = thrown(HttpClientErrorException)
         ex.statusCode.value() == 400
+    }
+
+    def "should append experiment group if experiment is in group"() {
+        given:
+        userProvider.user = new User('Anonymous', [], true)
+
+        String experimentId1 = UUID.randomUUID().toString()
+        String experimentId2 = createDraftExperiment()
+        String groupId = UUID.randomUUID().toString()
+        startExperiment(experimentId2)
+
+        and:
+        def pairedExperimentCreationRequest = [
+                experimentCreationRequest: [
+                        id                 : experimentId1,
+                        description        : 'desc',
+                        documentLink       : 'https://vuetifyjs.com/vuetify/quick-start',
+                        variantNames       : ['base', 'v2', 'v3'],
+                        internalVariantName: 'v1',
+                        percentage         : 10,
+                        deviceClass        : 'phone',
+                        groups             : ['group a', 'group b'],
+                        reportingEnabled   : true,
+                        reportingType: 'BACKEND'
+                ],
+                experimentGroupCreationRequest: [
+                        id: groupId,
+                        experiments: [experimentId1, experimentId2]
+                ]
+        ]
+
+        when:
+        restTemplate.postForEntity(localUrl('/api/admin/experiments/create-paired-experiment'), pairedExperimentCreationRequest, Map)
+
+        then:
+        restTemplate.getForEntity(localUrl("/api/admin/experiments/${experimentId1}/"), Map)
+                .body['experimentGroup'] == [
+                    id: groupId,
+                    experiments: [experimentId1, experimentId2],
+                    salt: experimentId2
+                ]
+
+        restTemplate.getForEntity(localUrl("/api/admin/experiments"), List).body
+                .find({it -> it.id == experimentId1})['experimentGroup'] == [
+                    id: groupId,
+                    experiments: [experimentId1, experimentId2],
+                    salt: experimentId2
+                ]
     }
 }

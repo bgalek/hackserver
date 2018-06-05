@@ -5,6 +5,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import pl.allegro.experiments.chi.chiserver.application.experiments.v1.*;
 import pl.allegro.experiments.chi.chiserver.domain.experiments.*;
+import pl.allegro.experiments.chi.chiserver.domain.experiments.groups.ShredHashRangePredicate;
 
 import java.lang.reflect.Type;
 import java.time.Duration;

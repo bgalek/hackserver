@@ -28,7 +28,8 @@ const ExperimentRecord = Record({
   percentage: null,
   internalVariantName: null,
   variantNames: [],
-  deviceClass: null
+  deviceClass: null,
+  experimentGroup: null
 })
 
 export default class ExperimentModel extends ExperimentRecord {
@@ -41,6 +42,9 @@ export default class ExperimentModel extends ExperimentRecord {
     experimentObject.groups = List(experimentObject.groups)
     experimentObject.variantNames = List(experimentObject.variantNames)
     experimentObject.eventDefinitions = List(experimentObject.eventDefinitions)
+    if (experimentObject.experimentGroup) {
+      experimentObject.experimentGroup = experimentObject.experimentGroup.id
+    }
     super(experimentObject)
   }
 
@@ -104,11 +108,22 @@ export default class ExperimentModel extends ExperimentRecord {
   }
 
   canChangeVariants () {
-    return this.origin === 'MONGO' && this.status !== 'ENDED'
+    return this.origin === 'MONGO' && this.status !== 'ENDED' && !this.isInGroup()
   }
 
   canChangeEventDefinitions () {
     return this.reportingType === 'FRONTEND' && this.status !== 'ENDED'
+  }
+
+  isInGroup () {
+    return this.experimentGroup
+  }
+
+  canBeGrouped () {
+    return !this.isInGroup() &&
+      this.origin === 'MONGO' &&
+      ['BACKEND', 'FRONTEND', 'GTM'].includes(this.reportingType) &&
+      ['DRAFT', 'ACTIVE'].includes(this.status)
   }
 
   canRunLifecycleCommand () {

@@ -10,6 +10,7 @@ import pl.allegro.experiments.chi.chiserver.domain.experiments.ExperimentsReposi
 import pl.allegro.experiments.chi.chiserver.domain.experiments.administration.*
 import pl.allegro.experiments.chi.chiserver.domain.experiments.administration.ProlongExperimentCommand
 import pl.allegro.experiments.chi.chiserver.domain.experiments.administration.ProlongExperimentProperties
+import pl.allegro.experiments.chi.chiserver.domain.experiments.groups.ExperimentGroupRepository
 import pl.allegro.experiments.chi.chiserver.infrastructure.experiments.ExperimentsTestConfig
 import pl.allegro.experiments.chi.chiserver.infrastructure.experiments.MutableUserProvider
 
@@ -21,6 +22,9 @@ class ProlongExperimentCommandIntegrationSpec extends BaseIntegrationSpec {
 
     @Autowired
     ExperimentsRepository experimentsRepository
+
+    @Autowired
+    ExperimentGroupRepository experimentGroupRepository
 
     @Autowired
     MutableUserProvider mutableUserProvider
@@ -40,6 +44,7 @@ class ProlongExperimentCommandIntegrationSpec extends BaseIntegrationSpec {
                 experimentsRepository,
                 new StartExperimentProperties(30),
                 permissionsAwareExperimentGetter,
+                experimentGroupRepository,
                 experiment.id)
         startCommand.execute()
 

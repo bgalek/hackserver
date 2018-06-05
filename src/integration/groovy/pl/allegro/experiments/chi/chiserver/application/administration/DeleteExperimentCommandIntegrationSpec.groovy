@@ -10,6 +10,7 @@ import pl.allegro.experiments.chi.chiserver.domain.experiments.administration.Cr
 import pl.allegro.experiments.chi.chiserver.domain.experiments.administration.ExperimentCommandException
 import pl.allegro.experiments.chi.chiserver.domain.experiments.administration.PermissionsAwareExperimentRepository
 import pl.allegro.experiments.chi.chiserver.domain.experiments.administration.DeleteExperimentCommand
+import pl.allegro.experiments.chi.chiserver.domain.experiments.groups.ExperimentGroupRepository
 import pl.allegro.experiments.chi.chiserver.domain.statistics.StatisticsRepository
 import pl.allegro.experiments.chi.chiserver.infrastructure.experiments.ExperimentsTestConfig
 import pl.allegro.experiments.chi.chiserver.infrastructure.experiments.FileBasedExperimentsRepository
@@ -26,6 +27,9 @@ class DeleteExperimentCommandIntegrationSpec extends BaseIntegrationSpec {
 
     @Autowired
     FileBasedExperimentsRepository fileBasedExperimentsRepository
+
+    @Autowired
+    ExperimentGroupRepository experimentGroupRepository
 
     StatisticsRepository statisticsRepository
 
@@ -47,7 +51,13 @@ class DeleteExperimentCommandIntegrationSpec extends BaseIntegrationSpec {
         command.execute()
 
         and:
-        def deleteCommand = new DeleteExperimentCommand(experimentsRepository, permissionsAwareExperimentGetter, id, statisticsRepository)
+        def deleteCommand = new DeleteExperimentCommand(
+                experimentsRepository,
+                permissionsAwareExperimentGetter,
+                id,
+                statisticsRepository,
+                experimentGroupRepository
+        )
 
         and:
         statisticsRepository.hasAnyStatistics(_) >> false
@@ -67,7 +77,13 @@ class DeleteExperimentCommandIntegrationSpec extends BaseIntegrationSpec {
         command.execute()
 
         and:
-        def deleteCommand = new DeleteExperimentCommand(experimentsRepository, permissionsAwareExperimentGetter, id, statisticsRepository)
+        def deleteCommand = new DeleteExperimentCommand(
+                experimentsRepository,
+                permissionsAwareExperimentGetter,
+                id,
+                statisticsRepository,
+                experimentGroupRepository
+        )
 
         and:
         statisticsRepository.hasAnyStatistics(_) >> true

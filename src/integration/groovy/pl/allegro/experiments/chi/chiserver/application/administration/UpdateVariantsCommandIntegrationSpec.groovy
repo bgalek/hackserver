@@ -8,6 +8,7 @@ import pl.allegro.experiments.chi.chiserver.domain.User
 import pl.allegro.experiments.chi.chiserver.domain.experiments.Experiment
 import pl.allegro.experiments.chi.chiserver.domain.experiments.ExperimentsRepository
 import pl.allegro.experiments.chi.chiserver.domain.experiments.administration.*
+import pl.allegro.experiments.chi.chiserver.domain.experiments.groups.ExperimentGroupRepository
 import pl.allegro.experiments.chi.chiserver.infrastructure.experiments.ExperimentsTestConfig
 import pl.allegro.experiments.chi.chiserver.infrastructure.experiments.MutableUserProvider
 
@@ -19,6 +20,9 @@ class UpdateVariantsCommandIntegrationSpec extends BaseIntegrationSpec {
 
     @Autowired
     ExperimentsRepository experimentsRepository
+
+    @Autowired
+    ExperimentGroupRepository experimentGroupRepository
 
     @Autowired
     MutableUserProvider mutableUserProvider
@@ -38,6 +42,7 @@ class UpdateVariantsCommandIntegrationSpec extends BaseIntegrationSpec {
                 experimentsRepository,
                 new StartExperimentProperties(30),
                 permissionsAwareExperimentGetter,
+                experimentGroupRepository,
                 experiment.id)
         startCommand.execute()
 
@@ -49,7 +54,9 @@ class UpdateVariantsCommandIntegrationSpec extends BaseIntegrationSpec {
                 experiment.id,
                 new UpdateVariantsProperties(['va', 'vb'], 'iname', 13, 'phone'),
                 experimentsRepository,
-                permissionsAwareExperimentGetter)
+                permissionsAwareExperimentGetter,
+                experimentGroupRepository
+        )
 
         when:
         updateVariantsCommand.execute()

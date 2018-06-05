@@ -5,6 +5,7 @@ import org.springframework.core.convert.converter.Converter;
 import pl.allegro.experiments.chi.chiserver.domain.experiments.EventDefinition;
 
 public class EventDefinitionSerializer implements Converter<EventDefinition, Document> {
+
     @Override
     public Document convert(EventDefinition source) {
         Document result = new Document();

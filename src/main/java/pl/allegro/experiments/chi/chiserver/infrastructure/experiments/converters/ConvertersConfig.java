@@ -74,4 +74,14 @@ public class ConvertersConfig {
     ReportingDefinitionDeserializer reportingDefinitionDeserializer(EventDefinitionDeserializer eventDefinitionDeserializer) {
         return new ReportingDefinitionDeserializer(eventDefinitionDeserializer);
     }
+
+    @Bean
+    ExperimentGroupDeserializer experimentGroupDeserializer() {
+        return new ExperimentGroupDeserializer();
+    }
+
+    @Bean
+    ExperimentGroupSerializer experimentGroupSerializer() {
+        return new ExperimentGroupSerializer();
+    }
 }

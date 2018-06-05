@@ -12,6 +12,7 @@ import pl.allegro.experiments.chi.chiserver.domain.experiments.DeviceClass;
 import pl.allegro.experiments.chi.chiserver.domain.experiments.EventDefinition;
 import pl.allegro.experiments.chi.chiserver.domain.experiments.Experiment;
 import pl.allegro.experiments.chi.chiserver.domain.experiments.ExperimentsRepository;
+import pl.allegro.experiments.chi.chiserver.domain.experiments.groups.ExperimentGroupRepository;
 import pl.allegro.experiments.chi.chiserver.domain.statistics.MeasurementsRepository;
 import pl.allegro.experiments.chi.chiserver.domain.experiments.administration.*;
 import pl.allegro.experiments.chi.chiserver.domain.experiments.administration.audit.AuditLog;
@@ -40,7 +41,7 @@ public class ExperimentsController {
     private final Gson jsonConverter;
     private final Auditor auditor;
     private final UserProvider userProvider;
-
+    private final ExperimentGroupRepository experimentGroupRepository;
 
     public ExperimentsController(
             ExperimentsRepository experimentsRepository,
@@ -49,7 +50,8 @@ public class ExperimentsController {
             Gson jsonConverter,
             Auditor auditor,
             UserProvider userProvider,
-            BayesianChartsRepository bayesianChartsRepository) {
+            BayesianChartsRepository bayesianChartsRepository,
+            ExperimentGroupRepository experimentGroupRepository) {
         this.experimentsRepository = experimentsRepository;
         this.measurementsRepository = measurementsRepository;
         this.experimentActions = experimentActions;
@@ -57,6 +59,7 @@ public class ExperimentsController {
         this.auditor = auditor;
         this.userProvider = userProvider;
         this.bayesianChartsRepository = bayesianChartsRepository;
+        this.experimentGroupRepository = experimentGroupRepository;
     }
 
     @MeteredEndpoint
@@ -68,6 +71,9 @@ public class ExperimentsController {
                 .map(this::toAdminExperiment)
                 .map(it -> it.withMeasurements(measurementsRepository.getMeasurements(it.getId())))
                 .map(it -> it.withHorizontalEqualizer(bayesianChartsRepository.getHorizontalEqualizer(it.getId(), DeviceClass.all).orElse(null)))
+                .map(it -> experimentGroupRepository.findByExperimentId(it.getId())
+                        .map(g -> it.withExperimentGroup(g))
+                        .orElse(it))
                 .collect(Collectors.toList()));
     }
 
@@ -78,6 +84,9 @@ public class ExperimentsController {
         return experimentsRepository.getExperiment(experimentId)
                 .map(this::toAdminExperiment)
                 .map(it -> it.withMeasurements(measurementsRepository.getMeasurements(it.getId())))
+                .map(it -> experimentGroupRepository.findByExperimentId(it.getId())
+                        .map(g -> it.withExperimentGroup(g))
+                        .orElse(it))
                 .map(e -> ResponseEntity.ok(jsonConverter.toJson(e)))
                 .orElse(new ResponseEntity<>(HttpStatus.NOT_FOUND));
     }
@@ -87,6 +96,15 @@ public class ExperimentsController {
     ResponseEntity<String> addExperiment(@RequestBody ExperimentCreationRequest experimentCreationRequest) {
         logger.info("Experiment creation request received", experimentCreationRequest);
         experimentActions.create(experimentCreationRequest);
+        return new ResponseEntity<>(HttpStatus.CREATED);
+    }
+
+    @MeteredEndpoint
+    @PostMapping(path = "create-paired-experiment")
+    ResponseEntity<String> createPairedExperiment(
+            @RequestBody PairedExperimentCreationRequest pairedExperimentCreationRequest) {
+        logger.info("Paired experiment creation request received", pairedExperimentCreationRequest);
+        experimentActions.createPairedExperiment(pairedExperimentCreationRequest);
         return new ResponseEntity<>(HttpStatus.CREATED);
     }
 
@@ -179,6 +197,32 @@ public class ExperimentsController {
         final AuditLog auditLog = auditor.getAuditLog(experimentId);
         final String body = jsonConverter.toJson(auditLog);
         return ResponseEntity.ok(body);
+    }
+
+    @MeteredEndpoint
+    @PostMapping(path = "groups")
+    ResponseEntity<String> createExperimentGroup(
+            @RequestBody ExperimentGroupCreationRequest experimentGroupCreationRequest) {
+        logger.info("Experiment group creation request received", experimentGroupCreationRequest);
+        experimentActions.createExperimentGroup(experimentGroupCreationRequest);
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    @MeteredEndpoint
+    @GetMapping(path = "groups/{groupId}")
+    ResponseEntity<String> getExperimentGroup(@PathVariable String groupId) {
+        logger.info("Single experiment group request received");
+        return experimentGroupRepository.findById(groupId)
+                .map(jsonConverter::toJson)
+                .map(ResponseEntity::ok)
+                .orElse(new ResponseEntity<>(HttpStatus.NOT_FOUND));
+    }
+
+    @MeteredEndpoint
+    @GetMapping(path = "groups")
+    String getExperimentGroups() {
+        logger.info("All experiment group request received");
+        return jsonConverter.toJson(experimentGroupRepository.findAll());
     }
 
     @ExceptionHandler(AuthorizationException.class)

@@ -2,6 +2,7 @@ import Vue from 'vue'
 import Vuex from 'vuex'
 
 import experiments from './experiments'
+import experimentGroups from './experimentGroups'
 import experiment from './experiment'
 import experimentAuditLog from './experimentAuditLog'
 import experimentStatistics from './experimentStatistics'
@@ -10,6 +11,7 @@ import bayesianEqualizer from './bayesianEqualizer'
 import deleteExperiment from './deleteExperiment'
 import startExperiment from './startExperiment'
 import createExperiment from './createExperiment'
+import createGroupedExperiment from './createGroupedExperiment'
 import stopExperiment from './stopExperiment'
 import pauseExperiment from './pauseExperiment'
 import resumeExperiment from './resumeExperiment'
@@ -32,11 +34,13 @@ export default new Vuex.Store({
   modules: {
     experiment,
     experiments,
+    experimentGroups,
     experimentAuditLog,
     experimentStatistics,
     bayesianHistograms,
     bayesianEqualizer,
     createExperiment,
+    createGroupedExperiment,
     startExperiment,
     deleteExperiment,
     userPreferences,

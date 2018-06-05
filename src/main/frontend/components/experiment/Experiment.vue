@@ -75,7 +75,7 @@
       })
 
       this.loadExperimentStatistics('all', this.$route.params.experimentId).then(() => {
-        this.allowDelete = this.experimentStatistics.metrics.length === 0
+        this.allowDelete = this.experimentStatistics.metrics.length === 0 && !this.experiment.isInGroup()
         console.log('loading stats for "' + this.experimentId + '" done')
         this.loadingStatsDone = true
       }).catch(() => {
@@ -124,7 +124,6 @@
 
       experimentStatistics (state) {
         const stats = state.experimentStatistics.experimentStatistics
-
         const mappedMetrics = []
 
         _.forIn(stats.metrics, (metricValuePerVariant, metricName) => {
@@ -151,7 +150,7 @@
           device: stats.device,
           toDate: stats.toDate,
           metrics: mappedMetrics.sort((x, y) => x.order - y.order),
-          allowDelete: stats.metrics && stats.metrics.length === 0
+          allowDelete: stats.metrics && stats.metrics.length === 0 && !state.experiment.experiment.isInGroup()
         }
       },
 

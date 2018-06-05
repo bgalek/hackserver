@@ -8,6 +8,7 @@ import pl.allegro.experiments.chi.chiserver.domain.User
 import pl.allegro.experiments.chi.chiserver.domain.experiments.ExperimentStatus
 import pl.allegro.experiments.chi.chiserver.domain.experiments.ExperimentsRepository
 import pl.allegro.experiments.chi.chiserver.domain.experiments.administration.*
+import pl.allegro.experiments.chi.chiserver.domain.experiments.groups.ExperimentGroupRepository
 import pl.allegro.experiments.chi.chiserver.infrastructure.experiments.ExperimentsTestConfig
 import pl.allegro.experiments.chi.chiserver.infrastructure.experiments.MutableUserProvider
 
@@ -18,6 +19,9 @@ import static pl.allegro.experiments.chi.chiserver.application.administration.Co
 class StartExperimentCommandIntegrationSpec extends BaseIntegrationSpec {
     @Autowired
     ExperimentsRepository experimentsRepository
+
+    @Autowired
+    ExperimentGroupRepository experimentGroupRepository
 
     @Autowired
     MutableUserProvider mutableUserProvider
@@ -40,6 +44,7 @@ class StartExperimentCommandIntegrationSpec extends BaseIntegrationSpec {
                 experimentsRepository,
                 new StartExperimentProperties(30),
                 permissionsAwareExperimentGetter,
+                experimentGroupRepository,
                 id)
 
         when:
@@ -61,6 +66,7 @@ class StartExperimentCommandIntegrationSpec extends BaseIntegrationSpec {
                 experimentsRepository,
                 new StartExperimentProperties(30),
                 permissionsAwareExperimentGetter,
+                experimentGroupRepository,
                 id)
         startCommand.execute()
 
@@ -69,6 +75,7 @@ class StartExperimentCommandIntegrationSpec extends BaseIntegrationSpec {
                 experimentsRepository,
                 new StartExperimentProperties(30),
                 permissionsAwareExperimentGetter,
+                experimentGroupRepository,
                 id)
 
         when:

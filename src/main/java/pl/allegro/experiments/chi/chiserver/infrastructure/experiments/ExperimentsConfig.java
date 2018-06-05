@@ -17,7 +17,9 @@ import pl.allegro.experiments.chi.chiserver.application.experiments.WhitelistCri
 import pl.allegro.experiments.chi.chiserver.domain.UserProvider;
 import pl.allegro.experiments.chi.chiserver.domain.experiments.Experiment;
 import pl.allegro.experiments.chi.chiserver.domain.experiments.ExperimentsRepository;
+import pl.allegro.experiments.chi.chiserver.domain.experiments.groups.ExperimentGroupRepository;
 import pl.allegro.experiments.chi.chiserver.domain.statistics.MeasurementsRepository;
+import pl.allegro.experiments.chi.chiserver.infrastructure.ClientExperimentFactory;
 import pl.allegro.experiments.chi.chiserver.infrastructure.statistics.DruidClient;
 import pl.allegro.experiments.chi.chiserver.infrastructure.experiments.converters.DateTimeDeserializer;
 import pl.allegro.experiments.chi.chiserver.infrastructure.experiments.converters.DateTimeSerializer;
@@ -122,5 +124,14 @@ public class ExperimentsConfig {
     @ConfigurationProperties("chi.crisis-management")
     CrisisManagementProperties crisisManagementProperties() {
         return new CrisisManagementProperties();
+    }
+
+    @Bean
+    ExperimentGroupRepository cachedExperimentGroupRepository(
+            MongoExperimentGroupRepository mongoExperimentGroupRepository,
+            Javers javers,
+            UserProvider userProvider,
+            ExperimentsMongoMetricsReporter metrics) {
+        return new CachedExperimentGroupRepository(mongoExperimentGroupRepository, javers, userProvider, metrics);
     }
 }

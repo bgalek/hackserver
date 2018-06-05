@@ -10,42 +10,47 @@ import org.springframework.web.bind.annotation.RestController;
 import pl.allegro.experiments.chi.chiserver.domain.experiments.ExperimentsRepository;
 import pl.allegro.experiments.chi.chiserver.domain.experiments.groups.ExperimentGroupRepository;
 import pl.allegro.experiments.chi.chiserver.infrastructure.ClientExperiment;
+import pl.allegro.experiments.chi.chiserver.infrastructure.ClientExperimentFactory;
 import pl.allegro.tech.common.andamio.metrics.MeteredEndpoint;
 
 import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping(value = {"/api/experiments"}, produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_JSON_UTF8_VALUE})
-class ClientExperimentsControllerV2 {
+class ClientExperimentsControllerV3 {
     private final ExperimentsRepository experimentsRepository;
     private final Gson jsonConverter;
     private final CrisisManagementFilter crisisManagementFilter;
     private final ExperimentGroupRepository experimentGroupRepository;
+    private final ClientExperimentFactory clientExperimentFactory;
 
-    private static final Logger logger = LoggerFactory.getLogger(ClientExperimentsControllerV2.class);
+    private static final Logger logger = LoggerFactory.getLogger(ClientExperimentsControllerV3.class);
 
-    ClientExperimentsControllerV2(
+    ClientExperimentsControllerV3(
             ExperimentsRepository experimentsRepository,
             Gson jsonConverter,
             CrisisManagementFilter crisisManagementFilter,
-            ExperimentGroupRepository experimentGroupRepository) {
+            ExperimentGroupRepository experimentGroupRepository,
+            ClientExperimentFactory clientExperimentFactory) {
         this.experimentsRepository = experimentsRepository;
         this.jsonConverter = jsonConverter;
         this.crisisManagementFilter = crisisManagementFilter;
         this.experimentGroupRepository = experimentGroupRepository;
+        this.clientExperimentFactory = clientExperimentFactory;
     }
 
     @MeteredEndpoint
-    @GetMapping(path = {"/v2"})
+    @GetMapping(path = {"/v3", ""})
     String experiments() {
-        logger.debug("Client V2 experiments request received");
+        logger.debug("Client V3 experiments request received");
 
         return jsonConverter.toJson(experimentsRepository
                 .assignable()
                 .stream()
                 .filter(crisisManagementFilter::filter)
-                .filter(experiment -> !experimentGroupRepository.experimentInGroup(experiment.getId()))
-                .map(it -> new ClientExperiment(it))
+                .map(it -> !experimentGroupRepository.experimentInGroup(it.getId())
+                            ? new ClientExperiment(it) : clientExperimentFactory.fromGroupedExperiment(it.getDefinition().get()).get()
+                )
                 .collect(Collectors.toList()));
     }
 }

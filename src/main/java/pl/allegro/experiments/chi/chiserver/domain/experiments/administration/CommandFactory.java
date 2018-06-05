@@ -6,6 +6,7 @@ import org.springframework.stereotype.Service;
 import pl.allegro.experiments.chi.chiserver.domain.UserProvider;
 import pl.allegro.experiments.chi.chiserver.domain.experiments.EventDefinition;
 import pl.allegro.experiments.chi.chiserver.domain.experiments.ExperimentsRepository;
+import pl.allegro.experiments.chi.chiserver.domain.experiments.groups.ExperimentGroupRepository;
 import pl.allegro.experiments.chi.chiserver.domain.statistics.StatisticsRepository;
 
 import java.util.List;
@@ -16,16 +17,19 @@ public class CommandFactory {
     private final UserProvider userProvider;
     private final PermissionsAwareExperimentRepository permissionsAwareExperimentRepository;
     private final StatisticsRepository statisticsRepository;
+    private final ExperimentGroupRepository experimentGroupRepository;
 
     @Autowired
     public CommandFactory(ExperimentsRepository experimentsRepository,
                           UserProvider userProvider,
                           PermissionsAwareExperimentRepository permissionsAwareExperimentRepository,
-                          StatisticsRepository statisticsRepository) {
+                          StatisticsRepository statisticsRepository,
+                          ExperimentGroupRepository experimentGroupRepository) {
         this.experimentsRepository = experimentsRepository;
         this.userProvider = userProvider;
         this.permissionsAwareExperimentRepository = permissionsAwareExperimentRepository;
         this.statisticsRepository = statisticsRepository;
+        this.experimentGroupRepository = experimentGroupRepository;
     }
 
     public CreateExperimentCommand createExperimentCommand(ExperimentCreationRequest request) {
@@ -42,6 +46,7 @@ public class CommandFactory {
                 experimentsRepository,
                 properties,
                 permissionsAwareExperimentRepository,
+                experimentGroupRepository,
                 experimentId
         );
     }
@@ -89,7 +94,8 @@ public class CommandFactory {
                 experimentsRepository,
                 permissionsAwareExperimentRepository,
                 experimentId,
-                statisticsRepository
+                statisticsRepository,
+                experimentGroupRepository
         );
     }
 
@@ -113,7 +119,8 @@ public class CommandFactory {
                 experimentId,
                 properties,
                 experimentsRepository,
-                permissionsAwareExperimentRepository
+                permissionsAwareExperimentRepository,
+                experimentGroupRepository
         );
     }
 
@@ -126,5 +133,25 @@ public class CommandFactory {
                 permissionsAwareExperimentRepository,
                 eventDefinitions
         );
+    }
+
+    public CreateExperimentGroupCommand createExperimentGroupCommand(ExperimentGroupCreationRequest experimentGroupCreationRequest) {
+        return new CreateExperimentGroupCommand(
+                experimentGroupRepository,
+                experimentsRepository,
+                userProvider,
+                experimentGroupCreationRequest,
+                permissionsAwareExperimentRepository
+        );
+    }
+
+    public CreatePairedExperimentCommand createPairedExperimentCommand(
+            PairedExperimentCreationRequest pairedExperimentCreationRequest) {
+        return new CreatePairedExperimentCommand(
+                createExperimentCommand(pairedExperimentCreationRequest.getExperimentCreationRequest()),
+                createExperimentGroupCommand(pairedExperimentCreationRequest.getExperimentGroupCreationRequest()),
+                deleteExperimentCommand(pairedExperimentCreationRequest.getExperimentCreationRequest().getId())
+        );
+
     }
 }

@@ -3,14 +3,12 @@ package pl.allegro.experiments.chi.chiserver.infrastructure.experiments.fetch
 import com.github.tomakehurst.wiremock.junit.WireMockRule
 import org.junit.ClassRule
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.test.annotation.DirtiesContext
 import org.springframework.web.client.RestTemplate
 import pl.allegro.experiments.chi.chiserver.BaseIntegrationSpec
 import pl.allegro.experiments.chi.chiserver.domain.experiments.ExperimentsRepository
 import pl.allegro.experiments.chi.chiserver.infrastructure.experiments.FileBasedExperimentsRepository
 import spock.lang.Shared
 
-//@DirtiesContext
 class ClientExperimentsV1E2ESpec extends BaseIntegrationSpec {
 
     @ClassRule
@@ -40,7 +38,6 @@ class ClientExperimentsV1E2ESpec extends BaseIntegrationSpec {
 
         then:
         response.statusCode.value() == 200
-        response.body.size() == 7
 
         and:
         response.body.contains(internalExperiment())

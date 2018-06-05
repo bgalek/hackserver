@@ -60,4 +60,11 @@ public class ExperimentActions {
         commandFactory.deleteExperimentCommand(experimentId).execute();
     }
 
+    public void createExperimentGroup(ExperimentGroupCreationRequest experimentGroupCreationRequest) {
+        commandFactory.createExperimentGroupCommand(experimentGroupCreationRequest).execute();
+    }
+
+    public void createPairedExperiment(PairedExperimentCreationRequest pairedExperimentCreationRequest) {
+        commandFactory.createPairedExperimentCommand(pairedExperimentCreationRequest).execute();
+    }
 }

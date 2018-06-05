@@ -3,6 +3,7 @@ package pl.allegro.experiments.chi.chiserver.application.experiments;
 import com.google.common.base.Preconditions;
 import pl.allegro.experiments.chi.chiserver.domain.User;
 import pl.allegro.experiments.chi.chiserver.domain.experiments.*;
+import pl.allegro.experiments.chi.chiserver.domain.experiments.groups.ExperimentGroup;
 import pl.allegro.experiments.chi.chiserver.domain.statistics.bayes.BayesianHorizontalEqualizer;
 import pl.allegro.experiments.chi.chiserver.domain.statistics.ExperimentMeasurements;
 import pl.allegro.experiments.chi.chiserver.infrastructure.ClientExperiment;
@@ -19,6 +20,7 @@ public class AdminExperiment {
     private final ClientExperiment clientExperiment;
     private ExperimentMeasurements experimentMeasurements;
     private BayesianHorizontalEqualizer bayesianHorizontalEqualizer;
+    private ExperimentGroup experimentGroup;
 
     public AdminExperiment(Experiment legacyDefinition) {
         experimentDefinition = fromLegacyDefinition(legacyDefinition);
@@ -59,6 +61,12 @@ public class AdminExperiment {
     public AdminExperiment withMeasurements(ExperimentMeasurements experimentMeasurements) {
         Preconditions.checkState(this.experimentMeasurements == null);
         this.experimentMeasurements = experimentMeasurements;
+        return this;
+    }
+
+    public AdminExperiment withExperimentGroup(ExperimentGroup experimentGroup) {
+        Preconditions.checkState(this.experimentGroup == null);
+        this.experimentGroup = experimentGroup;
         return this;
     }
 
@@ -136,5 +144,9 @@ public class AdminExperiment {
 
     public ReportingType getReportingType() {
         return experimentDefinition.getReportingDefinition().getType();
+    }
+
+    public ExperimentGroup getExperimentGroup() {
+        return experimentGroup;
     }
 }

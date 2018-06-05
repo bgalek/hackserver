@@ -22,6 +22,19 @@ public class ClientExperiment {
         status = experiment.getStatus();
     }
 
+    ClientExperiment(
+            String id,
+            List<ExperimentVariant> variants,
+            boolean reportingEnabled,
+            ActivityPeriod activityPeriod,
+            ExperimentStatus status) {
+        this.id = id;
+        this.variants = variants;
+        this.reportingEnabled = reportingEnabled;
+        this.activityPeriod = activityPeriod;
+        this.status = status;
+    }
+
     public String getId() {
         return id;
     }
