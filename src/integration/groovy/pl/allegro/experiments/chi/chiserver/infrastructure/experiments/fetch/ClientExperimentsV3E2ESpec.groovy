@@ -41,11 +41,9 @@ class ClientExperimentsV3E2ESpec extends BaseIntegrationSpec {
         String groupId = UUID.randomUUID().toString()
 
         and:
-        String experimentId1 = UUID.randomUUID().toString()
-        String experimentId2 = UUID.randomUUID().toString()
+        String experimentId1 = createDraftExperiment(['base', 'v1'])
+        String experimentId2 = createDraftExperiment(['base', 'v1'])
         def experiments = [experimentId1, experimentId2]
-        createDraftExperiment(experimentId1, ['base', 'v1'])
-        createDraftExperiment(experimentId2, ['base', 'v2'])
 
         and:
         restTemplate.postForEntity(localUrl('/api/admin/experiments/groups'), [
@@ -73,11 +71,9 @@ class ClientExperimentsV3E2ESpec extends BaseIntegrationSpec {
         String groupId = UUID.randomUUID().toString()
 
         and:
-        String experimentId1 = UUID.randomUUID().toString()
-        String experimentId2 = UUID.randomUUID().toString()
+        String experimentId1 = createDraftExperiment(['base', 'v1'])
+        String experimentId2 = createDraftExperiment(['base', 'v2'])
         def experiments = [experimentId1, experimentId2]
-        createDraftExperiment(experimentId1, ['base', 'v1'])
-        createDraftExperiment(experimentId2, ['base', 'v2'])
         startExperiment(experimentId1)
 
         and:
@@ -150,11 +146,9 @@ class ClientExperimentsV3E2ESpec extends BaseIntegrationSpec {
         String groupId = UUID.randomUUID().toString()
 
         and:
-        String experimentId1 = UUID.randomUUID().toString()
-        String experimentId2 = UUID.randomUUID().toString()
+        String experimentId1 = createDraftExperiment(['base', 'v1'])
+        String experimentId2 = createDraftExperiment(['base', 'v2'])
         def experiments = [experimentId1, experimentId2]
-        createDraftExperiment(experimentId1, ['base', 'v1'])
-        createDraftExperiment(experimentId2, ['base', 'v2'])
         startExperiment(experimentId1)
 
         and:
@@ -185,11 +179,9 @@ class ClientExperimentsV3E2ESpec extends BaseIntegrationSpec {
         String groupId = UUID.randomUUID().toString()
 
         and:
-        String experimentId1 = UUID.randomUUID().toString()
-        String experimentId2 = UUID.randomUUID().toString()
+        String experimentId1 = createDraftExperiment(['base', 'v1'])
+        String experimentId2 = createDraftExperiment(['base', 'v2'])
         def experiments = [experimentId1, experimentId2]
-        createDraftExperiment(experimentId1, ['base', 'v1'])
-        createDraftExperiment(experimentId2, ['base', 'v2'])
         startExperiment(experimentId1)
 
         and:
@@ -231,9 +223,11 @@ class ClientExperimentsV3E2ESpec extends BaseIntegrationSpec {
 
     def "should render grouped experiments ranges in deterministic manner"() {
         given:
-        def (String experiment1, String experiment2, String experiment3, String experiment4) = (1..4).collect { i ->
-            UUID.randomUUID().toString()
-        }
+        String experiment1 = createDraftExperiment(['base', 'v1'], 5)
+        String experiment2 = createDraftExperiment(['base', 'v1'], 10)
+        String experiment3 = createDraftExperiment(['base', 'v1'], 20)
+        String experiment4 = createDraftExperiment(['base', 'v1'], 15)
+        def experiments = [experiment2, experiment3, experiment4, experiment1]
 
         and:
         def expectedExperiment1State = [
@@ -330,13 +324,6 @@ class ClientExperimentsV3E2ESpec extends BaseIntegrationSpec {
 
         userProvider.user = new User('Author', [], true)
         String groupId = UUID.randomUUID().toString()
-
-        and:
-        def experiments = [experiment2, experiment3, experiment4, experiment1]
-        createDraftExperiment(experiment1, ['base', 'v1'], 5)
-        createDraftExperiment(experiment2, ['base', 'v1'], 10)
-        createDraftExperiment(experiment3, ['base', 'v1'], 20)
-        createDraftExperiment(experiment4, ['base', 'v1'], 15)
 
         startExperiment(experiment1)
 
@@ -448,7 +435,8 @@ class ClientExperimentsV3E2ESpec extends BaseIntegrationSpec {
         response.experimentVariants(experiment4) == expectedExperiment4State
     }
 
-    def createDraftExperiment(String experimentId, List<String> variants, int percentage=10) {
+    def createDraftExperiment(List<String> variants, int percentage=10) {
+        String experimentId = UUID.randomUUID().toString()
         def request = [
                 id                 : experimentId,
                 description        : 'desc',
@@ -462,5 +450,6 @@ class ClientExperimentsV3E2ESpec extends BaseIntegrationSpec {
                 reportingType: 'BACKEND'
         ]
         restTemplate.postForEntity(localUrl('/api/admin/experiments'), request, Map)
+        experimentId
     }
 }
