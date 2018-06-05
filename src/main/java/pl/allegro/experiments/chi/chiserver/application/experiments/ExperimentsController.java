@@ -212,7 +212,7 @@ public class ExperimentsController {
     @GetMapping(path = "groups/{groupId}")
     ResponseEntity<String> getExperimentGroup(@PathVariable String groupId) {
         logger.info("Single experiment group request received");
-        return experimentGroupRepository.get(groupId)
+        return experimentGroupRepository.findById(groupId)
                 .map(jsonConverter::toJson)
                 .map(ResponseEntity::ok)
                 .orElse(new ResponseEntity<>(HttpStatus.NOT_FOUND));

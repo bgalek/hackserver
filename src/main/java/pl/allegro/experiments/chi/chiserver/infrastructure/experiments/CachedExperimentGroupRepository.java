@@ -4,7 +4,6 @@ import com.google.common.collect.ImmutableList;
 import org.javers.core.Javers;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.scheduling.annotation.Scheduled;
 import pl.allegro.experiments.chi.chiserver.domain.UserProvider;
 import pl.allegro.experiments.chi.chiserver.domain.experiments.groups.ExperimentGroup;
@@ -76,7 +75,7 @@ public class CachedExperimentGroupRepository implements ExperimentGroupRepositor
     }
 
     @Override
-    public Optional<ExperimentGroup> get(String id) {
+    public Optional<ExperimentGroup> findById(String id) {
         return experimentGroups.stream()
                 .filter(it -> it.getId().equals(id))
                 .findFirst();
@@ -84,7 +83,7 @@ public class CachedExperimentGroupRepository implements ExperimentGroupRepositor
 
     @Override
     public boolean exists(String id) {
-        return get(id).isPresent();
+        return findById(id).isPresent();
     }
 
     @Override
