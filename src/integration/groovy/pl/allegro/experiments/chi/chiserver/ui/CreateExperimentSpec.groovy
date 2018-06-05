@@ -60,12 +60,12 @@ class CreateExperimentSpec extends BaseUiSpec {
         pushTheCreateButton()
 
         then:
-        assert $("div:nth-child(1) > div.flex.xs11 > div > div.input-group__details > div").text() == "Experiment ID is required"
+        $("div:nth-child(1) > div.flex.xs11 > div > div.input-group__details > div").text() == "Experiment ID is required"
 
         and:
-        assert $("div:nth-child(3) > div > div > div.input-group__details > div").text() == "No variants. Seriously?"
+        $("div:nth-child(3) > div > div > div.input-group__details > div").text() == "No variants. Seriously?"
     }
-    def "should check that all fields are exist"() {
+    def "should check if all fields exist"() {
 
         given:
         to CreateExperimentPage
@@ -73,43 +73,43 @@ class CreateExperimentSpec extends BaseUiSpec {
         and:
         waitForPageLoad()
 
-        when:
-        assert title == "Chi Admin"
-
-        then:
-        assert $("#experimentIdFormField").displayed
+        expect:
+        title == "Chi Admin"
 
         and:
-        assert $("#experimentIdSlug").displayed
+        $("#experimentIdFormField").displayed
 
         and:
-        assert $("#experimentDescriptionFormField").displayed
+        $("#experimentIdSlug").displayed
 
         and:
-        assert $("#experimentDocumentationLinkFormField").displayed
+        $("#experimentDescriptionFormField").displayed
 
         and:
-        assert $("#experimentAuthorizationGroupsFormField").displayed
+        $("#experimentDocumentationLinkFormField").displayed
 
         and:
-        assert $("#deviceClassDropdown").displayed
+        $("#experimentAuthorizationGroupsFormField").displayed
 
         and:
-        assert $("#percentageVariantSlider").displayed
+        $("#deviceClassDropdown").displayed
 
         and:
-        assert $("#experimentVariants").displayed
+        $("#percentageVariantSlider").displayed
 
         and:
-        assert $("#internalVariantFormField").displayed
+        $("#experimentVariants").displayed
 
         and:
-        assert $("#internalVariantNameSlug").displayed
+        $("#internalVariantFormField").displayed
 
         and:
-        assert $("#reportingTypeDropdown").displayed
+        $("#internalVariantNameSlug").displayed
 
         and:
-        assert $("#createExperimentFormSubmitButton").displayed
+        $("#reportingTypeDropdown").displayed
+
+        and:
+        $("#createExperimentFormSubmitButton").displayed
     }
 }
