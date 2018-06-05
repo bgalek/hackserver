@@ -4,14 +4,11 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.ResponseEntity
 import org.springframework.web.client.RestTemplate
 import pl.allegro.experiments.chi.chiserver.BaseIntegrationSpec
-import pl.allegro.experiments.chi.chiserver.application.administration.RenderedExperimentVariantsBuilder
 import pl.allegro.experiments.chi.chiserver.domain.User
 import pl.allegro.experiments.chi.chiserver.domain.UserProvider
 import pl.allegro.experiments.chi.chiserver.domain.experiments.groups.ExperimentGroupRepository
 import pl.allegro.experiments.chi.chiserver.infrastructure.experiments.CachedExperimentGroupRepository
 import spock.lang.Unroll
-
-import static pl.allegro.experiments.chi.chiserver.application.administration.RenderedExperimentVariantsBuilder.Range.rangeOf
 
 class ClientExperimentsV3E2ESpec extends BaseIntegrationSpec {
 
@@ -99,16 +96,52 @@ class ClientExperimentsV3E2ESpec extends BaseIntegrationSpec {
         response.numberOfExperimentsPresent(experiments) == 2
 
         and:
-        response.experimentVariants(experimentId1) == RenderedExperimentVariantsBuilder.builder()
-                .addVariant('base', experimentId1, [rangeOf(90, 100)])
-                .addVariant('v1', experimentId1, [rangeOf(0, 10)])
-                .build()
+        response.experimentVariants(experimentId1) == [
+                [
+                        name      : 'base',
+                        predicates: [
+                                [
+                                        type  : 'SHRED_HASH',
+                                        ranges: [[from: 90, to: 100]],
+                                        salt  : experimentId1
+                                ]
+                        ]
+                ],
+                [
+                        name      : 'v1',
+                        predicates: [
+                                [
+                                        type  : 'SHRED_HASH',
+                                        ranges: [[from: 0, to: 10]],
+                                        salt  : experimentId1
+                                ]
+                        ]
+                ]
+        ]
 
         and:
-        response.experimentVariants(experimentId2) == RenderedExperimentVariantsBuilder.builder()
-                .addVariant('base', experimentId1, [rangeOf(90, 100)])
-                .addVariant('v2', experimentId1, [rangeOf(10, 20)])
-                .build()
+        response.experimentVariants(experimentId2) == [
+                [
+                        name      : 'base',
+                        predicates: [
+                                [
+                                        type  : 'SHRED_HASH',
+                                        ranges: [[from: 90, to: 100]],
+                                        salt  : experimentId1
+                                ]
+                        ]
+                ],
+                [
+                        name      : 'v2',
+                        predicates: [
+                                [
+                                        type  : 'SHRED_HASH',
+                                        ranges: [[from: 10, to: 20]],
+                                        salt  : experimentId1
+                                ]
+                        ]
+                ]
+        ]
     }
 
     def "should ignore PAUSED and ENDED experiments when rendering grouped experiments"() {
@@ -172,10 +205,28 @@ class ClientExperimentsV3E2ESpec extends BaseIntegrationSpec {
         response.numberOfExperimentsPresent(experiments) == 2
 
         and:
-        response.experimentVariants(experimentId1) == RenderedExperimentVariantsBuilder.builder()
-                .addVariant('base', experimentId1, [rangeOf(90, 100)])
-                .addVariant('v1', experimentId1, [rangeOf(0, 10)])
-                .build()
+        response.experimentVariants(experimentId1) == [
+                [
+                        name      : 'base',
+                        predicates: [
+                                [
+                                        type  : 'SHRED_HASH',
+                                        ranges: [[from: 90, to: 100]],
+                                        salt  : experimentId1
+                                ]
+                        ]
+                ],
+                [
+                        name      : 'v1',
+                        predicates: [
+                                [
+                                        type  : 'SHRED_HASH',
+                                        ranges: [[from: 0, to: 10]],
+                                        salt  : experimentId1
+                                ]
+                        ]
+                ]
+        ]
     }
 
     def "should render grouped experiments ranges in deterministic manner"() {
@@ -185,25 +236,97 @@ class ClientExperimentsV3E2ESpec extends BaseIntegrationSpec {
         }
 
         and:
-        def expectedExperiment1State = RenderedExperimentVariantsBuilder.builder()
-                .addVariant('base', experiment1, [rangeOf(95, 100)])
-                .addVariant('v1', experiment1, [rangeOf(0, 5)])
-                .build()
+        def expectedExperiment1State = [
+                [
+                        name      : 'base',
+                        predicates: [
+                                [
+                                        type  : 'SHRED_HASH',
+                                        ranges: [[from: 95, to: 100]],
+                                        salt  : experiment1
+                                ]
+                        ]
+                ],
+                [
+                        name      : 'v1',
+                        predicates: [
+                                [
+                                        type  : 'SHRED_HASH',
+                                        ranges: [[from: 0, to: 5]],
+                                        salt  : experiment1
+                                ]
+                        ]
+                ]
+        ]
 
-        def expectedExperiment2State = RenderedExperimentVariantsBuilder.builder()
-                .addVariant('base', experiment1, [rangeOf(90, 100)])
-                .addVariant('v1', experiment1, [rangeOf(5, 15)])
-                .build()
+        def expectedExperiment2State = [
+                [
+                        name      : 'base',
+                        predicates: [
+                                [
+                                        type  : 'SHRED_HASH',
+                                        ranges: [[from: 90, to: 100]],
+                                        salt  : experiment1
+                                ]
+                        ]
+                ],
+                [
+                        name      : 'v1',
+                        predicates: [
+                                [
+                                        type  : 'SHRED_HASH',
+                                        ranges: [[from: 5, to: 15]],
+                                        salt  : experiment1
+                                ]
+                        ]
+                ]
+        ]
 
-        def expectedExperiment3State = RenderedExperimentVariantsBuilder.builder()
-                .addVariant('base', experiment1, [rangeOf(80, 100)])
-                .addVariant('v1', experiment1, [rangeOf(15, 35)])
-                .build()
+        def expectedExperiment3State = [
+                [
+                        name      : 'base',
+                        predicates: [
+                                [
+                                        type  : 'SHRED_HASH',
+                                        ranges: [[from: 80, to: 100]],
+                                        salt  : experiment1
+                                ]
+                        ]
+                ],
+                [
+                        name      : 'v1',
+                        predicates: [
+                                [
+                                        type  : 'SHRED_HASH',
+                                        ranges: [[from: 15, to: 35]],
+                                        salt  : experiment1
+                                ]
+                        ]
+                ]
+        ]
 
-        def expectedExperiment4State = RenderedExperimentVariantsBuilder.builder()
-                .addVariant('base', experiment1, [rangeOf(85, 100)])
-                .addVariant('v1', experiment1, [rangeOf(35, 50)])
-                .build()
+        def expectedExperiment4State = [
+                [
+                        name      : 'base',
+                        predicates: [
+                                [
+                                        type  : 'SHRED_HASH',
+                                        ranges: [[from: 85, to: 100]],
+                                        salt  : experiment1
+                                ]
+                        ]
+                ],
+                [
+                        name      : 'v1',
+                        predicates: [
+                                [
+                                        type  : 'SHRED_HASH',
+                                        ranges: [[from: 35, to: 50]],
+                                        salt  : experiment1
+                                ]
+                        ]
+                ]
+        ]
 
         userProvider.user = new User('Author', [], true)
         String groupId = UUID.randomUUID().toString()
