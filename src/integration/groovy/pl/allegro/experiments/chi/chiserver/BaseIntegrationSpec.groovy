@@ -37,7 +37,8 @@ abstract class BaseIntegrationSpec extends Specification {
         new HttpEntity<String>(jsonBody, headers())
     }
 
-    def createDraftExperiment(String experimentId, int percentage=10) {
+    def createDraftExperiment(int percentage=10) {
+        String experimentId = UUID.randomUUID().toString()
         def request = [
                 id                 : experimentId,
                 description        : 'desc',
@@ -51,6 +52,7 @@ abstract class BaseIntegrationSpec extends Specification {
                 reportingType: 'BACKEND'
         ]
         restTemplate.postForEntity(localUrl('/api/admin/experiments'), request, Map)
+        experimentId
     }
 
     def startExperiment(String experimentId) {

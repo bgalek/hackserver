@@ -198,10 +198,8 @@ class ExperimentsE2ESpec extends BaseIntegrationSpec implements ExampleExperimen
         userProvider.user = new User('Anonymous', [], true)
 
         String experimentId1 = UUID.randomUUID().toString()
-        String experimentId2 = UUID.randomUUID().toString()
+        String experimentId2 = createDraftExperiment()
         String groupId = UUID.randomUUID().toString()
-
-        createDraftExperiment(experimentId2)
         startExperiment(experimentId2)
 
         and:

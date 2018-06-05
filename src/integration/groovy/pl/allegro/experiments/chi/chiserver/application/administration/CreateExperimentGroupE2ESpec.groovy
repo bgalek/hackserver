@@ -54,10 +54,8 @@ class CreateExperimentGroupE2ESpec extends BaseIntegrationSpec {
         String groupId = UUID.randomUUID().toString()
 
         and:
-        String experimentId1 = UUID.randomUUID().toString()
-        String experimentId2 = UUID.randomUUID().toString()
-        createDraftExperiment(experimentId1)
-        createDraftExperiment(experimentId2)
+        String experimentId1 = createDraftExperiment()
+        String experimentId2 = createDraftExperiment()
 
         when:
         restTemplate.postForEntity(localUrl('/api/admin/experiments/groups'), [
@@ -77,10 +75,8 @@ class CreateExperimentGroupE2ESpec extends BaseIntegrationSpec {
         String groupId = UUID.randomUUID().toString()
 
         and:
-        String experimentId1 = UUID.randomUUID().toString()
-        String experimentId2 = UUID.randomUUID().toString()
-        createDraftExperiment(experimentId1)
-        createDraftExperiment(experimentId2)
+        String experimentId1 = createDraftExperiment()
+        String experimentId2 = createDraftExperiment()
         startExperiment(experimentId1)
         startExperiment(experimentId2)
 
@@ -101,7 +97,7 @@ class CreateExperimentGroupE2ESpec extends BaseIntegrationSpec {
         String groupId = UUID.randomUUID().toString()
 
         and:
-        experiments.forEach({e -> createDraftExperiment(e)})
+        def experiments = numberOfExperiments.collect{e -> createDraftExperiment()}
 
         when:
         restTemplate.postForEntity(localUrl('/api/admin/experiments/groups'), [
@@ -114,7 +110,7 @@ class CreateExperimentGroupE2ESpec extends BaseIntegrationSpec {
         ex.statusCode == HttpStatus.BAD_REQUEST
 
         where:
-        experiments << [[], [UUID.randomUUID().toString()]]
+        numberOfExperiments << [0, 1]
     }
 
     def "should not create experiment group if one of provided experiments does not exist"() {
@@ -124,8 +120,7 @@ class CreateExperimentGroupE2ESpec extends BaseIntegrationSpec {
 
         and:
         String experimentId1 = UUID.randomUUID().toString()
-        String experimentId2 = UUID.randomUUID().toString()
-        createDraftExperiment(experimentId1)
+        String experimentId2 = createDraftExperiment()
 
         when:
         restTemplate.postForEntity(localUrl('/api/admin/experiments/groups'), [
@@ -144,14 +139,10 @@ class CreateExperimentGroupE2ESpec extends BaseIntegrationSpec {
         String groupId = UUID.randomUUID().toString()
 
         and:
-        String experimentId1 = UUID.randomUUID().toString()
-        String experimentId2 = UUID.randomUUID().toString()
-        String experimentId3 = UUID.randomUUID().toString()
-        String experimentId4 = UUID.randomUUID().toString()
-        createDraftExperiment(experimentId1)
-        createDraftExperiment(experimentId2)
-        createDraftExperiment(experimentId3)
-        createDraftExperiment(experimentId4)
+        String experimentId1 = createDraftExperiment()
+        String experimentId2 = createDraftExperiment()
+        String experimentId3 = createDraftExperiment()
+        String experimentId4 = createDraftExperiment()
 
         and:
         restTemplate.postForEntity(localUrl('/api/admin/experiments/groups'), [
@@ -180,8 +171,7 @@ class CreateExperimentGroupE2ESpec extends BaseIntegrationSpec {
         String groupId = UUID.randomUUID().toString()
 
         and:
-        String experimentId1 = UUID.randomUUID().toString()
-        createDraftExperiment(experimentId1)
+        String experimentId1 = createDraftExperiment()
 
         when:
         restTemplate.postForEntity(localUrl('/api/admin/experiments/groups'), [
@@ -200,10 +190,8 @@ class CreateExperimentGroupE2ESpec extends BaseIntegrationSpec {
         String groupId = UUID.randomUUID().toString()
 
         and:
-        String experimentId1 = UUID.randomUUID().toString()
-        String experimentId2 = UUID.randomUUID().toString()
-        createDraftExperiment(experimentId1, 33)
-        createDraftExperiment(experimentId2, 34)
+        String experimentId1 = createDraftExperiment(33)
+        String experimentId2 = createDraftExperiment(34)
 
         when:
         restTemplate.postForEntity(localUrl('/api/admin/experiments/groups'), [
@@ -223,12 +211,9 @@ class CreateExperimentGroupE2ESpec extends BaseIntegrationSpec {
         String groupId2 = UUID.randomUUID().toString()
 
         and:
-        String experimentId1 = UUID.randomUUID().toString()
-        String experimentId2 = UUID.randomUUID().toString()
-        String experimentId3 = UUID.randomUUID().toString()
-        createDraftExperiment(experimentId1)
-        createDraftExperiment(experimentId2)
-        createDraftExperiment(experimentId3)
+        String experimentId1 = createDraftExperiment()
+        String experimentId2 = createDraftExperiment()
+        String experimentId3 = createDraftExperiment()
 
         and:
         restTemplate.postForEntity(localUrl('/api/admin/experiments/groups'), [
@@ -253,10 +238,8 @@ class CreateExperimentGroupE2ESpec extends BaseIntegrationSpec {
         String groupId = UUID.randomUUID().toString()
 
         and:
-        String experimentId1 = UUID.randomUUID().toString()
-        String experimentId2 = UUID.randomUUID().toString()
-        createDraftExperiment(experimentId1)
-        createDraftExperiment(experimentId2)
+        String experimentId1 = createDraftExperiment()
+        String experimentId2 = createDraftExperiment()
         startExperiment(experimentId1)
 
         when:

@@ -18,10 +18,8 @@ class GetAllExperimentGroupE2ESpec extends BaseIntegrationSpec {
         String groupId = UUID.randomUUID().toString()
 
         and:
-        String experimentId1 = UUID.randomUUID().toString()
-        String experimentId2 = UUID.randomUUID().toString()
-        createDraftExperiment(experimentId1)
-        createDraftExperiment(experimentId2)
+        String experimentId1 = createDraftExperiment()
+        String experimentId2 = createDraftExperiment()
         startExperiment(experimentId1)
 
         and:

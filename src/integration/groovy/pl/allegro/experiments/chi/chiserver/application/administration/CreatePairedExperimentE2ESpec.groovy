@@ -38,10 +38,8 @@ class CreatePairedExperimentE2ESpec extends BaseIntegrationSpec {
         userProvider.user = new User('Root', [], true)
 
         String experimentId1 = UUID.randomUUID().toString()
-        String experimentId2 = UUID.randomUUID().toString()
+        String experimentId2 = createDraftExperiment()
         String groupId = UUID.randomUUID().toString()
-
-        createDraftExperiment(experimentId2)
 
         and:
         def pairedExperimentCreationRequest = [
@@ -130,10 +128,8 @@ class CreatePairedExperimentE2ESpec extends BaseIntegrationSpec {
         userProvider.user = new User('Root', [], true)
 
         String experimentId1 = UUID.randomUUID().toString()
-        String experimentId2 = UUID.randomUUID().toString()
+        String experimentId2 = createDraftExperiment()
         String groupId = UUID.randomUUID().toString()
-
-        createDraftExperiment(experimentId2)
 
         and:
         def pairedExperimentCreationRequest = [
