@@ -12,7 +12,7 @@ public interface ExperimentGroupRepository {
 
     boolean experimentInGroup(String experimentId);
 
-    List<ExperimentGroup> all();
+    List<ExperimentGroup> findAll();
 
     Optional<ExperimentGroup> getExperimentGroup(String experimentId);
 }

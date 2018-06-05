@@ -92,7 +92,7 @@ public class CachedExperimentGroupRepository implements ExperimentGroupRepositor
     }
 
     @Override
-    public List<ExperimentGroup> all() {
+    public List<ExperimentGroup> findAll() {
         return ImmutableList.copyOf(experimentGroups);
     }
 

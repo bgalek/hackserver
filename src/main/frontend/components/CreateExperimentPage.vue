@@ -124,7 +124,6 @@
             </v-container>
 
             <v-container
-              v-if="reportingType === 'BACKEND'"
               fluid style="margin: 0px; padding: 0px" text-xs-center>
               <v-layout row align-top>
 

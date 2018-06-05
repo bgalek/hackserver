@@ -222,7 +222,7 @@ public class ExperimentsController {
     @GetMapping(path = "groups")
     String getExperimentGroups() {
         logger.info("All experiment group request received");
-        return jsonConverter.toJson(experimentGroupRepository.all());
+        return jsonConverter.toJson(experimentGroupRepository.findAll());
     }
 
     @ExceptionHandler(AuthorizationException.class)
