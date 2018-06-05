@@ -71,7 +71,7 @@ class CreateExperimentGroupE2ESpec extends BaseIntegrationSpec {
         createdGroup.id == groupId
     }
 
-    def "should not create experiment group if contains more than 1 active experiment"() {
+    def "should not create experiment group if it contains more than 1 active experiment"() {
         given:
         userProvider.user = new User('Author', [], true)
         String groupId = UUID.randomUUID().toString()
