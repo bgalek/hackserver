@@ -128,10 +128,10 @@ public class ExperimentsConfig {
 
     @Bean
     ExperimentGroupRepository cachedExperimentGroupRepository(
-            MongoTemplate mongoTemplate,
+            MongoExperimentGroupRepository mongoExperimentGroupRepository,
             Javers javers,
             UserProvider userProvider,
             ExperimentsMongoMetricsReporter metrics) {
-        return new CachedExperimentGroupRepository(new MongoExperimentGroupRepository(mongoTemplate, javers, userProvider, metrics));
+        return new CachedExperimentGroupRepository(mongoExperimentGroupRepository, javers, userProvider, metrics);
     }
 }

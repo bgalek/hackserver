@@ -1,9 +1,12 @@
 package pl.allegro.experiments.chi.chiserver.infrastructure.experiments;
 
 import com.google.common.collect.ImmutableList;
+import org.javers.core.Javers;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.scheduling.annotation.Scheduled;
+import pl.allegro.experiments.chi.chiserver.domain.UserProvider;
 import pl.allegro.experiments.chi.chiserver.domain.experiments.groups.ExperimentGroup;
 import pl.allegro.experiments.chi.chiserver.domain.experiments.groups.ExperimentGroupRepository;
 
@@ -15,12 +18,23 @@ import java.util.Optional;
 public class CachedExperimentGroupRepository implements ExperimentGroupRepository {
     private List<ExperimentGroup> experimentGroups;
     private Map<String, ExperimentGroup> experimentGroupMap;
-    private final ExperimentGroupRepository delegate;
+    private final MongoExperimentGroupRepository delegate;
     private static final long REFRESH_RATE_IN_SECONDS = 1;
     private static final Logger logger = LoggerFactory.getLogger(CachedExperimentGroupRepository.class);
 
-    CachedExperimentGroupRepository(ExperimentGroupRepository delegate) {
+    private final Javers javers;
+    private final UserProvider userProvider;
+    private final ExperimentsMongoMetricsReporter metrics;
+
+    CachedExperimentGroupRepository(
+            MongoExperimentGroupRepository delegate,
+            Javers javers,
+            UserProvider userProvider,
+            ExperimentsMongoMetricsReporter metrics) {
         this.delegate = delegate;
+        this.javers = javers;
+        this.userProvider = userProvider;
+        this.metrics = metrics;
         refresh();
     }
 
@@ -36,7 +50,8 @@ public class CachedExperimentGroupRepository implements ExperimentGroupRepositor
     }
 
     private void refresh() {
-        experimentGroups = delegate.all();
+        metrics.timerAllExperimentGroups().record(() ->
+                experimentGroups = delegate.findAll());
         experimentGroupMap = buildExperimentGroupMap(experimentGroups);
     }
 
@@ -52,7 +67,11 @@ public class CachedExperimentGroupRepository implements ExperimentGroupRepositor
 
     @Override
     public void save(ExperimentGroup experimentGroup) {
-        delegate.save(experimentGroup);
+        String username = userProvider.getCurrentUser().getName();
+        metrics.timerSaveExperimentGroup().record(() -> {
+            delegate.save(experimentGroup);
+        });
+        javers.commit(username, experimentGroup);
         secureRefresh();
     }
 
