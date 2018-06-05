@@ -65,4 +65,51 @@ class CreateExperimentSpec extends BaseUiSpec {
         and:
         assert $("div:nth-child(3) > div > div > div.input-group__details > div").text() == "No variants. Seriously?"
     }
+    def "should check that all fields are exist"() {
+
+        given:
+        to CreateExperimentPage
+
+        and:
+        waitForPageLoad()
+
+        when:
+        assert title == "Chi Admin"
+
+        then:
+        assert $("#experimentIdFormField").displayed
+
+        and:
+        assert $("#experimentIdSlug").displayed
+
+        and:
+        assert $("#experimentDescriptionFormField").displayed
+
+        and:
+        assert $("#experimentDocumentationLinkFormField").displayed
+
+        and:
+        assert $("#experimentAuthorizationGroupsFormField").displayed
+
+        and:
+        assert $("#deviceClassDropdown").displayed
+
+        and:
+        assert $("#percentageVariantSlider").displayed
+
+        and:
+        assert $("#experimentVariants").displayed
+
+        and:
+        assert $("#internalVariantFormField").displayed
+
+        and:
+        assert $("#internalVariantNameSlug").displayed
+
+        and:
+        assert $("#reportingTypeDropdown").displayed
+
+        and:
+        assert $("#createExperimentFormSubmitButton").displayed
+    }
 }

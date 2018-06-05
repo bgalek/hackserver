@@ -73,7 +73,7 @@
                       slot="activator">help_outline</v-icon>
                   </v-tooltip>
                 </v-flex>
-                <v-flex xs11>
+                <v-flex xs11 id="reportingTypeDropdown">
                   <v-select
                     :items="availableReportingTypes"
                     v-model="reportingType"

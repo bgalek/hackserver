@@ -3,7 +3,7 @@
     <v-container fluid style="margin: 0px; padding: 0px" text-xs-center>
       <v-layout row align-center>
 
-        <v-flex offset-xs1>
+        <v-flex offset-xs1 id="deviceClassDropdown">
           <v-select
             v-bind:items="deviceClasses"
             v-model="value.deviceClass"
@@ -17,6 +17,7 @@
 
         <v-flex offset-xs1>
           <v-slider
+            id="percentageVariantSlider"
             v-model="value.percentage"
             thumb-label
             :label="parseInt(value.percentage) + '% per variant'"
@@ -88,6 +89,7 @@
 
         <v-flex offset-xs1>
           <v-text-field
+            id="internalVariantNameSlug"
             style="width: 300px"
             v-model="value.slugifiedInternalVariantName"
             label="Final internal variant name"
