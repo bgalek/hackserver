@@ -88,7 +88,7 @@ public class CachedExperimentGroupRepository implements ExperimentGroupRepositor
 
     @Override
     public boolean experimentInGroup(String experimentId) {
-        return getExperimentGroup(experimentId).isPresent();
+        return findByExperimentId(experimentId).isPresent();
     }
 
     @Override
@@ -97,7 +97,7 @@ public class CachedExperimentGroupRepository implements ExperimentGroupRepositor
     }
 
     @Override
-    public Optional<ExperimentGroup> getExperimentGroup(String experimentId) {
+    public Optional<ExperimentGroup> findByExperimentId(String experimentId) {
         return Optional.ofNullable(experimentGroupMap.get(experimentId));
     }
 }

@@ -14,5 +14,5 @@ public interface ExperimentGroupRepository {
 
     List<ExperimentGroup> findAll();
 
-    Optional<ExperimentGroup> getExperimentGroup(String experimentId);
+    Optional<ExperimentGroup> findByExperimentId(String experimentId);
 }

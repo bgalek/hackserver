@@ -24,7 +24,7 @@ public class ClientExperimentFactory {
     public Optional<ClientExperiment> fromGroupedExperiment(ExperimentDefinition assignableExperiment) {
         Preconditions.checkArgument(assignableExperiment.isAssignable());
 
-        return experimentGroupRepository.getExperimentGroup(assignableExperiment.getId())
+        return experimentGroupRepository.findByExperimentId(assignableExperiment.getId())
                 .map(experimentGroup -> {
                     int percentageRangeStart = 0;
                     int maxBasePercentage = -1;

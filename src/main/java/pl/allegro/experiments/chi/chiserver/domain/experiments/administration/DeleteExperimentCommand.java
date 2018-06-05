@@ -1,7 +1,6 @@
 package pl.allegro.experiments.chi.chiserver.domain.experiments.administration;
 
 import pl.allegro.experiments.chi.chiserver.domain.experiments.Experiment;
-import pl.allegro.experiments.chi.chiserver.domain.experiments.ExperimentStatus;
 import pl.allegro.experiments.chi.chiserver.domain.experiments.ExperimentsRepository;
 import pl.allegro.experiments.chi.chiserver.domain.experiments.groups.ExperimentGroupRepository;
 import pl.allegro.experiments.chi.chiserver.domain.statistics.StatisticsRepository;
@@ -37,7 +36,7 @@ public class DeleteExperimentCommand {
         Experiment experiment = permissionsAwareExperimentRepository.getExperimentOrException(experimentId);
         validate(experiment);
 
-        experimentGroupRepository.getExperimentGroup(experimentId)
+        experimentGroupRepository.findByExperimentId(experimentId)
                 .ifPresent(experimentGroup ->
                     experimentGroupRepository.save(experimentGroup.removeExperiment(experimentId))
                 );

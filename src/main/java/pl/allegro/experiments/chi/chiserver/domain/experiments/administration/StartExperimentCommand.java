@@ -39,7 +39,7 @@ public class StartExperimentCommand {
                 .getDefinition()
                 .orElseThrow(() -> new UnsupportedOperationException("Missing experiment definition"))
                 .start(startExperimentProperties.getExperimentDurationDays());
-        experimentGroupRepository.getExperimentGroup(experimentId)
+        experimentGroupRepository.findByExperimentId(experimentId)
                 .ifPresent(experimentGroup ->
                     experimentGroupRepository
                             .save(experimentGroup.moveExperimentToTail(experimentId))
