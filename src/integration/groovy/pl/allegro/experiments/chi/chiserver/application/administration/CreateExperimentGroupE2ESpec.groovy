@@ -247,7 +247,7 @@ class CreateExperimentGroupE2ESpec extends BaseIntegrationSpec {
         ex.statusCode == HttpStatus.BAD_REQUEST
     }
 
-    def "should set group name space to ACTIVE experiment"() {
+    def "should set group's salt to first ACTIVE experiment"() {
         given:
         userProvider.user = new User('Author', [], true)
         String groupId = UUID.randomUUID().toString()

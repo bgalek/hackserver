@@ -196,13 +196,13 @@ class ClientExperimentsV3E2ESpec extends BaseIntegrationSpec {
                 .build()
 
         def expectedExperiment3State = RenderedExperimentVariantsBuilder.builder()
-                .addVariant('base', experiment1, [rangeOf(90, 100)])
-                .addVariant('v1', experiment1, [rangeOf(15, 25)])
+                .addVariant('base', experiment1, [rangeOf(80, 100)])
+                .addVariant('v1', experiment1, [rangeOf(15, 35)])
                 .build()
 
         def expectedExperiment4State = RenderedExperimentVariantsBuilder.builder()
                 .addVariant('base', experiment1, [rangeOf(85, 100)])
-                .addVariant('v1', experiment1, [rangeOf(25, 40)])
+                .addVariant('v1', experiment1, [rangeOf(35, 50)])
                 .build()
 
         userProvider.user = new User('Author', [], true)
@@ -212,7 +212,7 @@ class ClientExperimentsV3E2ESpec extends BaseIntegrationSpec {
         def experiments = [experiment2, experiment3, experiment4, experiment1]
         createDraftExperiment(experiment1, ['base', 'v1'], 5)
         createDraftExperiment(experiment2, ['base', 'v1'], 10)
-        createDraftExperiment(experiment3, ['base', 'v1'], 10)
+        createDraftExperiment(experiment3, ['base', 'v1'], 20)
         createDraftExperiment(experiment4, ['base', 'v1'], 15)
 
         startExperiment(experiment1)

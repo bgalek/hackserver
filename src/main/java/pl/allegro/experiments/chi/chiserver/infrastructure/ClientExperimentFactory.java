@@ -27,7 +27,6 @@ public class ClientExperimentFactory {
         return experimentGroupRepository.findByExperimentId(assignableExperiment.getId())
                 .map(experimentGroup -> {
                     int percentageRangeStart = 0;
-                    int maxBasePercentage = -1;
 
                     for (String experimentId: experimentGroup.getExperiments()) {
                         if (!experimentId.equals(assignableExperiment.getId())) {
@@ -44,7 +43,6 @@ public class ClientExperimentFactory {
                             long numberOfNonBaseVariants = currentExperiment.getVariantNames().stream()
                                     .filter(v -> !v.equals("base"))
                                     .count();
-                            maxBasePercentage = Integer.max(maxBasePercentage, currentExperimentPercentage);
                             percentageRangeStart += (int) numberOfNonBaseVariants * currentExperimentPercentage;
                         } else {
                             List<ExperimentVariant> variants = new ArrayList<>();
@@ -57,8 +55,7 @@ public class ClientExperimentFactory {
 
                                 List<PercentageRange> ranges = new ArrayList<>();
                                 if (variantName.equals("base")) {
-                                    maxBasePercentage = Integer.max(maxBasePercentage, assignableExperiment.getPercentage().get());
-                                    ranges.add(new PercentageRange(100 - maxBasePercentage, 100));
+                                    ranges.add(new PercentageRange(100 - assignableExperiment.getPercentage().get(), 100));
                                 } else {
                                     ranges.add(new PercentageRange(percentageRangeStart, percentageRangeStart + assignableExperiment.getPercentage().get()));
                                     percentageRangeStart += assignableExperiment.getPercentage().get();
