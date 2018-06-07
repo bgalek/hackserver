@@ -37,7 +37,7 @@
         <experiment-actions
           v-if="loadingExperimentDone && loadingStatsDone"
           :experiment="experiment"
-          :allowDelete="metricsAvailable && !isInGroup"
+          :allowDelete="metricsNotAvailable && !isInGroup"
         ></experiment-actions>
 
         <assignment-panel
@@ -75,11 +75,11 @@
       })
 
       this.loadExperimentStatistics('all', this.$route.params.experimentId).then(() => {
-        this.metricsAvailable = this.experimentStatistics.metrics.length === 0
+        this.metricsNotAvailable = this.experimentStatistics.metrics.length === 0
         console.log('loading stats for "' + this.experimentId + '" done')
         this.loadingStatsDone = true
       }).catch(() => {
-        this.metricsAvailable = false
+        this.metricsNotAvailable = true
         this.loadingStatsDone = true
       })
 
@@ -152,7 +152,7 @@
           device: stats.device,
           toDate: stats.toDate,
           metrics: mappedMetrics.sort((x, y) => x.order - y.order),
-          metricsAvailable: stats.metrics && stats.metrics.length === 0
+          metricsNotAvailable: stats.metrics && stats.metrics.length === 0
         }
       },
 
