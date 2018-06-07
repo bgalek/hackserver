@@ -1,6 +1,5 @@
 package pl.allegro.experiments.chi.chiserver.infrastructure.experiments;
 
-import com.google.common.collect.ImmutableList;
 import org.javers.core.Javers;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
