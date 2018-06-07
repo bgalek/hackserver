@@ -42,10 +42,11 @@ public class BayesianStatisticsController {
     }
 
     @MeteredEndpoint
-    @GetMapping("/histograms/{experimentId}")
+    @GetMapping("/histograms/{experimentId}/{device}")
     ResponseEntity<String> histogram(
             @PathVariable String experimentId,
-            @RequestParam(value = "device", required = false) final String device) {
+            @PathVariable(value = "device", required = false) final String device) {
+
         return bayesianChartsRepository.getHistograms(experimentId, DeviceClass.fromString(device))
                 .map(s -> ResponseEntity.ok(jsonConverter.toJson(s)))
                 .orElse(new ResponseEntity<>(HttpStatus.NO_CONTENT));

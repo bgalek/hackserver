@@ -9,7 +9,7 @@ export default new Vapi({
 }).get({
   action: 'getBayesianHistograms',
   property: 'bayesianHistograms',
-  path: ({experimentId}) => `/bayes/histograms/${experimentId}`,
+  path: ({experimentId, device}) => `/bayes/histograms/${experimentId}/${device}`,
   queryParams: true,
   onError: (state, error) => {
     console.log('getBayesianHistograms', 'onError', error)
