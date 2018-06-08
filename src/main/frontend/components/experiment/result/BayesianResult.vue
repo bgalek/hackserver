@@ -87,7 +87,9 @@
       },
 
       showEqualizer () {
-        return this.bayesianEqualizer && this.bayesianEqualizer.bars && this.bayesianEqualizer.bars.length > 0
+        return this.experiment.isMultiVariant() &&
+               this.bayesianEqualizer &&
+               this.bayesianEqualizer.bars && this.bayesianEqualizer.bars.length > 0
       },
 
       deviceChanged ({device}) {

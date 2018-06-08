@@ -61,6 +61,10 @@ export default class ExperimentModel extends ExperimentRecord {
     }
   }
 
+  isMultiVariant () {
+    return this.variants.length > 2
+  }
+
   groupsInfo () {
     return this.groups.join(', ')
   }

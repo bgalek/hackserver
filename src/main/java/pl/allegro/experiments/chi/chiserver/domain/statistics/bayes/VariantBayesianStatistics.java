@@ -1,5 +1,6 @@
 package pl.allegro.experiments.chi.chiserver.domain.statistics.bayes;
 
+import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
 
 import java.math.BigDecimal;
@@ -8,6 +9,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
+
+import static java.lang.Math.min;
 
 public class VariantBayesianStatistics {
     private final String variantName;
@@ -25,6 +28,33 @@ public class VariantBayesianStatistics {
         this.outliersRight = outliersRight == null ? 0 : outliersRight;
     }
 
+    int radius() {
+        return getSamples().getValues().size() / 2;
+    }
+
+    VariantBayesianStatistics noiseReduction() {
+        int samplesCount = samples.getValues().size();
+        Preconditions.checkState(samplesCount % 2 == 0);
+
+        var newValues = new ArrayList<Double>();
+        var newCounts = new ArrayList<Integer>();
+
+        for (int p=0; p<samplesCount/2; p++) {
+            int i = p * 2;
+            int j = p * 2 + 1;
+
+            var leftValue = samples.getValues().get(i);
+            var rightValue = samples.getValues().get(j);
+            var newValue = rightValue >= 0 ? rightValue : leftValue;
+            newValues.add(newValue);
+
+            var newCount = samples.getCounts().get(i) + samples.getCounts().get(j);
+            newCounts.add(newCount);
+        }
+
+        return new VariantBayesianStatistics(variantName, new Samples(newValues, newCounts), outliersLeft, outliersRight);
+    }
+
     public String getVariantName() {
         return variantName;
     }
@@ -34,7 +64,7 @@ public class VariantBayesianStatistics {
     }
 
     private List<Sample> getSamplesAsList() {
-        return IntStream.range(0, Math.min(samples.getValues().size(), samples.getCounts().size()))
+        return IntStream.range(0, min(samples.getValues().size(), samples.getCounts().size()))
                 .mapToObj(i -> new Sample(samples.getValues().get(i), samples.getCounts().get(i)))
                 .collect(Collectors.toList());
     }
@@ -92,6 +122,13 @@ public class VariantBayesianStatistics {
 
     public int getOutliersRight() {
         return outliersRight;
+    }
+
+    public List<BigDecimal> calculateFrequencies() {
+        var allCount = allCount();
+        return samples.getCounts().stream()
+                .map(it -> toRatio(it,allCount))
+                .collect(Collectors.toList());
     }
 
     static class Sample {
