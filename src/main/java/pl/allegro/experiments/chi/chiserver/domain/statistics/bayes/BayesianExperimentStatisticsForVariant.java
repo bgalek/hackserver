@@ -2,6 +2,7 @@ package pl.allegro.experiments.chi.chiserver.domain.statistics.bayes;
 
 
 import com.google.common.base.Preconditions;
+import pl.allegro.experiments.chi.chiserver.domain.experiments.DeviceClass;
 
 /**
  * Raw data received from PySpark
@@ -9,11 +10,11 @@ import com.google.common.base.Preconditions;
 public class BayesianExperimentStatisticsForVariant {
     private final String experimentId;
     private final String toDate;
-    private final String device;
+    private final DeviceClass device;
     private final String variantName;
     private final VariantBayesianStatistics data;
 
-    public BayesianExperimentStatisticsForVariant(String experimentId, String toDate, String device, String variantName, VariantBayesianStatistics data) {
+    public BayesianExperimentStatisticsForVariant(String experimentId, String toDate, DeviceClass device, String variantName, VariantBayesianStatistics data) {
         Preconditions.checkNotNull(experimentId, "experimentId cannot be null");
         Preconditions.checkNotNull(toDate, "toDate cannot be null");
         Preconditions.checkNotNull(device, "device cannot be null");
@@ -34,7 +35,7 @@ public class BayesianExperimentStatisticsForVariant {
         return toDate;
     }
 
-    public String getDevice() {
+    public DeviceClass getDevice() {
         return device;
     }
 

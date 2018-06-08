@@ -2,7 +2,7 @@ package pl.allegro.experiments.chi.chiserver.infrastructure;
 
 import com.google.gson.*;
 import com.google.gson.reflect.TypeToken;
-import pl.allegro.experiments.chi.chiserver.domain.statistics.bayes.BayesianExperimentStatistics;
+import pl.allegro.experiments.chi.chiserver.domain.experiments.DeviceClass;
 import pl.allegro.experiments.chi.chiserver.domain.statistics.bayes.BayesianExperimentStatisticsForVariant;
 import pl.allegro.experiments.chi.chiserver.domain.statistics.bayes.Samples;
 import pl.allegro.experiments.chi.chiserver.domain.statistics.bayes.VariantBayesianStatistics;
@@ -17,7 +17,7 @@ public class BayesianExperimentStatisticsDeserializer implements JsonDeserialize
         var json = jsonElement.getAsJsonObject();
         var id = json.get("experimentId").getAsString();
         var toDate = json.get("toDate").getAsString();
-        var deviceClass = json.get("device").getAsString();
+        var deviceClass = DeviceClass.fromString(json.get("device").getAsString());
         var variantName = json.get("variantName").getAsString();
 
         var dataNode = json.getAsJsonObject("data");

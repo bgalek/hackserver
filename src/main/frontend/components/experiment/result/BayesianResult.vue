@@ -15,7 +15,7 @@
       <h4>Visits conversion equalizer</h4>
       <br/>
       <bayesian-equalizer-chart v-if="this.showEqualizer()"
-                                :equalizerData="this.getEqualizerData()"
+                                :equalizerData="bayesianEqualizer"
 
       ></bayesian-equalizer-chart>
       <v-spacer></v-spacer>
@@ -70,14 +70,9 @@
 
         return histograms && histograms.find(x => x.variantName === this.variantName)
       }
-
     },
 
     methods: {
-      getEqualizerData () {
-        return this.bayesianEqualizer
-      },
-
       updateVariantName ({ variantName }) {
         this.variantName = variantName
       },
