@@ -1,5 +1,4 @@
 import { Bar } from 'vue-chartjs'
-const RADIUS = 100
 
 export default {
   extends: Bar,
@@ -14,18 +13,26 @@ export default {
 
   methods: {
     printHistogram (histogramData) {
+      const RADIUS = histogramData.labels.length / 2
+      const variantName = histogramData.variantName.toUpperCase()
+      const betterThanBase = Math.round(histogramData.labels[RADIUS]) + '%'
+      const worseThanBase = Math.round(histogramData.labels[RADIUS - 1]) + '%'
+
+      const redDataset = histogramData.frequencies.slice(0, RADIUS)
+      const greenDataset = new Array(RADIUS).fill(0).concat(histogramData.frequencies.slice(RADIUS, RADIUS * 2))
+
       this.renderChart({
-        labels: histogramData.values.map(x => `${(x * 100.0).toFixed(2)}%`),
+        labels: histogramData.values.map(x => (x * 100).toFixed(1) + '%'),
         datasets: [
           {
-            label: histogramData.labels[RADIUS - 1],
+            label: `There is ${worseThanBase} risk that variant ${variantName} is worse than Base`,
             backgroundColor: new Array(RADIUS * 2).fill('#e62e00'),
-            data: histogramData.counts.slice(0, RADIUS).concat(new Array(RADIUS).fill(0))
+            data: redDataset
           },
           {
-            label: histogramData.labels[RADIUS],
+            label: `There is ${betterThanBase} chance that variant ${variantName} is better than Base`,
             backgroundColor: new Array(RADIUS * 2).fill('#00b300'),
-            data: new Array(RADIUS).fill(0).concat(histogramData.counts.slice(RADIUS, RADIUS * 2))
+            data: greenDataset
           }
         ]
       },
@@ -37,6 +44,10 @@ export default {
         maintainAspectRatio: false,
         scales: {
           xAxes: [{
+            scaleLabel: {
+              display: true,
+              labelString: 'Diff to Base'
+            },
             stacked: true,
             gridLines: {
               display: false
@@ -48,6 +59,10 @@ export default {
             }
           }],
           yAxes: [{
+            scaleLabel: {
+              display: true,
+              labelString: 'Frequency'
+            },
             ticks: {
               min: 0
             }
@@ -60,13 +75,13 @@ export default {
           callbacks: {
             title: function (item, data) {
               if (item[0].xLabel.startsWith('-')) {
-                return `Probability of decrease by ${item[0].xLabel} or more`
+                return `Risk of decreasing Diff to Base by ${item[0].xLabel} or more`
               } else {
-                return `Probability of increase by ${item[0].xLabel} or more`
+                return `Chance of increasing Diff to Base by ${item[0].xLabel} or more`
               }
             },
             label: function (item, data) {
-              return histogramData.labels[item.index]
+              return histogramData.labels[item.index] + '%'
             }
 
           }

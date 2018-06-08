@@ -34,7 +34,7 @@
         ></variant-selector>
       </v-layout>
       <bayesian-histogram-chart v-if="this.showHistogram()"
-        :histogramData="this.getHistogramData(this.variantName)"
+        :histogramData="histogramData"
       >
       </bayesian-histogram-chart>
     </v-container>
@@ -59,18 +59,21 @@
 
     data () {
       return {
-        histogramsToDate: this.bayesianHistograms.metadata.toDate,
-        histograms: this.bayesianHistograms.histograms,
+        histogramsToDate: this.bayesianHistograms.metadata && this.bayesianHistograms.metadata.toDate,
         variantName: this.experiment.variants.find(v => v.name !== 'base').name
       }
     },
 
-    methods: {
-      getHistogramData (variantName) {
-        let found = this.histograms && this.histograms.find(x => x.variantName === variantName)
-        return found
-      },
+    computed: {
+      histogramData: function () {
+        const histograms = this.bayesianHistograms.histograms
 
+        return histograms && histograms.find(x => x.variantName === this.variantName)
+      }
+
+    },
+
+    methods: {
       getEqualizerData () {
         return this.bayesianEqualizer
       },
@@ -80,11 +83,13 @@
       },
 
       showHistogram () {
-        return this.histograms && this.histograms.length > 0
+        return this.histogramData
       },
 
       showEqualizer () {
-        return this.bayesianEqualizer && this.bayesianEqualizer.bars && this.bayesianEqualizer.bars.length > 0
+        return this.experiment.isMultiVariant() &&
+               this.bayesianEqualizer &&
+               this.bayesianEqualizer.bars && this.bayesianEqualizer.bars.length > 0
       },
 
       deviceChanged ({device}) {

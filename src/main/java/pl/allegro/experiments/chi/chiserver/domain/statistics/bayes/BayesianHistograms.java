@@ -3,7 +3,6 @@ package pl.allegro.experiments.chi.chiserver.domain.statistics.bayes;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Streams;
-import pl.allegro.experiments.chi.chiserver.domain.experiments.DeviceClass;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -15,7 +14,6 @@ public class BayesianHistograms {
     private final BayesianChartMetadata metadata;
     private final List<VariantHistogram> histograms;
     private static final double BOX_SIZE = 0.001;
-    private static final int MAX_BOX = 100;
 
     public BayesianHistograms(BayesianExperimentStatistics experimentStatistics) {
         this(new BayesianChartMetadata(experimentStatistics,BOX_SIZE),
@@ -29,21 +27,24 @@ public class BayesianHistograms {
         this.histograms = histograms;
     }
 
-    private static VariantHistogram toHistogram(VariantBayesianStatistics statistics) {
-        Preconditions.checkArgument(statistics.getSamples().getValues().size() == MAX_BOX * 2);
+    private static VariantHistogram toHistogram(VariantBayesianStatistics rawStatistics) {
+        Preconditions.checkArgument(rawStatistics != null);
 
-        List<BigDecimal> improvingProbabilities = statistics.calculateImprovingProbabilities(BOX_SIZE, MAX_BOX);
-        List<BigDecimal> worseningProbabilities = statistics.calculateWorseningProbabilities(BOX_SIZE, MAX_BOX);
+        var statistics = rawStatistics.noiseReduction();
 
-        Stream<BigDecimal> allProbabilities = Streams.concat(Lists.reverse(worseningProbabilities).stream(), improvingProbabilities.stream());
+        var frequencies = statistics.calculateFrequencies();
+        var improvingLabels = statistics.calculateImprovingProbabilities(BOX_SIZE, statistics.radius());
+        var worseningLabels = statistics.calculateWorseningProbabilities(BOX_SIZE, statistics.radius());
+
+        Stream<BigDecimal> allLabels = Streams.concat(Lists.reverse(worseningLabels).stream(), improvingLabels.stream());
 
         return new VariantHistogram(
                 statistics.getVariantName(),
                 statistics.getSamples().getValues(),
-                statistics.getSamples().getCounts(),
-                allProbabilities
-                        .map(it -> it.multiply(BigDecimal.valueOf(100)).setScale(2, RoundingMode.HALF_DOWN))
-                        .map(it -> it.toString()+"%").collect(Collectors.toList())
+                frequencies,
+                allLabels
+                        .map(it -> it.multiply(BigDecimal.valueOf(100)).setScale(1, RoundingMode.HALF_DOWN))
+                        .collect(Collectors.toList())
                 );
     }
 
