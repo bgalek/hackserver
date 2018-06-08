@@ -48,6 +48,8 @@ class CreateExperimentSpec extends BaseUiSpec {
         then:
         successfullyRedirectedToExperimentDetails(experimentId)
     }
+
+    @UiTest
     def "should show validation statements after create experiment without required fields"() {
 
         given:
@@ -65,6 +67,8 @@ class CreateExperimentSpec extends BaseUiSpec {
         and:
         $("div:nth-child(3) > div > div > div.input-group__details > div").text() == "No variants. Seriously?"
     }
+
+    @UiTest
     def "should check if all fields exist"() {
 
         given:
