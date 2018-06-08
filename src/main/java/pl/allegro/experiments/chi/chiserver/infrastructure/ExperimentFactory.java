@@ -1,5 +1,7 @@
 package pl.allegro.experiments.chi.chiserver.infrastructure;
 
+import pl.allegro.experiments.chi.chiserver.application.experiments.AdminExperiment;
+import pl.allegro.experiments.chi.chiserver.domain.UserProvider;
 import pl.allegro.experiments.chi.chiserver.domain.experiments.*;
 import pl.allegro.experiments.chi.chiserver.domain.experiments.groups.ExperimentGroupRepository;
 import pl.allegro.experiments.chi.chiserver.domain.experiments.groups.ShredHashRangePredicate;
@@ -9,19 +11,22 @@ import java.util.List;
 import java.util.Optional;
 
 // todo refactor/optimize
-public class ClientExperimentFactory {
+public class ExperimentFactory {
     private final ExperimentGroupRepository experimentGroupRepository;
     private final ExperimentsRepository experimentsRepository;
+    private final UserProvider userProvider;
 
-    public ClientExperimentFactory(
+
+    public ExperimentFactory(
             ExperimentGroupRepository experimentGroupRepository,
-            ExperimentsRepository experimentsRepository) {
+            ExperimentsRepository experimentsRepository,
+            UserProvider userProvider) {
         this.experimentGroupRepository = experimentGroupRepository;
         this.experimentsRepository = experimentsRepository;
+        this.userProvider = userProvider;
     }
 
-    public Optional<ClientExperiment> fromGroupedExperiment(ExperimentDefinition experimentDefinition) {
-
+    public Optional<ClientExperiment> clientExperimentFromGroupedExperiment(ExperimentDefinition experimentDefinition) {
         return experimentGroupRepository.findByExperimentId(experimentDefinition.getId())
                 .map(experimentGroup -> {
                     int percentageRangeStart = 0;
@@ -73,5 +78,17 @@ public class ClientExperimentFactory {
 
                     return null;
                 });
+    }
+
+    public AdminExperiment adminExperiment(Experiment experiment) {
+        if (experimentGroupRepository.experimentInGroup(experiment.getId())) {
+            return new AdminExperiment(
+                    experiment.getDefinition().get(), // grouped experiment has definition
+                    userProvider.getCurrentUser(),
+                    clientExperimentFromGroupedExperiment(experiment.getDefinition().get()).get());
+        } else {
+            return experiment.getDefinition().map(it -> new AdminExperiment(it, userProvider.getCurrentUser()))
+                    .orElse(new AdminExperiment(experiment));
+        }
     }
 }
