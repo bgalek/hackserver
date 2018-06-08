@@ -1,6 +1,5 @@
 package pl.allegro.experiments.chi.chiserver.infrastructure;
 
-import com.google.common.base.Preconditions;
 import pl.allegro.experiments.chi.chiserver.domain.experiments.*;
 import pl.allegro.experiments.chi.chiserver.domain.experiments.groups.ExperimentGroupRepository;
 import pl.allegro.experiments.chi.chiserver.domain.experiments.groups.ShredHashRangePredicate;
@@ -21,15 +20,14 @@ public class ClientExperimentFactory {
         this.experimentsRepository = experimentsRepository;
     }
 
-    public Optional<ClientExperiment> fromGroupedExperiment(ExperimentDefinition assignableExperiment) {
-        Preconditions.checkArgument(assignableExperiment.isAssignable());
+    public Optional<ClientExperiment> fromGroupedExperiment(ExperimentDefinition experimentDefinition) {
 
-        return experimentGroupRepository.findByExperimentId(assignableExperiment.getId())
+        return experimentGroupRepository.findByExperimentId(experimentDefinition.getId())
                 .map(experimentGroup -> {
                     int percentageRangeStart = 0;
 
                     for (String experimentId: experimentGroup.getExperiments()) {
-                        if (!experimentId.equals(assignableExperiment.getId())) {
+                        if (!experimentId.equals(experimentDefinition.getId())) {
                             ExperimentDefinition currentExperiment = experimentsRepository.getExperiment(experimentId)
                                     .get()
                                     .getDefinition()
@@ -46,19 +44,19 @@ public class ClientExperimentFactory {
                             percentageRangeStart += (int) numberOfNonBaseVariants * currentExperimentPercentage;
                         } else {
                             List<ExperimentVariant> variants = new ArrayList<>();
-                            for (String variantName: assignableExperiment.getVariantNames()) {
+                            for (String variantName: experimentDefinition.getVariantNames()) {
                                 List<Predicate> variantPredicates = new ArrayList<>();
-                                if (assignableExperiment.getInternalVariantName().isPresent()
-                                        && assignableExperiment.getInternalVariantName().get().equals(variantName)) {
+                                if (experimentDefinition.getInternalVariantName().isPresent()
+                                        && experimentDefinition.getInternalVariantName().get().equals(variantName)) {
                                     variantPredicates.add(new InternalPredicate());
                                 }
 
                                 List<PercentageRange> ranges = new ArrayList<>();
                                 if (variantName.equals("base")) {
-                                    ranges.add(new PercentageRange(100 - assignableExperiment.getPercentage().get(), 100));
+                                    ranges.add(new PercentageRange(100 - experimentDefinition.getPercentage().get(), 100));
                                 } else {
-                                    ranges.add(new PercentageRange(percentageRangeStart, percentageRangeStart + assignableExperiment.getPercentage().get()));
-                                    percentageRangeStart += assignableExperiment.getPercentage().get();
+                                    ranges.add(new PercentageRange(percentageRangeStart, percentageRangeStart + experimentDefinition.getPercentage().get()));
+                                    percentageRangeStart += experimentDefinition.getPercentage().get();
                                 }
                                 variantPredicates.add(new ShredHashRangePredicate(ranges, experimentGroup.getSalt()));
                                 variants.add(new ExperimentVariant(variantName, variantPredicates));
@@ -66,9 +64,9 @@ public class ClientExperimentFactory {
                             return new ClientExperiment(
                                     experimentId,
                                     variants,
-                                    assignableExperiment.isReportingEnabled(),
-                                    assignableExperiment.getActivityPeriod(),
-                                    assignableExperiment.getStatus()
+                                    experimentDefinition.isReportingEnabled(),
+                                    experimentDefinition.getActivityPeriod(),
+                                    experimentDefinition.getStatus()
                             );
                         }
                     }

@@ -18,6 +18,8 @@ import pl.allegro.experiments.chi.chiserver.domain.experiments.administration.*;
 import pl.allegro.experiments.chi.chiserver.domain.experiments.administration.audit.AuditLog;
 import pl.allegro.experiments.chi.chiserver.domain.experiments.administration.audit.Auditor;
 import pl.allegro.experiments.chi.chiserver.domain.statistics.bayes.BayesianChartsRepository;
+import pl.allegro.experiments.chi.chiserver.infrastructure.ClientExperiment;
+import pl.allegro.experiments.chi.chiserver.infrastructure.ClientExperimentFactory;
 import pl.allegro.tech.common.andamio.errors.Error;
 import pl.allegro.tech.common.andamio.errors.ErrorsHolder;
 import pl.allegro.tech.common.andamio.errors.SimpleErrorsHolder;
@@ -42,6 +44,7 @@ public class ExperimentsController {
     private final Auditor auditor;
     private final UserProvider userProvider;
     private final ExperimentGroupRepository experimentGroupRepository;
+    private final ClientExperimentFactory clientExperimentFactory;
 
     public ExperimentsController(
             ExperimentsRepository experimentsRepository,
@@ -51,7 +54,8 @@ public class ExperimentsController {
             Auditor auditor,
             UserProvider userProvider,
             BayesianChartsRepository bayesianChartsRepository,
-            ExperimentGroupRepository experimentGroupRepository) {
+            ExperimentGroupRepository experimentGroupRepository,
+            ClientExperimentFactory clientExperimentFactory) {
         this.experimentsRepository = experimentsRepository;
         this.measurementsRepository = measurementsRepository;
         this.experimentActions = experimentActions;
@@ -60,6 +64,7 @@ public class ExperimentsController {
         this.userProvider = userProvider;
         this.bayesianChartsRepository = bayesianChartsRepository;
         this.experimentGroupRepository = experimentGroupRepository;
+        this.clientExperimentFactory = clientExperimentFactory;
     }
 
     @MeteredEndpoint
@@ -82,7 +87,16 @@ public class ExperimentsController {
     ResponseEntity<String> getExperiment(@PathVariable String experimentId) {
         logger.info("Single experiment request received");
         return experimentsRepository.getExperiment(experimentId)
-                .map(this::toAdminExperiment)
+                .map(it -> {
+                    if (experimentGroupRepository.experimentInGroup(it.getId())) {
+                        return new AdminExperiment(
+                                it.getDefinition().get(), // grouped experiment has definition
+                                userProvider.getCurrentUser(),
+                                clientExperimentFactory.fromGroupedExperiment(it.getDefinition().get()).get());
+                    } else {
+                        return toAdminExperiment(it);
+                    }
+                })
                 .map(it -> it.withMeasurements(measurementsRepository.getMeasurements(it.getId())))
                 .map(it -> experimentGroupRepository.findByExperimentId(it.getId())
                         .map(g -> it.withExperimentGroup(g))
@@ -240,7 +254,6 @@ public class ExperimentsController {
     ResponseEntity<ErrorsHolder> handle(ExperimentNotFoundException exception) {
         return handleBadRequest(exception, exception.getClass().getSimpleName());
     }
-
 
     @ExceptionHandler(HttpMessageConversionException.class)
     ResponseEntity<ErrorsHolder> handle(HttpMessageConversionException exception) {
