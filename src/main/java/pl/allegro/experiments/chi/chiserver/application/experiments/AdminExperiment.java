@@ -29,13 +29,6 @@ public class AdminExperiment {
         clientExperiment = new ClientExperiment(legacyDefinition);
     }
 
-    public AdminExperiment(ExperimentDefinition experimentDefinition, User currentUser) {
-        this.experimentDefinition = experimentDefinition;
-        origin = ExperimentOrigin.MONGO;
-        editable = currentUser.isOwner(experimentDefinition);
-        clientExperiment = new ClientExperiment(experimentDefinition.toExperiment());
-    }
-
     public AdminExperiment(
             ExperimentDefinition experimentDefinition,
             User currentUser,

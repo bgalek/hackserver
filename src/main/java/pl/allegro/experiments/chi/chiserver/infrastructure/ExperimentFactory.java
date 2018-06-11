@@ -87,8 +87,9 @@ public class ExperimentFactory {
                     userProvider.getCurrentUser(),
                     clientExperimentFromGroupedExperiment(experiment.getDefinition().get()).get());
         } else {
-            return experiment.getDefinition().map(it -> new AdminExperiment(it, userProvider.getCurrentUser()))
-                    .orElse(new AdminExperiment(experiment));
+            return experiment.getDefinition().map(it ->
+                new AdminExperiment(it, userProvider.getCurrentUser(), new ClientExperiment(it.toExperiment()))
+            ).orElse(new AdminExperiment(experiment));
         }
     }
 }
