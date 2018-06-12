@@ -208,12 +208,11 @@
 
       computeMaxPercentagePerVariant (experimentToPair, numberOfVariants) {
         if (experimentToPair) {
-          var percentageLeft = 100 - (experimentToPair.variants.length - 1) * experimentToPair.percentage
+          let percentageLeft = 100 - (experimentToPair.variants.length - 1) * experimentToPair.percentage
           if (percentageLeft / numberOfVariants >= experimentToPair.percentage) {
             return percentageLeft / numberOfVariants
           } else {
-            percentageLeft = 100 - (experimentToPair.variants.length) * experimentToPair.percentage
-            return percentageLeft / (numberOfVariants - 1)
+            return (100 - (experimentToPair.variants.length) * experimentToPair.percentage) / (numberOfVariants - 1)
           }
         } else {
           return 100 / numberOfVariants
@@ -223,12 +222,12 @@
 
     watch: {
       experimentToPair (newExperimentToPair) {
-        this.maxPercentPerVariant = this.computeMaxPercentagePerVariant(newExperimentToPair, this.value.variantNames.length)
+        this.maxPercentPerVariant = Math.floor(this.computeMaxPercentagePerVariant(newExperimentToPair, this.value.variantNames.length))
       },
 
       value: {
         handler (newValue) {
-          this.maxPercentPerVariant = this.computeMaxPercentagePerVariant(this.experimentToPair, newValue.variantNames.length)
+          this.maxPercentPerVariant = Math.floor(this.computeMaxPercentagePerVariant(this.experimentToPair, newValue.variantNames.length))
           this.blockPercentageSlider = newValue.variantNames.length <= 1
         },
 
