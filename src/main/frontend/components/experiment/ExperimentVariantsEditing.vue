@@ -212,12 +212,8 @@
           if (percentageLeft / numberOfVariants >= experimentToPair.percentage) {
             return percentageLeft / numberOfVariants
           } else {
-            percentageLeft = 100 - experimentToPair.variants.length * experimentToPair.percentage
-            let maxPercentagePerVariantWithoutSharedBase = percentageLeft / numberOfVariants
-            if (experimentToPair.percentage >= maxPercentagePerVariantWithoutSharedBase) {
-              percentageLeft += percentageLeft / numberOfVariants
-            }
-            return percentageLeft / numberOfVariants
+            percentageLeft = 100 - (experimentToPair.variants.length) * experimentToPair.percentage
+            return percentageLeft / (numberOfVariants - 1)
           }
         } else {
           return 100 / numberOfVariants
