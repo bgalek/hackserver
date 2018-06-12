@@ -52,7 +52,10 @@
 
             <experiment-desc-editing v-model="descriptions" />
 
-            <experiment-variants-editing :allowModifyRegularVariants="true" v-model="variants" />
+            <experiment-variants-editing
+              :experimentToPair="groupWithExperiment"
+              :allowModifyRegularVariants="true"
+              v-model="variants" />
 
             <v-container fluid style="margin: 0px; padding: 0px" text-xs-center>
               <v-layout row align-top>
@@ -119,22 +122,22 @@
                 <v-flex xs11 text-xs-left>
                   <v-switch
                     label="Group together with another experiment"
-                    v-model="experimentGroup.createGroupFlag"
+                    v-model="createGroupFlag"
                   ></v-switch>
                   <v-select
-                    v-if="experimentGroup.createGroupFlag"
+                    v-if="createGroupFlag"
                     id="groupWithExperiment"
-                    :items="experimentsThatCanBeGrouped"
-                    v-model="experimentGroup.groupWithExperiment"
+                    :items="experimentNamesThatCanBeGrouped"
+                    v-model="groupWithExperimentName"
                     label="Group with"
                     :rules="groupWithExperimentRules"
                     :autocomplete="true"
                     single-line
                   ></v-select>
                   <v-text-field
-                    v-if="experimentGroup.createGroupFlag"
+                    v-if="createGroupFlag"
                     id="experimentGroupName"
-                    v-model="experimentGroup.experimentGroupName"
+                    v-model="experimentGroupName"
                     label="Group name"
                     :rules="experimentGroupIdRules"
                   ></v-text-field>
@@ -197,20 +200,32 @@
         reportingType: 'BACKEND',
         availableReportingTypes: ['BACKEND', 'FRONTEND', 'GTM'],
         eventDefinitions: [],
-        experimentGroup: {
-          groupWithExperiment: null,
-          experimentGroupName: null,
-          createGroupFlag: false
-        }
+
+        groupWithExperiment: null,
+        groupWithExperimentName: null,
+        experimentGroupName: null,
+        createGroupFlag: false
+      }
+    },
+
+    watch: {
+      groupWithExperimentName (val) {
+        this.groupWithExperiment = this.experimentsThatCanBeGrouped.find(e => e.id === val)
+      },
+
+      createGroupFlag (val) {
+        this.groupWithExperimentName = null
       }
     },
 
     computed: {
       ...mapState({
-        experimentsThatCanBeGrouped: state => state.experiments.experiments
+        experimentNamesThatCanBeGrouped: state => state.experiments.experiments
           .filter((e, index, array) => { return e.canBeGrouped() })
           .map((e, index, array) => { return e.id })
-          .sort()
+          .sort(),
+        experimentsThatCanBeGrouped: state => state.experiments.experiments
+          .filter((e, index, array) => { return e.canBeGrouped() })
       }),
 
       showForm () {
@@ -289,11 +304,11 @@
       },
 
       isExperimentGroupIdUnique () {
-        return _.find(this.$store.state.experimentGroups.experimentGroups, e => e === this.experimentGroup.experimentGroupName) === undefined
+        return _.find(this.$store.state.experimentGroups.experimentGroups, e => e === this.experimentGroupName) === undefined
       },
 
       shouldBeGrouped () {
-        return this.experimentGroup.groupWithExperiment != null && this.experimentGroup.experimentGroupName != null
+        return this.groupWithExperimentName != null && this.experimentGroupName != null
       },
 
       getExperimentDataToSend () {
@@ -315,8 +330,8 @@
           return {
             experimentCreationRequest: experimentCreationRequest,
             experimentGroupCreationRequest: {
-              id: this.experimentGroup.experimentGroupName,
-              experiments: [this.experimentIdSlug, this.experimentGroup.groupWithExperiment]
+              id: this.experimentGroupName,
+              experiments: [this.experimentIdSlug, this.groupWithExperimentName]
             }
           }
         } else {

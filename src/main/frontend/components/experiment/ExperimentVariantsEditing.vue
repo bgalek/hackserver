@@ -13,21 +13,6 @@
         </v-flex>
 
       </v-layout>
-      <v-layout row align-center>
-
-        <v-flex offset-xs1>
-          <v-slider
-            id="percentageVariantSlider"
-            v-model="value.percentage"
-            thumb-label
-            :label="parseInt(value.percentage) + '% per variant'"
-            step="1"
-            v-bind:max="maxPercentPerVariant"
-            v-bind:min="1"
-            ticks></v-slider>
-        </v-flex>
-
-      </v-layout>
 
       <v-layout row align-center>
 
@@ -60,6 +45,23 @@
 
             </template>
           </v-select>
+        </v-flex>
+
+      </v-layout>
+
+      <v-layout row align-center>
+
+        <v-flex offset-xs1>
+          <v-slider
+            id="percentageVariantSlider"
+            v-model="value.percentage"
+            thumb-label
+            :label="parseInt(value.percentage) + '% per variant'"
+            step="1"
+            v-bind:max="maxPercentPerVariant"
+            v-bind:min="1"
+            :disabled="blockPercentageSlider"
+            ticks></v-slider>
         </v-flex>
 
       </v-layout>
@@ -112,9 +114,10 @@
 
   export default {
     props: {
-      variants: {
+      experimentToPair: {},
 
-      },
+      variants: {},
+
       allowModifyRegularVariants: {
         default: false,
         type: Boolean
@@ -135,7 +138,9 @@
         ],
         internalVariantNameRules: [
           (v) => !startsOrEndsWithSpace(v) || 'Do not start nor end variant name with space'
-        ]
+        ],
+        maxPercentPerVariant: 100,
+        blockPercentageSlider: true
       }
     },
 
@@ -199,15 +204,43 @@
 
       onInternalVariantNameChange (event) {
         this.value.slugifiedInternalVariantName = this.slugify(event)
-      }
+      },
 
+      computeMaxPercentagePerVariant (experimentToPair, numberOfVariants) {
+        if (experimentToPair) {
+          var percentageLeft = 100 - (experimentToPair.variants.length - 1) * experimentToPair.percentage
+          if (percentageLeft / numberOfVariants >= experimentToPair.percentage) {
+            return percentageLeft / numberOfVariants
+          } else {
+            percentageLeft = 100 - experimentToPair.variants.length * experimentToPair.percentage
+            let maxPercentagePerVariantWithoutSharedBase = percentageLeft / numberOfVariants
+            if (experimentToPair.percentage >= maxPercentagePerVariantWithoutSharedBase) {
+              percentageLeft += percentageLeft / numberOfVariants
+            }
+            return percentageLeft / numberOfVariants
+          }
+        } else {
+          return 100 / numberOfVariants
+        }
+      }
+    },
+
+    watch: {
+      experimentToPair (newExperimentToPair) {
+        this.maxPercentPerVariant = this.computeMaxPercentagePerVariant(newExperimentToPair, this.value.variantNames.length)
+      },
+
+      value: {
+        handler (newValue) {
+          this.maxPercentPerVariant = this.computeMaxPercentagePerVariant(this.experimentToPair, newValue.variantNames.length)
+          this.blockPercentageSlider = newValue.variantNames.length <= 1
+        },
+
+        deep: true
+      }
     },
 
     computed: {
-      maxPercentPerVariant () {
-        return 100 / this.value.variantNames.length
-      },
-
       slugifiedVariants () {
         return _.map(this.value.variantNames, v => slugify(v))
       }
