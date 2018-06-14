@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.RestController;
 import pl.allegro.experiments.chi.chiserver.domain.experiments.ExperimentsRepository;
 import pl.allegro.experiments.chi.chiserver.domain.experiments.groups.ExperimentGroupRepository;
 import pl.allegro.experiments.chi.chiserver.infrastructure.ClientExperiment;
-import pl.allegro.experiments.chi.chiserver.infrastructure.ClientExperimentFactory;
+import pl.allegro.experiments.chi.chiserver.infrastructure.ExperimentFactory;
 import pl.allegro.tech.common.andamio.metrics.MeteredEndpoint;
 
 import java.util.stream.Collectors;
@@ -22,7 +22,7 @@ class ClientExperimentsControllerV3 {
     private final Gson jsonConverter;
     private final CrisisManagementFilter crisisManagementFilter;
     private final ExperimentGroupRepository experimentGroupRepository;
-    private final ClientExperimentFactory clientExperimentFactory;
+    private final ExperimentFactory experimentFactory;
 
     private static final Logger logger = LoggerFactory.getLogger(ClientExperimentsControllerV3.class);
 
@@ -31,12 +31,12 @@ class ClientExperimentsControllerV3 {
             Gson jsonConverter,
             CrisisManagementFilter crisisManagementFilter,
             ExperimentGroupRepository experimentGroupRepository,
-            ClientExperimentFactory clientExperimentFactory) {
+            ExperimentFactory experimentFactory) {
         this.experimentsRepository = experimentsRepository;
         this.jsonConverter = jsonConverter;
         this.crisisManagementFilter = crisisManagementFilter;
         this.experimentGroupRepository = experimentGroupRepository;
-        this.clientExperimentFactory = clientExperimentFactory;
+        this.experimentFactory = experimentFactory;
     }
 
     @MeteredEndpoint
@@ -49,7 +49,7 @@ class ClientExperimentsControllerV3 {
                 .stream()
                 .filter(crisisManagementFilter::filter)
                 .map(it -> !experimentGroupRepository.experimentInGroup(it.getId())
-                            ? new ClientExperiment(it) : clientExperimentFactory.fromGroupedExperiment(it.getDefinition().get()).get()
+                            ? new ClientExperiment(it) : experimentFactory.clientExperimentFromGroupedExperiment(it.getDefinition().get()).get()
                 )
                 .collect(Collectors.toList()));
     }

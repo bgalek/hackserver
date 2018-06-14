@@ -8,9 +8,9 @@ const ExperimentVariantRecord = Record({
 })
 
 export default class ExperimentVariantModel extends ExperimentVariantRecord {
-  constructor (variant, i) {
+  constructor (isDraft, variant, i) {
     variant = Object.assign({}, variant)
-    variant.predicatesInfo = ExperimentVariantModel.predicatesInfo(variant)
+    variant.predicatesInfo = ExperimentVariantModel.predicatesInfo(isDraft, variant)
     variant.color = ExperimentVariantModel.color(variant.name, i)
     variant.deviceClass = ExperimentVariantModel.deviceClass(variant)
     super(variant)
@@ -28,8 +28,9 @@ export default class ExperimentVariantModel extends ExperimentVariantRecord {
     return colors[i % colors.length]
   }
 
-  static predicatesInfo (variant) {
-    return variant.predicates.map(ExperimentVariantModel.predicateToString).join(' AND ')
+  static predicatesInfo (isDraft, variant) {
+    return variant.predicates.map(it =>
+      ExperimentVariantModel.predicateToString(isDraft, it)).join(' AND ')
   }
 
   static deviceClass (variant) {
@@ -40,7 +41,7 @@ export default class ExperimentVariantModel extends ExperimentVariantRecord {
     }
   }
 
-  static predicateToString (p) {
+  static predicateToString (isDraft, p) {
     if (p.type === 'INTERNAL') {
       return 'INTERNAL'
     } else if (p.type === 'HASH') {
@@ -49,6 +50,10 @@ export default class ExperimentVariantModel extends ExperimentVariantRecord {
       return p.device
     } else if (p.type === 'CMUID_REGEXP') {
       return p.regexp
+    } else if (p.type === 'SHRED_HASH' && !isDraft) {
+      return p.ranges.map(r => `${r.from} - ${r.to} %`).join(' AND ')
+    } else if (p.type === 'SHRED_HASH' && isDraft) {
+      return p.ranges.map(r => `${(r.to - r.from)} %`).join(' AND ')
     }
     return ''
   }

@@ -36,7 +36,8 @@ export default class ExperimentModel extends ExperimentRecord {
   constructor (experimentObject) {
     experimentObject = Object.assign({}, experimentObject)
     experimentObject.activityPeriod = experimentObject.activityPeriod && new ActivityPeriod(experimentObject.activityPeriod)
-    experimentObject.variants = List(experimentObject.renderedVariants).map((variant, i) => new ExperimentVariantModel(variant, i)).toArray()
+    experimentObject.variants = List(experimentObject.renderedVariants).map((variant, i) =>
+      new ExperimentVariantModel(experimentObject.status === 'DRAFT', variant, i)).toArray()
     experimentObject.hasBase = _.includes(_.map(experimentObject.variants, v => v.name), 'base')
     experimentObject.isMeasured = experimentObject.hasBase && experimentObject.reportingEnabled
     experimentObject.groups = List(experimentObject.groups)

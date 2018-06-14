@@ -7,10 +7,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageConversionException;
 import org.springframework.web.bind.annotation.*;
-import pl.allegro.experiments.chi.chiserver.domain.UserProvider;
 import pl.allegro.experiments.chi.chiserver.domain.experiments.DeviceClass;
 import pl.allegro.experiments.chi.chiserver.domain.experiments.EventDefinition;
-import pl.allegro.experiments.chi.chiserver.domain.experiments.Experiment;
 import pl.allegro.experiments.chi.chiserver.domain.experiments.ExperimentsRepository;
 import pl.allegro.experiments.chi.chiserver.domain.experiments.groups.ExperimentGroupRepository;
 import pl.allegro.experiments.chi.chiserver.domain.statistics.MeasurementsRepository;
@@ -18,6 +16,7 @@ import pl.allegro.experiments.chi.chiserver.domain.experiments.administration.*;
 import pl.allegro.experiments.chi.chiserver.domain.experiments.administration.audit.AuditLog;
 import pl.allegro.experiments.chi.chiserver.domain.experiments.administration.audit.Auditor;
 import pl.allegro.experiments.chi.chiserver.domain.statistics.bayes.BayesianChartsRepository;
+import pl.allegro.experiments.chi.chiserver.infrastructure.ExperimentFactory;
 import pl.allegro.tech.common.andamio.errors.Error;
 import pl.allegro.tech.common.andamio.errors.ErrorsHolder;
 import pl.allegro.tech.common.andamio.errors.SimpleErrorsHolder;
@@ -40,8 +39,8 @@ public class ExperimentsController {
     private ExperimentActions experimentActions;
     private final Gson jsonConverter;
     private final Auditor auditor;
-    private final UserProvider userProvider;
     private final ExperimentGroupRepository experimentGroupRepository;
+    private final ExperimentFactory clientExperimentFactory;
 
     public ExperimentsController(
             ExperimentsRepository experimentsRepository,
@@ -49,17 +48,17 @@ public class ExperimentsController {
             ExperimentActions experimentActions,
             Gson jsonConverter,
             Auditor auditor,
-            UserProvider userProvider,
             BayesianChartsRepository bayesianChartsRepository,
-            ExperimentGroupRepository experimentGroupRepository) {
+            ExperimentGroupRepository experimentGroupRepository,
+            ExperimentFactory experimentFactory) {
         this.experimentsRepository = experimentsRepository;
         this.measurementsRepository = measurementsRepository;
         this.experimentActions = experimentActions;
         this.jsonConverter = jsonConverter;
         this.auditor = auditor;
-        this.userProvider = userProvider;
         this.bayesianChartsRepository = bayesianChartsRepository;
         this.experimentGroupRepository = experimentGroupRepository;
+        this.clientExperimentFactory = experimentFactory;
     }
 
     @MeteredEndpoint
@@ -68,7 +67,7 @@ public class ExperimentsController {
         logger.info("All experiments request received");
         return jsonConverter.toJson(
                  experimentsRepository.getAll().stream()
-                .map(this::toAdminExperiment)
+                .map(clientExperimentFactory::adminExperiment)
                 .map(it -> it.withMeasurements(measurementsRepository.getMeasurements(it.getId())))
                 .map(it -> it.withHorizontalEqualizer(bayesianChartsRepository.getHorizontalEqualizer(it.getId(), DeviceClass.all).orElse(null)))
                 .map(it -> experimentGroupRepository.findByExperimentId(it.getId())
@@ -82,7 +81,7 @@ public class ExperimentsController {
     ResponseEntity<String> getExperiment(@PathVariable String experimentId) {
         logger.info("Single experiment request received");
         return experimentsRepository.getExperiment(experimentId)
-                .map(this::toAdminExperiment)
+                .map(clientExperimentFactory::adminExperiment)
                 .map(it -> it.withMeasurements(measurementsRepository.getMeasurements(it.getId())))
                 .map(it -> experimentGroupRepository.findByExperimentId(it.getId())
                         .map(g -> it.withExperimentGroup(g))
@@ -241,7 +240,6 @@ public class ExperimentsController {
         return handleBadRequest(exception, exception.getClass().getSimpleName());
     }
 
-
     @ExceptionHandler(HttpMessageConversionException.class)
     ResponseEntity<ErrorsHolder> handle(HttpMessageConversionException exception) {
         return handleBadRequest(exception, exception.getClass().getSimpleName());
@@ -261,10 +259,5 @@ public class ExperimentsController {
                 .build();
 
         return new ResponseEntity<>(new SimpleErrorsHolder(error), HttpStatus.BAD_REQUEST);
-    }
-
-    private AdminExperiment toAdminExperiment(Experiment experiment) {
-        return experiment.getDefinition().map(it -> new AdminExperiment(it, userProvider.getCurrentUser()))
-                .orElse(new AdminExperiment(experiment));
     }
 }

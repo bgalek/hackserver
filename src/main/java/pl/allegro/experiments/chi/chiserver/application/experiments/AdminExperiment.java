@@ -29,11 +29,14 @@ public class AdminExperiment {
         clientExperiment = new ClientExperiment(legacyDefinition);
     }
 
-    public AdminExperiment(ExperimentDefinition experimentDefinition, User currentUser) {
+    public AdminExperiment(
+            ExperimentDefinition experimentDefinition,
+            User currentUser,
+            ClientExperiment clientExperiment) {
         this.experimentDefinition = experimentDefinition;
         origin = ExperimentOrigin.MONGO;
         editable = currentUser.isOwner(experimentDefinition);
-        clientExperiment = new ClientExperiment(experimentDefinition.toExperiment());
+        this.clientExperiment = clientExperiment;
     }
 
     private static ExperimentDefinition fromLegacyDefinition(Experiment legacyDefinition) {
