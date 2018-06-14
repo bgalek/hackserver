@@ -58,6 +58,10 @@ class BayesianExperimentStatisticsIntegrationSpec extends BaseIntegrationSpec {
       when:
       postStats(bayesFromPyspark(expId, 'variant-a', '2018-01-01',[1], [1]))
       postStats(bayesFromPyspark(expId, 'variant-b', '2018-01-01',[2], [2]))
+
+      postStats(bayesFromPyspark(expId, 'variant-a', '2018-01-01',[11], [16]))
+      postStats(bayesFromPyspark(expId, 'variant-b', '2018-01-01',[21], [26]))
+
       postStats(bayesFromPyspark(expId, 'variant-a', '2018-01-02',[10], [15]))
       postStats(bayesFromPyspark(expId, 'variant-b', '2018-01-02',[20], [25]))
 
