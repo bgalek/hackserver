@@ -13,6 +13,7 @@ public class BayesianExperimentStatisticsForVariant {
     private final DeviceClass device;
     private final String variantName;
     private final VariantBayesianStatistics data;
+    private int version;
 
     public BayesianExperimentStatisticsForVariant(String experimentId, String toDate, DeviceClass device, String variantName, VariantBayesianStatistics data) {
         Preconditions.checkNotNull(experimentId, "experimentId cannot be null");
@@ -45,5 +46,13 @@ public class BayesianExperimentStatisticsForVariant {
 
     public VariantBayesianStatistics getData() {
         return data;
+    }
+
+    public void setVersion(int version) {
+        this.version = version;
+    }
+
+    public int getVersion() {
+        return version;
     }
 }

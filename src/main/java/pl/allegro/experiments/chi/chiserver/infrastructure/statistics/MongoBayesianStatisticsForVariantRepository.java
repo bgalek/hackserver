@@ -53,20 +53,38 @@ public class MongoBayesianStatisticsForVariantRepository implements BayesianStat
     public void save(BayesianExperimentStatisticsForVariant newStats) {
         Timer timer = experimentsMongoMetricsReporter.timerWriteBayesianExperimentStatistics();
         timer.record(() -> {
-            logger.info("Saving new Bayesian stats for: {} {} {} {}", newStats.getExperimentId(), newStats.getDevice(), newStats.getVariantName(), newStats.getToDate());
+            int existingVersion = getExistingVersion(newStats);
+            logger.info("Existing version of Bayesian stats for: {} {} {} is {}", newStats.getExperimentId(), newStats.getDevice(), newStats.getVariantName(), existingVersion);
+
+            newStats.setVersion(existingVersion + 1);
+            logger.info("Saving new Bayesian stats for: {} {} {} {} {}", newStats.getExperimentId(), newStats.getDevice(), newStats.getVariantName(), newStats.getToDate(), newStats.getVersion());
             mongoTemplate.save(newStats, COLLECTION);
 
-            removeOldStats(newStats.getExperimentId(), newStats.getDevice(), newStats.getVariantName(), newStats.getToDate());
+            removeOldStats(newStats.getExperimentId(), newStats.getDevice(), newStats.getVariantName(), newStats.getVersion());
         });
     }
 
-    private void removeOldStats(String expId, DeviceClass device, String variantName, String toDate) {
+    private int getExistingVersion(BayesianExperimentStatisticsForVariant stats) {
+        Query select = new Query();
+        select.addCriteria(Criteria.where("experimentId").is(stats.getExperimentId()));
+        select.addCriteria(Criteria.where("device").is(stats.getDevice()));
+        select.addCriteria(Criteria.where("variantName").is(stats.getVariantName()));
+
+        BayesianExperimentStatisticsForVariant existing = (BayesianExperimentStatisticsForVariant)mongoTemplate.findOne(select, ENTITY, COLLECTION);
+
+        if (existing == null) {
+            return 0;
+        }
+        return existing.getVersion();
+    }
+
+    private void removeOldStats(String expId, DeviceClass device, String variantName, int currentVersion) {
         Query delete = new Query();
 
         delete.addCriteria(Criteria.where("experimentId").is(expId));
         delete.addCriteria(Criteria.where("device").is(device));
         delete.addCriteria(Criteria.where("variantName").is(variantName));
-        delete.addCriteria(Criteria.where("toDate").lt(toDate));
+        delete.addCriteria(Criteria.where("version").lt(currentVersion));
 
         DeleteResult remove = mongoTemplate.remove(delete, ENTITY, COLLECTION);
         logger.info("Removed {} old Bayesian stats for: {} {} {}", remove.getDeletedCount(), expId, device, variantName);
