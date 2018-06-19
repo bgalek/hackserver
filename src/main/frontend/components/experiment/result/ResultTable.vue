@@ -109,11 +109,11 @@
         ],
         metricNames: {
           'tx_visit': 'Visits conversion',
-          'tx_daily': 'Daily conversion',
+          'tx_daily': 'Daily conversion - BETA',
           'tx_avg': 'Transactions per visit',
-          'tx_avg_daily': 'Transactions daily',
+          'tx_avg_daily': 'Transactions daily - BETA',
           'gmv': 'GMV per visit',
-          'gmv_daily': 'GMV daily'
+          'gmv_daily': 'GMV daily - BETA'
         },
         metricFormatter: {
           'tx_visit': (it) => this.formatAsPercent(it),
