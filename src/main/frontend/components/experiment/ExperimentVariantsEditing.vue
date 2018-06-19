@@ -116,7 +116,7 @@
     props: {
       experimentToPair: {},
 
-      variants: {},
+      experiment: {},
 
       allowModifyRegularVariants: {
         default: false,
@@ -126,8 +126,9 @@
 
     data () {
       const baseVariant = 'base'
+      const initialValue = this.init(this.experiment)
       return {
-        value: this.init(this.variants),
+        value: initialValue,
         deviceClasses: ['all', 'phone', 'desktop', 'tablet'],
         baseVariant: baseVariant,
         variantsRules: [
@@ -140,21 +141,28 @@
           (v) => !startsOrEndsWithSpace(v) || 'Do not start nor end variant name with space'
         ],
         maxPercentPerVariant: 100,
-        blockPercentageSlider: true
+        blockPercentageSlider: this.shouldBlockPercentageSlider(initialValue)
       }
     },
 
     methods: {
-      init (variants) {
+      init (experiment) {
         const value = {
-          variantNames: (variants && Array.from(variants.variantNames)) || ['base'],
-          percentage: (variants && variants.percentage) || 1,
-          internalVariantName: variants && variants.internalVariantName,
-          slugifiedInternalVariantName: variants && this.slugify(variants.internalVariantName),
-          deviceClass: (variants && variants.deviceClass) || 'all'
+          variantNames: (experiment && Array.from(experiment.variantNames)) || ['base'],
+          percentage: (experiment && experiment.percentage) || 1,
+          internalVariantName: experiment && experiment.internalVariantName,
+          slugifiedInternalVariantName: experiment && this.slugify(experiment.internalVariantName),
+          deviceClass: (experiment && experiment.deviceClass) || 'all'
         }
         this.$emit('input', value)
         return value
+      },
+
+      shouldBlockPercentageSlider (value) {
+        if (!value) {
+          return true
+        }
+        return value.variantNames.length <= 1
       },
 
       inputEntered () {
@@ -228,7 +236,7 @@
       value: {
         handler (newValue) {
           this.maxPercentPerVariant = Math.floor(this.computeMaxPercentagePerVariant(this.experimentToPair, newValue.variantNames.length))
-          this.blockPercentageSlider = newValue.variantNames.length <= 1
+          this.blockPercentageSlider = this.shouldBlockPercentageSlider(newValue)
         },
 
         deep: true

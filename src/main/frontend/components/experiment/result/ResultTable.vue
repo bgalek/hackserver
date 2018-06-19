@@ -109,13 +109,19 @@
         ],
         metricNames: {
           'tx_visit': 'Visits conversion',
+          'tx_daily': 'Daily conversion',
           'tx_avg': 'Transactions per visit',
-          'gmv': 'GMV per visit'
+          'tx_avg_daily': 'Transactions daily',
+          'gmv': 'GMV per visit',
+          'gmv_daily': 'GMV daily'
         },
         metricFormatter: {
           'tx_visit': (it) => this.formatAsPercent(it),
+          'tx_daily': (it) => this.formatAsPercent(it),
           'tx_avg': (it) => this.formatNumber(it, 4),
-          'gmv': (it) => this.formatCurrency(it, 'PLN')
+          'tx_avg_daily': (it) => this.formatNumber(it, 4),
+          'gmv': (it) => this.formatCurrency(it, 'PLN'),
+          'gmv_daily': (it) => this.formatCurrency(it, 'PLN')
         }
       }
     },

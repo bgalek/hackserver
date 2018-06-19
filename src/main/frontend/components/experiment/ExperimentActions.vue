@@ -136,9 +136,9 @@
           </v-btn>
 
           <v-list style="padding:15px; display: block;">
-            <experiment-variants-editing :variants="experiment"
+            <experiment-variants-editing :experiment="experiment"
                                          :allowModifyRegularVariants="false"
-                                     v-model="variantsEditingResult"
+                                         v-model="variantsEditingResult"
             ></experiment-variants-editing>
 
             <v-btn flat @click="closeVariants()">Cancel</v-btn>

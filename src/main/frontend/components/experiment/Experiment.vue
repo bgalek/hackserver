@@ -106,7 +106,10 @@
         metricOrder: {
           'tx_visit': 1,
           'tx_avg': 2,
-          'gmv': 3
+          'gmv': 3,
+          'tx_daily': 4,
+          'tx_avg_daily': 5,
+          'gmv_daily': 6
         }
       }
     },
