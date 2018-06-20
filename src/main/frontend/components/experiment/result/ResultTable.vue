@@ -19,7 +19,7 @@
         <div style="margin-top: 30px;">
           <b>{{metricNames[metric.key]}}</b>
 
-          <pivot-link cube-type="metrics" :experiment-id="experiment.id"
+          <pivot-link cube-type="metrics" :experiment-id="experiment.id" v-if="showMetricTurniloLink(metric.key)"
                       :selected-metric-name="metric.key"
           ></pivot-link>
         </div>
@@ -122,7 +122,8 @@
           'tx_avg_daily': (it) => this.formatNumber(it, 4),
           'gmv': (it) => this.formatCurrency(it, 'PLN'),
           'gmv_daily': (it) => this.formatCurrency(it, 'PLN')
-        }
+        },
+        hiddenMetricsTurnilo: ['tx_daily', 'tx_avg_daily', 'gmv_daily']
       }
     },
 
@@ -154,6 +155,10 @@
           return 'Okay, looks like the experiment is going to become statistically significant. ' +
                  'Wait till the end of the experiment for the official results. '
         }
+      },
+
+      showMetricTurniloLink (metricKey) {
+        return !this.hiddenMetricsTurnilo.includes(metricKey)
       },
 
       testSignificance (metricVariant) {
