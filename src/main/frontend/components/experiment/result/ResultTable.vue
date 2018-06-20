@@ -166,6 +166,7 @@
       },
 
       testSignificance (metricVariant) {
+        console.log("experiment.NoT", this.experiment.numberOfTests)
         const pVal = metricVariant.pValue
 
         // if p-Value > 0.05
@@ -310,6 +311,10 @@
         }
 
         return numPercent.toFixed(2) + ' %'
+      },
+
+      showMetric() {
+
       },
 
       formatDiff (metricVariant) {
