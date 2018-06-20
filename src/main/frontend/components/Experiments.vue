@@ -38,8 +38,8 @@
       </v-flex>
     </v-layout>
 
-    <v-alert v-if="pivotError" color="error" icon="warning" value="true">
-      Error while trying to get Pivot url: {{ pivotError }}
+    <v-alert v-if="turniloError" color="error" icon="warning" value="true">
+      Error while trying to get Turnilo url: {{ turniloError }}
     </v-alert>
 
     <experiment-list :linkToData="true" :experiments="experiments" v-if="experiments.length"></experiment-list>
@@ -78,7 +78,7 @@ export default {
 
   data () {
     return {
-      pivotError: false,
+      turniloError: false,
       filterMyExperiments: false,
       statusFilter: 'all'
     }

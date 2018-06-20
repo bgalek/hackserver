@@ -1,5 +1,5 @@
 <template>
-  <v-btn icon @click="goToPivot()" style="margin-bottom: 10px; margin-top: 0px;">
+  <v-btn icon @click="goToTurnilo()" style="margin-bottom: 10px; margin-top: 0px;">
     <v-icon>fa-bar-chart</v-icon>
   </v-btn>
 </template>
@@ -20,7 +20,7 @@
         return window.location.hostname === 'chi.allegrogroup.com'
       },
 
-      pivotMetricCode () {
+      turniloMetricCode () {
         const metric = this.selectedMetricName
 
         const names = {
@@ -32,14 +32,14 @@
         return names[metric]
       },
 
-      pivotUrl () {
-        const PIVOT_PROD = 'https://turnilo.allegrogroup.com'
-        const PIVOT_TEST = 'https://turnilo-nga-test.allegrogroup.com'
+      turniloUrl () {
+        const TURNILO_PROD = 'https://turnilo.allegrogroup.com'
+        const TURNILO_TEST = 'https://turnilo-nga-test.allegrogroup.com'
 
-        return this.isProdEnv() ? PIVOT_PROD : PIVOT_TEST
+        return this.isProdEnv() ? TURNILO_PROD : TURNILO_TEST
       },
 
-      buildPivotRequest () {
+      buildTurniloRequest () {
         if (this.cubeType === 'metrics') {
           return {
             dataCubeName: 'chi_experiments',
@@ -74,7 +74,7 @@
                   type: 'string',
                   dimension: 'experiment_variant',
                   sort: {
-                    ref: this.pivotMetricCode(),
+                    ref: this.turniloMetricCode(),
                     direction: 'descending'
                   },
                   limit: null
@@ -92,7 +92,7 @@
               ],
               measures: {
                 isMulti: false,
-                single: this.pivotMetricCode(),
+                single: this.turniloMetricCode(),
                 multi: [
                   'transaction_count',
                   'transaction_sum',
@@ -101,7 +101,7 @@
                 ]
               },
               pinnedDimensions: [],
-              pinnedSort: this.pivotMetricCode(),
+              pinnedSort: this.turniloMetricCode(),
               legend: {
                 dimension: 'experiment_variant',
                 limit: 5
@@ -180,7 +180,7 @@
               ],
               measures: {
                 isMulti: false,
-                single: this.pivotMetricCode(),
+                single: this.turniloMetricCode(),
                 multi: [
                   'count',
                   'experiment_duration',
@@ -200,11 +200,11 @@
         }
       },
 
-      goToPivot () {
-        axios.post(`${this.pivotUrl()}/mkurl`, this.buildPivotRequest()).then(response => {
-          window.open(this.pivotUrl() + '/' + response.data.hash, '_blank')
+      goToTurnilo () {
+        axios.post(`${this.turniloUrl()}/mkurl`, this.buildTurniloRequest()).then(response => {
+          window.open(`${this.turniloUrl()}/${response.data.hash}`, '_blank')
         }).catch(error => {
-          console.log('failed to generate Pivot link', error.message)
+          console.log('failed to generate Turnilo link', error.message)
         })
       }
     }
