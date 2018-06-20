@@ -73,6 +73,10 @@ public class AdminExperiment {
         return this;
     }
 
+    public int getNumberOfTests() {
+        return experimentDefinition.getNumberOfTests();
+    }
+
     public ExperimentMeasurements getMeasurements() {
         return this.experimentMeasurements;
     }

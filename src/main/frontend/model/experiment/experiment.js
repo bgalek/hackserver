@@ -29,7 +29,8 @@ const ExperimentRecord = Record({
   internalVariantName: null,
   variantNames: [],
   deviceClass: null,
-  experimentGroup: null
+  experimentGroup: null,
+  numberOfTests: 0
 })
 
 export default class ExperimentModel extends ExperimentRecord {
@@ -72,6 +73,10 @@ export default class ExperimentModel extends ExperimentRecord {
 
   getBaseVariant () {
     return this.variants.find(it => it.isBase())
+  }
+
+  getFirstVariant () {
+    return this.variants.find(it => !it.isBase())
   }
 
   getBaseDeviceClass () {

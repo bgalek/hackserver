@@ -162,6 +162,13 @@ public class ExperimentDefinition {
         return editable;
     }
 
+    /** for Bonferroni correction */
+    public int getNumberOfTests() {
+        return DeviceClass.values().length *
+               (getVariantNames().size() - 1) *
+               4; // (tx_visit, tx_daily, gmv_per_visit, gmv_daily)
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
