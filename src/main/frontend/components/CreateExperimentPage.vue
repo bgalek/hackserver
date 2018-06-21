@@ -61,7 +61,7 @@
               <v-layout row align-top>
 
                 <v-flex xs1>
-                  <v-tooltip right>
+                  <v-tooltip right close-delay="1000">
                     <span>
                       If you are going to experiment using Opbox and you want to filter
                       users' interactions by defining NGA events &mdash;
@@ -70,7 +70,8 @@
                       If you are going to experiment using GTM &mdash; pick GTM.
                       Otherwise, pick BACKEND.
                       <br/>
-                      You can find detailed info here: https://rtd.allegrogroup.com/docs/chi/pl/latest/reporting/
+                      <a target="_blank" style="color: aqua" href="https://rtd.allegrogroup.com/docs/chi/pl/latest/reporting/">
+                      Read more in χ Docs</a>
                     </span>
                     <v-icon
                       slot="activator">help_outline</v-icon>
@@ -91,8 +92,16 @@
               <v-layout row align-top>
 
                 <v-flex xs1>
-                  <v-tooltip right>
-                    <span>Chi will use specified NGA events to filter user interactions. You can find detailed info here: https://rtd.allegrogroup.com/docs/chi/pl/latest/reporting/</span>
+                  <v-tooltip right close-delay="1000">
+                    <span>
+                      Chi will use specified NGA events to filter user interactions.
+                      <br/><br/>
+                      For power users only.
+                      <br/><br/>
+                      <a target="_blank" style="color: aqua" href="https://rtd.allegrogroup.com/docs/chi/pl/latest/reporting/#raportowanie-frontendowe">
+                      Read more in χ Docs</a>
+                    </span>
+
                     <v-icon
                       slot="activator">help_outline</v-icon>
                   </v-tooltip>
@@ -112,8 +121,14 @@
               <v-layout row align-top>
 
                 <v-flex xs1>
-                  <v-tooltip right>
-                    <span>You can create a group of mutually exclusive experiments. Experiments in group will not interfere with each other. Useful when you have many experiments in the same area of the system.</span>
+                  <v-tooltip right  close-delay="1000">
+                    <span>
+                      You can create a group of mutually exclusive experiments.<br/>
+                      Experiments in group will not interfere with each other.<br/>
+                      Useful when you have many experiments in the same area of the system.<br/>
+                      <a target="_blank" style="color: aqua" href="https://rtd.allegrogroup.com/docs/chi/pl/latest/#grupa-eksperymentow">
+                      Read more in χ Docs</a>
+                    </span>
                     <v-icon
                       slot="activator">help_outline</v-icon>
                   </v-tooltip>
