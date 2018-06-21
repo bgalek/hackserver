@@ -37,7 +37,7 @@
       <v-layout row align-center>
 
           <v-flex xs1>
-            <v-tooltip right>
+            <v-tooltip right close-delay="1000">
               <span>
                 Let your team manage this experiment.
                 Provide a group name, for example: <code>Tech Content Team</code>.
@@ -46,7 +46,9 @@
               </span>
               You can add more than one group.
               <br/>
-              Check your groups on your JIRA profile &mdash; https://jira.allegrogroup.com/secure/ViewProfile.jspa
+              Check your groups on your JIRA profile<br/>
+              <a target="_blank" style="color: aqua" href="https://jira.allegrogroup.com/secure/ViewProfile.jspa">
+                https://jira.allegrogroup.com/secure/ViewProfile.jspa</a>
               <v-icon
                 slot="activator">help_outline</v-icon>
             </v-tooltip>

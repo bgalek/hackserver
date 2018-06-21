@@ -5,7 +5,15 @@
         <h3>Description</h3>
         {{ experiment.description || '-'}}
 
-      <h3>Experiment group</h3>
+      <h3>Experiment group
+      <v-tooltip right  close-delay="1000">
+          <span>
+              <a target="_blank" style="color: aqua" href="https://rtd.allegrogroup.com/docs/chi/pl/latest/#grupa-eksperymentow">
+               Read about groups in χ Docs</a>
+          </span>
+        <v-icon slot="activator">help_outline</v-icon>
+      </v-tooltip>
+      </h3>
       {{experiment.experimentGroup || '-'}}
 
       <h3>Documentation link</h3>
@@ -61,7 +69,15 @@
 
     <v-layout row class="mt-2">
       <v-flex xs5>
-        <h3>Reporting type</h3>
+        <h3>Reporting type
+          <v-tooltip right  close-delay="1000">
+          <span>
+              <a target="_blank" style="color: aqua" href="https://rtd.allegrogroup.com/docs/chi/pl/latest/reporting/">
+               Read about reporting types in χ Docs</a>
+          </span>
+            <v-icon slot="activator">help_outline</v-icon>
+          </v-tooltip>
+        </h3>
         <v-chip outline disabled :color="'black'">
           {{ experiment.reportingType }}
         </v-chip>
