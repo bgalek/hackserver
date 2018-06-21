@@ -19,9 +19,9 @@
         <div style="margin-top: 30px;">
           <b>{{metricNames[metric.key]}}</b>
 
-          <pivot-link cube-type="metrics" :experiment-id="experiment.id"
+          <turnilo-link cube-type="metrics" :experiment-id="experiment.id" v-if="showMetricTurniloLink(metric.key)"
                       :selected-metric-name="metric.key"
-          ></pivot-link>
+          ></turnilo-link>
         </div>
 
         <v-data-table
@@ -51,10 +51,10 @@
             <td class="text-xs-right">
               <div v-if="showVariant(props.item.variant)">
                 {{ formatNumber(props.item.pValue, 4) }}
-                <pivot-link cube-type="stats" :experiment-id="experiment.id"
+                <turnilo-link cube-type="stats" :experiment-id="experiment.id"
                             selected-metric-name="p_value" :variant="props.item.variant"
                             :metric="metric.key"
-                ></pivot-link>
+                ></turnilo-link>
               </div>
             </td>
 
@@ -88,14 +88,14 @@
 
 <script>
   import {mapActions} from 'vuex'
-  import PivotLink from '../../PivotLink.vue'
+  import TurniloLink from '../../TurniloLink.vue'
   import DeviceSelector from './DeviceSelector'
 
   export default {
     props: ['experiment', 'experimentStatistics', 'experimentStatisticsError', 'experimentStatisticsPending', 'selectedDevice'],
 
     components: {
-      PivotLink, DeviceSelector
+      TurniloLink, DeviceSelector
     },
 
     data () {
@@ -125,7 +125,8 @@
           'tx_avg_daily': (it) => this.formatNumber(it, 4),
           'gmv': (it) => this.formatCurrency(it, 'PLN'),
           'gmv_daily': (it) => this.formatCurrency(it, 'PLN')
-        }
+        },
+        hiddenMetricsTurnilo: ['tx_daily', 'tx_avg_daily', 'gmv_daily']
       }
     },
 
@@ -165,6 +166,10 @@
 
       lightAlfaThresWithBonferroni () {
         return (this.lightAlfaThres / this.experiment.numberOfTests).toFixed(5)
+      },
+
+      showMetricTurniloLink (metricKey) {
+        return !this.hiddenMetricsTurnilo.includes(metricKey)
       },
 
       testSignificance (metricVariant) {
