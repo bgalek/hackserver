@@ -25,7 +25,9 @@ public class AdminExperimentTypeSerializer implements JsonSerializer<AdminExperi
         jsonObject.addProperty("documentLink", src.getDocumentLink());
         jsonObject.addProperty("author", src.getAuthor());
         jsonObject.add("groups", context.serialize(src.getGroups()));
-        jsonObject.add("bonferroniCorrection", context.serialize(src.getBonferroniCorrection()));
+        if (src.getBonferroniCorrection() != 0) {
+            jsonObject.add("bonferroniCorrection", context.serialize(src.getBonferroniCorrection()));
+        }
         jsonObject.addProperty("reportingEnabled", src.isReportingEnabled());
         jsonObject.add("activityPeriod", context.serialize(src.getActivityPeriod()));
         jsonObject.add("editable", context.serialize(src.getEditable()));
