@@ -103,11 +103,11 @@
         strongAlfaThres: 0.01,
         lightAlfaThres: 0.05,
         headers: [
-          {text: 'Variant', sortable: false},
-          {text: 'Metric Value', sortable: false},
-          {text: 'Diff to Base', sortable: false},
-          {text: 'p-Value', sortable: false},
-          {text: 'Sample Count', sortable: false}
+          {text: 'Variant', sortable: false, align: 'left'},
+          {text: 'Metric Value', sortable: false, align: 'right'},
+          {text: 'Diff to Base', sortable: false, align: 'center'},
+          {text: 'p-Value', sortable: false, align: 'center'},
+          {text: 'Sample Count', sortable: false, align: 'right'}
         ],
         hiddenMetrics: ['tx_avg', 'tx_avg_daily'],
         metricNames: {
