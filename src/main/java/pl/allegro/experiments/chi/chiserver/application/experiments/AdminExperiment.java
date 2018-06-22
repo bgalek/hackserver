@@ -73,6 +73,10 @@ public class AdminExperiment {
         return this;
     }
 
+    public int getBonferroniCorrection() {
+        return experimentDefinition.getBonferroniCorrection();
+    }
+
     public ExperimentMeasurements getMeasurements() {
         return this.experimentMeasurements;
     }

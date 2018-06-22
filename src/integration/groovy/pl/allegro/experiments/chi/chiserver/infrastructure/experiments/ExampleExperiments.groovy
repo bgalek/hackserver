@@ -72,8 +72,8 @@ trait ExampleExperiments {
          variantNames    : ['v1', 'v2'],
          editable        : false,
          origin          : 'STASH',
-         measurements    : [lastDayVisits: 0]
-
+         measurements    : [lastDayVisits: 0],
+         bonferroniCorrection: 16
         ]
     }
 

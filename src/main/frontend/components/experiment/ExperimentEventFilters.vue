@@ -58,7 +58,6 @@
       <v-data-table
         :headers="headers"
         :items="items"
-        :key="initData"
         hide-actions
          light
       >

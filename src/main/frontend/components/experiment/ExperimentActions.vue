@@ -241,7 +241,6 @@
       },
 
       canRunOtherCommand () {
-        console.log('can run other command')
         return true
       },
 

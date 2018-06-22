@@ -107,16 +107,15 @@ class ExperimentsE2ESpec extends BaseIntegrationSpec implements ExampleExperimen
         response.statusCode.value() == 200
 
         and:
-        response.body.containsAll(
-                internalExperiment(),
-                plannedExperiment(),
-                cmuidRegexpExperiment(),
-                cmuidRegexpWithPhoneExperiment(),
-                hashVariantExperiment(),
-                sampleExperiment(),
-                timeboundExperiment(),
-                experimentFromThePast(),
-                pausedExperiment())
+        response.body.contains(internalExperiment())
+        response.body.contains(plannedExperiment())
+        response.body.contains(cmuidRegexpExperiment())
+        response.body.contains(cmuidRegexpWithPhoneExperiment())
+        response.body.contains(hashVariantExperiment())
+        response.body.contains(sampleExperiment())
+        response.body.contains(timeboundExperiment())
+        response.body.contains(experimentFromThePast())
+        response.body.contains(pausedExperiment())
     }
 
     def "should return last valid list when file is corrupted"() {

@@ -60,7 +60,7 @@
     data () {
       return {
         histogramsToDate: this.bayesianHistograms.metadata && this.bayesianHistograms.metadata.toDate,
-        variantName: this.experiment.variants.find(v => v.name !== 'base').name
+        variantName: this.experiment.getFirstVariant() && this.experiment.getFirstVariant().name
       }
     },
 

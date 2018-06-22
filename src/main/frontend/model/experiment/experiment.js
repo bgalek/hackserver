@@ -29,7 +29,8 @@ const ExperimentRecord = Record({
   internalVariantName: null,
   variantNames: [],
   deviceClass: null,
-  experimentGroup: null
+  experimentGroup: null,
+  bonferroniCorrection: 1
 })
 
 export default class ExperimentModel extends ExperimentRecord {
@@ -47,6 +48,14 @@ export default class ExperimentModel extends ExperimentRecord {
       experimentObject.experimentGroup = experimentObject.experimentGroup.id
     }
     super(experimentObject)
+  }
+
+  desiredAlpha () {
+    return 0.05
+  }
+
+  usedAlpha () {
+    return (this.desiredAlpha() / this.bonferroniCorrection).toFixed(4)
   }
 
   whenStartedOrEnded () {
@@ -72,6 +81,10 @@ export default class ExperimentModel extends ExperimentRecord {
 
   getBaseVariant () {
     return this.variants.find(it => it.isBase())
+  }
+
+  getFirstVariant () {
+    return this.variants.find(it => !it.isBase())
   }
 
   getBaseDeviceClass () {

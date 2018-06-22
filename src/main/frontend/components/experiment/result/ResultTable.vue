@@ -14,7 +14,7 @@
     </p>
 
     <div v-if="experimentStatistics.metrics">
-      <div v-for="metric in experimentStatistics.metrics" :key="metric.order">
+      <div v-for="metric in metrics()" :key="metric.order">
 
         <div style="margin-top: 30px;">
           <b>{{metricNames[metric.key]}}</b>
@@ -100,13 +100,16 @@
 
     data () {
       return {
+        strongAlfaThres: 0.01,
+        lightAlfaThres: 0.05,
         headers: [
-          {text: 'Variant', sortable: false},
-          {text: 'Metric Value', sortable: false},
-          {text: 'Diff to Base', sortable: false},
-          {text: 'p-Value', sortable: false},
-          {text: 'Sample Count', sortable: false}
+          {text: 'Variant', sortable: false, align: 'left'},
+          {text: 'Metric Value', sortable: false, align: 'right'},
+          {text: 'Diff to Base', sortable: false, align: 'center'},
+          {text: 'p-Value', sortable: false, align: 'center'},
+          {text: 'Sample Count', sortable: false, align: 'right'}
         ],
+        hiddenMetrics: ['tx_avg', 'tx_avg_daily'],
         metricNames: {
           'tx_visit': 'Visits conversion',
           'tx_daily': 'Daily conversion - BETA',
@@ -138,17 +141,17 @@
         }
 
         if (testSignificance === 'no') {
-          return 'According to our data, the difference is statistically not significant. ' +
-                 'Don\'t give up! ' +
-                 'Pro tip: try to reduce the noise in data using Event Filter.'
+          return 'The difference is statistically not significant.'
         }
 
         if (testSignificance === 'strong') {
-          return 'The difference is strongly statistically significant (with α = 1%).'
+          return `The difference is statistically significant with 𝜶 = ${this.experiment.desiredAlpha()}.`
         }
 
         if (testSignificance === 'light') {
-          return 'The difference is statistically significant (with α = 5%).'
+          return `Chi needs to adjust the ` +
+                 `significance level 𝜶 to ${this.experiment.usedAlpha()} ` +
+                 `which makes this individual test statistically insignificant.`
         }
 
         if (testSignificance === 'promising') {
@@ -164,7 +167,8 @@
       testSignificance (metricVariant) {
         const pVal = metricVariant.pValue
 
-        if (pVal > 0.05) {
+        // if p-Value > 0.05
+        if (pVal > this.experiment.desiredAlpha()) {
           if (this.experiment.status === 'ENDED') {
             return 'no'
           } else {
@@ -172,19 +176,26 @@
           }
         }
 
-        if (pVal < 0.05 && this.experiment.status !== 'ENDED') {
+        // if p-Value < 0.05 and experiment is not ENDED
+        if (pVal < this.experiment.desiredAlpha() && this.experiment.status !== 'ENDED') {
           return 'promising'
         }
 
-        // if p-Value is between 0.01 and 0.05, we are not so sure about statistical significance
-        if (pVal > 0.01 && pVal < 0.05 && this.experiment.status === 'ENDED') {
+        // if p-Value is < 0.05 but > 0.05*Bonferroni
+        if (pVal > this.experiment.usedAlpha() && pVal < this.experiment.desiredAlpha() &&
+            this.experiment.status === 'ENDED') {
           return 'light'
         }
 
-        // if p-Value < 0.01, we are sure about statistical significance
-        if (pVal <= 0.01 && this.experiment.status === 'ENDED') {
+        // if p-Value < 0.05*Bonferroni, we are sure about statistical significance
+        if (pVal <= this.experiment.usedAlpha() && this.experiment.status === 'ENDED') {
           return 'strong'
         }
+      },
+
+      metrics () {
+        return this.experimentStatistics.metrics &&
+               this.experimentStatistics.metrics.filter(metric => !this.hiddenMetrics.includes(metric.key))
       },
 
       diffColor (metricVariant) {
