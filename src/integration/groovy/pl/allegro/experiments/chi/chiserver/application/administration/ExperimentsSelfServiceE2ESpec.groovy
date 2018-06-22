@@ -109,6 +109,7 @@ class ExperimentsSelfServiceE2ESpec extends BaseIntegrationSpec {
                 author          : 'Anonymous',
                 status          : 'DRAFT',
                 measurements    : [lastDayVisits: 0],
+                bonferroniCorrection: 16,
                 editable        : true,
                 groups          : ['group a', 'group b'],
                 origin          : 'MONGO',
