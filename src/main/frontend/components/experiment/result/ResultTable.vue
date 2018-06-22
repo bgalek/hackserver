@@ -149,9 +149,9 @@
         }
 
         if (testSignificance === 'light') {
-          return  `Chi needs to adjust the ` +
-                  `significance level 𝜶 to ${this.experiment.usedAlpha()} ` +
-                  `which makes this individual test statistically insignificant.`
+          return `Chi needs to adjust the ` +
+                 `significance level 𝜶 to ${this.experiment.usedAlpha()} ` +
+                 `which makes this individual test statistically insignificant.`
         }
 
         if (testSignificance === 'promising') {
