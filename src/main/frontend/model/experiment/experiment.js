@@ -30,7 +30,7 @@ const ExperimentRecord = Record({
   variantNames: [],
   deviceClass: null,
   experimentGroup: null,
-  numberOfTests: 0
+  bonferroniCorrection: 1
 })
 
 export default class ExperimentModel extends ExperimentRecord {
@@ -48,6 +48,14 @@ export default class ExperimentModel extends ExperimentRecord {
       experimentObject.experimentGroup = experimentObject.experimentGroup.id
     }
     super(experimentObject)
+  }
+
+  desiredAlpha () {
+    return 0.05
+  }
+
+  usedAlpha () {
+    return (this.desiredAlpha() / this.bonferroniCorrection).toFixed(4)
   }
 
   whenStartedOrEnded () {

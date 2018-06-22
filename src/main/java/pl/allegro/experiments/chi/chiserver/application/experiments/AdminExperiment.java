@@ -73,8 +73,8 @@ public class AdminExperiment {
         return this;
     }
 
-    public int getNumberOfTests() {
-        return experimentDefinition.getNumberOfTests();
+    public int getBonferroniCorrection() {
+        return experimentDefinition.getBonferroniCorrection();
     }
 
     public ExperimentMeasurements getMeasurements() {

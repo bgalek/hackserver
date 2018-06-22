@@ -56,6 +56,30 @@
         </template>
       </v-list>
 
+      <div v-if="experiment.activityPeriod">
+        <h3 class="mt-2">Significance level
+          <v-tooltip right>
+          <span>
+            Since you are running multiple tests,
+            the desired overall significance level 𝜶 = {{ experiment.desiredAlpha() }}
+            is adjusted. <br/>
+            Each individual hypothesis is tested with
+            𝜶 = {{ experiment.desiredAlpha() }}/{{ experiment.bonferroniCorrection }} = {{ experiment.usedAlpha() }}.
+          </span>
+            <v-icon slot="activator">help_outline</v-icon>
+          </v-tooltip>
+        </h3>
+        <v-layout row>
+          <v-flex xs5>Desired 𝜶: </v-flex><v-flex xs5>{{ experiment.desiredAlpha() }}</v-flex>
+        </v-layout>
+        <v-layout row>
+          <v-flex xs5>Bonferroni correction: </v-flex><v-flex xs5>{{ experiment.bonferroniCorrection }}</v-flex>
+        </v-layout>
+        <v-layout row>
+          <v-flex xs5>Used 𝜶: </v-flex><v-flex xs5>{{ experiment.usedAlpha() }}</v-flex>
+        </v-layout>
+      </div>
+
     </v-flex>
     </v-layout>
 

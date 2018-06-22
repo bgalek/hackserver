@@ -141,17 +141,18 @@
         }
 
         if (testSignificance === 'no') {
-          return 'According to our data, the difference is statistically not significant. ' +
-                 'Don\'t give up! ' +
-                 'Pro tip: try to reduce the noise in data using Event Filter.'
+          return 'The difference is statistically not significant.'
         }
 
         if (testSignificance === 'strong') {
-          return 'The difference is strongly statistically significant (with α = 1%).'
+          return `The difference is statistically significant with 𝜶 = ${this.experiment.desiredAlpha()}.`
         }
 
         if (testSignificance === 'light') {
-          return 'The difference is statistically significant (with α = 5%).'
+          return `Close, but since you are running multiple tests, ` +
+                  `Chi needs to adjust the ` +
+                  `significance level 𝜶 to ${this.experiment.usedAlpha()} ` +
+                  `which makes this individual test statistically insignificant.`
         }
 
         if (testSignificance === 'promising') {
@@ -160,23 +161,15 @@
         }
       },
 
-      strongAlfaThresWithBonferroni () {
-        return (this.strongAlfaThres / this.experiment.numberOfTests).toFixed(5)
-      },
-
-      lightAlfaThresWithBonferroni () {
-        return (this.lightAlfaThres / this.experiment.numberOfTests).toFixed(5)
-      },
-
       showMetricTurniloLink (metricKey) {
         return !this.hiddenMetricsTurnilo.includes(metricKey)
       },
 
       testSignificance (metricVariant) {
-        console.log("experiment.NoT", this.experiment.numberOfTests)
         const pVal = metricVariant.pValue
 
-        if (pVal > this.lightAlfaThresWithBonferroni()) {
+        // if p-Value > 0.05
+        if (pVal > this.experiment.desiredAlpha()) {
           if (this.experiment.status === 'ENDED') {
             return 'no'
           } else {
@@ -185,24 +178,25 @@
         }
 
         // if p-Value < 0.05 and experiment is not ENDED
-        if (pVal < this.lightAlfaThresWithBonferroni() && this.experiment.status !== 'ENDED') {
+        if (pVal < this.experiment.desiredAlpha() && this.experiment.status !== 'ENDED') {
           return 'promising'
         }
 
-        // if p-Value is between 0.01 and 0.05, we are not so sure about statistical significance
-        if (pVal > this.strongAlfaThresWithBonferroni() && pVal < this.lightAlfaThresWithBonferroni()
-            && this.experiment.status === 'ENDED') {
+        // if p-Value is < 0.05 but > 0.05*Bonferroni
+        if (pVal > this.experiment.usedAlpha() && pVal < this.experiment.desiredAlpha() &&
+            this.experiment.status === 'ENDED') {
           return 'light'
         }
 
-        // if p-Value < 0.01, we are sure about statistical significance
-        if (pVal <= this.strongAlfaThresWithBonferroni() && this.experiment.status === 'ENDED') {
+        // if p-Value < 0.05*Bonferroni, we are sure about statistical significance
+        if (pVal <= this.experiment.usedAlpha() && this.experiment.status === 'ENDED') {
           return 'strong'
         }
       },
 
-      metrics() {
-        return  this.experimentStatistics.metrics && this.experimentStatistics.metrics.filter(metric => !this.hiddenMetrics.includes(metric.key) )
+      metrics () {
+        return this.experimentStatistics.metrics &&
+               this.experimentStatistics.metrics.filter(metric => !this.hiddenMetrics.includes(metric.key))
       },
 
       diffColor (metricVariant) {
@@ -316,10 +310,6 @@
         }
 
         return numPercent.toFixed(2) + ' %'
-      },
-
-      showMetric() {
-
       },
 
       formatDiff (metricVariant) {
