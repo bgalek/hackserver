@@ -68,7 +68,9 @@
         <h3 class="mt-2">Significance level
           <v-tooltip right>
           <span>
-            Since you are running multiple tests,
+            Since you are running multiple tests
+            (number of devices * number of metrics * number of variants = {{ experiment.bonferroniCorrection }}),
+            <br/>
             the desired overall significance level 𝜶 = {{ experiment.desiredAlpha() }}
             is adjusted. <br/>
             Each individual hypothesis is tested with

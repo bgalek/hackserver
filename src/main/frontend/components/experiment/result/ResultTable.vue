@@ -149,8 +149,7 @@
         }
 
         if (testSignificance === 'light') {
-          return `Close, but since you are running multiple tests, ` +
-                  `Chi needs to adjust the ` +
+          return  `Chi needs to adjust the ` +
                   `significance level 𝜶 to ${this.experiment.usedAlpha()} ` +
                   `which makes this individual test statistically insignificant.`
         }
