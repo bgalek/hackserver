@@ -49,7 +49,7 @@ interactions:
     bootstrap-servers-dc4: kasiatestdc4-cbroker1.kasia-test.pl-kra-3.dc4.local:9092,kasiatestdc4-cbroker2.kasia-test.pl-kra-3.dc4.local:9092,kasiatestdc4-cbroker3.kasia-test.pl-kra-3.dc4.local:9092,kasiatestdc4-cbroker4.kasia-test.pl-kra-3.dc4.local:9092
     topic: pl.allegro.experiments.chi.interactions.Interaction_avro
     send-timeout: 100
-    batch-size: 10000
+    batch-size: 1000
     linger-ms: 10
 
 avro:
