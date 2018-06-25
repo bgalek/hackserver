@@ -1,4 +1,4 @@
-package pl.allegro.experiments.chi.chiserver.infrastructure.statistics;
+package pl.allegro.experiments.chi.chiserver.infrastructure.druid;
 
 import org.springframework.web.client.RestTemplate;
 import org.springframework.http.HttpEntity;

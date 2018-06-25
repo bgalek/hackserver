@@ -3,7 +3,7 @@ package pl.allegro.experiments.chi.chiserver.domain.experiments.administration;
 import pl.allegro.experiments.chi.chiserver.domain.experiments.Experiment;
 import pl.allegro.experiments.chi.chiserver.domain.experiments.ExperimentsRepository;
 import pl.allegro.experiments.chi.chiserver.domain.experiments.groups.ExperimentGroupRepository;
-import pl.allegro.experiments.chi.chiserver.domain.statistics.StatisticsRepository;
+import pl.allegro.experiments.chi.chiserver.domain.statistics.clasic.StatisticsRepository;
 
 import java.util.Objects;
 

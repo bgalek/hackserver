@@ -8,6 +8,8 @@ public class ExperimentsMongoMetricsReporter {
     private static final String SINGLE_EXPERIMENT = "mongo.experiments.single";
     private static final String BAYESIAN_EXPERIMENT_STATISTICS_READ = "mongo.experiments.bayesian.read";
     private static final String BAYESIAN_EXPERIMENT_STATISTICS_WRITE = "mongo.experiments.bayesian.write";
+    private static final String CLASSIC_EXPERIMENT_STATISTICS_READ = "mongo.experiments.classic.read";
+    private static final String CLASSIC_EXPERIMENT_STATISTICS_WRITE = "mongo.experiments.classic.write";
     private static final String ALL_EXPERIMENT_GROUPS = "mongo.experiments.groups.all";
     private static final String SAVE_EXPERIMENT_GROUP = "mongo.experiments.groups.save";
 
@@ -31,6 +33,14 @@ public class ExperimentsMongoMetricsReporter {
 
     public Timer timerWriteBayesianExperimentStatistics() {
         return metricRegistry.timer(BAYESIAN_EXPERIMENT_STATISTICS_WRITE);
+    }
+
+    public Timer timerReadClassicExperimentStatistics() {
+        return metricRegistry.timer(CLASSIC_EXPERIMENT_STATISTICS_READ);
+    }
+
+    public Timer timerWriteClassicExperimentStatistics() {
+        return metricRegistry.timer(CLASSIC_EXPERIMENT_STATISTICS_WRITE);
     }
 
     public Timer timerAllExperimentGroups() {
