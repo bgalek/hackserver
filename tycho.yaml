@@ -42,7 +42,7 @@ vars:
 
   prod_resources: &PROD_RESOURCES
     cpus: 1
-    mem: 1024
+    mem: 2048
     env_vars:
       JAVA_OPTS: "-Xmx700m -Xms700m -XX:MetaspaceSize=100m"
 
