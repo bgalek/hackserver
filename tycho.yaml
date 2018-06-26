@@ -44,7 +44,7 @@ vars:
     cpus: 1
     mem: 2048
     env_vars:
-      JAVA_OPTS: "-Xmx700m -Xms700m -XX:MetaspaceSize=100m"
+      JAVA_OPTS: "-Xmx900m -Xms900m -XX:MetaspaceSize=100m"
 
 deploy:
   dev:
@@ -103,7 +103,7 @@ deploy:
         labels:
           consul: "{{ name }}"
           << : *LABELS
-        instances: 2
+        instances: 4
         << : *PROD_RESOURCES
         health_check:
           << : *HEALTH_CHECK
