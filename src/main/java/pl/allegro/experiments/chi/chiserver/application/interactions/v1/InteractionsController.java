@@ -38,7 +38,6 @@ class InteractionsController {
     void saveInteractions(@RequestBody String interactionsAsJson) {
         logger.debug("Save interactions request received");
         List<Interaction> interactions = interactionsFactory.fromJson(interactionsAsJson);
-        interactionsMetricsReporter.meterParsed(interactions.size());
 
         interactions.forEach(interactionRepository::save);
 

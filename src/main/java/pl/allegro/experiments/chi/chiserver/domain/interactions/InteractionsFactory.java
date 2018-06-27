@@ -30,6 +30,8 @@ public class InteractionsFactory {
         Preconditions.checkNotNull(json);
         try {
             List<Interaction> interactions = interactionConverter.fromJson(json);
+            interactionsMetricsReporter.meterParsed(interactions.size());
+
             return interactions.stream().filter(i -> {
                     var isGood = experimentsRepository.getExperiment(i.getExperimentId())
                                 .map(Experiment::shouldSaveInteractions)
