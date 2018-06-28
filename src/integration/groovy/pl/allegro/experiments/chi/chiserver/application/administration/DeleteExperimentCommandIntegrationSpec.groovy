@@ -11,7 +11,7 @@ import pl.allegro.experiments.chi.chiserver.domain.experiments.administration.Ex
 import pl.allegro.experiments.chi.chiserver.domain.experiments.administration.PermissionsAwareExperimentRepository
 import pl.allegro.experiments.chi.chiserver.domain.experiments.administration.DeleteExperimentCommand
 import pl.allegro.experiments.chi.chiserver.domain.experiments.groups.ExperimentGroupRepository
-import pl.allegro.experiments.chi.chiserver.domain.statistics.StatisticsRepository
+import pl.allegro.experiments.chi.chiserver.domain.statistics.clasic.StatisticsRepository
 import pl.allegro.experiments.chi.chiserver.infrastructure.experiments.ExperimentsTestConfig
 import pl.allegro.experiments.chi.chiserver.infrastructure.experiments.FileBasedExperimentsRepository
 import pl.allegro.experiments.chi.chiserver.infrastructure.experiments.MutableUserProvider

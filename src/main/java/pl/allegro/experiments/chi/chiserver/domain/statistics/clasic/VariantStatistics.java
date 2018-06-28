@@ -1,4 +1,4 @@
-package pl.allegro.experiments.chi.chiserver.domain.statistics;
+package pl.allegro.experiments.chi.chiserver.domain.statistics.clasic;
 
 public class VariantStatistics {
     private final double value;

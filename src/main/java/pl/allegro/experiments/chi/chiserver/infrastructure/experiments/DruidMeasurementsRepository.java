@@ -8,8 +8,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import pl.allegro.experiments.chi.chiserver.domain.statistics.ExperimentMeasurements;
 import pl.allegro.experiments.chi.chiserver.domain.statistics.MeasurementsRepository;
-import pl.allegro.experiments.chi.chiserver.infrastructure.statistics.DruidClient;
-import pl.allegro.experiments.chi.chiserver.infrastructure.statistics.DruidException;
+import pl.allegro.experiments.chi.chiserver.infrastructure.druid.DruidClient;
+import pl.allegro.experiments.chi.chiserver.infrastructure.druid.DruidException;
 
 import java.util.*;
 import java.util.concurrent.TimeUnit;
