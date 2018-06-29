@@ -10,6 +10,7 @@ metrics:
   graphite:
     enabled: true
     host: skystats.qxlint
+    frequency: 45
 
 chi:
   experiments:
