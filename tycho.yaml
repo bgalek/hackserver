@@ -41,10 +41,10 @@ vars:
                   -Dcom.sun.management.jmxremote.authenticate=false -Dcom.sun.management.jmxremote.ssl=false -Djava.rmi.server.hostname=$MESOS_HOSTNAME"
 
   prod_resources: &PROD_RESOURCES
-    cpus: 1
+    cpus: 2
     mem: 2048
     env_vars:
-      JAVA_OPTS: "-Xmx900m -Xms900m -XX:MetaspaceSize=100m"
+      JAVA_OPTS: "-Xmx1400m -Xms1400m -XX:MetaspaceSize=100m"
 
 deploy:
   dev:
@@ -103,7 +103,7 @@ deploy:
         labels:
           consul: "{{ name }}"
           << : *LABELS
-        instances: 4
+        instances: 2
         << : *PROD_RESOURCES
         health_check:
           << : *HEALTH_CHECK
