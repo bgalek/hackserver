@@ -145,6 +145,10 @@ public class AdminExperiment {
         return this.experimentDefinition.getStatus();
     }
 
+    public boolean isActive() {
+        return getStatus().equals(ExperimentStatus.ACTIVE);
+    }
+
     public List<EventDefinition> getEventDefinitions() {
         return experimentDefinition.getReportingDefinition().getEventDefinitions();
     }

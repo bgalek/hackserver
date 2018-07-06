@@ -9,6 +9,7 @@ import org.springframework.http.converter.HttpMessageConversionException;
 import org.springframework.web.bind.annotation.*;
 import pl.allegro.experiments.chi.chiserver.domain.experiments.DeviceClass;
 import pl.allegro.experiments.chi.chiserver.domain.experiments.EventDefinition;
+import pl.allegro.experiments.chi.chiserver.domain.experiments.ExperimentStatus;
 import pl.allegro.experiments.chi.chiserver.domain.experiments.ExperimentsRepository;
 import pl.allegro.experiments.chi.chiserver.domain.experiments.groups.ExperimentGroupRepository;
 import pl.allegro.experiments.chi.chiserver.domain.statistics.MeasurementsRepository;
@@ -73,7 +74,7 @@ public class ExperimentsController {
                         .map(it -> experimentGroupRepository.findByExperimentId(it.getId())
                                 .map(g -> it.withExperimentGroup(g))
                                 .orElse(it))
-                        .filter(it -> !it.getEventDefinitions().isEmpty())
+                        .filter(it -> !it.getEventDefinitions().isEmpty() && it.isActive())
                         .collect(Collectors.toMap(it -> it.getId(), it -> it.getEventDefinitions())));
     }
 

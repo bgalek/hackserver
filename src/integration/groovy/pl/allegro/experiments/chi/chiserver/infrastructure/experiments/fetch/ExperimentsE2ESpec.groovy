@@ -240,9 +240,10 @@ class ExperimentsE2ESpec extends BaseIntegrationSpec implements ExampleExperimen
                 ]
     }
 
-    def "should return all experiment event definitions if non empty"() {
+    def "should return all active experiment event definitions if non empty"() {
         given:
         userProvider.user = new User('Anonymous', [], true)
+        def experimentId = experimentPrefix + UUID.randomUUID().toString()
 
         def request = [
                 id              : experimentId,
@@ -256,53 +257,36 @@ class ExperimentsE2ESpec extends BaseIntegrationSpec implements ExampleExperimen
         and:
         restTemplate.postForEntity(localUrl('/api/admin/experiments'), request, Map)
 
+        and:
+        if (isActive) {
+            def startRequest = [
+                    experimentDurationDays: 30
+            ]
+            restTemplate.put(localUrl("/api/admin/experiments/${request.id}/start"), startRequest, Map)
+        }
+
         when:
         def result = restTemplate.getForEntity(localUrl("/api/admin/experiments/filters/nonEmpty"), Map).body
 
         then:
         result.containsKey(experimentId) == shouldBeAvailable
-        result[experimentId] == expectedResult
+        result[experimentId] == fillNullEventDefinitionFields(expectedResult)
 
         where:
-        experimentId << [UUID.randomUUID().toString(), UUID.randomUUID().toString()]
-        shouldBeAvailable << [false, true]
-        eventDefinitions << [
-                [],
-                [
-                        [
-                                label   : 'label1',
-                                category: 'category1',
-                                value   : 'value1',
-                                action  : 'action1',
-                                boxName : 'boxName1'
-                        ],
-                        [
-                                label   : 'label2',
-                                category: 'category2',
-                                value   : 'value2',
-                                action  : 'action2',
-                                boxName : 'boxName2'
-                        ],
-                ]
-        ]
-        expectedResult << [
-                null,
-                [
-                        [
-                                label   : 'label1',
-                                category: 'category1',
-                                value   : 'value1',
-                                action  : 'action1',
-                                boxName : 'boxName1'
-                        ],
-                        [
-                                label   : 'label2',
-                                category: 'category2',
-                                value   : 'value2',
-                                action  : 'action2',
-                                boxName : 'boxName2'
-                        ],
-                ]
-        ]
+        shouldBeAvailable | eventDefinitions    | expectedResult      | isActive | experimentPrefix
+        false             | []                  | null                | true     | 'exp1'
+        true              | [[label: 'label1']] | [[label: 'label1']] | true     | 'exp2'
+        false             | [[label: 'label1']] | null                | false    | 'exp3'
+    }
+
+    def fillNullEventDefinitionFields(eventDefinitions) {
+        if (eventDefinitions != null)
+            eventDefinitions.collect{ it -> [
+                    label: it.label,
+                    category: '',
+                    value   : '',
+                    action  : '',
+                    boxName : ''
+            ]}
     }
 }
