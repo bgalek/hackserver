@@ -62,6 +62,21 @@ public class ExperimentsController {
     }
 
     @MeteredEndpoint
+    @GetMapping(path = {"filters"})
+    String allExperimentFilters() {
+        logger.info("All experiment filters request received");
+        return jsonConverter.toJson(
+                experimentsRepository.getAll().stream()
+                        .map(clientExperimentFactory::adminExperiment)
+                        .map(it -> it.withMeasurements(measurementsRepository.getMeasurements(it.getId())))
+                        .map(it -> it.withHorizontalEqualizer(bayesianChartsRepository.getHorizontalEqualizer(it.getId(), DeviceClass.all).orElse(null)))
+                        .map(it -> experimentGroupRepository.findByExperimentId(it.getId())
+                                .map(g -> it.withExperimentGroup(g))
+                                .orElse(it))
+                        .collect(Collectors.toMap(it -> it.getId(), it -> it.getEventDefinitions())));
+    }
+
+    @MeteredEndpoint
     @GetMapping(path = {""})
     String allExperiments() {
         logger.info("All experiments request received");
