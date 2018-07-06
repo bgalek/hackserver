@@ -62,7 +62,7 @@ public class ExperimentsController {
     }
 
     @MeteredEndpoint
-    @GetMapping(path = {"filters"})
+    @GetMapping(path = {"filters/nonEmpty"})
     String allExperimentFilters() {
         logger.info("All experiment filters request received");
         return jsonConverter.toJson(
@@ -73,6 +73,7 @@ public class ExperimentsController {
                         .map(it -> experimentGroupRepository.findByExperimentId(it.getId())
                                 .map(g -> it.withExperimentGroup(g))
                                 .orElse(it))
+                        .filter(it -> !it.getEventDefinitions().isEmpty())
                         .collect(Collectors.toMap(it -> it.getId(), it -> it.getEventDefinitions())));
     }
 

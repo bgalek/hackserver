@@ -240,17 +240,35 @@ class ExperimentsE2ESpec extends BaseIntegrationSpec implements ExampleExperimen
                 ]
     }
 
-    def "should return all experiment event definitions"() {
+    def "should return all experiment event definitions if non empty"() {
         given:
         userProvider.user = new User('Anonymous', [], true)
-        def experimentId = UUID.randomUUID().toString()
 
         def request = [
                 id              : experimentId,
                 variantNames    : ['v2'],
                 percentage      : 10,
                 reportingType   : 'FRONTEND',
-                eventDefinitions: [
+                eventDefinitions: eventDefinitions,
+                reportingEnabled: true
+        ]
+
+        and:
+        restTemplate.postForEntity(localUrl('/api/admin/experiments'), request, Map)
+
+        when:
+        def result = restTemplate.getForEntity(localUrl("/api/admin/experiments/filters/nonEmpty"), Map).body
+
+        then:
+        result.containsKey(experimentId) == shouldBeAvailable
+        result[experimentId] == expectedResult
+
+        where:
+        experimentId << [UUID.randomUUID().toString(), UUID.randomUUID().toString()]
+        shouldBeAvailable << [false, true]
+        eventDefinitions << [
+                [],
+                [
                         [
                                 label   : 'label1',
                                 category: 'category1',
@@ -265,33 +283,26 @@ class ExperimentsE2ESpec extends BaseIntegrationSpec implements ExampleExperimen
                                 action  : 'action2',
                                 boxName : 'boxName2'
                         ],
-                ],
-                reportingEnabled: true
-        ]
-
-        and:
-        restTemplate.postForEntity(localUrl('/api/admin/experiments'), request, Map)
-
-        when:
-        def result = restTemplate.getForEntity(localUrl("/api/admin/experiments/filters"), Map).body
-
-        then:
-        result.containsKey(experimentId)
-        result[experimentId] as Set == [
-                [
-                        label   : 'label1',
-                        category: 'category1',
-                        value   : 'value1',
-                        action  : 'action1',
-                        boxName : 'boxName1'
-                ],
-                [
-                        label   : 'label2',
-                        category: 'category2',
-                        value   : 'value2',
-                        action  : 'action2',
-                        boxName : 'boxName2'
                 ]
-        ] as Set
+        ]
+        expectedResult << [
+                null,
+                [
+                        [
+                                label   : 'label1',
+                                category: 'category1',
+                                value   : 'value1',
+                                action  : 'action1',
+                                boxName : 'boxName1'
+                        ],
+                        [
+                                label   : 'label2',
+                                category: 'category2',
+                                value   : 'value2',
+                                action  : 'action2',
+                                boxName : 'boxName2'
+                        ],
+                ]
+        ]
     }
 }
