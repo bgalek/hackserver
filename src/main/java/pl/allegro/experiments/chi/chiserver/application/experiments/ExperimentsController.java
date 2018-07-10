@@ -9,7 +9,6 @@ import org.springframework.http.converter.HttpMessageConversionException;
 import org.springframework.web.bind.annotation.*;
 import pl.allegro.experiments.chi.chiserver.domain.experiments.DeviceClass;
 import pl.allegro.experiments.chi.chiserver.domain.experiments.EventDefinition;
-import pl.allegro.experiments.chi.chiserver.domain.experiments.ExperimentStatus;
 import pl.allegro.experiments.chi.chiserver.domain.experiments.ExperimentsRepository;
 import pl.allegro.experiments.chi.chiserver.domain.experiments.groups.ExperimentGroupRepository;
 import pl.allegro.experiments.chi.chiserver.domain.statistics.MeasurementsRepository;
@@ -18,6 +17,7 @@ import pl.allegro.experiments.chi.chiserver.domain.experiments.administration.au
 import pl.allegro.experiments.chi.chiserver.domain.experiments.administration.audit.Auditor;
 import pl.allegro.experiments.chi.chiserver.domain.statistics.bayes.BayesianChartsRepository;
 import pl.allegro.experiments.chi.chiserver.infrastructure.ExperimentFactory;
+import pl.allegro.tech.common.andamio.endpoint.PublicEndpoint;
 import pl.allegro.tech.common.andamio.errors.Error;
 import pl.allegro.tech.common.andamio.errors.ErrorsHolder;
 import pl.allegro.tech.common.andamio.errors.SimpleErrorsHolder;
@@ -64,6 +64,7 @@ public class ExperimentsController {
 
     @MeteredEndpoint
     @GetMapping(path = {"filters/nonEmpty"})
+    @PublicEndpoint(documented = true, timeout = "3000")
     String allExperimentFilters() {
         logger.info("All experiment filters request received");
         return jsonConverter.toJson(
