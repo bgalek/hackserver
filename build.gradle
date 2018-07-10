@@ -69,6 +69,7 @@ dependencies {
     compile group: 'com.fasterxml.jackson.module', name: 'jackson-module-parameter-names', version: versions.jackson
     compile group: 'org.springframework.kafka', name: 'spring-kafka', version: versions.springKafka
     compile group: 'pl.allegro.tech.common', name: 'spring-boot-starter-andamio-avro', version: '0.7.1'
+    compile group: 'pl.allegro.tech.common', name: 'andamio-endpoint-discovery-spring', version: '0.8.1'
     compile 'com.squareup.okhttp3:okhttp:3.9.1'
     compile 'com.github.slugify:slugify:2.1.12'
 
