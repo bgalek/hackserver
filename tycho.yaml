@@ -31,6 +31,7 @@ vars:
 
   labels: &LABELS
     default-monitoring: tag
+    public: tag
 
   test_resources: &TEST_RESOURCES
     cpus: 0.2
