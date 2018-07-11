@@ -266,7 +266,7 @@ class ExperimentsE2ESpec extends BaseIntegrationSpec implements ExampleExperimen
         }
 
         when:
-        def result = restTemplate.getForEntity(localUrl("/api/admin/experiments/filters/nonEmpty"), Map).body
+        def result = restTemplate.getForEntity(localUrl("/experiments/filters"), Map).body
 
         then:
         result.containsKey(experimentId) == shouldBeAvailable

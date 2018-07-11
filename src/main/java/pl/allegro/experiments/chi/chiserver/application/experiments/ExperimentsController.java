@@ -17,7 +17,6 @@ import pl.allegro.experiments.chi.chiserver.domain.experiments.administration.au
 import pl.allegro.experiments.chi.chiserver.domain.experiments.administration.audit.Auditor;
 import pl.allegro.experiments.chi.chiserver.domain.statistics.bayes.BayesianChartsRepository;
 import pl.allegro.experiments.chi.chiserver.infrastructure.ExperimentFactory;
-import pl.allegro.tech.common.andamio.endpoint.PublicEndpoint;
 import pl.allegro.tech.common.andamio.errors.Error;
 import pl.allegro.tech.common.andamio.errors.ErrorsHolder;
 import pl.allegro.tech.common.andamio.errors.SimpleErrorsHolder;
@@ -60,23 +59,6 @@ public class ExperimentsController {
         this.bayesianChartsRepository = bayesianChartsRepository;
         this.experimentGroupRepository = experimentGroupRepository;
         this.clientExperimentFactory = experimentFactory;
-    }
-
-    @MeteredEndpoint
-    @GetMapping(path = {"filters/nonEmpty"})
-    @PublicEndpoint(timeout = "3000")
-    String allExperimentFilters() {
-        logger.info("All experiment filters request received");
-        return jsonConverter.toJson(
-                experimentsRepository.getAll().stream()
-                        .map(clientExperimentFactory::adminExperiment)
-                        .map(it -> it.withMeasurements(measurementsRepository.getMeasurements(it.getId())))
-                        .map(it -> it.withHorizontalEqualizer(bayesianChartsRepository.getHorizontalEqualizer(it.getId(), DeviceClass.all).orElse(null)))
-                        .map(it -> experimentGroupRepository.findByExperimentId(it.getId())
-                                .map(g -> it.withExperimentGroup(g))
-                                .orElse(it))
-                        .filter(it -> !it.getEventDefinitions().isEmpty() && it.isActive())
-                        .collect(Collectors.toMap(it -> it.getId(), it -> it.getEventDefinitions())));
     }
 
     @MeteredEndpoint
