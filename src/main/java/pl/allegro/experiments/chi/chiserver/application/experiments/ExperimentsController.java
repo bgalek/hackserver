@@ -64,7 +64,7 @@ public class ExperimentsController {
 
     @MeteredEndpoint
     @GetMapping(path = {"filters/nonEmpty"})
-    @PublicEndpoint(documented = true, timeout = "3000")
+    @PublicEndpoint(timeout = "3000")
     String allExperimentFilters() {
         logger.info("All experiment filters request received");
         return jsonConverter.toJson(
