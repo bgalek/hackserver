@@ -1,0 +1,38 @@
+{
+    "type": "record",
+    "name": "EventDefinition",
+    "namespace": "pl.allegro.experiments.chi.experiments",
+    "doc": "Definition of event used for experiment interaction confirmation",
+    "fields": [
+        {
+            "name": "experimentId",
+            "type": "string",
+            "doc": "experimentId"
+        },
+        {
+            "name": "category",
+            "type": "string",
+            "doc": "nga meta event category"
+        },
+        {
+            "name": "action",
+            "type": "string",
+            "doc": "nga meta event action"
+        },
+        {
+            "name": "value",
+            "type": "string",
+            "doc": "nga meta event value"
+        },
+        {
+            "name": "label",
+            "type": "string",
+            "doc": "nga meta event label"
+        },
+        {
+            "name": "boxName",
+            "type": "string",
+            "doc": "nga meta event boxName"
+        }
+    ]
+}

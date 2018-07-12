@@ -63,6 +63,10 @@ avro:
         schemaVersion: 1
         schemaLocation: /avro/pl.allegro.experiment.chi.chiserver.interactions.Interaction.avsc
         remoteSchemaSubject: pl.allegro.experiments.chi.interactions.Interaction
+      - className: pl.allegro.experiments.chi.chiserver.infrastructure.avro.AvroEventDefinition
+        schemaVersion: 1
+        schemaLocation: /avro/pl.allegro.experiment.chi.chiserver.experiments.EventDefinition.avsc
+        remoteSchemaSubject: pl.allegro.experiments.chi.experiments.EventDefinition
 
 druid:
   apiHost: druidbroker-nga-test.allegrogroup.com
