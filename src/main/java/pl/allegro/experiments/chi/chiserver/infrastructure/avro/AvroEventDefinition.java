@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.common.base.Preconditions;
 
+import java.time.Instant;
 import java.util.Objects;
 import java.util.Optional;
 
@@ -14,6 +15,8 @@ public class AvroEventDefinition {
     private final String value;
     private final String label;
     private final String boxName;
+    private final Instant sentAt;
+    private final Instant stateFrom;
 
     @JsonCreator
     public AvroEventDefinition(
@@ -22,8 +25,13 @@ public class AvroEventDefinition {
             @JsonProperty("action") String action,
             @JsonProperty("value") String value,
             @JsonProperty("label") String label,
-            @JsonProperty("boxName") String boxName) {
+            @JsonProperty("boxName") String boxName,
+            @JsonProperty("sentAt") Instant sentAt,
+            @JsonProperty("__timestamp") Instant stateFrom
+            ) {
         Preconditions.checkNotNull(experimentId);
+        Preconditions.checkNotNull(sentAt);
+        Preconditions.checkNotNull(stateFrom);
         Preconditions.checkArgument(experimentId.length() > 0);
 
         this.experimentId = experimentId;
@@ -32,6 +40,8 @@ public class AvroEventDefinition {
         this.value = Optional.ofNullable(value).orElse("");
         this.label = Optional.ofNullable(label).orElse("");
         this.boxName = Optional.ofNullable(boxName).orElse("");
+        this.sentAt = sentAt;
+        this.stateFrom = stateFrom;
     }
 
     public String getCategory() {
@@ -56,6 +66,14 @@ public class AvroEventDefinition {
 
     public String getExperimentId() {
         return experimentId;
+    }
+
+    public Instant getSentAt() {
+        return sentAt;
+    }
+
+    public Instant getStateFrom() {
+        return stateFrom;
     }
 
     @Override

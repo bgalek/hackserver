@@ -87,7 +87,7 @@ class KafkaInteractionRepositoryIntegrationSpec extends BaseIntegrationSpec {
         embeddedKafka.after()
     }
 
-    def "avro should work"() {
+    def "should convert bytes to Interaction using avro converter"() {
         given:
         Interaction interaction = sampleInteraction()
 

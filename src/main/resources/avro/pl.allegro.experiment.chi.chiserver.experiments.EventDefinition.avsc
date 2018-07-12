@@ -33,6 +33,16 @@
             "name": "boxName",
             "type": "string",
             "doc": "nga meta event boxName"
+        },
+        {
+            "name": "sentAt",
+            "type": "long",
+            "doc": "sent to kafka timestamp"
+        },
+        {
+            "name": "__timestamp",
+            "type": "long",
+            "doc": "event definition state timestamp"
         }
     ]
 }
