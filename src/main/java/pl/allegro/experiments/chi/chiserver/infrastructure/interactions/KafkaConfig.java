@@ -11,7 +11,12 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.kafka.core.DefaultKafkaProducerFactory;
 import org.springframework.kafka.core.KafkaTemplate;
+import pl.allegro.experiments.chi.chiserver.domain.experiments.EventDefinitionRepository;
+import pl.allegro.experiments.chi.chiserver.domain.experiments.EventDefinitionSaver;
+import pl.allegro.experiments.chi.chiserver.domain.experiments.ExperimentsRepository;
 import pl.allegro.experiments.chi.chiserver.domain.interactions.InteractionRepository;
+import pl.allegro.experiments.chi.chiserver.infrastructure.experiments.KafkaEventDefinitionRepository;
+import pl.allegro.experiments.chi.chiserver.infrastructure.experiments.LoggerEventDefinitionRepository;
 import pl.allegro.tech.common.andamio.server.cloud.CloudMetadata;
 import pl.allegro.tech.common.andamio.avro.AvroConverter;
 
@@ -28,12 +33,34 @@ public class KafkaConfig {
     }
 
     @Bean
+    @ConditionalOnProperty(name = {"eventDefinitions.repository"}, havingValue = "local")
+    public EventDefinitionRepository localEventDefinitionsRepository() {
+        return new LoggerEventDefinitionRepository();
+    }
+
+    @Bean
     @ConditionalOnProperty(name = {"interactions.repository"}, havingValue = "kafka")
     public InteractionRepository kafkaInteractionRepository(
             KafkaTemplate<String, byte[]> kafkaTemplate,
             AvroConverter avroConverter,
             @Value("${interactions.kafka.topic}") String kafkaTopic) {
         return new KafkaInteractionRepository(kafkaTemplate, avroConverter, kafkaTopic);
+    }
+
+    @Bean
+    @ConditionalOnProperty(name = {"eventDefinitions.repository"}, havingValue = "kafka")
+    public EventDefinitionRepository kafkaEventDefinitionRepository(
+            KafkaTemplate<String, byte[]> kafkaTemplate,
+            AvroConverter avroConverter,
+            @Value("${eventDefinitions.kafka.topic}") String kafkaTopic) {
+        return new KafkaEventDefinitionRepository(kafkaTemplate, avroConverter, kafkaTopic);
+    }
+
+    @Bean
+    public EventDefinitionSaver eventDefinitionSaver(
+            ExperimentsRepository experimentsRepository,
+            EventDefinitionRepository eventDefinitionRepository) {
+        return new EventDefinitionSaver(eventDefinitionRepository, experimentsRepository);
     }
 
     @Bean

@@ -1,6 +1,9 @@
 interactions:
   repository: local
 
+eventDefinitions:
+  repository: local
+
 security:
   enabled: false
 

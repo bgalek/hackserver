@@ -16,6 +16,7 @@ import pl.allegro.experiments.chi.chiserver.BaseIntegrationSpec
 import pl.allegro.experiments.chi.chiserver.domain.experiments.ExperimentsRepository
 import pl.allegro.experiments.chi.chiserver.domain.interactions.Interaction
 import pl.allegro.experiments.chi.chiserver.domain.interactions.InteractionRepository
+import pl.allegro.experiments.chi.chiserver.infrastructure.experiments.EventDefinitionSaverTestConfig
 import pl.allegro.experiments.chi.chiserver.infrastructure.interactions.KafkaConfig
 import pl.allegro.tech.common.andamio.server.cloud.CloudMetadata
 import pl.allegro.tech.common.andamio.avro.AvroConverter
@@ -28,11 +29,8 @@ import java.util.concurrent.TimeUnit
 
 import static pl.allegro.experiments.chi.chiserver.utils.SampleInMemoryExperimentsRepository.TEST_EXPERIMENT_ID
 
-@ContextConfiguration(classes = [InteractionsIntegrationTestConfig])
+@ContextConfiguration(classes = [InteractionsIntegrationTestConfig, EventDefinitionSaverTestConfig])
 class KafkaInteractionRepositoryIntegrationSpec extends BaseIntegrationSpec {
-
-    @Shared
-    String TOPIC = "topic.t"
 
     @Shared
     String brokers
@@ -41,8 +39,8 @@ class KafkaInteractionRepositoryIntegrationSpec extends BaseIntegrationSpec {
 
     BlockingQueue<ConsumerRecord<String, byte[]>> records
 
-    @Shared
-    KafkaEmbedded embeddedKafka = new KafkaEmbedded(1, true, TOPIC)
+    @Autowired
+    KafkaEmbedded embeddedKafka
 
     @Shared
     InteractionRepository interactionRepository
@@ -56,18 +54,15 @@ class KafkaInteractionRepositoryIntegrationSpec extends BaseIntegrationSpec {
     @Autowired
     CloudMetadata cloudMetadata
 
-    def setupSpec() {
-        embeddedKafka.before()
-        brokers = System.getProperties().getProperty("spring.embedded.kafka.brokers")
-    }
-
     def setup() {
-        Map<String, Object> consumerProps = KafkaTestUtils.consumerProps("sampleRawConsumer", "false", embeddedKafka);
-        consumerProps.put("auto.offset.reset", "earliest");
+//        embeddedKafka.before()
+        brokers = System.getProperties().getProperty("spring.embedded.kafka.brokers")
+        Map<String, Object> consumerProps = KafkaTestUtils.consumerProps("sampleRawConsumer", "false", embeddedKafka)
+        consumerProps.put("auto.offset.reset", "earliest")
 
         def consumerFactory = new DefaultKafkaConsumerFactory(consumerProps)
 
-        def containerProperties = new ContainerProperties(TOPIC)
+        def containerProperties = new ContainerProperties(KafkaIntegrationConfig.TOPIC)
 
         container = new KafkaMessageListenerContainer(consumerFactory, containerProperties)
 
@@ -81,9 +76,6 @@ class KafkaInteractionRepositoryIntegrationSpec extends BaseIntegrationSpec {
 
     def cleanup() {
         container.stop()
-    }
-
-    def cleanupSpec() {
         embeddedKafka.after()
     }
 
@@ -144,7 +136,7 @@ class KafkaInteractionRepositoryIntegrationSpec extends BaseIntegrationSpec {
                 10,
                 new SimpleMeterRegistry()
         )
-        kafkaConfig.kafkaInteractionRepository(kafkaTemplate, avroConverter, TOPIC)
+        kafkaConfig.kafkaInteractionRepository(kafkaTemplate, avroConverter, KafkaIntegrationConfig.TOPIC)
     }
 
     Interaction sampleInteraction() {

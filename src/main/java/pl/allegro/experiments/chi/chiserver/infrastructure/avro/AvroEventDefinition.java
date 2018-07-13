@@ -3,12 +3,24 @@ package pl.allegro.experiments.chi.chiserver.infrastructure.avro;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.common.base.Preconditions;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import pl.allegro.experiments.chi.chiserver.application.experiments.ExperimentsController;
+import pl.allegro.experiments.chi.chiserver.domain.experiments.ExperimentDefinition;
 
-import java.time.Instant;
+import java.time.*;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.stream.Collectors;
+
+import static java.time.format.DateTimeFormatter.ISO_DATE_TIME;
+import static java.time.temporal.ChronoUnit.SECONDS;
 
 public class AvroEventDefinition {
+    private static final Logger logger = LoggerFactory.getLogger(AvroEventDefinition.class);
+
     private final String experimentId;
     private final String category;
     private final String action;
@@ -16,7 +28,7 @@ public class AvroEventDefinition {
     private final String label;
     private final String boxName;
     private final Instant sentAt;
-    private final Instant stateFrom;
+    private final long __timestamp; // state
 
     @JsonCreator
     public AvroEventDefinition(
@@ -27,11 +39,9 @@ public class AvroEventDefinition {
             @JsonProperty("label") String label,
             @JsonProperty("boxName") String boxName,
             @JsonProperty("sentAt") Instant sentAt,
-            @JsonProperty("__timestamp") Instant stateFrom
+            @JsonProperty("__timestamp") long __timestamp
             ) {
         Preconditions.checkNotNull(experimentId);
-        Preconditions.checkNotNull(sentAt);
-        Preconditions.checkNotNull(stateFrom);
         Preconditions.checkArgument(experimentId.length() > 0);
 
         this.experimentId = experimentId;
@@ -41,7 +51,7 @@ public class AvroEventDefinition {
         this.label = Optional.ofNullable(label).orElse("");
         this.boxName = Optional.ofNullable(boxName).orElse("");
         this.sentAt = sentAt;
-        this.stateFrom = stateFrom;
+        this.__timestamp = __timestamp;
     }
 
     public String getCategory() {
@@ -72,8 +82,33 @@ public class AvroEventDefinition {
         return sentAt;
     }
 
-    public Instant getStateFrom() {
-        return stateFrom;
+    public long get__timestamp() {
+        return __timestamp;
+    }
+
+    public static List<AvroEventDefinition> listFrom(List<ExperimentDefinition> experimentDefinitions) {
+        Instant now = Instant.parse(Clock.systemUTC().instant()
+                .atZone(ZoneId.of("UTC"))
+                .withZoneSameInstant(ZoneOffset.UTC)
+                .truncatedTo(SECONDS).format(ISO_DATE_TIME));
+        List<AvroEventDefinition> result = new ArrayList<>();
+        experimentDefinitions.forEach(experimentDefinition ->
+                result.addAll(AvroEventDefinition.listFrom(experimentDefinition, now)));
+        return result;
+    }
+
+    private static List<AvroEventDefinition> listFrom(ExperimentDefinition experimentDefinition, Instant now) {
+        return experimentDefinition.getReportingDefinition().getEventDefinitions()
+                .stream()
+                .map(eventDefinition -> new AvroEventDefinition(
+                        experimentDefinition.getId(),
+                        eventDefinition.getCategory(),
+                        eventDefinition.getAction(),
+                        eventDefinition.getValue(),
+                        eventDefinition.getLabel(),
+                        eventDefinition.getBoxName(),
+                        now, now.toEpochMilli()))
+                .collect(Collectors.toList());
     }
 
     @Override
@@ -81,7 +116,9 @@ public class AvroEventDefinition {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         AvroEventDefinition that = (AvroEventDefinition) o;
-        return Objects.equals(experimentId, that.experimentId) &&
+        return sentAt == that.sentAt &&
+                __timestamp == that.__timestamp &&
+                Objects.equals(experimentId, that.experimentId) &&
                 Objects.equals(category, that.category) &&
                 Objects.equals(action, that.action) &&
                 Objects.equals(value, that.value) &&
@@ -91,6 +128,6 @@ public class AvroEventDefinition {
 
     @Override
     public int hashCode() {
-        return Objects.hash(experimentId, category, action, value, label, boxName);
+        return Objects.hash(experimentId, category, action, value, label, boxName, sentAt, __timestamp);
     }
 }
