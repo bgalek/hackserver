@@ -3,14 +3,10 @@ package pl.allegro.experiments.chi.chiserver.infrastructure.avro;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.common.base.Preconditions;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import pl.allegro.experiments.chi.chiserver.application.experiments.ExperimentsController;
 import pl.allegro.experiments.chi.chiserver.domain.experiments.ExperimentDefinition;
 
 import java.time.*;
 import java.time.temporal.ChronoUnit;
-import java.time.temporal.TemporalUnit;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -89,10 +85,7 @@ public class AvroEventDefinition {
     }
 
     public static List<AvroEventDefinition> listFrom(List<ExperimentDefinition> experimentDefinitions) {
-        Instant now = Instant.parse(Clock.systemUTC().instant()
-                .atZone(ZoneId.of("UTC"))
-                .withZoneSameInstant(ZoneOffset.UTC)
-                .truncatedTo(SECONDS).format(ISO_DATE_TIME));
+        Instant now = Instant.now();
         List<AvroEventDefinition> result = new ArrayList<>();
         experimentDefinitions.forEach(experimentDefinition ->
                 result.addAll(AvroEventDefinition.listFrom(experimentDefinition, now)));

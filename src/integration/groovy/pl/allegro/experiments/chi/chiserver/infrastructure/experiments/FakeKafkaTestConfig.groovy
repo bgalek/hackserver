@@ -14,7 +14,6 @@ import org.springframework.kafka.listener.config.ContainerProperties
 import org.springframework.kafka.test.rule.KafkaEmbedded
 import org.springframework.kafka.test.utils.KafkaTestUtils
 import pl.allegro.experiments.chi.chiserver.domain.experiments.EventDefinitionRepository
-import pl.allegro.experiments.chi.chiserver.domain.interactions.InteractionRepository
 import pl.allegro.experiments.chi.chiserver.infrastructure.interactions.KafkaConfig
 import pl.allegro.experiments.chi.chiserver.infrastructure.interactions.KafkaInteractionRepository
 import pl.allegro.tech.common.andamio.avro.AvroConverter

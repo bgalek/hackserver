@@ -73,4 +73,11 @@ public class ReportingDefinition {
     public static ReportingDefinition frontend(List<EventDefinition> eventDefinitions) {
         return new ReportingDefinition(eventDefinitions, false, false);
     }
+
+    @Override
+    public String toString() {
+        return String.join("\n", eventDefinitions.stream()
+                .map(EventDefinition::toString)
+                .collect(Collectors.toList()));
+    }
 }

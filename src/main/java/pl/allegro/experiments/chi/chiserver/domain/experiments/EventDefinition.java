@@ -63,4 +63,9 @@ public class EventDefinition {
     public int hashCode() {
         return Objects.hash(category, action, value, label, boxName);
     }
+
+    @Override
+    public String toString() {
+        return "category: " + category + ", action: " + action + ", value: " + value + ", label: " + label + ", boxName: " + boxName;
+    }
 }

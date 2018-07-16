@@ -2,10 +2,7 @@ package pl.allegro.experiments.chi.chiserver.interactions
 
 import groovy.json.JsonOutput
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.http.HttpEntity
-import org.springframework.http.HttpHeaders
 import org.springframework.http.HttpMethod
-import org.springframework.http.MediaType
 import org.springframework.test.context.ContextConfiguration
 import org.springframework.web.client.HttpClientErrorException
 import org.springframework.web.client.RestTemplate

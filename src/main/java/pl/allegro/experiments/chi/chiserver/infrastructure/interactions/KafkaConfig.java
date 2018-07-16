@@ -15,6 +15,7 @@ import pl.allegro.experiments.chi.chiserver.domain.experiments.EventDefinitionRe
 import pl.allegro.experiments.chi.chiserver.domain.experiments.EventDefinitionSaver;
 import pl.allegro.experiments.chi.chiserver.domain.experiments.ExperimentsRepository;
 import pl.allegro.experiments.chi.chiserver.domain.interactions.InteractionRepository;
+import pl.allegro.experiments.chi.chiserver.infrastructure.EventDefinitionSaveScheduler;
 import pl.allegro.experiments.chi.chiserver.infrastructure.experiments.KafkaEventDefinitionRepository;
 import pl.allegro.experiments.chi.chiserver.infrastructure.experiments.LoggerEventDefinitionRepository;
 import pl.allegro.tech.common.andamio.server.cloud.CloudMetadata;
@@ -64,13 +65,13 @@ public class KafkaConfig {
     }
 
     @Bean
-    @ConditionalOnProperty(name = {"interactions.repository"}, havingValue = "kafka")
+    @ConditionalOnProperty(name = {"kafkaCommon.kafkaTemplate"}, havingValue = "on")
     public KafkaTemplate kafkaTemplate(
-            @Value("${interactions.kafka.bootstrap-servers-dc4}") String bootstrapServersDc4,
-            @Value("${interactions.kafka.bootstrap-servers-dc5}") String bootstrapServersDc5,
+            @Value("${kafkaCommon.bootstrap-servers-dc4}") String bootstrapServersDc4,
+            @Value("${kafkaCommon.bootstrap-servers-dc5}") String bootstrapServersDc5,
             CloudMetadata cloudMetadata,
-            @Value("${interactions.kafka.batch-size}") int batchSize,
-            @Value("${interactions.kafka.linger-ms}") int lingerMs,
+            @Value("${kafkaCommon.batch-size}") int batchSize,
+            @Value("${kafkaCommon.linger-ms}") int lingerMs,
             MeterRegistry metricRegistry) {
         String bootstrapServer = cloudMetadata.getDatacenter().equals("dc5") ? bootstrapServersDc5 : bootstrapServersDc4;
         final KafkaTemplate<String, byte[]> kafkaTemplate = new KafkaTemplate<>(producerFactory(bootstrapServer, batchSize, lingerMs));
@@ -81,6 +82,11 @@ public class KafkaConfig {
         );
 
         return kafkaTemplate;
+    }
+
+    @Bean
+    EventDefinitionSaveScheduler eventDefinitionSaveScheduler(EventDefinitionSaver eventDefinitionSaver) {
+        return new EventDefinitionSaveScheduler(eventDefinitionSaver);
     }
 
     private double getMetricValue(KafkaTemplate<String, byte[]> kafkaTemplate, String metricName) {

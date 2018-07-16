@@ -4,6 +4,9 @@ interactions:
 eventDefinitions:
   repository: local
 
+kafkaCommon:
+  kafkaTemplate: off
+
 security:
   enabled: false
 
