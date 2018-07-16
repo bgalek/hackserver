@@ -13,14 +13,11 @@ import pl.allegro.experiments.chi.chiserver.domain.experiments.EventDefinitionSa
 import pl.allegro.experiments.chi.chiserver.infrastructure.avro.AvroEventDefinition
 import pl.allegro.tech.common.andamio.avro.AvroConverter
 
-import java.time.Clock
 import java.time.Instant
-import java.time.ZoneId
-import java.time.ZonedDateTime
 import java.util.concurrent.BlockingQueue
 import java.util.concurrent.TimeUnit
 
-@ContextConfiguration(classes = [EventDefinitionSaverTestConfig])
+@ContextConfiguration(classes = [FakeKafkaTestConfig])
 class EventDefinitionSaverSpec extends BaseIntegrationSpec {
 
     @Autowired
@@ -49,7 +46,20 @@ class EventDefinitionSaverSpec extends BaseIntegrationSpec {
 
     def cleanup() {
         container.stop()
-        embeddedKafka.after()
+    }
+
+    def "should convert event definition from avro and back again"() {
+        given:
+        def now = Instant.now()
+        AvroEventDefinition eventDefinition = new AvroEventDefinition(
+                'e', 'c', 'a', 'v', 'l', 'bn', now, now)
+
+        when:
+        byte[] toAvro = avroConverter.toAvro(eventDefinition).data()
+        AvroEventDefinition fromAvro = avroConverter.fromAvro(toAvro, 1, AvroEventDefinition)
+
+        then:
+        eventDefinition == fromAvro
     }
 
     def "should save event definitions from existing experiments"() {
@@ -71,8 +81,6 @@ class EventDefinitionSaverSpec extends BaseIntegrationSpec {
                 ]],
                 reportingEnabled: true
         ]
-        ZonedDateTime now = Clock.systemUTC().instant().atZone(ZoneId.of("UTC"))
-
         and:
         restTemplate.postForEntity(localUrl('/api/admin/experiments'), request, Map)
 
@@ -86,11 +94,10 @@ class EventDefinitionSaverSpec extends BaseIntegrationSpec {
         received.getValue() == 'value1'
         received.getAction() == 'action1'
         received.getBoxName() == 'boxName1'
-        received.getSentAt().isAfter(now.toInstant())
     }
 
     def receiveEventDefinition() {
-        ConsumerRecord record = records.poll(1000, TimeUnit.MILLISECONDS)
+        ConsumerRecord record = records.poll(2000, TimeUnit.MILLISECONDS)
         byte[] recordAsBytes = record.value()
         avroConverter.fromAvro(
                 recordAsBytes,

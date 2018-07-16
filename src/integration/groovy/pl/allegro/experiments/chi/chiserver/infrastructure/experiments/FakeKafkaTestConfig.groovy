@@ -13,9 +13,10 @@ import org.springframework.kafka.listener.MessageListener
 import org.springframework.kafka.listener.config.ContainerProperties
 import org.springframework.kafka.test.rule.KafkaEmbedded
 import org.springframework.kafka.test.utils.KafkaTestUtils
-import pl.allegro.experiments.chi.chiserver.BaseIntegrationSpec
 import pl.allegro.experiments.chi.chiserver.domain.experiments.EventDefinitionRepository
+import pl.allegro.experiments.chi.chiserver.domain.interactions.InteractionRepository
 import pl.allegro.experiments.chi.chiserver.infrastructure.interactions.KafkaConfig
+import pl.allegro.experiments.chi.chiserver.infrastructure.interactions.KafkaInteractionRepository
 import pl.allegro.tech.common.andamio.avro.AvroConverter
 import pl.allegro.tech.common.andamio.server.cloud.CloudMetadata
 
@@ -23,7 +24,7 @@ import java.util.concurrent.BlockingQueue
 import java.util.concurrent.LinkedBlockingQueue
 
 @Configuration
-class EventDefinitionSaverTestConfig extends BaseIntegrationSpec.KafkaIntegrationConfig {
+class FakeKafkaTestConfig {
 
     @Autowired
     CloudMetadata cloudMetadata
@@ -31,12 +32,20 @@ class EventDefinitionSaverTestConfig extends BaseIntegrationSpec.KafkaIntegratio
     @Autowired
     AvroConverter avroConverter
 
+    static String TOPIC = "topic.t"
+
+    @Bean
+    KafkaEmbedded kafkaEmbedded() {
+        new KafkaEmbedded(1, true, TOPIC)
+    }
+
     @Bean
     KafkaMessageListenerContainer kafkaMessageListenerContainer(
             KafkaEmbedded embeddedKafka,
             BlockingQueue<ConsumerRecord<String, byte[]>> records) {
 
-        Map<String, Object> consumerProps = KafkaTestUtils.consumerProps("sampleRawConsumer2", "false", embeddedKafka)
+        Map<String, Object> consumerProps = KafkaTestUtils.consumerProps(
+                "sampleRawConsumer", "false", embeddedKafka)
         consumerProps.put("auto.offset.reset", "earliest")
 
         def consumerFactory = new DefaultKafkaConsumerFactory(consumerProps)
@@ -50,7 +59,7 @@ class EventDefinitionSaverTestConfig extends BaseIntegrationSpec.KafkaIntegratio
 
     @Primary
     @Bean
-    EventDefinitionRepository eventDefinitionRepository() {
+    EventDefinitionRepository eventDefinitionRepository(KafkaEmbedded kafkaEmbedded) {
 
         String brokers = System.getProperties().getProperty("spring.embedded.kafka.brokers")
 
@@ -64,6 +73,22 @@ class EventDefinitionSaverTestConfig extends BaseIntegrationSpec.KafkaIntegratio
                 new SimpleMeterRegistry()
         )
         kafkaConfig.kafkaEventDefinitionRepository(kafkaTemplate, avroConverter, TOPIC)
+    }
+
+    @Bean
+    KafkaInteractionRepository kafkaInteractionRepository(KafkaEmbedded kafkaEmbedded) {
+        String brokers = System.getProperties().getProperty("spring.embedded.kafka.brokers")
+
+        KafkaConfig kafkaConfig = new KafkaConfig()
+        KafkaTemplate kafkaTemplate = kafkaConfig.kafkaTemplate(
+                brokers,
+                brokers,
+                cloudMetadata,
+                1,
+                10,
+                new SimpleMeterRegistry()
+        )
+        (KafkaInteractionRepository) kafkaConfig.kafkaInteractionRepository(kafkaTemplate, avroConverter, TOPIC)
     }
 
     @Bean

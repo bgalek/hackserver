@@ -9,6 +9,8 @@ import pl.allegro.experiments.chi.chiserver.application.experiments.ExperimentsC
 import pl.allegro.experiments.chi.chiserver.domain.experiments.ExperimentDefinition;
 
 import java.time.*;
+import java.time.temporal.ChronoUnit;
+import java.time.temporal.TemporalUnit;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -19,8 +21,6 @@ import static java.time.format.DateTimeFormatter.ISO_DATE_TIME;
 import static java.time.temporal.ChronoUnit.SECONDS;
 
 public class AvroEventDefinition {
-    private static final Logger logger = LoggerFactory.getLogger(AvroEventDefinition.class);
-
     private final String experimentId;
     private final String category;
     private final String action;
@@ -28,7 +28,7 @@ public class AvroEventDefinition {
     private final String label;
     private final String boxName;
     private final Instant sentAt;
-    private final long __timestamp; // state
+    private final Instant __timestamp; // state from
 
     @JsonCreator
     public AvroEventDefinition(
@@ -39,9 +39,11 @@ public class AvroEventDefinition {
             @JsonProperty("label") String label,
             @JsonProperty("boxName") String boxName,
             @JsonProperty("sentAt") Instant sentAt,
-            @JsonProperty("__timestamp") long __timestamp
+            @JsonProperty("__timestamp") Instant __timestamp
             ) {
         Preconditions.checkNotNull(experimentId);
+        Preconditions.checkNotNull(sentAt);
+        Preconditions.checkNotNull(__timestamp);
         Preconditions.checkArgument(experimentId.length() > 0);
 
         this.experimentId = experimentId;
@@ -50,8 +52,8 @@ public class AvroEventDefinition {
         this.value = Optional.ofNullable(value).orElse("");
         this.label = Optional.ofNullable(label).orElse("");
         this.boxName = Optional.ofNullable(boxName).orElse("");
-        this.sentAt = sentAt;
-        this.__timestamp = __timestamp;
+        this.sentAt = sentAt.truncatedTo(ChronoUnit.SECONDS);
+        this.__timestamp = __timestamp.truncatedTo(ChronoUnit.SECONDS);
     }
 
     public String getCategory() {
@@ -82,7 +84,7 @@ public class AvroEventDefinition {
         return sentAt;
     }
 
-    public long get__timestamp() {
+    public Instant get__timestamp() {
         return __timestamp;
     }
 
@@ -107,7 +109,7 @@ public class AvroEventDefinition {
                         eventDefinition.getValue(),
                         eventDefinition.getLabel(),
                         eventDefinition.getBoxName(),
-                        now, now.toEpochMilli()))
+                        now, now))
                 .collect(Collectors.toList());
     }
 
@@ -116,14 +118,14 @@ public class AvroEventDefinition {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         AvroEventDefinition that = (AvroEventDefinition) o;
-        return sentAt == that.sentAt &&
-                __timestamp == that.__timestamp &&
-                Objects.equals(experimentId, that.experimentId) &&
+        return Objects.equals(experimentId, that.experimentId) &&
                 Objects.equals(category, that.category) &&
                 Objects.equals(action, that.action) &&
                 Objects.equals(value, that.value) &&
                 Objects.equals(label, that.label) &&
-                Objects.equals(boxName, that.boxName);
+                Objects.equals(boxName, that.boxName) &&
+                Objects.equals(sentAt, that.sentAt) &&
+                Objects.equals(__timestamp, that.__timestamp);
     }
 
     @Override

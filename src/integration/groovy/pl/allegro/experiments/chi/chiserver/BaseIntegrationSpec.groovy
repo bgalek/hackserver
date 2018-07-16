@@ -63,14 +63,4 @@ abstract class BaseIntegrationSpec extends Specification {
         ]
         restTemplate.put(localUrl("/api/admin/experiments/${experimentId}/start"), startRequest, Map)
     }
-
-    @Configuration
-    static class KafkaIntegrationConfig {
-        static String TOPIC = "topic.t"
-
-        @Bean
-        KafkaEmbedded kafkaEmbedded() {
-            new KafkaEmbedded(1, true, TOPIC)
-        }
-    }
 }

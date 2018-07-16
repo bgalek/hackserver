@@ -5,3 +5,9 @@ server:
   shutdown:
     delay:
       enabled: false
+
+interactions:
+  repository: integration
+
+eventDefinitions:
+  repository: integration

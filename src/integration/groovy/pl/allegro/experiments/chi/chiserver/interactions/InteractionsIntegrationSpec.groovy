@@ -14,7 +14,6 @@ import pl.allegro.experiments.chi.chiserver.domain.User
 import pl.allegro.experiments.chi.chiserver.domain.UserProvider
 import pl.allegro.experiments.chi.chiserver.domain.experiments.ExperimentsRepository
 import pl.allegro.experiments.chi.chiserver.domain.interactions.InteractionConverter
-import pl.allegro.experiments.chi.chiserver.infrastructure.experiments.ExperimentsDoubleRepository
 import pl.allegro.experiments.chi.chiserver.infrastructure.interactions.InMemoryInteractionRepository
 import spock.lang.Unroll
 

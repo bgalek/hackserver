@@ -1,5 +1,6 @@
 package pl.allegro.experiments.chi.chiserver.infrastructure.experiments;
 
+import com.google.common.base.Preconditions;
 import org.springframework.kafka.core.KafkaOperations;
 import pl.allegro.experiments.chi.chiserver.domain.experiments.EventDefinitionRepository;
 import pl.allegro.experiments.chi.chiserver.domain.experiments.ExperimentDefinition;
@@ -17,6 +18,9 @@ public class KafkaEventDefinitionRepository implements EventDefinitionRepository
             KafkaOperations<String, byte[]> kafkaTemplate,
             AvroConverter avroConverter,
             String kafkaTopic) {
+        Preconditions.checkNotNull(kafkaTemplate);
+        Preconditions.checkNotNull(avroConverter);
+        Preconditions.checkNotNull(kafkaTopic);
         this.kafkaTemplate = kafkaTemplate;
         this.avroConverter = avroConverter;
         this.kafkaTopic = kafkaTopic;
