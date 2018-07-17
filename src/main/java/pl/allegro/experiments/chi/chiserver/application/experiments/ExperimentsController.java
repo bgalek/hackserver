@@ -90,7 +90,7 @@ public class ExperimentsController {
                 .map(it -> experimentGroupRepository.findByExperimentId(it.getId())
                         .map(g -> it.withExperimentGroup(g))
                         .orElse(it))
-                .map(it -> it.withBonferroniCorrection(classicStatisticsForVariantMetricRepository.countVariants(experimentId)))
+                .map(it -> it.withBonferroniCorrection(classicStatisticsForVariantMetricRepository.countNumberOfTests(experimentId)))
                 .map(e -> ResponseEntity.ok(jsonConverter.toJson(e)))
                 .orElse(new ResponseEntity<>(HttpStatus.NOT_FOUND));
     }

@@ -50,7 +50,7 @@ public class MongoClassicStatisticsForVariantMetricRepository implements Classic
     }
 
     @Override
-    public int countVariants(String experimentId) {
+    public int countNumberOfTests(String experimentId) {
         Timer timer = experimentsMongoMetricsReporter.timerReadClassicExperimentStatistics();
         try {
             Query query = new Query();
