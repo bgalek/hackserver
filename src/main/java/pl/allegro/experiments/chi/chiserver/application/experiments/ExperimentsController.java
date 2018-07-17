@@ -16,6 +16,7 @@ import pl.allegro.experiments.chi.chiserver.domain.experiments.administration.*;
 import pl.allegro.experiments.chi.chiserver.domain.experiments.administration.audit.AuditLog;
 import pl.allegro.experiments.chi.chiserver.domain.experiments.administration.audit.Auditor;
 import pl.allegro.experiments.chi.chiserver.domain.statistics.bayes.BayesianChartsRepository;
+import pl.allegro.experiments.chi.chiserver.domain.statistics.clasic.ClassicStatisticsForVariantMetricRepository;
 import pl.allegro.experiments.chi.chiserver.infrastructure.ExperimentFactory;
 import pl.allegro.tech.common.andamio.errors.Error;
 import pl.allegro.tech.common.andamio.errors.ErrorsHolder;
@@ -41,6 +42,7 @@ public class ExperimentsController {
     private final Auditor auditor;
     private final ExperimentGroupRepository experimentGroupRepository;
     private final ExperimentFactory clientExperimentFactory;
+    private final ClassicStatisticsForVariantMetricRepository classicStatisticsForVariantMetricRepository;
 
     public ExperimentsController(
             ExperimentsRepository experimentsRepository,
@@ -50,7 +52,8 @@ public class ExperimentsController {
             Auditor auditor,
             BayesianChartsRepository bayesianChartsRepository,
             ExperimentGroupRepository experimentGroupRepository,
-            ExperimentFactory experimentFactory) {
+            ExperimentFactory experimentFactory,
+            ClassicStatisticsForVariantMetricRepository classicStatisticsForVariantMetricRepository) {
         this.experimentsRepository = experimentsRepository;
         this.measurementsRepository = measurementsRepository;
         this.experimentActions = experimentActions;
@@ -59,6 +62,7 @@ public class ExperimentsController {
         this.bayesianChartsRepository = bayesianChartsRepository;
         this.experimentGroupRepository = experimentGroupRepository;
         this.clientExperimentFactory = experimentFactory;
+        this.classicStatisticsForVariantMetricRepository = classicStatisticsForVariantMetricRepository;
     }
 
     @MeteredEndpoint
@@ -86,6 +90,7 @@ public class ExperimentsController {
                 .map(it -> experimentGroupRepository.findByExperimentId(it.getId())
                         .map(g -> it.withExperimentGroup(g))
                         .orElse(it))
+                .map(it -> it.withBonferroniCorrection(classicStatisticsForVariantMetricRepository.countVariants(experimentId)))
                 .map(e -> ResponseEntity.ok(jsonConverter.toJson(e)))
                 .orElse(new ResponseEntity<>(HttpStatus.NOT_FOUND));
     }

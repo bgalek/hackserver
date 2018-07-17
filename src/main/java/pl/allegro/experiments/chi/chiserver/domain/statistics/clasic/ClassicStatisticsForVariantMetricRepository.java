@@ -7,5 +7,7 @@ import java.util.List;
 public interface ClassicStatisticsForVariantMetricRepository {
     List<ClassicExperimentStatisticsForVariantMetric> getLatestForAllMetricsAndVariants(String experimentId, DeviceClass device);
 
+    int countVariants(String experimentId);
+
     void save(ClassicExperimentStatisticsForVariantMetric experimentStatistics);
 }

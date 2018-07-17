@@ -21,6 +21,7 @@ public class AdminExperiment {
     private ExperimentMeasurements experimentMeasurements;
     private BayesianHorizontalEqualizer bayesianHorizontalEqualizer;
     private ExperimentGroup experimentGroup;
+    private int bonferroniCorrection;
 
     public AdminExperiment(Experiment legacyDefinition) {
         experimentDefinition = fromLegacyDefinition(legacyDefinition);
@@ -73,8 +74,13 @@ public class AdminExperiment {
         return this;
     }
 
+    public AdminExperiment withBonferroniCorrection(int bonferroniCorrection) {
+        this.bonferroniCorrection = bonferroniCorrection;
+        return this;
+    }
+
     public int getBonferroniCorrection() {
-        return experimentDefinition.getBonferroniCorrection();
+        return bonferroniCorrection;
     }
 
     public ExperimentMeasurements getMeasurements() {

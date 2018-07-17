@@ -50,6 +50,19 @@ public class MongoClassicStatisticsForVariantMetricRepository implements Classic
     }
 
     @Override
+    public int countVariants(String experimentId) {
+        Timer timer = experimentsMongoMetricsReporter.timerReadClassicExperimentStatistics();
+        try {
+            Query query = new Query();
+            query.addCriteria(Criteria.where("experimentId").is(experimentId));
+
+            return Math.toIntExact(timer.wrap(() -> mongoTemplate.count(query, ENTITY, COLLECTION)).call());
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    @Override
     public void save(ClassicExperimentStatisticsForVariantMetric newStats) {
         Timer timer = experimentsMongoMetricsReporter.timerWriteClassicExperimentStatistics();
         timer.record(() -> {
