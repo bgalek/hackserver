@@ -59,7 +59,13 @@ class EventDefinitionSaverSpec extends BaseIntegrationSpec {
         AvroEventDefinition fromAvro = avroConverter.fromAvro(toAvro, 1, AvroEventDefinition)
 
         then:
-        eventDefinition == fromAvro
+        eventDefinition.get__timestamp() == fromAvro.get__timestamp()
+        eventDefinition.getSentAt() == fromAvro.getSentAt()
+        eventDefinition.getCategory() == fromAvro.getCategory()
+        eventDefinition.getLabel() == fromAvro.getLabel()
+        eventDefinition.getValue() == fromAvro.getValue()
+        eventDefinition.getAction() == fromAvro.getAction()
+        eventDefinition.getBoxName() == fromAvro.getBoxName()
     }
 
     def "should save event definitions from existing experiments"() {

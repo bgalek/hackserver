@@ -104,24 +104,4 @@ public class AvroEventDefinition {
                         now, now.truncatedTo(DAYS)))
                 .collect(Collectors.toList());
     }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        AvroEventDefinition that = (AvroEventDefinition) o;
-        return Objects.equals(experimentId, that.experimentId) &&
-                Objects.equals(category, that.category) &&
-                Objects.equals(action, that.action) &&
-                Objects.equals(value, that.value) &&
-                Objects.equals(label, that.label) &&
-                Objects.equals(boxName, that.boxName) &&
-                Objects.equals(sentAt, that.sentAt) &&
-                Objects.equals(__timestamp, that.__timestamp);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(experimentId, category, action, value, label, boxName, sentAt, __timestamp);
-    }
 }
