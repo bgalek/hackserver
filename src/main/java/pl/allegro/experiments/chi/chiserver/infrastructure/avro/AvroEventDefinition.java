@@ -13,8 +13,7 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-import static java.time.format.DateTimeFormatter.ISO_DATE_TIME;
-import static java.time.temporal.ChronoUnit.SECONDS;
+import static java.time.temporal.ChronoUnit.DAYS;
 
 public class AvroEventDefinition {
     private final String experimentId;
@@ -102,7 +101,7 @@ public class AvroEventDefinition {
                         eventDefinition.getValue(),
                         eventDefinition.getLabel(),
                         eventDefinition.getBoxName(),
-                        now, now))
+                        now, now.truncatedTo(DAYS)))
                 .collect(Collectors.toList());
     }
 

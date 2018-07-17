@@ -33,7 +33,7 @@ public class KafkaEventDefinitionRepository implements EventDefinitionRepository
     @Override
     public void saveExperimentsEventDefinitions(List<ExperimentDefinition> experimentDefinitions) {
         experimentDefinitions.forEach(experimentDefinition ->
-                logger.info("Saving event definitions: \n" + experimentDefinition.getReportingDefinition().toString() + "\n"));
+                logger.info("Saving event definitions of experiment " + experimentDefinition.getId() + ": \n" + experimentDefinition.getReportingDefinition().toString() + "\n"));
         List<AvroEventDefinition> toSave = AvroEventDefinition.listFrom(experimentDefinitions);
         toSave.forEach(it -> kafkaTemplate.send(kafkaTopic, serialize(it)));
     }

@@ -12,5 +12,5 @@ interactions:
 eventDefinitions:
   repository: integration
 
-kafkaCommon:
-  kafkaTemplate: off
+kafka:
+  kafkaTemplate: "off"

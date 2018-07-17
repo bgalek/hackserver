@@ -42,18 +42,18 @@ chi:
     enabled: false
     whitelist: metrum
 
-interactions:
-  repository: kafka
-  kafka:
-    topic: pl.allegro.experiments.chi.interactions.Interaction_avro
-
-kafkaCommon:
-  kafkaTemplate: on
+kafka:
+  template: "on"
   bootstrap-servers-dc5: kasiatestdc4-cbroker1.kasia-test.pl-kra-3.dc4.local:9092,kasiatestdc4-cbroker2.kasia-test.pl-kra-3.dc4.local:9092,kasiatestdc4-cbroker3.kasia-test.pl-kra-3.dc4.local:9092,kasiatestdc4-cbroker4.kasia-test.pl-kra-3.dc4.local:9092
   bootstrap-servers-dc4: kasiatestdc4-cbroker1.kasia-test.pl-kra-3.dc4.local:9092,kasiatestdc4-cbroker2.kasia-test.pl-kra-3.dc4.local:9092,kasiatestdc4-cbroker3.kasia-test.pl-kra-3.dc4.local:9092,kasiatestdc4-cbroker4.kasia-test.pl-kra-3.dc4.local:9092
   send-timeout: 100
   batch-size: 10000
   linger-ms: 100
+
+interactions:
+  repository: kafka
+  kafka:
+    topic: pl.allegro.experiments.chi.interactions.Interaction_avro
 
 eventDefinitions:
   repository: kafka

@@ -65,13 +65,13 @@ public class KafkaConfig {
     }
 
     @Bean
-    @ConditionalOnProperty(name = {"kafkaCommon.kafkaTemplate"}, havingValue = "on")
+    @ConditionalOnProperty(name = {"kafka.template"}, havingValue = "on")
     public KafkaTemplate kafkaTemplate(
-            @Value("${kafkaCommon.bootstrap-servers-dc4}") String bootstrapServersDc4,
-            @Value("${kafkaCommon.bootstrap-servers-dc5}") String bootstrapServersDc5,
+            @Value("${kafka.bootstrap-servers-dc4}") String bootstrapServersDc4,
+            @Value("${kafka.bootstrap-servers-dc5}") String bootstrapServersDc5,
             CloudMetadata cloudMetadata,
-            @Value("${kafkaCommon.batch-size}") int batchSize,
-            @Value("${kafkaCommon.linger-ms}") int lingerMs,
+            @Value("${kafka.batch-size}") int batchSize,
+            @Value("${kafka.linger-ms}") int lingerMs,
             MeterRegistry metricRegistry) {
         String bootstrapServer = cloudMetadata.getDatacenter().equals("dc5") ? bootstrapServersDc5 : bootstrapServersDc4;
         final KafkaTemplate<String, byte[]> kafkaTemplate = new KafkaTemplate<>(producerFactory(bootstrapServer, batchSize, lingerMs));

@@ -4,8 +4,8 @@ interactions:
 eventDefinitions:
   repository: local
 
-kafkaCommon:
-  kafkaTemplate: off
+kafka:
+  tempalte: "off"
 
 security:
   enabled: false

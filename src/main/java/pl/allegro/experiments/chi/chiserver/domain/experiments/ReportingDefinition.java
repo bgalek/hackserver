@@ -76,8 +76,9 @@ public class ReportingDefinition {
 
     @Override
     public String toString() {
-        return String.join("\n", eventDefinitions.stream()
+        String result = String.join("\n", eventDefinitions.stream()
                 .map(EventDefinition::toString)
                 .collect(Collectors.toList()));
+        return result.isEmpty() ? "empty" : result;
     }
 }
