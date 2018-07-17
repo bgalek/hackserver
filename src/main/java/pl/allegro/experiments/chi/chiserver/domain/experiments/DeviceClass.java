@@ -2,6 +2,8 @@ package pl.allegro.experiments.chi.chiserver.domain.experiments;
 
 public enum DeviceClass {
     phone,
+    phone_iphone,
+    phone_android,
     desktop,
     tablet,
     all;
@@ -12,13 +14,13 @@ public enum DeviceClass {
         } else if ("smartphone".equals(deviceClass)) {
             return phone;
         }
-        return valueOf(deviceClass.toLowerCase());
+        return valueOf(deviceClass.replace('-', '_').toLowerCase());
     }
 
     public String toJsonString() {
         if (this == all) {
             return null;
         }
-        return name();
+        return name().replace('_', '-');
     }
 }

@@ -163,7 +163,7 @@ public class ExperimentDefinition {
     }
 
     public int getBonferroniCorrection() {
-        return DeviceClass.values().length *
+        return 4 *
                (getVariantNames().size() - 1) *
                4; // (tx_visit, tx_daily, gmv_per_visit, gmv_daily)
     }
@@ -261,7 +261,7 @@ public class ExperimentDefinition {
         final var predicates = new ArrayList<Predicate>();
         predicates.add(new HashRangePredicate(new PercentageRange(from, to)));
         if (DeviceClass.all != deviceClass) {
-            predicates.add(new DeviceClassPredicate(deviceClass.name()));
+            predicates.add(new DeviceClassPredicate(deviceClass.toJsonString()));
         }
         return new ExperimentVariant(variantName, predicates);
     }
