@@ -13,7 +13,7 @@ public class EventDefinitionSaveScheduler {
         this.eventDefinitionSaver = eventDefinitionSaver;
     }
 
-    @Scheduled(cron = "0 0 23 * * ?")
+    @Scheduled(cron = "0 0 21 * * ?")
     public void save() {
         logger.info("Scheduling saveCurrentEventDefinitions");
         eventDefinitionSaver.saveCurrentEventDefinitions();
