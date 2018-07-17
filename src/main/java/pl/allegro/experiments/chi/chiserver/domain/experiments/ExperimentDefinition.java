@@ -162,12 +162,6 @@ public class ExperimentDefinition {
         return editable;
     }
 
-    public int getBonferroniCorrection() {
-        return 4 *
-               (getVariantNames().size() - 1) *
-               4; // (tx_visit, tx_daily, gmv_per_visit, gmv_daily)
-    }
-
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
