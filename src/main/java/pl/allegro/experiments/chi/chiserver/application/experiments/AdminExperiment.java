@@ -57,24 +57,24 @@ public class AdminExperiment {
                 .build();
     }
 
-    public AdminExperiment withHorizontalEqualizer(BayesianHorizontalEqualizer equalizer) {
+    AdminExperiment withHorizontalEqualizer(BayesianHorizontalEqualizer equalizer) {
         this.bayesianHorizontalEqualizer = equalizer;
         return this;
     }
 
-    public AdminExperiment withMeasurements(ExperimentMeasurements experimentMeasurements) {
+    AdminExperiment withMeasurements(ExperimentMeasurements experimentMeasurements) {
         Preconditions.checkState(this.experimentMeasurements == null);
         this.experimentMeasurements = experimentMeasurements;
         return this;
     }
 
-    public AdminExperiment withExperimentGroup(ExperimentGroup experimentGroup) {
+    AdminExperiment withExperimentGroup(ExperimentGroup experimentGroup) {
         Preconditions.checkState(this.experimentGroup == null);
         this.experimentGroup = experimentGroup;
         return this;
     }
 
-    public AdminExperiment withBonferroniCorrection(int bonferroniCorrection) {
+    AdminExperiment withBonferroniCorrection(int bonferroniCorrection) {
         this.bonferroniCorrection = bonferroniCorrection;
         return this;
     }
