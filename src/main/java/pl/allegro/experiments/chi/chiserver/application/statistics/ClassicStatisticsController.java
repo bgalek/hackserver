@@ -12,9 +12,9 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-import pl.allegro.experiments.chi.chiserver.domain.statistics.clasic.ClassicExperimentStatisticsForVariantMetric;
-import pl.allegro.experiments.chi.chiserver.domain.statistics.clasic.ClassicStatisticsForVariantMetricRepository;
-import pl.allegro.experiments.chi.chiserver.domain.statistics.clasic.StatisticsRepository;
+import pl.allegro.experiments.chi.chiserver.domain.statistics.classic.ClassicExperimentStatisticsForVariantMetric;
+import pl.allegro.experiments.chi.chiserver.domain.statistics.classic.ClassicStatisticsForVariantMetricRepository;
+import pl.allegro.experiments.chi.chiserver.domain.statistics.classic.StatisticsRepository;
 import pl.allegro.tech.common.andamio.metrics.MeteredEndpoint;
 
 import static org.springframework.http.MediaType.APPLICATION_JSON_UTF8_VALUE;

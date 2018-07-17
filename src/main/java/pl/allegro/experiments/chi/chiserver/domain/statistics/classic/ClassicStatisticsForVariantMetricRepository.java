@@ -1,4 +1,4 @@
-package pl.allegro.experiments.chi.chiserver.domain.statistics.clasic;
+package pl.allegro.experiments.chi.chiserver.domain.statistics.classic;
 
 import pl.allegro.experiments.chi.chiserver.domain.experiments.DeviceClass;
 

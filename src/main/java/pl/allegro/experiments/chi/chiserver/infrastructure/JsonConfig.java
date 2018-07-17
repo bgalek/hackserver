@@ -10,9 +10,9 @@ import pl.allegro.experiments.chi.chiserver.domain.experiments.*;
 import pl.allegro.experiments.chi.chiserver.domain.experiments.groups.ExperimentGroup;
 import pl.allegro.experiments.chi.chiserver.domain.experiments.groups.ShredHashRangePredicate;
 import pl.allegro.experiments.chi.chiserver.domain.statistics.bayes.BayesianExperimentStatisticsForVariant;
-import pl.allegro.experiments.chi.chiserver.domain.statistics.clasic.ClassicExperimentStatistics;
-import pl.allegro.experiments.chi.chiserver.domain.statistics.clasic.ClassicExperimentStatisticsForVariantMetric;
-import pl.allegro.experiments.chi.chiserver.domain.statistics.clasic.VariantStatistics;
+import pl.allegro.experiments.chi.chiserver.domain.statistics.classic.ClassicExperimentStatistics;
+import pl.allegro.experiments.chi.chiserver.domain.statistics.classic.ClassicExperimentStatisticsForVariantMetric;
+import pl.allegro.experiments.chi.chiserver.domain.statistics.classic.VariantStatistics;
 
 import java.time.Duration;
 import java.time.LocalDate;

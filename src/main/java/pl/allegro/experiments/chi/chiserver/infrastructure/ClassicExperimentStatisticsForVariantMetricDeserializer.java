@@ -6,8 +6,8 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
 import pl.allegro.experiments.chi.chiserver.domain.experiments.DeviceClass;
-import pl.allegro.experiments.chi.chiserver.domain.statistics.clasic.ClassicExperimentStatisticsForVariantMetric;
-import pl.allegro.experiments.chi.chiserver.domain.statistics.clasic.VariantStatistics;
+import pl.allegro.experiments.chi.chiserver.domain.statistics.classic.ClassicExperimentStatisticsForVariantMetric;
+import pl.allegro.experiments.chi.chiserver.domain.statistics.classic.VariantStatistics;
 
 import java.lang.reflect.Type;
 

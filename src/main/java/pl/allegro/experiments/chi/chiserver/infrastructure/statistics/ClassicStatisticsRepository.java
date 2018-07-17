@@ -5,11 +5,11 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import pl.allegro.experiments.chi.chiserver.domain.experiments.DeviceClass;
-import pl.allegro.experiments.chi.chiserver.domain.statistics.clasic.StatisticsRepository;
-import pl.allegro.experiments.chi.chiserver.domain.statistics.clasic.VariantStatistics;
-import pl.allegro.experiments.chi.chiserver.domain.statistics.clasic.ClassicExperimentStatistics;
-import pl.allegro.experiments.chi.chiserver.domain.statistics.clasic.ClassicExperimentStatisticsForVariantMetric;
-import pl.allegro.experiments.chi.chiserver.domain.statistics.clasic.ClassicStatisticsForVariantMetricRepository;
+import pl.allegro.experiments.chi.chiserver.domain.statistics.classic.StatisticsRepository;
+import pl.allegro.experiments.chi.chiserver.domain.statistics.classic.VariantStatistics;
+import pl.allegro.experiments.chi.chiserver.domain.statistics.classic.ClassicExperimentStatistics;
+import pl.allegro.experiments.chi.chiserver.domain.statistics.classic.ClassicExperimentStatisticsForVariantMetric;
+import pl.allegro.experiments.chi.chiserver.domain.statistics.classic.ClassicStatisticsForVariantMetricRepository;
 
 import java.time.Duration;
 import java.time.LocalDate;

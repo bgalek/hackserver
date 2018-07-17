@@ -5,7 +5,7 @@ import com.google.gson.JsonDeserializer;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
-import pl.allegro.experiments.chi.chiserver.domain.statistics.clasic.VariantStatistics;
+import pl.allegro.experiments.chi.chiserver.domain.statistics.classic.VariantStatistics;
 
 import java.lang.reflect.Type;
 

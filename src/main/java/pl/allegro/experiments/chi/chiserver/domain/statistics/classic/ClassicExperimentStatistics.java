@@ -1,4 +1,4 @@
-package pl.allegro.experiments.chi.chiserver.domain.statistics.clasic;
+package pl.allegro.experiments.chi.chiserver.domain.statistics.classic;
 
 import com.google.common.base.Preconditions;
 import org.slf4j.Logger;

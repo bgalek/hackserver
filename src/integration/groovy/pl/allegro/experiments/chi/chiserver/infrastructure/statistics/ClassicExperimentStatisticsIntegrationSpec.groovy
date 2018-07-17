@@ -11,8 +11,8 @@ import org.springframework.http.ResponseEntity
 import org.springframework.web.client.RestTemplate
 import pl.allegro.experiments.chi.chiserver.BaseIntegrationSpec
 import pl.allegro.experiments.chi.chiserver.domain.experiments.DeviceClass
-import pl.allegro.experiments.chi.chiserver.domain.statistics.clasic.ClassicExperimentStatistics
-import pl.allegro.experiments.chi.chiserver.domain.statistics.clasic.VariantStatistics
+import pl.allegro.experiments.chi.chiserver.domain.statistics.classic.ClassicExperimentStatistics
+import pl.allegro.experiments.chi.chiserver.domain.statistics.classic.VariantStatistics
 import spock.lang.Unroll
 
 import java.time.LocalDate

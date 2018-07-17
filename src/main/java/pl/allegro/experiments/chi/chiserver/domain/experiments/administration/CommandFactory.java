@@ -7,7 +7,7 @@ import pl.allegro.experiments.chi.chiserver.domain.UserProvider;
 import pl.allegro.experiments.chi.chiserver.domain.experiments.EventDefinition;
 import pl.allegro.experiments.chi.chiserver.domain.experiments.ExperimentsRepository;
 import pl.allegro.experiments.chi.chiserver.domain.experiments.groups.ExperimentGroupRepository;
-import pl.allegro.experiments.chi.chiserver.domain.statistics.clasic.StatisticsRepository;
+import pl.allegro.experiments.chi.chiserver.domain.statistics.classic.StatisticsRepository;
 
 import java.util.List;
 
