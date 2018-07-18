@@ -16,10 +16,10 @@ chi:
   experiments:
     file: "http://assets-chi.qxlint/chi-server/experiments-prod.json"
 
-interactions:
-  kafka:
-    bootstrap-servers-dc4: kasiaproddc4-fbroker21.kasia-prod.pl-kra-6.dc4.local:9092,kasiaproddc4-fbroker22.kasia-prod.pl-kra-6.dc4.local:9092,kasiaproddc4-fbroker23.kasia-prod.pl-kra-6.dc4.local:9092,kasiaproddc4-fbroker24.kasia-prod.pl-kra-6.dc4.local:9092,kasiaproddc4-fbroker25.kasia-prod.pl-kra-6.dc4.local:9092,kasiaproddc4-fbroker26.kasia-prod.pl-kra-6.dc4.local:9092,kasiaproddc4-fbroker27.kasia-prod.pl-kra-6.dc4.local:9092,kasiaproddc4-fbroker28.kasia-prod.pl-kra-6.dc4.local:9092,kasiaproddc4-fbroker29.kasia-prod.pl-kra-6.dc4.local:9092,kasiaproddc4-fbroker30.kasia-prod.pl-kra-6.dc4.local:9092
-    bootstrap-servers-dc5: kasiaproddc5-fbroker31.kasia-prod.pl-poz-6.dc5.alledc.net:9092,kasiaproddc5-fbroker32.kasia-prod.pl-poz-6.dc5.alledc.net:9092,kasiaproddc5-fbroker33.kasia-prod.pl-poz-6.dc5.alledc.net:9092,kasiaproddc5-fbroker34.kasia-prod.pl-poz-6.dc5.alledc.net:9092,kasiaproddc5-fbroker35.kasia-prod.pl-poz-6.dc5.alledc.net:9092,kasiaproddc5-fbroker36.kasia-prod.pl-poz-6.dc5.alledc.net:9092,kasiaproddc5-fbroker37.kasia-prod.pl-poz-6.dc5.alledc.net:9092,kasiaproddc5-fbroker38.kasia-prod.pl-poz-6.dc5.alledc.net:9092,kasiaproddc5-fbroker39.kasia-prod.pl-poz-6.dc5.alledc.net:9092,kasiaproddc5-fbroker40.kasia-prod.pl-poz-6.dc5.alledc.net:9092
+kafka:
+  template: "on"
+  bootstrap-servers-dc4: kasiaproddc4-fbroker21.kasia-prod.pl-kra-6.dc4.local:9092,kasiaproddc4-fbroker22.kasia-prod.pl-kra-6.dc4.local:9092,kasiaproddc4-fbroker23.kasia-prod.pl-kra-6.dc4.local:9092,kasiaproddc4-fbroker24.kasia-prod.pl-kra-6.dc4.local:9092,kasiaproddc4-fbroker25.kasia-prod.pl-kra-6.dc4.local:9092,kasiaproddc4-fbroker26.kasia-prod.pl-kra-6.dc4.local:9092,kasiaproddc4-fbroker27.kasia-prod.pl-kra-6.dc4.local:9092,kasiaproddc4-fbroker28.kasia-prod.pl-kra-6.dc4.local:9092,kasiaproddc4-fbroker29.kasia-prod.pl-kra-6.dc4.local:9092,kasiaproddc4-fbroker30.kasia-prod.pl-kra-6.dc4.local:9092
+  bootstrap-servers-dc5: kasiaproddc5-fbroker31.kasia-prod.pl-poz-6.dc5.alledc.net:9092,kasiaproddc5-fbroker32.kasia-prod.pl-poz-6.dc5.alledc.net:9092,kasiaproddc5-fbroker33.kasia-prod.pl-poz-6.dc5.alledc.net:9092,kasiaproddc5-fbroker34.kasia-prod.pl-poz-6.dc5.alledc.net:9092,kasiaproddc5-fbroker35.kasia-prod.pl-poz-6.dc5.alledc.net:9092,kasiaproddc5-fbroker36.kasia-prod.pl-poz-6.dc5.alledc.net:9092,kasiaproddc5-fbroker37.kasia-prod.pl-poz-6.dc5.alledc.net:9092,kasiaproddc5-fbroker38.kasia-prod.pl-poz-6.dc5.alledc.net:9092,kasiaproddc5-fbroker39.kasia-prod.pl-poz-6.dc5.alledc.net:9092,kasiaproddc5-fbroker40.kasia-prod.pl-poz-6.dc5.alledc.net:9092
 
 avro:
   schema:
