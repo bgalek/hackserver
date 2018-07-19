@@ -50,10 +50,8 @@
     props: ['experiment'],
 
     data () {
-      let value1 = this.init(this.experiment)
-
       return {
-        value: value1,
+        value: this.init(this.experiment),
 
         customParameterNameRules: [
           (v) => !startsOrEndsWithSpace(v) || 'Do not start nor end string with space',
@@ -69,8 +67,8 @@
     methods: {
       init (experiment) {
         const value = {
-          name: experiment && experiment.customParam.name,
-          value: experiment && experiment.customParam.value
+          name: experiment && experiment.customParameter && experiment.customParameter.name,
+          value: experiment && experiment.customParameter && experiment.customParameter.value
         }
 
         this.$emit('input', value)

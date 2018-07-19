@@ -159,6 +159,7 @@ class UpdateEventDefinitionsCommandIntegrationSpec extends BaseIntegrationSpec {
                         new EventDefinition('c1', 'a1', 'v1', 'l1', 'b1'),
                         new EventDefinition('c2', 'a2', 'v2', 'l2', 'b2')
                 ],
-                ReportingType.FRONTEND)
+                ReportingType.FRONTEND,
+                customParameter)
     }
 }

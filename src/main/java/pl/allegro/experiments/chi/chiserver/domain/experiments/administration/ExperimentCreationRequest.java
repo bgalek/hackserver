@@ -24,6 +24,7 @@ public class ExperimentCreationRequest {
     private final List<String> groups;
     private final boolean reportingEnabled;
     private final ReportingDefinition reportingDefinition;
+    private final CustomParameter customParameter;
 
     @JsonCreator
     public ExperimentCreationRequest(
@@ -37,11 +38,16 @@ public class ExperimentCreationRequest {
             @JsonProperty("groups") List<String> groups,
             @JsonProperty("reportingEnabled") Boolean reportingEnabled,
             @JsonProperty("eventDefinitions") List<EventDefinition> eventDefinitions,
-            @JsonProperty("reportingType") ReportingType reportingType) {
+            @JsonProperty("reportingType") ReportingType reportingType,
+            @JsonProperty("customParameter") CustomParameter customParameter) {
         Preconditions.checkArgument(id != null, "experiment id is null");
         Preconditions.checkArgument(variantNames != null, "experiment variantNames are null");
         Preconditions.checkArgument(percentage != null, "experiment percentage is null");
         Preconditions.checkArgument(percentage >= 0, "experiment percentage < 0");
+        if (customParameter != null) {
+            Preconditions.checkArgument(customParameter.getName() != null, "custom parameter name is null");
+            Preconditions.checkArgument(customParameter.getValue() != null, "custom parameter value is null");
+        }
         this.id = id;
         this.variantNames = ImmutableList.copyOf(variantNames);
         this.internalVariantName = internalVariantName;
@@ -62,7 +68,7 @@ public class ExperimentCreationRequest {
         this.reportingDefinition = Optional.ofNullable(reportingType)
                 .map(rt -> rt.reportingDefinition(eventDefinitions))
                 .orElse(ReportingDefinition.createDefault());
-
+        this.customParameter = customParameter;
     }
 
     public String getId() {
@@ -89,7 +95,7 @@ public class ExperimentCreationRequest {
         return reportingEnabled;
     }
 
-    public ExperimentDefinition toExperimentDefinition(String author) {
+    ExperimentDefinition toExperimentDefinition(String author) {
         Preconditions.checkNotNull(author);
         try {
             return ExperimentDefinition.builder()
@@ -104,6 +110,7 @@ public class ExperimentCreationRequest {
                     .groups(this.groups)
                     .reportingEnabled(this.reportingEnabled)
                     .reportingDefinition(this.reportingDefinition)
+                    .customParameter(this.customParameter)
                     .build();
 
         } catch (Exception e) {

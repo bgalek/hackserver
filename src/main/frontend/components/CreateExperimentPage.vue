@@ -52,7 +52,7 @@
 
             <experiment-desc-editing v-model="descriptions" />
 
-            <experiment-custom-parameter-editing v-model="customParam" />
+            <experiment-custom-parameter-editing v-model="customParameter" />
 
             <experiment-variants-editing
               :experimentToPair="groupWithExperiment"
@@ -214,7 +214,7 @@
         sendingDataToServer: false,
         errors: [],
         descriptions: {},
-        customParam: {},
+        customParameter: {},
         variants: {},
         reportingType: 'BACKEND',
         availableReportingTypes: ['BACKEND', 'FRONTEND', 'GTM'],
@@ -336,8 +336,8 @@
           id: this.experimentIdSlug,
           description: this.descriptions.description,
           documentLink: this.descriptions.documentLink,
-          customParameter: this.customParam.name != null && this.customParam.value != null
-            ? {name: this.customParam.name, value: this.customParam.value} : null,
+          customParameter: this.customParameter.name != null && this.customParameter.value != null
+            ? {name: this.customParameter.name, value: this.customParameter.value} : null,
           groups: this.descriptions.groups,
           reportingEnabled: this.reportingEnabled,
           variantNames: this.slugifiedVariants,

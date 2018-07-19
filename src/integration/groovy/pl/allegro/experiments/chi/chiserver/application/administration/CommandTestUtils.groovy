@@ -17,6 +17,7 @@ class CommandTestUtils {
                 ["group a", "group b"],
                 true,
                 null,
+                null,
                 null)
     }
 }
