@@ -25,6 +25,7 @@ class FileBasedExperimentsRepositorySpec extends Specification {
         def internalExperiment = experimentsRepository.getExperiment("internal_exp").get()
         def timedExp = experimentsRepository.getExperiment("timed_internal_exp").get()
         def phoneExperiment = experimentsRepository.getExperiment("cmuid_regexp_with_phone").get()
+        def customParamExperiment = experimentsRepository.getExperiment("custom_param_test").get()
 
         with(phoneExperiment) {
             id == "cmuid_regexp_with_phone"
@@ -64,6 +65,15 @@ class FileBasedExperimentsRepositorySpec extends Specification {
             id == "timed_internal_exp"
             activityPeriod.activeFrom == ZonedDateTime.of(2017, 11, 03, 10, 15, 30, 0, ZoneId.of('+02:00'))
             activityPeriod.activeTo == ZonedDateTime.of(2018, 11, 03, 10, 15, 30, 0, ZoneId.of('+02:00'))
+        }
+
+        with(customParamExperiment) {
+            id == "custom_param_test"
+            variants.size() == 1
+            variants[0].predicates.size() == 1
+            variants[0].predicates[0].name == "myCustomParamName"
+            variants[0].predicates[0].value == "myCustomParamValue"
+
         }
     }
 

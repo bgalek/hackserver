@@ -57,7 +57,7 @@ class ExperimentsE2ESpec extends BaseIntegrationSpec implements ExampleExperimen
         response.statusCode.value() == 200
         response.body == [
                 id              : 'cmuid_regexp',
-                renderedVariants: [[name: 'v1', predicates: [[type: 'CMUID_REGEXP', regexp: '.*[0-3]$']]]],
+                renderedVariants: [[name: 'v1', predicates: [[type: 'CMUID_REGEXP', regexp: '.*[0-3]$'], [type: 'CUSTOM_PARAM', name: 'myParam', value: 'myParamValue']]]],
                 variantNames    : ['v1'],
                 reportingEnabled: true,
                 description     : "Experiment description",
@@ -72,7 +72,7 @@ class ExperimentsE2ESpec extends BaseIntegrationSpec implements ExampleExperimen
         ]
     }
 
-    def "should return list of assignable experiments in API v.2 for Cient"() {
+    def "should return list of assignable experiments in API v.2 for Client"() {
         given:
         fileBasedExperimentsRepository.jsonUrl = WireMockUtils.resourceUrl('/experiments', wireMock)
         fileBasedExperimentsRepository.secureRefresh()

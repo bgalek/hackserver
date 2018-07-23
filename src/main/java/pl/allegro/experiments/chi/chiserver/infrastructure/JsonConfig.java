@@ -34,6 +34,7 @@ class JsonConfig {
                 .registerTypeAdapter(HashRangePredicate.class, new HashRangePredicateSerializer())
                 .registerTypeAdapter(CmuidRegexpPredicate.class, new CmuidRegexpPredicateSerializer())
                 .registerTypeAdapter(ShredHashRangePredicate.class, new ShredHashRangePredicateSerializer())
+                .registerTypeAdapter(CustomParameterPredicate.class, new CustomParameterPredicateSerializer())
                 .registerTypeAdapter(ExperimentGroup.class, new ExperimentGroupTypeSerializer())
                 .registerTypeAdapter(InternalPredicate.class, new InternalPredicateSerializer())
                 .registerTypeAdapter(DeviceClassPredicate.class, new DeviceClassPredicateSerializer())

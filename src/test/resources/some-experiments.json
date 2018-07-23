@@ -38,6 +38,24 @@
     "owner": "Experiment owner"
   },
   {
+    "id": "custom_param_test",
+    "variants": [
+      {
+        "name": "v1",
+        "predicates": [
+          {
+            "type": "CUSTOM_PARAM",
+            "name": "myCustomParamName",
+            "value": "myCustomParamValue"
+          }
+        ]
+      }
+    ],
+    "reportingEnabled": true,
+    "description": "Experiment description",
+    "owner": "Experiment owner"
+  },
+  {
     "id": "test_dev",
     "variants": [
       {

@@ -56,8 +56,9 @@ public class ConvertersConfig {
     @Bean
     ExperimentDeserializer experimentDeserializer(
             ActivityPeriodDeserializer activityPeriodDeserializer,
-            ReportingDefinitionDeserializer reportingDefinitionDeserializer) {
-        return new ExperimentDeserializer(activityPeriodDeserializer, reportingDefinitionDeserializer);
+            ReportingDefinitionDeserializer reportingDefinitionDeserializer,
+            CustomParameterDeserializer customParameterDeserializer) {
+        return new ExperimentDeserializer(activityPeriodDeserializer, reportingDefinitionDeserializer, customParameterDeserializer);
     }
 
     @Bean
@@ -88,5 +89,10 @@ public class ConvertersConfig {
     @Bean
     ExperimentGroupSerializer experimentGroupSerializer() {
         return new ExperimentGroupSerializer();
+    }
+
+    @Bean
+    CustomParameterDeserializer customParameterDeserializer() {
+        return new CustomParameterDeserializer();
     }
 }

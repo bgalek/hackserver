@@ -10,12 +10,15 @@ import java.util.Optional;
 public class ExperimentDeserializer implements Converter<Document, ExperimentDefinition> {
     private final ActivityPeriodDeserializer activityPeriodDeserializer;
     private final ReportingDefinitionDeserializer reportingDefinitionDeserializer;
+    private final CustomParameterDeserializer customParameterDeserializer;
 
     public ExperimentDeserializer(
             ActivityPeriodDeserializer activityPeriodDeserializer,
-            ReportingDefinitionDeserializer reportingDefinitionDeserializer) {
+            ReportingDefinitionDeserializer reportingDefinitionDeserializer,
+            CustomParameterDeserializer customParameterDeserializer) {
         this.activityPeriodDeserializer = activityPeriodDeserializer;
         this.reportingDefinitionDeserializer = reportingDefinitionDeserializer;
+        this.customParameterDeserializer = customParameterDeserializer;
     }
 
     @Override
@@ -51,6 +54,9 @@ public class ExperimentDeserializer implements Converter<Document, ExperimentDef
                 .explicitStatus(explicitStatus);
         if (bson.get("reportingDefinition") != null) {
             result.reportingDefinition(reportingDefinitionDeserializer.convert((Document) bson.get("reportingDefinition")));
+        }
+        if (bson.get("customParameter") != null) {
+            result.customParameter(customParameterDeserializer.convert((Document) bson.get("customParameter")));
         }
         return result.build();
     }

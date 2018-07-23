@@ -264,6 +264,9 @@ public class ExperimentDefinition {
         if (DeviceClass.all != deviceClass) {
             predicates.add(new DeviceClassPredicate(deviceClass.toJsonString()));
         }
+        if (customParameter != null) {
+            predicates.add(new CustomParameterPredicate(customParameter.getName(), customParameter.getValue()));
+        }
         return new ExperimentVariant(variantName, predicates);
     }
 
