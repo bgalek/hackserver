@@ -336,8 +336,8 @@
           id: this.experimentIdSlug,
           description: this.descriptions.description,
           documentLink: this.descriptions.documentLink,
-          customParameter: this.customParameter.name != null && this.customParameter.value != null
-            ? {name: this.customParameter.name, value: this.customParameter.value} : null,
+          customParameterName: this.customParameter.name,
+          customParameterValue: this.customParameter.value,
           groups: this.descriptions.groups,
           reportingEnabled: this.reportingEnabled,
           variantNames: this.slugifiedVariants,

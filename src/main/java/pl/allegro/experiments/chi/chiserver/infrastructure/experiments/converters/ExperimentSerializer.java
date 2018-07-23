@@ -11,12 +11,14 @@ import java.util.Map;
 public class ExperimentSerializer implements Converter<ExperimentDefinition, Document> {
     private final DateTimeSerializer dateTimeSerializer;
     private final ReportingDefinitionSerializer reportingDefinitionSerializer;
+    private final CustomParameterSerializer customParameterSerializer;
 
     public ExperimentSerializer(
             DateTimeSerializer dateTimeSerializer,
-            ReportingDefinitionSerializer reportingDefinitionSerializer) {
+            ReportingDefinitionSerializer reportingDefinitionSerializer, CustomParameterSerializer customParameterSerializer) {
         this.dateTimeSerializer = dateTimeSerializer;
         this.reportingDefinitionSerializer = reportingDefinitionSerializer;
+        this.customParameterSerializer = customParameterSerializer;
     }
 
     @Override
@@ -49,6 +51,9 @@ public class ExperimentSerializer implements Converter<ExperimentDefinition, Doc
         ExperimentStatus experimentStatus = source.getStatus().explicitOrNull();
         result.put("explicitStatus", experimentStatus != null ? experimentStatus.toString() : null);
         result.put("reportingDefinition", reportingDefinitionSerializer.convert(source.getReportingDefinitionToSave()));
+        if (source.getCustomParameter() != null) {
+            result.put("customParameter", customParameterSerializer.convert(source.getCustomParameter()));
+        }
         return result;
     }
 }

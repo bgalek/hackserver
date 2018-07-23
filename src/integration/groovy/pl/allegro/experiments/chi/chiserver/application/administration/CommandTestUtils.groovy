@@ -18,6 +18,7 @@ class CommandTestUtils {
                 true,
                 null,
                 null,
+                null,
                 null)
     }
 }

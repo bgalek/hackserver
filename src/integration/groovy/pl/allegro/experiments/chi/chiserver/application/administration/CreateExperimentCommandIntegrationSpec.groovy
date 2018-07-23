@@ -95,6 +95,7 @@ class CreateExperimentCommandIntegrationSpec extends BaseIntegrationSpec {
                 false,
                 null,
                 null,
+                null,
                 null
         )
 

@@ -67,8 +67,8 @@
     methods: {
       init (experiment) {
         const value = {
-          name: experiment && experiment.customParameter && experiment.customParameter.name,
-          value: experiment && experiment.customParameter && experiment.customParameter.value
+          name: null,
+          value: null
         }
 
         this.$emit('input', value)

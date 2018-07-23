@@ -2,7 +2,6 @@ package pl.allegro.experiments.chi.chiserver.infrastructure.experiments.converte
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import pl.allegro.experiments.chi.chiserver.domain.experiments.ReportingDefinition;
 
 @Configuration
 public class ConvertersConfig {
@@ -44,8 +43,14 @@ public class ConvertersConfig {
     @Bean
     ExperimentSerializer experimentSerializer(
             DateTimeSerializer dateTimeSerializer,
-            ReportingDefinitionSerializer reportingDefinitionSerializer) {
-        return new ExperimentSerializer(dateTimeSerializer, reportingDefinitionSerializer);
+            ReportingDefinitionSerializer reportingDefinitionSerializer,
+            CustomParameterSerializer customParameterSerializer) {
+        return new ExperimentSerializer(dateTimeSerializer, reportingDefinitionSerializer, customParameterSerializer);
+    }
+
+    @Bean
+    CustomParameterSerializer customParameterSerializer() {
+        return new CustomParameterSerializer();
     }
 
     @Bean

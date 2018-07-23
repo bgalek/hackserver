@@ -4,7 +4,11 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
-import pl.allegro.experiments.chi.chiserver.domain.experiments.*;
+import pl.allegro.experiments.chi.chiserver.domain.experiments.CustomParameter;
+import pl.allegro.experiments.chi.chiserver.domain.experiments.EventDefinition;
+import pl.allegro.experiments.chi.chiserver.domain.experiments.ExperimentDefinition;
+import pl.allegro.experiments.chi.chiserver.domain.experiments.ReportingDefinition;
+import pl.allegro.experiments.chi.chiserver.domain.experiments.ReportingType;
 
 import javax.validation.constraints.NotNull;
 import java.util.ArrayList;
@@ -39,14 +43,15 @@ public class ExperimentCreationRequest {
             @JsonProperty("reportingEnabled") Boolean reportingEnabled,
             @JsonProperty("eventDefinitions") List<EventDefinition> eventDefinitions,
             @JsonProperty("reportingType") ReportingType reportingType,
-            @JsonProperty("customParameter") CustomParameter customParameter) {
+            @JsonProperty("customParameterName") String customParameterName,
+            @JsonProperty("customParameterValue") String customParameterValue) {
         Preconditions.checkArgument(id != null, "experiment id is null");
         Preconditions.checkArgument(variantNames != null, "experiment variantNames are null");
         Preconditions.checkArgument(percentage != null, "experiment percentage is null");
         Preconditions.checkArgument(percentage >= 0, "experiment percentage < 0");
-        if (customParameter != null) {
-            Preconditions.checkArgument(customParameter.getName() != null, "custom parameter name is null");
-            Preconditions.checkArgument(customParameter.getValue() != null, "custom parameter value is null");
+        if (customParameterName != null || customParameterValue != null) {
+            Preconditions.checkArgument(customParameterName != null, "custom parameter name is null");
+            Preconditions.checkArgument(customParameterValue != null, "custom parameter value is null");
         }
         this.id = id;
         this.variantNames = ImmutableList.copyOf(variantNames);
@@ -68,7 +73,8 @@ public class ExperimentCreationRequest {
         this.reportingDefinition = Optional.ofNullable(reportingType)
                 .map(rt -> rt.reportingDefinition(eventDefinitions))
                 .orElse(ReportingDefinition.createDefault());
-        this.customParameter = customParameter;
+
+        this.customParameter = new CustomParameter(customParameterName, customParameterValue);
     }
 
     public String getId() {

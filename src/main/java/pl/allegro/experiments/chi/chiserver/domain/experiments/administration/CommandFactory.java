@@ -32,12 +32,12 @@ public class CommandFactory {
         this.experimentGroupRepository = experimentGroupRepository;
     }
 
-    public CreateExperimentCommand createExperimentCommand(ExperimentCreationRequest request) {
+    CreateExperimentCommand createExperimentCommand(ExperimentCreationRequest request) {
         Preconditions.checkNotNull(request);
         return new CreateExperimentCommand(experimentsRepository, userProvider, request);
     }
 
-    public StartExperimentCommand startExperimentCommand(
+    StartExperimentCommand startExperimentCommand(
             String experimentId,
             StartExperimentProperties properties) {
         Preconditions.checkNotNull(experimentId);
@@ -51,7 +51,7 @@ public class CommandFactory {
         );
     }
 
-    public ProlongExperimentCommand prolongExperimentCommand(
+    ProlongExperimentCommand prolongExperimentCommand(
             String experimentId,
             ProlongExperimentProperties properties) {
         Preconditions.checkNotNull(experimentId);
@@ -64,7 +64,7 @@ public class CommandFactory {
         );
     }
 
-    public StopExperimentCommand stopExperimentCommand(String experimentId) {
+    StopExperimentCommand stopExperimentCommand(String experimentId) {
         return new StopExperimentCommand(
                 experimentId,
                 experimentsRepository,
@@ -72,7 +72,7 @@ public class CommandFactory {
         );
     }
 
-    public PauseExperimentCommand pauseExperimentCommand(String experimentId) {
+    PauseExperimentCommand pauseExperimentCommand(String experimentId) {
         return new PauseExperimentCommand(
                 experimentId,
                 experimentsRepository,
@@ -80,7 +80,7 @@ public class CommandFactory {
         );
     }
 
-    public ResumeExperimentCommand resumeExperimentCommand(String experimentId) {
+    ResumeExperimentCommand resumeExperimentCommand(String experimentId) {
         return new ResumeExperimentCommand(
                 experimentId,
                 experimentsRepository,
@@ -88,7 +88,7 @@ public class CommandFactory {
         );
     }
 
-    public DeleteExperimentCommand deleteExperimentCommand(String experimentId) {
+    DeleteExperimentCommand deleteExperimentCommand(String experimentId) {
         Preconditions.checkNotNull(experimentId);
         return new DeleteExperimentCommand(
                 experimentsRepository,
@@ -99,7 +99,7 @@ public class CommandFactory {
         );
     }
 
-    public UpdateDescriptionsCommand updateDescriptionsCommand(String experimentId, UpdateExperimentProperties properties) {
+    UpdateDescriptionsCommand updateDescriptionsCommand(String experimentId, UpdateExperimentProperties properties) {
         Preconditions.checkNotNull(experimentId);
         Preconditions.checkNotNull(properties);
 
@@ -111,7 +111,7 @@ public class CommandFactory {
         );
     }
 
-    public UpdateVariantsCommand updateVariantsCommand(String experimentId, UpdateVariantsProperties properties) {
+    UpdateVariantsCommand updateVariantsCommand(String experimentId, UpdateVariantsProperties properties) {
         Preconditions.checkNotNull(experimentId);
         Preconditions.checkNotNull(properties);
 
@@ -124,7 +124,7 @@ public class CommandFactory {
         );
     }
 
-    public UpdateExperimentEventDefinitionsCommand updateExperimentEventDefinitionsCommand(
+    UpdateExperimentEventDefinitionsCommand updateExperimentEventDefinitionsCommand(
             String experimentId,
             List<EventDefinition> eventDefinitions) {
         return new UpdateExperimentEventDefinitionsCommand(
@@ -135,7 +135,7 @@ public class CommandFactory {
         );
     }
 
-    public CreateExperimentGroupCommand createExperimentGroupCommand(ExperimentGroupCreationRequest experimentGroupCreationRequest) {
+    CreateExperimentGroupCommand createExperimentGroupCommand(ExperimentGroupCreationRequest experimentGroupCreationRequest) {
         return new CreateExperimentGroupCommand(
                 experimentGroupRepository,
                 experimentsRepository,
@@ -145,7 +145,7 @@ public class CommandFactory {
         );
     }
 
-    public CreatePairedExperimentCommand createPairedExperimentCommand(
+    CreatePairedExperimentCommand createPairedExperimentCommand(
             PairedExperimentCreationRequest pairedExperimentCreationRequest) {
         return new CreatePairedExperimentCommand(
                 createExperimentCommand(pairedExperimentCreationRequest.getExperimentCreationRequest()),
