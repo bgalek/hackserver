@@ -173,7 +173,7 @@ class InteractionsIntegrationSpec extends BaseIntegrationSpec {
         where:
         experimentId << ['e1', 'e2', 'e3']
         reportingType << ['FRONTEND', 'GTM', 'BACKEND']
-        shouldReport << [false, false, true]
+        shouldReport << [true, true, true]
         eventDefinitions << [
                 [
                         [
