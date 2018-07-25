@@ -75,7 +75,7 @@ public class Experiment {
     }
 
     public boolean shouldSaveInteractions() {
-        return getReportingEnabled() && getReportingDefinition().isBackendInteractionsEnabled();
+        return getReportingEnabled();
     }
 
     public String getDescription() {
