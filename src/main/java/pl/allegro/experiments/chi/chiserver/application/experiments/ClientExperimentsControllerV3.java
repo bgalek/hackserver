@@ -40,7 +40,7 @@ class ClientExperimentsControllerV3 {
     }
 
     @MeteredEndpoint
-    @GetMapping(path = {"/v3", ""})
+    @GetMapping(path = {"/v3"})
     String experiments() {
         logger.debug("Client V3 experiments request received");
 
@@ -48,6 +48,7 @@ class ClientExperimentsControllerV3 {
                 .assignable()
                 .stream()
                 .filter(crisisManagementFilter::filter)
+                .filter(ExperimentWithoutCustomParameterFilter::filter)
                 .map(it -> !experimentGroupRepository.experimentInGroup(it.getId())
                             ? new ClientExperiment(it) : experimentFactory.clientExperimentFromGroupedExperiment(it.getDefinition().get()).get()
                 )

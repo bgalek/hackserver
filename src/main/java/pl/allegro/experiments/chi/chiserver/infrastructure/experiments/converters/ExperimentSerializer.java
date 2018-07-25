@@ -15,7 +15,8 @@ public class ExperimentSerializer implements Converter<ExperimentDefinition, Doc
 
     public ExperimentSerializer(
             DateTimeSerializer dateTimeSerializer,
-            ReportingDefinitionSerializer reportingDefinitionSerializer, CustomParameterSerializer customParameterSerializer) {
+            ReportingDefinitionSerializer reportingDefinitionSerializer,
+            CustomParameterSerializer customParameterSerializer) {
         this.dateTimeSerializer = dateTimeSerializer;
         this.reportingDefinitionSerializer = reportingDefinitionSerializer;
         this.customParameterSerializer = customParameterSerializer;

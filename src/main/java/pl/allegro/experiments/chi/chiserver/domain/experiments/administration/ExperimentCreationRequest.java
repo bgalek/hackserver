@@ -74,7 +74,11 @@ public class ExperimentCreationRequest {
                 .map(rt -> rt.reportingDefinition(eventDefinitions))
                 .orElse(ReportingDefinition.createDefault());
 
-        this.customParameter = new CustomParameter(customParameterName, customParameterValue);
+        if (customParameterName != null) {
+            this.customParameter = new CustomParameter(customParameterName, customParameterValue);
+        } else {
+            this.customParameter = null;
+        }
     }
 
     public String getId() {
