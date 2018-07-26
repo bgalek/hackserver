@@ -17,8 +17,7 @@ public class ReportingDefinitionSerializer implements Converter<ReportingDefinit
     public Document convert(ReportingDefinition source) {
         Document result = new Document();
 
-        result.put("gtm", source.isGtm());
-        result.put("backendInteractionsEnabled", source.isBackendInteractionsEnabled());
+        result.put("reportingType", source.getType().toString());
         result.put("eventDefinitions", source.getEventDefinitions().stream()
                 .map(eventDefinitionSerializer::convert)
                 .collect(Collectors.toList()));

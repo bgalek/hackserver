@@ -24,14 +24,6 @@ public class ReportingDefinition {
         return ImmutableList.copyOf(eventDefinitions);
     }
 
-    public boolean isGtm() {
-        return reportingType.equals(ReportingType.GTM);
-    }
-
-    public boolean isBackendInteractionsEnabled() {
-        return true;
-    }
-
     public ReportingType getType() {
         return reportingType;
     }
