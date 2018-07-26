@@ -72,6 +72,7 @@ dependencies {
     compile group: 'pl.allegro.tech.common', name: 'andamio-endpoint-discovery-spring', version: '0.8.1'
     compile 'com.squareup.okhttp3:okhttp:3.9.1'
     compile 'com.github.slugify:slugify:2.1.12'
+    compile group: 'org.apache.commons', name: 'commons-lang3', version: '3.7'
 
     //dependencies missing on Java 10 jre
     compile "javax.activation:activation:1.1.1"

@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
+import org.apache.commons.lang3.StringUtils;
 import pl.allegro.experiments.chi.chiserver.domain.experiments.CustomParameter;
 import pl.allegro.experiments.chi.chiserver.domain.experiments.EventDefinition;
 import pl.allegro.experiments.chi.chiserver.domain.experiments.ExperimentDefinition;
@@ -49,9 +50,9 @@ public class ExperimentCreationRequest {
         Preconditions.checkArgument(variantNames != null, "experiment variantNames are null");
         Preconditions.checkArgument(percentage != null, "experiment percentage is null");
         Preconditions.checkArgument(percentage >= 0, "experiment percentage < 0");
-        if (customParameterName != null || customParameterValue != null) {
-            Preconditions.checkArgument(customParameterName != null, "custom parameter name is null");
-            Preconditions.checkArgument(customParameterValue != null, "custom parameter value is null");
+        if (StringUtils.isNotBlank(customParameterName) || StringUtils.isNotBlank(customParameterValue)) {
+            Preconditions.checkArgument(StringUtils.isNotBlank(customParameterName), "custom parameter name is blank");
+            Preconditions.checkArgument(StringUtils.isNotBlank(customParameterValue), "custom parameter value is blank");
         }
         this.id = id;
         this.variantNames = ImmutableList.copyOf(variantNames);
@@ -74,8 +75,8 @@ public class ExperimentCreationRequest {
                 .map(rt -> rt.reportingDefinition(eventDefinitions))
                 .orElse(ReportingDefinition.createDefault());
 
-        if (customParameterName != null) {
-            this.customParameter = new CustomParameter(customParameterName, customParameterValue);
+        if (StringUtils.isNotBlank(customParameterName)) {
+            this.customParameter = new CustomParameter(customParameterName.trim(), customParameterValue.trim());
         } else {
             this.customParameter = null;
         }

@@ -51,19 +51,29 @@ class CustomParameterSpec extends BaseIntegrationSpec {
         "v1/"   | {!it}
         "v2/"   | {!it}
         "v3/"   | {!it}
-        "v4/"   | hasBaseVariantWithCustomParamPredicate()
-        ""      | hasBaseVariantWithCustomParamPredicate()
+        "v4/"   | hasBaseVariantWithCustomParamPredicate('this is name', 'this is value')
+        ""      | hasBaseVariantWithCustomParamPredicate('this is name', 'this is value')
     }
 
-    private static Closure hasBaseVariantWithCustomParamPredicate() {
+    private static Closure hasBaseVariantWithCustomParamPredicate(String expectedName, String expectedValue) {
         return {
             it.variants
                     .find({ it.name == 'base' })
                     .predicates
-                    .contains([type: 'CUSTOM_PARAM', name: 'this is name', value: 'this is value'])
+                    .contains([type: 'CUSTOM_PARAM', name: expectedName, value: expectedValue])
         }
     }
 
+    private static Closure hasBaseVariantWithoutCustomParamPredicate() {
+        return {
+            !it.variants
+                    .find({ it.name == 'base' })
+                    .predicates
+                    .find({it.type == 'CUSTOM_PARAM'})
+        }
+    }
+
+    @Unroll
     def "should not save experiment with partially defined custom parameter"() {
         given:
             def expId = UUID.randomUUID().toString()
@@ -76,8 +86,8 @@ class CustomParameterSpec extends BaseIntegrationSpec {
                     internalVariantName : 'v1',
                     percentage          : 1,
                     reportingEnabled    : true,
-                    customParameterName : 'this is name',
-                    customParameterValue: null
+                    customParameterName : name,
+                    customParameterValue: 'value'
             ]
 
         when:
@@ -86,5 +96,45 @@ class CustomParameterSpec extends BaseIntegrationSpec {
         then:
             HttpClientErrorException exception = thrown()
             exception.statusCode == HttpStatus.BAD_REQUEST
+
+        where:
+            name    | _
+            null    | _
+            ''      | _
+            ' '     | _
+    }
+
+    @Unroll
+    def 'should ignore blank custom parameter fields and trim not blank fields'() {
+        given:
+            def expId = UUID.randomUUID().toString()
+
+            userProvider.user = new User('Author', [], true)
+            def request = [
+                    id                  : expId,
+                    description         : "desc",
+                    variantNames        : ['base'],
+                    internalVariantName : 'v1',
+                    percentage          : 1,
+                    reportingEnabled    : true,
+                    customParameterName : name,
+                    customParameterValue: value
+            ]
+            restTemplate.postForEntity(localUrl('/api/admin/experiments/'), request, Map)
+
+        when:
+            def response = restTemplate.getForEntity(localUrl("/api/experiments/"), List)
+
+        then:
+            condition(response.body.find({it.id == expId}))
+
+        where:
+            name            | value                     | condition
+            null            | null                      | hasBaseVariantWithoutCustomParamPredicate()
+            ''              | null                      | hasBaseVariantWithoutCustomParamPredicate()
+            ' '             | null                      | hasBaseVariantWithoutCustomParamPredicate()
+            ' notBlank '    | ' this will be trimmed '  | hasBaseVariantWithCustomParamPredicate('notBlank', 'this will be trimmed')
+
+
     }
 }
