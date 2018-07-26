@@ -1,11 +1,14 @@
 package pl.allegro.experiments.chi.chiserver.application.administration
 
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.http.HttpStatus
+import org.springframework.web.client.HttpClientErrorException
 import pl.allegro.experiments.chi.chiserver.BaseIntegrationSpec
 import pl.allegro.experiments.chi.chiserver.domain.User
 import pl.allegro.experiments.chi.chiserver.domain.UserProvider
 import pl.allegro.experiments.chi.chiserver.domain.experiments.administration.ExperimentActions
 import pl.allegro.experiments.chi.chiserver.domain.statistics.classic.ClassicStatisticsForVariantMetricRepository
+import spock.lang.Unroll
 
 class CustomParameterSpec extends BaseIntegrationSpec {
 
@@ -18,7 +21,8 @@ class CustomParameterSpec extends BaseIntegrationSpec {
     @Autowired
     UserProvider userProvider
 
-    def "should save experiment with custom parameter definition"() {
+    @Unroll
+    def "should save experiment with custom parameter definition and return it for clients with API version >= 4"() {
         given:
             def expId = UUID.randomUUID().toString()
 
@@ -36,55 +40,51 @@ class CustomParameterSpec extends BaseIntegrationSpec {
             ]
             restTemplate.postForEntity(localUrl('/api/admin/experiments/'), request, Map)
 
-            def expectedExperiment = [
-                    id              : expId,
-                    reportingEnabled: true,
-                    status          : 'DRAFT',
-                    variants        : [
-                            [
-                                name        : 'v1',
-                                 predicates  : [[type:'INTERNAL']]
-                            ],
-                            [
-                                name        : 'base',
-                                predicates  : [
-                                        [
-                                            type   : 'HASH',
-                                            from   : 0,
-                                            to     : 1
-                                         ],
-                                         [
-                                            type    : 'CUSTOM_PARAM',
-                                            name    : 'this is name',
-                                            value   : 'this is value'
-                                          ]
-                                 ]
-                            ]
-                    ]
+        when:
+            def response = restTemplate.getForEntity(localUrl("/api/experiments/" + version), List)
+
+        then:
+            condtion(response.body.find({it.id == expId}))
+
+        where:
+        version | condtion
+        "v1/"   | {!it}
+        "v2/"   | {!it}
+        "v3/"   | {!it}
+        "v4/"   | hasBaseVariantWithCustomParamPredicate()
+        ""      | hasBaseVariantWithCustomParamPredicate()
+    }
+
+    private static Closure hasBaseVariantWithCustomParamPredicate() {
+        return {
+            it.variants
+                    .find({ it.name == 'base' })
+                    .predicates
+                    .contains([type: 'CUSTOM_PARAM', name: 'this is name', value: 'this is value'])
+        }
+    }
+
+    def "should not save experiment with partially defined custom parameter"() {
+        given:
+            def expId = UUID.randomUUID().toString()
+
+            userProvider.user = new User('Author', [], true)
+            def request = [
+                    id                  : expId,
+                    description         : "desc",
+                    variantNames        : ['base'],
+                    internalVariantName : 'v1',
+                    percentage          : 1,
+                    reportingEnabled    : true,
+                    customParameterName : 'this is name',
+                    customParameterValue: null
             ]
 
         when:
-            def responseSingle = restTemplate.getForEntity(localUrl("/api/experiments/v1/"), List)
+            restTemplate.postForEntity(localUrl('/api/admin/experiments/'), request, Map)
 
         then:
-            responseSingle.body.find({it -> it.id == expId}) == null
-
-        when:
-            responseSingle = restTemplate.getForEntity(localUrl("/api/experiments/v2/"), List)
-
-        then:
-            responseSingle.body.find({it -> it.id == expId}) == null
-
-        when:
-            responseSingle = restTemplate.getForEntity(localUrl("/api/experiments/v3/"), List)
-
-        then:
-            responseSingle.body.find({it -> it.id == expId}) == null
-
-        when:
-            responseSingle = restTemplate.getForEntity(localUrl("/api/experiments/v4/"), List)
-
-        then:
-            responseSingle.body.contains(expectedExperiment)
+            HttpClientErrorException exception = thrown()
+            exception.statusCode == HttpStatus.BAD_REQUEST
     }
 }

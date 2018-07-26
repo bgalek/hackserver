@@ -171,6 +171,10 @@ public class Experiment {
         return new Builder();
     }
 
+    public boolean hasCustomParam() {
+        return getDefinition().map(ExperimentDefinition::getCustomParameter).isPresent();
+    }
+
     public static class Builder {
 
         static Builder from(Experiment other) {

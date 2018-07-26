@@ -48,7 +48,7 @@ class ClientExperimentsControllerV3 {
                 .assignable()
                 .stream()
                 .filter(crisisManagementFilter::filter)
-                .filter(ExperimentWithoutCustomParameterFilter::filter)
+                .filter(experiment -> !experiment.hasCustomParam())
                 .map(it -> !experimentGroupRepository.experimentInGroup(it.getId())
                             ? new ClientExperiment(it) : experimentFactory.clientExperimentFromGroupedExperiment(it.getDefinition().get()).get()
                 )

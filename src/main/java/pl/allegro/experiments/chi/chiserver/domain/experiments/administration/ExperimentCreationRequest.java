@@ -127,5 +127,109 @@ public class ExperimentCreationRequest {
             throw new ExperimentCommandException("Cannot create experiment from request", e);
         }
     }
+
+    public static Builder builder() {
+        return new Builder();
+    }
+
+    static public class Builder {
+
+        private String id;
+        private List<String> variantNames;
+        private String internalVariantName;
+        private Integer percentage;
+        private String deviceClass;
+        private String description;
+        private String documentLink;
+        private List<String> groups;
+        private Boolean reportingEnabled;
+        private List<EventDefinition> eventDefinitions;
+        private ReportingType reportingType;
+        private String customParameterName;
+        private String customParameterValue;
+
+        public Builder id(String id) {
+            this.id = id;
+            return this;
+        }
+
+        public Builder variantNames(List<String> variantNames) {
+            this.variantNames = variantNames;
+            return this;
+        }
+
+        public Builder internalVariantName(String internalVariantName) {
+            this.internalVariantName = internalVariantName;
+            return this;
+        }
+
+        public Builder percentage(Integer percentage) {
+            this.percentage = percentage;
+            return this;
+        }
+
+        public Builder deviceClass(String deviceClass) {
+            this.deviceClass = deviceClass;
+            return this;
+        }
+
+        public Builder description(String description) {
+            this.description = description;
+            return this;
+        }
+
+        public Builder documentLink(String documentLink) {
+            this.documentLink = documentLink;
+            return this;
+        }
+
+        public Builder groups(List<String> groups) {
+            this.groups = groups;
+            return this;
+        }
+
+        public Builder reportingEnabled(Boolean reportingEnabled) {
+            this.reportingEnabled = reportingEnabled;
+            return this;
+        }
+
+        public Builder eventDefinitions(List<EventDefinition> eventDefinitions) {
+            this.eventDefinitions = eventDefinitions;
+            return this;
+        }
+
+        public Builder reportingType(ReportingType reportingType) {
+            this.reportingType = reportingType;
+            return this;
+        }
+
+        public Builder customParameterName(String customParameterName) {
+            this.customParameterName = customParameterName;
+            return this;
+        }
+
+        public Builder customParameterValue(String customParameterValue) {
+            this.customParameterValue = customParameterValue;
+            return this;
+        }
+
+        public ExperimentCreationRequest build() {
+            return new ExperimentCreationRequest(
+                    id,
+                    variantNames,
+                    internalVariantName,
+                    percentage,
+                    deviceClass,
+                    description,
+                    documentLink,
+                    groups,
+                    reportingEnabled,
+                    eventDefinitions,
+                    reportingType,
+                    customParameterName,
+                    customParameterValue);
+        }
+    }
+
 }
 

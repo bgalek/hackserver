@@ -6,19 +6,15 @@ class CommandTestUtils {
     static def simpleExperimentRequest(String id) {
         def variantNames = []
         def internalVariantName = "v1"
-        return new ExperimentCreationRequest(
-                id,
-                variantNames,
-                internalVariantName,
-                1,
-                null,
-                "simple description",
-                "some link",
-                ["group a", "group b"],
-                true,
-                null,
-                null,
-                null,
-                null)
+        return ExperimentCreationRequest.builder()
+                .id(id)
+                .variantNames(variantNames)
+                .internalVariantName(internalVariantName)
+                .percentage(1)
+                .description("simple description")
+                .documentLink("some link")
+                .groups(["group a", "group b"])
+                .reportingEnabled(true)
+                .build()
     }
 }

@@ -5,7 +5,15 @@
 
         <v-flex xs1>
           <v-tooltip right>
-            <span>(optional) Define custom parameter</span>
+            <span>
+              (optional) Define custom parameter
+              <br />
+              When defined, then passing the same parameter will be required to assign a user to this experiment
+               <br/>
+              <a target="_blank" style="color: aqua" href="https://rtd.allegrogroup.com/docs/chi/pl/latest/">
+              Read more in χ Docs</a>
+
+            </span>
             <v-icon
               slot="activator">help_outline
             </v-icon>

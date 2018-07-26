@@ -82,21 +82,17 @@ class CreateExperimentCommandIntegrationSpec extends BaseIntegrationSpec {
         given:
         mutableUserProvider.user = new User('root', [], true)
 
-        def brokenRequest = new ExperimentCreationRequest(
-                'x',
-                ['v1'],
-                'xyz',
-                1000,
-                'a',
-                '',
-                '',
-                [],
-                false,
-                null,
-                null,
-                null,
-                null
-        )
+        def brokenRequest = ExperimentCreationRequest.builder()
+                .id('x')
+                .variantNames(['v1'])
+                .internalVariantName('xyz')
+                .percentage(1000)
+                .deviceClass('a')
+                .description('')
+                .documentLink('')
+                .groups([])
+                .reportingEnabled(false)
+                .build()
 
         def command = new CreateExperimentCommand(experimentsRepository, mutableUserProvider, brokenRequest)
 
