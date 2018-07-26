@@ -50,6 +50,8 @@ export default class ExperimentVariantModel extends ExperimentVariantRecord {
       return p.device
     } else if (p.type === 'CMUID_REGEXP') {
       return p.regexp
+    } else if (p.type === 'CUSTOM_PARAM') {
+      return p.name + ' = ' + p.value
     } else if (p.type === 'SHRED_HASH' && !isDraft) {
       return p.ranges.map(r => `${r.from} - ${r.to} %`).join(' AND ')
     } else if (p.type === 'SHRED_HASH' && isDraft) {

@@ -52,6 +52,8 @@
 
             <experiment-desc-editing v-model="descriptions" />
 
+            <experiment-custom-parameter-editing v-model="customParameter" />
+
             <experiment-variants-editing
               :experimentToPair="groupWithExperiment"
               :allowModifyRegularVariants="true"
@@ -183,6 +185,7 @@
   import _ from 'lodash'
 
   import ChiPanel from './ChiPanel.vue'
+  import ExperimentCustomParameterEditing from './experiment/ExperimentCustomParameterEditing'
 
   export default {
     mounted () {
@@ -211,6 +214,7 @@
         sendingDataToServer: false,
         errors: [],
         descriptions: {},
+        customParameter: {},
         variants: {},
         reportingType: 'BACKEND',
         availableReportingTypes: ['BACKEND', 'FRONTEND', 'GTM'],
@@ -264,7 +268,8 @@
       ChiPanel,
       ExperimentDescEditing,
       ExperimentVariantsEditing,
-      ExperimentEventFilters
+      ExperimentEventFilters,
+      ExperimentCustomParameterEditing
     },
 
     methods: {
@@ -331,6 +336,8 @@
           id: this.experimentIdSlug,
           description: this.descriptions.description,
           documentLink: this.descriptions.documentLink,
+          customParameterName: this.customParameter.name,
+          customParameterValue: this.customParameter.value,
           groups: this.descriptions.groups,
           reportingEnabled: this.reportingEnabled,
           variantNames: this.slugifiedVariants,

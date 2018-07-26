@@ -4,7 +4,11 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
-import pl.allegro.experiments.chi.chiserver.domain.experiments.*;
+import pl.allegro.experiments.chi.chiserver.domain.experiments.CustomParameter;
+import pl.allegro.experiments.chi.chiserver.domain.experiments.EventDefinition;
+import pl.allegro.experiments.chi.chiserver.domain.experiments.ExperimentDefinition;
+import pl.allegro.experiments.chi.chiserver.domain.experiments.ReportingDefinition;
+import pl.allegro.experiments.chi.chiserver.domain.experiments.ReportingType;
 
 import javax.validation.constraints.NotNull;
 import java.util.ArrayList;
@@ -24,6 +28,7 @@ public class ExperimentCreationRequest {
     private final List<String> groups;
     private final boolean reportingEnabled;
     private final ReportingDefinition reportingDefinition;
+    private final CustomParameter customParameter;
 
     @JsonCreator
     public ExperimentCreationRequest(
@@ -37,11 +42,17 @@ public class ExperimentCreationRequest {
             @JsonProperty("groups") List<String> groups,
             @JsonProperty("reportingEnabled") Boolean reportingEnabled,
             @JsonProperty("eventDefinitions") List<EventDefinition> eventDefinitions,
-            @JsonProperty("reportingType") ReportingType reportingType) {
+            @JsonProperty("reportingType") ReportingType reportingType,
+            @JsonProperty("customParameterName") String customParameterName,
+            @JsonProperty("customParameterValue") String customParameterValue) {
         Preconditions.checkArgument(id != null, "experiment id is null");
         Preconditions.checkArgument(variantNames != null, "experiment variantNames are null");
         Preconditions.checkArgument(percentage != null, "experiment percentage is null");
         Preconditions.checkArgument(percentage >= 0, "experiment percentage < 0");
+        if (customParameterName != null || customParameterValue != null) {
+            Preconditions.checkArgument(customParameterName != null, "custom parameter name is null");
+            Preconditions.checkArgument(customParameterValue != null, "custom parameter value is null");
+        }
         this.id = id;
         this.variantNames = ImmutableList.copyOf(variantNames);
         this.internalVariantName = internalVariantName;
@@ -63,6 +74,11 @@ public class ExperimentCreationRequest {
                 .map(rt -> rt.reportingDefinition(eventDefinitions))
                 .orElse(ReportingDefinition.createDefault());
 
+        if (customParameterName != null) {
+            this.customParameter = new CustomParameter(customParameterName, customParameterValue);
+        } else {
+            this.customParameter = null;
+        }
     }
 
     public String getId() {
@@ -89,7 +105,7 @@ public class ExperimentCreationRequest {
         return reportingEnabled;
     }
 
-    public ExperimentDefinition toExperimentDefinition(String author) {
+    ExperimentDefinition toExperimentDefinition(String author) {
         Preconditions.checkNotNull(author);
         try {
             return ExperimentDefinition.builder()
@@ -104,11 +120,116 @@ public class ExperimentCreationRequest {
                     .groups(this.groups)
                     .reportingEnabled(this.reportingEnabled)
                     .reportingDefinition(this.reportingDefinition)
+                    .customParameter(this.customParameter)
                     .build();
 
         } catch (Exception e) {
             throw new ExperimentCommandException("Cannot create experiment from request", e);
         }
     }
+
+    public static Builder builder() {
+        return new Builder();
+    }
+
+    static public class Builder {
+
+        private String id;
+        private List<String> variantNames;
+        private String internalVariantName;
+        private Integer percentage;
+        private String deviceClass;
+        private String description;
+        private String documentLink;
+        private List<String> groups;
+        private Boolean reportingEnabled;
+        private List<EventDefinition> eventDefinitions;
+        private ReportingType reportingType;
+        private String customParameterName;
+        private String customParameterValue;
+
+        public Builder id(String id) {
+            this.id = id;
+            return this;
+        }
+
+        public Builder variantNames(List<String> variantNames) {
+            this.variantNames = variantNames;
+            return this;
+        }
+
+        public Builder internalVariantName(String internalVariantName) {
+            this.internalVariantName = internalVariantName;
+            return this;
+        }
+
+        public Builder percentage(Integer percentage) {
+            this.percentage = percentage;
+            return this;
+        }
+
+        public Builder deviceClass(String deviceClass) {
+            this.deviceClass = deviceClass;
+            return this;
+        }
+
+        public Builder description(String description) {
+            this.description = description;
+            return this;
+        }
+
+        public Builder documentLink(String documentLink) {
+            this.documentLink = documentLink;
+            return this;
+        }
+
+        public Builder groups(List<String> groups) {
+            this.groups = groups;
+            return this;
+        }
+
+        public Builder reportingEnabled(Boolean reportingEnabled) {
+            this.reportingEnabled = reportingEnabled;
+            return this;
+        }
+
+        public Builder eventDefinitions(List<EventDefinition> eventDefinitions) {
+            this.eventDefinitions = eventDefinitions;
+            return this;
+        }
+
+        public Builder reportingType(ReportingType reportingType) {
+            this.reportingType = reportingType;
+            return this;
+        }
+
+        public Builder customParameterName(String customParameterName) {
+            this.customParameterName = customParameterName;
+            return this;
+        }
+
+        public Builder customParameterValue(String customParameterValue) {
+            this.customParameterValue = customParameterValue;
+            return this;
+        }
+
+        public ExperimentCreationRequest build() {
+            return new ExperimentCreationRequest(
+                    id,
+                    variantNames,
+                    internalVariantName,
+                    percentage,
+                    deviceClass,
+                    description,
+                    documentLink,
+                    groups,
+                    reportingEnabled,
+                    eventDefinitions,
+                    reportingType,
+                    customParameterName,
+                    customParameterValue);
+        }
+    }
+
 }
 

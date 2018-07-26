@@ -72,7 +72,7 @@ class ExperimentsE2ESpec extends BaseIntegrationSpec implements ExampleExperimen
         ]
     }
 
-    def "should return list of assignable experiments in API v.2 for Cient"() {
+    def "should return list of assignable experiments in API v.2 for Client"() {
         given:
         fileBasedExperimentsRepository.jsonUrl = WireMockUtils.resourceUrl('/experiments', wireMock)
         fileBasedExperimentsRepository.secureRefresh()

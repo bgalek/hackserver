@@ -44,9 +44,17 @@ public class ExperimentVariantTypeAdapter implements JsonSerializer<ExperimentVa
             return deserializeCmuidPredicate(json);
         } else if (PredicateType.INTERNAL.toString().equals(type)) {
             return deserializeInternalVariant(json);
+        } else if (PredicateType.CUSTOM_PARAM.toString().equals(type)) {
+            return deserializeCustomParameterPredicate(json);
         }
 
         throw new IllegalArgumentException("Cannot handle ExperimentInteraction type : " + type);
+    }
+
+    private Predicate deserializeCustomParameterPredicate(JsonObject json) {
+        String name = json.get("name").getAsString();
+        String value = json.get("value").getAsString();
+        return new CustomParameterPredicate(name, value);
     }
 
     private Predicate deserializeHashPredicate(JsonObject json) {

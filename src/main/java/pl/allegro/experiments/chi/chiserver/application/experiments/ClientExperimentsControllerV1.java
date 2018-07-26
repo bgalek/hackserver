@@ -45,6 +45,7 @@ public class ClientExperimentsControllerV1 {
                 .assignable()
                 .stream()
                 .filter(crisisManagementFilter::filter)
+                .filter(experiment -> !experiment.hasCustomParam())
                 .filter(experiment -> !experimentGroupRepository.experimentInGroup(experiment.getId()))
                 .collect(Collectors.toList()));
     }

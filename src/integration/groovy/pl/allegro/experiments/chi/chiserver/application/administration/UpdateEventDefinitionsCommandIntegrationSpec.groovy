@@ -145,20 +145,18 @@ class UpdateEventDefinitionsCommandIntegrationSpec extends BaseIntegrationSpec {
     ExperimentCreationRequest simpleFrontendExperimentRequest(String id) {
         def variantNames = []
         def internalVariantName = "v1"
-        return new ExperimentCreationRequest(
-                id,
-                variantNames,
-                internalVariantName,
-                1,
-                null,
-                "simple description",
-                "some link",
-                ["group a", "group b"],
-                true,
-                [
-                        new EventDefinition('c1', 'a1', 'v1', 'l1', 'b1'),
-                        new EventDefinition('c2', 'a2', 'v2', 'l2', 'b2')
-                ],
-                ReportingType.FRONTEND)
+        return ExperimentCreationRequest.builder()
+                .id(id)
+                .variantNames(variantNames)
+                .internalVariantName(internalVariantName)
+                .percentage(1)
+                .description("simple description")
+                .documentLink("some link")
+                .groups(["group a", "group b"])
+                .reportingEnabled(true).eventDefinitions([
+                    new EventDefinition('c1', 'a1', 'v1', 'l1', 'b1'),
+                    new EventDefinition('c2', 'a2', 'v2', 'l2', 'b2')])
+                .reportingType(ReportingType.FRONTEND)
+                .build()
     }
 }

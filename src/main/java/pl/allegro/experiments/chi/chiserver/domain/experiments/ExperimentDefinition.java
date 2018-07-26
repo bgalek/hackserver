@@ -33,8 +33,8 @@ public class ExperimentDefinition {
     private final Boolean editable;
     private final ExperimentStatus explicitStatus;
     private final ExperimentStatus status;
-
     private final ReportingDefinition reportingDefinition;
+    private final CustomParameter customParameter;
 
     private ExperimentDefinition(
             String id,
@@ -50,7 +50,8 @@ public class ExperimentDefinition {
             ActivityPeriod activityPeriod,
             Boolean editable,
             ExperimentStatus explicitStatus,
-            ReportingDefinition reportingDefinition) {
+            ReportingDefinition reportingDefinition,
+            CustomParameter customParameter) {
         Preconditions.checkArgument(!Strings.isNullOrEmpty(id));
         Preconditions.checkNotNull(variantNames);
         Preconditions.checkNotNull(reportingDefinition);
@@ -72,6 +73,7 @@ public class ExperimentDefinition {
         this.explicitStatus = explicitStatus;
         this.status = ExperimentStatus.of(explicitStatus, activityPeriod);
         this.reportingDefinition = reportingDefinition;
+        this.customParameter = customParameter;
     }
 
     @Id
@@ -135,6 +137,11 @@ public class ExperimentDefinition {
 
     public ActivityPeriod getActivityPeriod() {
         return activityPeriod;
+    }
+
+    @DiffInclude
+    public CustomParameter getCustomParameter() {
+        return customParameter;
     }
 
     @DiffInclude
@@ -257,6 +264,9 @@ public class ExperimentDefinition {
         if (DeviceClass.all != deviceClass) {
             predicates.add(new DeviceClassPredicate(deviceClass.toJsonString()));
         }
+        if (customParameter != null) {
+            predicates.add(new CustomParameterPredicate(customParameter.getName(), customParameter.getValue()));
+        }
         return new ExperimentVariant(variantName, predicates);
     }
 
@@ -323,7 +333,8 @@ public class ExperimentDefinition {
                     .activityPeriod(other.activityPeriod)
                     .editable(other.editable)
                     .reportingDefinition(other.reportingDefinition)
-                    .explicitStatus(other.explicitStatus);
+                    .explicitStatus(other.explicitStatus)
+                    .customParameter(other.customParameter);
         }
 
         private String id;
@@ -341,6 +352,7 @@ public class ExperimentDefinition {
         private String origin;
         private ExperimentStatus explicitStatus;
         private ReportingDefinition reportingDefinition = ReportingDefinition.createDefault();
+        private CustomParameter customParameter;
 
         public Builder id(String id) {
             this.id = id;
@@ -422,6 +434,11 @@ public class ExperimentDefinition {
             return this;
         }
 
+        public Builder customParameter(CustomParameter customParameter) {
+            this.customParameter = customParameter;
+            return this;
+        }
+
         public ExperimentDefinition build() {
             return new ExperimentDefinition(
                     id,
@@ -437,7 +454,8 @@ public class ExperimentDefinition {
                     activityPeriod,
                     editable,
                     explicitStatus,
-                    reportingDefinition);
+                    reportingDefinition,
+                    customParameter);
         }
     }
 

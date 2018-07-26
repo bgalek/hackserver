@@ -17,16 +17,16 @@ import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping(value = {"/api/experiments"}, produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_JSON_UTF8_VALUE})
-class ClientExperimentsControllerV3 {
+class ClientExperimentsControllerV4 {
     private final ExperimentsRepository experimentsRepository;
     private final Gson jsonConverter;
     private final CrisisManagementFilter crisisManagementFilter;
     private final ExperimentGroupRepository experimentGroupRepository;
     private final ExperimentFactory experimentFactory;
 
-    private static final Logger logger = LoggerFactory.getLogger(ClientExperimentsControllerV3.class);
+    private static final Logger logger = LoggerFactory.getLogger(ClientExperimentsControllerV4.class);
 
-    ClientExperimentsControllerV3(
+    ClientExperimentsControllerV4(
             ExperimentsRepository experimentsRepository,
             Gson jsonConverter,
             CrisisManagementFilter crisisManagementFilter,
@@ -40,7 +40,7 @@ class ClientExperimentsControllerV3 {
     }
 
     @MeteredEndpoint
-    @GetMapping(path = {"/v3"})
+    @GetMapping(path = {"/v4", ""})
     String experiments() {
         logger.debug("Client V3 experiments request received");
 
@@ -48,7 +48,6 @@ class ClientExperimentsControllerV3 {
                 .assignable()
                 .stream()
                 .filter(crisisManagementFilter::filter)
-                .filter(experiment -> !experiment.hasCustomParam())
                 .map(it -> !experimentGroupRepository.experimentInGroup(it.getId())
                             ? new ClientExperiment(it) : experimentFactory.clientExperimentFromGroupedExperiment(it.getDefinition().get()).get()
                 )
