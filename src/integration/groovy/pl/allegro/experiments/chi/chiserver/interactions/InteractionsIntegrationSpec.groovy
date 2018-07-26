@@ -132,7 +132,7 @@ class InteractionsIntegrationSpec extends BaseIntegrationSpec {
     }
 
     @Unroll
-    def "should save interactions depending on reporting type"() {
+    def "should save interactions for #reportingType experiment"() {
         given:
         userProvider.user = new User('Anonymous', [], true)
 
@@ -168,12 +168,11 @@ class InteractionsIntegrationSpec extends BaseIntegrationSpec {
 
         then:
         def interactions = interactionConverter.fromJson(interactionsJson)
-        inMemoryInteractionRepository.interactionSaved(interactions[0]) == shouldReport
+        inMemoryInteractionRepository.interactionSaved(interactions[0])
 
         where:
         experimentId << ['e1', 'e2', 'e3']
         reportingType << ['FRONTEND', 'GTM', 'BACKEND']
-        shouldReport << [true, true, true]
         eventDefinitions << [
                 [
                         [
