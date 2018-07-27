@@ -1,13 +1,14 @@
 <template>
   <v-form>
     <v-container fluid style="margin: 0px; padding: 0px" text-xs-center>
+
       <v-layout row align-center>
 
         <v-flex xs1>
           <v-tooltip right>
             <span>
-              (optional) Define custom parameter
-              <br />
+              Custom parameter
+              <br/>
               When defined, then passing the same parameter will be required to assign a user to this experiment
                <br/>
               <a target="_blank" style="color: aqua" href="https://rtd.allegrogroup.com/docs/chi/pl/latest/">
@@ -19,9 +20,15 @@
             </v-icon>
           </v-tooltip>
         </v-flex>
-        <v-flex xs11>
 
+        <v-flex xs11>
+          <v-switch
+            label="Define custom parameter"
+            v-model="defineCustomParameter"
+            v-on:change="onDefineCustomParameterChange"
+          ></v-switch>
           <v-text-field
+            v-if="defineCustomParameter"
             id="experimentCustomParameterNameFormField"
             v-model="value.name"
             :rules="customParameterNameRules"
@@ -29,13 +36,8 @@
             v-on:input="inputEntered()">
             >
           </v-text-field>
-        </v-flex>
-
-      </v-layout>
-      <v-layout row align-center>
-
-        <v-flex offset-xs1>
           <v-text-field
+            v-if="defineCustomParameter"
             id="experimentCustomParameterValueFormField"
             v-model="value.value"
             :rules="customParameterValueRules"
@@ -45,9 +47,10 @@
         </v-flex>
 
       </v-layout>
-    </v-container>
 
+    </v-container>
   </v-form>
+
 </template>
 
 
@@ -57,7 +60,7 @@
   export default {
     props: ['experiment'],
 
-    data () {
+    data() {
       return {
         value: this.init(this.experiment),
 
@@ -68,12 +71,13 @@
         customParameterValueRules: [
           (v) => !startsOrEndsWithSpace(v) || 'Do not start nor end string with space',
           (v) => !!v || this.customParameterIsUndefined() || 'Enter value or remove custom parameter name'
-        ]
+        ],
+        defineCustomParameter: false
       }
     },
 
     methods: {
-      init (experiment) {
+      init(experiment) {
         const value = {
           name: null,
           value: null
@@ -83,12 +87,20 @@
         return value
       },
 
-      inputEntered () {
+      inputEntered() {
         this.$emit('input', this.value)
       },
 
-      customParameterIsUndefined () {
+      customParameterIsUndefined() {
         return !(!!this.value.name || !!this.value.value)
+      },
+
+      onDefineCustomParameterChange(newVal) {
+        if (!newVal) {
+          this.value.name = null
+          this.value.value = null
+          this.$emit('input', this.value)
+        }
       }
     }
   }
