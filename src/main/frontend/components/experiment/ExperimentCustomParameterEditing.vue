@@ -58,14 +58,12 @@
   import {startsOrEndsWithSpace} from '../../utils/startsOrEndsWithSpace'
   import { slugify } from '../../utils/slugify'
 
-
   export default {
     props: ['experiment'],
 
-    data() {
+    data () {
       return {
         value: this.init(this.experiment),
-
         customParameterNameRules: [
           (v) => !startsOrEndsWithSpace(v) || 'Do not start nor end string with space',
           (v) => !!this.value.name || 'Enter custom parameter name'
@@ -79,7 +77,7 @@
     },
 
     methods: {
-      init(experiment) {
+      init (experiment) {
         const value = {
           name: null,
           value: null
@@ -89,19 +87,20 @@
         return value
       },
 
-      inputEntered() {
+      inputEntered () {
         this.value.name = slugify(this.value.name)
         this.value.value = slugify(this.value.value)
         this.$emit('input', this.value)
       },
 
-      onDefineCustomParameterChange(newVal) {
+      onDefineCustomParameterChange (newVal) {
         if (!newVal) {
           this.value.name = null
           this.value.value = null
           this.$emit('input', this.value)
         }
       }
+
     }
   }
 </script>
