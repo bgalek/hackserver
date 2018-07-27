@@ -66,11 +66,11 @@
 
         customParameterNameRules: [
           (v) => !startsOrEndsWithSpace(v) || 'Do not start nor end string with space',
-          (v) => !!v || this.customParameterIsUndefined() || 'Enter name or remove custom parameter value'
+          (v) => !!this.value.name || 'Enter custom parameter name'
         ],
         customParameterValueRules: [
           (v) => !startsOrEndsWithSpace(v) || 'Do not start nor end string with space',
-          (v) => !!v || this.customParameterIsUndefined() || 'Enter value or remove custom parameter name'
+          (v) => !!this.value.value || 'Enter custom parameter value'
         ],
         defineCustomParameter: false
       }
@@ -89,10 +89,6 @@
 
       inputEntered() {
         this.$emit('input', this.value)
-      },
-
-      customParameterIsUndefined() {
-        return !(!!this.value.name || !!this.value.value)
       },
 
       onDefineCustomParameterChange(newVal) {
