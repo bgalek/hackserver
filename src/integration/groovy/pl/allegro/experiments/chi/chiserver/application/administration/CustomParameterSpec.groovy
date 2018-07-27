@@ -55,7 +55,7 @@ class CustomParameterSpec extends BaseIntegrationSpec {
         ""      | hasBaseVariantWithCustomParamPredicate('this is name', 'this is value')
     }
 
-    private static Closure hasBaseVariantWithCustomParamPredicate(String expectedName, String expectedValue) {
+    def hasBaseVariantWithCustomParamPredicate(String expectedName, String expectedValue) {
         return {
             it.variants
                     .find({ it.name == 'base' })
@@ -64,7 +64,7 @@ class CustomParameterSpec extends BaseIntegrationSpec {
         }
     }
 
-    private static Closure hasBaseVariantWithoutCustomParamPredicate() {
+    def hasBaseVariantWithoutCustomParamPredicate() {
         return {
             !it.variants
                     .find({ it.name == 'base' })
