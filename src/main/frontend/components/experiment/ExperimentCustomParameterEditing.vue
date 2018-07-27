@@ -56,6 +56,8 @@
 
 <script>
   import {startsOrEndsWithSpace} from '../../utils/startsOrEndsWithSpace'
+  import { slugify } from '../../utils/slugify'
+
 
   export default {
     props: ['experiment'],
@@ -88,6 +90,8 @@
       },
 
       inputEntered() {
+        this.value.name = slugify(this.value.name)
+        this.value.value = slugify(this.value.value)
         this.$emit('input', this.value)
       },
 
