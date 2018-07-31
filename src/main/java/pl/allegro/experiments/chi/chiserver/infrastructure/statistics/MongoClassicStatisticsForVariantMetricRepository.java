@@ -54,7 +54,7 @@ public class MongoClassicStatisticsForVariantMetricRepository implements Classic
         Timer timer = experimentsMongoMetricsReporter.timerReadClassicExperimentStatistics();
         try {
             Query query = new Query();
-            query.addCriteria(Criteria.where("experimentId").is(experimentId));
+            query.addCriteria(Criteria.where("experimentId").is(experimentId).and("variantName").ne("base"));
 
             return Math.toIntExact(timer.wrap(() -> mongoTemplate.count(query, ENTITY, COLLECTION)).call());
         } catch (Exception e) {

@@ -22,7 +22,7 @@
       },
 
       labels () {
-        return ['all', 'desktop', 'smartphone', 'tablet']
+        return ['all', 'desktop', 'smartphone']
       }
     },
 

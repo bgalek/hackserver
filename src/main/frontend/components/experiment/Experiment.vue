@@ -222,7 +222,7 @@
       calcInitialDevice (experiment) {
         const baseClass = experiment.getBaseDeviceClass()
 
-        if (baseClass === 'desktop' || baseClass === 'tablet') {
+        if (baseClass === 'desktop') {
           return baseClass
         }
 

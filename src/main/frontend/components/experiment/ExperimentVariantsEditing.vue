@@ -129,7 +129,7 @@
       const initialValue = this.init(this.experiment)
       return {
         value: initialValue,
-        deviceClasses: ['all', 'phone', 'phone-android', 'phone-iphone', 'desktop', 'tablet'],
+        deviceClasses: ['all', 'phone', 'phone-android', 'phone-iphone', 'desktop'],
         baseVariant: baseVariant,
         variantsRules: [
           (v) => this.baseVariantPresent() || 'base variant is mandatory',
