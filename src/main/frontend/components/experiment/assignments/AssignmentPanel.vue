@@ -10,7 +10,7 @@
           :color="variant.color"
           :title="variant.name"
           redirect-label="Assign me"
-          :redirect-link="cookieBakerLink(experiment.id, variant.name, false)"
+          :redirect-link="cookieBakerLink(experiment.id, variant.name, true)"
         >
         </assignment-button>
 

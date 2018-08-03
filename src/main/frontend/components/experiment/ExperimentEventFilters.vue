@@ -13,7 +13,7 @@
             <v-container grid-list-md>
               <v-layout wrap>
                 <v-flex xs12 sm6 md4>
-                  <v-text-field label="boxName" v-model="editedItem.boxName"
+                  <v-text-field label="boxName" v-model="editedItem.boxName" hint="for example: offers_reco"
                                 :rules="filterRules"
                   ></v-text-field>
                 </v-flex>
@@ -28,7 +28,7 @@
                   ></v-text-field>
                 </v-flex>
                 <v-flex xs12 sm6 md4>
-                  <v-text-field label="action" v-model="editedItem.action"
+                  <v-text-field label="action" v-model="editedItem.action" hint="for example: boxView"
                                 :rules="filterRules"
                   ></v-text-field>
                 </v-flex>
