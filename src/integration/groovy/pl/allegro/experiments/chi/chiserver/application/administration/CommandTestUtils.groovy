@@ -4,7 +4,7 @@ import pl.allegro.experiments.chi.chiserver.domain.experiments.administration.Ex
 
 class CommandTestUtils {
     static def simpleExperimentRequest(String id) {
-        def variantNames = []
+        def variantNames = ["v2", "v3"]
         def internalVariantName = "v1"
         return ExperimentCreationRequest.builder()
                 .id(id)

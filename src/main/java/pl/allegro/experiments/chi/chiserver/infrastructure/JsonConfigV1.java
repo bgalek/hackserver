@@ -22,6 +22,7 @@ public class JsonConfigV1 {
                 .registerTypeAdapter(HashRangePredicate.class, new HashRangePredicateSerializer())
                 .registerTypeAdapter(CmuidRegexpPredicate.class, new CmuidRegexpPredicateSerializer())
                 .registerTypeAdapter(InternalPredicate.class, new InternalPredicateSerializer())
+                .registerTypeAdapter(FullOnPredicate.class, new FullOnPredicateSerializer())
                 .registerTypeAdapter(DeviceClassPredicate.class, new DeviceClassPredicateSerializer())
                 .registerTypeAdapter(ExperimentVariant.class, new ExperimentVariantTypeAdapter())
                 .registerTypeAdapter(LocalDate.class, new LocalDateTypeAdapter())

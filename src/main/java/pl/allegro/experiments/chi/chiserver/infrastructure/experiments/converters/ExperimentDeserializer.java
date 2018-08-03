@@ -26,6 +26,7 @@ public class ExperimentDeserializer implements Converter<Document, ExperimentDef
         String id = (String) bson.get("_id");
         List<String> variantNames = (List<String>) bson.get("variantNames");
         String internalVariantName = (String)bson.get("internalVariantName");
+        String fullOnVariantName = (String)bson.get("fullOnVariantName");
         String deviceClass = (String)bson.get("deviceClass");
         Integer percentage = (Integer)bson.get("percentage");
         String description = bson.get("description") != null ? (String) bson.get("description") : null;
@@ -43,6 +44,7 @@ public class ExperimentDeserializer implements Converter<Document, ExperimentDef
                 .id(id)
                 .variantNames(variantNames)
                 .internalVariantName(internalVariantName)
+                .fullOnVariantName(fullOnVariantName)
                 .percentage(percentage)
                 .deviceClass(deviceClass)
                 .description(description)

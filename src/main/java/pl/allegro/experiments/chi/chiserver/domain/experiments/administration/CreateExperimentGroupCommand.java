@@ -2,6 +2,7 @@ package pl.allegro.experiments.chi.chiserver.domain.experiments.administration;
 
 import pl.allegro.experiments.chi.chiserver.domain.User;
 import pl.allegro.experiments.chi.chiserver.domain.UserProvider;
+import pl.allegro.experiments.chi.chiserver.domain.experiments.Experiment;
 import pl.allegro.experiments.chi.chiserver.domain.experiments.ExperimentStatus;
 import pl.allegro.experiments.chi.chiserver.domain.experiments.ExperimentsRepository;
 import pl.allegro.experiments.chi.chiserver.domain.experiments.ReportingType;
@@ -11,6 +12,7 @@ import pl.allegro.experiments.chi.chiserver.infrastructure.experiments.Experimen
 
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -70,6 +72,8 @@ public class CreateExperimentGroupCommand {
         checkIfGroupHasEnoughPercentageSpaceForAllExperiments(experiments);
 
         checkIfAllExperimentsHaveNoGroup(experiments);
+
+        checkIfNoExperimentIsFullOn(experiments);
 
         return new ExperimentGroup(id, getSalt(experiments), experiments);
     }
@@ -141,6 +145,18 @@ public class CreateExperimentGroupCommand {
 
         if (!allExperimentsExist) {
             throw new ExperimentCommandException("Cannot create group if not all experiments exist");
+        }
+    }
+
+    private void checkIfNoExperimentIsFullOn(List<String> experiments) {
+        boolean anyExperimentIsFullOn = experiments.stream()
+                .map(experimentsRepository::getExperiment)
+                .filter(Optional::isPresent)
+                .map(Optional::get)
+                .anyMatch(Experiment::isFullOn);
+
+        if (anyExperimentIsFullOn) {
+            throw new ExperimentCommandException("Cannot create group if one of the experiments is full-on");
         }
     }
 

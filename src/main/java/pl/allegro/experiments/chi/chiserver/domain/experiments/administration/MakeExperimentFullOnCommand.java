@@ -5,47 +5,46 @@ import pl.allegro.experiments.chi.chiserver.domain.experiments.ExperimentDefinit
 import pl.allegro.experiments.chi.chiserver.domain.experiments.ExperimentsRepository;
 import pl.allegro.experiments.chi.chiserver.domain.experiments.groups.ExperimentGroupRepository;
 
-public class UpdateVariantsCommand {
+public class MakeExperimentFullOnCommand {
     private final String experimentId;
-    private final UpdateVariantsProperties properties;
+    private final MakeExperimentFullOnProperties properties;
     private final ExperimentsRepository experimentsRepository;
-    private final PermissionsAwareExperimentRepository permissionsAwareExperimentRepository;
     private final ExperimentGroupRepository experimentGroupRepository;
+    private final PermissionsAwareExperimentRepository permissionsAwareExperimentRepository;
 
-    UpdateVariantsCommand(
+    MakeExperimentFullOnCommand(
             String experimentId,
-            UpdateVariantsProperties properties,
+            MakeExperimentFullOnProperties properties,
             ExperimentsRepository experimentsRepository,
-            PermissionsAwareExperimentRepository permissionsAwareExperimentRepository,
-            ExperimentGroupRepository experimentGroupRepository) {
+            ExperimentGroupRepository experimentGroupRepository,
+            PermissionsAwareExperimentRepository permissionsAwareExperimentRepository) {
         this.experimentId = experimentId;
         this.properties = properties;
         this.experimentsRepository = experimentsRepository;
-        this.permissionsAwareExperimentRepository = permissionsAwareExperimentRepository;
         this.experimentGroupRepository = experimentGroupRepository;
+        this.permissionsAwareExperimentRepository = permissionsAwareExperimentRepository;
     }
 
     public void execute() {
         Experiment experiment = permissionsAwareExperimentRepository.getExperimentOrException(experimentId);
         validate(experiment);
-        ExperimentDefinition mutated = experiment.getDefinition()
+        ExperimentDefinition fullOnExperiment = experiment
+                .getDefinition()
                 .orElseThrow(() -> new UnsupportedOperationException("Missing experiment definition"))
-                .mutate()
-                .percentage(properties.getPercentage())
-                .deviceClass(properties.getDeviceClass().orElse(null))
-                .internalVariantName(properties.getInternalVariantName().orElse(null))
-                .variantNames(properties.getVariantNames())
-                .build();
-        experimentsRepository.save(mutated);
+                .makeFullOn(properties.getVariantName());
+        experimentsRepository.save(fullOnExperiment);
     }
 
     private void validate(Experiment experiment) {
-        if (experiment.isEffectivelyEnded()) {
-            throw new ExperimentCommandException(experiment.getStatus() + " experiment event definitions cant be updated");
+        if (!experiment.isActive()) {
+            throw new ExperimentCommandException(
+                    String.format("Experiment is not ACTIVE. Now '%s' has %s status",
+                            experimentId, experiment.getStatus().toString())
+            );
         }
 
         if (experimentGroupRepository.experimentInGroup(experimentId)) {
-            throw new ExperimentCommandException("Can not change variants of experiment bounded to a group");
+            throw new ExperimentCommandException("Experiment cannot be made full-on if it belongs to a group");
         }
     }
 }

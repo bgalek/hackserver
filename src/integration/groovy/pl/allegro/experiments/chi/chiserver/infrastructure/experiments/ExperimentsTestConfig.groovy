@@ -34,7 +34,7 @@ class MutableUserProvider implements UserProvider {
 
     @Override
     User getCurrentUser() {
-        return user;
+        return user
     }
 
     void reset() {

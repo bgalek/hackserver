@@ -23,13 +23,7 @@ public class UpdateExperimentEventDefinitionsCommand {
 
     public void execute() {
         Experiment experiment = permissionsAwareExperimentRepository.getExperimentOrException(experimentId);
-        if (!experiment.getReportingDefinition().getType().equals(ReportingType.FRONTEND)) {
-            throw new ExperimentCommandException("Non frontend experiment has no event definitions");
-        }
-        if (experiment.getStatus().equals(ExperimentStatus.ENDED)) {
-            throw new ExperimentCommandException("ENDED experiment event definitions cant be updated");
-        }
-
+        validate(experiment);
         ExperimentDefinition mutated = experiment.getDefinition()
                 .orElseThrow(() -> new UnsupportedOperationException("Missing experiment definition"))
                 .mutate()
@@ -37,5 +31,14 @@ public class UpdateExperimentEventDefinitionsCommand {
                 .build();
 
         experimentsRepository.save(mutated);
+    }
+
+    private void validate(Experiment experiment) {
+        if (!experiment.getReportingDefinition().getType().equals(ReportingType.FRONTEND)) {
+            throw new ExperimentCommandException("Non frontend experiment has no event definitions");
+        }
+        if (experiment.isEffectivelyEnded()) {
+            throw new ExperimentCommandException(experiment.getStatus() + " experiment event definitions cant be updated");
+        }
     }
 }

@@ -32,7 +32,7 @@ public class CommandFactory {
         this.experimentGroupRepository = experimentGroupRepository;
     }
 
-    CreateExperimentCommand createExperimentCommand(ExperimentCreationRequest request) {
+    public CreateExperimentCommand createExperimentCommand(ExperimentCreationRequest request) {
         Preconditions.checkNotNull(request);
         return new CreateExperimentCommand(experimentsRepository, userProvider, request);
     }
@@ -153,5 +153,17 @@ public class CommandFactory {
                 deleteExperimentCommand(pairedExperimentCreationRequest.getExperimentCreationRequest().getId())
         );
 
+    }
+
+    MakeExperimentFullOnCommand makeExperimentFullOnCommand(
+            String experimentId,
+            MakeExperimentFullOnProperties properties) {
+        return new MakeExperimentFullOnCommand(
+                experimentId,
+                properties,
+                experimentsRepository,
+                experimentGroupRepository,
+                permissionsAwareExperimentRepository
+        );
     }
 }

@@ -44,6 +44,10 @@ public class ExperimentActions {
         commandFactory.updateExperimentEventDefinitionsCommand(experimentId, eventDefinitions).execute();
     }
 
+    public void makeExperimentFullOn(String experimentId, MakeExperimentFullOnProperties properties) {
+        commandFactory.makeExperimentFullOnCommand(experimentId, properties).execute();
+    }
+
     public void stop(String experimentId) {
         commandFactory.stopExperimentCommand(experimentId).execute();
     }

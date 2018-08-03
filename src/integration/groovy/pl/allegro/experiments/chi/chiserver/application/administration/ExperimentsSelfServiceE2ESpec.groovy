@@ -252,20 +252,87 @@ class ExperimentsSelfServiceE2ESpec extends BaseIntegrationSpec {
         ex.statusCode == HttpStatus.NOT_FOUND
     }
 
-    ExperimentResponseAssertions assertThatExperimentWithId(String id) {
-        def response = fetchExperiment(id)
+    def "should execute full-on command on active experiment"() {
+        given: "a user"
+        userProvider.user = new User('Anonymous', [], true)
+
+        and: "an active experiment"
+        def experimentId = UUID.randomUUID().toString()
+        def request = [
+                id                 : experimentId,
+                variantNames       : ['v2', 'v3'],
+                percentage         : 10,
+                reportingEnabled   : true
+        ]
+        restTemplate.postForEntity(localUrl('/api/admin/experiments'), request, Map)
+        restTemplate.put(localUrl("/api/admin/experiments/$experimentId/start"), [experimentDurationDays: 30], Map)
+
+        when: "full-on command is executed"
+        def properties = [variantName: 'v2']
+        restTemplate.put(localUrl("/api/admin/experiments/$experimentId/full-on"), properties, Map)
+
+        then: "an experiment goes into full-on mode"
+        def experiment = fetchExperiment(experimentId)
+        assertThatExperiment(experiment)
+            .finishedActivityBefore(ZonedDateTime.now())
+
+        assertThatExperiment(experiment)
+                .ignoringProperty("activityPeriod")
+                .hasProperties(
+                [
+                        id              : experimentId,
+                        author          : 'Anonymous',
+                        groups          : [],
+                        status          : 'FULL_ON',
+                        measurements    : [lastDayVisits: 0],
+                        editable        : true,
+                        origin          : 'MONGO',
+                        reportingEnabled: true,
+                        reportingType   : 'BACKEND',
+                        eventDefinitions: [],
+                        renderedVariants: [
+                                [
+                                        name      : 'v2',
+                                        predicates: [[type: 'FULL_ON']]
+                                ],
+                                [
+                                        name      : 'v3',
+                                        predicates: []
+                                ]
+                        ],
+                        variantNames    : ['v2', 'v3'],
+                        percentage      : 0
+                ])
+    }
+
+    private def assertThatExperimentWithId(String id) {
+        return assertThatExperiment(fetchExperiment(id))
+    }
+
+    private def static assertThatExperiment(ResponseEntity<Map> response) {
         return new ExperimentResponseAssertions(response)
     }
 
-    def fetchExperiment(String id) {
+    private def fetchExperiment(String id) {
         return restTemplate.getForEntity(localUrl("/api/admin/experiments/$id/"), Map)
     }
 
-    static class ExperimentResponseAssertions {
+    private static class ExperimentResponseAssertions {
         ResponseEntity<Map> response
 
         ExperimentResponseAssertions(ResponseEntity<Map> response) {
             this.response = response
+        }
+
+        def ignoringProperty(String propertyName) {
+            response.body.remove(propertyName)
+            return this
+        }
+
+        def finishedActivityBefore(ZonedDateTime dateTime) {
+            def activeTo = ZonedDateTime.parse(response.body.activityPeriod.activeTo as String)
+            assert activeTo <= dateTime
+            return this
         }
 
         def hasStatus(ExperimentStatus experimentStatus) {
@@ -273,6 +340,10 @@ class ExperimentsSelfServiceE2ESpec extends BaseIntegrationSpec {
             return this
         }
 
+        def hasProperties(Map expectedExperiment) {
+            assert response.body == expectedExperiment
+            return this
+        }
     }
 }
 

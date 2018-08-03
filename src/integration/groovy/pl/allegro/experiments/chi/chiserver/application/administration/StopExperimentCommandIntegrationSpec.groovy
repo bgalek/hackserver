@@ -1,103 +1,111 @@
 package pl.allegro.experiments.chi.chiserver.application.administration
 
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.test.annotation.DirtiesContext
 import org.springframework.test.context.ContextConfiguration
 import pl.allegro.experiments.chi.chiserver.BaseIntegrationSpec
 import pl.allegro.experiments.chi.chiserver.domain.User
 import pl.allegro.experiments.chi.chiserver.domain.experiments.Experiment
+import pl.allegro.experiments.chi.chiserver.domain.experiments.ExperimentsRepository
 import pl.allegro.experiments.chi.chiserver.domain.experiments.administration.*
-import pl.allegro.experiments.chi.chiserver.domain.experiments.administration.StopExperimentCommand
-import pl.allegro.experiments.chi.chiserver.domain.experiments.groups.ExperimentGroupRepository
 import pl.allegro.experiments.chi.chiserver.infrastructure.experiments.ExperimentsTestConfig
-import pl.allegro.experiments.chi.chiserver.infrastructure.experiments.MongoExperimentsRepository
 import pl.allegro.experiments.chi.chiserver.infrastructure.experiments.MutableUserProvider
-import spock.lang.Shared
+import spock.lang.Unroll
 
 import static pl.allegro.experiments.chi.chiserver.application.administration.CommandTestUtils.simpleExperimentRequest
+import static pl.allegro.experiments.chi.chiserver.domain.experiments.ExperimentStatus.*
 
 @ContextConfiguration(classes = [ExperimentsTestConfig])
-@DirtiesContext
 class StopExperimentCommandIntegrationSpec extends BaseIntegrationSpec {
 
     @Autowired
-    MongoExperimentsRepository experimentsRepository
+    ExperimentsRepository experimentsRepository
 
     @Autowired
-    ExperimentGroupRepository experimentGroupRepository
+    CommandFactory commandFactory
 
     @Autowired
     MutableUserProvider mutableUserProvider
 
-    @Shared
-    PermissionsAwareExperimentRepository permissionsAwareExperimentGetter
-
-    def setup() {
-        permissionsAwareExperimentGetter = new PermissionsAwareExperimentRepository(
-                experimentsRepository,
-                mutableUserProvider)
-    }
-
-    def "should stop experiment"() {
+    @Unroll
+    def "should stop #status experiment"() {
         given:
-        def experiment = startedExperiment()
-
-        and:
-        def stopCommand = stopCommand(experiment.id)
+        def experiment = creator(this)
 
         when:
-        stopCommand.execute()
-        experiment = experimentsRepository.getExperiment(experiment.id).get()
+        stopCommand(experiment.id).execute()
 
         then:
-        experiment.isEnded()
+        experimentsRepository.getExperiment(experiment.id).get().isEnded()
+
+        where:
+        status  | creator
+        ACTIVE  | { it.startedExperiment() }
+        FULL_ON | { it.fullOnExperiment() }
     }
 
     def "should not stop nonexistent experiment"() {
         when:
-        stopCommand('nonexistentExperimentId').execute()
+        def nonexistentExperimentId = 'nonexistentExperimentId'
+        stopCommand(nonexistentExperimentId).execute()
 
         then:
-        thrown ExperimentNotFoundException
+        def exception = thrown ExperimentNotFoundException
+        exception.message == "Experiment not found: $nonexistentExperimentId"
     }
 
-    def "should not stop experiment if it is not ACTIVE"() {
+    @Unroll
+    def "should not stop #status experiment"() {
+        given:
+        def experiment = creator(this)
+
         when:
-        stopCommand(draftExperiment().id).execute()
+        stopCommand(experiment.id).execute()
 
         then:
-        ExperimentCommandException e = thrown()
-        e.message.startsWith("Experiment is not ACTIVE")
+        def exception = thrown ExperimentCommandException
+        exception.message == "$status experiment cannot be ended"
+
+        where:
+        status | creator
+        DRAFT  | { it.draftExperiment() }
+        ENDED  | { it.endedExperiment() }
+    }
+
+    def fullOnExperiment() {
+        def experiment = startedExperiment()
+        def command = commandFactory.makeExperimentFullOnCommand(
+                experiment.id,
+                new MakeExperimentFullOnProperties(experiment.variants.first().getName()))
+        command.execute()
+        return experimentsRepository.getExperiment(experiment.id).get()
+    }
+
+    def endedExperiment() {
+        def experiment = startedExperiment()
+        def command = stopCommand(experiment.id)
+        command.execute()
+        return experimentsRepository.getExperiment(experiment.id).get()
     }
 
     def startedExperiment() {
         def experiment = draftExperiment()
-        def startCommand = new StartExperimentCommand(
-                experimentsRepository,
-                new StartExperimentProperties(30),
-                permissionsAwareExperimentGetter,
-                experimentGroupRepository,
-                experiment.id)
-        startCommand.execute()
+        def command = commandFactory.startExperimentCommand(
+                experiment.id,
+                new StartExperimentProperties(30))
+        command.execute()
         return experimentsRepository.getExperiment(experiment.id).get()
     }
 
     Experiment draftExperiment() {
         def id = UUID.randomUUID().toString()
         mutableUserProvider.user = new User('Root', [], true)
-        def command = new CreateExperimentCommand(
-                experimentsRepository,
-                mutableUserProvider,
-                simpleExperimentRequest(id))
+        def command = commandFactory.createExperimentCommand(simpleExperimentRequest(id))
         command.execute()
-        experimentsRepository.getExperiment(id).get()
+        return experimentsRepository.getExperiment(id).get()
     }
 
     StopExperimentCommand stopCommand(String experimentId) {
-        new StopExperimentCommand(
-                experimentId,
-                experimentsRepository,
-                permissionsAwareExperimentGetter)
+        return commandFactory.stopExperimentCommand(experimentId)
     }
 
 }

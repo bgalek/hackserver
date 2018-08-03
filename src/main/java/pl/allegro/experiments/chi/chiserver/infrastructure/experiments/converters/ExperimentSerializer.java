@@ -29,6 +29,7 @@ public class ExperimentSerializer implements Converter<ExperimentDefinition, Doc
         result.put("_id", source.getId());
         result.put("variantNames", source.getVariantNames());
         result.put("internalVariantName", source.getInternalVariantName().orElse(null));
+        result.put("fullOnVariantName", source.getFullOnVariantName().orElse(null));
         result.put("deviceClass", source.getDeviceClass().toJsonString());
         result.put("percentage", source.getPercentage().orElse(null));
 

@@ -37,6 +37,7 @@ class JsonConfig {
                 .registerTypeAdapter(CustomParameterPredicate.class, new CustomParameterPredicateSerializer())
                 .registerTypeAdapter(ExperimentGroup.class, new ExperimentGroupTypeSerializer())
                 .registerTypeAdapter(InternalPredicate.class, new InternalPredicateSerializer())
+                .registerTypeAdapter(FullOnPredicate.class, new FullOnPredicateSerializer())
                 .registerTypeAdapter(DeviceClassPredicate.class, new DeviceClassPredicateSerializer())
                 .registerTypeAdapter(ExperimentVariant.class, new ExperimentVariantTypeAdapter())
                 .registerTypeAdapter(LocalDate.class, new LocalDateTypeAdapter())

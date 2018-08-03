@@ -187,6 +187,16 @@ public class ExperimentsController {
     }
 
     @MeteredEndpoint
+    @PutMapping(path = "{experimentId}/full-on")
+    ResponseEntity<String> makeExperimentFullOn(
+            @PathVariable String experimentId,
+            @RequestBody MakeExperimentFullOnProperties properties) {
+        logger.info("Make experiment full-on request received: " + experimentId);
+        experimentActions.makeExperimentFullOn(experimentId, properties);
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    @MeteredEndpoint
     @DeleteMapping(path = "{experimentId}")
     ResponseEntity<String> deleteExperiment(@PathVariable String experimentId) {
         logger.info("Delete experiment request received: " + experimentId);

@@ -46,6 +46,8 @@ public class ExperimentVariantTypeAdapter implements JsonSerializer<ExperimentVa
             return deserializeInternalVariant(json);
         } else if (PredicateType.CUSTOM_PARAM.toString().equals(type)) {
             return deserializeCustomParameterPredicate(json);
+        } else if (PredicateType.FULL_ON.toString().equals(type)) {
+            return deserializeFullOnPredicate(json);
         }
 
         throw new IllegalArgumentException("Cannot handle ExperimentInteraction type : " + type);
@@ -75,5 +77,9 @@ public class ExperimentVariantTypeAdapter implements JsonSerializer<ExperimentVa
     private Predicate deserializeDevicePredicate(JsonObject json) {
         String device = json.get("device").getAsString();
         return new DeviceClassPredicate(device);
+    }
+
+    private Predicate deserializeFullOnPredicate(JsonObject json) {
+        return new FullOnPredicate();
     }
 }

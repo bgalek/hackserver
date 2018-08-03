@@ -15,6 +15,7 @@ public class PredicateDeserializer implements Converter<Document, Predicate> {
     public PredicateDeserializer() {
         predicateDeserializers.put(PredicateType.HASH.toString(), new HashRangePredicateDeserializer());
         predicateDeserializers.put(PredicateType.INTERNAL.toString(), new InternalPredicateDeserializer());
+        predicateDeserializers.put(PredicateType.FULL_ON.toString(), new FullOnPredicateDeserializer());
         predicateDeserializers.put(PredicateType.DEVICE_CLASS.toString(), new DeviceClassPredicateDeserializer());
         predicateDeserializers.put(PredicateType.CMUID_REGEXP.toString(), new CmuidRegexpPredicateDeserializer());
     }
@@ -42,6 +43,13 @@ public class PredicateDeserializer implements Converter<Document, Predicate> {
         @Override
         public Predicate convert(Document source) {
             return new InternalPredicate();
+        }
+    }
+
+    class FullOnPredicateDeserializer implements Converter<Document, Predicate> {
+        @Override
+        public Predicate convert(Document source) {
+            return new FullOnPredicate();
         }
     }
 

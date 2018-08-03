@@ -5,7 +5,7 @@ import com.google.common.base.Preconditions;
 import java.time.ZonedDateTime;
 
 public enum ExperimentStatus {
-    DRAFT(false), PLANNED(false), ACTIVE(false), ENDED(false), PAUSED(true);
+    DRAFT(false), PLANNED(false), ACTIVE(false), ENDED(false), PAUSED(true), FULL_ON(true);
 
     boolean explicit;
 
@@ -37,7 +37,7 @@ public enum ExperimentStatus {
     }
 
     public static ExperimentStatus of(ExperimentStatus status, ActivityPeriod activityPeriod) {
-        Preconditions.checkArgument(status == null || status == ExperimentStatus.PAUSED, "Explicit experiment explicitStatus can be only PAUSED");
+        Preconditions.checkArgument(status == null || status.isExplicit(), "Explicit experiment explicitStatus can be only PAUSED OR FULL_ON");
         if (status == null) {
             return of(activityPeriod);
         }

@@ -24,5 +24,4 @@ public class ExperimentVariant {
     public List<Predicate> getPredicates() {
         return predicates;
     }
-
 }

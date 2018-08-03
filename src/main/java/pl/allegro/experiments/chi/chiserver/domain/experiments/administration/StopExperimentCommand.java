@@ -34,8 +34,8 @@ public class StopExperimentCommand {
     }
 
     private void validate(Experiment experiment) {
-        if (!experiment.isActive()) {
-            throw new ExperimentCommandException("Experiment is not ACTIVE: " + experimentId);
+        if (!experiment.isEndable()) {
+            throw new ExperimentCommandException(experiment.getStatus() + " experiment cannot be ended");
         }
     }
 }

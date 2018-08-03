@@ -16,12 +16,18 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
+
+import static java.util.stream.Collectors.toList;
+import static java.util.stream.Stream.concat;
 
 @TypeName("Experiment")
 public class ExperimentDefinition {
     private final String id;
     private final List<String> variantNames;
     private final String internalVariantName;
+    private final String fullOnVariantName;
     private final Integer percentage;
     private final DeviceClass deviceClass;
     private final String description;
@@ -40,6 +46,7 @@ public class ExperimentDefinition {
             String id,
             List<String> variantNames,
             String internalVariantName,
+            String fullOnVariantName,
             Integer percentage,
             DeviceClass deviceClass,
             String description,
@@ -58,9 +65,11 @@ public class ExperimentDefinition {
         Preconditions.checkNotNull(groups);
         Preconditions.checkNotNull(deviceClass);
         Preconditions.checkArgument(internalVariantName == null || !internalVariantName.isEmpty());
+        Preconditions.checkArgument(fullOnVariantName == null || !fullOnVariantName.isEmpty());
         this.id = id;
         this.variantNames = ImmutableList.copyOf(variantNames);
         this.internalVariantName = internalVariantName;
+        this.fullOnVariantName = fullOnVariantName;
         this.percentage = percentage;
         this.deviceClass = deviceClass;
         this.description = emptyToNull(description);
@@ -97,7 +106,10 @@ public class ExperimentDefinition {
     }
 
     @DiffInclude
-    public Optional<String> getInternalVariantName() { return Optional.ofNullable(internalVariantName); };
+    public Optional<String> getInternalVariantName() { return Optional.ofNullable(internalVariantName); }
+
+    @DiffInclude
+    public Optional<String> getFullOnVariantName() { return Optional.ofNullable(fullOnVariantName); }
 
     @DiffInclude
     public Optional<Integer> getPercentage() {
@@ -199,6 +211,10 @@ public class ExperimentDefinition {
         return getStatus() == ExperimentStatus.ACTIVE;
     }
 
+    public boolean isFullOn() {
+        return getStatus() == ExperimentStatus.FULL_ON;
+    }
+
     public boolean isAssignable() {
         return !isEnded() && !isPaused();
     }
@@ -216,6 +232,7 @@ public class ExperimentDefinition {
         final ActivityPeriod activityPeriod = this.activityPeriod.endNow();
         return mutate()
                 .activityPeriod(activityPeriod)
+                .explicitStatus(null)
                 .build();
     }
 
@@ -228,6 +245,18 @@ public class ExperimentDefinition {
     public ExperimentDefinition resume() {
         return mutate()
                 .explicitStatus(null)
+                .build();
+    }
+
+    public ExperimentDefinition makeFullOn(String fullOnVariantName) {
+        Preconditions.checkNotNull(fullOnVariantName);
+        Preconditions.checkNotNull(this.activityPeriod);
+        final ActivityPeriod activityPeriod = this.activityPeriod.endNow();
+        return mutate()
+                .activityPeriod(activityPeriod)
+                .explicitStatus(ExperimentStatus.FULL_ON)
+                .fullOnVariantName(fullOnVariantName)
+                .percentage(0)
                 .build();
     }
 
@@ -278,28 +307,58 @@ public class ExperimentDefinition {
         return new Builder();
     }
 
+    private List<ExperimentVariant> prepareExperimentVariants() {
+        if (isFullOn()) {
+            return prepareFullOnVariants();
+        } else {
+            return concat(prepareInternalVariants().stream(), preparePercentageVariants().stream())
+                    .collect(toList());
+        }
+    }
+
+    private List<ExperimentVariant> prepareInternalVariants() {
+        if (internalVariantName != null) {
+            return List.of(
+                    new ExperimentVariant(internalVariantName, ImmutableList.of(new InternalPredicate())));
+        } else {
+            return List.of();
+        }
+    }
+
+    private List<ExperimentVariant> preparePercentageVariants() {
+        if (percentage != null && !variantNames.isEmpty()) {
+            int maxPercentageVariant = 100 / variantNames.size();
+            if (percentage > maxPercentageVariant) {
+                throw new ExperimentDefinitionException(
+                        "Percentage exceeds maximum value ( " + percentage + " > " + maxPercentageVariant + " )");
+            }
+
+            return IntStream.range(0, variantNames.size()).mapToObj( i -> convertVariant(
+                    variantNames.get(i), i * maxPercentageVariant, i * maxPercentageVariant + percentage)
+            ).collect(toList());
+        }  else {
+            return List.of();
+        }
+    }
+
+    private List<ExperimentVariant> prepareFullOnVariants() {
+        Preconditions.checkNotNull(fullOnVariantName);
+        return variantNames.stream()
+                .map(it -> {
+                    if (it.equals(fullOnVariantName)) {
+                        return new ExperimentVariant(it, ImmutableList.of(new FullOnPredicate()));
+                    } else {
+                        return new ExperimentVariant(it, ImmutableList.of());
+                    }
+                }).collect(toList());
+    }
+
     @Deprecated
     public Experiment toExperiment() {
         try {
-            final var experimentVariants = new ArrayList<ExperimentVariant>();
-
-            if (internalVariantName != null) {
-                experimentVariants.add(new ExperimentVariant(internalVariantName, ImmutableList.of(new InternalPredicate())));
-            }
-
-            if (percentage != null && !variantNames.isEmpty()) {
-                int maxPercentageVariant = 100 / variantNames.size();
-                if (percentage > maxPercentageVariant) {
-                    throw new ExperimentDefinitionException("Percentage exceeds maximum value ( " + percentage + " > " + maxPercentageVariant + " )");
-                }
-                for (int i = 0; i < variantNames.size(); i++) {
-                    experimentVariants.add(convertVariant(variantNames.get(i), i * maxPercentageVariant, i * maxPercentageVariant + percentage));
-                }
-            }
-
             return Experiment.builder()
                     .id(id)
-                    .variants(experimentVariants)
+                    .variants(prepareExperimentVariants())
                     .description(description)
                     .documentLink(documentLink)
                     .author(author)
@@ -323,6 +382,7 @@ public class ExperimentDefinition {
                     .id(other.id)
                     .variantNames(other.variantNames)
                     .internalVariantName(other.internalVariantName)
+                    .fullOnVariantName(other.fullOnVariantName)
                     .deviceClass(other.deviceClass)
                     .percentage(other.percentage)
                     .description(other.description)
@@ -340,6 +400,7 @@ public class ExperimentDefinition {
         private String id;
         private List<String> variantNames;
         private String internalVariantName;
+        private String fullOnVariantName;
         private Integer percentage;
         private DeviceClass deviceClass = DeviceClass.all;
         private String description;
@@ -371,6 +432,11 @@ public class ExperimentDefinition {
 
         public Builder internalVariantName(String internalVariantName) {
             this.internalVariantName = internalVariantName;
+            return this;
+        }
+
+        public Builder fullOnVariantName(String fullOnVariantName) {
+            this.fullOnVariantName = fullOnVariantName;
             return this;
         }
 
@@ -444,6 +510,7 @@ public class ExperimentDefinition {
                     id,
                     variantNames,
                     internalVariantName,
+                    fullOnVariantName,
                     percentage,
                     deviceClass,
                     description,

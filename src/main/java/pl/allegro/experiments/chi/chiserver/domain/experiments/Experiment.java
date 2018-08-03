@@ -158,12 +158,23 @@ public class Experiment {
         return getStatus() == ExperimentStatus.ACTIVE;
     }
 
+    public boolean isFullOn() {
+        return getStatus() == ExperimentStatus.FULL_ON;
+    }
+
     public boolean isAssignable() {
         return !isEnded() && !isPaused();
     }
 
-    public Builder mutate() {
+    public boolean isEffectivelyEnded() {
+        return isEnded() || isFullOn();
+    }
 
+    public boolean isEndable() {
+        return isActive() || isFullOn();
+    }
+
+    public Builder mutate() {
         return Builder.from(this);
     }
 
