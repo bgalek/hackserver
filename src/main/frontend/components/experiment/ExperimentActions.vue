@@ -25,12 +25,12 @@
         <h4 style="margin-top: 5px">Lifecycle actions</h4>
 
         <v-text-field
-               style="width: 200px"
-               v-if="this.experiment.canBeStarted()"
-               label="Duration days"
-               v-model="durationDays"
-               :rules="durationDaysRules"
-               required
+          style="width: 200px"
+          v-if="this.experiment.canBeStarted()"
+          label="Duration days"
+          v-model="durationDays"
+          :rules="durationDaysRules"
+          required
         ></v-text-field>
 
         <v-btn v-if="this.experiment.canBeStarted()"
@@ -38,22 +38,24 @@
                @click="start"
                style="text-transform: none"
                class="white--text">
-          Start experiment<v-icon right dark>play_arrow</v-icon>
+          Start experiment
+          <v-icon right dark>play_arrow</v-icon>
         </v-btn>
 
         <v-menu :close-on-content-click="false"
                 v-model="prolongMenuVisible"
                 v-if="this.experiment.canBeProlonged()">
           <v-btn color="gray" slot="activator" style="text-transform: none">
-            Prolong <v-icon right>alarm_add</v-icon>
+            Prolong
+            <v-icon right>alarm_add</v-icon>
           </v-btn>
 
           <v-list style="padding:15px; display: block;">
             <v-text-field
-                   label="Additional days"
-                   v-model="additionalDurationDays"
-                   :rules="durationDaysRules"
-                   required
+              label="Additional days"
+              v-model="additionalDurationDays"
+              :rules="durationDaysRules"
+              required
             ></v-text-field>
 
             <v-btn flat @click="closeProlong()">Cancel</v-btn>
@@ -68,7 +70,8 @@
         <v-menu bottom offset-y
                 v-if="this.experiment.canBePaused()">
           <v-btn color="gray" slot="activator" style="text-transform: none">
-            Pause<v-icon right>pause</v-icon>
+            Pause
+            <v-icon right>pause</v-icon>
           </v-btn>
           <v-list>
             <v-list-tile @click="pause">
@@ -80,7 +83,8 @@
         <v-menu bottom offset-y
                 v-if="this.experiment.canBeResumed()">
           <v-btn color="gray" slot="activator" style="text-transform: none">
-            Resume<v-icon right>play_arrow</v-icon>
+            Resume
+            <v-icon right>play_arrow</v-icon>
           </v-btn>
           <v-list>
             <v-list-tile @click="resume">
@@ -89,11 +93,36 @@
           </v-list>
         </v-menu>
 
+        <v-menu :close-on-content-click="false"
+                v-model="fullOnMenuVisible"
+                v-if="this.experiment.canBeFullOn()">
+          <v-btn color="gray" slot="activator" style="text-transform: none">
+            Full-on
+            <v-icon right>check_circle</v-icon>
+          </v-btn>
+          <v-list style="padding:15px; display: block;">
+            <v-select
+              v-model="selectedFullOnVariant"
+              :items="Array.from(this.experiment.variantNames)"
+              label="Choose variant"
+            ></v-select>
+            <v-btn flat @click="closeFullOn()">Cancel</v-btn>
+            <v-btn color="gray"
+                   :disabled="!fullOnVariantSelected()"
+                   @click="fullOn"
+                   style="text-transform: none">
+              Make experiment &nbsp;<b>{{ this.experiment.id }}</b>&nbsp; full-on
+            </v-btn>
+          </v-list>
+        </v-menu>
+
+        {{ this.selectedFullOnVariant }}
 
         <v-menu bottom offset-y
                 v-if="this.experiment.canBeStopped()">
           <v-btn color="gray" slot="activator" style="text-transform: none">
-            Stop <v-icon right>stop</v-icon>
+            Stop
+            <v-icon right>stop</v-icon>
           </v-btn>
           <v-list>
             <v-list-tile @click="stop">
@@ -198,8 +227,8 @@
   import ExperimentVariantsEditing from './ExperimentVariantsEditing.vue'
   import ExperimentEventFilters from './ExperimentEventFilters'
   import ChiPanel from '../ChiPanel.vue'
-  import { mapActions } from 'vuex'
-  import { slugify } from '../../utils/slugify'
+  import {mapActions} from 'vuex'
+  import {slugify} from '../../utils/slugify'
 
   export default {
     props: ['experiment', 'allowDelete'],
@@ -220,9 +249,11 @@
         variantsEditingResult: {},
         eventDefinitionsEditingResult: this.experiment.eventDefinitions.toArray(),
         prolongMenuVisible: false,
+        fullOnMenuVisible: false,
         commandOkMessage: '',
         actionFormValid: true,
         durationDays: '14',
+        selectedFullOnVariant: '',
         additionalDurationDays: '14',
         durationDaysRules: [
           (v) => !!v || 'duration is required',
@@ -285,6 +316,21 @@
         }
       },
 
+      fullOn () {
+        this.prepareToSend()
+        this.makeExperimentFullOn({
+          params: {experimentId: this.experiment.id},
+          data: {variantName: 'v1'}
+        }).then(response => {
+          this.afterSending()
+          this.getExperiment({params: {experimentId: this.experiment.id}})
+          this.commandOkMessage = 'Experiment made full-on'
+        }).catch(error => {
+          this.afterSending()
+          this.showError(error)
+        })
+      },
+
       stop () {
         this.prepareToSend()
         this.stopExperiment({
@@ -331,14 +377,23 @@
         this.prolongMenuVisible = false
       },
 
+      fullOnVariantSelected () {
+        return this.selectedFullOnVariant !== ''
+      },
+
+      closeFullOn () {
+        this.selectedFullOnVariant = ''
+        this.fullOnMenuVisible = false
+      },
+
       closeDescriptions () {
         this.descriptionsMenuVisible = false
       },
 
       descriptionsChanged () {
         return this.descriptionsEditingResult.description !== this.experiment.description ||
-               JSON.stringify(this.descriptionsEditingResult.groups) !== JSON.stringify(this.experiment.groups) ||
-               this.descriptionsEditingResult.documentLink !== this.experiment.documentLink
+          JSON.stringify(this.descriptionsEditingResult.groups) !== JSON.stringify(this.experiment.groups) ||
+          this.descriptionsEditingResult.documentLink !== this.experiment.documentLink
       },
 
       updateDescriptions () {
@@ -481,6 +536,7 @@
         'getExperiment',
         'deleteExperiment',
         'stopExperiment',
+        'makeExperimentFullOn',
         'pauseExperiment',
         'resumeExperiment',
         'prolongExperiment',

@@ -56,6 +56,8 @@ export default class ExperimentVariantModel extends ExperimentVariantRecord {
       return p.ranges.map(r => `${r.from} - ${r.to} %`).join(' AND ')
     } else if (p.type === 'SHRED_HASH' && isDraft) {
       return p.ranges.map(r => `${(r.to - r.from)} %`).join(' AND ')
+    } else if (p.type === 'FULL_ON') {
+      return 'FULL-ON'
     }
     return ''
   }

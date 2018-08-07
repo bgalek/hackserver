@@ -65,6 +65,8 @@ export default class ExperimentModel extends ExperimentRecord {
       } else
       if (this.status === 'ENDED') {
         return 'ended ' + this.activityPeriod.toDateShortString()
+      } else if (this.status === 'FULL_ON') {
+        return 'made full-on ' + this.activityPeriod.toDateShortString()
       } else {
         return 'started ' + this.activityPeriod.fromDateShortString()
       }
@@ -110,6 +112,10 @@ export default class ExperimentModel extends ExperimentRecord {
   }
 
   canBeStopped () {
+    return this.origin === 'MONGO' && ['ACTIVE', 'FULL_ON'].includes(this.status)
+  }
+
+  canBeFullOn () {
     return this.origin === 'MONGO' && this.status === 'ACTIVE'
   }
 
@@ -126,11 +132,15 @@ export default class ExperimentModel extends ExperimentRecord {
   }
 
   canChangeVariants () {
-    return this.origin === 'MONGO' && this.status !== 'ENDED' && !this.isInGroup()
+    return this.origin === 'MONGO' && !this.isEffectivelyEnded() && !this.isInGroup()
+  }
+
+  isEffectivelyEnded () {
+    return this.status === 'ENDED' || this.status === 'FULL_ON'
   }
 
   canChangeEventDefinitions () {
-    return this.reportingType === 'FRONTEND' && this.status !== 'ENDED'
+    return this.reportingType === 'FRONTEND' && !this.isEffectivelyEnded()
   }
 
   isInGroup () {

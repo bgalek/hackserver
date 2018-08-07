@@ -22,6 +22,7 @@ import prolongExperiment from './prolongExperiment'
 import user from './user'
 import {userPreferences} from './userPreferences'
 import createPersistedState from 'vuex-persistedstate'
+import makeExperimentFullOn from './makeExperimentFullOn'
 
 Vue.use(Vuex)
 
@@ -45,6 +46,7 @@ export default new Vuex.Store({
     deleteExperiment,
     userPreferences,
     stopExperiment,
+    makeExperimentFullOn,
     pauseExperiment,
     resumeExperiment,
     prolongExperiment,

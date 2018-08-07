@@ -1,11 +1,13 @@
 <template>
 
-  <chi-panel title="Chi cookie assignments">
+  <chi-panel
+    title="Chi cookie assignments"
+    v-if="!experiment.isEffectivelyEnded()">
     <v-layout row>
       <v-flex>
         <assignment-button
           v-if="experiment"
-          v-for="(variant, i) in experiment.variants"
+          v-for="variant in experiment.variants"
           :key="variant.name"
           :color="variant.color"
           :title="variant.name"

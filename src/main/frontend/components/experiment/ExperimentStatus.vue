@@ -1,7 +1,7 @@
 <template>
   <span>
     <v-chip outline disabled :color="statusColor()">
-      {{ experiment.status }}
+      {{ formatStatusName() }}
     </v-chip>
 
     <v-chip v-if="showReportingStatus" disabled outline :color="reportingEnabledButtonClass()" >
@@ -20,7 +20,8 @@
           DRAFT: 'gray',
           PLANNED: 'blue',
           ACTIVE: 'green',
-          ENDED: 'black'
+          ENDED: 'black',
+          FULL_ON: 'black'
         }
         return colors[this.experiment.status] || 'gray'
       },
@@ -31,6 +32,10 @@
 
       reportingEnabledButtonText () {
         return this.experiment.reportingEnabled ? 'Reporting enabled' : 'Reporting disabled'
+      },
+
+      formatStatusName () {
+        return this.experiment.status.replace('_', '-')
       }
     }
   }
