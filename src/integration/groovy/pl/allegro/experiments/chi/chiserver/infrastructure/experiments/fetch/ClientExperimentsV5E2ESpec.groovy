@@ -1,19 +1,13 @@
 package pl.allegro.experiments.chi.chiserver.infrastructure.experiments.fetch
 
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.http.ResponseEntity
 import org.springframework.web.client.RestTemplate
 import pl.allegro.experiments.chi.chiserver.BaseIntegrationSpec
 import pl.allegro.experiments.chi.chiserver.domain.User
 import pl.allegro.experiments.chi.chiserver.domain.UserProvider
-import pl.allegro.experiments.chi.chiserver.domain.experiments.groups.ExperimentGroupRepository
-import pl.allegro.experiments.chi.chiserver.infrastructure.experiments.CachedExperimentGroupRepository
 import spock.lang.Unroll
 
 class ClientExperimentsV5E2ESpec extends BaseIntegrationSpec {
-
-    @Autowired
-    ExperimentGroupRepository experimentGroupRepository
 
     RestTemplate restTemplate = new RestTemplate()
 
@@ -21,41 +15,36 @@ class ClientExperimentsV5E2ESpec extends BaseIntegrationSpec {
     UserProvider userProvider
 
     def setup() {
-        if (!experimentGroupRepository instanceof CachedExperimentGroupRepository) {
-            throw new RuntimeException("We should test cached repository")
-        }
-        ResponseEntity.metaClass.numberOfExperimentsPresent << { List<String> experimentIds ->
-            getBody().stream()
-                    .filter({e -> e.id in experimentIds})
-                    .count()
-        }
         userProvider.user = new User('Author', [], true)
     }
 
-    def "should ignore full-on experiments in client api v4"() {
+    @Unroll
+    def "should ignore full-on experiments in client API #apiVersion"() {
         given:
         def draftExperimentId = createDraftExperiment(['base', 'v1'])
         def startedExperimentId = createStartedExperiment(['base', 'v1'])
         def fullOnExperimentId = createFullOnExperiment(['base', 'v1'], 'v1')
-        def experiments = [draftExperimentId, startedExperimentId, fullOnExperimentId]
 
         when:
-        def response = restTemplate.getForEntity(localUrl("/api/experiments/v4"), List)
+        def response = restTemplate.getForEntity(localUrl("/api/experiments/$apiVersion"), List)
 
         then:
-        response.numberOfExperimentsPresent(experiments) == 2
         def presentIds = response.body.collect{it.id}
         presentIds.contains(draftExperimentId)
         presentIds.contains(startedExperimentId)
         !presentIds.contains(fullOnExperimentId)
+
+        where:
+        apiVersion << ["v1","v2","v3","v4"]
     }
 
-    def "should return full-on experiment in client api v5"() {
+    @Unroll
+    def "should return full-on experiment in client API #apiDesc"() {
         given:
         createFullOnExperiment(['base', 'v1'], 'v1', "full-on_exp")
 
         when:
-        def response = restTemplate.getForEntity(localUrl("/api/experiments/v5"), List)
+        def response = restTemplate.getForEntity(localUrl("/api/experiments/$apiVersion"), List)
 
         then:
         response.body.contains([
@@ -73,6 +62,10 @@ class ClientExperimentsV5E2ESpec extends BaseIntegrationSpec {
                 ]
             ]
         ])
+
+        where:
+        apiVersion << ["v5", ""]
+        apiDesc <<    ["v5", "latest"]
     }
 
     def createDraftExperiment(List<String> variants, String id = UUID.randomUUID().toString()) {

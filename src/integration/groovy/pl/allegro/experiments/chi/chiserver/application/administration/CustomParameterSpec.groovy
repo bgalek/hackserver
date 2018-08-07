@@ -22,55 +22,39 @@ class CustomParameterSpec extends BaseIntegrationSpec {
     UserProvider userProvider
 
     @Unroll
-    def "should save experiment with custom parameter definition and return it for clients with API version >= 4"() {
+    def "should save experiment with custom parameter definition and return it for clients"() {
         given:
             def expId = UUID.randomUUID().toString()
 
             userProvider.user = new User('Author', [], true)
-            def request = [
-                    id                  : expId,
-                    description         : "desc",
-                    variantNames        : ['base'],
-                    internalVariantName : 'v1',
-                    percentage          : 1,
-                    reportingEnabled    : true,
-                    customParameterName : 'this is name',
-                    customParameterValue: 'this is value'
-
-            ]
+            def request = requestExperimentWithCustomParam(expId, 'this is name', 'this is value')
             restTemplate.postForEntity(localUrl('/api/admin/experiments/'), request, Map)
 
         when:
-            def response = restTemplate.getForEntity(localUrl("/api/experiments/" + version), List)
+            def response = restTemplate.getForEntity(localUrl("/api/experiments"), List)
+            def exp = response.body.find({it.id == expId})
 
         then:
-            condtion(response.body.find({it.id == expId}))
-
-        where:
-        version | condtion
-        "v1/"   | {!it}
-        "v2/"   | {!it}
-        "v3/"   | {!it}
-        "v4/"   | hasBaseVariantWithCustomParamPredicate('this is name', 'this is value')
-        ""      | hasBaseVariantWithCustomParamPredicate('this is name', 'this is value')
+            exp.id == expId
+            exp.status == "DRAFT"
+            exp.variants.find{it.name == "base"}
+               .predicates.contains([type: 'CUSTOM_PARAM', name: 'this is name', value: 'this is value'])
     }
 
-    def hasBaseVariantWithCustomParamPredicate(String expectedName, String expectedValue) {
-        return {
-            it.variants
-                    .find({ it.name == 'base' })
-                    .predicates
-                    .contains([type: 'CUSTOM_PARAM', name: expectedName, value: expectedValue])
-        }
-    }
+    static Map requestExperimentWithCustomParam(String expId,
+                                                String customParameterName = 'name',
+                                                String customParameterValue = 'value') {
+        [
+                id                  : expId,
+                description         : "desc",
+                variantNames        : ['base'],
+                internalVariantName : 'v1',
+                percentage          : 1,
+                reportingEnabled    : true,
+                customParameterName : customParameterName,
+                customParameterValue: customParameterValue
 
-    def hasBaseVariantWithoutCustomParamPredicate() {
-        return {
-            !it.variants
-                    .find({ it.name == 'base' })
-                    .predicates
-                    .find({it.type == 'CUSTOM_PARAM'})
-        }
+        ]
     }
 
     @Unroll
@@ -110,16 +94,7 @@ class CustomParameterSpec extends BaseIntegrationSpec {
             def expId = UUID.randomUUID().toString()
 
             userProvider.user = new User('Author', [], true)
-            def request = [
-                    id                  : expId,
-                    description         : "desc",
-                    variantNames        : ['base'],
-                    internalVariantName : 'v1',
-                    percentage          : 1,
-                    reportingEnabled    : true,
-                    customParameterName : name,
-                    customParameterValue: value
-            ]
+            def request = requestExperimentWithCustomParam(expId, name, value)
             restTemplate.postForEntity(localUrl('/api/admin/experiments/'), request, Map)
 
         when:
@@ -134,7 +109,23 @@ class CustomParameterSpec extends BaseIntegrationSpec {
             ''              | null                      | hasBaseVariantWithoutCustomParamPredicate()
             ' '             | null                      | hasBaseVariantWithoutCustomParamPredicate()
             ' notBlank '    | ' this will be trimmed '  | hasBaseVariantWithCustomParamPredicate('notBlank', 'this will be trimmed')
+    }
 
+    def hasBaseVariantWithCustomParamPredicate(String expectedName, String expectedValue) {
+        return {
+            it.variants
+                    .find({ it.name == 'base' })
+                    .predicates
+                    .contains([type: 'CUSTOM_PARAM', name: expectedName, value: expectedValue])
+        }
+    }
 
+    def hasBaseVariantWithoutCustomParamPredicate() {
+        return {
+            !it.variants
+                    .find({ it.name == 'base' })
+                    .predicates
+                    .find({it.type == 'CUSTOM_PARAM'})
+        }
     }
 }
