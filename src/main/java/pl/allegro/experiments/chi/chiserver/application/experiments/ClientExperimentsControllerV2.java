@@ -7,46 +7,50 @@ import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import pl.allegro.experiments.chi.chiserver.domain.experiments.ExperimentsRepository;
+import pl.allegro.experiments.chi.chiserver.domain.experiments.Experiment;
 import pl.allegro.experiments.chi.chiserver.domain.experiments.groups.ExperimentGroupRepository;
 import pl.allegro.experiments.chi.chiserver.infrastructure.ClientExperiment;
 import pl.allegro.tech.common.andamio.metrics.MeteredEndpoint;
 
-import java.util.stream.Collectors;
+import java.util.stream.Stream;
+
+import static java.util.stream.Collectors.toList;
 
 @RestController
 @RequestMapping(value = {"/api/experiments"}, produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_JSON_UTF8_VALUE})
 class ClientExperimentsControllerV2 {
-    private final ExperimentsRepository experimentsRepository;
-    private final Gson jsonConverter;
-    private final CrisisManagementFilter crisisManagementFilter;
+    final Gson jsonConverter;
     private final ExperimentGroupRepository experimentGroupRepository;
+
+    private final ClientExperimentsControllerV3 controllerV3;
 
     private static final Logger logger = LoggerFactory.getLogger(ClientExperimentsControllerV2.class);
 
-    ClientExperimentsControllerV2(
-            ExperimentsRepository experimentsRepository,
-            Gson jsonConverter,
-            CrisisManagementFilter crisisManagementFilter,
-            ExperimentGroupRepository experimentGroupRepository) {
-        this.experimentsRepository = experimentsRepository;
-        this.jsonConverter = jsonConverter;
-        this.crisisManagementFilter = crisisManagementFilter;
-        this.experimentGroupRepository = experimentGroupRepository;
+    ClientExperimentsControllerV2(ClientExperimentsControllerV3 controllerV3) {
+        this.controllerV3 = controllerV3;
+        this.jsonConverter = controllerV3.jsonConverter;
+        this.experimentGroupRepository = controllerV3.experimentGroupRepository;
+    }
+
+    private boolean isV2Compliant(Experiment experiment) {
+        return !experimentGroupRepository.experimentInGroup(experiment.getId());
+    }
+
+    Stream<Experiment> experimentStream() {
+        return controllerV3.experimentStream().filter(this::isV2Compliant);
+    }
+
+    private ClientExperiment convertToClientExperiment(Experiment experiment) {
+        return new ClientExperiment(experiment);
     }
 
     @MeteredEndpoint
     @GetMapping(path = {"/v2"})
     String experiments() {
         logger.debug("Client V2 experiments request received");
-
-        return jsonConverter.toJson(experimentsRepository
-                .assignable()
-                .stream()
-                .filter(crisisManagementFilter::filter)
-                .filter(experiment -> !experiment.hasCustomParam())
-                .filter(experiment -> !experimentGroupRepository.experimentInGroup(experiment.getId()))
-                .map(it -> new ClientExperiment(it))
-                .collect(Collectors.toList()));
+        return jsonConverter.toJson(experimentStream()
+                .map(this::convertToClientExperiment)
+                .collect(toList())
+        );
     }
 }
