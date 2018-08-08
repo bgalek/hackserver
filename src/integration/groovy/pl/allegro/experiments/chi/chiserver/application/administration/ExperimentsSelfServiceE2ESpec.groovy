@@ -305,44 +305,44 @@ class ExperimentsSelfServiceE2ESpec extends BaseIntegrationSpec {
                 ])
     }
 
-    private def assertThatExperimentWithId(String id) {
-        return assertThatExperiment(fetchExperiment(id))
+    ExperimentResponseAssertions assertThatExperimentWithId(String id) {
+        assertThatExperiment(fetchExperiment(id))
     }
 
-    private def static assertThatExperiment(ResponseEntity<Map> response) {
-        return new ExperimentResponseAssertions(response)
+    ExperimentResponseAssertions assertThatExperiment(ResponseEntity response) {
+        new ExperimentResponseAssertions(response)
     }
 
-    private def fetchExperiment(String id) {
-        return restTemplate.getForEntity(localUrl("/api/admin/experiments/$id/"), Map)
+    ResponseEntity fetchExperiment(String id) {
+        restTemplate.getForEntity(localUrl("/api/admin/experiments/$id/"), Map)
     }
 
-    private static class ExperimentResponseAssertions {
+    static class ExperimentResponseAssertions {
         ResponseEntity<Map> response
 
         ExperimentResponseAssertions(ResponseEntity<Map> response) {
             this.response = response
         }
 
-        def ignoringProperty(String propertyName) {
+        ExperimentResponseAssertions ignoringProperty(String propertyName) {
             response.body.remove(propertyName)
-            return this
+            this
         }
 
-        def finishedActivityBefore(ZonedDateTime dateTime) {
+        ExperimentResponseAssertions finishedActivityBefore(ZonedDateTime dateTime) {
             def activeTo = ZonedDateTime.parse(response.body.activityPeriod.activeTo as String)
             assert activeTo <= dateTime
-            return this
+            this
         }
 
-        def hasStatus(ExperimentStatus experimentStatus) {
+        ExperimentResponseAssertions hasStatus(ExperimentStatus experimentStatus) {
             assert response.body.status == experimentStatus.toString()
-            return this
+            this
         }
 
-        def hasProperties(Map expectedExperiment) {
+        ExperimentResponseAssertions hasProperties(Map expectedExperiment) {
             assert response.body == expectedExperiment
-            return this
+            this
         }
     }
 }

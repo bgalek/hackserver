@@ -4,11 +4,13 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.test.context.ContextConfiguration
 import pl.allegro.experiments.chi.chiserver.BaseIntegrationSpec
 import pl.allegro.experiments.chi.chiserver.domain.User
+import pl.allegro.experiments.chi.chiserver.domain.experiments.Experiment
 import pl.allegro.experiments.chi.chiserver.domain.experiments.ExperimentsRepository
 import pl.allegro.experiments.chi.chiserver.domain.experiments.administration.CommandFactory
 import pl.allegro.experiments.chi.chiserver.domain.experiments.administration.ExperimentCommandException
 import pl.allegro.experiments.chi.chiserver.domain.experiments.administration.ExperimentCreationRequest
 import pl.allegro.experiments.chi.chiserver.domain.experiments.administration.ExperimentGroupCreationRequest
+import pl.allegro.experiments.chi.chiserver.domain.experiments.administration.MakeExperimentFullOnCommand
 import pl.allegro.experiments.chi.chiserver.domain.experiments.administration.MakeExperimentFullOnProperties
 import pl.allegro.experiments.chi.chiserver.domain.experiments.administration.PairedExperimentCreationRequest
 import pl.allegro.experiments.chi.chiserver.domain.experiments.administration.StartExperimentProperties
@@ -92,19 +94,19 @@ class MakeExperimentFullOnCommandIntegrationSpec extends BaseIntegrationSpec {
         "a group"   | ({ it, id -> it.createExperimentGroup([id, it.draftExperimentWithVariants(["v3", "v4"]).id]) })
     }
 
-    private def makeExperimentFullOnCommand(String experimentId, String variantName) {
-        return commandFactory.makeExperimentFullOnCommand(
+    MakeExperimentFullOnCommand makeExperimentFullOnCommand(String experimentId, String variantName) {
+        commandFactory.makeExperimentFullOnCommand(
                 experimentId,
                 new MakeExperimentFullOnProperties(variantName))
     }
 
-    private def createExperimentGroup(List<String> experimentIds) {
+    void createExperimentGroup(List<String> experimentIds) {
         commandFactory
                 .createExperimentGroupCommand(experimentGroupRequest(experimentIds))
                 .execute()
     }
 
-    private def createPairedExperimentWithVariants(List<String> variantNames, List<String> experimentIds) {
+    Experiment createPairedExperimentWithVariants(List<String> variantNames, List<String> experimentIds) {
         def experimentId = UUID.randomUUID().toString()
         def request = new PairedExperimentCreationRequest(
                 experimentRequestWithVariants(experimentId, variantNames),
@@ -113,34 +115,35 @@ class MakeExperimentFullOnCommandIntegrationSpec extends BaseIntegrationSpec {
         commandFactory
                 .createPairedExperimentCommand(request)
                 .execute()
-        return experimentsRepository
+
+        experimentsRepository
                 .getExperiment(experimentId)
                 .get()
     }
 
-    private def startedExperimentWithVariants(List<String> variantNames) {
+    Experiment startedExperimentWithVariants(List<String> variantNames) {
         def experiment = draftExperimentWithVariants(variantNames)
         def properties = new StartExperimentProperties(30)
         commandFactory
                 .startExperimentCommand(experiment.id, properties)
                 .execute()
-        return experimentsRepository
+        experimentsRepository
                 .getExperiment(experiment.id)
                 .get()
     }
 
-    private def draftExperimentWithVariants(List<String> variantNames) {
+    Experiment draftExperimentWithVariants(List<String> variantNames) {
         def experimentId = UUID.randomUUID().toString()
         commandFactory
                 .createExperimentCommand(experimentRequestWithVariants(experimentId, variantNames))
                 .execute()
-        return experimentsRepository
+        experimentsRepository
                 .getExperiment(experimentId)
                 .get()
     }
 
-    private static def experimentRequestWithVariants(String id, List<String> variantNames) {
-        return ExperimentCreationRequest.builder()
+    ExperimentCreationRequest experimentRequestWithVariants(String id, List<String> variantNames) {
+        ExperimentCreationRequest.builder()
                 .id(id)
                 .variantNames(variantNames)
                 .percentage(10)
@@ -148,8 +151,7 @@ class MakeExperimentFullOnCommandIntegrationSpec extends BaseIntegrationSpec {
                 .build()
     }
 
-    private static def experimentGroupRequest(List<String> experimentIds) {
-        def groupId = UUID.randomUUID().toString()
-        return new ExperimentGroupCreationRequest(groupId, experimentIds)
+    ExperimentGroupCreationRequest experimentGroupRequest(List<String> experimentIds) {
+        new ExperimentGroupCreationRequest(UUID.randomUUID().toString(), experimentIds)
     }
 }

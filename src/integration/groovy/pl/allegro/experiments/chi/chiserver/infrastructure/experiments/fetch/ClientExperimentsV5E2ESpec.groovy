@@ -68,7 +68,7 @@ class ClientExperimentsV5E2ESpec extends BaseIntegrationSpec {
         apiDesc <<    ["v5", "latest"]
     }
 
-    def createDraftExperiment(List<String> variants) {
+    String createDraftExperiment(List<String> variants) {
         def expId = UUID.randomUUID().toString()
         def request = [
                 id                 : expId,
@@ -98,7 +98,7 @@ class ClientExperimentsV5E2ESpec extends BaseIntegrationSpec {
         experimentId
     }
 
-    def makeExperimentFullOn(String experimentId, String variant) {
+    void makeExperimentFullOn(String experimentId, String variant) {
         def request = [
                 variantName: variant
         ]

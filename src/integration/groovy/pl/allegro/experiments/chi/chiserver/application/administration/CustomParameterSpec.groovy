@@ -111,7 +111,7 @@ class CustomParameterSpec extends BaseIntegrationSpec {
             ' notBlank '    | ' this will be trimmed '  | hasBaseVariantWithCustomParamPredicate('notBlank', 'this will be trimmed')
     }
 
-    def hasBaseVariantWithCustomParamPredicate(String expectedName, String expectedValue) {
+    Closure hasBaseVariantWithCustomParamPredicate(String expectedName, String expectedValue) {
         return {
             it.variants
                     .find({ it.name == 'base' })
@@ -120,7 +120,7 @@ class CustomParameterSpec extends BaseIntegrationSpec {
         }
     }
 
-    def hasBaseVariantWithoutCustomParamPredicate() {
+    Closure hasBaseVariantWithoutCustomParamPredicate() {
         return {
             !it.variants
                     .find({ it.name == 'base' })

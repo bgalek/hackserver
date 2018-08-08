@@ -71,29 +71,29 @@ class StopExperimentCommandIntegrationSpec extends BaseIntegrationSpec {
         ENDED  | { it.endedExperiment() }
     }
 
-    def fullOnExperiment() {
+    Experiment fullOnExperiment() {
         def experiment = startedExperiment()
         def command = commandFactory.makeExperimentFullOnCommand(
                 experiment.id,
                 new MakeExperimentFullOnProperties(experiment.variants.first().getName()))
         command.execute()
-        return experimentsRepository.getExperiment(experiment.id).get()
+        experimentsRepository.getExperiment(experiment.id).get()
     }
 
-    def endedExperiment() {
+    Experiment endedExperiment() {
         def experiment = startedExperiment()
         def command = stopCommand(experiment.id)
         command.execute()
-        return experimentsRepository.getExperiment(experiment.id).get()
+        experimentsRepository.getExperiment(experiment.id).get()
     }
 
-    def startedExperiment() {
+    Experiment startedExperiment() {
         def experiment = draftExperiment()
         def command = commandFactory.startExperimentCommand(
                 experiment.id,
                 new StartExperimentProperties(30))
         command.execute()
-        return experimentsRepository.getExperiment(experiment.id).get()
+        experimentsRepository.getExperiment(experiment.id).get()
     }
 
     Experiment draftExperiment() {
