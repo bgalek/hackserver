@@ -34,6 +34,22 @@ class MakeExperimentFullOnCommandIntegrationSpec extends BaseIntegrationSpec {
         mutableUserProvider.user = new User('Root', [], true)
     }
 
+    def "should fail to make nonexistent variant full-on"() {
+        given: "an experiment"
+        def experiment = startedExperimentWithVariants(["v1", "v2"])
+
+        when: "a nonexistent variant is being made full-on"
+        def nonexistentVariantName = "nonexistent variant"
+        makeExperimentFullOnCommand(experiment.id, nonexistentVariantName).execute()
+
+        then: "exception is thrown"
+        def exception = thrown ExperimentCommandException
+        exception.message == "Experiment '${experiment.id}' does not have variant named '$nonexistentVariantName'"
+
+        and: "experiment is not in full-on mode"
+        !experiment.isFullOn()
+    }
+
     def "should fail to make inactive experiment full-on"() {
         given: "an inactive experiment"
         def experiment = draftExperimentWithVariants(["v1", "v2"])
@@ -147,7 +163,6 @@ class MakeExperimentFullOnCommandIntegrationSpec extends BaseIntegrationSpec {
                 .id(id)
                 .variantNames(variantNames)
                 .percentage(10)
-                .reportingEnabled(true)
                 .build()
     }
 

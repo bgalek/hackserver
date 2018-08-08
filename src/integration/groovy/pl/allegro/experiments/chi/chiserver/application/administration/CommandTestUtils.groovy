@@ -14,7 +14,6 @@ class CommandTestUtils {
                 .description("simple description")
                 .documentLink("some link")
                 .groups(["group a", "group b"])
-                .reportingEnabled(true)
                 .build()
     }
 }

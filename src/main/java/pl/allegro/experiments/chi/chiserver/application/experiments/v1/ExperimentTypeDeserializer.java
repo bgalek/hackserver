@@ -28,9 +28,6 @@ public class ExperimentTypeDeserializer implements JsonDeserializer<Experiment> 
         String documentLink = getAsStringOrNull("documentLink", json);
         String owner = getAsStringOrNull("owner", json);
 
-        JsonElement rawReported = json.get("reportingEnabled");
-        boolean reported = rawReported == null || rawReported.getAsBoolean();
-
         List<ExperimentVariant> variants = deserializeVariants(json, context);
 
         JsonElement rawExperimentStatus = json.get("explicitStatus");
@@ -49,7 +46,6 @@ public class ExperimentTypeDeserializer implements JsonDeserializer<Experiment> 
                 .documentLink(documentLink)
                 .author(owner)
                 .groups(new ArrayList<>())
-                .reportingEnabled(reported)
                 .activityPeriod(activityPeriod)
                 .explicitStatus(experimentStatus)
                 .build();

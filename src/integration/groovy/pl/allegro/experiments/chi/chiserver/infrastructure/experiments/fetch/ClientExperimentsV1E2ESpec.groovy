@@ -54,7 +54,7 @@ class ClientExperimentsV1E2ESpec extends BaseIntegrationSpec {
           variants: [
                   [ name: 'internal', predicates: [[type: 'INTERNAL']] ]
           ],
-          reportingEnabled: false
+          reportingEnabled: true
         ]
     }
 

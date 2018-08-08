@@ -15,12 +15,10 @@ class SampleInMemoryExperimentsRepository {
     static InMemoryExperimentsRepository createSampleRepository() {
         Experiment experiment = ExperimentFactory.experimentWithId(TEST_EXPERIMENT_ID)
                 .mutate()
-                .reportingEnabled(true)
                 .definition(ExperimentFactory.backendReportingDefinition(TEST_EXPERIMENT_ID))
                 .build()
         Experiment experimentWithoutReporting = experiment.mutate()
                 .id(TEST_EXPERIMENT_ID_WITH_DISABLED_REPORTING)
-                .reportingEnabled(false)
                 .build()
         return new InMemoryExperimentsRepository([
                 experiment,

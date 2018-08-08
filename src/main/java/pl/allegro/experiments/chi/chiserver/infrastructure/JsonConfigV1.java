@@ -38,7 +38,7 @@ public class JsonConfigV1 {
             element.addProperty("id", src.getId());
             element.addProperty("description", src.getDescription());
             element.addProperty("owner", src.getAuthor());
-            element.addProperty("reportingEnabled", src.getReportingEnabled());
+            element.addProperty("reportingEnabled", true);
             element.add("variants", context.serialize(src.getVariants()));
             if (src.getActivityPeriod() != null) {
                 element.add("activeFrom", context.serialize(src.getActivityPeriod().getActiveFrom()));

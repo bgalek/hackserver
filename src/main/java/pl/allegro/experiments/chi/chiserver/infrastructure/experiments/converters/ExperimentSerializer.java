@@ -43,7 +43,7 @@ public class ExperimentSerializer implements Converter<ExperimentDefinition, Doc
             result.put("author", source.getAuthor());
         }
         result.put("groups", source.getGroups());
-        result.put("reportingEnabled", source.isReportingEnabled());
+        result.put("reportingEnabled", true);
         if (source.getActivityPeriod() != null) {
             Map<String, String> activityPeriodAsMap = new HashMap<>();
             activityPeriodAsMap.put("activeFrom", dateTimeSerializer.convert(source.getActivityPeriod().getActiveFrom()));

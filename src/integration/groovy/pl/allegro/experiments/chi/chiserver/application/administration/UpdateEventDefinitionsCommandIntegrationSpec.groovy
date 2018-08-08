@@ -153,7 +153,7 @@ class UpdateEventDefinitionsCommandIntegrationSpec extends BaseIntegrationSpec {
                 .description("simple description")
                 .documentLink("some link")
                 .groups(["group a", "group b"])
-                .reportingEnabled(true).eventDefinitions([
+                .eventDefinitions([
                     new EventDefinition('c1', 'a1', 'v1', 'l1', 'b1'),
                     new EventDefinition('c2', 'a2', 'v2', 'l2', 'b2')])
                 .reportingType(ReportingType.FRONTEND)

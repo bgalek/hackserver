@@ -60,18 +60,10 @@ class InteractionsIntegrationSpec extends BaseIntegrationSpec {
     }
 
     @Unroll
-    def "should not save interactions when #error"() {
-        when:
-        restTemplate.exchange(localUrl('/api/interactions/v1/'),
-                HttpMethod.POST, httpJsonEntity(interaction), Void.class)
-
-        then:
-        def interactions = interactionConverter.fromJson(interaction)
-        !inMemoryInteractionRepository.interactionSaved(interactions[0])
-
-        where:
-        interaction << [
-                JsonOutput.toJson([[
+    def "should not save interactions when there is no connected experiment"() {
+        given:
+        def interaction = JsonOutput.toJson([
+                [
                         "userId"         : "someUserId123",
                         "userCmId"       : "someUserCmId123",
                         "experimentId"   : "SOME NONEXISTENT EXPERIMENT ID",
@@ -80,19 +72,16 @@ class InteractionsIntegrationSpec extends BaseIntegrationSpec {
                         "deviceClass"    : "iphone",
                         "interactionDate": "1970-01-01T00:00:00Z",
                         "appId"          : "a"
-                ]]),
-                JsonOutput.toJson([[
-                        "userId"         : "someUserId123",
-                        "userCmId"       : "someUserCmId123",
-                        "experimentId"   : TEST_EXPERIMENT_ID_WITH_DISABLED_REPORTING,
-                        "variantName"    : "someVariantName",
-                        "internal"       : true,
-                        "deviceClass"    : "iphone",
-                        "interactionDate": "1970-01-01T00:00:00Z",
-                        "appId"          : "a"
-                ]])
-        ]
-        error << ['there is no connected experiment', 'experiment reporting is disabled']
+                ]
+        ])
+
+        when:
+        restTemplate.exchange(localUrl('/api/interactions/v1/'),
+                HttpMethod.POST, httpJsonEntity(interaction), Void.class)
+
+        then:
+        def interactions = interactionConverter.fromJson(interaction)
+        !inMemoryInteractionRepository.interactionSaved(interactions[0])
     }
 
     @Unroll

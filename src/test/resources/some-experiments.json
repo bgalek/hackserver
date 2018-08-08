@@ -122,7 +122,7 @@
         ]
       }
     ],
-    "reportingEnabled": false
+    "reportingEnabled": true
   },
   {
     "id": "experiment_from_the_past",

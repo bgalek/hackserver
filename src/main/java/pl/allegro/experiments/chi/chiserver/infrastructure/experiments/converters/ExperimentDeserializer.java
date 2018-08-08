@@ -33,7 +33,6 @@ public class ExperimentDeserializer implements Converter<Document, ExperimentDef
         String documentLink = bson.get("documentLink") != null ? (String) bson.get("documentLink") : null;
         String author = bson.get("author") != null ? (String) bson.get("author") : null;
         List<String> groups = bson.get("groups") != null ? (List<String>) bson.get("groups") : null;
-        boolean reportingEnabled = bson.get("reportingEnabled") != null ? (boolean) bson.get("reportingEnabled") : null; // wroc
         ActivityPeriod activityPeriod = Optional.ofNullable(bson.get("activityPeriod"))
                 .map(a -> activityPeriodDeserializer.convert((Document)a))
                 .orElse(null);
@@ -51,7 +50,6 @@ public class ExperimentDeserializer implements Converter<Document, ExperimentDef
                 .documentLink(documentLink)
                 .author(author)
                 .groups(groups)
-                .reportingEnabled(reportingEnabled)
                 .activityPeriod(activityPeriod)
                 .explicitStatus(explicitStatus);
         if (bson.get("reportingDefinition") != null) {

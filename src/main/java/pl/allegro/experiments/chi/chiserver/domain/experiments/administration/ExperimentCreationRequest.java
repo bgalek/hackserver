@@ -27,7 +27,6 @@ public class ExperimentCreationRequest {
     private final String description;
     private final String documentLink;
     private final List<String> groups;
-    private final boolean reportingEnabled;
     private final ReportingDefinition reportingDefinition;
     private final CustomParameter customParameter;
 
@@ -41,7 +40,6 @@ public class ExperimentCreationRequest {
             @JsonProperty("description") String description,
             @JsonProperty("documentLink") String documentLink,
             @JsonProperty("groups") List<String> groups,
-            @JsonProperty("reportingEnabled") Boolean reportingEnabled,
             @JsonProperty("eventDefinitions") List<EventDefinition> eventDefinitions,
             @JsonProperty("reportingType") ReportingType reportingType,
             @JsonProperty("customParameterName") String customParameterName,
@@ -65,11 +63,6 @@ public class ExperimentCreationRequest {
             this.groups = ImmutableList.copyOf(new ArrayList<>());
         } else {
             this.groups = ImmutableList.copyOf(groups);
-        }
-        if (reportingEnabled == null) {
-            this.reportingEnabled = false;
-        } else {
-            this.reportingEnabled = reportingEnabled;
         }
         this.reportingDefinition = Optional.ofNullable(reportingType)
                 .map(rt -> rt.reportingDefinition(eventDefinitions))
@@ -102,10 +95,6 @@ public class ExperimentCreationRequest {
         return groups;
     }
 
-    public boolean getReportingEnabled() {
-        return reportingEnabled;
-    }
-
     ExperimentDefinition toExperimentDefinition(String author) {
         Preconditions.checkNotNull(author);
         try {
@@ -119,7 +108,6 @@ public class ExperimentCreationRequest {
                     .documentLink(this.documentLink)
                     .author(author)
                     .groups(this.groups)
-                    .reportingEnabled(this.reportingEnabled)
                     .reportingDefinition(this.reportingDefinition)
                     .customParameter(this.customParameter)
                     .build();
@@ -143,7 +131,6 @@ public class ExperimentCreationRequest {
         private String description;
         private String documentLink;
         private List<String> groups;
-        private Boolean reportingEnabled;
         private List<EventDefinition> eventDefinitions;
         private ReportingType reportingType;
         private String customParameterName;
@@ -189,11 +176,6 @@ public class ExperimentCreationRequest {
             return this;
         }
 
-        public Builder reportingEnabled(Boolean reportingEnabled) {
-            this.reportingEnabled = reportingEnabled;
-            return this;
-        }
-
         public Builder eventDefinitions(List<EventDefinition> eventDefinitions) {
             this.eventDefinitions = eventDefinitions;
             return this;
@@ -224,7 +206,6 @@ public class ExperimentCreationRequest {
                     description,
                     documentLink,
                     groups,
-                    reportingEnabled,
                     eventDefinitions,
                     reportingType,
                     customParameterName,

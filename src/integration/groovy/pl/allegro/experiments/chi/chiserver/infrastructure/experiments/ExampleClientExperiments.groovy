@@ -6,7 +6,7 @@ class ExampleClientExperiments {
          variants        : [
                  [name: 'internal', predicates: [[type: 'INTERNAL']]]
          ],
-         reportingEnabled: false,
+         reportingEnabled: true,
          status          : 'DRAFT'
         ]
     }

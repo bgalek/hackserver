@@ -10,14 +10,12 @@ import java.util.List;
 public class ClientExperiment {
     private final String id;
     private final List<ExperimentVariant> variants;
-    private final boolean reportingEnabled;
     private final ActivityPeriod activityPeriod;
     private final ExperimentStatus status;
 
     public ClientExperiment(Experiment experiment) {
         id = experiment.getId();
         variants = experiment.getVariants();
-        reportingEnabled = experiment.getReportingEnabled();
         activityPeriod = experiment.getActivityPeriod();
         status = experiment.getStatus();
     }
@@ -25,12 +23,10 @@ public class ClientExperiment {
     ClientExperiment(
             String id,
             List<ExperimentVariant> variants,
-            boolean reportingEnabled,
             ActivityPeriod activityPeriod,
             ExperimentStatus status) {
         this.id = id;
         this.variants = variants;
-        this.reportingEnabled = reportingEnabled;
         this.activityPeriod = activityPeriod;
         this.status = status;
     }
@@ -41,10 +37,6 @@ public class ClientExperiment {
 
     public List<ExperimentVariant> getVariants() {
         return variants;
-    }
-
-    public boolean isReportingEnabled() {
-        return reportingEnabled;
     }
 
     public ActivityPeriod getActivityPeriod() {

@@ -18,7 +18,6 @@ public class Experiment {
     private final String documentLink;
     private final String author;
     private final List<String> groups;
-    private final boolean reportingEnabled;
     private final ActivityPeriod activityPeriod;
     private final Boolean editable;
     private final String origin;
@@ -34,7 +33,6 @@ public class Experiment {
             String documentLink,
             String author,
             List<String> groups,
-            boolean reportingEnabled,
             ActivityPeriod activityPeriod,
             Boolean editable,
             String origin,
@@ -50,7 +48,6 @@ public class Experiment {
         this.documentLink = emptyToNull(documentLink);
         this.author = author;
         this.groups = ImmutableList.copyOf(groups);
-        this.reportingEnabled = reportingEnabled;
         this.activityPeriod = activityPeriod;
         this.editable = editable;
         this.origin = origin;
@@ -75,7 +72,7 @@ public class Experiment {
     }
 
     public boolean shouldSaveInteractions() {
-        return getReportingEnabled();
+        return !isFullOn();
     }
 
     public String getDescription() {
@@ -92,10 +89,6 @@ public class Experiment {
 
     public List<String> getGroups() {
         return groups;
-    }
-
-    public boolean getReportingEnabled() {
-        return reportingEnabled;
     }
 
     public ActivityPeriod getActivityPeriod() {
@@ -196,7 +189,6 @@ public class Experiment {
                     .documentLink(other.documentLink)
                     .author(other.author)
                     .groups(other.groups)
-                    .reportingEnabled(other.reportingEnabled)
                     .activityPeriod(other.activityPeriod)
                     .editable(other.editable)
                     .origin(other.origin)
@@ -210,7 +202,6 @@ public class Experiment {
         private String documentLink;
         private String author;
         private List<String> groups;
-        private boolean reportingEnabled;
         private ActivityPeriod activityPeriod;
         private Boolean editable;
         private String origin;
@@ -247,11 +238,6 @@ public class Experiment {
             return this;
         }
 
-        public Builder reportingEnabled(boolean reportingEnabled) {
-            this.reportingEnabled = reportingEnabled;
-            return this;
-        }
-
         public Builder activityPeriod(ActivityPeriod activityPeriod) {
             this.activityPeriod = activityPeriod;
             return this;
@@ -285,7 +271,6 @@ public class Experiment {
                     documentLink,
                     author,
                     groups,
-                    reportingEnabled,
                     activityPeriod,
                     editable,
                     origin,

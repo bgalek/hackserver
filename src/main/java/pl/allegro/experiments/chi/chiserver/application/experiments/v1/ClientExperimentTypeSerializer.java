@@ -23,11 +23,9 @@ public class ClientExperimentTypeSerializer implements JsonSerializer<ClientExpe
             Type typeOfSrc,
             JsonSerializationContext context) {
         JsonObject jsonObject = new JsonObject();
-
         jsonObject.addProperty("id", experiment.getId());
-        jsonObject.addProperty("reportingEnabled", experiment.isReportingEnabled());
+        jsonObject.addProperty("reportingEnabled", true);
         jsonObject.add("status", context.serialize(experiment.getStatus()));
-
 
         if (experiment.getStatus() == ExperimentStatus.FULL_ON) {
             List<ExperimentVariant> fullOnVariants = experiment.getVariants().stream()

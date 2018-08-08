@@ -50,7 +50,6 @@ public class AdminExperiment {
                 .documentLink(legacyDefinition.getDocumentLink())
                 .author(legacyDefinition.getAuthor())
                 .groups(legacyDefinition.getGroups())
-                .reportingEnabled(legacyDefinition.getReportingEnabled())
                 .reportingDefinition(ReportingDefinition.createDefault())
                 .explicitStatus(legacyDefinition.getExplicitStatus())
                 .deviceClass(DeviceClass.all)
@@ -133,10 +132,6 @@ public class AdminExperiment {
 
     public List<String> getGroups() {
         return this.experimentDefinition.getGroups();
-    }
-
-    public boolean isReportingEnabled() {
-        return this.experimentDefinition.isReportingEnabled();
     }
 
     public ActivityPeriod getActivityPeriod() {

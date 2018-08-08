@@ -69,7 +69,6 @@ public class ExperimentFactory {
                             return new ClientExperiment(
                                     experimentId,
                                     variants,
-                                    experimentDefinition.isReportingEnabled(),
                                     experimentDefinition.getActivityPeriod(),
                                     experimentDefinition.getStatus()
                             );

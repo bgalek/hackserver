@@ -6,7 +6,7 @@ trait ExampleExperiments {
          renderedVariants : [
                  [name: 'internal', predicates: [[type: 'INTERNAL']]]
          ],
-         reportingEnabled: false,
+         reportingEnabled: true,
          groups          : [],
          status          : 'DRAFT',
          reportingType   : 'BACKEND',

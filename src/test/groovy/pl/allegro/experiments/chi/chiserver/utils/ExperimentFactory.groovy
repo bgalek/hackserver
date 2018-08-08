@@ -66,7 +66,6 @@ class ExperimentFactory {
                 .description('description')
                 .documentLink('link')
                 .author('owner')
-                .reportingEnabled(true)
                 .groups([])
                 .build()
     }
@@ -78,7 +77,6 @@ class ExperimentFactory {
                 .description("description")
                 .documentLink("link")
                 .author("owner")
-                .reportingEnabled(true)
                 .groups([])
                 .build()
     }

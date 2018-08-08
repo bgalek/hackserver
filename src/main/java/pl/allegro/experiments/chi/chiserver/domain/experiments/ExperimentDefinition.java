@@ -34,7 +34,6 @@ public class ExperimentDefinition {
     private final String documentLink;
     private final String author;
     private final List<String> groups;
-    private final boolean reportingEnabled;
     private final ActivityPeriod activityPeriod;
     private final Boolean editable;
     private final ExperimentStatus explicitStatus;
@@ -53,7 +52,6 @@ public class ExperimentDefinition {
             String documentLink,
             String author,
             List<String> groups,
-            boolean reportingEnabled,
             ActivityPeriod activityPeriod,
             Boolean editable,
             ExperimentStatus explicitStatus,
@@ -76,7 +74,6 @@ public class ExperimentDefinition {
         this.documentLink = emptyToNull(documentLink);
         this.author = author;
         this.groups = ImmutableList.copyOf(groups);
-        this.reportingEnabled = reportingEnabled;
         this.activityPeriod = activityPeriod;
         this.editable = editable;
         this.explicitStatus = explicitStatus;
@@ -140,11 +137,6 @@ public class ExperimentDefinition {
     @DiffInclude
     public List<String> getGroups() {
         return groups;
-    }
-
-    @DiffInclude
-    public boolean isReportingEnabled() {
-        return reportingEnabled;
     }
 
     public ActivityPeriod getActivityPeriod() {
@@ -363,7 +355,6 @@ public class ExperimentDefinition {
                     .documentLink(documentLink)
                     .author(author)
                     .groups(groups)
-                    .reportingEnabled(reportingEnabled)
                     .activityPeriod(activityPeriod)
                     .explicitStatus(explicitStatus)
                     .origin(ExperimentOrigin.MONGO.toString())
@@ -389,7 +380,6 @@ public class ExperimentDefinition {
                     .documentLink(other.documentLink)
                     .author(other.author)
                     .groups(other.groups)
-                    .reportingEnabled(other.reportingEnabled)
                     .activityPeriod(other.activityPeriod)
                     .editable(other.editable)
                     .reportingDefinition(other.reportingDefinition)
@@ -407,7 +397,6 @@ public class ExperimentDefinition {
         private String documentLink;
         private String author;
         private List<String> groups = Collections.emptyList();
-        private boolean reportingEnabled;
         private ActivityPeriod activityPeriod;
         private Boolean editable;
         private String origin;
@@ -475,11 +464,6 @@ public class ExperimentDefinition {
             return this;
         }
 
-        public Builder reportingEnabled(boolean reportingEnabled) {
-            this.reportingEnabled = reportingEnabled;
-            return this;
-        }
-
         public Builder activityPeriod(ActivityPeriod activityPeriod) {
             this.activityPeriod = activityPeriod;
             return this;
@@ -517,7 +501,6 @@ public class ExperimentDefinition {
                     documentLink,
                     author,
                     groups,
-                    reportingEnabled,
                     activityPeriod,
                     editable,
                     explicitStatus,

@@ -91,7 +91,6 @@ class CreateExperimentCommandIntegrationSpec extends BaseIntegrationSpec {
                 .description('')
                 .documentLink('')
                 .groups([])
-                .reportingEnabled(false)
                 .build()
 
         def command = new CreateExperimentCommand(experimentsRepository, mutableUserProvider, brokenRequest)
