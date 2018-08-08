@@ -116,8 +116,6 @@
           </v-list>
         </v-menu>
 
-        {{ this.selectedFullOnVariant }}
-
         <v-menu bottom offset-y
                 v-if="this.experiment.canBeStopped()">
           <v-btn color="gray" slot="activator" style="text-transform: none">
@@ -320,7 +318,7 @@
         this.prepareToSend()
         this.makeExperimentFullOn({
           params: {experimentId: this.experiment.id},
-          data: {variantName: 'v1'}
+          data: {variantName: this.selectedFullOnVariant}
         }).then(response => {
           this.afterSending()
           this.getExperiment({params: {experimentId: this.experiment.id}})

@@ -36,13 +36,22 @@ public class MakeExperimentFullOnCommand {
     }
 
     private void validate(Experiment experiment) {
+        boolean variantExists = experiment
+                .getVariants()
+                .stream()
+                .anyMatch(it -> it.getName().equals(properties.getVariantName()));
+        if (!variantExists) {
+            throw new ExperimentCommandException(
+                    String.format("Experiment '%s' does not have variant named '%s'",
+                            experimentId, properties.getVariantName())
+            );
+        }
         if (!experiment.isActive()) {
             throw new ExperimentCommandException(
                     String.format("Experiment is not ACTIVE. Now '%s' has %s status",
                             experimentId, experiment.getStatus().toString())
             );
         }
-
         if (experimentGroupRepository.experimentInGroup(experimentId)) {
             throw new ExperimentCommandException("Experiment cannot be made full-on if it belongs to a group");
         }
