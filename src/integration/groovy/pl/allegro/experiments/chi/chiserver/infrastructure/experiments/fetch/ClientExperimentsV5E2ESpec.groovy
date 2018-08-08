@@ -41,14 +41,14 @@ class ClientExperimentsV5E2ESpec extends BaseIntegrationSpec {
     @Unroll
     def "should return full-on experiment in client API #apiDesc"() {
         given:
-        createFullOnExperiment(['base', 'v1'], 'v1', "full-on_exp")
+        def expId = createFullOnExperiment(['base', 'v1'], 'v1')
 
         when:
         def response = restTemplate.getForEntity(localUrl("/api/experiments/$apiVersion"), List)
 
         then:
         response.body.contains([
-            id: "full-on_exp",
+            id: expId,
             status: "FULL_ON",
             reportingEnabled: true,
             variants: [
@@ -68,9 +68,10 @@ class ClientExperimentsV5E2ESpec extends BaseIntegrationSpec {
         apiDesc <<    ["v5", "latest"]
     }
 
-    def createDraftExperiment(List<String> variants, String id = UUID.randomUUID().toString()) {
+    def createDraftExperiment(List<String> variants) {
+        def expId = UUID.randomUUID().toString()
         def request = [
-                id                 : id,
+                id                 : expId,
                 description        : 'desc',
                 documentLink       : 'https://vuetifyjs.com/vuetify/quick-start',
                 variantNames       : variants,
@@ -82,19 +83,19 @@ class ClientExperimentsV5E2ESpec extends BaseIntegrationSpec {
                 reportingType: 'BACKEND'
         ]
         restTemplate.postForEntity(localUrl('/api/admin/experiments'), request, Map)
-        return id
+        expId
     }
 
-    def createStartedExperiment(List<String> variants, String id = UUID.randomUUID().toString()) {
-        def experimentId = createDraftExperiment(variants, id)
+    String createStartedExperiment(List<String> variants) {
+        def experimentId = createDraftExperiment(variants)
         startExperiment(experimentId)
-        return experimentId
+        experimentId
     }
 
-    def createFullOnExperiment(List<String> variants, String variant, String id = UUID.randomUUID().toString()) {
-        def experimentId = createStartedExperiment(variants, id)
+    String createFullOnExperiment(List<String> variants, String variant) {
+        def experimentId = createStartedExperiment(variants)
         makeExperimentFullOn(experimentId, variant)
-        return experimentId
+        experimentId
     }
 
     def makeExperimentFullOn(String experimentId, String variant) {
