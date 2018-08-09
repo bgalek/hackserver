@@ -9,12 +9,20 @@ import org.springframework.web.client.RestTemplate
 import pl.allegro.experiments.chi.chiserver.BaseIntegrationSpec
 import pl.allegro.experiments.chi.chiserver.domain.User
 import pl.allegro.experiments.chi.chiserver.domain.UserProvider
+import pl.allegro.experiments.chi.chiserver.domain.experiments.DeviceClass
 import pl.allegro.experiments.chi.chiserver.domain.experiments.ExperimentStatus
 import pl.allegro.experiments.chi.chiserver.domain.experiments.ExperimentsRepository
 import pl.allegro.experiments.chi.chiserver.infrastructure.experiments.ExperimentsDoubleRepository
 import spock.lang.Unroll
 
 import java.time.ZonedDateTime
+
+import static pl.allegro.experiments.chi.chiserver.domain.experiments.DeviceClass.all
+import static pl.allegro.experiments.chi.chiserver.domain.experiments.DeviceClass.desktop
+import static pl.allegro.experiments.chi.chiserver.domain.experiments.DeviceClass.phone
+import static pl.allegro.experiments.chi.chiserver.domain.experiments.DeviceClass.phone_android
+import static pl.allegro.experiments.chi.chiserver.domain.experiments.DeviceClass.phone_iphone
+import static pl.allegro.experiments.chi.chiserver.domain.experiments.DeviceClass.tablet
 
 @DirtiesContext
 class ExperimentsSelfServiceE2ESpec extends BaseIntegrationSpec {
@@ -259,10 +267,10 @@ class ExperimentsSelfServiceE2ESpec extends BaseIntegrationSpec {
         and: "an active experiment"
         def experimentId = UUID.randomUUID().toString()
         def request = [
-                id                 : experimentId,
-                variantNames       : ['v2', 'v3'],
-                percentage         : 10,
-                reportingEnabled   : true
+                id          : experimentId,
+                variantNames: ['v2', 'v3'],
+                percentage  : 10,
+                deviceClass: all
         ]
         restTemplate.postForEntity(localUrl('/api/admin/experiments'), request, Map)
         restTemplate.put(localUrl("/api/admin/experiments/$experimentId/start"), [experimentDurationDays: 30], Map)
@@ -278,8 +286,7 @@ class ExperimentsSelfServiceE2ESpec extends BaseIntegrationSpec {
 
         assertThatExperiment(experiment)
                 .ignoringProperty("activityPeriod")
-                .hasProperties(
-                [
+                .hasProperties([
                         id              : experimentId,
                         author          : 'Anonymous',
                         groups          : [],
@@ -303,6 +310,67 @@ class ExperimentsSelfServiceE2ESpec extends BaseIntegrationSpec {
                         variantNames    : ['v2', 'v3'],
                         percentage      : 0
                 ])
+    }
+
+    @Unroll
+    def "should execute full-on command on active experiment with #deviceClass"() {
+        given: "a user"
+        userProvider.user = new User('Anonymous', [], true)
+
+        and: "an active experiment"
+        def experimentId = UUID.randomUUID().toString()
+        def request = [
+                id          : experimentId,
+                variantNames: ['v2', 'v3'],
+                percentage  : 10,
+                deviceClass : deviceClass
+        ]
+        restTemplate.postForEntity(localUrl('/api/admin/experiments'), request, Map)
+        restTemplate.put(localUrl("/api/admin/experiments/$experimentId/start"), [experimentDurationDays: 30], Map)
+
+        when: "full-on command is executed"
+        def properties = [variantName: 'v2']
+        restTemplate.put(localUrl("/api/admin/experiments/$experimentId/full-on"), properties, Map)
+
+        then: "an experiment goes into full-on mode"
+        def experiment = fetchExperiment(experimentId)
+
+        assertThatExperiment(experiment)
+                .finishedActivityBefore(ZonedDateTime.now())
+
+        assertThatExperiment(experiment)
+                .ignoringProperty("activityPeriod")
+                .hasProperties([
+                        id              : experimentId,
+                        author          : 'Anonymous',
+                        groups          : [],
+                        status          : 'FULL_ON',
+                        measurements    : [lastDayVisits: 0],
+                        editable        : true,
+                        origin          : 'MONGO',
+                        reportingEnabled: true,
+                        reportingType   : 'BACKEND',
+                        eventDefinitions: [],
+                        deviceClass     : deviceClass.toJsonString(),
+                        renderedVariants: [
+                                [
+                                        name      : 'v2',
+                                        predicates: [
+                                                [type: 'FULL_ON'],
+                                                [type: 'DEVICE_CLASS', device: deviceClass.toJsonString()]
+                                        ]
+                                ],
+                                [
+                                        name      : 'v3',
+                                        predicates: []
+                                ]
+                        ],
+                        variantNames    : ['v2', 'v3'],
+                        percentage      : 0
+                ])
+
+        where:
+        deviceClass << [phone, phone_android, phone_iphone, desktop, tablet]
     }
 
     ExperimentResponseAssertions assertThatExperimentWithId(String id) {
@@ -341,7 +409,7 @@ class ExperimentsSelfServiceE2ESpec extends BaseIntegrationSpec {
         }
 
         ExperimentResponseAssertions hasProperties(Map expectedExperiment) {
-            assert response.body == expectedExperiment
+            assert response.body.sort().toString() == expectedExperiment.sort().toString()
             this
         }
     }

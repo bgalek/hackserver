@@ -300,21 +300,16 @@ public class ExperimentDefinition {
     }
 
     private List<ExperimentVariant> prepareExperimentVariants() {
-        if (isFullOn()) {
-            return prepareFullOnVariants();
-        } else {
-            return concat(prepareInternalVariants().stream(), preparePercentageVariants().stream())
-                    .collect(toList());
-        }
+        return isFullOn()
+                ? prepareFullOnVariants()
+                : concat(prepareInternalVariants().stream(), preparePercentageVariants().stream())
+                        .collect(toList());
     }
 
     private List<ExperimentVariant> prepareInternalVariants() {
-        if (internalVariantName != null) {
-            return List.of(
-                    new ExperimentVariant(internalVariantName, ImmutableList.of(new InternalPredicate())));
-        } else {
-            return List.of();
-        }
+        return internalVariantName != null
+                ? List.of(new ExperimentVariant(internalVariantName, ImmutableList.of(new InternalPredicate())))
+                : List.of();
     }
 
     private List<ExperimentVariant> preparePercentageVariants() {
@@ -324,7 +319,6 @@ public class ExperimentDefinition {
                 throw new ExperimentDefinitionException(
                         "Percentage exceeds maximum value ( " + percentage + " > " + maxPercentageVariant + " )");
             }
-
             return IntStream.range(0, variantNames.size()).mapToObj( i -> convertVariant(
                     variantNames.get(i), i * maxPercentageVariant, i * maxPercentageVariant + percentage)
             ).collect(toList());
@@ -335,14 +329,16 @@ public class ExperimentDefinition {
 
     private List<ExperimentVariant> prepareFullOnVariants() {
         Preconditions.checkNotNull(fullOnVariantName);
-        return variantNames.stream()
-                .map(it -> {
-                    if (it.equals(fullOnVariantName)) {
-                        return new ExperimentVariant(it, ImmutableList.of(new FullOnPredicate()));
-                    } else {
-                        return new ExperimentVariant(it, ImmutableList.of());
-                    }
-                }).collect(toList());
+        return variantNames.stream().map(it -> {
+            List<Predicate> predicates = new ArrayList<>();
+            if (it.equals(fullOnVariantName)) {
+                predicates.add(new FullOnPredicate());
+                if (deviceClass != DeviceClass.all) {
+                    predicates.add(new DeviceClassPredicate(deviceClass.toJsonString()));
+                }
+            }
+            return new ExperimentVariant(it, predicates);
+        }).collect(toList());
     }
 
     @Deprecated

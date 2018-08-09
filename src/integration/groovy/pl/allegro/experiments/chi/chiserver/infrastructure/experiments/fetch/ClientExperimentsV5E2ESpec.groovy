@@ -77,7 +77,6 @@ class ClientExperimentsV5E2ESpec extends BaseIntegrationSpec {
                 variantNames       : variants,
                 internalVariantName: 'v3',
                 percentage         : 10,
-                deviceClass        : 'phone',
                 groups             : ['group a', 'group b'],
                 reportingEnabled   : true,
                 reportingType: 'BACKEND'
