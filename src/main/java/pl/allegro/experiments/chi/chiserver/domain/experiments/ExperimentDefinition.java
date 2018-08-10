@@ -16,8 +16,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 import java.util.stream.IntStream;
+import java.util.stream.Stream;
 
 import static java.util.stream.Collectors.toList;
 import static java.util.stream.Stream.concat;
@@ -279,6 +279,13 @@ public class ExperimentDefinition {
                 .build();
     }
 
+    private ExperimentVariant convertVariantByIndex(int i, int maxPercentageVariant) {
+        return convertVariant(
+                variantNames.get(i),
+                i * maxPercentageVariant,
+                i * maxPercentageVariant + percentage);
+    }
+
     private ExperimentVariant convertVariant(String variantName, int from, int to) {
         final var predicates = new ArrayList<Predicate>();
         predicates.add(new HashRangePredicate(new PercentageRange(from, to)));
@@ -302,8 +309,32 @@ public class ExperimentDefinition {
     private List<ExperimentVariant> prepareExperimentVariants() {
         return isFullOn()
                 ? prepareFullOnVariants()
-                : concat(prepareInternalVariants().stream(), preparePercentageVariants().stream())
+                : concat(prepareInternalVariants().stream(), prepareNormalVariants().stream())
                         .collect(toList());
+    }
+
+    private List<ExperimentVariant> prepareFullOnVariants() {
+        return getVariantNamesWithInternal()
+                .stream()
+                .map(this::convertToFullOnVariant)
+                .collect(toList());
+    }
+
+    private ExperimentVariant convertToFullOnVariant(String variantName) {
+        List<Predicate> predicates = new ArrayList<>();
+        if (variantName.equals(fullOnVariantName)) {
+            predicates.add(new FullOnPredicate());
+            if (deviceClass != DeviceClass.all) {
+                predicates.add(new DeviceClassPredicate(deviceClass.toJsonString()));
+            }
+        }
+        return new ExperimentVariant(variantName, predicates);
+    }
+
+    private List<String> getVariantNamesWithInternal() {
+        return internalVariantName != null && !variantNames.contains(internalVariantName)
+                ? concat(variantNames.stream(), Stream.of(internalVariantName)).collect(toList())
+                : variantNames;
     }
 
     private List<ExperimentVariant> prepareInternalVariants() {
@@ -312,33 +343,20 @@ public class ExperimentDefinition {
                 : List.of();
     }
 
-    private List<ExperimentVariant> preparePercentageVariants() {
+    private List<ExperimentVariant> prepareNormalVariants() {
         if (percentage != null && !variantNames.isEmpty()) {
             int maxPercentageVariant = 100 / variantNames.size();
             if (percentage > maxPercentageVariant) {
                 throw new ExperimentDefinitionException(
-                        "Percentage exceeds maximum value ( " + percentage + " > " + maxPercentageVariant + " )");
+                        String.format("Percentage exceeds maximum value (%s > %s)",
+                        percentage, maxPercentageVariant));
             }
-            return IntStream.range(0, variantNames.size()).mapToObj( i -> convertVariant(
-                    variantNames.get(i), i * maxPercentageVariant, i * maxPercentageVariant + percentage)
-            ).collect(toList());
+            return IntStream.range(0, variantNames.size())
+                    .mapToObj(i -> convertVariantByIndex(i, maxPercentageVariant))
+                    .collect(toList());
         }  else {
             return List.of();
         }
-    }
-
-    private List<ExperimentVariant> prepareFullOnVariants() {
-        Preconditions.checkNotNull(fullOnVariantName);
-        return variantNames.stream().map(it -> {
-            List<Predicate> predicates = new ArrayList<>();
-            if (it.equals(fullOnVariantName)) {
-                predicates.add(new FullOnPredicate());
-                if (deviceClass != DeviceClass.all) {
-                    predicates.add(new DeviceClassPredicate(deviceClass.toJsonString()));
-                }
-            }
-            return new ExperimentVariant(it, predicates);
-        }).collect(toList());
     }
 
     @Deprecated

@@ -103,7 +103,7 @@
           <v-list style="padding:15px; display: block;">
             <v-select
               v-model="selectedFullOnVariant"
-              :items="Array.from(this.experiment.variantNames)"
+              :items="allVariantNames()"
               label="Choose variant"
             ></v-select>
             <v-btn flat @click="closeFullOn()">Cancel</v-btn>
@@ -251,7 +251,7 @@
         commandOkMessage: '',
         actionFormValid: true,
         durationDays: '14',
-        selectedFullOnVariant: '',
+        selectedFullOnVariant: null,
         additionalDurationDays: '14',
         durationDaysRules: [
           (v) => !!v || 'duration is required',
@@ -375,12 +375,20 @@
         this.prolongMenuVisible = false
       },
 
+      allVariantNames () {
+        const variantNames = this.experiment.variantNames
+        const internalVariantName = this.experiment.internalVariantName
+        return internalVariantName != null && !variantNames.contains(internalVariantName)
+          ? variantNames.toArray().concat([internalVariantName])
+          : variantNames
+      },
+
       fullOnVariantSelected () {
-        return this.selectedFullOnVariant !== ''
+        return this.selectedFullOnVariant != null
       },
 
       closeFullOn () {
-        this.selectedFullOnVariant = ''
+        this.selectedFullOnVariant = null
         this.fullOnMenuVisible = false
       },
 

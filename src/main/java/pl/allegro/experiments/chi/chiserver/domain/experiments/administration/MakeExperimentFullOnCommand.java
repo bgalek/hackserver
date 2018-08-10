@@ -2,8 +2,14 @@ package pl.allegro.experiments.chi.chiserver.domain.experiments.administration;
 
 import pl.allegro.experiments.chi.chiserver.domain.experiments.Experiment;
 import pl.allegro.experiments.chi.chiserver.domain.experiments.ExperimentDefinition;
+import pl.allegro.experiments.chi.chiserver.domain.experiments.ExperimentVariant;
 import pl.allegro.experiments.chi.chiserver.domain.experiments.ExperimentsRepository;
 import pl.allegro.experiments.chi.chiserver.domain.experiments.groups.ExperimentGroupRepository;
+
+import java.util.List;
+import java.util.Optional;
+
+import static java.util.stream.Collectors.toList;
 
 public class MakeExperimentFullOnCommand {
     private final String experimentId;
@@ -35,11 +41,26 @@ public class MakeExperimentFullOnCommand {
         experimentsRepository.save(fullOnExperiment);
     }
 
-    private void validate(Experiment experiment) {
-        boolean variantExists = experiment
+    private List<String> allVariantNames(Experiment experiment) {
+        List<String> variantNames = experiment
                 .getVariants()
                 .stream()
-                .anyMatch(it -> it.getName().equals(properties.getVariantName()));
+                .map(ExperimentVariant::getName)
+                .collect(toList());
+
+        Optional<String> internalVariantName = experiment
+                .getDefinition()
+                .flatMap(ExperimentDefinition::getInternalVariantName);
+        if (internalVariantName.isPresent() && !variantNames.contains(internalVariantName.get())) {
+            variantNames.add(internalVariantName.get());
+        }
+        return variantNames;
+    }
+
+    private void validate(Experiment experiment) {
+        boolean variantExists = allVariantNames(experiment)
+                .stream()
+                .anyMatch(it -> it.equals(properties.getVariantName()));
         if (!variantExists) {
             throw new ExperimentCommandException(
                     String.format("Experiment '%s' does not have variant named '%s'",

@@ -34,6 +34,25 @@ class MakeExperimentFullOnCommandIntegrationSpec extends BaseIntegrationSpec {
         mutableUserProvider.user = new User('Root', [], true)
     }
 
+    @Unroll
+    def "should make internal variant full-on if internal variant #description"() {
+        given:
+        def experiment = startedExperimentWithVariants(["v1", "v2"], internalVariantName)
+
+        when:
+        makeExperimentFullOnCommand(experiment.id, internalVariantName).execute()
+        experiment = experimentsRepository.getExperiment(experiment.id).get()
+
+        then:
+        experiment.isFullOn()
+        experiment.definition.get().fullOnVariantName.get() == internalVariantName
+
+        where:
+        internalVariantName | description
+        "v1"                | "is one of normal variants"
+        "v3"                | "is not one of normal variants"
+    }
+
     def "should fail to make nonexistent variant full-on"() {
         given: "an experiment"
         def experiment = startedExperimentWithVariants(["v1", "v2"])
@@ -47,7 +66,7 @@ class MakeExperimentFullOnCommandIntegrationSpec extends BaseIntegrationSpec {
         exception.message == "Experiment '${experiment.id}' does not have variant named '$nonexistentVariantName'"
 
         and: "experiment is not in full-on mode"
-        !experiment.isFullOn()
+        !experimentsRepository.getExperiment(experiment.id).get().isFullOn()
     }
 
     def "should fail to make inactive experiment full-on"() {
@@ -62,7 +81,7 @@ class MakeExperimentFullOnCommandIntegrationSpec extends BaseIntegrationSpec {
         exception.message == "Experiment is not ACTIVE. Now '${experiment.id}' has DRAFT status"
 
         and: "experiment is not in full-on mode"
-        !experiment.isFullOn()
+        !experimentsRepository.getExperiment(experiment.id).get().isFullOn()
     }
 
     @Unroll
@@ -80,7 +99,7 @@ class MakeExperimentFullOnCommandIntegrationSpec extends BaseIntegrationSpec {
         exception.message == "Experiment cannot be made full-on if it belongs to a group"
 
         and: "experiment is not in full-on mode"
-        !activeExperiment.isFullOn()
+        !experimentsRepository.getExperiment(activeExperiment.id).get().isFullOn()
 
         where:
         description | groupCreator
@@ -100,9 +119,6 @@ class MakeExperimentFullOnCommandIntegrationSpec extends BaseIntegrationSpec {
         then: "exception is thrown"
         def exception = thrown ExperimentCommandException
         exception.message == "Cannot create group if one of the experiments is full-on"
-
-        and: "experiment is not in full-on mode"
-        !experiment.isFullOn()
 
         where:
         description | groupCreator
@@ -137,8 +153,8 @@ class MakeExperimentFullOnCommandIntegrationSpec extends BaseIntegrationSpec {
                 .get()
     }
 
-    Experiment startedExperimentWithVariants(List<String> variantNames) {
-        def experiment = draftExperimentWithVariants(variantNames)
+    Experiment startedExperimentWithVariants(List<String> variantNames, String internalVariantName = null) {
+        def experiment = draftExperimentWithVariants(variantNames, internalVariantName)
         def properties = new StartExperimentProperties(30)
         commandFactory
                 .startExperimentCommand(experiment.id, properties)
@@ -148,20 +164,21 @@ class MakeExperimentFullOnCommandIntegrationSpec extends BaseIntegrationSpec {
                 .get()
     }
 
-    Experiment draftExperimentWithVariants(List<String> variantNames) {
+    Experiment draftExperimentWithVariants(List<String> variantNames, String internalVariantName = null) {
         def experimentId = UUID.randomUUID().toString()
         commandFactory
-                .createExperimentCommand(experimentRequestWithVariants(experimentId, variantNames))
+                .createExperimentCommand(experimentRequestWithVariants(experimentId, variantNames, internalVariantName))
                 .execute()
         experimentsRepository
                 .getExperiment(experimentId)
                 .get()
     }
 
-    ExperimentCreationRequest experimentRequestWithVariants(String id, List<String> variantNames) {
+    ExperimentCreationRequest experimentRequestWithVariants(String id, List<String> variantNames, String internalVariantName = null) {
         ExperimentCreationRequest.builder()
                 .id(id)
                 .variantNames(variantNames)
+                .internalVariantName(internalVariantName)
                 .percentage(10)
                 .build()
     }
