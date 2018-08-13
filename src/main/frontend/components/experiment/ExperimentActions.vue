@@ -380,7 +380,7 @@
         const internalVariantName = this.experiment.internalVariantName
         return internalVariantName != null && !variantNames.contains(internalVariantName)
           ? variantNames.toArray().concat([internalVariantName])
-          : variantNames
+          : variantNames.toArray()
       },
 
       fullOnVariantSelected () {
