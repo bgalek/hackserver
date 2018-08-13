@@ -29,4 +29,8 @@ public class UpdateDescriptionsCommand {
 
         experimentsRepository.save(mutated);
     }
+
+    public String getNotificationMessage(String experimentId) {
+        return "Description of experiment with '" + experimentId + "' was changed.";
+    }
 }

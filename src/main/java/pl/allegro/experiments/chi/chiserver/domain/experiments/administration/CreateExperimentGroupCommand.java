@@ -5,7 +5,6 @@ import pl.allegro.experiments.chi.chiserver.domain.UserProvider;
 import pl.allegro.experiments.chi.chiserver.domain.experiments.Experiment;
 import pl.allegro.experiments.chi.chiserver.domain.experiments.ExperimentStatus;
 import pl.allegro.experiments.chi.chiserver.domain.experiments.ExperimentsRepository;
-import pl.allegro.experiments.chi.chiserver.domain.experiments.ReportingType;
 import pl.allegro.experiments.chi.chiserver.domain.experiments.groups.ExperimentGroup;
 import pl.allegro.experiments.chi.chiserver.domain.experiments.groups.ExperimentGroupRepository;
 import pl.allegro.experiments.chi.chiserver.infrastructure.experiments.ExperimentOrigin;
@@ -166,5 +165,9 @@ public class CreateExperimentGroupCommand {
                 .map(e -> e.get().getDefinition().get())
                 .collect(Collectors.toList())
         );
+    }
+
+    public String getNotificationMessage(List<String> experiments) {
+        return "Experiments with ids '" + String.join(",", experiments) + "' was combined in group.";
     }
 }

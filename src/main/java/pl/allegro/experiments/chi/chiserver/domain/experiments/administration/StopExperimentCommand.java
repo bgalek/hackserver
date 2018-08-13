@@ -38,4 +38,8 @@ public class StopExperimentCommand {
             throw new ExperimentCommandException(experiment.getStatus() + " experiment cannot be ended");
         }
     }
+
+    String getNotificationMessage(String experimentId) {
+        return "Experiment with id '" + experimentId + "' was stopped.";
+    }
 }

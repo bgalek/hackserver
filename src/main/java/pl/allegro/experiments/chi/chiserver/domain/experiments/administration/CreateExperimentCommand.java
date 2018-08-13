@@ -33,4 +33,8 @@ public class CreateExperimentCommand {
         }
         experimentRepository.save(experimentCreationRequest.toExperimentDefinition(user.getName()));
     }
+
+    String getNotificationMessage(String experimentId) {
+        return "Created experiment with id '" + experimentId + "'.";
+    }
 }

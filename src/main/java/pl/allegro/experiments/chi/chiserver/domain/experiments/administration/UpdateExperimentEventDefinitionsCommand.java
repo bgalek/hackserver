@@ -41,4 +41,9 @@ public class UpdateExperimentEventDefinitionsCommand {
             throw new ExperimentCommandException(experiment.getStatus() + " experiment event definitions cant be updated");
         }
     }
+
+    String getNotificationMessage(String experimentId) {
+        return "Events definitions of experiment with id '" + experimentId + "' was changed.";
+
+    }
 }

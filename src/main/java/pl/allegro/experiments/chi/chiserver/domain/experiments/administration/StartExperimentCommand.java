@@ -52,4 +52,8 @@ public class StartExperimentCommand {
             throw new ExperimentCommandException("Experiment is not DRAFT: " + experimentId);
         }
     }
+
+    String getNotificationMessage(String experimentId) {
+        return "Experiment with id '" + experimentId + "' was started.";
+    }
 }

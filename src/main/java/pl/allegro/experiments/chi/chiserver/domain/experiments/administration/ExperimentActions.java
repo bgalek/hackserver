@@ -9,66 +9,66 @@ import java.util.List;
 @Service
 public class ExperimentActions {
 
-    private final CommandFactory commandFactory;
+    private final ExperimentsNotifications experimentsNotifications;
 
     @Autowired
-    public ExperimentActions(CommandFactory commandFactory) {
-        this.commandFactory = commandFactory;
+    public ExperimentActions(ExperimentsNotifications experimentsNotifications) {
+        this.experimentsNotifications = experimentsNotifications;
     }
 
     public void create(ExperimentCreationRequest experimentCreationRequest) {
-        commandFactory.createExperimentCommand(experimentCreationRequest).execute();
+        experimentsNotifications.createExperiment(experimentCreationRequest);
     }
 
     public void start(
             String experimentId,
             StartExperimentProperties properties) {
-        commandFactory.startExperimentCommand(experimentId, properties).execute();
+        experimentsNotifications.startExperiment(experimentId, properties);
     }
 
     public void prolong(
             String experimentId,
             ProlongExperimentProperties properties) {
-        commandFactory.prolongExperimentCommand(experimentId, properties).execute();
+        experimentsNotifications.prolongExperiment(experimentId, properties);
     }
 
     public void updateDescriptions(String experimentId, UpdateExperimentProperties properties) {
-        commandFactory.updateDescriptionsCommand(experimentId, properties).execute();
+        experimentsNotifications.updateDescriptions(experimentId, properties);
     }
 
     public void updateVariants(String experimentId, UpdateVariantsProperties properties) {
-        commandFactory.updateVariantsCommand(experimentId, properties).execute();
+        experimentsNotifications.updateVariants(experimentId, properties);
     }
 
     public void updateExperimentEventDefinitions(String experimentId, List<EventDefinition> eventDefinitions) {
-        commandFactory.updateExperimentEventDefinitionsCommand(experimentId, eventDefinitions).execute();
+        experimentsNotifications.updateExperimentEventDefinitions(experimentId, eventDefinitions);
     }
 
     public void makeExperimentFullOn(String experimentId, MakeExperimentFullOnProperties properties) {
-        commandFactory.makeExperimentFullOnCommand(experimentId, properties).execute();
+        experimentsNotifications.makeExperimentFullOn(experimentId, properties);
     }
 
     public void stop(String experimentId) {
-        commandFactory.stopExperimentCommand(experimentId).execute();
+        experimentsNotifications.stopExperiment(experimentId);
     }
 
     public void pause(String experimentId) {
-        commandFactory.pauseExperimentCommand(experimentId).execute();
+        experimentsNotifications.pauseExperiment(experimentId);
     }
     
     public void resume(String experimentId) {
-        commandFactory.resumeExperimentCommand(experimentId).execute();
+        experimentsNotifications.resumeExperiment(experimentId);
     }
 
     public void delete(String experimentId) {
-        commandFactory.deleteExperimentCommand(experimentId).execute();
+        experimentsNotifications.deleteExperiment(experimentId);
     }
 
     public void createExperimentGroup(ExperimentGroupCreationRequest experimentGroupCreationRequest) {
-        commandFactory.createExperimentGroupCommand(experimentGroupCreationRequest).execute();
+        experimentsNotifications.createExperimentGroup(experimentGroupCreationRequest);
     }
 
     public void createPairedExperiment(PairedExperimentCreationRequest pairedExperimentCreationRequest) {
-        commandFactory.createPairedExperimentCommand(pairedExperimentCreationRequest).execute();
+        experimentsNotifications.createPairedExperiment(pairedExperimentCreationRequest);
     }
 }

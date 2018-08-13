@@ -25,4 +25,10 @@ public class CreatePairedExperimentCommand {
             throw e;
         }
     }
+
+    public String getNotificationMessage(PairedExperimentCreationRequest pairedExperimentCreationRequest) {
+        return "Experiment with id '"
+                + String.join(",", pairedExperimentCreationRequest.getExperimentGroupCreationRequest().getExperiments())
+                + "' was paired.";
+    }
 }

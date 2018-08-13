@@ -38,4 +38,8 @@ public class ResumeExperimentCommand {
             throw new ExperimentCommandException(String.format("Experiment <%s> is not PAUSED.", experimentId));
         }
     }
+
+    public String getNotificationMessage(String experimentId) {
+        return "Experiment with id '" + experimentId + "' was resumed.";
+    }
 }

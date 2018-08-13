@@ -41,4 +41,8 @@ public class PauseExperimentCommand {
             );
         }
     }
+
+    public String getNotificationMessage(String experimentId) {
+        return "Experiment with id '" + experimentId + "' was paused.";
+    }
 }

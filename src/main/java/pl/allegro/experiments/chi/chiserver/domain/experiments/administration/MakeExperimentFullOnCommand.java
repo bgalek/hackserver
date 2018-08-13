@@ -63,4 +63,8 @@ public class MakeExperimentFullOnCommand {
             throw new ExperimentCommandException("Experiment cannot be made full-on if it belongs to a group");
         }
     }
+
+    public String getNotificationMessage(String experimentId, MakeExperimentFullOnProperties properties) {
+        return "Experiment with id '" + experimentId + ":" + properties.getVariantName() + "' was made full-on.";
+    }
 }

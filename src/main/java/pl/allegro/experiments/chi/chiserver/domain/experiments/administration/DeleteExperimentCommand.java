@@ -53,4 +53,8 @@ public class DeleteExperimentCommand {
             throw new ExperimentCommandException("Non-DRAFT experiment bounded to a group can not be deleted");
         }
     }
+
+    public String getNotificationMessage(String experimentId) {
+        return "Experiment with id '" + experimentId + "' was deleted.";
+    }
 }

@@ -48,4 +48,9 @@ public class UpdateVariantsCommand {
             throw new ExperimentCommandException("Can not change variants of experiment bounded to a group");
         }
     }
+
+    public String getNotificationMessage(String experimentId) {
+        return "Variants of experiment with id '" + experimentId + "' was updated.";
+
+    }
 }

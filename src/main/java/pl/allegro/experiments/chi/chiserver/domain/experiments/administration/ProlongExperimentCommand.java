@@ -43,4 +43,8 @@ public class ProlongExperimentCommand {
             throw new ExperimentCommandException("Experiment cant be prolonged if it is not ACTIVE");
         }
     }
+
+    public String getNotificationMessage(String experimentId, ProlongExperimentProperties properties) {
+        return "Experiment with id '" + experimentId + "' was prolonged by " + properties.getExperimentAdditionalDays() + "days.";
+    }
 }
