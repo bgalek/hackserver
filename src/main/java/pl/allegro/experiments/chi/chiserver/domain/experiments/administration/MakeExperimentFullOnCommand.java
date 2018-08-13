@@ -6,8 +6,10 @@ import pl.allegro.experiments.chi.chiserver.domain.experiments.ExperimentVariant
 import pl.allegro.experiments.chi.chiserver.domain.experiments.ExperimentsRepository;
 import pl.allegro.experiments.chi.chiserver.domain.experiments.groups.ExperimentGroupRepository;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 import static java.util.stream.Collectors.toList;
 
@@ -41,26 +43,13 @@ public class MakeExperimentFullOnCommand {
         experimentsRepository.save(fullOnExperiment);
     }
 
-    private List<String> allVariantNames(Experiment experiment) {
-        List<String> variantNames = experiment
-                .getVariants()
-                .stream()
-                .map(ExperimentVariant::getName)
-                .collect(toList());
-
-        Optional<String> internalVariantName = experiment
-                .getDefinition()
-                .flatMap(ExperimentDefinition::getInternalVariantName);
-        if (internalVariantName.isPresent() && !variantNames.contains(internalVariantName.get())) {
-            variantNames.add(internalVariantName.get());
-        }
-        return variantNames;
+    private Set<String> allVariantNames(Experiment experiment) {
+        return experiment.getDefinition().map(d -> d.allVariantNames()).orElse(Collections.emptySet());
     }
 
     private void validate(Experiment experiment) {
-        boolean variantExists = allVariantNames(experiment)
-                .stream()
-                .anyMatch(it -> it.equals(properties.getVariantName()));
+        boolean variantExists = allVariantNames(experiment).contains(properties.getVariantName());
+
         if (!variantExists) {
             throw new ExperimentCommandException(
                     String.format("Experiment '%s' does not have variant named '%s'",

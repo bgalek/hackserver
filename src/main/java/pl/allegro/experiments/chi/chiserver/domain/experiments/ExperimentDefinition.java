@@ -12,12 +12,8 @@ import pl.allegro.experiments.chi.chiserver.infrastructure.experiments.Experimen
 
 import java.time.LocalDateTime;
 import java.time.ZonedDateTime;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.IntStream;
-import java.util.stream.Stream;
 
 import static java.util.stream.Collectors.toList;
 import static java.util.stream.Stream.concat;
@@ -173,6 +169,12 @@ public class ExperimentDefinition {
         return editable;
     }
 
+    public Set<String> allVariantNames() {
+        var allVariants = new HashSet<>(variantNames);
+        allVariants.add(internalVariantName);
+        return Collections.unmodifiableSet(allVariants);
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -314,7 +316,7 @@ public class ExperimentDefinition {
     }
 
     private List<ExperimentVariant> prepareFullOnVariants() {
-        return getVariantNamesWithInternal()
+        return allVariantNames()
                 .stream()
                 .map(this::convertToFullOnVariant)
                 .collect(toList());
@@ -329,12 +331,6 @@ public class ExperimentDefinition {
             }
         }
         return new ExperimentVariant(variantName, predicates);
-    }
-
-    private List<String> getVariantNamesWithInternal() {
-        return internalVariantName != null && !variantNames.contains(internalVariantName)
-                ? concat(variantNames.stream(), Stream.of(internalVariantName)).collect(toList())
-                : variantNames;
     }
 
     private List<ExperimentVariant> prepareInternalVariants() {
