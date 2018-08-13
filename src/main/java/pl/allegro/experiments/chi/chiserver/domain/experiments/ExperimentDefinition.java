@@ -171,7 +171,9 @@ public class ExperimentDefinition {
 
     public Set<String> allVariantNames() {
         var allVariants = new HashSet<>(variantNames);
-        allVariants.add(internalVariantName);
+        if (internalVariantName != null) {
+            allVariants.add(internalVariantName);
+        }
         return Collections.unmodifiableSet(allVariants);
     }
 

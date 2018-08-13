@@ -4,8 +4,8 @@ import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
 import joptsimple.internal.Strings;
 import java.time.LocalDateTime;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * Is it a ClientExperiment? Or maybe StashExperimentDefinition?
@@ -62,6 +62,12 @@ public class Experiment {
 
     public List<ExperimentVariant> getVariants() {
         return variants;
+    }
+
+    public Set<String> allVariantNames() {
+        return getDefinition()
+                .map(d -> d.allVariantNames())
+                .orElse(variants.stream().map(it -> it.getName()).collect(Collectors.toSet()));
     }
 
     public ReportingDefinition getReportingDefinition() {

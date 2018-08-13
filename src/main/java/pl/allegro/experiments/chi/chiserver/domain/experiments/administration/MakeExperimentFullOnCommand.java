@@ -43,12 +43,9 @@ public class MakeExperimentFullOnCommand {
         experimentsRepository.save(fullOnExperiment);
     }
 
-    private Set<String> allVariantNames(Experiment experiment) {
-        return experiment.getDefinition().map(d -> d.allVariantNames()).orElse(Collections.emptySet());
-    }
 
     private void validate(Experiment experiment) {
-        boolean variantExists = allVariantNames(experiment).contains(properties.getVariantName());
+        boolean variantExists = experiment.allVariantNames().contains(properties.getVariantName());
 
         if (!variantExists) {
             throw new ExperimentCommandException(
