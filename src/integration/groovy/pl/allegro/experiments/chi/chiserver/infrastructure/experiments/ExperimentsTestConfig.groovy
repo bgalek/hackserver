@@ -36,9 +36,5 @@ class MutableUserProvider implements UserProvider {
     User getCurrentUser() {
         return user
     }
-
-    void reset() {
-        user = DEFAULT
-    }
 }
 

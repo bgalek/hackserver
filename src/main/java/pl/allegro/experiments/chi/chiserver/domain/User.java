@@ -2,7 +2,6 @@ package pl.allegro.experiments.chi.chiserver.domain;
 
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
-import pl.allegro.experiments.chi.chiserver.domain.experiments.Experiment;
 import pl.allegro.experiments.chi.chiserver.domain.experiments.ExperimentDefinition;
 
 import java.util.List;
@@ -35,7 +34,7 @@ public class User {
 
     public boolean isOwner(ExperimentDefinition experiment) {
         Preconditions.checkNotNull(experiment);
-        return isRoot || groups.stream().anyMatch(g -> experiment.getGroups().contains(g)) || isAuthor(experiment);
+        return isRoot || isMemberOfAllowedGroup(experiment) || isAuthor(experiment);
     }
 
     public boolean isAnonymous() {
@@ -44,6 +43,10 @@ public class User {
 
     public boolean isLoggedIn() {
         return !isAnonymous() || isRoot();
+    }
+
+    private boolean isMemberOfAllowedGroup(ExperimentDefinition experiment) {
+        return groups.stream().anyMatch(it -> experiment.getGroups().contains(it));
     }
 
     private boolean isAuthor(ExperimentDefinition experiment) {
