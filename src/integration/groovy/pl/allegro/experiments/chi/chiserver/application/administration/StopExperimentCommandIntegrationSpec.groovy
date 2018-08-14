@@ -104,8 +104,8 @@ class StopExperimentCommandIntegrationSpec extends BaseIntegrationSpec {
         return experimentsRepository.getExperiment(id).get()
     }
 
-    StopExperimentCommand stopCommand(String experimentId) {
-        return commandFactory.stopExperimentCommand(experimentId)
+    BasicExperimentCommand stopCommand(String experimentId) {
+        commandFactory.stopExperimentCommand(experimentId)
     }
 
 }

@@ -15,7 +15,7 @@ import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
-public class CreateExperimentGroupCommand {
+public class CreateExperimentGroupCommand implements ExperimentCommand {
     private final ExperimentGroupRepository experimentGroupRepository;
     private final ExperimentsRepository experimentsRepository;
     private final PermissionsAwareExperimentRepository permissionsAwareExperimentRepository;
@@ -167,7 +167,7 @@ public class CreateExperimentGroupCommand {
         );
     }
 
-    public String getNotificationMessage(List<String> experiments) {
-        return "Experiments with ids '" + String.join(",", experiments) + "' was combined in group.";
+    public String getNotificationMessage() {
+        return "Experiments with ids '" + String.join(",", experimentGroupCreationRequest.getExperiments()) + "' was combined in group. ";
     }
 }

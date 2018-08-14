@@ -6,7 +6,7 @@ import pl.allegro.experiments.chi.chiserver.domain.experiments.ExperimentsReposi
 
 import java.util.Objects;
 
-public class CreateExperimentCommand {
+public class CreateExperimentCommand implements ExperimentCommand {
     private final ExperimentsRepository experimentRepository;
     private final UserProvider userProvider;
     private final ExperimentCreationRequest experimentCreationRequest;
@@ -34,7 +34,7 @@ public class CreateExperimentCommand {
         experimentRepository.save(experimentCreationRequest.toExperimentDefinition(user.getName()));
     }
 
-    String getNotificationMessage(String experimentId) {
-        return "Created experiment with id '" + experimentId + "'.";
+    public String getNotificationMessage() {
+        return "Created experiment with id '" + experimentCreationRequest.getId() + "'. ";
     }
 }

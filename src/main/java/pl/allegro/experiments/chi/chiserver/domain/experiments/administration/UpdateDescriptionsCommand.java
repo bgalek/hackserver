@@ -4,7 +4,7 @@ import pl.allegro.experiments.chi.chiserver.domain.experiments.Experiment;
 import pl.allegro.experiments.chi.chiserver.domain.experiments.ExperimentDefinition;
 import pl.allegro.experiments.chi.chiserver.domain.experiments.ExperimentsRepository;
 
-public class UpdateDescriptionsCommand {
+public class UpdateDescriptionsCommand implements ExperimentCommand {
     private final String experimentId;
     private final UpdateExperimentProperties properties;
     private final ExperimentsRepository experimentsRepository;
@@ -30,7 +30,7 @@ public class UpdateDescriptionsCommand {
         experimentsRepository.save(mutated);
     }
 
-    public String getNotificationMessage(String experimentId) {
-        return "Description of experiment with '" + experimentId + "' was changed.";
+    public String getNotificationMessage() {
+        return "Description of experiment with '" + experimentId + "' was changed. ";
     }
 }

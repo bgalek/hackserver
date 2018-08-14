@@ -6,7 +6,7 @@ import pl.allegro.experiments.chi.chiserver.domain.experiments.ExperimentsReposi
 
 import java.util.Objects;
 
-public class ProlongExperimentCommand {
+public class ProlongExperimentCommand implements ExperimentCommand {
     private final ExperimentsRepository experimentsRepository;
     private final ProlongExperimentProperties prolongExperimentProperties;
     private final PermissionsAwareExperimentRepository permissionsAwareExperimentRepository;
@@ -44,7 +44,7 @@ public class ProlongExperimentCommand {
         }
     }
 
-    public String getNotificationMessage(String experimentId, ProlongExperimentProperties properties) {
-        return "Experiment with id '" + experimentId + "' was prolonged by " + properties.getExperimentAdditionalDays() + "days.";
+    public String getNotificationMessage() {
+        return "Experiment with id '" + experimentId + "' was prolonged by " + prolongExperimentProperties.getExperimentAdditionalDays() + "days. ";
     }
 }

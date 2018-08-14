@@ -5,7 +5,7 @@ import pl.allegro.experiments.chi.chiserver.domain.experiments.ExperimentDefinit
 import pl.allegro.experiments.chi.chiserver.domain.experiments.ExperimentsRepository;
 import pl.allegro.experiments.chi.chiserver.domain.experiments.groups.ExperimentGroupRepository;
 
-public class UpdateVariantsCommand {
+public class UpdateVariantsCommand implements ExperimentCommand {
     private final String experimentId;
     private final UpdateVariantsProperties properties;
     private final ExperimentsRepository experimentsRepository;
@@ -49,8 +49,8 @@ public class UpdateVariantsCommand {
         }
     }
 
-    public String getNotificationMessage(String experimentId) {
-        return "Variants of experiment with id '" + experimentId + "' was updated.";
+    public String getNotificationMessage() {
+        return "Variants of experiment with id '" + experimentId + "' was updated. ";
 
     }
 }

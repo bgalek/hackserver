@@ -6,14 +6,7 @@ import pl.allegro.experiments.chi.chiserver.domain.experiments.ExperimentVariant
 import pl.allegro.experiments.chi.chiserver.domain.experiments.ExperimentsRepository;
 import pl.allegro.experiments.chi.chiserver.domain.experiments.groups.ExperimentGroupRepository;
 
-import java.util.Collections;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
-
-import static java.util.stream.Collectors.toList;
-
-public class MakeExperimentFullOnCommand {
+public class MakeExperimentFullOnCommand implements ExperimentCommand {
     private final String experimentId;
     private final MakeExperimentFullOnProperties properties;
     private final ExperimentsRepository experimentsRepository;
@@ -64,7 +57,7 @@ public class MakeExperimentFullOnCommand {
         }
     }
 
-    public String getNotificationMessage(String experimentId, MakeExperimentFullOnProperties properties) {
-        return "Experiment with id '" + experimentId + ":" + properties.getVariantName() + "' was made full-on.";
+    public String getNotificationMessage() {
+        return "Experiment with id '" + experimentId + ":" + properties.getVariantName() + "' was made full-on. ";
     }
 }

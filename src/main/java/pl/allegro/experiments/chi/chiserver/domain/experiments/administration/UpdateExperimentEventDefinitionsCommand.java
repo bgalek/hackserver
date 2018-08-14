@@ -4,7 +4,7 @@ import pl.allegro.experiments.chi.chiserver.domain.experiments.*;
 
 import java.util.List;
 
-public class UpdateExperimentEventDefinitionsCommand {
+public class UpdateExperimentEventDefinitionsCommand implements ExperimentCommand {
     private final String experimentId;
     private final ExperimentsRepository experimentsRepository;
     private final PermissionsAwareExperimentRepository permissionsAwareExperimentRepository;
@@ -42,8 +42,8 @@ public class UpdateExperimentEventDefinitionsCommand {
         }
     }
 
-    String getNotificationMessage(String experimentId) {
-        return "Events definitions of experiment with id '" + experimentId + "' was changed.";
+    public String getNotificationMessage() {
+        return "Events definitions of experiment with id '" + experimentId + "' was changed. ";
 
     }
 }

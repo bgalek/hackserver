@@ -7,7 +7,7 @@ import pl.allegro.experiments.chi.chiserver.domain.statistics.classic.Statistics
 
 import java.util.Objects;
 
-public class DeleteExperimentCommand {
+public class DeleteExperimentCommand implements ExperimentCommand {
     private final ExperimentsRepository experimentsRepository;
     private final PermissionsAwareExperimentRepository permissionsAwareExperimentRepository;
     private final String experimentId;
@@ -54,7 +54,7 @@ public class DeleteExperimentCommand {
         }
     }
 
-    public String getNotificationMessage(String experimentId) {
-        return "Experiment with id '" + experimentId + "' was deleted.";
+    public String getNotificationMessage() {
+        return "Experiment with id '" + experimentId + "' was deleted. ";
     }
 }

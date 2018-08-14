@@ -7,7 +7,7 @@ import pl.allegro.experiments.chi.chiserver.domain.experiments.groups.Experiment
 
 import java.util.Objects;
 
-public class StartExperimentCommand {
+public class StartExperimentCommand implements ExperimentCommand {
     private final ExperimentsRepository experimentsRepository;
     private final StartExperimentProperties startExperimentProperties;
     private final PermissionsAwareExperimentRepository permissionsAwareExperimentRepository;
@@ -53,7 +53,7 @@ public class StartExperimentCommand {
         }
     }
 
-    String getNotificationMessage(String experimentId) {
-        return "Experiment with id '" + experimentId + "' was started.";
+    public String getNotificationMessage() {
+        return "Experiment with id '" + experimentId + "' was started.'";
     }
 }

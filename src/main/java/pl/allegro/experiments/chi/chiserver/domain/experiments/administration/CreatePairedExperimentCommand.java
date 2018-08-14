@@ -1,6 +1,6 @@
 package pl.allegro.experiments.chi.chiserver.domain.experiments.administration;
 
-public class CreatePairedExperimentCommand {
+public class CreatePairedExperimentCommand implements ExperimentCommand {
 
     private final CreateExperimentCommand createExperimentCommand;
     private final CreateExperimentGroupCommand createExperimentGroupCommand;
@@ -26,9 +26,8 @@ public class CreatePairedExperimentCommand {
         }
     }
 
-    public String getNotificationMessage(PairedExperimentCreationRequest pairedExperimentCreationRequest) {
-        return "Experiment with id '"
-                + String.join(",", pairedExperimentCreationRequest.getExperimentGroupCreationRequest().getExperiments())
-                + "' was paired.";
+    @Override
+    public String getNotificationMessage() {
+        return null;
     }
 }

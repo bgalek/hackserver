@@ -6,7 +6,7 @@ import pl.allegro.experiments.chi.chiserver.domain.experiments.ExperimentsReposi
 
 import java.util.Objects;
 
-public class ResumeExperimentCommand {
+public class ResumeExperimentCommand implements ExperimentCommand {
     private final String experimentId;
     private final ExperimentsRepository experimentsRepository;
     private final PermissionsAwareExperimentRepository permissionsAwareExperimentRepository;
@@ -39,7 +39,7 @@ public class ResumeExperimentCommand {
         }
     }
 
-    public String getNotificationMessage(String experimentId) {
-        return "Experiment with id '" + experimentId + "' was resumed.";
+    public String getNotificationMessage() {
+        return "Experiment with id '" + experimentId + "' was resumed. ";
     }
 }
