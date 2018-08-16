@@ -42,11 +42,7 @@ public class CommandFactory {
         return new NotificationDecoratorCommand(experimentCommand, notificator, userProvider);
     }
 
-<<<<<<< HEAD
     Command startExperimentCommand(
-=======
-    public StartExperimentCommand startExperimentCommand(
->>>>>>> CHIBOX-118 refactor command tests and add utility traits
             String experimentId,
             StartExperimentProperties properties) {
         Preconditions.checkNotNull(experimentId);
@@ -61,11 +57,7 @@ public class CommandFactory {
         return new NotificationDecoratorCommand(experimentCommand, notificator, userProvider);
     }
 
-<<<<<<< HEAD
     Command prolongExperimentCommand(
-=======
-    public ProlongExperimentCommand prolongExperimentCommand(
->>>>>>> CHIBOX-118 refactor command tests and add utility traits
             String experimentId,
             ProlongExperimentProperties properties) {
         Preconditions.checkNotNull(experimentId);
@@ -79,28 +71,17 @@ public class CommandFactory {
         return new NotificationDecoratorCommand(experimentCommand, notificator, userProvider);
     }
 
-<<<<<<< HEAD
     Command stopExperimentCommand(String experimentId) {
         StopExperimentCommand experimentCommand = new StopExperimentCommand(
-=======
-    public StopExperimentCommand stopExperimentCommand(String experimentId) {
-        return new StopExperimentCommand(
->>>>>>> CHIBOX-118 refactor command tests and add utility traits
                 experimentId,
                 experimentsRepository,
                 permissionsAwareExperimentRepository
         );
         return new NotificationDecoratorCommand(experimentCommand, notificator, userProvider);
-
     }
 
-<<<<<<< HEAD
     Command pauseExperimentCommand(String experimentId) {
         PauseExperimentCommand experimentCommand = new PauseExperimentCommand(
-=======
-    public PauseExperimentCommand pauseExperimentCommand(String experimentId) {
-        return new PauseExperimentCommand(
->>>>>>> CHIBOX-118 refactor command tests and add utility traits
                 experimentId,
                 experimentsRepository,
                 permissionsAwareExperimentRepository
@@ -108,13 +89,8 @@ public class CommandFactory {
         return new NotificationDecoratorCommand(experimentCommand, notificator, userProvider);
     }
 
-<<<<<<< HEAD
     Command resumeExperimentCommand(String experimentId) {
         ResumeExperimentCommand experimentCommand = new ResumeExperimentCommand(
-=======
-    public ResumeExperimentCommand resumeExperimentCommand(String experimentId) {
-        return new ResumeExperimentCommand(
->>>>>>> CHIBOX-118 refactor command tests and add utility traits
                 experimentId,
                 experimentsRepository,
                 permissionsAwareExperimentRepository
@@ -122,11 +98,7 @@ public class CommandFactory {
         return new NotificationDecoratorCommand(experimentCommand, notificator, userProvider);
     }
 
-<<<<<<< HEAD
     Command deleteExperimentCommand(String experimentId) {
-=======
-    public DeleteExperimentCommand deleteExperimentCommand(String experimentId) {
->>>>>>> CHIBOX-118 refactor command tests and add utility traits
         Preconditions.checkNotNull(experimentId);
         DeleteExperimentCommand experimentCommand = new DeleteExperimentCommand(
                 experimentsRepository,
@@ -138,11 +110,7 @@ public class CommandFactory {
         return new NotificationDecoratorCommand(experimentCommand, notificator, userProvider);
     }
 
-<<<<<<< HEAD
     Command updateDescriptionsCommand(String experimentId, UpdateExperimentProperties properties) {
-=======
-    public UpdateDescriptionsCommand updateDescriptionsCommand(String experimentId, UpdateExperimentProperties properties) {
->>>>>>> CHIBOX-118 refactor command tests and add utility traits
         Preconditions.checkNotNull(experimentId);
         Preconditions.checkNotNull(properties);
 
@@ -155,11 +123,7 @@ public class CommandFactory {
         return new NotificationDecoratorCommand(experimentCommand, notificator, userProvider);
     }
 
-<<<<<<< HEAD
     Command updateVariantsCommand(String experimentId, UpdateVariantsProperties properties) {
-=======
-    public UpdateVariantsCommand updateVariantsCommand(String experimentId, UpdateVariantsProperties properties) {
->>>>>>> CHIBOX-118 refactor command tests and add utility traits
         Preconditions.checkNotNull(experimentId);
         Preconditions.checkNotNull(properties);
 
@@ -173,11 +137,7 @@ public class CommandFactory {
         return new NotificationDecoratorCommand(experimentCommand, notificator, userProvider);
     }
 
-<<<<<<< HEAD
     Command updateExperimentEventDefinitionsCommand(
-=======
-    public UpdateExperimentEventDefinitionsCommand updateExperimentEventDefinitionsCommand(
->>>>>>> CHIBOX-118 refactor command tests and add utility traits
             String experimentId,
             List<EventDefinition> eventDefinitions) {
         UpdateExperimentEventDefinitionsCommand experimentCommand = new UpdateExperimentEventDefinitionsCommand(
@@ -189,11 +149,7 @@ public class CommandFactory {
         return new NotificationDecoratorCommand(experimentCommand, notificator, userProvider);
     }
 
-<<<<<<< HEAD
     Command createExperimentGroupCommand(ExperimentGroupCreationRequest experimentGroupCreationRequest) {
-=======
-    public CreateExperimentGroupCommand createExperimentGroupCommand(ExperimentGroupCreationRequest experimentGroupCreationRequest) {
->>>>>>> CHIBOX-118 refactor command tests and add utility traits
         return new CreateExperimentGroupCommand(
                 experimentGroupRepository,
                 experimentsRepository,
@@ -203,11 +159,7 @@ public class CommandFactory {
         );
     }
 
-<<<<<<< HEAD
     Command createPairedExperimentCommand(
-=======
-    public CreatePairedExperimentCommand createPairedExperimentCommand(
->>>>>>> CHIBOX-118 refactor command tests and add utility traits
             PairedExperimentCreationRequest pairedExperimentCreationRequest) {
         return new CreatePairedExperimentCommand(
                 new CreateExperimentCommand(
@@ -228,11 +180,7 @@ public class CommandFactory {
                         experimentGroupRepository));
     }
 
-<<<<<<< HEAD
     Command makeExperimentFullOnCommand(
-=======
-    public MakeExperimentFullOnCommand makeExperimentFullOnCommand(
->>>>>>> CHIBOX-118 refactor command tests and add utility traits
             String experimentId,
             MakeExperimentFullOnProperties properties) {
         var command = new MakeExperimentFullOnCommand(

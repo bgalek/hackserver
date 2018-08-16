@@ -41,7 +41,7 @@ public class UpdateVariantsCommand implements ExperimentCommand {
 
     private void validate(Experiment experiment) {
         if (experiment.isEffectivelyEnded()) {
-            throw new ExperimentCommandException(experiment.getStatus() + " experiment variants cant be updated");
+            throw new ExperimentCommandException(experiment.getStatus() + " experiment event definitions cant be updated");
         }
 
         if (experimentGroupRepository.experimentInGroup(experimentId)) {

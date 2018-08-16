@@ -3,16 +3,9 @@ package pl.allegro.experiments.chi.chiserver.domain.experiments;
 import com.google.common.base.Preconditions;
 
 import java.time.ZonedDateTime;
-import java.util.Arrays;
-import java.util.List;
-import java.util.stream.Collectors;
-
-import static java.util.Arrays.asList;
-import static java.util.Arrays.stream;
-import static java.util.stream.Collectors.toList;
 
 public enum ExperimentStatus {
-    DRAFT(false), @Deprecated PLANNED(false), ACTIVE(false), ENDED(false), PAUSED(true), FULL_ON(true);
+    DRAFT(false), PLANNED(false), ACTIVE(false), ENDED(false), PAUSED(true), FULL_ON(true);
 
     boolean explicit;
 

@@ -4,6 +4,8 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.test.context.ContextConfiguration
 import pl.allegro.experiments.chi.chiserver.BaseIntegrationSpec
 import pl.allegro.experiments.chi.chiserver.domain.experiments.ExperimentStatus
+import pl.allegro.experiments.chi.chiserver.domain.statistics.classic.StatisticsRepository
+import pl.allegro.experiments.chi.chiserver.infrastructure.experiments.ExperimentsTestConfig
 import pl.allegro.experiments.chi.chiserver.utils.CommandExperimentUtils
 import pl.allegro.experiments.chi.chiserver.domain.User
 import pl.allegro.experiments.chi.chiserver.domain.experiments.ExperimentsRepository
@@ -13,11 +15,11 @@ import pl.allegro.experiments.chi.chiserver.domain.experiments.administration.Pe
 import pl.allegro.experiments.chi.chiserver.domain.experiments.groups.ExperimentGroupRepository
 import pl.allegro.experiments.chi.chiserver.infrastructure.experiments.MutableUserProvider
 
-@ContextConfiguration(classes = CommandTestConfig.class)
+@ContextConfiguration(classes = ExperimentsTestConfig.class)
 abstract class BaseCommandIntegrationSpec extends BaseIntegrationSpec implements CommandExperimentUtils {
 
     @Autowired
-    InMemoryStatisticsRepository statisticsRepository
+    StatisticsRepository statisticsRepository
 
     @Autowired
     MutableUserProvider mutableUserProvider
@@ -44,7 +46,7 @@ abstract class BaseCommandIntegrationSpec extends BaseIntegrationSpec implements
     }
 
     def cleanup() {
-        experimentsRepository.getAll().forEach { experimentsRepository.delete(it.id) }
+        experimentsRepository.getAll().findAll{it.origin == "MONGO"}.forEach { experimentsRepository.delete(it.id) }
     }
 
     void signInAs(User user) {

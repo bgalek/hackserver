@@ -5,17 +5,9 @@ import org.springframework.context.annotation.Configuration
 import org.springframework.context.annotation.Primary
 import pl.allegro.experiments.chi.chiserver.domain.User
 import pl.allegro.experiments.chi.chiserver.domain.UserProvider
-import pl.allegro.experiments.chi.chiserver.infrastructure.InMemoryExperimentsRepository
-import pl.allegro.experiments.chi.chiserver.utils.SampleInMemoryExperimentsRepository
 
 @Configuration
 class ExperimentsTestConfig {
-
-    @Primary
-    @Bean
-    InMemoryExperimentsRepository experimentsRepository() {
-        return SampleInMemoryExperimentsRepository.createSampleRepository();
-    }
 
     @Primary
     @Bean
