@@ -14,15 +14,3 @@ eventDefinitions:
 
 kafka:
   kafkaTemplate: "off"
-
-email-notifier:
-  emailNotificationUrl: http://localhost:8089/
-  path: /sender/send
-  callerId: chi-server
-  recipients:
-  - aaa@allegro.pl
-
-oauth:
-  serviceUrl: http://localhost:8089/
-  path: /auth/oauth/token
-  encodedCredentials: buVKZRRnep3Sl6E9BCZH0ksisWCXSdX2SJWT38kRNhWDoB5mlUtmdK8xX9aizPU9

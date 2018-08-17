@@ -1,5 +1,9 @@
 package pl.allegro.experiments.chi.chiserver.domain.experiments.administration.notifications;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -21,11 +25,16 @@ public class NotificationConfig {
     }
 
     @Bean
-    EmailService notificator(AuthenticationClient authenticationClient, EmailNotifierProperties emailNotifierProperties, RestTemplate restTemplate) {
-        return new EmailService(authenticationClient, emailNotifierProperties, restTemplate);
+    Notificator notificator(AuthenticationClient authenticationClient, EmailNotifierProperties emailNotifierProperties, RestTemplate restTemplate,
+                             @Value("${email-notifier.enabled:false}") boolean notificationsEnabled) {
+        if (notificationsEnabled) {
+            return new EmailService(authenticationClient, emailNotifierProperties, restTemplate);
+        }
+        return (s, m) -> {};
     }
 
     @Bean
+    @ConditionalOnProperty(name = "email-notifier.enabled")
     AuthenticationClient authenticationClient(OAuthProperties oAuthProperties, RestTemplate restTemplate) {
         return new AuthenticationClient(oAuthProperties, restTemplate);
     }

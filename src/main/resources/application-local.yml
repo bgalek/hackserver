@@ -17,11 +17,12 @@ spring:
         host: "localhost"
 
 email-notifier:
+  enabled: true
   emailNotificationUrl: service://notificationstwo
   path: /sender/send
   callerId: chi-server
   recipients:
-    - aaa@allegro.pl
+    -zonk@allegro.pl
 
 oauth:
   serviceUrl: service://allegro-auth-service
