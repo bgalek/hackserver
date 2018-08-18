@@ -26,7 +26,7 @@ class HipChatNotification {
 
     @JsonProperty("notify")
     boolean isNotify() {
-        return false;
+        return true;
     }
 
     @JsonProperty
