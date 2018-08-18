@@ -39,7 +39,13 @@ public class ResumeExperimentCommand implements ExperimentCommand {
         }
     }
 
+    @Override
     public String getNotificationMessage() {
-        return "Experiment with id '" + experimentId + "' was resumed. ";
+        return "was resumed";
+    }
+
+    @Override
+    public String getExperimentId() {
+        return experimentId;
     }
 }

@@ -44,7 +44,13 @@ public class ProlongExperimentCommand implements ExperimentCommand {
         }
     }
 
+    @Override
     public String getNotificationMessage() {
-        return "Experiment with id '" + experimentId + "' was prolonged by " + prolongExperimentProperties.getExperimentAdditionalDays() + "days. ";
+        return "was prolonged by " + prolongExperimentProperties.getExperimentAdditionalDays() + "days";
+    }
+
+    @Override
+    public String getExperimentId() {
+        return experimentId;
     }
 }

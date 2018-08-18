@@ -104,7 +104,7 @@ class StopExperimentCommandIntegrationSpec extends BaseIntegrationSpec {
         return experimentsRepository.getExperiment(id).get()
     }
 
-    BasicExperimentCommand stopCommand(String experimentId) {
+    NotificationAwareCommand stopCommand(String experimentId) {
         commandFactory.stopExperimentCommand(experimentId)
     }
 

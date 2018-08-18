@@ -3,5 +3,5 @@ package pl.allegro.experiments.chi.chiserver.domain.experiments.administration.n
 @FunctionalInterface
 public interface Notificator {
 
-    void send(String subject, String message);
+    void send(Notification message);
 }

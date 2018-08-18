@@ -54,7 +54,13 @@ public class DeleteExperimentCommand implements ExperimentCommand {
         }
     }
 
+    @Override
     public String getNotificationMessage() {
-        return "Experiment with id '" + experimentId + "' was deleted. ";
+        return "was deleted";
+    }
+
+    @Override
+    public String getExperimentId() {
+        return experimentId;
     }
 }

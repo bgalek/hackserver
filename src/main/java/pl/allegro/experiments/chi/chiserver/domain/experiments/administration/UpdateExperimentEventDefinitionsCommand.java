@@ -43,7 +43,11 @@ public class UpdateExperimentEventDefinitionsCommand implements ExperimentComman
     }
 
     public String getNotificationMessage() {
-        return "Events definitions of experiment with id '" + experimentId + "' was changed. ";
+        return "- event definitions was updated";
+    }
 
+    @Override
+    public String getExperimentId() {
+        return experimentId;
     }
 }

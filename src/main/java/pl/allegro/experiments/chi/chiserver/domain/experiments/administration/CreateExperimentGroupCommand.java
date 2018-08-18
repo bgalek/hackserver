@@ -15,7 +15,7 @@ import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
-public class CreateExperimentGroupCommand implements ExperimentCommand {
+public class CreateExperimentGroupCommand {
     private final ExperimentGroupRepository experimentGroupRepository;
     private final ExperimentsRepository experimentsRepository;
     private final PermissionsAwareExperimentRepository permissionsAwareExperimentRepository;
@@ -165,9 +165,5 @@ public class CreateExperimentGroupCommand implements ExperimentCommand {
                 .map(e -> e.get().getDefinition().get())
                 .collect(Collectors.toList())
         );
-    }
-
-    public String getNotificationMessage() {
-        return "Experiments with ids '" + String.join(",", experimentGroupCreationRequest.getExperiments()) + "' was combined in group. ";
     }
 }

@@ -6,7 +6,7 @@ application:
   name: chi-server
 
 discovery:
-  enabled: true
+  enabled: false
 
 metadata:
   cloud:
@@ -87,5 +87,5 @@ status:
       resources:
         - GET
 
-email-notifier:
+notificator:
   enabled: false

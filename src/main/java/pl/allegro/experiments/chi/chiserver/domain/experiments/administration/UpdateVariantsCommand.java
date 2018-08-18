@@ -50,7 +50,11 @@ public class UpdateVariantsCommand implements ExperimentCommand {
     }
 
     public String getNotificationMessage() {
-        return "Variants of experiment with id '" + experimentId + "' was updated. ";
+        return "- traffic allocation was changed to "+properties.getPercentage()+"%";
+    }
 
+    @Override
+    public String getExperimentId() {
+        return experimentId;
     }
 }

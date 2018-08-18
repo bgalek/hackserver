@@ -30,7 +30,13 @@ public class UpdateDescriptionsCommand implements ExperimentCommand {
         experimentsRepository.save(mutated);
     }
 
+    @Override
     public String getNotificationMessage() {
-        return "Description of experiment with '" + experimentId + "' was changed. ";
+        return "- description was updated";
+    }
+
+    @Override
+    public String getExperimentId() {
+        return experimentId;
     }
 }

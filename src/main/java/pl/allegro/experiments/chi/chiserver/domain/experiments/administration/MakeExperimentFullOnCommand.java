@@ -57,7 +57,13 @@ public class MakeExperimentFullOnCommand implements ExperimentCommand {
         }
     }
 
+    @Override
     public String getNotificationMessage() {
-        return "Experiment with id '" + experimentId + ":" + properties.getVariantName() + "' was made full-on. ";
+        return "was made full-on";
+    }
+
+    @Override
+    public String getExperimentId() {
+        return experimentId;
     }
 }

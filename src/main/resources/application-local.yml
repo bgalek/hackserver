@@ -16,15 +16,6 @@ spring:
         database: chi-server
         host: "localhost"
 
-email-notifier:
+notificator:
   enabled: true
-  emailNotificationUrl: service://notificationstwo
-  path: /sender/send
-  callerId: chi-server
-  recipients:
-    -zonk@allegro.pl
-
-oauth:
-  serviceUrl: service://allegro-auth-service
-  path: /auth/oauth/token
-  encodedCredentials: Y2hpLXNlcnZlcjpidVZLWlJSbmVwM1NsNkU5QkNaSDBrc2lzV0NYU2RYMlNKV1QzOGtSTmhXRG9CNW1sVXRtZEs4eFg5YWl6UFU5
+  hipChatPostUrl: https://allegro.hipchat.com/v2/room/4710838/notification?auth_token=0PO6dZUgmlOfoZ3YWSYPB4bI7XeSLxAXT6UavZdl

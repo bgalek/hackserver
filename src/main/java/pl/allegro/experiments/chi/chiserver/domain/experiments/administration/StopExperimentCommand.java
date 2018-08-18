@@ -39,7 +39,13 @@ public class StopExperimentCommand implements ExperimentCommand {
         }
     }
 
+    @Override
     public String getNotificationMessage() {
-        return "Experiment with id '" + experimentId + "' was stopped. ";
+        return "was stopped";
+    }
+
+    @Override
+    public String getExperimentId() {
+        return experimentId;
     }
 }

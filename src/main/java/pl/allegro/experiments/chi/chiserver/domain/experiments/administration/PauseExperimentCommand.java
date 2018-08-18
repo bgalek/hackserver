@@ -42,7 +42,13 @@ public class PauseExperimentCommand implements ExperimentCommand {
         }
     }
 
+    @Override
     public String getNotificationMessage() {
-        return "Experiment with id '" + experimentId + "' was paused. ";
+        return "was paused";
+    }
+
+    @Override
+    public String getExperimentId() {
+        return experimentId;
     }
 }

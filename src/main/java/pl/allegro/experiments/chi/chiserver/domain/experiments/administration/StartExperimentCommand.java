@@ -53,7 +53,13 @@ public class StartExperimentCommand implements ExperimentCommand {
         }
     }
 
+    @Override
     public String getNotificationMessage() {
-        return "Experiment with id '" + experimentId + "' was started.'";
+        return "was started";
+    }
+
+    @Override
+    public String getExperimentId() {
+        return experimentId;
     }
 }

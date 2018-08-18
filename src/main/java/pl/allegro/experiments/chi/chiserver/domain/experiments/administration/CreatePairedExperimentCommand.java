@@ -1,6 +1,6 @@
 package pl.allegro.experiments.chi.chiserver.domain.experiments.administration;
 
-public class CreatePairedExperimentCommand implements ExperimentCommand {
+public class CreatePairedExperimentCommand {
 
     private final CreateExperimentCommand createExperimentCommand;
     private final CreateExperimentGroupCommand createExperimentGroupCommand;
@@ -20,14 +20,9 @@ public class CreatePairedExperimentCommand implements ExperimentCommand {
         createExperimentCommand.execute();
         try {
             createExperimentGroupCommand.execute();
-        } catch(ExperimentCommandException e) {
+        } catch (ExperimentCommandException e) {
             deleteExperimentCommand.execute();
             throw e;
         }
-    }
-
-    @Override
-    public String getNotificationMessage() {
-        return null;
     }
 }

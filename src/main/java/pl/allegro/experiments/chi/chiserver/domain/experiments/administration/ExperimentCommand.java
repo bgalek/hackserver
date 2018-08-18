@@ -5,4 +5,6 @@ public interface ExperimentCommand {
     void execute();
 
     String getNotificationMessage();
+
+    String getExperimentId();
 }

@@ -34,7 +34,13 @@ public class CreateExperimentCommand implements ExperimentCommand {
         experimentRepository.save(experimentCreationRequest.toExperimentDefinition(user.getName()));
     }
 
+    @Override
     public String getNotificationMessage() {
-        return "Created experiment with id '" + experimentCreationRequest.getId() + "'. ";
+        return "draft was created";
+    }
+
+    @Override
+    public String getExperimentId() {
+        return experimentCreationRequest.getId();
     }
 }
