@@ -36,13 +36,13 @@ public class CommandFactory {
         this.notificator = emailService;
     }
 
-    NotificationAwareCommand createExperimentCommand(ExperimentCreationRequest request) {
+    Command createExperimentCommand(ExperimentCreationRequest request) {
         Preconditions.checkNotNull(request);
         CreateExperimentCommand experimentCommand = new CreateExperimentCommand(experimentsRepository, userProvider, request);
-        return new NotificationAwareCommand(experimentCommand, notificator, userProvider);
+        return new NotificationDecoratorCommand(experimentCommand, notificator, userProvider);
     }
 
-    NotificationAwareCommand startExperimentCommand(
+    Command startExperimentCommand(
             String experimentId,
             StartExperimentProperties properties) {
         Preconditions.checkNotNull(experimentId);
@@ -54,10 +54,10 @@ public class CommandFactory {
                 experimentGroupRepository,
                 experimentId
         );
-        return new NotificationAwareCommand(experimentCommand, notificator, userProvider);
+        return new NotificationDecoratorCommand(experimentCommand, notificator, userProvider);
     }
 
-    NotificationAwareCommand prolongExperimentCommand(
+    Command prolongExperimentCommand(
             String experimentId,
             ProlongExperimentProperties properties) {
         Preconditions.checkNotNull(experimentId);
@@ -68,38 +68,38 @@ public class CommandFactory {
                 permissionsAwareExperimentRepository,
                 experimentId
         );
-        return new NotificationAwareCommand(experimentCommand, notificator, userProvider);
+        return new NotificationDecoratorCommand(experimentCommand, notificator, userProvider);
     }
 
-    NotificationAwareCommand stopExperimentCommand(String experimentId) {
+    Command stopExperimentCommand(String experimentId) {
         StopExperimentCommand experimentCommand = new StopExperimentCommand(
                 experimentId,
                 experimentsRepository,
                 permissionsAwareExperimentRepository
         );
-        return new NotificationAwareCommand(experimentCommand, notificator, userProvider);
+        return new NotificationDecoratorCommand(experimentCommand, notificator, userProvider);
 
     }
 
-    NotificationAwareCommand pauseExperimentCommand(String experimentId) {
+    Command pauseExperimentCommand(String experimentId) {
         PauseExperimentCommand experimentCommand = new PauseExperimentCommand(
                 experimentId,
                 experimentsRepository,
                 permissionsAwareExperimentRepository
         );
-        return new NotificationAwareCommand(experimentCommand, notificator, userProvider);
+        return new NotificationDecoratorCommand(experimentCommand, notificator, userProvider);
     }
 
-    NotificationAwareCommand resumeExperimentCommand(String experimentId) {
+    Command resumeExperimentCommand(String experimentId) {
         ResumeExperimentCommand experimentCommand = new ResumeExperimentCommand(
                 experimentId,
                 experimentsRepository,
                 permissionsAwareExperimentRepository
         );
-        return new NotificationAwareCommand(experimentCommand, notificator, userProvider);
+        return new NotificationDecoratorCommand(experimentCommand, notificator, userProvider);
     }
 
-    NotificationAwareCommand deleteExperimentCommand(String experimentId) {
+    Command deleteExperimentCommand(String experimentId) {
         Preconditions.checkNotNull(experimentId);
         DeleteExperimentCommand experimentCommand = new DeleteExperimentCommand(
                 experimentsRepository,
@@ -108,10 +108,10 @@ public class CommandFactory {
                 statisticsRepository,
                 experimentGroupRepository
         );
-        return new NotificationAwareCommand(experimentCommand, notificator, userProvider);
+        return new NotificationDecoratorCommand(experimentCommand, notificator, userProvider);
     }
 
-    NotificationAwareCommand updateDescriptionsCommand(String experimentId, UpdateExperimentProperties properties) {
+    Command updateDescriptionsCommand(String experimentId, UpdateExperimentProperties properties) {
         Preconditions.checkNotNull(experimentId);
         Preconditions.checkNotNull(properties);
 
@@ -121,10 +121,10 @@ public class CommandFactory {
                 experimentsRepository,
                 permissionsAwareExperimentRepository
         );
-        return new NotificationAwareCommand(experimentCommand, notificator, userProvider);
+        return new NotificationDecoratorCommand(experimentCommand, notificator, userProvider);
     }
 
-    NotificationAwareCommand updateVariantsCommand(String experimentId, UpdateVariantsProperties properties) {
+    Command updateVariantsCommand(String experimentId, UpdateVariantsProperties properties) {
         Preconditions.checkNotNull(experimentId);
         Preconditions.checkNotNull(properties);
 
@@ -135,10 +135,10 @@ public class CommandFactory {
                 permissionsAwareExperimentRepository,
                 experimentGroupRepository
         );
-        return new NotificationAwareCommand(experimentCommand, notificator, userProvider);
+        return new NotificationDecoratorCommand(experimentCommand, notificator, userProvider);
     }
 
-    NotificationAwareCommand updateExperimentEventDefinitionsCommand(
+    Command updateExperimentEventDefinitionsCommand(
             String experimentId,
             List<EventDefinition> eventDefinitions) {
         UpdateExperimentEventDefinitionsCommand experimentCommand = new UpdateExperimentEventDefinitionsCommand(
@@ -147,10 +147,10 @@ public class CommandFactory {
                 permissionsAwareExperimentRepository,
                 eventDefinitions
         );
-        return new NotificationAwareCommand(experimentCommand, notificator, userProvider);
+        return new NotificationDecoratorCommand(experimentCommand, notificator, userProvider);
     }
 
-    CreateExperimentGroupCommand createExperimentGroupCommand(ExperimentGroupCreationRequest experimentGroupCreationRequest) {
+    Command createExperimentGroupCommand(ExperimentGroupCreationRequest experimentGroupCreationRequest) {
         return new CreateExperimentGroupCommand(
                 experimentGroupRepository,
                 experimentsRepository,
@@ -160,7 +160,7 @@ public class CommandFactory {
         );
     }
 
-    CreatePairedExperimentCommand createPairedExperimentCommand(
+    Command createPairedExperimentCommand(
             PairedExperimentCreationRequest pairedExperimentCreationRequest) {
         return new CreatePairedExperimentCommand(
                 new CreateExperimentCommand(
@@ -181,7 +181,7 @@ public class CommandFactory {
                         experimentGroupRepository));
     }
 
-    NotificationAwareCommand makeExperimentFullOnCommand(
+    Command makeExperimentFullOnCommand(
             String experimentId,
             MakeExperimentFullOnProperties properties) {
         var command = new MakeExperimentFullOnCommand(
@@ -192,6 +192,6 @@ public class CommandFactory {
                 permissionsAwareExperimentRepository
         );
 
-        return new NotificationAwareCommand(command, notificator, userProvider);
+        return new NotificationDecoratorCommand(command, notificator, userProvider);
     }
 }

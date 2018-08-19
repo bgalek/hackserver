@@ -1,6 +1,6 @@
 package pl.allegro.experiments.chi.chiserver.domain.experiments.administration;
 
-public class CreatePairedExperimentCommand {
+public class CreatePairedExperimentCommand implements Command {
 
     private final CreateExperimentCommand createExperimentCommand;
     private final CreateExperimentGroupCommand createExperimentGroupCommand;

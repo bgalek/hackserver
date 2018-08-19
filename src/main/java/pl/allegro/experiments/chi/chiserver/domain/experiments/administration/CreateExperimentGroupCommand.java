@@ -15,7 +15,7 @@ import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
-public class CreateExperimentGroupCommand {
+public class CreateExperimentGroupCommand implements Command {
     private final ExperimentGroupRepository experimentGroupRepository;
     private final ExperimentsRepository experimentsRepository;
     private final PermissionsAwareExperimentRepository permissionsAwareExperimentRepository;

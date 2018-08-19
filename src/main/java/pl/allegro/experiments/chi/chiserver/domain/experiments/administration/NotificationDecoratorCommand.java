@@ -4,12 +4,12 @@ import pl.allegro.experiments.chi.chiserver.domain.UserProvider;
 import pl.allegro.experiments.chi.chiserver.domain.experiments.administration.notifications.Notification;
 import pl.allegro.experiments.chi.chiserver.domain.experiments.administration.notifications.Notificator;
 
-public class NotificationAwareCommand {
+class NotificationDecoratorCommand implements Command {
     private final ExperimentCommand experimentCommand;
     private final Notificator notificator;
     private final UserProvider userProvider;
 
-    NotificationAwareCommand(ExperimentCommand experimentCommand, Notificator notificator, UserProvider userProvider) {
+    NotificationDecoratorCommand(ExperimentCommand experimentCommand, Notificator notificator, UserProvider userProvider) {
         this.experimentCommand = experimentCommand;
         this.notificator = notificator;
         this.userProvider = userProvider;

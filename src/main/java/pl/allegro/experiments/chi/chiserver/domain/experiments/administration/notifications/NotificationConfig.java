@@ -12,8 +12,8 @@ public class NotificationConfig {
 
     @Bean
     Notificator notificator(RestTemplate restTemplate,
-                            @Value("${notificator.enabled}") boolean notificationsEnabled,
-                            @Value("${notificator.hipChatPostUrl}") String hipChatPostUrl
+                            @Value("${notificator.enabled:false}") boolean notificationsEnabled,
+                            @Value("${notificator.hipChatPostUrl:}") String hipChatPostUrl
                             ) {
         if (notificationsEnabled) {
             return new HipChatNotificator(restTemplate, hipChatPostUrl);
