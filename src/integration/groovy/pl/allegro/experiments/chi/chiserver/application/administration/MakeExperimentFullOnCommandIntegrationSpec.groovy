@@ -6,7 +6,9 @@ import pl.allegro.experiments.chi.chiserver.BaseIntegrationSpec
 import pl.allegro.experiments.chi.chiserver.domain.User
 import pl.allegro.experiments.chi.chiserver.domain.experiments.Experiment
 import pl.allegro.experiments.chi.chiserver.domain.experiments.ExperimentsRepository
+import pl.allegro.experiments.chi.chiserver.domain.experiments.administration.Command
 import pl.allegro.experiments.chi.chiserver.domain.experiments.administration.CommandFactory
+import pl.allegro.experiments.chi.chiserver.domain.experiments.administration.ExperimentCommand
 import pl.allegro.experiments.chi.chiserver.domain.experiments.administration.ExperimentCommandException
 import pl.allegro.experiments.chi.chiserver.domain.experiments.administration.ExperimentCreationRequest
 import pl.allegro.experiments.chi.chiserver.domain.experiments.administration.ExperimentGroupCreationRequest
@@ -126,7 +128,7 @@ class MakeExperimentFullOnCommandIntegrationSpec extends BaseIntegrationSpec {
         "a group"   | ({ it, id -> it.createExperimentGroup([id, it.draftExperimentWithVariants(["v3", "v4"]).id]) })
     }
 
-    MakeExperimentFullOnCommand makeExperimentFullOnCommand(String experimentId, String variantName) {
+    Command makeExperimentFullOnCommand(String experimentId, String variantName) {
         commandFactory.makeExperimentFullOnCommand(
                 experimentId,
                 new MakeExperimentFullOnProperties(variantName))
