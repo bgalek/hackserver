@@ -27,3 +27,7 @@ avro:
 
 druid:
   apiHost: druidbroker-nga-prod.allegrogroup.com
+
+notificator:
+  enabled: true
+  hipChatPostUrl: https://allegro.hipchat.com/v2/room/4710838/notification?auth_token=0PO6dZUgmlOfoZ3YWSYPB4bI7XeSLxAXT6UavZdl
