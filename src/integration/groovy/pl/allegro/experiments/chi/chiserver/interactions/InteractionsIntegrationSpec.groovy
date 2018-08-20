@@ -2,23 +2,17 @@ package pl.allegro.experiments.chi.chiserver.interactions
 
 import groovy.json.JsonOutput
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.http.HttpMethod
 import org.springframework.test.context.ContextConfiguration
 import org.springframework.web.client.HttpClientErrorException
-import org.springframework.web.client.RestTemplate
-import pl.allegro.experiments.chi.chiserver.BaseIntegrationSpec
-import pl.allegro.experiments.chi.chiserver.domain.User
-import pl.allegro.experiments.chi.chiserver.domain.UserProvider
-import pl.allegro.experiments.chi.chiserver.domain.experiments.ExperimentsRepository
+import pl.allegro.experiments.chi.chiserver.BaseE2EIntegrationSpec
 import pl.allegro.experiments.chi.chiserver.domain.interactions.InteractionConverter
 import pl.allegro.experiments.chi.chiserver.infrastructure.interactions.InMemoryInteractionRepository
 import spock.lang.Unroll
 
-import static pl.allegro.experiments.chi.chiserver.utils.SampleInMemoryExperimentsRepository.FULL_ON_TEST_EXPERIMENT_ID
-import static pl.allegro.experiments.chi.chiserver.utils.SampleInMemoryExperimentsRepository.TEST_EXPERIMENT_ID
+import static pl.allegro.experiments.chi.chiserver.domain.experiments.ExperimentStatus.FULL_ON
 
 @ContextConfiguration(classes = [InteractionsIntegrationTestConfig])
-class InteractionsIntegrationSpec extends BaseIntegrationSpec {
+class InteractionsIntegrationSpec extends BaseE2EIntegrationSpec {
 
     @Autowired
     InMemoryInteractionRepository inMemoryInteractionRepository
@@ -26,21 +20,16 @@ class InteractionsIntegrationSpec extends BaseIntegrationSpec {
     @Autowired
     InteractionConverter interactionConverter
 
-    @Autowired
-    UserProvider userProvider
-
-    RestTemplate restTemplate = new RestTemplate()
-
-    @Autowired
-    ExperimentsRepository experimentsRepository
-
-    def "should save interactions"() {
+    @Unroll
+    def "should save interactions when connected experiment is #status"() {
         given:
+        def experiment = experimentWithStatus(status)
+
         List interactionList = [
                 [
                         "userId"         : "someUserId123",
                         "userCmId"       : "someUserCmId123",
-                        "experimentId"   : TEST_EXPERIMENT_ID,
+                        "experimentId"   : experiment.id,
                         "variantName"    : "someVariantName",
                         "internal"       : true,
                         "deviceClass"    : "iphone",
@@ -50,21 +39,23 @@ class InteractionsIntegrationSpec extends BaseIntegrationSpec {
         ]
 
         when:
-        restTemplate.postForEntity(localUrl('/api/interactions/v1/'), interactionList, List)
+        postInteractions(interactionList)
 
         then:
         def interactions = interactionConverter.fromJson(JsonOutput.toJson(interactionList))
         inMemoryInteractionRepository.interactionSaved(interactions[0])
+
+        where:
+        status << allExperimentStatusValuesExcept(FULL_ON)
     }
 
-    @Unroll
-    def "should not save interactions when connected experiment #description"() {
+    def "should not save interactions when connected experiment does not exist"() {
         given:
         def interactionList = [
                 [
                         "userId"         : "someUserId123",
                         "userCmId"       : "someUserCmId123",
-                        "experimentId"   : experimentId,
+                        "experimentId"   : 'SOME NONEXISTENT EXPERIMENT ID',
                         "variantName"    : "someVariantName",
                         "internal"       : true,
                         "deviceClass"    : "iphone",
@@ -74,16 +65,37 @@ class InteractionsIntegrationSpec extends BaseIntegrationSpec {
         ]
 
         when:
-        restTemplate.postForEntity(localUrl('/api/interactions/v1/'), interactionList, List)
+        postInteractions(interactionList)
 
         then:
         def interactions = interactionConverter.fromJson(JsonOutput.toJson(interactionList))
         !inMemoryInteractionRepository.interactionSaved(interactions[0])
+    }
 
-        where:
-        experimentId                     | description
-        FULL_ON_TEST_EXPERIMENT_ID       | 'is full-on'
-        'SOME NONEXISTENT EXPERIMENT ID' | 'does not exist'
+    def "should not save interactions when connected experiment is FULL_ON"() {
+        given:
+        def experiment = fullOnExperiment()
+
+        and:
+        def interactionList = [
+                [
+                        "userId"         : "someUserId123",
+                        "userCmId"       : "someUserCmId123",
+                        "experimentId"   : experiment.id,
+                        "variantName"    : "someVariantName",
+                        "internal"       : true,
+                        "deviceClass"    : "iphone",
+                        "interactionDate": "1970-01-01T00:00:00Z",
+                        "appId"          : "a"
+                ]
+        ]
+
+        when:
+        postInteractions(interactionList)
+
+        then:
+        def interactions = interactionConverter.fromJson(JsonOutput.toJson(interactionList))
+        !inMemoryInteractionRepository.interactionSaved(interactions[0])
     }
 
     @Unroll
@@ -92,10 +104,10 @@ class InteractionsIntegrationSpec extends BaseIntegrationSpec {
         def interactionList = List.of(interaction)
 
         when:
-        restTemplate.postForEntity(localUrl('/api/interactions/v1/'), interactionList, List)
+        postInteractions(interactionList)
 
         then:
-        thrown(HttpClientErrorException)
+        thrown HttpClientErrorException
 
         where:
         error                       | interaction
@@ -106,26 +118,20 @@ class InteractionsIntegrationSpec extends BaseIntegrationSpec {
     @Unroll
     def "should save interactions for #reportingType experiment"() {
         given:
-        userProvider.user = new User('Anonymous', [], true)
-
-        def request = [
-                id              : experimentId,
+        def experiment = draftExperiment([
                 variantNames    : ['v2'],
                 percentage      : 10,
                 reportingType   : reportingType,
                 eventDefinitions: eventDefinitions,
                 reportingEnabled: true
-        ]
-
-        and:
-        restTemplate.postForEntity(localUrl('/api/admin/experiments'), request, Map)
+        ])
 
         and:
         def interactionList = [
                 [
                         "userId"         : "someUserId123",
                         "userCmId"       : "someUserCmId123",
-                        "experimentId"   : experimentId,
+                        "experimentId"   : experiment.id,
                         "variantName"    : "v2",
                         "internal"       : false,
                         "deviceClass"    : "iphone",
@@ -135,21 +141,20 @@ class InteractionsIntegrationSpec extends BaseIntegrationSpec {
         ]
 
         when:
-        restTemplate.postForEntity(localUrl('/api/interactions/v1/'), interactionList, List)
+        postInteractions(interactionList)
 
         then:
         def interactions = interactionConverter.fromJson(JsonOutput.toJson(interactionList))
         inMemoryInteractionRepository.interactionSaved(interactions[0])
 
         where:
-        experimentId | reportingType | eventDefinitions
-        'e1'         | 'FRONTEND'    | frontendEventDefinitions
-        'e2'         | 'GTM'         | null
-        'e3'         | 'BACKEND'     | null
+        reportingType | eventDefinitions
+        'FRONTEND'    | frontendEventDefinitions
+        'GTM'         | null
+        'BACKEND'     | null
     }
 
     static Map interactionWithNulls = [
-
             "userId"         : null,
             "userCmId"       : null,
             "experimentId"   : null,
@@ -161,10 +166,9 @@ class InteractionsIntegrationSpec extends BaseIntegrationSpec {
     ]
 
     static Map interactionWithMissingRequiredField = [
-
             "userId"      : "123",
             "userCmId"    : "123",
-            "experimentId": TEST_EXPERIMENT_ID,
+            "experimentId": UUID.randomUUID().toString(),
             "variantName" : "123",
             "internal"    : true,
             "deviceClass" : "iphone"

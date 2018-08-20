@@ -1,41 +1,20 @@
 package pl.allegro.experiments.chi.chiserver.infrastructure.experiments.fetch
 
-import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.web.client.RestTemplate
-import pl.allegro.experiments.chi.chiserver.BaseIntegrationSpec
-import pl.allegro.experiments.chi.chiserver.domain.User
-import pl.allegro.experiments.chi.chiserver.domain.UserProvider
+import pl.allegro.experiments.chi.chiserver.BaseE2EIntegrationSpec
 
-class GetAllExperimentGroupE2ESpec extends BaseIntegrationSpec {
-    RestTemplate restTemplate = new RestTemplate()
-
-    @Autowired
-    UserProvider userProvider
+class GetAllExperimentGroupE2ESpec extends BaseE2EIntegrationSpec {
 
     def "should return all experiment groups"() {
         given:
-        userProvider.user = new User('Author', [], true)
-        String groupId = UUID.randomUUID().toString()
+        def firstExperiment = startedExperiment()
+        def secondExperiment = draftExperiment()
+        def group = experimentGroup([firstExperiment.id, secondExperiment.id])
 
-        and:
-        String experimentId1 = createDraftExperiment()
-        String experimentId2 = createDraftExperiment()
-        startExperiment(experimentId1)
-
-        and:
-        restTemplate.postForEntity(localUrl('/api/admin/experiments/groups'), [
-                id: groupId,
-                experiments: [experimentId1, experimentId2]
-        ], Map)
-
-        when:
-        def allGroups = restTemplate.getForEntity(localUrl("/api/admin/experiments/groups"), List).body
-
-        then:
-        allGroups.find({g -> g.id == groupId}) == [
-                id: groupId,
-                salt: experimentId1,
-                experiments: [experimentId1, experimentId2]
+        expect:
+        fetchExperimentGroup(group.id as String) == [
+                id         : group.id,
+                salt       : firstExperiment.id,
+                experiments: [firstExperiment.id, secondExperiment.id]
         ]
     }
 }

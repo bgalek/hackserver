@@ -2,6 +2,7 @@ package pl.allegro.experiments.chi.chiserver.ui
 
 import geb.Page
 import org.springframework.test.context.ContextConfiguration
+import spock.lang.Ignore
 
 class CreateExperimentPage extends Page {
 

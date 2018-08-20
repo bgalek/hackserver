@@ -1,4 +1,4 @@
-package pl.allegro.experiments.chi.chiserver.application.commands
+package pl.allegro.experiments.chi.chiserver.commands
 
 import pl.allegro.experiments.chi.chiserver.domain.experiments.EventDefinition
 import pl.allegro.experiments.chi.chiserver.domain.experiments.administration.ExperimentCommandException

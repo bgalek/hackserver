@@ -6,7 +6,7 @@ import pl.allegro.experiments.chi.chiserver.domain.experiments.administration.Ex
 
 class SampleExperimentRequests {
     static Map DEFAULT_PROPERTIES = [
-            variantNames       : ['v1'],
+            variantNames       : ['base', 'v1'],
             percentage         : 10,
             internalVariantName: null,
             deviceClass        : null,

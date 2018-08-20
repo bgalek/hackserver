@@ -1,155 +1,158 @@
 package pl.allegro.experiments.chi.chiserver.infrastructure.statistics
 
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.data.mongodb.core.MongoTemplate
-import org.springframework.http.HttpEntity
-import org.springframework.http.HttpHeaders
-import org.springframework.http.MediaType
-import org.springframework.http.ResponseEntity
-import org.springframework.web.client.RestTemplate
-import pl.allegro.experiments.chi.chiserver.BaseIntegrationSpec
-import pl.allegro.experiments.chi.chiserver.domain.statistics.bayes.BayesianStatisticsRepository
+import pl.allegro.experiments.chi.chiserver.BaseE2EIntegrationSpec
 import pl.allegro.experiments.chi.chiserver.domain.statistics.bayes.BayesianExperimentStatistics
+import pl.allegro.experiments.chi.chiserver.domain.statistics.bayes.BayesianStatisticsRepository
 
-class BayesianExperimentStatisticsIntegrationSpec extends BaseIntegrationSpec {
+import static pl.allegro.experiments.chi.chiserver.utils.SampleStatisticsRequests.sampleBayesianStatisticsRequest
+
+class BayesianExperimentStatisticsIntegrationSpec extends BaseE2EIntegrationSpec {
 
     @Autowired
     BayesianStatisticsRepository bayesianStatisticsRepository
 
-    @Autowired
-    MongoTemplate mongoTemplate
-
-    @Autowired
-    RestTemplate restTemplate
-
     def "should save and return bayesian statistics"() {
         given:
-        def expId = "exp_" + UUID.randomUUID().toString()
+        def experiment = startedExperiment()
+
+        and:
+        def request = sampleBayesianStatisticsRequest([-0.2, -0.1, 0.1, 0.2], [100, 200, 250, 150], [
+                experimentId: experiment.id,
+                toDate      : '2018-04-01',
+        ])
 
         when:
-        def response = postStats(bayesFromPyspark(expId, 'variant-a', '2018-04-01', [-0.2, -0.1, 0.1, 0.2], [100,  200,  250, 150]))
+        def response = postBayesianStatistics(request)
 
         then:
         response.statusCode.value() == 200
 
         when:
-        BayesianExperimentStatistics result =
-                bayesianStatisticsRepository.experimentStatistics(expId, 'all').get()
+        def result = fetchBayesianStatistics(experiment.id as String)
 
         then:
         result.device == 'all'
-        result.experimentId == expId
+        result.experimentId == experiment.id
         result.toDate == '2018-04-01'
         result.variantBayesianStatistics.size() == 1
 
+        and:
         def variant = result.variantBayesianStatistics[0]
         variant.variantName == 'variant-a'
         variant.samples.values == [-0.2, -0.1, 0.1, 0.2]
-        variant.samples.counts == [100,  200,  250, 150]
+        variant.samples.counts == [100, 200, 250, 150]
         variant.outliersLeft == 10
         variant.outliersRight == 122
         variant.allCount() == 100 + 200 + 250 + 150 + 10 + 122
     }
 
-    def "should evict old stats when new are coming"(){
-      given:
-      def expId = "exp_no_1" + UUID.randomUUID().toString()
+    def "should evict old stats when new are coming"() {
+        given:
+        def experiment = startedExperiment()
 
-      when:
-      postStats(bayesFromPyspark(expId, 'variant-a', '2018-01-01',[1], [1]))
-      postStats(bayesFromPyspark(expId, 'variant-b', '2018-01-01',[2], [2]))
+        when:
+        postBayesianStatistics(sampleBayesianStatisticsRequest([1], [1], [
+                experimentId: experiment.id,
+                variantName: 'variant-a',
+                toDate      : '2018-01-01'
+        ]))
+        postBayesianStatistics(sampleBayesianStatisticsRequest([2], [2], [
+                experimentId: experiment.id,
+                variantName: 'variant-b',
+                toDate      : '2018-01-01'
+        ]))
 
-      postStats(bayesFromPyspark(expId, 'variant-a', '2018-01-01',[11], [16]))
-      postStats(bayesFromPyspark(expId, 'variant-b', '2018-01-01',[21], [26]))
+        and:
+        postBayesianStatistics(sampleBayesianStatisticsRequest([11], [16], [
+                experimentId: experiment.id,
+                variantName: 'variant-a',
+                toDate      : '2018-01-01'
+        ]))
+        postBayesianStatistics(sampleBayesianStatisticsRequest([21], [26], [
+                experimentId: experiment.id,
+                variantName: 'variant-b',
+                toDate      : '2018-01-01'
+        ]))
 
-      postStats(bayesFromPyspark(expId, 'variant-a', '2018-01-02',[10], [15]))
-      postStats(bayesFromPyspark(expId, 'variant-b', '2018-01-02',[20], [25]))
+        and:
+        postBayesianStatistics(sampleBayesianStatisticsRequest([10], [15], [
+                experimentId: experiment.id,
+                variantName: 'variant-a',
+                toDate      : '2018-01-02'
+        ]))
+        postBayesianStatistics(sampleBayesianStatisticsRequest([20], [25], [
+                experimentId: experiment.id,
+                variantName: 'variant-b',
+                toDate      : '2018-01-02'
+        ]))
 
-      def result = bayesianStatisticsRepository.experimentStatistics(expId, 'all').get()
+        and:
+        def result = fetchBayesianStatistics(experiment.id as String)
 
-      then:
-      result.device == 'all'
-      result.experimentId == expId
-      result.toDate == '2018-01-02'
-      result.variantBayesianStatistics.size() == 2
+        then:
+        result.device == 'all'
+        result.experimentId == experiment.id
+        result.toDate == '2018-01-02'
+        result.variantBayesianStatistics.size() == 2
 
-      def variantA = result.variantBayesianStatistics.find{it.variantName == 'variant-a'}
-      def variantB = result.variantBayesianStatistics.find{it.variantName == 'variant-b'}
+        def variantA = result.variantBayesianStatistics.find { it.variantName == 'variant-a' }
+        def variantB = result.variantBayesianStatistics.find { it.variantName == 'variant-b' }
 
-      variantA.samples.values == [10]
-      variantA.samples.counts == [15]
+        variantA.samples.values == [10]
+        variantA.samples.counts == [15]
 
-      variantB.samples.values == [20]
-      variantB.samples.counts == [25]
+        variantB.samples.values == [20]
+        variantB.samples.counts == [25]
     }
 
     def "should update existing stats with new variants and return bayesian statistics"() {
         given:
-        def expId = "exp_" + UUID.randomUUID().toString()
+        def experiment = startedExperiment()
 
         when:
-        def response = postStats(bayesFromPyspark(expId, 'variant-a', [-0.2, -0.1], [100,  200]))
+        def response = postBayesianStatistics(sampleBayesianStatisticsRequest([-0.2, -0.1], [100, 200], [
+                experimentId: experiment.id,
+                variantName: 'variant-a'
+        ]))
 
         then:
         response.statusCode.value() == 200
 
         when:
-        def secondResponse = postStats(bayesFromPyspark(expId, 'variant-c', [-0.1, -0.2, 0.3, 0.6], [10,  200,  250, 1]))
+        response = postBayesianStatistics(sampleBayesianStatisticsRequest([-0.1, -0.2, 0.3, 0.6], [10, 200, 250, 1], [
+                experimentId: experiment.id,
+                variantName: 'variant-c'
+        ]))
 
         then:
-        secondResponse.statusCode.value() == 200
-        
+        response.statusCode.value() == 200
+
         when:
-        def result = bayesianStatisticsRepository.experimentStatistics(expId, 'all').get()
+        def statistics = fetchBayesianStatistics(experiment.id as String)
 
         then:
-        result.device == 'all'
-        result.experimentId == expId
-        result.toDate == '2018-04-01'
-        result.variantBayesianStatistics.size() == 2
+        statistics.device == 'all'
+        statistics.experimentId == experiment.id
+        statistics.toDate == '2018-04-01'
+        statistics.variantBayesianStatistics.size() == 2
 
-        def varianta = result.variantBayesianStatistics.find{it.variantName == 'variant-a'}
-        varianta.samples.values == [-0.2, -0.1]
-        varianta.samples.counts == [100,  200]
-        varianta.outliersLeft == 10
-        varianta.outliersRight == 122
-        varianta.allCount() == 100 + 200 + 10 + 122
+        def variantA = statistics.variantBayesianStatistics.find { it.variantName == 'variant-a' }
+        variantA.samples.values == [-0.2, -0.1]
+        variantA.samples.counts == [100, 200]
+        variantA.outliersLeft == 10
+        variantA.outliersRight == 122
+        variantA.allCount() == 100 + 200 + 10 + 122
 
-        def variantc = result.variantBayesianStatistics.find{it.variantName == 'variant-c'}
-        variantc.samples.values == [-0.1, -0.2, 0.3, 0.6]
-        variantc.samples.counts == [10,  200,  250, 1]
-        variantc.outliersLeft == 10
-        variantc.outliersRight == 122
-        variantc.allCount() == 593
+        def variantC = statistics.variantBayesianStatistics.find { it.variantName == 'variant-c' }
+        variantC.samples.values == [-0.1, -0.2, 0.3, 0.6]
+        variantC.samples.counts == [10, 200, 250, 1]
+        variantC.outliersLeft == 10
+        variantC.outliersRight == 122
+        variantC.allCount() == 593
     }
 
-    ResponseEntity postStats(String stats) {
-        def headers = new HttpHeaders()
-        headers.setContentType(MediaType.APPLICATION_JSON)
-        def entity = new HttpEntity(stats, headers)
-
-        restTemplate.postForEntity(localUrl('/api/bayes/statistics'), entity, String)
-    }
-
-    String bayesFromPyspark(String expId, String variantName, String toDate, List<Double> values, List<Integer> counts) {
-        """{
-            'experimentId': '$expId',
-            'toDate': '$toDate',
-            'device': 'all',
-            'variantName': '$variantName',
-            'data': {
-                    'samples': {
-                        'values': $values,
-                        'counts': $counts
-                    },
-                    'outliersLeft': 10,
-                    'outliersRight': 122
-             }
-        }
-        """
-    }
-
-    String bayesFromPyspark(String expId, String variantName, List<Double> values, List<Integer> counts) {
-        bayesFromPyspark(expId, variantName, '2018-04-01', values, counts)
+    BayesianExperimentStatistics fetchBayesianStatistics(String experimentId) {
+        bayesianStatisticsRepository.experimentStatistics(experimentId as String, 'all').get()
     }
 }

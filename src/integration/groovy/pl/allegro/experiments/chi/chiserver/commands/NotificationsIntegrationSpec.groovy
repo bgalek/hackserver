@@ -1,43 +1,27 @@
-package pl.allegro.experiments.chi.chiserver.application.administration
+package pl.allegro.experiments.chi.chiserver.commands
 
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.context.annotation.Primary
 import org.springframework.test.context.ContextConfiguration
-import pl.allegro.experiments.chi.chiserver.BaseIntegrationSpec
-import pl.allegro.experiments.chi.chiserver.domain.User
-import pl.allegro.experiments.chi.chiserver.domain.experiments.administration.CommandFactory
-import pl.allegro.experiments.chi.chiserver.domain.experiments.administration.ExperimentCreationRequest
 import pl.allegro.experiments.chi.chiserver.domain.experiments.administration.notifications.Notification
 import pl.allegro.experiments.chi.chiserver.domain.experiments.administration.notifications.Notificator
-import pl.allegro.experiments.chi.chiserver.infrastructure.experiments.MutableUserProvider
+
+import static pl.allegro.experiments.chi.chiserver.utils.SampleExperimentRequests.sampleExperimentCreationRequest
 
 @ContextConfiguration(classes = [NotificationsIntegrationTestConfig])
-class NotificationsIntegrationSpec extends BaseIntegrationSpec {
-
-    @Autowired
-    MutableUserProvider mutableUserProvider
+class NotificationsIntegrationSpec extends BaseCommandIntegrationSpec {
 
     @Autowired
     Notificator notificator
 
-    @Autowired
-    CommandFactory commandFactory
-
     def "should send notification after creating experiment"() {
         given:
-        mutableUserProvider.user = new User('Root', [], true)
         def experimentId = UUID.randomUUID().toString()
 
         when:
-        commandFactory
-            .createExperimentCommand(ExperimentCreationRequest.builder()
-            .id(experimentId)
-            .variantNames(["a","b"])
-            .percentage(10)
-            .build())
-            .execute()
+        createExperiment(sampleExperimentCreationRequest([id: experimentId]))
 
         then:
         with(notificator.sent[0]) {

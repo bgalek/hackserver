@@ -59,8 +59,7 @@ public class ExperimentGroup {
         Preconditions.checkArgument(experiments.stream().allMatch(e -> e.getPercentage().isPresent()));
 
         int maxBasePercentage = experiments.stream()
-                .map(e -> e.getPercentage()
-                        .get())
+                .map(e -> e.getPercentage().get())
                 .max(Integer::compare)
                 .get();
         int percentageSum = experiments.stream()

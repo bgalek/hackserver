@@ -4,12 +4,11 @@ import com.github.tomakehurst.wiremock.junit.WireMockRule
 import org.junit.ClassRule
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.web.client.RestTemplate
-import pl.allegro.experiments.chi.chiserver.BaseIntegrationSpec
-import pl.allegro.experiments.chi.chiserver.domain.experiments.ExperimentsRepository
+import pl.allegro.experiments.chi.chiserver.BaseE2EIntegrationSpec
 import pl.allegro.experiments.chi.chiserver.infrastructure.experiments.FileBasedExperimentsRepository
 import spock.lang.Shared
 
-class ClientExperimentsV1E2ESpec extends BaseIntegrationSpec {
+class ClientExperimentsV1E2ESpec extends BaseE2EIntegrationSpec {
 
     @ClassRule
     @Shared
@@ -19,9 +18,6 @@ class ClientExperimentsV1E2ESpec extends BaseIntegrationSpec {
 
     @Autowired
     FileBasedExperimentsRepository fileBasedExperimentsRepository
-
-    @Autowired
-    ExperimentsRepository experimentsRepository
 
     def setup() {
         WireMockUtils.teachWireMockJson("/experiments", 'some-experiments.json')
@@ -34,92 +30,84 @@ class ClientExperimentsV1E2ESpec extends BaseIntegrationSpec {
         fileBasedExperimentsRepository.refresh()
 
         when:
-        def response = restTemplate.getForEntity(localUrl('/api/experiments/v1'), List)
+        def experiments = fetchClientExperiments('v1')
 
         then:
-        response.statusCode.value() == 200
-
-        and:
-        response.body.contains(internalExperiment())
-        response.body.contains(cmuidRegexpExperiment())
-        response.body.contains(plannedExperiment())
-        response.body.contains(hashVariantExperiment())
-        response.body.contains(sampleExperiment())
-        response.body.contains(timeboundExperiment())
-        !response.body.contains(experimentFromThePast())
+        experiments.containsAll([
+                internalExperiment,
+                cmuidRegexpExperiment,
+                plannedExperiment,
+                hashVariantExperiment,
+                sampleExperiment,
+                timeboundExperiment
+        ])
+        !experiments.contains(experimentFromThePast)
     }
 
-    Map internalExperiment() {
-        [ id: 'internal_exp',
-          variants: [
-                  [ name: 'internal', predicates: [[type: 'INTERNAL']] ]
-          ],
-          reportingEnabled: true
-        ]
-    }
+    Map internalExperiment = [
+            id              : 'internal_exp',
+            variants        : [
+                    [name: 'internal', predicates: [[type: 'INTERNAL']]]
+            ],
+            reportingEnabled: true
+    ]
 
-    Map cmuidRegexpExperiment() {
-        [ id: 'cmuid_regexp',
-          variants: [
-                  [ name: 'v1', predicates: [[type: 'CMUID_REGEXP', regexp: '.*[0-3]$']] ]
-          ],
-          reportingEnabled: true,
-          description: "Experiment description",
-          owner: "Experiment owner"
-        ]
-    }
+    Map cmuidRegexpExperiment = [
+            id              : 'cmuid_regexp',
+            variants        : [
+                    [name: 'v1', predicates: [[type: 'CMUID_REGEXP', regexp: '.*[0-3]$']]]
+            ],
+            reportingEnabled: true,
+            description     : "Experiment description",
+            owner           : "Experiment owner"
+    ]
 
-    Map hashVariantExperiment() {
-        [ id: 'test_dev',
-          variants: [
-                  [ name: 'v1', predicates: [[type: 'HASH', from: 0, to: 50]] ],
-                  [ name: 'v2', predicates: [[type: 'HASH', from: 50, to: 100]] ]
-          ],
-          reportingEnabled: true
-        ]
-    }
+    Map hashVariantExperiment = [
+            id              : 'test_dev',
+            variants        : [
+                    [name: 'v1', predicates: [[type: 'HASH', from: 0, to: 50]]],
+                    [name: 'v2', predicates: [[type: 'HASH', from: 50, to: 100]]]
+            ],
+            reportingEnabled: true
+    ]
 
-    Map sampleExperiment() {
-        [id: 'another_one',
-         variants: [
-                 [ name: 'v1', predicates: [[type: 'HASH', from: 0, to: 50]] ]
-         ],
-         reportingEnabled: true,
-         description: "Another one",
-         owner: "Someone"
-        ]
-    }
+    Map sampleExperiment = [
+            id              : 'another_one',
+            variants        : [
+                    [name: 'v1', predicates: [[type: 'HASH', from: 0, to: 50]]]
+            ],
+            reportingEnabled: true,
+            description     : "Another one",
+            owner           : "Someone"
+    ]
 
-    Map timeboundExperiment() {
-        [ id: 'timed_internal_exp',
-          activeFrom: '2017-11-03T10:15:30+02:00',
-          activeTo: '2018-11-03T10:15:30+02:00',
-          variants: [
-                  [ name: 'internal', predicates: [[ type:'INTERNAL' ]] ]
-          ],
-          reportingEnabled: true
-        ]
-    }
+    Map timeboundExperiment = [
+            id              : 'timed_internal_exp',
+            activeFrom      : '2017-11-03T10:15:30+02:00',
+            activeTo        : '2018-11-03T10:15:30+02:00',
+            variants        : [
+                    [name: 'internal', predicates: [[type: 'INTERNAL']]]
+            ],
+            reportingEnabled: true
+    ]
 
-    Map plannedExperiment() {
-        [ id: 'planned_exp',
-          "activeFrom": "2050-11-03T10:15:30+02:00",
-          "activeTo": "2060-11-03T10:15:30+02:00",
-          variants: [
-                  [ name: 'internal', predicates: [[ type:'INTERNAL' ]] ]
-          ],
-          reportingEnabled: true
-        ]
-    }
+    Map plannedExperiment = [
+            id              : 'planned_exp',
+            "activeFrom"    : "2050-11-03T10:15:30+02:00",
+            "activeTo"      : "2060-11-03T10:15:30+02:00",
+            variants        : [
+                    [name: 'internal', predicates: [[type: 'INTERNAL']]]
+            ],
+            reportingEnabled: true
+    ]
 
-    Map experimentFromThePast() {
-        [ id: 'experiment_from_the_past',
-          activeFrom: '2017-10-01T10:15:30+02:00',
-          activeTo: '2017-11-01T10:15:30+02:00',
-          variants: [
-                  [ name: 'internal', predicates: [[ type:'INTERNAL' ]] ]
-          ],
-          reportingEnabled: true
-        ]
-    }
+    Map experimentFromThePast = [
+            id              : 'experiment_from_the_past',
+            activeFrom      : '2017-10-01T10:15:30+02:00',
+            activeTo        : '2017-11-01T10:15:30+02:00',
+            variants        : [
+                    [name: 'internal', predicates: [[type: 'INTERNAL']]]
+            ],
+            reportingEnabled: true
+    ]
 }

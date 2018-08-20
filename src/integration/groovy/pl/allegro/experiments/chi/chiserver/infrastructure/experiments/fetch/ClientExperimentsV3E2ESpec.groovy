@@ -1,105 +1,57 @@
 package pl.allegro.experiments.chi.chiserver.infrastructure.experiments.fetch
 
-import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.http.ResponseEntity
-import org.springframework.web.client.RestTemplate
-import pl.allegro.experiments.chi.chiserver.BaseIntegrationSpec
-import pl.allegro.experiments.chi.chiserver.domain.User
-import pl.allegro.experiments.chi.chiserver.domain.UserProvider
-import pl.allegro.experiments.chi.chiserver.domain.experiments.groups.ExperimentGroupRepository
-import pl.allegro.experiments.chi.chiserver.infrastructure.experiments.CachedExperimentGroupRepository
+import pl.allegro.experiments.chi.chiserver.BaseE2EIntegrationSpec
 import spock.lang.Unroll
 
-class ClientExperimentsV3E2ESpec extends BaseIntegrationSpec {
+import static pl.allegro.experiments.chi.chiserver.domain.experiments.ExperimentStatus.*
 
-    @Autowired
-    ExperimentGroupRepository experimentGroupRepository
-
-    RestTemplate restTemplate = new RestTemplate()
-
-    @Autowired
-    UserProvider userProvider
-
-    def setup() {
-        if (!experimentGroupRepository instanceof CachedExperimentGroupRepository) {
-            throw new RuntimeException("We should test cached repository")
-        }
-        ResponseEntity.metaClass.experimentVariants << { String experimentId ->
-            getBody().find {e -> e.id == experimentId}.variants
-        }
-        ResponseEntity.metaClass.numberOfExperimentsPresent << { List<String> experimentIds ->
-            getBody().stream()
-                    .filter({e -> e.id in experimentIds})
-                    .count()
-        }
-    }
+class ClientExperimentsV3E2ESpec extends BaseE2EIntegrationSpec {
 
     @Unroll
     def "should ignore grouped experiments in client api version #apiVersion"() {
         given:
-        userProvider.user = new User('Author', [], true)
-        String groupId = UUID.randomUUID().toString()
+        def firstExperiment = draftExperiment()
+        def secondExperiment = draftExperiment()
+        createExperimentGroup([firstExperiment.id, secondExperiment.id])
 
         and:
-        String experimentId1 = createDraftExperiment(['base', 'v1'])
-        String experimentId2 = createDraftExperiment(['base', 'v1'])
-        def experiments = [experimentId1, experimentId2]
-
-        and:
-        restTemplate.postForEntity(localUrl('/api/admin/experiments/groups'), [
-                id: groupId,
-                experiments: [experimentId1, experimentId2]
-        ], Map)
-
-        and:
-        startExperiment(experimentId1)
-        startExperiment(experimentId2)
+        startExperiment(firstExperiment.id as String, 30)
+        startExperiment(secondExperiment.id as String, 30)
 
         when:
-        def response = restTemplate.getForEntity(localUrl("/api/experiments/${apiVersion}"), List)
+        def experimentIds = fetchClientExperiments(apiVersion).collect { it.id }
 
         then:
-        response.numberOfExperimentsPresent(experiments) == 0
+        !experimentIds.contains(firstExperiment.id)
+        !experimentIds.contains(secondExperiment.id)
 
         where:
         apiVersion << ['v1', 'v2']
     }
 
-    def "should return grouped experiments in v3"() {
+    def "should return grouped experiments in client api version #description"() {
         given:
-        userProvider.user = new User('Author', [], true)
-        String groupId = UUID.randomUUID().toString()
+        def firstExperiment = startedExperiment()
+        def secondExperiment = draftExperiment()
 
         and:
-        String experimentId1 = createDraftExperiment(['base', 'v1'])
-        String experimentId2 = createDraftExperiment(['base', 'v2'])
-        def experiments = [experimentId1, experimentId2]
-        startExperiment(experimentId1)
+        createExperimentGroup([firstExperiment.id, secondExperiment.id])
 
         and:
-        restTemplate.postForEntity(localUrl('/api/admin/experiments/groups'), [
-                id: groupId,
-                experiments: [experimentId1, experimentId2]
-        ], Map)
-
-        and:
-        startExperiment(experimentId2)
+        startExperiment(secondExperiment.id as String, 30)
 
         when:
-        def response = restTemplate.getForEntity(localUrl("/api/experiments/v3"), List)
+        def experiments = fetchClientExperiments(apiVersion)
 
         then:
-        response.numberOfExperimentsPresent(experiments) == 2
-
-        and:
-        response.experimentVariants(experimentId1) == [
+        experiments.find { it.id == firstExperiment.id }.variants == [
                 [
                         name      : 'base',
                         predicates: [
                                 [
                                         type  : 'SHRED_HASH',
                                         ranges: [[from: 90, to: 100]],
-                                        salt  : experimentId1
+                                        salt  : firstExperiment.id
                                 ]
                         ]
                 ],
@@ -109,102 +61,81 @@ class ClientExperimentsV3E2ESpec extends BaseIntegrationSpec {
                                 [
                                         type  : 'SHRED_HASH',
                                         ranges: [[from: 0, to: 10]],
-                                        salt  : experimentId1
+                                        salt  : firstExperiment.id
                                 ]
                         ]
                 ]
         ]
 
         and:
-        response.experimentVariants(experimentId2) == [
+        experiments.find { it.id == secondExperiment.id }.variants == [
                 [
                         name      : 'base',
                         predicates: [
                                 [
                                         type  : 'SHRED_HASH',
                                         ranges: [[from: 90, to: 100]],
-                                        salt  : experimentId1
+                                        salt  : firstExperiment.id
                                 ]
                         ]
                 ],
                 [
-                        name      : 'v2',
+                        name      : 'v1',
                         predicates: [
                                 [
                                         type  : 'SHRED_HASH',
                                         ranges: [[from: 10, to: 20]],
-                                        salt  : experimentId1
+                                        salt  : firstExperiment.id
                                 ]
                         ]
                 ]
         ]
+
+        where:
+        description | apiVersion
+        'v3'        | 'v3'
+        'latest'    | ''
     }
 
-    def "should ignore PAUSED and ENDED experiments when rendering grouped experiments"() {
+    @Unroll
+    def "should ignore #status experiments when rendering grouped experiments"() {
         given:
-        userProvider.user = new User('Author', [], true)
-        String groupId = UUID.randomUUID().toString()
-
-        and:
-        String experimentId1 = createDraftExperiment(['base', 'v1'])
-        String experimentId2 = createDraftExperiment(['base', 'v2'])
-        def experiments = [experimentId1, experimentId2]
-        startExperiment(experimentId1)
-
-        and:
-        restTemplate.postForEntity(localUrl('/api/admin/experiments/groups'), [
-                id: groupId,
-                experiments: [experimentId1, experimentId2]
-        ], Map)
-
-        and:
-        startExperiment(experimentId2)
-
-        and:
-        restTemplate.put(localUrl("/api/admin/experiments/${experimentId1}/pause"), Map)
-
-        and:
-        restTemplate.put(localUrl("/api/admin/experiments/${experimentId2}/stop"), Map)
+        def firstExperiment = experimentWithStatus(status)
+        def secondExperiment = draftExperiment()
+        createExperimentGroup([firstExperiment.id, secondExperiment.id])
 
         when:
-        def response = restTemplate.getForEntity(localUrl("/api/experiments/v3"), List)
+        def experimentIds = fetchClientExperiments().collect { it.id }
 
         then:
-        response.numberOfExperimentsPresent(experiments) == 0
+        !experimentIds.contains(firstExperiment.id)
+
+        where:
+        status << allExperimentStatusValuesExcept(DRAFT, ACTIVE, FULL_ON)
     }
 
-    def "should not ignore DRAFT experiments when rendering grouped experiments"() {
+    def "should not ignore DRAFT and ACTIVE experiments when rendering grouped experiments"() {
         given:
-        userProvider.user = new User('Author', [], true)
-        String groupId = UUID.randomUUID().toString()
-
-        and:
-        String experimentId1 = createDraftExperiment(['base', 'v1'])
-        String experimentId2 = createDraftExperiment(['base', 'v2'])
-        def experiments = [experimentId1, experimentId2]
-        startExperiment(experimentId1)
-
-        and:
-        restTemplate.postForEntity(localUrl('/api/admin/experiments/groups'), [
-                id: groupId,
-                experiments: [experimentId1, experimentId2]
-        ], Map)
+        def firstExperiment = startedExperiment()
+        def secondExperiment = draftExperiment()
+        createExperimentGroup([firstExperiment.id, secondExperiment.id])
 
         when:
-        def response = restTemplate.getForEntity(localUrl("/api/experiments/v3"), List)
+        def experiments = fetchClientExperiments()
 
         then:
-        response.numberOfExperimentsPresent(experiments) == 2
+        experiments.collect {it.id}.contains(firstExperiment.id)
+        experiments.collect {it.id}.contains(secondExperiment.id)
 
         and:
-        response.experimentVariants(experimentId1) == [
+        experiments.find { it.id == firstExperiment.id }.variants == [
                 [
                         name      : 'base',
                         predicates: [
                                 [
                                         type  : 'SHRED_HASH',
                                         ranges: [[from: 90, to: 100]],
-                                        salt  : experimentId1
+                                        salt  : firstExperiment.id
                                 ]
                         ]
                 ],
@@ -214,7 +145,7 @@ class ClientExperimentsV3E2ESpec extends BaseIntegrationSpec {
                                 [
                                         type  : 'SHRED_HASH',
                                         ranges: [[from: 0, to: 10]],
-                                        salt  : experimentId1
+                                        salt  : firstExperiment.id
                                 ]
                         ]
                 ]
@@ -223,21 +154,144 @@ class ClientExperimentsV3E2ESpec extends BaseIntegrationSpec {
 
     def "should render grouped experiments ranges in deterministic manner"() {
         given:
-        String experiment1 = createDraftExperiment(['base', 'v1'], 5)
-        String experiment2 = createDraftExperiment(['base', 'v1'], 10)
-        String experiment3 = createDraftExperiment(['base', 'v1'], 20)
-        String experiment4 = createDraftExperiment(['base', 'v1'], 15)
-        def experiments = [experiment2, experiment3, experiment4, experiment1]
+        def experiment1 = startedExperiment([percentage: 5])
+        def experiment2 = draftExperiment([percentage: 10])
+        def experiment3 = draftExperiment([percentage: 20])
+        def experiment4 = draftExperiment([percentage: 15])
 
         and:
-        def expectedExperiment1State = [
+        def experimentIds = [experiment2.id, experiment3.id, experiment4.id, experiment1.id]
+        createExperimentGroup(experimentIds as List<String>)
+
+        and:
+        def expectedExperiment1Variants = expectedExperiment1State(experiment1.id as String)
+        def expectedExperiment2Variants = expectedExperiment2State(experiment1.id as String)
+        def expectedExperiment3Variants = expectedExperiment3State(experiment1.id as String)
+        def expectedExperiment4Variants = expectedExperiment4State(experiment1.id as String)
+
+        when:
+        def experiments = fetchClientExperiments()
+
+        then:
+        experiments.collect {it.id}.containsAll(experimentIds)
+        experiments.find {it.id == experiment1.id}.variants == expectedExperiment1Variants
+
+        when:
+        startExperiment(experiment2.id as String, 30)
+        experiments = fetchClientExperiments()
+
+        then:
+        experiments.collect {it.id}.containsAll(experimentIds)
+
+        and:
+        experiments.find {it.id == experiment1.id}.variants == expectedExperiment1Variants
+        experiments.find {it.id == experiment2.id}.variants == expectedExperiment2Variants
+
+        when:
+        startExperiment(experiment3.id as String, 30)
+        experiments = fetchClientExperiments()
+
+        then:
+        experiments.collect {it.id}.containsAll(experimentIds)
+
+        and:
+        experiments.find {it.id == experiment1.id}.variants == expectedExperiment1Variants
+        experiments.find {it.id == experiment2.id}.variants == expectedExperiment2Variants
+        experiments.find {it.id == experiment3.id}.variants == expectedExperiment3Variants
+
+        when:
+        startExperiment(experiment4.id as String, 30)
+        experiments = fetchClientExperiments()
+
+        then:
+        experiments.collect {it.id}.containsAll(experimentIds)
+
+        and:
+        experiments.find {it.id == experiment1.id}.variants == expectedExperiment1Variants
+        experiments.find {it.id == experiment2.id}.variants == expectedExperiment2Variants
+        experiments.find {it.id == experiment3.id}.variants == expectedExperiment3Variants
+        experiments.find {it.id == experiment4.id}.variants == expectedExperiment4Variants
+
+        when:
+        pauseExperiment(experiment2.id as String)
+        experiments = fetchClientExperiments()
+
+        then:
+        experimentIds.remove(experiment2.id)
+        experiments.collect {it.id}.containsAll(experimentIds)
+        !experiments.collect {it.id}.contains(experiment2.id)
+
+        and:
+        experiments.find {it.id == experiment1.id}.variants == expectedExperiment1Variants
+        experiments.find {it.id == experiment3.id}.variants == expectedExperiment3Variants
+        experiments.find {it.id == experiment4.id}.variants == expectedExperiment4Variants
+
+        when:
+        stopExperiment(experiment3.id as String)
+        experiments = fetchClientExperiments()
+
+        then:
+        experimentIds.remove(experiment3.id)
+        experiments.collect {it.id}.containsAll(experimentIds)
+        !experiments.collect {it.id}.contains(experiment2.id)
+        !experiments.collect {it.id}.contains(experiment3.id)
+
+        and:
+        experiments.find {it.id == experiment1.id}.variants == expectedExperiment1Variants
+        experiments.find {it.id == experiment4.id}.variants == expectedExperiment4Variants
+
+        when:
+        pauseExperiment(experiment1.id as String)
+        experiments = fetchClientExperiments()
+
+        then:
+        experimentIds.remove(experiment1.id)
+        experiments.collect {it.id}.containsAll(experimentIds)
+        !experiments.collect {it.id}.contains(experiment1.id)
+        !experiments.collect {it.id}.contains(experiment2.id)
+        !experiments.collect {it.id}.contains(experiment3.id)
+
+        and:
+        experiments.find {it.id == experiment4.id}.variants == expectedExperiment4Variants
+
+        when:
+        resumeExperiment(experiment1.id as String)
+        experiments = fetchClientExperiments()
+
+        then:
+        experimentIds.add(experiment1.id)
+        experiments.collect {it.id}.containsAll(experimentIds)
+        !experiments.collect {it.id}.contains(experiment2.id)
+        !experiments.collect {it.id}.contains(experiment3.id)
+
+        and:
+        experiments.find {it.id == experiment1.id}.variants == expectedExperiment1Variants
+        experiments.find {it.id == experiment4.id}.variants == expectedExperiment4Variants
+
+        when:
+        resumeExperiment(experiment2.id as String)
+        experiments = fetchClientExperiments()
+
+        then:
+        experimentIds.add(experiment2.id)
+        experiments.collect {it.id}.containsAll(experimentIds)
+        !experiments.collect {it.id}.contains(experiment3.id)
+
+        and:
+        experiments.find {it.id == experiment1.id}.variants == expectedExperiment1Variants
+        experiments.find {it.id == experiment2.id}.variants == expectedExperiment2Variants
+        experiments.find {it.id == experiment4.id}.variants == expectedExperiment4Variants
+    }
+
+    List expectedExperiment1State(String experimentId) {
+        [
                 [
                         name      : 'base',
                         predicates: [
                                 [
                                         type  : 'SHRED_HASH',
                                         ranges: [[from: 95, to: 100]],
-                                        salt  : experiment1
+                                        salt  : experimentId
                                 ]
                         ]
                 ],
@@ -247,20 +301,22 @@ class ClientExperimentsV3E2ESpec extends BaseIntegrationSpec {
                                 [
                                         type  : 'SHRED_HASH',
                                         ranges: [[from: 0, to: 5]],
-                                        salt  : experiment1
+                                        salt  : experimentId
                                 ]
                         ]
                 ]
         ]
+    }
 
-        def expectedExperiment2State = [
+    List expectedExperiment2State(String experimentId) {
+        [
                 [
                         name      : 'base',
                         predicates: [
                                 [
                                         type  : 'SHRED_HASH',
                                         ranges: [[from: 90, to: 100]],
-                                        salt  : experiment1
+                                        salt  : experimentId
                                 ]
                         ]
                 ],
@@ -270,20 +326,22 @@ class ClientExperimentsV3E2ESpec extends BaseIntegrationSpec {
                                 [
                                         type  : 'SHRED_HASH',
                                         ranges: [[from: 5, to: 15]],
-                                        salt  : experiment1
+                                        salt  : experimentId
                                 ]
                         ]
                 ]
         ]
+    }
 
-        def expectedExperiment3State = [
+    List expectedExperiment3State(String experimentId) {
+        [
                 [
                         name      : 'base',
                         predicates: [
                                 [
                                         type  : 'SHRED_HASH',
                                         ranges: [[from: 80, to: 100]],
-                                        salt  : experiment1
+                                        salt  : experimentId
                                 ]
                         ]
                 ],
@@ -293,20 +351,22 @@ class ClientExperimentsV3E2ESpec extends BaseIntegrationSpec {
                                 [
                                         type  : 'SHRED_HASH',
                                         ranges: [[from: 15, to: 35]],
-                                        salt  : experiment1
+                                        salt  : experimentId
                                 ]
                         ]
                 ]
         ]
+    }
 
-        def expectedExperiment4State = [
+    List expectedExperiment4State(String experimentId) {
+        [
                 [
                         name      : 'base',
                         predicates: [
                                 [
                                         type  : 'SHRED_HASH',
                                         ranges: [[from: 85, to: 100]],
-                                        salt  : experiment1
+                                        salt  : experimentId
                                 ]
                         ]
                 ],
@@ -316,140 +376,10 @@ class ClientExperimentsV3E2ESpec extends BaseIntegrationSpec {
                                 [
                                         type  : 'SHRED_HASH',
                                         ranges: [[from: 35, to: 50]],
-                                        salt  : experiment1
+                                        salt  : experimentId
                                 ]
                         ]
                 ]
         ]
-
-        userProvider.user = new User('Author', [], true)
-        String groupId = UUID.randomUUID().toString()
-
-        startExperiment(experiment1)
-
-        and:
-        restTemplate.postForEntity(localUrl('/api/admin/experiments/groups'), [
-                id: groupId,
-                experiments: experiments
-        ], Map)
-
-        when:
-        def response = restTemplate.getForEntity(localUrl("/api/experiments/v3"), List)
-
-        then:
-        response.numberOfExperimentsPresent(experiments) == 4
-
-        and:
-        response.experimentVariants(experiment1) == expectedExperiment1State
-
-        when:
-        startExperiment(experiment2)
-        response = restTemplate.getForEntity(localUrl("/api/experiments/v3"), List)
-
-        then:
-        response.numberOfExperimentsPresent(experiments) == 4
-
-        and:
-        response.experimentVariants(experiment1) == expectedExperiment1State
-        response.experimentVariants(experiment2) == expectedExperiment2State
-
-        when:
-        startExperiment(experiment3)
-        response = restTemplate.getForEntity(localUrl("/api/experiments/v3"), List)
-
-        then:
-        response.numberOfExperimentsPresent(experiments) == 4
-
-        and:
-        response.experimentVariants(experiment1) == expectedExperiment1State
-        response.experimentVariants(experiment2) == expectedExperiment2State
-        response.experimentVariants(experiment3) == expectedExperiment3State
-
-        when:
-        startExperiment(experiment4)
-        response = restTemplate.getForEntity(localUrl("/api/experiments/v3"), List)
-
-        then:
-        response.numberOfExperimentsPresent(experiments) == 4
-
-        and:
-        response.experimentVariants(experiment1) == expectedExperiment1State
-        response.experimentVariants(experiment2) == expectedExperiment2State
-        response.experimentVariants(experiment3) == expectedExperiment3State
-        response.experimentVariants(experiment4) == expectedExperiment4State
-
-        when:
-        restTemplate.put(localUrl("/api/admin/experiments/${experiment2}/pause"), Map)
-        response = restTemplate.getForEntity(localUrl("/api/experiments/v3"), List)
-
-        then:
-        response.numberOfExperimentsPresent(experiments) == 3
-
-        and:
-        response.experimentVariants(experiment1) == expectedExperiment1State
-        response.experimentVariants(experiment3) == expectedExperiment3State
-        response.experimentVariants(experiment4) == expectedExperiment4State
-
-        when:
-        restTemplate.put(localUrl("/api/admin/experiments/${experiment3}/stop"), Map)
-        response = restTemplate.getForEntity(localUrl("/api/experiments/v3"), List)
-
-        then:
-        response.numberOfExperimentsPresent(experiments) == 2
-
-        and:
-        response.experimentVariants(experiment1) == expectedExperiment1State
-        response.experimentVariants(experiment4) == expectedExperiment4State
-
-        when:
-        restTemplate.put(localUrl("/api/admin/experiments/${experiment1}/pause"), Map)
-        response = restTemplate.getForEntity(localUrl("/api/experiments/v3"), List)
-
-        then:
-        response.numberOfExperimentsPresent(experiments) == 1
-
-        and:
-        response.experimentVariants(experiment4) == expectedExperiment4State
-
-        when:
-        restTemplate.put(localUrl("/api/admin/experiments/${experiment1}/resume"), Map)
-        response = restTemplate.getForEntity(localUrl("/api/experiments/v3"), List)
-
-        then:
-        response.numberOfExperimentsPresent(experiments) == 2
-
-        and:
-        response.experimentVariants(experiment1) == expectedExperiment1State
-        response.experimentVariants(experiment4) == expectedExperiment4State
-
-        when:
-        restTemplate.put(localUrl("/api/admin/experiments/${experiment2}/resume"), Map)
-        response = restTemplate.getForEntity(localUrl("/api/experiments/v3"), List)
-
-        then:
-        response.numberOfExperimentsPresent(experiments) == 3
-
-        and:
-        response.experimentVariants(experiment1) == expectedExperiment1State
-        response.experimentVariants(experiment2) == expectedExperiment2State
-        response.experimentVariants(experiment4) == expectedExperiment4State
-    }
-
-    def createDraftExperiment(List<String> variants, int percentage=10) {
-        String experimentId = UUID.randomUUID().toString()
-        def request = [
-                id                 : experimentId,
-                description        : 'desc',
-                documentLink       : 'https://vuetifyjs.com/vuetify/quick-start',
-                variantNames       : variants,
-                internalVariantName: 'v3',
-                percentage         : percentage,
-                deviceClass        : 'phone',
-                groups             : ['group a', 'group b'],
-                reportingEnabled   : true,
-                reportingType: 'BACKEND'
-        ]
-        restTemplate.postForEntity(localUrl('/api/admin/experiments'), request, Map)
-        experimentId
     }
 }

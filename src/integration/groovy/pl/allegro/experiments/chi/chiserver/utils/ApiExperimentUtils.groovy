@@ -1,27 +1,36 @@
 package pl.allegro.experiments.chi.chiserver.utils
 
-import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.http.HttpStatus
-import pl.allegro.experiments.chi.chiserver.domain.experiments.Experiment
-import pl.allegro.experiments.chi.chiserver.domain.experiments.ExperimentDefinition
 import pl.allegro.experiments.chi.chiserver.domain.experiments.ExperimentStatus
-import pl.allegro.experiments.chi.chiserver.domain.experiments.ExperimentsRepository
 
-import static pl.allegro.experiments.chi.chiserver.utils.SampleExperimentRequests.sampleExperimentCreationRequest
 import static pl.allegro.experiments.chi.chiserver.utils.SampleExperimentRequests.sampleExperimentCreationRequestProperties
 
 trait ApiExperimentUtils implements ApiActionUtils {
 
-    boolean experimentsExists(String experimentId) {
-        get(experimentId).statusCode != HttpStatus.NOT_FOUND
+    List fetchClientExperiments(String apiVersion = "") {
+        get("$CLIENT_API_PATH/$apiVersion", List).body as List
     }
 
-    List fetchExperiments(String apiVersion = "") {
-        get(apiVersion, List).body as List
+    List fetchExperiments() {
+        get(ADMIN_API_PATH, List).body as List
     }
 
     Map fetchExperiment(String experimentId) {
-        get(experimentId, Map).body as Map
+        get("$ADMIN_API_PATH/$experimentId", Map).body as Map
+    }
+
+    Map fetchExperimentGroup(String groupId) {
+        get("$ADMIN_API_PATH/groups/$groupId", Map).body as Map
+    }
+
+    Map experimentGroup(List experimentIds, String groupId = UUID.randomUUID().toString()) {
+        createExperimentGroup(experimentIds, groupId)
+        fetchExperimentGroup(groupId)
+    }
+
+    Map pairedExperiment(List experimentIds, String groupId = UUID.randomUUID().toString(), Map customProperties = [:]) {
+        def properties = sampleExperimentCreationRequestProperties(customProperties)
+        createPairedExperiment(properties, experimentIds,  groupId)
+        fetchExperiment(properties.id as String)
     }
 
     Map draftExperiment(Map customProperties = [:]) {

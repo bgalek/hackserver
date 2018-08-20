@@ -1,4 +1,4 @@
-package pl.allegro.experiments.chi.chiserver.application.commands
+package pl.allegro.experiments.chi.chiserver.commands
 
 import pl.allegro.experiments.chi.chiserver.domain.experiments.administration.ExperimentCommandException
 import pl.allegro.experiments.chi.chiserver.domain.experiments.administration.ExperimentNotFoundException
@@ -6,43 +6,43 @@ import spock.lang.Unroll
 
 import static pl.allegro.experiments.chi.chiserver.domain.experiments.ExperimentStatus.*
 
-class PauseExperimentCommandIntegrationSpec extends BaseCommandIntegrationSpec {
+class ResumeExperimentCommandIntegrationSpec extends BaseCommandIntegrationSpec {
 
-    def "should pause ACTIVE experiment"() {
+    def "should resume PAUSED experiment"() {
         given:
-        def experiment = startedExperiment()
+        def experiment = pausedExperiment()
 
         when:
-        pauseExperiment(experiment.id)
+        resumeExperiment(experiment.id)
 
         then:
-        fetchExperiment(experiment.id).isPaused()
+        fetchExperiment(experiment.id).isActive()
     }
 
-    def "should not pause nonexistent experiment"() {
+    def "should not resume non existing experiment"() {
         when:
-        pauseExperiment('nonexistentExperimentId')
+        resumeExperiment('nonexistentExperimentId')
 
         then:
         thrown ExperimentNotFoundException
     }
 
     @Unroll
-    def "should not pause #status experiment"() {
+    def "should not resume #status experiment"() {
         given:
         def experiment = experimentWithStatus(status)
 
         when:
-        pauseExperiment(experiment.id as String)
+        resumeExperiment(experiment.id as String)
 
         then:
         def exception = thrown ExperimentCommandException
-        exception.message == "Experiment is not ACTIVE. Now '${experiment.id}' has $status status"
+        exception.message == "Experiment <${experiment.id}> is not PAUSED."
 
         and:
         fetchExperiment(experiment.id).status == status
 
         where:
-        status << allExperimentStatusValuesExcept(ACTIVE)
+        status << allExperimentStatusValuesExcept(PAUSED)
     }
 }

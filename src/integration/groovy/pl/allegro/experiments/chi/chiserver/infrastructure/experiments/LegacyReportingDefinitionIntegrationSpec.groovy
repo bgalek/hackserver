@@ -16,15 +16,9 @@ class LegacyReportingDefinitionIntegrationSpec extends BaseIntegrationSpec {
         reportingDefinitionDeserializer.convert(document).type == expectedResult.type
 
         where:
-        document << [
-                new Document([gtm: false, backendInteractionsEnabled: false, eventDefinitions: []]),
-                new Document([gtm: false, backendInteractionsEnabled: true, eventDefinitions: []]),
-                new Document([gtm: true, backendInteractionsEnabled: false, eventDefinitions: []])
-        ]
-        expectedResult << [
-                ReportingDefinition.frontend([]),
-                ReportingDefinition.backend(),
-                ReportingDefinition.gtm()
-        ]
+        document                                                                            | expectedResult
+        new Document([gtm: false, backendInteractionsEnabled: false, eventDefinitions: []]) | ReportingDefinition.frontend([])
+        new Document([gtm: false, backendInteractionsEnabled: true, eventDefinitions: []])  | ReportingDefinition.backend()
+        new Document([gtm: true, backendInteractionsEnabled: false, eventDefinitions: []])  | ReportingDefinition.gtm()
     }
 }

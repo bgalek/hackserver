@@ -36,7 +36,7 @@ class MongoExperimentsIntegrationSpec extends BaseIntegrationSpec {
         mongoExperimentsRepository.delete(experiment.id)
 
         then:
-        notThrown(JaversException)
+        notThrown JaversException
 
         and:
         !mongoExperimentsRepository.getExperiment(experiment.id).isPresent()

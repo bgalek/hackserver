@@ -10,7 +10,6 @@ import pl.allegro.experiments.chi.chiserver.AppRunner
 import pl.allegro.experiments.chi.chiserver.domain.User
 import pl.allegro.experiments.chi.chiserver.domain.UserProvider
 import pl.allegro.experiments.chi.chiserver.domain.experiments.ExperimentsRepository
-import pl.allegro.experiments.chi.chiserver.utils.SampleInMemoryExperimentsRepository
 
 import java.lang.annotation.ElementType
 import java.lang.annotation.Retention

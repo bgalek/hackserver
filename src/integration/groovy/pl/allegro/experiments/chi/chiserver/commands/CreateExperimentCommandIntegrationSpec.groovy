@@ -1,4 +1,4 @@
-package pl.allegro.experiments.chi.chiserver.application.commands
+package pl.allegro.experiments.chi.chiserver.commands
 
 import pl.allegro.experiments.chi.chiserver.domain.User
 import pl.allegro.experiments.chi.chiserver.domain.experiments.administration.AuthorizationException
@@ -11,14 +11,13 @@ class CreateExperimentCommandIntegrationSpec extends BaseCommandIntegrationSpec 
 
     def "should create experiment"() {
         given:
-        def experimentId = "simple id"
+        def request = sampleExperimentCreationRequest()
 
         when:
-        createExperiment(sampleExperimentCreationRequest([id: experimentId]))
+        createExperiment(request)
 
         then:
-        experimentsExists(experimentId)
-        fetchExperiment(experimentId).id == "simple id"
+        experimentsExists(request.id)
     }
 
     def "should not create experiment where experiment with given id exists"() {
