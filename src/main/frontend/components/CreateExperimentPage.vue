@@ -72,7 +72,7 @@
                       If you are going to experiment using GTM &mdash; pick GTM.
                       Otherwise, pick BACKEND.
                       <br/>
-                      <a target="_blank" style="color: aqua" href="https://rtd.allegrogroup.com/docs/chi/pl/latest/reporting/">
+                      <a target="_blank" style="color: aqua" href="https://rtd.allegrogroup.com/docs/chi/reporting/">
                       Read more in χ Docs</a>
                     </span>
                     <v-icon
@@ -100,7 +100,7 @@
                       <br/><br/>
                       For power users only.
                       <br/><br/>
-                      <a target="_blank" style="color: aqua" href="https://rtd.allegrogroup.com/docs/chi/pl/latest/reporting/#raportowanie-frontendowe">
+                      <a target="_blank" style="color: aqua" href="https://rtd.allegrogroup.com/docs/chi/reporting/#raportowanie-frontendowe">
                       Read more in χ Docs</a>
                     </span>
 
@@ -128,7 +128,7 @@
                       You can create a group of mutually exclusive experiments.<br/>
                       Experiments in group will not interfere with each other.<br/>
                       Useful when you have many experiments in the same area of the system.<br/>
-                      <a target="_blank" style="color: aqua" href="https://rtd.allegrogroup.com/docs/chi/pl/latest/#grupa-eksperymentow">
+                      <a target="_blank" style="color: aqua" href="https://rtd.allegrogroup.com/docs/chi/#grupa-eksperymentow">
                       Read more in χ Docs</a>
                     </span>
                     <v-icon

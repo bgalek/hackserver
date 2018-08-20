@@ -11,7 +11,7 @@
               <br/>
               When defined, then passing the same parameter will be required to assign a user to this experiment
                <br/>
-              <a target="_blank" style="color: aqua" href="https://rtd.allegrogroup.com/docs/chi/pl/latest/">
+              <a target="_blank" style="color: aqua" href="https://rtd.allegrogroup.com/docs/chi/">
               Read more in χ Docs</a>
 
             </span>

@@ -5,8 +5,10 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 class HipChatNotification {
 
     private final String message;
+    private final String color;
 
     HipChatNotification(Notification notification) {
+        this.color = notification.getSeverity() == Notification.Severity.MEDIUM ? "green" : "red";
         this.message =
                 "Experiment " +
                         getExpLink(notification.getExpId()) +
@@ -31,7 +33,7 @@ class HipChatNotification {
 
     @JsonProperty
     String getColor() {
-        return "green";
+        return color;
     }
 
     @JsonProperty

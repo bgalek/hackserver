@@ -8,7 +8,7 @@
       <h3>Experiment group
       <v-tooltip right  close-delay="1000">
           <span>
-              <a target="_blank" style="color: aqua" href="https://rtd.allegrogroup.com/docs/chi/pl/latest/#grupa-eksperymentow">
+              <a target="_blank" style="color: aqua" href="https://rtd.allegrogroup.com/docs/chi/#grupa-eksperymentow">
                Read about groups in χ Docs</a>
           </span>
         <v-icon slot="activator">help_outline</v-icon>
@@ -98,7 +98,7 @@
         <h3>Reporting type
           <v-tooltip right  close-delay="1000">
           <span>
-              <a target="_blank" style="color: aqua" href="https://rtd.allegrogroup.com/docs/chi/pl/latest/reporting/">
+              <a target="_blank" style="color: aqua" href="https://rtd.allegrogroup.com/docs/chi/reporting/">
                Read about reporting types in χ Docs</a>
           </span>
             <v-icon slot="activator">help_outline</v-icon>

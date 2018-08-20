@@ -37,7 +37,7 @@
 
     <div slot="footer">
       Use these buttons to open new browser tab with Chi cookie set to selected variant. Read the Docs about
-      <a href="https://rtd.allegrogroup.com/docs/chi/pl/latest/chi_cookie/">Chi cookie</a>.
+      <a href="https://rtd.allegrogroup.com/docs/chi/chi_cookie/">Chi cookie</a>.
     </div>
 
   </chi-panel>

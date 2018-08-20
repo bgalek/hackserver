@@ -1,6 +1,7 @@
 package pl.allegro.experiments.chi.chiserver.domain.experiments.administration;
 
 import pl.allegro.experiments.chi.chiserver.domain.UserProvider;
+import pl.allegro.experiments.chi.chiserver.domain.experiments.FullOnPredicate;
 import pl.allegro.experiments.chi.chiserver.domain.experiments.administration.notifications.Notification;
 import pl.allegro.experiments.chi.chiserver.domain.experiments.administration.notifications.Notificator;
 
@@ -17,9 +18,16 @@ class NotificationDecoratorCommand implements Command {
 
     public void execute() {
         experimentCommand.execute();
+
+        var severity = Notification.Severity.MEDIUM;
+        if (experimentCommand instanceof StartExperimentCommand ||
+            experimentCommand instanceof MakeExperimentFullOnCommand) {
+            severity = Notification.Severity.HIGH;
+        }
+
         notificator.send(
                 new Notification(experimentCommand.getExperimentId(),
                                  experimentCommand.getNotificationMessage(),
-                                 userProvider.getCurrentUser().getName()));
+                                 userProvider.getCurrentUser().getName(), severity));
     }
 }

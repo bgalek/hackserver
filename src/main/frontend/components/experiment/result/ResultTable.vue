@@ -77,9 +77,9 @@
     </p>
 
     <div slot="footer">
-      Read the χ Docs about <a href="https://rtd.allegrogroup.com/docs/chi/pl/latest/chi_metrics/">metrics</a>
+      Read the χ Docs about <a href="https://rtd.allegrogroup.com/docs/chi/chi_metrics/">metrics</a>
       and how to understand
-      <a href="https://rtd.allegrogroup.com/docs/chi/pl/latest/results/">p-Value</a>.
+      <a href="https://rtd.allegrogroup.com/docs/chi/results/">p-Value</a>.
     </div>
 
   </v-container>
