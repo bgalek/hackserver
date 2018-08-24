@@ -7,15 +7,12 @@ import pl.allegro.experiments.chi.chiserver.domain.experiments.groups.Experiment
 import pl.allegro.experiments.chi.chiserver.domain.statistics.bayes.BayesianHorizontalEqualizer;
 import pl.allegro.experiments.chi.chiserver.domain.statistics.ExperimentMeasurements;
 import pl.allegro.experiments.chi.chiserver.infrastructure.ClientExperiment;
-import pl.allegro.experiments.chi.chiserver.infrastructure.experiments.ExperimentOrigin;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 public class AdminExperiment {
     private ExperimentDefinition experimentDefinition;
-    private final ExperimentOrigin origin;
     private final boolean editable;
     private final ClientExperiment clientExperiment;
     private ExperimentMeasurements experimentMeasurements;
@@ -23,37 +20,13 @@ public class AdminExperiment {
     private ExperimentGroup experimentGroup;
     private int bonferroniCorrection;
 
-    public AdminExperiment(Experiment legacyDefinition) {
-        experimentDefinition = fromLegacyDefinition(legacyDefinition);
-        origin = ExperimentOrigin.STASH;
-        editable = false;
-        clientExperiment = new ClientExperiment(legacyDefinition);
-    }
-
     public AdminExperiment(
             ExperimentDefinition experimentDefinition,
             User currentUser,
             ClientExperiment clientExperiment) {
         this.experimentDefinition = experimentDefinition;
-        origin = ExperimentOrigin.MONGO;
-        editable = currentUser.isOwner(experimentDefinition);
+        this.editable = currentUser.isOwner(experimentDefinition);
         this.clientExperiment = clientExperiment;
-    }
-
-    private static ExperimentDefinition fromLegacyDefinition(Experiment legacyDefinition) {
-
-        return ExperimentDefinition.builder()
-                .id(legacyDefinition.getId())
-                .activityPeriod(legacyDefinition.getActivityPeriod())
-                .variantNames(legacyDefinition.getVariants().stream().map(it->it.getName()).collect(Collectors.toList()))
-                .description(legacyDefinition.getDescription())
-                .documentLink(legacyDefinition.getDocumentLink())
-                .author(legacyDefinition.getAuthor())
-                .groups(legacyDefinition.getGroups())
-                .reportingDefinition(ReportingDefinition.createDefault())
-                .explicitStatus(legacyDefinition.getExplicitStatus())
-                .deviceClass(DeviceClass.all)
-                .build();
     }
 
     AdminExperiment withHorizontalEqualizer(BayesianHorizontalEqualizer equalizer) {
@@ -84,10 +57,6 @@ public class AdminExperiment {
 
     public ExperimentMeasurements getMeasurements() {
         return this.experimentMeasurements;
-    }
-
-    public String getOrigin() {
-        return origin.name();
     }
 
     public List<ExperimentVariant> getRenderedVariants() {

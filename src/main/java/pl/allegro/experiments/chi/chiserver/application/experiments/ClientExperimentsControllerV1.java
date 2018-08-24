@@ -7,7 +7,7 @@ import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import pl.allegro.experiments.chi.chiserver.domain.experiments.Experiment;
+import pl.allegro.experiments.chi.chiserver.domain.experiments.ExperimentDefinition;
 import pl.allegro.tech.common.andamio.metrics.MeteredEndpoint;
 
 import java.util.stream.Collectors;
@@ -29,7 +29,7 @@ public class ClientExperimentsControllerV1 {
         this.jsonConverterV1 = jsonConverterV1;
     }
 
-    private Stream<Experiment> experimentStream() {
+    private Stream<ExperimentDefinition> experimentStream() {
         return controllerV2.experimentStream();
     }
 

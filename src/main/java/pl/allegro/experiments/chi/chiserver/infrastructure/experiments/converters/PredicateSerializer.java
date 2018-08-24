@@ -17,10 +17,6 @@ public class PredicateSerializer implements Converter<Predicate, Document> {
             result.put("to", predicate.getHashRange().getTo());
         } else if (source instanceof InternalPredicate) {
             result.put("type", PredicateType.INTERNAL.toString());
-        } else if (source instanceof CmuidRegexpPredicate) {
-            CmuidRegexpPredicate predicate = (CmuidRegexpPredicate) source;
-            result.put("type", PredicateType.CMUID_REGEXP.toString());
-            result.put("regexp", predicate.getPattern().toString());
         } else if (source instanceof DeviceClassPredicate) {
             DeviceClassPredicate predicate = (DeviceClassPredicate) source;
             result.put("type", PredicateType.DEVICE_CLASS.toString());

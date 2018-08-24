@@ -1,6 +1,5 @@
 package pl.allegro.experiments.chi.chiserver.domain.experiments.administration;
 
-import pl.allegro.experiments.chi.chiserver.domain.experiments.Experiment;
 import pl.allegro.experiments.chi.chiserver.domain.experiments.ExperimentDefinition;
 import pl.allegro.experiments.chi.chiserver.domain.experiments.ExperimentsRepository;
 
@@ -24,16 +23,13 @@ public class PauseExperimentCommand implements ExperimentCommand {
     }
 
     public void execute() {
-        Experiment experiment = permissionsAwareExperimentRepository.getExperimentOrException(experimentId);
+        ExperimentDefinition experiment = permissionsAwareExperimentRepository.getExperimentOrException(experimentId);
         validate(experiment);
-        ExperimentDefinition pausedExperiment = experiment
-                .getDefinition()
-                .orElseThrow(() -> new UnsupportedOperationException("Missing experiment definition"))
-                .pause();
+        ExperimentDefinition pausedExperiment = experiment.pause();
         experimentsRepository.save(pausedExperiment);
     }
 
-    private void validate(Experiment experiment) {
+    private void validate(ExperimentDefinition experiment) {
         if (!experiment.isActive()) {
             throw new ExperimentCommandException(
                     String.format("Experiment is not ACTIVE. Now '%s' has %s status",

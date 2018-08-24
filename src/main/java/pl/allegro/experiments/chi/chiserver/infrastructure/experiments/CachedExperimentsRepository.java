@@ -3,7 +3,6 @@ package pl.allegro.experiments.chi.chiserver.infrastructure.experiments;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.scheduling.annotation.Scheduled;
-import pl.allegro.experiments.chi.chiserver.domain.experiments.Experiment;
 import pl.allegro.experiments.chi.chiserver.domain.experiments.ExperimentDefinition;
 import pl.allegro.experiments.chi.chiserver.domain.experiments.ExperimentsRepository;
 
@@ -13,7 +12,7 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 public class CachedExperimentsRepository implements ExperimentsRepository {
-    private List<Experiment> experiments;
+    private List<ExperimentDefinition> experiments;
     private final ExperimentsRepository delegate;
     private static final long REFRESH_RATE_IN_SECONDS = 1;
     private static final Logger logger = LoggerFactory.getLogger(CachedExperimentsRepository.class);
@@ -36,14 +35,14 @@ public class CachedExperimentsRepository implements ExperimentsRepository {
     }
 
     @Override
-    public List<Experiment> getAll() {
+    public List<ExperimentDefinition> getAll() {
         return Collections.unmodifiableList(experiments);
     }
 
     @Override
-    public List<Experiment> assignable() {
+    public List<ExperimentDefinition> assignable() {
         return experiments.stream()
-                .filter(Experiment::isAssignable)
+                .filter(ExperimentDefinition::isAssignable)
                 .collect(Collectors.toList());
     }
 
@@ -60,10 +59,9 @@ public class CachedExperimentsRepository implements ExperimentsRepository {
     }
 
     @Override
-    public Optional<Experiment> getExperiment(String experimentId) {
-        return Optional.ofNullable(experiments.stream()
+    public Optional<ExperimentDefinition> getExperiment(String experimentId) {
+        return experiments.stream()
                 .filter(it -> it.getId().equals(experimentId))
-                .findFirst()
-                .orElse(null));
+                .findFirst();
     }
 }

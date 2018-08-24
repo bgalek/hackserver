@@ -27,7 +27,6 @@ public class DbMigrateTool {
        String eName = "structure-navigation-electronics";
 
        experimentsRepository.getExperiment(eName)
-       .flatMap(e -> e.getDefinition())
        .ifPresent(e -> {
            if (e.getReportingDefinition().getType() != ReportingType.FRONTEND) {
                logger.info("updating " + eName + "...");
@@ -41,7 +40,6 @@ public class DbMigrateTool {
                );
 
                experimentsRepository.save(e.updateReportingDefinition(newDef));
-
                logger.info("experiment updated");
            }
        });

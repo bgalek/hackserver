@@ -40,8 +40,6 @@ public class ExperimentVariantTypeAdapter implements JsonSerializer<ExperimentVa
             return deserializeDevicePredicate(json);
         } else if (PredicateType.HASH.toString().equals(type)) {
             return deserializeHashPredicate(json);
-        } else if (PredicateType.CMUID_REGEXP.toString().equals(type)) {
-            return deserializeCmuidPredicate(json);
         } else if (PredicateType.INTERNAL.toString().equals(type)) {
             return deserializeInternalVariant(json);
         } else if (PredicateType.CUSTOM_PARAM.toString().equals(type)) {
@@ -67,11 +65,6 @@ public class ExperimentVariantTypeAdapter implements JsonSerializer<ExperimentVa
 
     private Predicate deserializeInternalVariant(JsonObject json) {
         return new InternalPredicate();
-    }
-
-    private Predicate deserializeCmuidPredicate(JsonObject json) {
-        String regexp = json.get("regexp").getAsString();
-        return new CmuidRegexpPredicate(Pattern.compile(regexp));
     }
 
     private Predicate deserializeDevicePredicate(JsonObject json) {

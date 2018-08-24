@@ -7,10 +7,9 @@ import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import pl.allegro.experiments.chi.chiserver.domain.experiments.Experiment;
+import pl.allegro.experiments.chi.chiserver.domain.experiments.ExperimentDefinition;
 import pl.allegro.experiments.chi.chiserver.domain.experiments.ExperimentsRepository;
 import pl.allegro.experiments.chi.chiserver.domain.experiments.groups.ExperimentGroupRepository;
-import pl.allegro.experiments.chi.chiserver.infrastructure.ClientExperiment;
 import pl.allegro.experiments.chi.chiserver.infrastructure.ExperimentFactory;
 import pl.allegro.tech.common.andamio.metrics.MeteredEndpoint;
 
@@ -42,18 +41,11 @@ class ClientExperimentsControllerV5 {
         this.experimentFactory = experimentFactory;
     }
 
-    Stream<Experiment> experimentStream() {
+    Stream<ExperimentDefinition> experimentStream() {
         return experimentsRepository
                 .assignable()
                 .stream()
                 .filter(crisisManagementFilter::filter);
-    }
-
-    private ClientExperiment convertToClientExperiment(Experiment experiment) {
-        return !experimentGroupRepository.experimentInGroup(experiment.getId())
-                ? new ClientExperiment(experiment)
-                : experimentFactory.clientExperimentFromGroupedExperiment(experiment.getDefinition().get())
-                .get();
     }
 
     @MeteredEndpoint
@@ -61,7 +53,7 @@ class ClientExperimentsControllerV5 {
     String experiments() {
         logger.debug("Client V5 experiments request received");
         return jsonConverter.toJson(experimentStream()
-                .map(this::convertToClientExperiment)
+                .map(experimentFactory::clientExperiment)
                 .collect(toList())
         );
     }

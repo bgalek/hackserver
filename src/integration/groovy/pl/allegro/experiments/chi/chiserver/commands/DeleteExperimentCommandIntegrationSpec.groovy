@@ -1,7 +1,7 @@
 package pl.allegro.experiments.chi.chiserver.commands
 
 import org.springframework.beans.factory.annotation.Autowired
-import pl.allegro.experiments.chi.chiserver.domain.experiments.Experiment
+import pl.allegro.experiments.chi.chiserver.domain.experiments.ExperimentDefinition
 import pl.allegro.experiments.chi.chiserver.domain.experiments.administration.ExperimentCommandException
 import pl.allegro.experiments.chi.chiserver.domain.statistics.classic.ClassicExperimentStatisticsForVariantMetric
 import pl.allegro.experiments.chi.chiserver.domain.statistics.classic.ClassicStatisticsForVariantMetricRepository
@@ -45,13 +45,13 @@ class DeleteExperimentCommandIntegrationSpec extends BaseCommandIntegrationSpec 
 
 
 
-    static ClassicExperimentStatisticsForVariantMetric sampleClassicExperimentStatisticsForVariantMetric(Experiment experiment) {
+    static ClassicExperimentStatisticsForVariantMetric sampleClassicExperimentStatisticsForVariantMetric(ExperimentDefinition experiment) {
         new ClassicExperimentStatisticsForVariantMetric(
                 experiment.id,
                 1,
                 LocalDate.now().toString(),
-                experiment.definition.get().deviceClass,
-                experiment.variants.first().toString(),
+                experiment.deviceClass,
+                experiment.variantNames.first(),
                 "tx_visit",
                 null)
     }

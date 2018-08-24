@@ -18,8 +18,7 @@ class UpdateEventDefinitionsCommandIntegrationSpec extends BaseCommandIntegratio
             new EventDefinition('c3', 'a3', 'v3', 'l3', 'b3')
 
 
-    @Unroll
-    def "should update event definitions if experiment is #status"() {
+    def "should update event definitions if experiment is a DRAFT"() {
         given:
         def experiment = draftExperiment([
                 reportingType   : FRONTEND,
@@ -30,12 +29,9 @@ class UpdateEventDefinitionsCommandIntegrationSpec extends BaseCommandIntegratio
         updateExperimentEventDefinitions(experiment.id, [firstEventDefinition, thirdEventDefinition])
 
         then:
-        def reportingDefinition = fetchExperimentDefinition(experiment.id).reportingDefinition
+        def reportingDefinition = fetchExperiment(experiment.id).reportingDefinition
         reportingDefinition.type == FRONTEND
         reportingDefinition.eventDefinitions == [firstEventDefinition, thirdEventDefinition]
-
-        where:
-        status << [DRAFT]
     }
 
     @Unroll

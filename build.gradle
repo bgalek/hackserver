@@ -56,7 +56,7 @@ repositories {
 }
 
 dependencies {
-    compile 'org.javers:javers-spring-boot-starter-mongo:3.9.0'
+    compile 'org.javers:javers-spring-boot-starter-mongo:3.11.3'
     compile 'pl.allegro.tech.common:andamio-starter-webmvc:' + versions.andamio
     compile group: 'org.springframework.security.oauth.boot', name: 'spring-security-oauth2-autoconfigure', version: versions.springBoot
     compile group: 'org.springframework.boot', name: 'spring-boot-starter-security', version: versions.springBoot
@@ -173,5 +173,5 @@ axionPublishing {
 }
 
 task wrapper(type: Wrapper) {
-    gradleVersion = '4.7'
+    gradleVersion = '4.9'
 }

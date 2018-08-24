@@ -59,7 +59,7 @@ abstract class BaseIntegrationSpec extends Specification {
     }
 
     def cleanup() {
-        experimentsRepository.getAll().findAll{it.origin == "MONGO"}.forEach { experimentsRepository.delete(it.id) }
+        experimentsRepository.getAll().forEach { experimentsRepository.delete(it.id) }
     }
 
     void signInAs(User user) {

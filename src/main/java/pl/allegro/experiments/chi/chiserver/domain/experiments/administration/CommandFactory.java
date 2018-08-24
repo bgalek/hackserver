@@ -152,7 +152,6 @@ public class CommandFactory {
     Command createExperimentGroupCommand(ExperimentGroupCreationRequest experimentGroupCreationRequest) {
         return new CreateExperimentGroupCommand(
                 experimentGroupRepository,
-                experimentsRepository,
                 userProvider,
                 experimentGroupCreationRequest,
                 permissionsAwareExperimentRepository
@@ -168,7 +167,6 @@ public class CommandFactory {
                         pairedExperimentCreationRequest.getExperimentCreationRequest()),
                 new CreateExperimentGroupCommand(
                         experimentGroupRepository,
-                        experimentsRepository,
                         userProvider,
                         pairedExperimentCreationRequest.getExperimentGroupCreationRequest(),
                         permissionsAwareExperimentRepository),

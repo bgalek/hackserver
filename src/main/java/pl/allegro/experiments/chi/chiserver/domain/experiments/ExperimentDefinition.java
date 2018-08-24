@@ -8,7 +8,6 @@ import org.javers.core.metamodel.annotation.Id;
 import org.javers.core.metamodel.annotation.PropertyName;
 import org.javers.core.metamodel.annotation.TypeName;
 import pl.allegro.experiments.chi.chiserver.domain.experiments.administration.ExperimentDefinitionException;
-import pl.allegro.experiments.chi.chiserver.infrastructure.experiments.ExperimentOrigin;
 
 import java.time.LocalDateTime;
 import java.time.ZonedDateTime;
@@ -31,7 +30,6 @@ public class ExperimentDefinition {
     private final String author;
     private final List<String> groups;
     private final ActivityPeriod activityPeriod;
-    private final Boolean editable;
     private final ExperimentStatus explicitStatus;
     private final ExperimentStatus status;
     private final ReportingDefinition reportingDefinition;
@@ -49,7 +47,6 @@ public class ExperimentDefinition {
             String author,
             List<String> groups,
             ActivityPeriod activityPeriod,
-            Boolean editable,
             ExperimentStatus explicitStatus,
             ReportingDefinition reportingDefinition,
             CustomParameter customParameter) {
@@ -71,7 +68,6 @@ public class ExperimentDefinition {
         this.author = author;
         this.groups = ImmutableList.copyOf(groups);
         this.activityPeriod = activityPeriod;
-        this.editable = editable;
         this.explicitStatus = explicitStatus;
         this.status = ExperimentStatus.of(explicitStatus, activityPeriod);
         this.reportingDefinition = reportingDefinition;
@@ -144,6 +140,10 @@ public class ExperimentDefinition {
         return customParameter;
     }
 
+    public boolean hasCustomParam() {
+        return customParameter != null;
+    }
+
     @DiffInclude
     public LocalDateTime getActiveFrom() {
         if (activityPeriod == null) {
@@ -163,10 +163,6 @@ public class ExperimentDefinition {
     @DiffInclude
     public ExperimentStatus getStatus() {
         return status;
-    }
-
-    public Boolean getEditable() {
-        return editable;
     }
 
     public Set<String> allVariantNames() {
@@ -211,8 +207,20 @@ public class ExperimentDefinition {
         return getStatus() == ExperimentStatus.FULL_ON;
     }
 
+    public boolean isEffectivelyEnded() {
+        return isFullOn() || isEnded();
+    }
+
+    public boolean isEndable() {
+        return isActive() || isFullOn();
+    }
+
     public boolean isAssignable() {
         return !isEnded() && !isPaused();
+    }
+
+    public boolean shouldSaveInteractions() {
+        return !isFullOn();
     }
 
     public ExperimentDefinition start(long experimentDurationDays) {
@@ -270,19 +278,6 @@ public class ExperimentDefinition {
                 .build();
     }
 
-    public ExperimentDefinition withEditableFlag(boolean editable) {
-        return mutate()
-                .editable(editable)
-                .build();
-    }
-
-    public ExperimentDefinition withOrigin(String origin) {
-        Preconditions.checkNotNull(origin);
-        return mutate()
-                .origin(origin)
-                .build();
-    }
-
     private ExperimentVariant convertVariantByIndex(int i, int maxPercentageVariant) {
         return convertVariant(
                 variantNames.get(i),
@@ -296,7 +291,7 @@ public class ExperimentDefinition {
         if (DeviceClass.all != deviceClass) {
             predicates.add(new DeviceClassPredicate(deviceClass.toJsonString()));
         }
-        if (customParameter != null) {
+        if (hasCustomParam()) {
             predicates.add(new CustomParameterPredicate(customParameter.getName(), customParameter.getValue()));
         }
         return new ExperimentVariant(variantName, predicates);
@@ -310,7 +305,7 @@ public class ExperimentDefinition {
         return new Builder();
     }
 
-    private List<ExperimentVariant> prepareExperimentVariants() {
+    public List<ExperimentVariant> prepareExperimentVariants() {
         return isFullOn()
                 ? prepareFullOnVariants()
                 : concat(prepareInternalVariants().stream(), prepareNormalVariants().stream())
@@ -357,27 +352,6 @@ public class ExperimentDefinition {
         }
     }
 
-    @Deprecated
-    public Experiment toExperiment() {
-        try {
-            return Experiment.builder()
-                    .id(id)
-                    .variants(prepareExperimentVariants())
-                    .description(description)
-                    .documentLink(documentLink)
-                    .author(author)
-                    .groups(groups)
-                    .activityPeriod(activityPeriod)
-                    .explicitStatus(explicitStatus)
-                    .origin(ExperimentOrigin.MONGO.toString())
-                    .definition(this)
-                    .build();
-
-        } catch (Exception e) {
-            throw new ExperimentDefinitionException("Cannot create experiment from definition, id=" + this.id, e);
-        }
-    }
-
     public static class Builder {
 
         static Builder from(ExperimentDefinition other) {
@@ -393,7 +367,6 @@ public class ExperimentDefinition {
                     .author(other.author)
                     .groups(other.groups)
                     .activityPeriod(other.activityPeriod)
-                    .editable(other.editable)
                     .reportingDefinition(other.reportingDefinition)
                     .explicitStatus(other.explicitStatus)
                     .customParameter(other.customParameter);
@@ -410,8 +383,6 @@ public class ExperimentDefinition {
         private String author;
         private List<String> groups = Collections.emptyList();
         private ActivityPeriod activityPeriod;
-        private Boolean editable;
-        private String origin;
         private ExperimentStatus explicitStatus;
         private ReportingDefinition reportingDefinition = ReportingDefinition.createDefault();
         private CustomParameter customParameter;
@@ -481,16 +452,6 @@ public class ExperimentDefinition {
             return this;
         }
 
-        public Builder editable(Boolean editable) {
-            this.editable = editable;
-            return this;
-        }
-
-        public Builder origin(String origin) {
-            this.origin = origin;
-            return this;
-        }
-
         public Builder explicitStatus(ExperimentStatus explicitStatus) {
             this.explicitStatus = explicitStatus;
             return this;
@@ -514,14 +475,13 @@ public class ExperimentDefinition {
                     author,
                     groups,
                     activityPeriod,
-                    editable,
                     explicitStatus,
                     reportingDefinition,
                     customParameter);
         }
     }
 
-    static String emptyToNull(String s) {
+    private static String emptyToNull(String s) {
         if (s != null && s.isEmpty()) {
             return null;
         }

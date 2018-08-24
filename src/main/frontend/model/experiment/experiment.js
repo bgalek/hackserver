@@ -21,7 +21,6 @@ const ExperimentRecord = Record({
   }),
   bayesianEqualizer: null,
   editable: false,
-  origin: '',
   definition: null,
   reportingType: null,
   eventDefinitions: [],
@@ -108,31 +107,31 @@ export default class ExperimentModel extends ExperimentRecord {
   }
 
   canBeStarted () {
-    return this.origin === 'MONGO' && this.status === 'DRAFT'
+    return this.status === 'DRAFT'
   }
 
   canBeStopped () {
-    return this.origin === 'MONGO' && ['ACTIVE', 'FULL_ON'].includes(this.status)
+    return ['ACTIVE', 'FULL_ON'].includes(this.status)
   }
 
   canBeFullOn () {
-    return this.origin === 'MONGO' && this.status === 'ACTIVE'
+    return this.status === 'ACTIVE'
   }
 
   canBePaused () {
-    return this.origin === 'MONGO' && this.status === 'ACTIVE'
+    return this.status === 'ACTIVE'
   }
 
   canBeResumed () {
-    return this.origin === 'MONGO' && this.status === 'PAUSED'
+    return this.status === 'PAUSED'
   }
 
   canBeProlonged () {
-    return this.origin === 'MONGO' && this.status === 'ACTIVE'
+    return this.status === 'ACTIVE'
   }
 
   canChangeVariants () {
-    return this.origin === 'MONGO' && !this.isEffectivelyEnded() && !this.isInGroup()
+    return !this.isEffectivelyEnded() && !this.isInGroup()
   }
 
   isEffectivelyEnded () {
@@ -149,7 +148,6 @@ export default class ExperimentModel extends ExperimentRecord {
 
   canBeGrouped () {
     return !this.isInGroup() &&
-      this.origin === 'MONGO' &&
       ['BACKEND', 'FRONTEND', 'GTM'].includes(this.reportingType) &&
       ['DRAFT', 'ACTIVE', 'PAUSED'].includes(this.status)
   }

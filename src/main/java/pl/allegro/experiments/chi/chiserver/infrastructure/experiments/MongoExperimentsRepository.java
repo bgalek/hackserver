@@ -4,7 +4,6 @@ import io.micrometer.core.instrument.Timer;
 import org.javers.core.Javers;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import pl.allegro.experiments.chi.chiserver.domain.UserProvider;
-import pl.allegro.experiments.chi.chiserver.domain.experiments.Experiment;
 import pl.allegro.experiments.chi.chiserver.domain.experiments.ExperimentDefinition;
 import pl.allegro.experiments.chi.chiserver.domain.experiments.ExperimentsRepository;
 
@@ -31,26 +30,23 @@ public class MongoExperimentsRepository implements ExperimentsRepository {
     }
 
     @Override
-    public Optional<Experiment> getExperiment(String id) {
+    public Optional<ExperimentDefinition> getExperiment(String id) {
         Timer timer = experimentsMongoMetricsReporter.timerSingleExperiment();
-
-        ExperimentDefinition definition = timer.record(
+        ExperimentDefinition experiment = timer.record(
             () -> mongoTemplate.findById(id, ExperimentDefinition.class, COLLECTION));
-        return Optional.ofNullable(definition).map(ExperimentDefinition::toExperiment);
+        return Optional.ofNullable(experiment);
     }
 
     @Override
     public void delete(String experimentId) {
-        ExperimentDefinition definition = getExperiment(experimentId)
-                .flatMap(Experiment::getDefinition)
-                .orElse(null);
+        ExperimentDefinition definition = getExperiment(experimentId).orElse(null);
         String username = userProvider.getCurrentUser().getName();
         javers.getLatestSnapshot(experimentId, ExperimentDefinition.class).ifPresent(it ->
             javers.commitShallowDelete(username, definition)
         );
-        mongoTemplate.remove(getExperiment(experimentId)
-                .flatMap(Experiment::getDefinition)
-                .orElse(null), COLLECTION);
+        if (definition != null) {
+            mongoTemplate.remove(definition, COLLECTION);
+        }
     }
 
     @Override
@@ -61,22 +57,16 @@ public class MongoExperimentsRepository implements ExperimentsRepository {
     }
 
     @Override
-    public List<Experiment> getAll() {
+    public List<ExperimentDefinition> getAll() {
         Timer timer = experimentsMongoMetricsReporter.timerAllExperiments();
-
-        List<Experiment> experiments = timer.record(() ->
-            mongoTemplate.findAll(ExperimentDefinition.class, COLLECTION)
-                         .stream()
-                         .map(ExperimentDefinition::toExperiment)
-                         .collect(Collectors.toList())
-        );
-        return experiments;
+        return timer.record(() ->
+            mongoTemplate.findAll(ExperimentDefinition.class, COLLECTION));
     }
 
     @Override
-    public List<Experiment> assignable() {
+    public List<ExperimentDefinition> assignable() {
         return getAll().stream()
-                .filter(Experiment::isAssignable)
+                .filter(ExperimentDefinition::isAssignable)
                 .collect(Collectors.toList());
     }
 }

@@ -1,7 +1,7 @@
 package pl.allegro.experiments.chi.chiserver.infrastructure;
 
 import pl.allegro.experiments.chi.chiserver.domain.experiments.ActivityPeriod;
-import pl.allegro.experiments.chi.chiserver.domain.experiments.Experiment;
+import pl.allegro.experiments.chi.chiserver.domain.experiments.ExperimentDefinition;
 import pl.allegro.experiments.chi.chiserver.domain.experiments.ExperimentStatus;
 import pl.allegro.experiments.chi.chiserver.domain.experiments.ExperimentVariant;
 
@@ -13,9 +13,9 @@ public class ClientExperiment {
     private final ActivityPeriod activityPeriod;
     private final ExperimentStatus status;
 
-    public ClientExperiment(Experiment experiment) {
+    public ClientExperiment(ExperimentDefinition experiment) {
         id = experiment.getId();
-        variants = experiment.getVariants();
+        variants = experiment.prepareExperimentVariants();
         activityPeriod = experiment.getActivityPeriod();
         status = experiment.getStatus();
     }
