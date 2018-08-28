@@ -5,13 +5,12 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.data.mongodb.core.MongoTemplate
 import pl.allegro.experiments.chi.chiserver.BaseIntegrationSpec
 import pl.allegro.experiments.chi.chiserver.domain.experiments.ExperimentDefinition
+import pl.allegro.experiments.chi.chiserver.domain.experiments.ExperimentsRepository
 
 class MongoExperimentsIntegrationSpec extends BaseIntegrationSpec {
 
-    static EXPERIMENTS_COLLECTION = MongoExperimentsRepository.COLLECTION
-
     @Autowired
-    MongoExperimentsRepository mongoExperimentsRepository
+    ExperimentsRepository experimentsRepository
 
     @Autowired
     MongoTemplate mongoTemplate
@@ -21,25 +20,25 @@ class MongoExperimentsIntegrationSpec extends BaseIntegrationSpec {
         def experiment = exampleExperiment()
 
         when:
-        mongoExperimentsRepository.save(experiment)
+        experimentsRepository.save(experiment)
 
         then:
-        mongoExperimentsRepository.getExperiment(experiment.id).get() == experiment
+        experimentsRepository.getExperiment(experiment.id).get() == experiment
     }
 
     def "should remove experiments not tracked by javers"() {
         given:
         def experiment = exampleExperiment()
-        mongoTemplate.save(experiment, EXPERIMENTS_COLLECTION)
+        mongoTemplate.save(experiment)
 
         when:
-        mongoExperimentsRepository.delete(experiment.id)
+        experimentsRepository.delete(experiment.id)
 
         then:
         notThrown JaversException
 
         and:
-        !mongoExperimentsRepository.getExperiment(experiment.id).isPresent()
+        !experimentsRepository.getExperiment(experiment.id).isPresent()
     }
 
     ExperimentDefinition exampleExperiment() {
@@ -49,9 +48,5 @@ class MongoExperimentsIntegrationSpec extends BaseIntegrationSpec {
                 .percentage(10)
                 .groups([])
                 .build()
-    }
-
-    def cleanup() {
-        mongoTemplate.dropCollection(EXPERIMENTS_COLLECTION)
     }
 }

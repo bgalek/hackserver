@@ -54,19 +54,15 @@ public class ExperimentsConfig {
             Javers javers,
             UserProvider userProvider,
             MeterRegistry metricRegistry) {
-        ExperimentsRepository repository =
+        MongoExperimentsRepository mongoExperimentsRepository =
                 new MongoExperimentsRepository(mongoTemplate, experimentsMongoMetricsReporter, javers, userProvider);
-
-        metricRegistry.gauge(EXPERIMENTS_COUNT_ALL_METRIC, repository,
+        metricRegistry.gauge(EXPERIMENTS_COUNT_ALL_METRIC, mongoExperimentsRepository,
                 r -> r.getAll().size());
-
-        metricRegistry.gauge(EXPERIMENTS_COUNT_ACTIVE_METRIC, repository,
+        metricRegistry.gauge(EXPERIMENTS_COUNT_ACTIVE_METRIC, mongoExperimentsRepository,
                 r -> r.getAll().stream().filter(ExperimentDefinition::isActive).count());
-
-        metricRegistry.gauge(EXPERIMENTS_COUNT_DRAFT_METRIC, repository,
+        metricRegistry.gauge(EXPERIMENTS_COUNT_DRAFT_METRIC, mongoExperimentsRepository,
                 r -> r.getAll().stream().filter(ExperimentDefinition::isDraft).count());
-
-        return repository;
+        return new CachedExperimentsRepository(mongoExperimentsRepository);
     }
 
     @Bean
@@ -75,11 +71,6 @@ public class ExperimentsConfig {
             Gson jsonConverter,
             @Value("${druid.experimentsCube}") String datasource) {
         return new DruidMeasurementsRepository(druid, jsonConverter, datasource);
-    }
-
-    @Bean
-    CachedExperimentsRepository mongoRefresher(MongoExperimentsRepository experimentsRepository) {
-        return new CachedExperimentsRepository(experimentsRepository);
     }
 
     @Bean
