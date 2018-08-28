@@ -1,10 +1,10 @@
 package pl.allegro.experiments.chi.chiserver.application.experiments;
 
-import pl.allegro.experiments.chi.chiserver.domain.experiments.Experiment;
+import pl.allegro.experiments.chi.chiserver.domain.experiments.ExperimentDefinition;
 
 public class AllEnabledCrisisManagementFilter implements CrisisManagementFilter {
     @Override
-    public Boolean filter(Experiment experiment) {
+    public Boolean filter(ExperimentDefinition experiment) {
         return true;
     }
 }

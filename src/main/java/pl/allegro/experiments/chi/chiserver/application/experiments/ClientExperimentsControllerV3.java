@@ -7,11 +7,11 @@ import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import pl.allegro.experiments.chi.chiserver.domain.experiments.Experiment;
+import pl.allegro.experiments.chi.chiserver.domain.experiments.ExperimentDefinition;
 import pl.allegro.experiments.chi.chiserver.domain.experiments.groups.ExperimentGroupRepository;
-import pl.allegro.experiments.chi.chiserver.infrastructure.ClientExperiment;
 import pl.allegro.experiments.chi.chiserver.infrastructure.ExperimentFactory;
 import pl.allegro.tech.common.andamio.metrics.MeteredEndpoint;
+
 
 import java.util.stream.Stream;
 
@@ -22,8 +22,7 @@ import static java.util.stream.Collectors.toList;
 class ClientExperimentsControllerV3 {
     final Gson jsonConverter;
     final ExperimentGroupRepository experimentGroupRepository;
-    private final ExperimentFactory experimentFactory;
-
+    final ExperimentFactory experimentFactory;
     private final ClientExperimentsControllerV4 controllerV4;
 
     private static final Logger logger = LoggerFactory.getLogger(ClientExperimentsControllerV3.class);
@@ -35,19 +34,12 @@ class ClientExperimentsControllerV3 {
         this.experimentFactory = controllerV4.experimentFactory;
     }
 
-    private boolean isV3Compliant(Experiment experiment) {
+    private boolean isV3Compliant(ExperimentDefinition experiment) {
         return !experiment.hasCustomParam();
     }
 
-    Stream<Experiment> experimentStream() {
+    Stream<ExperimentDefinition> experimentStream() {
         return controllerV4.experimentStream().filter(this::isV3Compliant);
-    }
-
-    private ClientExperiment convertToClientExperiment(Experiment experiment) {
-        return !experimentGroupRepository.experimentInGroup(experiment.getId())
-                ? new ClientExperiment(experiment)
-                : experimentFactory.clientExperimentFromGroupedExperiment(experiment.getDefinition().get())
-                .get();
     }
 
     @MeteredEndpoint
@@ -55,7 +47,7 @@ class ClientExperimentsControllerV3 {
     String experiments() {
         logger.debug("Client V3 experiments request received");
         return jsonConverter.toJson(experimentStream()
-                .map(this::convertToClientExperiment)
+                .map(experimentFactory::clientExperiment)
                 .collect(toList())
         );
     }

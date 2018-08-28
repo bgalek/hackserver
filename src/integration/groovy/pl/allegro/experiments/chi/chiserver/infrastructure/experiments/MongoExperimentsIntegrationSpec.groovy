@@ -4,7 +4,7 @@ import org.javers.common.exception.JaversException
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.data.mongodb.core.MongoTemplate
 import pl.allegro.experiments.chi.chiserver.BaseIntegrationSpec
-import pl.allegro.experiments.chi.chiserver.utils.ExperimentFactory
+import pl.allegro.experiments.chi.chiserver.domain.experiments.ExperimentDefinition
 
 class MongoExperimentsIntegrationSpec extends BaseIntegrationSpec {
 
@@ -18,18 +18,18 @@ class MongoExperimentsIntegrationSpec extends BaseIntegrationSpec {
 
     def "should get simple experiments saved before"() {
         given:
-        def experiment = ExperimentFactory.definitionWithId("some")
+        def experiment = exampleExperiment()
 
         when:
         mongoExperimentsRepository.save(experiment)
 
         then:
-        mongoExperimentsRepository.getExperiment('some').get().getDefinition().get() == experiment
+        mongoExperimentsRepository.getExperiment(experiment.id).get() == experiment
     }
 
-    def "should remove not experiments not tracked by javers"() {
+    def "should remove experiments not tracked by javers"() {
         given:
-        def experiment = ExperimentFactory.definitionWithId("legacy-experiment")
+        def experiment = exampleExperiment()
         mongoTemplate.save(experiment, EXPERIMENTS_COLLECTION)
 
         when:
@@ -40,6 +40,15 @@ class MongoExperimentsIntegrationSpec extends BaseIntegrationSpec {
 
         and:
         !mongoExperimentsRepository.getExperiment(experiment.id).isPresent()
+    }
+
+    ExperimentDefinition exampleExperiment() {
+        ExperimentDefinition.builder()
+                .id(UUID.randomUUID().toString())
+                .variantNames(['base', 'v1'])
+                .percentage(10)
+                .groups([])
+                .build()
     }
 
     def cleanup() {

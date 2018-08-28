@@ -1,27 +1,10 @@
 package pl.allegro.experiments.chi.chiserver.administration
 
-import com.github.tomakehurst.wiremock.junit.WireMockRule
-import org.junit.ClassRule
-import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.HttpStatus
 import org.springframework.web.client.HttpClientErrorException
 import pl.allegro.experiments.chi.chiserver.BaseE2EIntegrationSpec
-import pl.allegro.experiments.chi.chiserver.infrastructure.experiments.FileBasedExperimentsRepository
-import pl.allegro.experiments.chi.chiserver.infrastructure.experiments.fetch.WireMockUtils
-import spock.lang.Shared
 
 class CreateExperimentGroupE2ESpec extends BaseE2EIntegrationSpec {
-
-    @ClassRule
-    @Shared
-    public WireMockRule wireMock = new WireMockRule(port)
-
-    @Autowired
-    FileBasedExperimentsRepository fileBasedExperimentsRepository
-
-    def setup() {
-        WireMockUtils.teachWireMockJson("/experiments", 'some-experiments.json')
-    }
 
     def "should create experiment group"() {
         given:
@@ -82,19 +65,6 @@ class CreateExperimentGroupE2ESpec extends BaseE2EIntegrationSpec {
 
         when:
         createExperimentGroup([draftExperiment().id, draftExperiment().id], group.id as String)
-
-        then:
-        def exception = thrown HttpClientErrorException
-        exception.statusCode == HttpStatus.BAD_REQUEST
-    }
-
-    def "should not create experiment group if one of experiments is from stash"() {
-        given:
-        fileBasedExperimentsRepository.jsonUrl = WireMockUtils.resourceUrl('/experiments', wireMock)
-        fileBasedExperimentsRepository.secureRefresh()
-
-        when:
-        createExperimentGroup([draftExperiment().id as String, 'cmuid_regexp'])
 
         then:
         def exception = thrown HttpClientErrorException

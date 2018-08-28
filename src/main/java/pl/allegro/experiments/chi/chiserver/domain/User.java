@@ -2,7 +2,6 @@ package pl.allegro.experiments.chi.chiserver.domain;
 
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
-import pl.allegro.experiments.chi.chiserver.domain.experiments.Experiment;
 import pl.allegro.experiments.chi.chiserver.domain.experiments.ExperimentDefinition;
 
 import java.util.List;

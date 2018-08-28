@@ -14,7 +14,7 @@ class UpdateVariantsCommandIntegrationSpec extends BaseCommandIntegrationSpec {
         updateExperimentVariants(experiment.id, ['va', 'vb'], 'iname', 13, 'phone')
 
         then:
-        def definition = fetchExperimentDefinition(experiment.id)
+        def definition = fetchExperiment(experiment.id)
         definition.deviceClass.name() == 'phone'
         definition.internalVariantName.get() == 'iname'
         definition.variantNames == ['va', 'vb']

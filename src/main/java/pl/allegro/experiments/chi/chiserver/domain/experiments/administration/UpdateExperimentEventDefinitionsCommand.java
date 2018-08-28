@@ -22,18 +22,16 @@ public class UpdateExperimentEventDefinitionsCommand implements ExperimentComman
     }
 
     public void execute() {
-        Experiment experiment = permissionsAwareExperimentRepository.getExperimentOrException(experimentId);
+        ExperimentDefinition experiment = permissionsAwareExperimentRepository.getExperimentOrException(experimentId);
         validate(experiment);
-        ExperimentDefinition mutated = experiment.getDefinition()
-                .orElseThrow(() -> new UnsupportedOperationException("Missing experiment definition"))
-                .mutate()
+        ExperimentDefinition mutated = experiment.mutate()
                 .reportingDefinition(ReportingDefinition.frontend(eventDefinitions))
                 .build();
 
         experimentsRepository.save(mutated);
     }
 
-    private void validate(Experiment experiment) {
+    private void validate(ExperimentDefinition experiment) {
         if (!experiment.getReportingDefinition().getType().equals(ReportingType.FRONTEND)) {
             throw new ExperimentCommandException("Non frontend experiment has no event definitions");
         }

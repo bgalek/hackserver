@@ -437,13 +437,10 @@
       },
 
       variantsChanged () {
-        if (this.experiment.origin === 'MONGO') {
-          return this.variantsEditingResult.percentage !== this.experiment.percentage ||
-            JSON.stringify(this.variantsEditingResult.variantNames) !== JSON.stringify(this.experiment.variantNames) ||
-            slugify(this.variantsEditingResult.internalVariantName) !== slugify(this.experiment.internalVariantName) ||
-            (this.variantsEditingResult.deviceClass || 'all') !== (this.experiment.deviceClass || 'all')
-        }
-        return false
+        return this.variantsEditingResult.percentage !== this.experiment.percentage ||
+          JSON.stringify(this.variantsEditingResult.variantNames) !== JSON.stringify(this.experiment.variantNames) ||
+          slugify(this.variantsEditingResult.internalVariantName) !== slugify(this.experiment.internalVariantName) ||
+          (this.variantsEditingResult.deviceClass || 'all') !== (this.experiment.deviceClass || 'all')
       },
 
       updateVariants () {

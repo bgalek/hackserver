@@ -1,8 +1,6 @@
 package pl.allegro.experiments.chi.chiserver.domain.experiments.administration;
 
-import pl.allegro.experiments.chi.chiserver.domain.experiments.Experiment;
 import pl.allegro.experiments.chi.chiserver.domain.experiments.ExperimentDefinition;
-import pl.allegro.experiments.chi.chiserver.domain.experiments.ExperimentVariant;
 import pl.allegro.experiments.chi.chiserver.domain.experiments.ExperimentsRepository;
 import pl.allegro.experiments.chi.chiserver.domain.experiments.groups.ExperimentGroupRepository;
 
@@ -27,17 +25,14 @@ public class MakeExperimentFullOnCommand implements ExperimentCommand {
     }
 
     public void execute() {
-        Experiment experiment = permissionsAwareExperimentRepository.getExperimentOrException(experimentId);
+        ExperimentDefinition experiment = permissionsAwareExperimentRepository.getExperimentOrException(experimentId);
         validate(experiment);
-        ExperimentDefinition fullOnExperiment = experiment
-                .getDefinition()
-                .orElseThrow(() -> new UnsupportedOperationException("Missing experiment definition"))
-                .makeFullOn(properties.getVariantName());
+        ExperimentDefinition fullOnExperiment = experiment.makeFullOn(properties.getVariantName());
         experimentsRepository.save(fullOnExperiment);
     }
 
 
-    private void validate(Experiment experiment) {
+    private void validate(ExperimentDefinition experiment) {
         boolean variantExists = experiment.allVariantNames().contains(properties.getVariantName());
 
         if (!variantExists) {

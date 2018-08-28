@@ -1,6 +1,6 @@
 package pl.allegro.experiments.chi.chiserver.application.experiments;
 
-import pl.allegro.experiments.chi.chiserver.domain.experiments.Experiment;
+import pl.allegro.experiments.chi.chiserver.domain.experiments.ExperimentDefinition;
 
 import java.util.List;
 
@@ -12,7 +12,7 @@ public class WhitelistCrisisManagementFilter implements CrisisManagementFilter {
     }
 
     @Override
-    public Boolean filter(Experiment experiment) {
+    public Boolean filter(ExperimentDefinition experiment) {
         return whitelist.contains(experiment.getId());
     }
 }

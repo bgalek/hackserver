@@ -17,10 +17,8 @@ public class JsonConfigV1 {
     @Bean
     public Gson jsonConverterV1() {
         return new GsonBuilder()
-                .registerTypeAdapter(Experiment.class, new ExperimentTypeDeserializer())
-                .registerTypeAdapter(Experiment.class, new ExperimentSerializerV1())
+                .registerTypeAdapter(ExperimentDefinition.class, new ExperimentSerializerV1())
                 .registerTypeAdapter(HashRangePredicate.class, new HashRangePredicateSerializer())
-                .registerTypeAdapter(CmuidRegexpPredicate.class, new CmuidRegexpPredicateSerializer())
                 .registerTypeAdapter(InternalPredicate.class, new InternalPredicateSerializer())
                 .registerTypeAdapter(FullOnPredicate.class, new FullOnPredicateSerializer())
                 .registerTypeAdapter(DeviceClassPredicate.class, new DeviceClassPredicateSerializer())
@@ -31,15 +29,15 @@ public class JsonConfigV1 {
                 .create();
     }
 
-    static class ExperimentSerializerV1 implements JsonSerializer<Experiment> {
+    static class ExperimentSerializerV1 implements JsonSerializer<ExperimentDefinition> {
         @Override
-        public JsonElement serialize(Experiment src, Type typeOfSrc, JsonSerializationContext context) {
+        public JsonElement serialize(ExperimentDefinition src, Type typeOfSrc, JsonSerializationContext context) {
             JsonObject element = new JsonObject();
             element.addProperty("id", src.getId());
             element.addProperty("description", src.getDescription());
             element.addProperty("owner", src.getAuthor());
             element.addProperty("reportingEnabled", true);
-            element.add("variants", context.serialize(src.getVariants()));
+            element.add("variants", context.serialize(src.prepareExperimentVariants()));
             if (src.getActivityPeriod() != null) {
                 element.add("activeFrom", context.serialize(src.getActivityPeriod().getActiveFrom()));
                 element.add("activeTo", context.serialize(src.getActivityPeriod().getActiveTo()));

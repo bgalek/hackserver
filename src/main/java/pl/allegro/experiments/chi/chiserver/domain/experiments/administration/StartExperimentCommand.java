@@ -1,6 +1,5 @@
 package pl.allegro.experiments.chi.chiserver.domain.experiments.administration;
 
-import pl.allegro.experiments.chi.chiserver.domain.experiments.Experiment;
 import pl.allegro.experiments.chi.chiserver.domain.experiments.ExperimentDefinition;
 import pl.allegro.experiments.chi.chiserver.domain.experiments.ExperimentsRepository;
 import pl.allegro.experiments.chi.chiserver.domain.experiments.groups.ExperimentGroupRepository;
@@ -33,21 +32,17 @@ public class StartExperimentCommand implements ExperimentCommand {
     }
 
     public void execute() {
-        Experiment experiment = permissionsAwareExperimentRepository.getExperimentOrException(experimentId);
+        ExperimentDefinition experiment = permissionsAwareExperimentRepository.getExperimentOrException(experimentId);
         validate(experiment);
-        ExperimentDefinition started = experiment
-                .getDefinition()
-                .orElseThrow(() -> new UnsupportedOperationException("Missing experiment definition"))
-                .start(startExperimentProperties.getExperimentDurationDays());
+        ExperimentDefinition started = experiment.start(startExperimentProperties.getExperimentDurationDays());
         experimentGroupRepository.findByExperimentId(experimentId)
                 .ifPresent(experimentGroup ->
-                    experimentGroupRepository
-                            .save(experimentGroup.moveExperimentToTail(experimentId))
+                    experimentGroupRepository.save(experimentGroup.moveExperimentToTail(experimentId))
                 );
         experimentsRepository.save(started);
     }
 
-    private void validate(Experiment experiment) {
+    private void validate(ExperimentDefinition experiment) {
         if (!experiment.isDraft()) {
             throw new ExperimentCommandException("Experiment is not DRAFT: " + experimentId);
         }

@@ -17,7 +17,6 @@ public class PredicateDeserializer implements Converter<Document, Predicate> {
         predicateDeserializers.put(PredicateType.INTERNAL.toString(), new InternalPredicateDeserializer());
         predicateDeserializers.put(PredicateType.FULL_ON.toString(), new FullOnPredicateDeserializer());
         predicateDeserializers.put(PredicateType.DEVICE_CLASS.toString(), new DeviceClassPredicateDeserializer());
-        predicateDeserializers.put(PredicateType.CMUID_REGEXP.toString(), new CmuidRegexpPredicateDeserializer());
     }
 
     @Override
@@ -57,13 +56,6 @@ public class PredicateDeserializer implements Converter<Document, Predicate> {
         @Override
         public Predicate convert(Document bson) {
             return new DeviceClassPredicate((String) bson.get("device"));
-        }
-    }
-
-    class CmuidRegexpPredicateDeserializer implements Converter<Document, Predicate> {
-        @Override
-        public Predicate convert(Document bson) {
-            return new CmuidRegexpPredicate(Pattern.compile((String) bson.get("regexp")));
         }
     }
 }

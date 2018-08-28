@@ -28,7 +28,7 @@ class MakeExperimentFullOnCommandIntegrationSpec extends BaseCommandIntegrationS
 
         then:
         fetchExperiment(experiment.id).isFullOn()
-        fetchExperimentDefinition(experiment.id).fullOnVariantName.get() == internalVariantName
+        fetchExperiment(experiment.id).fullOnVariantName.get() == internalVariantName
 
         where:
         internalVariantName | description

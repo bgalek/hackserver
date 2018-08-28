@@ -2,9 +2,9 @@ package pl.allegro.experiments.chi.chiserver.infrastructure.experiments.fetch
 
 import pl.allegro.experiments.chi.chiserver.BaseE2EIntegrationSpec
 
-class ClientExperimentsV1E2ESpec extends BaseE2EIntegrationSpec {
+class ClientExperimentsV2E2ESpec extends BaseE2EIntegrationSpec {
 
-    def "should return list of DRAFT and ACTIVE experiments in api v1"() {
+    def "should return list of DRAFT and ACTIVE experiments in api v2"() {
         given:
         def draftExperiment = draftExperiment()
         def pausedExperiment = pausedExperiment()
@@ -22,7 +22,7 @@ class ClientExperimentsV1E2ESpec extends BaseE2EIntegrationSpec {
         ])
 
         when:
-        def experiments = fetchClientExperiments('v1')
+        def experiments = fetchClientExperiments('v2')
 
         then:
         experiments.containsAll([
@@ -31,18 +31,15 @@ class ClientExperimentsV1E2ESpec extends BaseE2EIntegrationSpec {
                 ],
                 percentageClientExperiment + [
                         id        : percentageExperiment.id,
-                        activeFrom: percentageExperiment.activityPeriod.activeFrom,
-                        activeTo  : percentageExperiment.activityPeriod.activeTo,
+                        activityPeriod: percentageExperiment.activityPeriod
                 ],
                 internalClientExperiment + [
                         id        : internalExperiment.id,
-                        activeFrom: internalExperiment.activityPeriod.activeFrom,
-                        activeTo  : internalExperiment.activityPeriod.activeTo,
+                        activityPeriod: internalExperiment.activityPeriod
                 ],
                 deviceClassClientExperiment + [
                         id        : deviceClassExperiment.id,
-                        activeFrom: deviceClassExperiment.activityPeriod.activeFrom,
-                        activeTo  : deviceClassExperiment.activityPeriod.activeTo,
+                        activityPeriod: deviceClassExperiment.activityPeriod
                 ]
         ])
 
@@ -52,7 +49,7 @@ class ClientExperimentsV1E2ESpec extends BaseE2EIntegrationSpec {
     }
 
     Map draftClientExperiment = [
-            owner           : 'Root',
+            status          : 'DRAFT',
             reportingEnabled: true,
             variants        : [
                     [
@@ -67,7 +64,7 @@ class ClientExperimentsV1E2ESpec extends BaseE2EIntegrationSpec {
     ]
 
     Map percentageClientExperiment = [
-            owner           : 'Root',
+            status          : 'ACTIVE',
             reportingEnabled: true,
             variants        : [
                     [
@@ -86,7 +83,7 @@ class ClientExperimentsV1E2ESpec extends BaseE2EIntegrationSpec {
     ]
 
     Map internalClientExperiment = [
-            owner           : 'Root',
+            status          : 'ACTIVE',
             reportingEnabled: true,
             variants        : [
                     [
@@ -101,7 +98,7 @@ class ClientExperimentsV1E2ESpec extends BaseE2EIntegrationSpec {
     ]
 
     Map deviceClassClientExperiment = [
-            owner           : 'Root',
+            status          : 'ACTIVE',
             reportingEnabled: true,
             variants        : [
                     [

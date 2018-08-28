@@ -2,7 +2,7 @@ package pl.allegro.experiments.chi.chiserver.domain.interactions;
 
 import com.google.common.base.Preconditions;
 import pl.allegro.experiments.chi.chiserver.application.interactions.v1.InvalidFormatException;
-import pl.allegro.experiments.chi.chiserver.domain.experiments.Experiment;
+import pl.allegro.experiments.chi.chiserver.domain.experiments.ExperimentDefinition;
 import pl.allegro.experiments.chi.chiserver.domain.experiments.ExperimentsRepository;
 import pl.allegro.experiments.chi.chiserver.infrastructure.interactions.InteractionsMetricsReporter;
 
@@ -34,7 +34,7 @@ public class InteractionsFactory {
 
             return interactions.stream().filter(i -> {
                     var isGood = experimentsRepository.getExperiment(i.getExperimentId())
-                                .map(Experiment::shouldSaveInteractions)
+                                .map(ExperimentDefinition::shouldSaveInteractions)
                                 .orElse(false);
                     if (!isGood) {
                         interactionsMetricsReporter.meterIgnored(i);

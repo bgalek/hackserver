@@ -2,9 +2,13 @@ package pl.allegro.experiments.chi.chiserver.utils
 
 import org.springframework.beans.factory.annotation.Autowired
 import pl.allegro.experiments.chi.chiserver.domain.experiments.EventDefinition
-import pl.allegro.experiments.chi.chiserver.domain.experiments.Experiment
-import pl.allegro.experiments.chi.chiserver.domain.experiments.ExperimentDefinition
-import pl.allegro.experiments.chi.chiserver.domain.experiments.administration.*
+import pl.allegro.experiments.chi.chiserver.domain.experiments.administration.ExperimentActions
+import pl.allegro.experiments.chi.chiserver.domain.experiments.administration.ExperimentCreationRequest
+import pl.allegro.experiments.chi.chiserver.domain.experiments.administration.ExperimentGroupCreationRequest
+import pl.allegro.experiments.chi.chiserver.domain.experiments.administration.MakeExperimentFullOnProperties
+import pl.allegro.experiments.chi.chiserver.domain.experiments.administration.ProlongExperimentProperties
+import pl.allegro.experiments.chi.chiserver.domain.experiments.administration.StartExperimentProperties
+import pl.allegro.experiments.chi.chiserver.domain.experiments.administration.UpdateVariantsProperties
 
 trait CommandActionUtils {
 

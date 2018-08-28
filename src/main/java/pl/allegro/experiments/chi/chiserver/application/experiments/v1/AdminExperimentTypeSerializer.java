@@ -32,7 +32,6 @@ public class AdminExperimentTypeSerializer implements JsonSerializer<AdminExperi
         jsonObject.add("activityPeriod", context.serialize(src.getActivityPeriod()));
         jsonObject.add("editable", context.serialize(src.getEditable()));
         jsonObject.add("status", context.serialize(src.getStatus()));
-        jsonObject.add("origin", context.serialize(src.getOrigin()));
         jsonObject.add("reportingType", context.serialize(src.getReportingType()));
         jsonObject.add("eventDefinitions", context.serialize(src.getEventDefinitions()));
         jsonObject.add("measurements", context.serialize(src.getMeasurements()));

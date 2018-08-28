@@ -1,6 +1,5 @@
 package pl.allegro.experiments.chi.chiserver.domain.experiments.administration;
 
-import pl.allegro.experiments.chi.chiserver.domain.experiments.Experiment;
 import pl.allegro.experiments.chi.chiserver.domain.experiments.ExperimentDefinition;
 import pl.allegro.experiments.chi.chiserver.domain.experiments.ExperimentsRepository;
 import pl.allegro.experiments.chi.chiserver.domain.experiments.groups.ExperimentGroupRepository;
@@ -26,11 +25,9 @@ public class UpdateVariantsCommand implements ExperimentCommand {
     }
 
     public void execute() {
-        Experiment experiment = permissionsAwareExperimentRepository.getExperimentOrException(experimentId);
+        ExperimentDefinition experiment = permissionsAwareExperimentRepository.getExperimentOrException(experimentId);
         validate(experiment);
-        ExperimentDefinition mutated = experiment.getDefinition()
-                .orElseThrow(() -> new UnsupportedOperationException("Missing experiment definition"))
-                .mutate()
+        ExperimentDefinition mutated = experiment.mutate()
                 .percentage(properties.getPercentage())
                 .deviceClass(properties.getDeviceClass().orElse(null))
                 .internalVariantName(properties.getInternalVariantName().orElse(null))
@@ -39,7 +36,7 @@ public class UpdateVariantsCommand implements ExperimentCommand {
         experimentsRepository.save(mutated);
     }
 
-    private void validate(Experiment experiment) {
+    private void validate(ExperimentDefinition experiment) {
         if (experiment.isEffectivelyEnded()) {
             throw new ExperimentCommandException(experiment.getStatus() + " experiment variants cant be updated");
         }
