@@ -6,6 +6,7 @@ import pl.allegro.experiments.chi.chiserver.BaseE2EIntegrationSpec
 import pl.allegro.experiments.chi.chiserver.domain.User
 import spock.lang.Unroll
 
+import java.time.LocalDateTime
 import java.time.ZonedDateTime
 import java.time.format.DateTimeFormatter
 
@@ -207,33 +208,24 @@ class ExperimentsSelfServiceE2ESpec extends BaseE2EIntegrationSpec {
         experiment = fetchExperiment(experiment.id as String)
 
         then:
-        finishedActivityBefore(experiment.id as String, ZonedDateTime.now())
+        def activeTo = ZonedDateTime.parse(experiment.activityPeriod.activeTo as String)
 
-        and:
-        experiment.remove('activityPeriod')
-        experiment == [
-                id              : experiment.id,
-                author          : 'Root',
-                groups          : [],
-                status          : 'FULL_ON',
-                measurements    : [lastDayVisits: 0],
-                editable        : true,
-                reportingEnabled: true,
-                reportingType   : 'BACKEND',
-                eventDefinitions: [],
-                renderedVariants: [
-                        [
-                                name      : 'v1',
-                                predicates: [[type: 'FULL_ON']]
-                        ],
-                        [
-                                name      : 'v2',
-                                predicates: []
-                        ]
+        experiment.status == 'FULL_ON'
+        ZonedDateTime.now().compareTo(activeTo) >= 0
+        experiment.lastStatusChange == experiment.activityPeriod.activeTo
+        experiment.renderedVariants == [
+                [
+                        name      : 'v1',
+                        predicates: [[type: 'FULL_ON']]
                 ],
-                variantNames    : ['v1', 'v2'],
-                percentage      : 0
+                [
+                        name      : 'v2',
+                        predicates: []
+                ]
         ]
+        experiment.variantNames    == ['v1', 'v2']
+        experiment.percentage      == 0
+        !experiment.deviceClass
     }
 
     @Unroll
@@ -246,46 +238,30 @@ class ExperimentsSelfServiceE2ESpec extends BaseE2EIntegrationSpec {
         experiment = fetchExperiment(experiment.id as String)
 
         then:
-        finishedActivityBefore(experiment.id as String, ZonedDateTime.now())
+        def activeTo = ZonedDateTime.parse(experiment.activityPeriod.activeTo as String)
 
-        and:
-        experiment.remove('activityPeriod')
-        experiment == [
-                id              : experiment.id,
-                author          : 'Root',
-                groups          : [],
-                status          : 'FULL_ON',
-                measurements    : [lastDayVisits: 0],
-                editable        : true,
-                reportingEnabled: true,
-                reportingType   : 'BACKEND',
-                eventDefinitions: [],
-                deviceClass     : deviceClass.toJsonString(),
-                renderedVariants: [
-                        [
-                                name      : 'v1',
-                                predicates: [
-                                        [type: 'FULL_ON'],
-                                        [type: 'DEVICE_CLASS', device: deviceClass.toJsonString()]
-                                ]
-                        ],
-                        [
-                                name      : 'v2',
-                                predicates: []
+        experiment.status == 'FULL_ON'
+        ZonedDateTime.now().compareTo(activeTo) >= 0
+        experiment.lastStatusChange == experiment.activityPeriod.activeTo
+        experiment.renderedVariants == [
+                [
+                        name      : 'v1',
+                        predicates: [
+                                [type: 'FULL_ON'],
+                                [type: 'DEVICE_CLASS', device: deviceClass.toJsonString()]
                         ]
                 ],
-                variantNames    : ['v1', 'v2'],
-                percentage      : 0
+                [
+                        name      : 'v2',
+                        predicates: []
+                ]
         ]
+        experiment.variantNames    == ['v1', 'v2']
+        experiment.percentage      == 0
+        experiment.deviceClass     == deviceClass.toJsonString()
 
         where:
         deviceClass << [phone, phone_android, phone_iphone, desktop, tablet]
-    }
-
-    boolean finishedActivityBefore(String experimentId, ZonedDateTime dateTime) {
-        def experiment = fetchExperiment(experimentId as String)
-        def activeTo = ZonedDateTime.parse(experiment.activityPeriod.activeTo as String)
-        activeTo <= dateTime
     }
 }
 
