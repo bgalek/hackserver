@@ -15,6 +15,11 @@ class MongoExperimentsIntegrationSpec extends BaseIntegrationSpec {
     @Autowired
     MongoTemplate mongoTemplate
 
+    def "should use cached ExperimentsRepository "(){
+      expect:
+      experimentsRepository instanceof CachedExperimentsRepository
+    }
+
     def "should get simple experiments saved before"() {
         given:
         def experiment = exampleExperiment()

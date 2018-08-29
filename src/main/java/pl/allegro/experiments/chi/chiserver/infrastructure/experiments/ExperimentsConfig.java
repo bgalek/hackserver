@@ -54,15 +54,18 @@ public class ExperimentsConfig {
             Javers javers,
             UserProvider userProvider,
             MeterRegistry metricRegistry) {
-        MongoExperimentsRepository mongoExperimentsRepository =
-                new MongoExperimentsRepository(mongoTemplate, experimentsMongoMetricsReporter, javers, userProvider);
-        metricRegistry.gauge(EXPERIMENTS_COUNT_ALL_METRIC, mongoExperimentsRepository,
+
+        var repository = new CachedExperimentsRepository(
+                new MongoExperimentsRepository(mongoTemplate, experimentsMongoMetricsReporter, javers, userProvider));
+
+        metricRegistry.gauge(EXPERIMENTS_COUNT_ALL_METRIC, repository,
                 r -> r.getAll().size());
-        metricRegistry.gauge(EXPERIMENTS_COUNT_ACTIVE_METRIC, mongoExperimentsRepository,
+        metricRegistry.gauge(EXPERIMENTS_COUNT_ACTIVE_METRIC, repository,
                 r -> r.getAll().stream().filter(ExperimentDefinition::isActive).count());
-        metricRegistry.gauge(EXPERIMENTS_COUNT_DRAFT_METRIC, mongoExperimentsRepository,
+        metricRegistry.gauge(EXPERIMENTS_COUNT_DRAFT_METRIC, repository,
                 r -> r.getAll().stream().filter(ExperimentDefinition::isDraft).count());
-        return new CachedExperimentsRepository(mongoExperimentsRepository);
+
+        return repository;
     }
 
     @Bean
