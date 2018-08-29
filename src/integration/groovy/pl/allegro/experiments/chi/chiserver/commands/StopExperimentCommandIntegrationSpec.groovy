@@ -4,23 +4,38 @@ import pl.allegro.experiments.chi.chiserver.domain.experiments.administration.Ex
 import pl.allegro.experiments.chi.chiserver.domain.experiments.administration.ExperimentNotFoundException
 import spock.lang.Unroll
 
+import java.time.ZonedDateTime
+
 import static pl.allegro.experiments.chi.chiserver.domain.experiments.ExperimentStatus.*
 
 class StopExperimentCommandIntegrationSpec extends BaseCommandIntegrationSpec {
 
-    @Unroll
-    def "should stop #status experiment"() {
+    def "should stop active experiment"() {
         given:
-        def experiment = experimentWithStatus(status)
+        def experiment = experimentWithStatus(ACTIVE)
 
         when:
         stopExperiment(experiment.id)
 
         then:
-        fetchExperiment(experiment.id).isEnded()
+        def fresh = fetchExperiment(experiment.id)
 
-        where:
-        status << [ACTIVE, FULL_ON]
+        fresh.isEnded()
+        ZonedDateTime.now().compareTo(fresh.activeTo) >= 0
+    }
+
+    def "should stop full-on experiment"() {
+        given:
+        def experiment = experimentWithStatus(FULL_ON)
+
+        when:
+        stopExperiment(experiment.id)
+
+        then:
+        def fresh = fetchExperiment(experiment.id)
+
+        fresh.isEnded()
+        fresh.activeTo == experiment.activeTo
     }
 
     def "should not stop nonexistent experiment"() {

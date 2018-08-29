@@ -34,6 +34,7 @@ public class ExperimentDefinition {
     private final ExperimentStatus status;
     private final ReportingDefinition reportingDefinition;
     private final CustomParameter customParameter;
+    private final ZonedDateTime lastExplicitStatusChange;
 
     private ExperimentDefinition(
             String id,
@@ -49,7 +50,8 @@ public class ExperimentDefinition {
             ActivityPeriod activityPeriod,
             ExperimentStatus explicitStatus,
             ReportingDefinition reportingDefinition,
-            CustomParameter customParameter) {
+            CustomParameter customParameter,
+            ZonedDateTime lastExplicitStatusChange) {
         Preconditions.checkArgument(!Strings.isNullOrEmpty(id));
         Preconditions.checkNotNull(variantNames);
         Preconditions.checkNotNull(reportingDefinition);
@@ -72,6 +74,7 @@ public class ExperimentDefinition {
         this.status = ExperimentStatus.of(explicitStatus, activityPeriod);
         this.reportingDefinition = reportingDefinition;
         this.customParameter = customParameter;
+        this.lastExplicitStatusChange = lastExplicitStatusChange;
     }
 
     @Id
@@ -165,6 +168,10 @@ public class ExperimentDefinition {
         return status;
     }
 
+    public ZonedDateTime getLastExplicitStatusChange() {
+        return lastExplicitStatusChange;
+    }
+
     public Set<String> allVariantNames() {
         var allVariants = new HashSet<>(variantNames);
         if (internalVariantName != null) {
@@ -233,22 +240,24 @@ public class ExperimentDefinition {
     }
 
     public ExperimentDefinition stop() {
-        final ActivityPeriod activityPeriod = this.activityPeriod.endNow();
-        return mutate()
-                .activityPeriod(activityPeriod)
-                .explicitStatus(null)
-                .build();
+        var mutator = mutate().changeExplicitStatus(null);
+
+        if (isActive()) {
+            mutator.activityPeriod(this.activityPeriod.endNow());
+        }
+
+        return mutator.build();
     }
 
     public ExperimentDefinition pause() {
         return mutate()
-                .explicitStatus(ExperimentStatus.PAUSED)
+                .changeExplicitStatus(ExperimentStatus.PAUSED)
                 .build();
     }
 
     public ExperimentDefinition resume() {
         return mutate()
-                .explicitStatus(null)
+                .changeExplicitStatus(null)
                 .build();
     }
 
@@ -258,7 +267,7 @@ public class ExperimentDefinition {
         final ActivityPeriod activityPeriod = this.activityPeriod.endNow();
         return mutate()
                 .activityPeriod(activityPeriod)
-                .explicitStatus(ExperimentStatus.FULL_ON)
+                .changeExplicitStatus(ExperimentStatus.FULL_ON)
                 .fullOnVariantName(fullOnVariantName)
                 .percentage(0)
                 .build();
@@ -386,6 +395,7 @@ public class ExperimentDefinition {
         private ExperimentStatus explicitStatus;
         private ReportingDefinition reportingDefinition = ReportingDefinition.createDefault();
         private CustomParameter customParameter;
+        private ZonedDateTime lastExplicitStatusChange;
 
         public Builder id(String id) {
             this.id = id;
@@ -452,8 +462,20 @@ public class ExperimentDefinition {
             return this;
         }
 
+        public Builder changeExplicitStatus(ExperimentStatus explicitStatus) {
+            this.explicitStatus = explicitStatus;
+            this.lastExplicitStatusChange = ZonedDateTime.now();
+            return this;
+        }
+
         public Builder explicitStatus(ExperimentStatus explicitStatus) {
             this.explicitStatus = explicitStatus;
+            return this;
+        }
+
+
+        public Builder lastExplicitStatusChange(ZonedDateTime lastExplicitStatusChange) {
+            this.lastExplicitStatusChange = lastExplicitStatusChange;
             return this;
         }
 
@@ -477,7 +499,8 @@ public class ExperimentDefinition {
                     activityPeriod,
                     explicitStatus,
                     reportingDefinition,
-                    customParameter);
+                    customParameter,
+                    lastExplicitStatusChange);
         }
     }
 

@@ -57,8 +57,9 @@ public class ConvertersConfig {
     ExperimentDeserializer experimentDeserializer(
             ActivityPeriodDeserializer activityPeriodDeserializer,
             ReportingDefinitionDeserializer reportingDefinitionDeserializer,
-            CustomParameterDeserializer customParameterDeserializer) {
-        return new ExperimentDeserializer(activityPeriodDeserializer, reportingDefinitionDeserializer, customParameterDeserializer);
+            CustomParameterDeserializer customParameterDeserializer,
+            DateTimeDeserializer dateTimeDeserializer) {
+        return new ExperimentDeserializer(activityPeriodDeserializer, reportingDefinitionDeserializer, customParameterDeserializer, dateTimeDeserializer);
     }
 
     @Bean

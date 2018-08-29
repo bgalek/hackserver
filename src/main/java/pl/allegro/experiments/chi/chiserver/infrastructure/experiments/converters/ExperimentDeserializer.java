@@ -4,6 +4,7 @@ import org.bson.Document;
 import org.springframework.core.convert.converter.Converter;
 import pl.allegro.experiments.chi.chiserver.domain.experiments.*;
 
+import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -11,14 +12,13 @@ public class ExperimentDeserializer implements Converter<Document, ExperimentDef
     private final ActivityPeriodDeserializer activityPeriodDeserializer;
     private final ReportingDefinitionDeserializer reportingDefinitionDeserializer;
     private final CustomParameterDeserializer customParameterDeserializer;
+    private final DateTimeDeserializer dateTimeDeserializer;
 
-    public ExperimentDeserializer(
-            ActivityPeriodDeserializer activityPeriodDeserializer,
-            ReportingDefinitionDeserializer reportingDefinitionDeserializer,
-            CustomParameterDeserializer customParameterDeserializer) {
+    public ExperimentDeserializer(ActivityPeriodDeserializer activityPeriodDeserializer, ReportingDefinitionDeserializer reportingDefinitionDeserializer, CustomParameterDeserializer customParameterDeserializer, DateTimeDeserializer dateTimeDeserializer) {
         this.activityPeriodDeserializer = activityPeriodDeserializer;
         this.reportingDefinitionDeserializer = reportingDefinitionDeserializer;
         this.customParameterDeserializer = customParameterDeserializer;
+        this.dateTimeDeserializer = dateTimeDeserializer;
     }
 
     @Override
@@ -38,6 +38,8 @@ public class ExperimentDeserializer implements Converter<Document, ExperimentDef
                 .orElse(null);
         Object rawExplicitStatus = bson.get("explicitStatus");
         ExperimentStatus explicitStatus = rawExplicitStatus != null ? ExperimentStatus.valueOf((String) rawExplicitStatus) : null;
+        ZonedDateTime lastExplicitStatusChange = bson.get("lastExplicitStatusChange") != null ?
+                                                 dateTimeDeserializer.convert((String)bson.get("lastExplicitStatusChange")) : null;
 
         ExperimentDefinition.Builder result = ExperimentDefinition.builder()
                 .id(id)
@@ -51,6 +53,7 @@ public class ExperimentDeserializer implements Converter<Document, ExperimentDef
                 .author(author)
                 .groups(groups)
                 .activityPeriod(activityPeriod)
+                .lastExplicitStatusChange(lastExplicitStatusChange)
                 .explicitStatus(explicitStatus);
         if (bson.get("reportingDefinition") != null) {
             result.reportingDefinition(reportingDefinitionDeserializer.convert((Document) bson.get("reportingDefinition")));
