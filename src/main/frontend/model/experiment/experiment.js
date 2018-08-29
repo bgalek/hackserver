@@ -1,6 +1,6 @@
 import { Record, List } from 'immutable'
 import _ from 'lodash'
-
+import moment from 'moment'
 import ExperimentVariantModel from './experiment-variant'
 import ActivityPeriod from './activity-period'
 
@@ -29,7 +29,8 @@ const ExperimentRecord = Record({
   variantNames: [],
   deviceClass: null,
   experimentGroup: null,
-  bonferroniCorrection: 1
+  bonferroniCorrection: 1,
+  lastStatusChange: null
 })
 
 export default class ExperimentModel extends ExperimentRecord {
@@ -57,19 +58,21 @@ export default class ExperimentModel extends ExperimentRecord {
     return (this.desiredAlpha() / this.bonferroniCorrection).toFixed(4)
   }
 
-  whenStartedOrEnded () {
-    if (this.activityPeriod) {
-      if (this.status === 'PLANNED') {
-        return 'to be started ' + this.activityPeriod.fromDateShortString()
-      } else
-      if (this.status === 'ENDED') {
-        return 'ended ' + this.activityPeriod.toDateShortString()
-      } else if (this.status === 'FULL_ON') {
-        return 'made full-on ' + this.activityPeriod.toDateShortString()
-      } else {
-        return 'started ' + this.activityPeriod.fromDateShortString()
-      }
-    }
+  getLastStatusChangeMoment () {
+    return this.lastStatusChange && moment(this.lastStatusChange).fromNow()
+  }
+
+  getStatusDesc () {
+    const map = new Map([
+      ['PLANNED', 'to be started'],
+      ['DRAFT', 'created as draft'],
+      ['ACTIVE', 'started'],
+      ['PAUSED', 'paused'],
+      ['ENDED', 'ended'],
+      ['FULL_ON', 'made full-on']
+    ])
+
+    return map.get(this.status)
   }
 
   isMultiVariant () {

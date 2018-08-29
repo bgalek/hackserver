@@ -41,11 +41,11 @@ public class ConvertersConfig {
     }
 
     @Bean
-    ExperimentSerializer experimentSerializer(
+    ExperimentDefinitionSerializer experimentSerializer(
             DateTimeSerializer dateTimeSerializer,
             ReportingDefinitionSerializer reportingDefinitionSerializer,
             CustomParameterSerializer customParameterSerializer) {
-        return new ExperimentSerializer(dateTimeSerializer, reportingDefinitionSerializer, customParameterSerializer);
+        return new ExperimentDefinitionSerializer(dateTimeSerializer, reportingDefinitionSerializer, customParameterSerializer);
     }
 
     @Bean
@@ -54,12 +54,12 @@ public class ConvertersConfig {
     }
 
     @Bean
-    ExperimentDeserializer experimentDeserializer(
+    ExperimentDefinitionDeserializer experimentDeserializer(
             ActivityPeriodDeserializer activityPeriodDeserializer,
             ReportingDefinitionDeserializer reportingDefinitionDeserializer,
             CustomParameterDeserializer customParameterDeserializer,
             DateTimeDeserializer dateTimeDeserializer) {
-        return new ExperimentDeserializer(activityPeriodDeserializer, reportingDefinitionDeserializer, customParameterDeserializer, dateTimeDeserializer);
+        return new ExperimentDefinitionDeserializer(activityPeriodDeserializer, reportingDefinitionDeserializer, customParameterDeserializer, dateTimeDeserializer);
     }
 
     @Bean

@@ -8,13 +8,13 @@ import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.Optional;
 
-public class ExperimentDeserializer implements Converter<Document, ExperimentDefinition> {
+public class ExperimentDefinitionDeserializer implements Converter<Document, ExperimentDefinition> {
     private final ActivityPeriodDeserializer activityPeriodDeserializer;
     private final ReportingDefinitionDeserializer reportingDefinitionDeserializer;
     private final CustomParameterDeserializer customParameterDeserializer;
     private final DateTimeDeserializer dateTimeDeserializer;
 
-    public ExperimentDeserializer(ActivityPeriodDeserializer activityPeriodDeserializer, ReportingDefinitionDeserializer reportingDefinitionDeserializer, CustomParameterDeserializer customParameterDeserializer, DateTimeDeserializer dateTimeDeserializer) {
+    public ExperimentDefinitionDeserializer(ActivityPeriodDeserializer activityPeriodDeserializer, ReportingDefinitionDeserializer reportingDefinitionDeserializer, CustomParameterDeserializer customParameterDeserializer, DateTimeDeserializer dateTimeDeserializer) {
         this.activityPeriodDeserializer = activityPeriodDeserializer;
         this.reportingDefinitionDeserializer = reportingDefinitionDeserializer;
         this.customParameterDeserializer = customParameterDeserializer;

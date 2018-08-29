@@ -8,6 +8,7 @@ import pl.allegro.experiments.chi.chiserver.domain.statistics.bayes.BayesianHori
 import pl.allegro.experiments.chi.chiserver.domain.statistics.ExperimentMeasurements;
 import pl.allegro.experiments.chi.chiserver.infrastructure.ClientExperiment;
 
+import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -129,5 +130,9 @@ public class AdminExperiment {
 
     public ExperimentGroup getExperimentGroup() {
         return experimentGroup;
+    }
+
+    public ZonedDateTime getLastStatusChange() {
+        return experimentDefinition.getLastStatusChange();
     }
 }

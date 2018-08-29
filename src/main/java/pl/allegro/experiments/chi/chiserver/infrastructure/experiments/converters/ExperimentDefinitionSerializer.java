@@ -8,12 +8,12 @@ import pl.allegro.experiments.chi.chiserver.domain.experiments.ExperimentStatus;
 import java.util.HashMap;
 import java.util.Map;
 
-public class ExperimentSerializer implements Converter<ExperimentDefinition, Document> {
+public class ExperimentDefinitionSerializer implements Converter<ExperimentDefinition, Document> {
     private final DateTimeSerializer dateTimeSerializer;
     private final ReportingDefinitionSerializer reportingDefinitionSerializer;
     private final CustomParameterSerializer customParameterSerializer;
 
-    public ExperimentSerializer(
+    public ExperimentDefinitionSerializer(
             DateTimeSerializer dateTimeSerializer,
             ReportingDefinitionSerializer reportingDefinitionSerializer,
             CustomParameterSerializer customParameterSerializer) {
@@ -55,6 +55,9 @@ public class ExperimentSerializer implements Converter<ExperimentDefinition, Doc
         result.put("reportingDefinition", reportingDefinitionSerializer.convert(source.getReportingDefinitionToSave()));
         if (source.getCustomParameter() != null) {
             result.put("customParameter", customParameterSerializer.convert(source.getCustomParameter()));
+        }
+        if (source.getLastExplicitStatusChange() != null) {
+            result.put("lastExplicitStatusChange", dateTimeSerializer.convert(source.getLastExplicitStatusChange()));
         }
         return result;
     }

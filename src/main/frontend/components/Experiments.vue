@@ -48,7 +48,7 @@
     <experiment-list :linkToData="true" :experiments="experiments" v-if="experiments.length"></experiment-list>
     <div v-else>There are no experiments available</div>
 
-    <h1>Unmeasurable Experiments</h1>
+    <h1>Experiments with disabled reporting</h1>
 
     <experiment-list :linkToData="false" :experiments="immeasurableExperiments" v-if="immeasurableExperiments.length"></experiment-list>
     <div v-else>There are no experiments available</div>

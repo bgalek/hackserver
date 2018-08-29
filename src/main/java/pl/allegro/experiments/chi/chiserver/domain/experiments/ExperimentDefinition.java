@@ -240,13 +240,15 @@ public class ExperimentDefinition {
     }
 
     public ExperimentDefinition stop() {
-        var mutator = mutate().changeExplicitStatus(null);
-
         if (isActive()) {
-            mutator.activityPeriod(this.activityPeriod.endNow());
+            return mutate().activityPeriod(this.activityPeriod.endNow()).build();
         }
 
-        return mutator.build();
+        if (isFullOn()) {
+            return mutate().changeExplicitStatus(null).build();
+        }
+
+        throw new IllegalStateException("illegal stop attempt");
     }
 
     public ExperimentDefinition pause() {
@@ -359,6 +361,22 @@ public class ExperimentDefinition {
         }  else {
             return List.of();
         }
+    }
+
+    public ZonedDateTime getLastStatusChange() {
+        if (isActive()) {
+            return getActivityPeriod().getActiveFrom();
+        }
+
+        if (lastExplicitStatusChange != null) {
+            return getLastExplicitStatusChange();
+        }
+
+        if (isEnded()) {
+            return getActivityPeriod().getActiveTo();
+        }
+
+        return null;
     }
 
     public static class Builder {

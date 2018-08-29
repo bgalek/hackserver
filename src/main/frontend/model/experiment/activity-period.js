@@ -14,14 +14,6 @@ export default class ActivityPeriodModel extends ActivityPeriodRecord {
     super(periodObject)
   }
 
-  toDateShortString () {
-    return moment(this.activeTo).fromNow()
-  }
-
-  fromDateShortString () {
-    return moment(this.activeFrom).fromNow()
-  }
-
   fromDateString () {
     return moment(this.activeFrom).format(DEFAULT_FORMAT)
   }

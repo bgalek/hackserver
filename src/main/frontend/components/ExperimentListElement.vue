@@ -7,8 +7,8 @@
       </v-list-tile-title>
       <v-list-tile-sub-title v-html="experiment.desc"></v-list-tile-sub-title>
 
-      <v-list-tile-sub-title v-if="experiment.whenStartedOrEnded()">
-        {{ experiment.whenStartedOrEnded() }}
+      <v-list-tile-sub-title v-if="experiment.getLastStatusChangeMoment()">
+        {{experiment.getStatusDesc()}} {{ experiment.getLastStatusChangeMoment() }}
       </v-list-tile-sub-title>
     </v-list-tile-content>
     <v-list-tile-action>

@@ -21,8 +21,8 @@ import pl.allegro.experiments.chi.chiserver.domain.statistics.MeasurementsReposi
 import pl.allegro.experiments.chi.chiserver.infrastructure.druid.DruidClient;
 import pl.allegro.experiments.chi.chiserver.infrastructure.experiments.converters.DateTimeDeserializer;
 import pl.allegro.experiments.chi.chiserver.infrastructure.experiments.converters.DateTimeSerializer;
-import pl.allegro.experiments.chi.chiserver.infrastructure.experiments.converters.ExperimentDeserializer;
-import pl.allegro.experiments.chi.chiserver.infrastructure.experiments.converters.ExperimentSerializer;
+import pl.allegro.experiments.chi.chiserver.infrastructure.experiments.converters.ExperimentDefinitionDeserializer;
+import pl.allegro.experiments.chi.chiserver.infrastructure.experiments.converters.ExperimentDefinitionSerializer;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -37,8 +37,8 @@ public class ExperimentsConfig {
     MongoCustomConversions customConversions(
             DateTimeSerializer dateTimeSerializer,
             DateTimeDeserializer dateTimeDeserializer,
-            ExperimentSerializer experimentSerializer,
-            ExperimentDeserializer experimentDeserializer) {
+            ExperimentDefinitionSerializer experimentSerializer,
+            ExperimentDefinitionDeserializer experimentDeserializer) {
         List<Converter> converters = new ArrayList<>();
         converters.add(dateTimeDeserializer);
         converters.add(dateTimeSerializer);
