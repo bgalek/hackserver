@@ -60,7 +60,7 @@ abstract class BaseIntegrationSpec extends Specification {
     }
 
     def cleanup() {
-        mongoTemplate.dropCollection(EntityDefinition)
+        mongoTemplate.findAll(EntityDefinition).each {it -> mongoTemplate.remove(it)}
     }
 
     void signInAs(User user) {
