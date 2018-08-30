@@ -111,7 +111,7 @@ public class ExperimentDefinition {
     public DeviceClass getDeviceClass() { return deviceClass; }
 
     public boolean hasDeviceClass() {
-        return deviceClass != null;
+        return deviceClass.toJsonString() != null;
     }
 
     @DiffInclude

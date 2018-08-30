@@ -57,6 +57,7 @@ public class ExperimentFactory {
                     if (experiment.hasDeviceClass()) {
                         variantPredicates.add(new DeviceClassPredicate(experiment.getDeviceClass().toJsonString()));
                     }
+
                     if (experiment.hasCustomParam()) {
                         variantPredicates.add(new CustomParameterPredicate(
                                 experiment.getCustomParameter().getName(), experiment.getCustomParameter().getValue()));
