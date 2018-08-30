@@ -50,7 +50,7 @@ class DeleteExperimentCommandIntegrationSpec extends BaseCommandIntegrationSpec 
                 experiment.id,
                 1,
                 LocalDate.now().toString(),
-                experiment.deviceClass,
+                experiment.deviceClass.orElse(null),
                 experiment.variantNames.first(),
                 "tx_visit",
                 null)

@@ -69,7 +69,7 @@ public class ExperimentDefinition {
         this.internalVariantName = internalVariantName;
         this.fullOnVariantName = fullOnVariantName;
         this.percentage = percentage;
-        this.deviceClass = deviceClass != null ? deviceClass : DeviceClass.all;
+        this.deviceClass = deviceClass;
         this.description = emptyToNull(description);
         this.documentLink = emptyToNull(documentLink);
         this.author = author;
@@ -113,11 +113,13 @@ public class ExperimentDefinition {
         return Optional.ofNullable(percentage);
     }
 
-    public DeviceClass getDeviceClass() { return deviceClass; }
+    public Optional<DeviceClass> getDeviceClass() { return Optional.ofNullable(deviceClass); }
 
     @DiffInclude
     @PropertyName("deviceClass")
-    Optional<String> getDeviceClassLegacyFormat() { return Optional.ofNullable(deviceClass.toJsonString()); }
+    Optional<String> getDeviceClassLegacyFormat() {
+        return getDeviceClass().map(it -> it.toJsonString());
+    }
 
     @DiffInclude
     public String getDescription() {
@@ -290,9 +292,7 @@ public class ExperimentDefinition {
     private ExperimentVariant convertVariant(String variantName, int from, int to) {
         final var predicates = new ArrayList<Predicate>();
         predicates.add(new HashRangePredicate(new PercentageRange(from, to)));
-        if (DeviceClass.all != deviceClass) {
-            predicates.add(new DeviceClassPredicate(deviceClass.toJsonString()));
-        }
+        getDeviceClass().ifPresent(d -> predicates.add(new DeviceClassPredicate(d.toJsonString())));
         if (hasCustomParam()) {
             predicates.add(new CustomParameterPredicate(customParameter.getName(), customParameter.getValue()));
         }
@@ -335,9 +335,7 @@ public class ExperimentDefinition {
         List<Predicate> predicates = new ArrayList<>();
         if (variantName.equals(fullOnVariantName)) {
             predicates.add(new FullOnPredicate());
-            if (deviceClass != DeviceClass.all) {
-                predicates.add(new DeviceClassPredicate(deviceClass.toJsonString()));
-            }
+            getDeviceClass().ifPresent(d -> predicates.add(new DeviceClassPredicate(deviceClass.toJsonString())));
         }
         return new ExperimentVariant(variantName, predicates);
     }

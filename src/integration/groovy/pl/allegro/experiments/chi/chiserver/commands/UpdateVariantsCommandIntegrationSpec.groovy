@@ -15,7 +15,7 @@ class UpdateVariantsCommandIntegrationSpec extends BaseCommandIntegrationSpec {
 
         then:
         def definition = fetchExperiment(experiment.id)
-        definition.deviceClass.name() == 'phone'
+        definition.deviceClass.get().name() == 'phone'
         definition.internalVariantName.get() == 'iname'
         definition.variantNames == ['va', 'vb']
         definition.percentage.get() == 13

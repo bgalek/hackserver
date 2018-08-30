@@ -81,7 +81,7 @@ public class AdminExperiment {
     }
 
     public Optional<String> getDeviceClass() {
-        return Optional.ofNullable(this.experimentDefinition.getDeviceClass().toJsonString());
+        return this.experimentDefinition.getDeviceClass().map(it -> it.toJsonString());
     }
 
     public BayesianHorizontalEqualizer getBayesianHorizontalEqualizer() {
