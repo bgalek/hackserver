@@ -35,7 +35,7 @@ class ClientExperimentsControllerV3 {
     }
 
     private boolean isV3Compliant(ExperimentDefinition experiment) {
-        return !experiment.hasCustomParam();
+        return !experiment.getCustomParameter().isPresent();
     }
 
     Stream<ExperimentDefinition> experimentStream() {
