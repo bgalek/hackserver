@@ -69,7 +69,7 @@ public class ExperimentDefinition {
         this.internalVariantName = internalVariantName;
         this.fullOnVariantName = fullOnVariantName;
         this.percentage = percentage;
-        this.deviceClass = deviceClass;
+        this.deviceClass = DeviceClass.all == deviceClass ? null : deviceClass;
         this.description = emptyToNull(description);
         this.documentLink = emptyToNull(documentLink);
         this.author = author;
@@ -146,12 +146,8 @@ public class ExperimentDefinition {
     }
 
     @DiffInclude
-    public CustomParameter getCustomParameter() {
-        return customParameter;
-    }
-
-    public boolean hasCustomParam() {
-        return customParameter != null;
+    public Optional<CustomParameter> getCustomParameter() {
+        return Optional.ofNullable(customParameter);
     }
 
     @DiffInclude
@@ -293,9 +289,7 @@ public class ExperimentDefinition {
         final var predicates = new ArrayList<Predicate>();
         predicates.add(new HashRangePredicate(new PercentageRange(from, to)));
         getDeviceClass().ifPresent(d -> predicates.add(new DeviceClassPredicate(d.toJsonString())));
-        if (hasCustomParam()) {
-            predicates.add(new CustomParameterPredicate(customParameter.getName(), customParameter.getValue()));
-        }
+        getCustomParameter().ifPresent(c -> predicates.add(new CustomParameterPredicate(c.getName(), c.getValue())));
         return new ExperimentVariant(variantName, predicates);
     }
 
