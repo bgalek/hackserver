@@ -57,10 +57,7 @@ public class ExperimentFactory {
 
                     experiment.getDeviceClass().ifPresent(d -> variantPredicates.add(new DeviceClassPredicate(d.toJsonString())));
 
-                    if (experiment.hasCustomParam()) {
-                        variantPredicates.add(new CustomParameterPredicate(
-                                experiment.getCustomParameter().getName(), experiment.getCustomParameter().getValue()));
-                    }
+                    experiment.getCustomParameter().ifPresent(p -> variantPredicates.add(new CustomParameterPredicate(p.getName(), p.getValue())));
 
                     List<PercentageRange> ranges = new ArrayList<>();
                     if (variantName.equals("base")) {
