@@ -112,4 +112,38 @@ class CreateExperimentGroupE2ESpec extends BaseE2EIntegrationSpec {
         then:
         group.salt == experiment1.id
     }
+
+    def "should preserve predicates after adding experiment to group"() {
+        given:
+        def experiment1 = startedExperiment([
+                deviceClass: 'desktop',
+                internalVariantName: 'base',
+                customParameterName: 'someCustomParam',
+                customParameterValue: 'someCustomParamValue'
+        ])
+        def experiment2 = draftExperiment()
+
+        when:
+        experimentGroup([experiment1.id, experiment2.id])
+        def experiment = fetchExperiment(experiment1.id)
+
+        then:
+        experiment.renderedVariants
+                .every({variant ->
+                            variant.predicates.any({predicate -> predicate.type == 'DEVICE_CLASS' && predicate.device == 'desktop'})})
+
+        and:
+        experiment.renderedVariants
+                .find({it -> it.name == 'base'})
+                .predicates.any({predicate -> predicate.type == 'INTERNAL'})
+
+        and:
+        experiment.renderedVariants
+                .every({variant ->
+                            variant.predicates.any({predicate ->
+                                predicate.type == 'CUSTOM_PARAM' &&
+                                        predicate.name == 'someCustomParam' &&
+                                        predicate.value == 'someCustomParamValue'
+                            })})
+    }
 }
