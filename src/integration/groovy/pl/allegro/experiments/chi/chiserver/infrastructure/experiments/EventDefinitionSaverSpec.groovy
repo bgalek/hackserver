@@ -4,7 +4,6 @@ import org.apache.kafka.clients.consumer.ConsumerRecord
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.kafka.listener.KafkaMessageListenerContainer
 import org.springframework.kafka.test.rule.KafkaEmbedded
-import org.springframework.test.context.ContextConfiguration
 import org.springframework.web.client.RestTemplate
 import pl.allegro.experiments.chi.chiserver.BaseIntegrationSpec
 import pl.allegro.experiments.chi.chiserver.domain.User
@@ -19,7 +18,7 @@ import java.util.concurrent.BlockingQueue
 import java.util.concurrent.TimeUnit
 
 @Ignore //TODO, naprawić, failuje losowo na Bamboo
-@ContextConfiguration(classes = [FakeKafkaTestConfig])
+//@ContextConfiguration(classes = [FakeKafkaTestConfig])
 class EventDefinitionSaverSpec extends BaseIntegrationSpec {
 
     @Autowired

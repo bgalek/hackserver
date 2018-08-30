@@ -7,6 +7,8 @@ import org.javers.core.metamodel.annotation.DiffInclude;
 import org.javers.core.metamodel.annotation.Id;
 import org.javers.core.metamodel.annotation.PropertyName;
 import org.javers.core.metamodel.annotation.TypeName;
+import org.springframework.data.annotation.Transient;
+import org.springframework.data.mongodb.core.mapping.Document;
 import pl.allegro.experiments.chi.chiserver.domain.experiments.administration.ExperimentDefinitionException;
 
 import java.time.LocalDateTime;
@@ -16,9 +18,12 @@ import java.util.stream.IntStream;
 
 import static java.util.stream.Collectors.toList;
 import static java.util.stream.Stream.concat;
+import static pl.allegro.experiments.chi.chiserver.domain.experiments.ExperimentDefinitionBuilder.experimentDefinition;
 
+@Document(collection = "experimentDefinitions")
 @TypeName("Experiment")
 public class ExperimentDefinition {
+    @org.springframework.data.annotation.Id
     private final String id;
     private final List<String> variantNames;
     private final String internalVariantName;
@@ -31,12 +36,13 @@ public class ExperimentDefinition {
     private final List<String> groups;
     private final ActivityPeriod activityPeriod;
     private final ExperimentStatus explicitStatus;
+    @Transient
     private final ExperimentStatus status;
     private final ReportingDefinition reportingDefinition;
     private final CustomParameter customParameter;
     private final ZonedDateTime lastExplicitStatusChange;
 
-    private ExperimentDefinition(
+    ExperimentDefinition(
             String id,
             List<String> variantNames,
             String internalVariantName,
@@ -180,20 +186,6 @@ public class ExperimentDefinition {
         return Collections.unmodifiableSet(allVariants);
     }
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || !(o instanceof ExperimentDefinition)) return false;
-
-        final var that = (ExperimentDefinition) o;
-        return id.equals(that.id);
-    }
-
-    @Override
-    public int hashCode() {
-        return id.hashCode();
-    }
-
     public boolean isDraft() {
         return getStatus() == ExperimentStatus.DRAFT;
     }
@@ -308,12 +300,22 @@ public class ExperimentDefinition {
         return new ExperimentVariant(variantName, predicates);
     }
 
-    public Builder mutate() {
-        return Builder.from(this);
-    }
-
-    public static Builder builder() {
-        return new Builder();
+    public ExperimentDefinitionBuilder mutate() {
+        return  experimentDefinition()
+                    .id(id)
+                    .variantNames(variantNames)
+                    .internalVariantName(internalVariantName)
+                    .fullOnVariantName(fullOnVariantName)
+                    .deviceClass(deviceClass)
+                    .percentage(percentage)
+                    .description(description)
+                    .documentLink(documentLink)
+                    .author(author)
+                    .groups(groups)
+                    .activityPeriod(activityPeriod)
+                    .reportingDefinition(reportingDefinition)
+                    .explicitStatus(explicitStatus)
+                    .customParameter(customParameter);
     }
 
     public List<ExperimentVariant> prepareExperimentVariants() {
@@ -377,149 +379,6 @@ public class ExperimentDefinition {
         }
 
         return null;
-    }
-
-    public static class Builder {
-
-        static Builder from(ExperimentDefinition other) {
-            return new Builder()
-                    .id(other.id)
-                    .variantNames(other.variantNames)
-                    .internalVariantName(other.internalVariantName)
-                    .fullOnVariantName(other.fullOnVariantName)
-                    .deviceClass(other.deviceClass)
-                    .percentage(other.percentage)
-                    .description(other.description)
-                    .documentLink(other.documentLink)
-                    .author(other.author)
-                    .groups(other.groups)
-                    .activityPeriod(other.activityPeriod)
-                    .reportingDefinition(other.reportingDefinition)
-                    .explicitStatus(other.explicitStatus)
-                    .customParameter(other.customParameter);
-        }
-
-        private String id;
-        private List<String> variantNames;
-        private String internalVariantName;
-        private String fullOnVariantName;
-        private Integer percentage;
-        private DeviceClass deviceClass = DeviceClass.all;
-        private String description;
-        private String documentLink;
-        private String author;
-        private List<String> groups = Collections.emptyList();
-        private ActivityPeriod activityPeriod;
-        private ExperimentStatus explicitStatus;
-        private ReportingDefinition reportingDefinition = ReportingDefinition.createDefault();
-        private CustomParameter customParameter;
-        private ZonedDateTime lastExplicitStatusChange;
-
-        public Builder id(String id) {
-            this.id = id;
-            return this;
-        }
-
-        public Builder variantNames(List<String> variantNames) {
-            this.variantNames = variantNames;
-            return this;
-        }
-
-        public Builder reportingDefinition(ReportingDefinition reportingDefinition) {
-            this.reportingDefinition = reportingDefinition;
-            return this;
-        }
-
-        public Builder internalVariantName(String internalVariantName) {
-            this.internalVariantName = internalVariantName;
-            return this;
-        }
-
-        public Builder fullOnVariantName(String fullOnVariantName) {
-            this.fullOnVariantName = fullOnVariantName;
-            return this;
-        }
-
-        public Builder deviceClass(String deviceClass) {
-            this.deviceClass = DeviceClass.fromString(deviceClass);
-            return this;
-        }
-
-        public Builder deviceClass(DeviceClass deviceClass) {
-            this.deviceClass = deviceClass;
-            return this;
-        }
-
-        public Builder percentage(Integer percentage) {
-            this.percentage = percentage;
-            return this;
-        }
-
-        public Builder description(String description) {
-            this.description = description;
-            return this;
-        }
-
-        public Builder documentLink(String documentLink) {
-            this.documentLink = documentLink;
-            return this;
-        }
-
-        public Builder author(String author) {
-            this.author = author;
-            return this;
-        }
-
-        public Builder groups(List<String> groups) {
-            this.groups = groups;
-            return this;
-        }
-
-        public Builder activityPeriod(ActivityPeriod activityPeriod) {
-            this.activityPeriod = activityPeriod;
-            return this;
-        }
-
-        public Builder changeExplicitStatus(ExperimentStatus explicitStatus) {
-            this.explicitStatus = explicitStatus;
-            this.lastExplicitStatusChange = ZonedDateTime.now();
-            return this;
-        }
-
-        public Builder explicitStatus(ExperimentStatus explicitStatus) {
-            this.explicitStatus = explicitStatus;
-            return this;
-        }
-
-
-        public Builder lastExplicitStatusChange(ZonedDateTime lastExplicitStatusChange) {
-            this.lastExplicitStatusChange = lastExplicitStatusChange;
-            return this;
-        }
-
-        public Builder customParameter(CustomParameter customParameter) {
-            this.customParameter = customParameter;
-            return this;
-        }
-
-        public ExperimentDefinition build() {
-            return new ExperimentDefinition(
-                    id,
-                    variantNames,
-                    internalVariantName,
-                    fullOnVariantName,
-                    percentage,
-                    deviceClass,
-                    description,
-                    documentLink,
-                    author,
-                    groups,
-                    activityPeriod,
-                    explicitStatus,
-                    reportingDefinition,
-                    customParameter,
-                    lastExplicitStatusChange);
-        }
     }
 
     private static String emptyToNull(String s) {

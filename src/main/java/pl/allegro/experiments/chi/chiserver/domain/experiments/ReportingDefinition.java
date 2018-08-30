@@ -5,6 +5,7 @@ import com.google.common.collect.ImmutableList;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 public class ReportingDefinition {
@@ -62,5 +63,19 @@ public class ReportingDefinition {
                 .map(EventDefinition::toString)
                 .collect(Collectors.toList()));
         return result.isEmpty() ? "empty" : result;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        ReportingDefinition that = (ReportingDefinition) o;
+        return Objects.equals(eventDefinitions, that.eventDefinitions) &&
+                              reportingType == that.reportingType;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(eventDefinitions, reportingType);
     }
 }

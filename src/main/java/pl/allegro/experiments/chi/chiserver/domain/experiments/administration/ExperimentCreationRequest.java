@@ -5,11 +5,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
 import org.apache.commons.lang3.StringUtils;
-import pl.allegro.experiments.chi.chiserver.domain.experiments.CustomParameter;
-import pl.allegro.experiments.chi.chiserver.domain.experiments.EventDefinition;
-import pl.allegro.experiments.chi.chiserver.domain.experiments.ExperimentDefinition;
-import pl.allegro.experiments.chi.chiserver.domain.experiments.ReportingDefinition;
-import pl.allegro.experiments.chi.chiserver.domain.experiments.ReportingType;
+import pl.allegro.experiments.chi.chiserver.domain.experiments.*;
 
 import javax.validation.constraints.NotNull;
 import java.util.ArrayList;
@@ -98,7 +94,7 @@ public class ExperimentCreationRequest {
     ExperimentDefinition toExperimentDefinition(String author) {
         Preconditions.checkNotNull(author);
         try {
-            return ExperimentDefinition.builder()
+            return ExperimentDefinitionBuilder.experimentDefinition()
                     .id(this.id)
                     .variantNames(variantNames)
                     .internalVariantName(internalVariantName)

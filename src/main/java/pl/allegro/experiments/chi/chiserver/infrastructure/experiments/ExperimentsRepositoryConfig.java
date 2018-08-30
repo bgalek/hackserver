@@ -8,7 +8,6 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.convert.converter.Converter;
-import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.convert.MongoCustomConversions;
 import pl.allegro.experiments.chi.chiserver.application.experiments.AllEnabledCrisisManagementFilter;
 import pl.allegro.experiments.chi.chiserver.application.experiments.CrisisManagementFilter;
@@ -21,42 +20,35 @@ import pl.allegro.experiments.chi.chiserver.domain.statistics.MeasurementsReposi
 import pl.allegro.experiments.chi.chiserver.infrastructure.druid.DruidClient;
 import pl.allegro.experiments.chi.chiserver.infrastructure.experiments.converters.DateTimeDeserializer;
 import pl.allegro.experiments.chi.chiserver.infrastructure.experiments.converters.DateTimeSerializer;
-import pl.allegro.experiments.chi.chiserver.infrastructure.experiments.converters.ExperimentDefinitionDeserializer;
-import pl.allegro.experiments.chi.chiserver.infrastructure.experiments.converters.ExperimentDefinitionSerializer;
+import pl.allegro.experiments.chi.chiserver.infrastructure.experiments.converters.ReportingDefinitionDeserializer;
 
 import java.util.ArrayList;
 import java.util.List;
 
 @Configuration
-public class ExperimentsConfig {
+public class ExperimentsRepositoryConfig {
     private static final String EXPERIMENTS_COUNT_ALL_METRIC =  "experiments.count.all";
     private static final String EXPERIMENTS_COUNT_ACTIVE_METRIC = "experiments.count.active";
     private static final String EXPERIMENTS_COUNT_DRAFT_METRIC = "experiments.count.draft";
 
     @Bean
     MongoCustomConversions customConversions(
+            ReportingDefinitionDeserializer reportingDefinitionDeserializer,
             DateTimeSerializer dateTimeSerializer,
-            DateTimeDeserializer dateTimeDeserializer,
-            ExperimentDefinitionSerializer experimentSerializer,
-            ExperimentDefinitionDeserializer experimentDeserializer) {
+            DateTimeDeserializer dateTimeDeserializer) {
         List<Converter> converters = new ArrayList<>();
         converters.add(dateTimeDeserializer);
         converters.add(dateTimeSerializer);
-        converters.add(experimentSerializer);
-        converters.add(experimentDeserializer);
+        converters.add(reportingDefinitionDeserializer);
         return new MongoCustomConversions(converters);
     }
 
     @Bean
     ExperimentsRepository experimentsRepository(
-            MongoTemplate mongoTemplate,
-            ExperimentsMongoMetricsReporter experimentsMongoMetricsReporter,
-            Javers javers,
-            UserProvider userProvider,
+            MongoExperimentsRepository mongoExperimentsRepository,
             MeterRegistry metricRegistry) {
 
-        var repository = new CachedExperimentsRepository(
-                new MongoExperimentsRepository(mongoTemplate, experimentsMongoMetricsReporter, javers, userProvider));
+        var repository = new CachedExperimentsRepository(mongoExperimentsRepository);
 
         metricRegistry.gauge(EXPERIMENTS_COUNT_ALL_METRIC, repository,
                 r -> r.getAll().size());
@@ -74,11 +66,6 @@ public class ExperimentsConfig {
             Gson jsonConverter,
             @Value("${druid.experimentsCube}") String datasource) {
         return new DruidMeasurementsRepository(druid, jsonConverter, datasource);
-    }
-
-    @Bean
-    ExperimentsMongoMetricsReporter experimentsMongoMetricsReporter(MeterRegistry metricRegistry) {
-        return new ExperimentsMongoMetricsReporter(metricRegistry);
     }
 
     @Bean

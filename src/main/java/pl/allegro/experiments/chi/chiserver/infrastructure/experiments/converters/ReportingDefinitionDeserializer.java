@@ -2,6 +2,7 @@ package pl.allegro.experiments.chi.chiserver.infrastructure.experiments.converte
 
 import org.bson.Document;
 import org.springframework.core.convert.converter.Converter;
+import org.springframework.stereotype.Service;
 import pl.allegro.experiments.chi.chiserver.domain.experiments.EventDefinition;
 import pl.allegro.experiments.chi.chiserver.domain.experiments.ReportingDefinition;
 import pl.allegro.experiments.chi.chiserver.domain.experiments.ReportingType;
@@ -11,19 +12,15 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+@Service
 public class ReportingDefinitionDeserializer implements Converter<Document, ReportingDefinition> {
-    private final EventDefinitionDeserializer eventDefinitionDeserializer;
-
-    public ReportingDefinitionDeserializer(EventDefinitionDeserializer eventDefinitionDeserializer) {
-        this.eventDefinitionDeserializer = eventDefinitionDeserializer;
-    }
 
     @Override
     public ReportingDefinition convert(Document source) {
         List<EventDefinition> eventDefinitions = Optional.ofNullable(source.get("eventDefinitions"))
                 .map(rawEventDefinitions -> ((List<Document>) rawEventDefinitions).stream()
-                        .map(eventDefinitionDeserializer::convert)
-                        .collect(Collectors.toList()))
+                .map(this::convertEventDefinition)
+                .collect(Collectors.toList()))
                 .orElse(Collections.emptyList());
         Object reportingType = source.get("reportingType");
         if (reportingType != null) {
@@ -36,6 +33,17 @@ public class ReportingDefinitionDeserializer implements Converter<Document, Repo
                     getReportingType(gtm, backendInteractionsEnabled)
             );
         }
+    }
+
+    //TODO this should be done by the default Spring Data converter
+    private EventDefinition convertEventDefinition(Document source) {
+        return new EventDefinition(
+                (String) source.get("category"),
+                (String) source.get("action"),
+                (String) source.get("value"),
+                (String) source.get("label"),
+                (String) source.get("boxName")
+        );
     }
 
     private ReportingType getReportingType(boolean gtm, boolean backendInteractionsEnabled) {

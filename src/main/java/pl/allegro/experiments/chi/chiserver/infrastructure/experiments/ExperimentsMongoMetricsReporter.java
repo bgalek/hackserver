@@ -2,7 +2,9 @@ package pl.allegro.experiments.chi.chiserver.infrastructure.experiments;
 
 import io.micrometer.core.instrument.Timer;
 import io.micrometer.core.instrument.MeterRegistry;
+import org.springframework.stereotype.Service;
 
+@Service
 public class ExperimentsMongoMetricsReporter {
     private static final String ALL_EXPERIMENTS = "mongo.experiments.all";
     private static final String SINGLE_EXPERIMENT = "mongo.experiments.single";

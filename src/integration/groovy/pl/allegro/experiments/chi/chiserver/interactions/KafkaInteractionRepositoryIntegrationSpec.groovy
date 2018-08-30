@@ -11,7 +11,6 @@ import pl.allegro.experiments.chi.chiserver.BaseIntegrationSpec
 import pl.allegro.experiments.chi.chiserver.domain.UserProvider
 import pl.allegro.experiments.chi.chiserver.domain.experiments.ExperimentsRepository
 import pl.allegro.experiments.chi.chiserver.domain.interactions.Interaction
-import pl.allegro.experiments.chi.chiserver.infrastructure.experiments.FakeKafkaTestConfig
 import pl.allegro.experiments.chi.chiserver.infrastructure.interactions.KafkaInteractionRepository
 import pl.allegro.tech.common.andamio.avro.AvroConverter
 import spock.lang.Ignore
@@ -21,7 +20,7 @@ import java.util.concurrent.BlockingQueue
 import java.util.concurrent.TimeUnit
 
 @Ignore //TODO, naprawić, failuje losowo na Bamboo
-@ContextConfiguration(classes = [FakeKafkaTestConfig])
+//@ContextConfiguration(classes = [FakeKafkaTestConfig])
 class KafkaInteractionRepositoryIntegrationSpec extends BaseIntegrationSpec {
 
     @Autowired

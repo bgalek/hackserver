@@ -7,10 +7,10 @@ server:
       enabled: false
 
 interactions:
-  repository: integration
+  repository: local
 
 eventDefinitions:
-  repository: integration
+  repository: local
 
 kafka:
-  kafkaTemplate: "off"
+  template: "off"

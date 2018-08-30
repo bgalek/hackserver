@@ -2,8 +2,10 @@ package pl.allegro.experiments.chi.chiserver.infrastructure.experiments.converte
 
 import org.bson.Document;
 import org.springframework.core.convert.converter.Converter;
+import org.springframework.stereotype.Service;
 import pl.allegro.experiments.chi.chiserver.domain.experiments.groups.ExperimentGroup;
 
+@Service
 public class ExperimentGroupSerializer implements Converter<ExperimentGroup, Document> {
 
     @Override

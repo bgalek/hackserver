@@ -67,6 +67,7 @@ public class KafkaConfig {
     @Bean
     @ConditionalOnProperty(name = {"kafka.template"}, havingValue = "on")
     public KafkaTemplate kafkaTemplate(
+            @Value("${kafka.template}") String kafka,
             @Value("${kafka.bootstrap-servers-dc4}") String bootstrapServersDc4,
             @Value("${kafka.bootstrap-servers-dc5}") String bootstrapServersDc5,
             CloudMetadata cloudMetadata,

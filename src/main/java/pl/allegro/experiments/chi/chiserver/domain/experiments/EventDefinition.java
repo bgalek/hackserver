@@ -52,7 +52,7 @@ public class EventDefinition {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         EventDefinition that = (EventDefinition) o;
-        return Objects.equals(category, that.category) &&
+        return  Objects.equals(category, that.category) &&
                 Objects.equals(action, that.action) &&
                 Objects.equals(value, that.value) &&
                 Objects.equals(label, that.label) &&

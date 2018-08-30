@@ -3,6 +3,7 @@ package pl.allegro.experiments.chi.chiserver.domain.experiments;
 import com.google.common.base.Preconditions;
 
 import java.time.ZonedDateTime;
+import java.util.Objects;
 
 public class ActivityPeriod {
     private final ZonedDateTime activeFrom;
@@ -12,8 +13,8 @@ public class ActivityPeriod {
         Preconditions.checkNotNull(activeFrom);
         Preconditions.checkNotNull(activeTo);
         Preconditions.checkArgument(activeTo.isAfter(activeFrom) || activeTo.equals(activeFrom));
-        this.activeFrom = activeFrom.withNano(0);
-        this.activeTo = activeTo.withNano(0);
+        this.activeFrom = activeFrom.withNano(0).withFixedOffsetZone();
+        this.activeTo = activeTo.withNano(0).withFixedOffsetZone();
     }
 
     public ZonedDateTime getActiveFrom() {
@@ -33,4 +34,17 @@ public class ActivityPeriod {
         return new ActivityPeriod(activeFrom, newActiveTo);
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        ActivityPeriod that = (ActivityPeriod) o;
+        return Objects.equals(activeFrom, that.activeFrom) &&
+               Objects.equals(activeTo, that.activeTo);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(activeFrom, activeTo);
+    }
 }

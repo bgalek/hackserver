@@ -1,40 +1,39 @@
 package pl.allegro.experiments.chi.chiserver.infrastructure.experiments;
 
 import io.micrometer.core.instrument.Timer;
+import org.apache.commons.collections.IteratorUtils;
 import org.javers.core.Javers;
 import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.stereotype.Repository;
 import pl.allegro.experiments.chi.chiserver.domain.UserProvider;
 import pl.allegro.experiments.chi.chiserver.domain.experiments.ExperimentDefinition;
 import pl.allegro.experiments.chi.chiserver.domain.experiments.ExperimentsRepository;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-public class MongoExperimentsRepository implements ExperimentsRepository {
-    private static final String COLLECTION = "experimentDefinitions";
-    private final MongoTemplate mongoTemplate;
+@Repository
+class MongoExperimentsRepository implements ExperimentsRepository {
     private final ExperimentsMongoMetricsReporter experimentsMongoMetricsReporter;
     private final Javers javers;
     private final UserProvider userProvider;
+    private final ExperimentDefinitionCrudRepository experimentDefinitionCrudRepository;
 
-    public MongoExperimentsRepository(
-            MongoTemplate mongoTemplate,
-            ExperimentsMongoMetricsReporter experimentsMongoMetricsReporter,
-            Javers javers,
-            UserProvider userProvider) {
-        this.mongoTemplate = mongoTemplate;
+    public MongoExperimentsRepository(ExperimentsMongoMetricsReporter experimentsMongoMetricsReporter, Javers javers, UserProvider userProvider, ExperimentDefinitionCrudRepository experimentDefinitionCrudRepository) {
         this.experimentsMongoMetricsReporter = experimentsMongoMetricsReporter;
         this.javers = javers;
         this.userProvider = userProvider;
+        this.experimentDefinitionCrudRepository = experimentDefinitionCrudRepository;
     }
 
     @Override
     public Optional<ExperimentDefinition> getExperiment(String id) {
         Timer timer = experimentsMongoMetricsReporter.timerSingleExperiment();
-        ExperimentDefinition experiment = timer.record(
-            () -> mongoTemplate.findById(id, ExperimentDefinition.class, COLLECTION));
-        return Optional.ofNullable(experiment);
+        Optional<ExperimentDefinition> experiment = timer.record(
+            () -> experimentDefinitionCrudRepository.findById(id));
+        return experiment;
     }
 
     @Override
@@ -45,7 +44,7 @@ public class MongoExperimentsRepository implements ExperimentsRepository {
             javers.commitShallowDelete(username, definition)
         );
         if (definition != null) {
-            mongoTemplate.remove(definition, COLLECTION);
+            experimentDefinitionCrudRepository.delete(definition);
         }
     }
 
@@ -53,14 +52,13 @@ public class MongoExperimentsRepository implements ExperimentsRepository {
     public void save(ExperimentDefinition experimentDefinition) {
         String username = userProvider.getCurrentUser().getName();
         javers.commit(username, experimentDefinition);
-        mongoTemplate.save(experimentDefinition, COLLECTION);
+        experimentDefinitionCrudRepository.save(experimentDefinition);
     }
 
     @Override
     public List<ExperimentDefinition> getAll() {
         Timer timer = experimentsMongoMetricsReporter.timerAllExperiments();
-        return timer.record(() ->
-            mongoTemplate.findAll(ExperimentDefinition.class, COLLECTION));
+        return timer.record(() -> IteratorUtils.toList(experimentDefinitionCrudRepository.findAll().iterator()));
     }
 
     @Override

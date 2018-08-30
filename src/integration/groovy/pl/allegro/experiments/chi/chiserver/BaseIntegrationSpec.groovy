@@ -1,12 +1,10 @@
 package pl.allegro.experiments.chi.chiserver
 
+import org.javers.core.metamodel.clazz.EntityDefinition
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.boot.test.context.SpringBootTest
-import org.springframework.http.HttpEntity
-import org.springframework.http.HttpHeaders
-import org.springframework.http.MediaType
-import org.springframework.web.client.RestTemplate
+import org.springframework.data.mongodb.core.MongoTemplate
 import pl.allegro.experiments.chi.chiserver.domain.User
 import pl.allegro.experiments.chi.chiserver.domain.experiments.ExperimentStatus
 import pl.allegro.experiments.chi.chiserver.domain.experiments.ExperimentsRepository
@@ -52,6 +50,9 @@ abstract class BaseIntegrationSpec extends Specification {
     @Autowired
     ExperimentActions experimentActions
 
+    @Autowired
+    MongoTemplate mongoTemplate
+
     User ROOT_USER = new User('Root', [], true)
 
     def setup() {
@@ -59,7 +60,7 @@ abstract class BaseIntegrationSpec extends Specification {
     }
 
     def cleanup() {
-        experimentsRepository.getAll().forEach { experimentsRepository.delete(it.id) }
+        mongoTemplate.dropCollection(EntityDefinition)
     }
 
     void signInAs(User user) {
