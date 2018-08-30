@@ -3,6 +3,7 @@ package pl.allegro.experiments.chi.chiserver.administration
 import org.springframework.http.HttpStatus
 import org.springframework.web.client.HttpClientErrorException
 import pl.allegro.experiments.chi.chiserver.BaseE2EIntegrationSpec
+import spock.lang.Unroll
 
 class CreateExperimentGroupE2ESpec extends BaseE2EIntegrationSpec {
 
@@ -145,5 +146,24 @@ class CreateExperimentGroupE2ESpec extends BaseE2EIntegrationSpec {
                                         predicate.name == 'someCustomParam' &&
                                         predicate.value == 'someCustomParamValue'
                             })})
+    }
+
+    @Unroll
+    def "should render single internal"() {
+        given:
+        def experiment1 = startedExperiment([
+                internalVariantName: internalVariantName
+        ])
+        def experiment2 = draftExperiment()
+
+        when:
+        experimentGroup([experiment1.id, experiment2.id])
+
+        then:
+        fetchExperiment(experiment1.id).renderedVariants
+                .count {v -> v.predicates.any({predicate -> predicate.type == 'INTERNAL'})} == 1
+
+        where:
+        internalVariantName << ['nonExistentVariant', 'base']
     }
 }
