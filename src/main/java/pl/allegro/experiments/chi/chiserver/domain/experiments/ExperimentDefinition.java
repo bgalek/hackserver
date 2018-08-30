@@ -110,6 +110,10 @@ public class ExperimentDefinition {
 
     public DeviceClass getDeviceClass() { return deviceClass; }
 
+    public boolean hasDeviceClass() {
+        return deviceClass != null;
+    }
+
     @DiffInclude
     @PropertyName("deviceClass")
     Optional<String> getDeviceClassLegacyFormat() { return Optional.ofNullable(deviceClass.toJsonString()); }

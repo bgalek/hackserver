@@ -54,6 +54,13 @@ public class ExperimentFactory {
                             && experiment.getInternalVariantName().get().equals(variantName)) {
                         variantPredicates.add(new InternalPredicate());
                     }
+                    if (experiment.hasDeviceClass()) {
+                        variantPredicates.add(new DeviceClassPredicate(experiment.getDeviceClass().toJsonString()));
+                    }
+                    if (experiment.hasCustomParam()) {
+                        variantPredicates.add(new CustomParameterPredicate(
+                                experiment.getCustomParameter().getName(), experiment.getCustomParameter().getValue()));
+                    }
 
                     List<PercentageRange> ranges = new ArrayList<>();
                     if (variantName.equals("base")) {
