@@ -74,7 +74,7 @@ class MongoExperimentsRepositoryIntegrationSpec extends BaseIntegrationSpec {
         loaded.documentLink == experiment.documentLink
         loaded.author == experiment.author
         loaded.reportingDefinition == experiment.reportingDefinition
-        loaded.customParameter == experiment.customParameter.get()
+        loaded.customParameter == experiment.customParameter
 
         when:
         Document doc = mongoTemplate.findById(experiment.id, Document, "experimentDefinitions")
