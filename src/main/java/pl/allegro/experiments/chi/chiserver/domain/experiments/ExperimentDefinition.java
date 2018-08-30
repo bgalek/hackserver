@@ -62,7 +62,6 @@ public class ExperimentDefinition {
         Preconditions.checkNotNull(variantNames);
         Preconditions.checkNotNull(reportingDefinition);
         Preconditions.checkNotNull(groups);
-        Preconditions.checkNotNull(deviceClass);
         Preconditions.checkArgument(internalVariantName == null || !internalVariantName.isEmpty());
         Preconditions.checkArgument(fullOnVariantName == null || !fullOnVariantName.isEmpty());
         this.id = id;
@@ -70,7 +69,7 @@ public class ExperimentDefinition {
         this.internalVariantName = internalVariantName;
         this.fullOnVariantName = fullOnVariantName;
         this.percentage = percentage;
-        this.deviceClass = deviceClass;
+        this.deviceClass = deviceClass != null ? deviceClass : DeviceClass.all;
         this.description = emptyToNull(description);
         this.documentLink = emptyToNull(documentLink);
         this.author = author;
