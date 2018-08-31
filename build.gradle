@@ -3,8 +3,8 @@ buildscript {
     ext {
         versions = [
                 jackson       : '2.9.5',
-                springBoot    : '2.0.0.RELEASE',
-                andamio       : '2.2.0',
+                springBoot    : '2.0.1.RELEASE',
+                andamio       : '2.3.1',
                 springKafka   : '2.1.5.RELEASE',
                 spock         : '1.1-groovy-2.4',
                 groovy        : '2.4.15',
@@ -150,6 +150,7 @@ integrationTest {
 
     testLogging {
         exceptionFormat = 'full'
+        //showStandardStreams = true
     }
 }
 
