@@ -48,6 +48,14 @@ public class ExperimentFactory {
                 percentageRangeStart += (int) numberOfNonBaseVariants * currentExperimentPercentage;
             } else {
                 List<ExperimentVariant> variants = new ArrayList<>();
+
+                if (experiment.getInternalVariantName().isPresent()) {
+                    List<Predicate> internalVariantPredicates = new ArrayList<>(List.of(new InternalPredicate()));
+                    addDeviceClassPredicateIfFound(internalVariantPredicates, experiment);
+                    addCustomParameterPredicateIfFound(internalVariantPredicates, experiment);
+                    variants.add(new ExperimentVariant(experiment.getInternalVariantName().get(), internalVariantPredicates));
+                }
+
                 for (String variantName: experiment.getVariantNames()) {
                     List<Predicate> variantPredicates = new ArrayList<>();
                     if (experiment.getInternalVariantName().isPresent()
@@ -78,6 +86,19 @@ public class ExperimentFactory {
             }
         }
         return null;
+    }
+
+    private void addDeviceClassPredicateIfFound(List<Predicate> predicates, ExperimentDefinition experimentDefinition) {
+        if (experimentDefinition.hasDeviceClass()) {
+            predicates.add(new DeviceClassPredicate(experimentDefinition.getDeviceClass().toJsonString()));
+        }
+    }
+
+    private void addCustomParameterPredicateIfFound(List<Predicate> predicates, ExperimentDefinition experimentDefinition) {
+        if (experimentDefinition.hasCustomParam()) {
+            predicates.add(new CustomParameterPredicate(
+                    experimentDefinition.getCustomParameter().getName(), experimentDefinition.getCustomParameter().getValue()));
+        }
     }
 
     public AdminExperiment adminExperiment(ExperimentDefinition experiment) {
