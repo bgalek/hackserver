@@ -1,7 +1,6 @@
 package pl.allegro.experiments.chi.chiserver.infrastructure;
 
 import pl.allegro.experiments.chi.chiserver.application.experiments.AdminExperiment;
-import pl.allegro.experiments.chi.chiserver.domain.User;
 import pl.allegro.experiments.chi.chiserver.domain.UserProvider;
 import pl.allegro.experiments.chi.chiserver.domain.experiments.*;
 import pl.allegro.experiments.chi.chiserver.domain.experiments.groups.ExperimentGroup;
@@ -10,7 +9,6 @@ import pl.allegro.experiments.chi.chiserver.domain.experiments.groups.ShredHashR
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 // todo refactor/optimize
 public class ExperimentFactory {
@@ -58,14 +56,8 @@ public class ExperimentFactory {
 
                 for (String variantName: experiment.getVariantNames()) {
                     List<Predicate> variantPredicates = new ArrayList<>();
-                    if (experiment.getInternalVariantName().isPresent()
-                            && experiment.getInternalVariantName().get().equals(variantName)) {
-                        variantPredicates.add(new InternalPredicate());
-                    }
-
-                    experiment.getDeviceClass().ifPresent(d -> variantPredicates.add(new DeviceClassPredicate(d.toJsonString())));
-
-                    experiment.getCustomParameter().ifPresent(p -> variantPredicates.add(new CustomParameterPredicate(p.getName(), p.getValue())));
+                    addDeviceClassPredicateIfFound(variantPredicates, experiment);
+                    addCustomParameterPredicateIfFound(variantPredicates, experiment);
 
                     List<PercentageRange> ranges = new ArrayList<>();
                     if (variantName.equals("base")) {
@@ -88,17 +80,12 @@ public class ExperimentFactory {
         return null;
     }
 
-    private void addDeviceClassPredicateIfFound(List<Predicate> predicates, ExperimentDefinition experimentDefinition) {
-        if (experimentDefinition.hasDeviceClass()) {
-            predicates.add(new DeviceClassPredicate(experimentDefinition.getDeviceClass().toJsonString()));
-        }
+    private void addDeviceClassPredicateIfFound(List<Predicate> predicates, ExperimentDefinition experiment) {
+        experiment.getDeviceClass().ifPresent(d -> predicates.add(new DeviceClassPredicate(d.toJsonString())));
     }
 
-    private void addCustomParameterPredicateIfFound(List<Predicate> predicates, ExperimentDefinition experimentDefinition) {
-        if (experimentDefinition.hasCustomParam()) {
-            predicates.add(new CustomParameterPredicate(
-                    experimentDefinition.getCustomParameter().getName(), experimentDefinition.getCustomParameter().getValue()));
-        }
+    private void addCustomParameterPredicateIfFound(List<Predicate> predicates, ExperimentDefinition experiment) {
+        experiment.getCustomParameter().ifPresent(p -> predicates.add(new CustomParameterPredicate(p.getName(), p.getValue())));
     }
 
     public AdminExperiment adminExperiment(ExperimentDefinition experiment) {
