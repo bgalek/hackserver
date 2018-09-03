@@ -1,17 +1,17 @@
 package pl.allegro.experiments.chi.chiserver.infrastructure.experiments
 
 import org.bson.Document
-import org.springframework.beans.factory.annotation.Autowired
-import pl.allegro.experiments.chi.chiserver.BaseIntegrationSpec
 import pl.allegro.experiments.chi.chiserver.domain.experiments.ReportingDefinition
 import pl.allegro.experiments.chi.chiserver.infrastructure.experiments.converters.ReportingDefinitionDeserializer
+import spock.lang.Specification
 
-class LegacyReportingDefinitionIntegrationSpec extends BaseIntegrationSpec {
+class LegacyReportingDefinitionIntegrationSpec extends Specification {
 
-    @Autowired
-    ReportingDefinitionDeserializer reportingDefinitionDeserializer
 
     def "should convert legacy reporting definition document to ReportingDefinition object"() {
+        given:
+        def reportingDefinitionDeserializer = new ReportingDefinitionDeserializer()
+
         expect:
         reportingDefinitionDeserializer.convert(document).type == expectedResult.type
 

@@ -23,4 +23,8 @@ public enum DeviceClass {
         }
         return name().replace('_', '-');
     }
+
+    public String toBsonString() {
+        return name().replace('_', '-');
+    }
 }
