@@ -9,6 +9,8 @@ import java.util.Objects;
 import java.util.stream.Collectors;
 
 public class ReportingDefinition {
+    public static final ReportingDefinition DEFAULT = new ReportingDefinition(Collections.emptyList(), ReportingType.BACKEND);
+
     private final List<EventDefinition> eventDefinitions;
     private final ReportingType reportingType;
 

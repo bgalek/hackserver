@@ -60,7 +60,6 @@ public class ExperimentDefinition {
             ZonedDateTime lastExplicitStatusChange) {
         Preconditions.checkArgument(!Strings.isNullOrEmpty(id));
         Preconditions.checkNotNull(variantNames);
-        Preconditions.checkNotNull(reportingDefinition);
         Preconditions.checkNotNull(groups);
         Preconditions.checkArgument(internalVariantName == null || !internalVariantName.isEmpty());
         Preconditions.checkArgument(fullOnVariantName == null || !fullOnVariantName.isEmpty());
@@ -77,7 +76,7 @@ public class ExperimentDefinition {
         this.activityPeriod = activityPeriod;
         this.explicitStatus = explicitStatus;
         this.status = ExperimentStatus.of(explicitStatus, activityPeriod);
-        this.reportingDefinition = reportingDefinition;
+        this.reportingDefinition = reportingDefinition == null ? ReportingDefinition.DEFAULT : reportingDefinition;
         this.customParameter = customParameter;
         this.lastExplicitStatusChange = lastExplicitStatusChange;
     }
