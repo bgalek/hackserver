@@ -2,7 +2,7 @@ package pl.allegro.experiments.chi.chiserver.infrastructure.experiments.converte
 
 import org.bson.Document;
 import org.springframework.core.convert.converter.Converter;
-import org.springframework.stereotype.Service;
+import org.springframework.data.convert.ReadingConverter;
 import pl.allegro.experiments.chi.chiserver.domain.experiments.EventDefinition;
 import pl.allegro.experiments.chi.chiserver.domain.experiments.ReportingDefinition;
 import pl.allegro.experiments.chi.chiserver.domain.experiments.ReportingType;
@@ -12,7 +12,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-@Service
+@ReadingConverter
 public class ReportingDefinitionDeserializer implements Converter<Document, ReportingDefinition> {
 
     @Override

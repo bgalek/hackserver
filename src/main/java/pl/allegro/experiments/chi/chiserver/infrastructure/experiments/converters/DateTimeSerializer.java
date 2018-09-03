@@ -1,12 +1,12 @@
 package pl.allegro.experiments.chi.chiserver.infrastructure.experiments.converters;
 
 import org.springframework.core.convert.converter.Converter;
-import org.springframework.stereotype.Service;
+import org.springframework.data.convert.WritingConverter;
 
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 
-@Service
+@WritingConverter
 public class DateTimeSerializer implements Converter<ZonedDateTime, String> {
     private static final DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ssXXX");
 

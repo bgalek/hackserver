@@ -18,9 +18,7 @@ import pl.allegro.experiments.chi.chiserver.domain.experiments.ExperimentsReposi
 import pl.allegro.experiments.chi.chiserver.domain.experiments.groups.ExperimentGroupRepository;
 import pl.allegro.experiments.chi.chiserver.domain.statistics.MeasurementsRepository;
 import pl.allegro.experiments.chi.chiserver.infrastructure.druid.DruidClient;
-import pl.allegro.experiments.chi.chiserver.infrastructure.experiments.converters.DateTimeDeserializer;
-import pl.allegro.experiments.chi.chiserver.infrastructure.experiments.converters.DateTimeSerializer;
-import pl.allegro.experiments.chi.chiserver.infrastructure.experiments.converters.ReportingDefinitionDeserializer;
+import pl.allegro.experiments.chi.chiserver.infrastructure.experiments.converters.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -32,14 +30,13 @@ public class ExperimentsRepositoryConfig {
     private static final String EXPERIMENTS_COUNT_DRAFT_METRIC = "experiments.count.draft";
 
     @Bean
-    MongoCustomConversions customConversions(
-            ReportingDefinitionDeserializer reportingDefinitionDeserializer,
-            DateTimeSerializer dateTimeSerializer,
-            DateTimeDeserializer dateTimeDeserializer) {
+    MongoCustomConversions customConversions() {
         List<Converter> converters = new ArrayList<>();
-        converters.add(dateTimeDeserializer);
-        converters.add(dateTimeSerializer);
-        converters.add(reportingDefinitionDeserializer);
+        converters.add(new DateTimeDeserializer());
+        converters.add(new DateTimeSerializer());
+        converters.add(new ReportingDefinitionDeserializer());
+        converters.add(new DeviceClassSerializer());
+        converters.add(new DeviceClassDeserializer());
         return new MongoCustomConversions(converters);
     }
 

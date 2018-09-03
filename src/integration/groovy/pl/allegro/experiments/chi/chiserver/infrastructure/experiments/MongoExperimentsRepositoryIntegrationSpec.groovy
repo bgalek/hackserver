@@ -52,7 +52,7 @@ class MongoExperimentsRepositoryIntegrationSpec extends BaseIntegrationSpec {
                 .documentLink('link')
                 .author('kazik')
                 .reportingDefinition(new ReportingDefinition([new EventDefinition('c','a','v','l','b')], ReportingType.FRONTEND))
-                .deviceClass(DeviceClass.desktop)
+                .deviceClass(DeviceClass.phone_android)
                 .customParameter(new CustomParameter('k','v'))
                 .build()
 
@@ -74,6 +74,7 @@ class MongoExperimentsRepositoryIntegrationSpec extends BaseIntegrationSpec {
         loaded.documentLink == experiment.documentLink
         loaded.author == experiment.author
         loaded.reportingDefinition == experiment.reportingDefinition
+        loaded.deviceClass == experiment.deviceClass
         loaded.customParameter == experiment.customParameter
 
         when:
@@ -101,6 +102,7 @@ class MongoExperimentsRepositoryIntegrationSpec extends BaseIntegrationSpec {
             assert it.getString('value') == 'v'
             assert it.getString('boxName') == 'b'
         }
+        doc.getString('deviceClass') =='phone-android'
         doc.get('customParameter').getString('name') =='k'
         doc.get('customParameter').getString('value') =='v'
     }
