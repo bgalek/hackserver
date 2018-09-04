@@ -149,11 +149,11 @@ public class CommandFactory {
         return new NotificationDecoratorCommand(experimentCommand, notificator, userProvider);
     }
 
-    Command createExperimentGroupCommand(ExperimentGroupCreationRequest experimentGroupCreationRequest) {
-        return new CreateExperimentGroupCommand(
+    Command createAddExperimentToGroupCommand(AddExperimentToGroupRequest addExperimentToGroupRequest) {
+        return new AddExperimentToGroupCommand(
                 experimentGroupRepository,
                 userProvider,
-                experimentGroupCreationRequest,
+                addExperimentToGroupRequest,
                 permissionsAwareExperimentRepository
         );
     }
@@ -165,10 +165,10 @@ public class CommandFactory {
                         experimentsRepository,
                         userProvider,
                         pairedExperimentCreationRequest.getExperimentCreationRequest()),
-                new CreateExperimentGroupCommand(
+                new AddExperimentToGroupCommand(
                         experimentGroupRepository,
                         userProvider,
-                        pairedExperimentCreationRequest.getExperimentGroupCreationRequest(),
+                        pairedExperimentCreationRequest.getAddExperimentToGroupRequest(),
                         permissionsAwareExperimentRepository),
                 new DeleteExperimentCommand(
                         experimentsRepository,

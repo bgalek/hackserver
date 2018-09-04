@@ -6,27 +6,27 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import javax.validation.constraints.NotNull;
 import java.util.List;
 
-public class ExperimentGroupCreationRequest {
+public class AddExperimentToGroupRequest {
 
     @NotNull
     private final String id;
 
     @NotNull
-    private final List<String> experiments;
+    private final String experimentId;
 
     @JsonCreator
-    ExperimentGroupCreationRequest(
+    AddExperimentToGroupRequest(
             @JsonProperty("id") String id,
-            @JsonProperty("experiments") List<String> experiments) {
+            @JsonProperty("experiment") String experimentId) {
         this.id = id;
-        this.experiments = experiments;
+        this.experimentId = experimentId;
     }
 
     public String getId() {
         return id;
     }
 
-    public List<String> getExperiments() {
-        return experiments;
+    public String getExperimentId() {
+        return experimentId;
     }
 }

@@ -351,7 +351,7 @@
         if (this.shouldBeGrouped()) {
           return {
             experimentCreationRequest: experimentCreationRequest,
-            experimentGroupCreationRequest: {
+            addExperimentToGroupRequest: {
               id: this.experimentGroupName,
               experiments: [this.experimentIdSlug, this.groupWithExperimentName]
             }

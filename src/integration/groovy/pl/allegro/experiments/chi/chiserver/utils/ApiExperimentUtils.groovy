@@ -22,9 +22,28 @@ trait ApiExperimentUtils implements ApiActionUtils {
         get("$ADMIN_API_PATH/groups/$groupId", Map).body as Map
     }
 
+    @Deprecated
+    Map addToGroupAndFetch(String experimentId, String groupId = UUID.randomUUID().toString()) {
+        addToGroup(experimentId, groupId)
+        fetchExperimentGroup(groupId)
+    }
+
+    @Deprecated
     Map experimentGroup(List experimentIds, String groupId = UUID.randomUUID().toString()) {
         createExperimentGroup(experimentIds, groupId)
         fetchExperimentGroup(groupId)
+    }
+
+    String createExperimentGroup(List<String> ids) {
+        def groupName = UUID.randomUUID().toString()
+        ids.each{ addToGroup(it, groupName) }
+        groupName
+    }
+
+    Map createExperimentGroupAndFetch(List<String> ids) {
+        def groupName = UUID.randomUUID().toString()
+        ids.each{ addToGroup(it, groupName) }
+        fetchExperimentGroup(groupName)
     }
 
     Map pairedExperiment(List experimentIds, String groupId = UUID.randomUUID().toString(), Map customProperties = [:]) {

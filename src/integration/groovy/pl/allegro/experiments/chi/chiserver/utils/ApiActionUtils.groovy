@@ -82,8 +82,8 @@ trait ApiActionUtils {
         delete("$ADMIN_API_PATH/$experimentId")
     }
 
-    void createExperimentGroup(List<String> experimentIds, String groupId = UUID.randomUUID().toString()) {
-        def request = [id: groupId, experiments: experimentIds]
+    void addToGroup(String experimentId, String groupId = UUID.randomUUID().toString()) {
+        def request = [id: groupId, experiment: experimentId]
         post("$ADMIN_API_PATH/groups/", request)
     }
 

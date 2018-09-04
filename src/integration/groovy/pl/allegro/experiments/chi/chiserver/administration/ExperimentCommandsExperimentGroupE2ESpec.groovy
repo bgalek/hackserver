@@ -14,7 +14,7 @@ class ExperimentCommandsExperimentGroupE2ESpec extends BaseE2EIntegrationSpec {
         given:
         def experiment1 = draftExperiment()
         def experiment2 = draftExperiment()
-        def group = experimentGroup([experiment1.id, experiment2.id])
+        def group = createExperimentGroupAndFetch([experiment1.id, experiment2.id])
 
         when:
         deleteExperiment(experiment1.id as String)
@@ -53,7 +53,7 @@ class ExperimentCommandsExperimentGroupE2ESpec extends BaseE2EIntegrationSpec {
         def experiment2 = startedExperiment()
 
         when:
-        def group = experimentGroup([experiment1.id, experiment2.id])
+        def group = createExperimentGroupAndFetch([experiment1.id, experiment2.id])
 
         then:
         group.experiments == [experiment1.id, experiment2.id]

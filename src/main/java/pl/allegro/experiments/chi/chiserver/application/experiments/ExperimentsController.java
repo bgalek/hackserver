@@ -215,10 +215,10 @@ public class ExperimentsController {
 
     @MeteredEndpoint
     @PostMapping(path = "groups")
-    ResponseEntity<String> createExperimentGroup(
-            @RequestBody ExperimentGroupCreationRequest experimentGroupCreationRequest) {
-        logger.info("Experiment group creation request received", experimentGroupCreationRequest);
-        experimentActions.createExperimentGroup(experimentGroupCreationRequest);
+    ResponseEntity<String> addExperimentToGroup(
+            @RequestBody AddExperimentToGroupRequest addExperimentToGroupRequest) {
+        logger.info("Add experiment to group creation request received", addExperimentToGroupRequest);
+        experimentActions.addExperimentToGroup(addExperimentToGroupRequest);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 

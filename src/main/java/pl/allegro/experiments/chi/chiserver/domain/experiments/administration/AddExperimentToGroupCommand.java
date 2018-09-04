@@ -1,8 +1,12 @@
 package pl.allegro.experiments.chi.chiserver.domain.experiments.administration;
 
+import com.google.common.base.Preconditions;
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.Lists;
 import pl.allegro.experiments.chi.chiserver.domain.User;
 import pl.allegro.experiments.chi.chiserver.domain.UserProvider;
 import pl.allegro.experiments.chi.chiserver.domain.experiments.ExperimentDefinition;
+import pl.allegro.experiments.chi.chiserver.domain.experiments.Predicate;
 import pl.allegro.experiments.chi.chiserver.domain.experiments.groups.ExperimentGroup;
 import pl.allegro.experiments.chi.chiserver.domain.experiments.groups.ExperimentGroupRepository;
 
@@ -13,60 +17,70 @@ import java.util.UUID;
 import static java.util.stream.Collectors.toList;
 import static pl.allegro.experiments.chi.chiserver.domain.experiments.ExperimentStatus.DRAFT;
 
-public class CreateExperimentGroupCommand implements Command {
+public class AddExperimentToGroupCommand implements Command {
     private final ExperimentGroupRepository experimentGroupRepository;
     private final PermissionsAwareExperimentRepository permissionsAwareExperimentRepository;
     private final UserProvider userProvider;
-    private final ExperimentGroupCreationRequest experimentGroupCreationRequest;
+    private final AddExperimentToGroupRequest addExperimentToGroupRequest;
 
-    CreateExperimentGroupCommand(
+    AddExperimentToGroupCommand(
             ExperimentGroupRepository experimentGroupRepository,
             UserProvider userProvider,
-            ExperimentGroupCreationRequest experimentGroupCreationRequest,
+            AddExperimentToGroupRequest addExperimentToGroupRequest,
             PermissionsAwareExperimentRepository permissionsAwareExperimentRepository) {
         Objects.requireNonNull(experimentGroupRepository);
         Objects.requireNonNull(userProvider);
-        Objects.requireNonNull(experimentGroupCreationRequest);
+        Objects.requireNonNull(addExperimentToGroupRequest);
         Objects.requireNonNull(permissionsAwareExperimentRepository);
         this.experimentGroupRepository = experimentGroupRepository;
         this.userProvider = userProvider;
-        this.experimentGroupCreationRequest = experimentGroupCreationRequest;
+        this.addExperimentToGroupRequest = addExperimentToGroupRequest;
         this.permissionsAwareExperimentRepository = permissionsAwareExperimentRepository;
     }
 
     public void execute() {
         User user = userProvider.getCurrentUser();
         if (!user.isLoggedIn()) {
-            throw new AuthorizationException("Only logged in user can create experiment group");
+            throw new AuthorizationException("Only logged in user can add experiments to a group");
         }
-        ExperimentGroup experimentGroup = create(
-                experimentGroupCreationRequest.getId(),
-                experimentGroupCreationRequest.getExperiments()
-        );
+
+        var groupId = addExperimentToGroupRequest.getId();
+        var experiment = permissionsAwareExperimentRepository.getExperimentOrException(addExperimentToGroupRequest.getExperimentId());
+
+        validateExperiment(experiment);
+
+        var experimentGroup = experimentGroupRepository.findById(groupId)
+                .map(it -> addAnotherExperiment(it, experiment))
+                .orElse(createGroup(groupId, experiment));
+
         experimentGroupRepository.save(experimentGroup);
     }
 
-    private ExperimentGroup create(String groupId, List<String> experimentIds) {
-        validateGroupIdIsUnique(groupId);
-        List<ExperimentDefinition> experiments = validateAndGetExperiments(experimentIds);
-
-        validateExperiments(experiments);
-        return new ExperimentGroup(groupId, getSalt(experiments), experimentIds);
+    private void validateExperiment(ExperimentDefinition experiment) {
+        if (experimentGroupRepository.experimentInGroup(experiment.getId())) {
+            throw new ExperimentCommandException("Experiment already in another group");
+        }
     }
 
-    private List<ExperimentDefinition> validateAndGetExperiments(List<String> experimentIds) {
-        try {
-            return getExperimentsOrException(experimentIds);
-        } catch (ExperimentNotFoundException exception) {
-            throw new ExperimentCommandException("Cannot create group if not all experiments exist");
+    private ExperimentGroup addAnotherExperiment(ExperimentGroup experimentGroup, final ExperimentDefinition experiment) {
+        validateEnoughPercentageSpace((List)Lists.asList(experiment.getId(),experimentGroup.getExperiments().toArray()));
+
+        if (!experiment.isDraft()) {
+            throw new ExperimentCommandException("Can't add non-draft experiment to existing group");
         }
+
+        return experimentGroup.addExperiment(experiment.getId());
+    }
+
+    private ExperimentGroup createGroup(final String groupId, final ExperimentDefinition experiment) {
+        var salt = experiment.isActive() ? experiment.getId() : UUID.randomUUID().toString();
+        var experimentGroup = new ExperimentGroup(groupId, salt, ImmutableList.of(experiment.getId()));
+        return experimentGroup;
     }
 
     private void validateExperiments(List<ExperimentDefinition> experiments) {
         validateGroupContainsAtLeast2Experiments(experiments);
         validateGroupContainsMax1NonDraftExperiment(experiments);
-        validateGroupHasEnoughPercentageSpaceForAllExperiments(experiments);
-        validateAllExperimentsHaveNoGroup(experiments);
         validateNoExperimentIsFullOn(experiments);
     }
 
@@ -78,18 +92,26 @@ public class CreateExperimentGroupCommand implements Command {
                 .orElse(UUID.randomUUID().toString());
     }
 
-    private void validateAllExperimentsHaveNoGroup(List<ExperimentDefinition> experiments) {
-        boolean allExperimentsHaveNoGroup = experiments.stream()
-                .map(ExperimentDefinition::getId)
-                .noneMatch(experimentGroupRepository::experimentInGroup);
-        if (!allExperimentsHaveNoGroup) {
-            throw new ExperimentCommandException("Cannot create group if one of the experiments is in another group");
-        }
-    }
+    private void validateEnoughPercentageSpace(List<String> experimentIds) {
+        Preconditions.checkArgument(!experimentIds.isEmpty());
 
-    private void validateGroupHasEnoughPercentageSpaceForAllExperiments(List<ExperimentDefinition> experiments) {
-        if (!ExperimentGroup.enoughPercentageSpace(experiments)) {
-            throw new ExperimentCommandException("Cannot create group there is no enough percentage space");
+        List<ExperimentDefinition> experiments = experimentIds.stream()
+                .map(it -> permissionsAwareExperimentRepository.getExperimentOrException(it))
+                .collect(toList());
+
+        int maxBasePercentage = experiments.stream()
+                .map(e -> e.getPercentage().get())
+                .max(Integer::compare)
+                .get();
+        int percentageSum = experiments.stream()
+                .mapToInt(e -> {
+                    int percentage = e.getPercentage().get();
+                    int numberOfVariantsDifferentThanBase = e.getVariantNames().size() - 1;
+                    return numberOfVariantsDifferentThanBase * percentage;
+                }).sum();
+
+        if (maxBasePercentage + percentageSum > 100) {
+            throw new ExperimentCommandException("Cannot create group - there is no enough percentage space");
         }
     }
 
@@ -118,11 +140,5 @@ public class CreateExperimentGroupCommand implements Command {
         if (experiments.stream().anyMatch(ExperimentDefinition::isFullOn)) {
             throw new ExperimentCommandException("Cannot create group if one of the experiments is full-on");
         }
-    }
-
-    private List<ExperimentDefinition> getExperimentsOrException(List<String> experimentIds) {
-        return experimentIds.stream()
-                .map(permissionsAwareExperimentRepository::getExperimentOrException)
-                .collect(toList());
     }
 }

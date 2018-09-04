@@ -5,23 +5,24 @@ import org.springframework.web.client.HttpClientErrorException
 import pl.allegro.experiments.chi.chiserver.BaseE2EIntegrationSpec
 import spock.lang.Unroll
 
-class CreateExperimentGroupE2ESpec extends BaseE2EIntegrationSpec {
+class AddExperimentToGroupE2ESpec extends BaseE2EIntegrationSpec {
 
     def "should create experiment group"() {
         given:
         def experiment1 = draftExperiment()
         def experiment2 = draftExperiment()
+        def experiment3 = draftExperiment()
 
         when:
-        def group = experimentGroup([experiment1.id, experiment2.id])
+        def group = createExperimentGroupAndFetch([experiment1.id, experiment2.id, experiment3.id])
 
         then:
-        group.experiments == [experiment1.id, experiment2.id]
+        group.experiments == [experiment1.id, experiment2.id, experiment3.id]
     }
 
-    def "should not create experiment group if it contains more than 1 active experiment"() {
+    def "should not add active experiment to existing group"() {
         given:
-        def experiment1 = startedExperiment()
+        def experiment1 = draftExperiment()
         def experiment2 = startedExperiment()
 
         when:
@@ -32,43 +33,20 @@ class CreateExperimentGroupE2ESpec extends BaseE2EIntegrationSpec {
         exception.statusCode == HttpStatus.BAD_REQUEST
     }
 
-    def "should not create experiment group if contains #numberOfExperiments experiments"() {
-        given:
-        def experiments = (0..<numberOfExperiments).collect { draftExperiment() }
-        def experimentIds = experiments.collect { it.id }
-
+    def "should not add non-existing experiment to a group"(){
         when:
-        createExperimentGroup(experimentIds as List<String>)
+        createExperimentGroup(['non-existing'])
 
         then:
         def exception = thrown HttpClientErrorException
         exception.statusCode == HttpStatus.BAD_REQUEST
 
-        where:
-        numberOfExperiments << [0, 1]
-    }
-
-    def "should not create experiment group if one of provided experiments does not exist"() {
-        given:
-        def experiment = draftExperiment()
-
         when:
-        createExperimentGroup([experiment.id, "nonexistent experiment id"])
+        def experiment1 = draftExperiment()
+        createExperimentGroup([experiment1.id, 'non-existing'])
 
         then:
-        def exception = thrown HttpClientErrorException
-        exception.statusCode == HttpStatus.BAD_REQUEST
-    }
-
-    def "should not create experiment group if group name is not unique"() {
-        given:
-        def group = experimentGroup([draftExperiment().id, draftExperiment().id])
-
-        when:
-        createExperimentGroup([draftExperiment().id, draftExperiment().id], group.id as String)
-
-        then:
-        def exception = thrown HttpClientErrorException
+        exception = thrown HttpClientErrorException
         exception.statusCode == HttpStatus.BAD_REQUEST
     }
 
@@ -102,13 +80,13 @@ class CreateExperimentGroupE2ESpec extends BaseE2EIntegrationSpec {
         exception.statusCode == HttpStatus.BAD_REQUEST
     }
 
-    def "should set group's salt to first ACTIVE experiment"() {
+    def "should set group's salt to first experiment"() {
         given:
         def experiment1 = startedExperiment()
         def experiment2 = draftExperiment()
 
         when:
-        def group = experimentGroup([experiment1.id, experiment2.id])
+        def group = createExperimentGroupAndFetch([experiment1.id, experiment2.id])
 
         then:
         group.salt == experiment1.id
@@ -125,7 +103,7 @@ class CreateExperimentGroupE2ESpec extends BaseE2EIntegrationSpec {
         def experiment2 = draftExperiment()
 
         when:
-        experimentGroup([experiment1.id, experiment2.id])
+        createExperimentGroup([experiment1.id, experiment2.id])
         def experiment = fetchExperiment(experiment1.id)
 
         then:
@@ -157,7 +135,7 @@ class CreateExperimentGroupE2ESpec extends BaseE2EIntegrationSpec {
         def experiment2 = draftExperiment()
 
         when:
-        experimentGroup([experiment1.id, experiment2.id])
+        createExperimentGroup([experiment1.id, experiment2.id])
 
         then:
         fetchExperiment(experiment1.id).renderedVariants

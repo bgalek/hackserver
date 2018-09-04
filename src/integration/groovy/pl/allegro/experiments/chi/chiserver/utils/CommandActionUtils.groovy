@@ -4,7 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired
 import pl.allegro.experiments.chi.chiserver.domain.experiments.EventDefinition
 import pl.allegro.experiments.chi.chiserver.domain.experiments.administration.ExperimentActions
 import pl.allegro.experiments.chi.chiserver.domain.experiments.administration.ExperimentCreationRequest
-import pl.allegro.experiments.chi.chiserver.domain.experiments.administration.ExperimentGroupCreationRequest
+import pl.allegro.experiments.chi.chiserver.domain.experiments.administration.AddExperimentToGroupRequest
 import pl.allegro.experiments.chi.chiserver.domain.experiments.administration.MakeExperimentFullOnProperties
 import pl.allegro.experiments.chi.chiserver.domain.experiments.administration.ProlongExperimentProperties
 import pl.allegro.experiments.chi.chiserver.domain.experiments.administration.StartExperimentProperties
@@ -51,7 +51,7 @@ trait CommandActionUtils {
     }
 
     void createExperimentGroup(List<String> experimentIds, String groupId = UUID.randomUUID().toString()) {
-        def request = new ExperimentGroupCreationRequest(groupId, experimentIds)
+        def request = new AddExperimentToGroupRequest(groupId, experimentIds)
         experimentActions.createExperimentGroup(request)
     }
 

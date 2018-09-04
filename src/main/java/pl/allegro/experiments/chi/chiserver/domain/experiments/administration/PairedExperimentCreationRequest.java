@@ -11,21 +11,21 @@ public class PairedExperimentCreationRequest {
     private final ExperimentCreationRequest experimentCreationRequest;
 
     @NotNull
-    private final ExperimentGroupCreationRequest experimentGroupCreationRequest;
+    private final AddExperimentToGroupRequest addExperimentToGroupRequest;
 
     @JsonCreator
     public PairedExperimentCreationRequest(
             @JsonProperty("experimentCreationRequest") ExperimentCreationRequest experimentCreationRequest,
-            @JsonProperty("experimentGroupCreationRequest") ExperimentGroupCreationRequest experimentGroupCreationRequest) {
+            @JsonProperty("addExperimentToGroupRequest") AddExperimentToGroupRequest addExperimentToGroupRequest) {
         this.experimentCreationRequest = experimentCreationRequest;
-        this.experimentGroupCreationRequest = experimentGroupCreationRequest;
+        this.addExperimentToGroupRequest = addExperimentToGroupRequest;
     }
 
     public ExperimentCreationRequest getExperimentCreationRequest() {
         return experimentCreationRequest;
     }
 
-    public ExperimentGroupCreationRequest getExperimentGroupCreationRequest() {
-        return experimentGroupCreationRequest;
+    public AddExperimentToGroupRequest getAddExperimentToGroupRequest() {
+        return addExperimentToGroupRequest;
     }
 }

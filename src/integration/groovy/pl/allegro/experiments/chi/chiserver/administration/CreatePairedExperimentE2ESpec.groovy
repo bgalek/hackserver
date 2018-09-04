@@ -6,6 +6,7 @@ import pl.allegro.experiments.chi.chiserver.BaseE2EIntegrationSpec
 
 import static pl.allegro.experiments.chi.chiserver.utils.SampleExperimentRequests.sampleExperimentCreationRequestProperties
 
+@Deprecated
 class CreatePairedExperimentE2ESpec extends BaseE2EIntegrationSpec {
 
     def "should create paired experiment"() {
