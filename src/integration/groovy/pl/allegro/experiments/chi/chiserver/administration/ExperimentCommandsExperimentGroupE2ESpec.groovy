@@ -50,13 +50,10 @@ class ExperimentCommandsExperimentGroupE2ESpec extends BaseE2EIntegrationSpec {
     def "should set experiment as list tail when starting"() {
         given:
         def experiment1 = draftExperiment()
-        def experiment2 = startedExperiment()
+        def experiment2 = draftExperiment()
 
-        when:
         def group = createExperimentGroupAndFetch([experiment1.id, experiment2.id])
-
-        then:
-        group.experiments == [experiment1.id, experiment2.id]
+        startExperiment(experiment2.id as String, 30)
 
         when:
         startExperiment(experiment1.id as String, 30)
