@@ -8,7 +8,7 @@ class GetAllExperimentGroupE2ESpec extends BaseE2EIntegrationSpec {
         given:
         def firstExperiment = startedExperiment()
         def secondExperiment = draftExperiment()
-        def group = experimentGroup([firstExperiment.id, secondExperiment.id])
+        def group = createExperimentGroupAndFetch([firstExperiment.id, secondExperiment.id])
 
         expect:
         fetchExperimentGroup(group.id as String) == [

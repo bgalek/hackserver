@@ -46,12 +46,6 @@ trait ApiExperimentUtils implements ApiActionUtils {
         fetchExperimentGroup(groupName)
     }
 
-    Map pairedExperiment(List experimentIds, String groupId = UUID.randomUUID().toString(), Map customProperties = [:]) {
-        def properties = sampleExperimentCreationRequestProperties(customProperties)
-        createPairedExperiment(properties, experimentIds,  groupId)
-        fetchExperiment(properties.id as String)
-    }
-
     Map draftExperiment(Map customProperties = [:]) {
         def request = sampleExperimentCreationRequestProperties(customProperties)
         createExperiment(request)

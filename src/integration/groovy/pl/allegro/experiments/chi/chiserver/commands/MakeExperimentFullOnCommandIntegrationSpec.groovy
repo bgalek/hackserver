@@ -86,19 +86,4 @@ class MakeExperimentFullOnCommandIntegrationSpec extends BaseCommandIntegrationS
         and:
         !fetchExperiment(experiment.id).isFullOn()
     }
-
-    def "should not add full-on experiment to a group"() {
-        given:
-        def experiment = fullOnExperiment([variantNames: ["v1", "v2"]], "v1")
-
-        when:
-        createExperimentGroup([experiment.id, draftExperiment().id])
-
-        then:
-        def exception = thrown ExperimentCommandException
-        exception.message == "Cannot create group if one of the experiments is full-on"
-
-        and:
-        !experimentGroupRepository.experimentInGroup(experiment.id)
-    }
 }

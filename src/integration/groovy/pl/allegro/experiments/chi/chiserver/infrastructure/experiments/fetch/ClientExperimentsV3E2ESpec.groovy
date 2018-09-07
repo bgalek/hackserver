@@ -29,72 +29,154 @@ class ClientExperimentsV3E2ESpec extends BaseE2EIntegrationSpec {
         apiVersion << ['v1', 'v2']
     }
 
-    def "should return grouped experiments in client api version #description"() {
+    def "should return one grouped experiments in client api version #description"() {
         given:
         def firstExperiment = startedExperiment()
-        def secondExperiment = draftExperiment()
-
-        and:
-        createExperimentGroup([firstExperiment.id, secondExperiment.id])
-
-        and:
-        startExperiment(secondExperiment.id as String, 30)
 
         when:
+        createExperimentGroup([firstExperiment.id])
         def experiments = fetchClientExperiments(apiVersion)
 
         then:
-        experiments.find { it.id == firstExperiment.id }.variants == [
-                [
-                        name      : 'base',
-                        predicates: [
-                                [
-                                        type  : 'SHRED_HASH',
-                                        ranges: [[from: 90, to: 100]],
-                                        salt  : firstExperiment.id
-                                ]
-                        ]
-                ],
-                [
-                        name      : 'v1',
-                        predicates: [
-                                [
-                                        type  : 'SHRED_HASH',
-                                        ranges: [[from: 0, to: 10]],
-                                        salt  : firstExperiment.id
-                                ]
-                        ]
-                ]
-        ]
+        def exp1 = experiments.find { it.id == firstExperiment.id }
 
-        and:
-        experiments.find { it.id == secondExperiment.id }.variants == [
-                [
-                        name      : 'base',
-                        predicates: [
-                                [
-                                        type  : 'SHRED_HASH',
-                                        ranges: [[from: 90, to: 100]],
-                                        salt  : firstExperiment.id
-                                ]
-                        ]
-                ],
-                [
-                        name      : 'v1',
-                        predicates: [
-                                [
-                                        type  : 'SHRED_HASH',
-                                        ranges: [[from: 10, to: 20]],
-                                        salt  : firstExperiment.id
-                                ]
-                        ]
-                ]
-        ]
+        assert exp1.variants.size() == 2
+        assert exp1.status == 'ACTIVE'
+        assertShredRange(exp1, 'base', 90, 100, firstExperiment.id)
+        assertShredRange(exp1, 'v1', 0, 10, firstExperiment.id)
 
         where:
         description | apiVersion
         'v3'        | 'v3'
         'latest'    | ''
+    }
+
+    def "should render two grouped experiments in client API version #description"() {
+        given:
+        def firstExperiment = startedExperiment()
+        def secondExperiment = draftExperiment()
+
+        when:
+        createExperimentGroup([firstExperiment.id, secondExperiment.id])
+        def experiments = fetchClientExperiments(apiVersion)
+
+        then:
+        def exp1 = experiments.find { it.id == firstExperiment.id }
+
+        assert exp1.variants.size() == 2
+        assert exp1.status == 'ACTIVE'
+
+        assertShredRange(exp1, 'base', 90, 100, firstExperiment.id)
+        assertShredRange(exp1, 'v1', 0, 10, firstExperiment.id)
+
+        and:
+        def exp2 = experiments.find { it.id == secondExperiment.id }
+
+        assert exp2.variants.size() == 2
+        assert exp2.status == 'DRAFT'
+
+        assertShredRange(exp2, 'base', 90, 100, firstExperiment.id)
+        assertShredRange(exp2, 'v1', 10, 20, firstExperiment.id)
+
+        where:
+        description | apiVersion
+        'v3'        | 'v3'
+        'latest'    | ''
+    }
+
+    @Unroll
+    def "should render three grouped experiments ranges in deterministic manner in client API version #description"() {
+        given:
+        def experiment1 = startedExperiment([percentage: 5])
+        def experiment2 = draftExperiment([percentage: 10])
+        def experiment3 = draftExperiment([percentage: 20])
+        def salt = experiment1.id
+
+        when:
+        createExperimentGroup([experiment1.id, experiment2.id, experiment3.id] as List<String>)
+        def experiments = fetchClientExperiments(apiVersion)
+
+        then:
+        def exp1 = experiments.find { it.id == experiment1.id }
+        def exp2 = experiments.find { it.id == experiment2.id }
+        def exp3 = experiments.find { it.id == experiment3.id }
+
+        assert exp1.status == 'ACTIVE'
+        assert exp2.status == 'DRAFT'
+        assert exp3.status == 'DRAFT'
+
+        assertShredRange(exp1, 'base', 95, 100, salt)
+        assertShredRange(exp1, 'v1',    0,   5, salt)
+
+        assertShredRange(exp2, 'base', 90, 100, salt)
+        assertShredRange(exp2, 'v1',    5,  15, salt)
+
+        assertShredRange(exp3, 'base', 80, 100, salt)
+        assertShredRange(exp3, 'v1',    5,  25, salt)
+
+        when: 'third experiment is started'
+        startExperiment(experiment3.id as String, 30)
+        def experiments_ = fetchClientExperiments(apiVersion)
+
+        then:
+        def exp1_ = experiments_.find { it.id == experiment1.id }
+        def exp2_ = experiments_.find { it.id == experiment2.id }
+        def exp3_ = experiments_.find { it.id == experiment3.id }
+
+        assert exp1_.status == 'ACTIVE'
+        assert exp2_.status == 'DRAFT'
+        assert exp3_.status == 'ACTIVE'
+
+        assertShredRange(exp1_, 'base', 95, 100, salt)
+        assertShredRange(exp1_, 'v1',    0,   5, salt)
+
+        assertShredRange(exp2_, 'base', 90, 100, salt)
+        assertShredRange(exp2_, 'v1',    5,  15, salt)
+
+        assertShredRange(exp3_, 'base', 80, 100, salt)
+        assertShredRange(exp3_, 'v1',    5,  25, salt)
+
+        when: 'third second is started'
+        startExperiment(experiment2.id as String, 30)
+        def experiments__ = fetchClientExperiments(apiVersion)
+
+        then:
+        def exp1__ = experiments__.find { it.id == experiment1.id }
+        def exp2__ = experiments__.find { it.id == experiment2.id }
+        def exp3__ = experiments__.find { it.id == experiment3.id }
+
+        assert exp1__.status == 'ACTIVE'
+        assert exp2__.status == 'ACTIVE'
+        assert exp3__.status == 'ACTIVE'
+
+        assertShredRange(exp1__, 'base', 95, 100, salt)
+        assertShredRange(exp1__, 'v1',    0,   5, salt)
+
+        assertShredRange(exp2__, 'base', 90, 100, salt)
+        assertShredRange(exp2__, 'v1',   25,  35, salt)
+
+        assertShredRange(exp3__, 'base', 80, 100, salt)
+        assertShredRange(exp3__, 'v1',    5,  25, salt)
+
+        where:
+        description | apiVersion
+        'v3'        | 'v3'
+        'latest'    | ''
+    }
+
+
+    void assertShredRange(Map experiment, String variantName, int from, int to, String salt) {
+        def variant = experiment.variants.find {it.name == variantName}
+        assert variant == [
+                name      : variantName,
+                predicates: [
+                        [
+                                type  : 'SHRED_HASH',
+                                ranges: [[from: from, to: to]],
+                                salt  : salt
+                        ]
+                ]
+        ]
     }
 
     @Unroll
@@ -112,274 +194,5 @@ class ClientExperimentsV3E2ESpec extends BaseE2EIntegrationSpec {
 
         where:
         status << allExperimentStatusValuesExcept(DRAFT, ACTIVE, FULL_ON)
-    }
-
-    def "should not ignore DRAFT and ACTIVE experiments when rendering grouped experiments"() {
-        given:
-        def firstExperiment = startedExperiment()
-        def secondExperiment = draftExperiment()
-        createExperimentGroup([firstExperiment.id, secondExperiment.id])
-
-        when:
-        def experiments = fetchClientExperiments()
-
-        then:
-        experiments.collect {it.id}.contains(firstExperiment.id)
-        experiments.collect {it.id}.contains(secondExperiment.id)
-
-        and:
-        experiments.find { it.id == firstExperiment.id }.variants == [
-                [
-                        name      : 'base',
-                        predicates: [
-                                [
-                                        type  : 'SHRED_HASH',
-                                        ranges: [[from: 90, to: 100]],
-                                        salt  : firstExperiment.id
-                                ]
-                        ]
-                ],
-                [
-                        name      : 'v1',
-                        predicates: [
-                                [
-                                        type  : 'SHRED_HASH',
-                                        ranges: [[from: 0, to: 10]],
-                                        salt  : firstExperiment.id
-                                ]
-                        ]
-                ]
-        ]
-    }
-
-    def "should render grouped experiments ranges in deterministic manner"() {
-        given:
-        def experiment1 = startedExperiment([percentage: 5])
-        def experiment2 = draftExperiment([percentage: 10])
-        def experiment3 = draftExperiment([percentage: 20])
-        def experiment4 = draftExperiment([percentage: 15])
-
-        and:
-        def experimentIds = [experiment2.id, experiment3.id, experiment4.id, experiment1.id]
-        createExperimentGroup(experimentIds as List<String>)
-
-        and:
-        def expectedExperiment1Variants = expectedExperiment1State(experiment1.id as String)
-        def expectedExperiment2Variants = expectedExperiment2State(experiment1.id as String)
-        def expectedExperiment3Variants = expectedExperiment3State(experiment1.id as String)
-        def expectedExperiment4Variants = expectedExperiment4State(experiment1.id as String)
-
-        when:
-        def experiments = fetchClientExperiments()
-
-        then:
-        experiments.collect {it.id}.containsAll(experimentIds)
-        experiments.find {it.id == experiment1.id}.variants == expectedExperiment1Variants
-
-        when:
-        startExperiment(experiment2.id as String, 30)
-        experiments = fetchClientExperiments()
-
-        then:
-        experiments.collect {it.id}.containsAll(experimentIds)
-
-        and:
-        experiments.find {it.id == experiment1.id}.variants == expectedExperiment1Variants
-        experiments.find {it.id == experiment2.id}.variants == expectedExperiment2Variants
-
-        when:
-        startExperiment(experiment3.id as String, 30)
-        experiments = fetchClientExperiments()
-
-        then:
-        experiments.collect {it.id}.containsAll(experimentIds)
-
-        and:
-        experiments.find {it.id == experiment1.id}.variants == expectedExperiment1Variants
-        experiments.find {it.id == experiment2.id}.variants == expectedExperiment2Variants
-        experiments.find {it.id == experiment3.id}.variants == expectedExperiment3Variants
-
-        when:
-        startExperiment(experiment4.id as String, 30)
-        experiments = fetchClientExperiments()
-
-        then:
-        experiments.collect {it.id}.containsAll(experimentIds)
-
-        and:
-        experiments.find {it.id == experiment1.id}.variants == expectedExperiment1Variants
-        experiments.find {it.id == experiment2.id}.variants == expectedExperiment2Variants
-        experiments.find {it.id == experiment3.id}.variants == expectedExperiment3Variants
-        experiments.find {it.id == experiment4.id}.variants == expectedExperiment4Variants
-
-        when:
-        pauseExperiment(experiment2.id as String)
-        experiments = fetchClientExperiments()
-
-        then:
-        experimentIds.remove(experiment2.id)
-        experiments.collect {it.id}.containsAll(experimentIds)
-        !experiments.collect {it.id}.contains(experiment2.id)
-
-        and:
-        experiments.find {it.id == experiment1.id}.variants == expectedExperiment1Variants
-        experiments.find {it.id == experiment3.id}.variants == expectedExperiment3Variants
-        experiments.find {it.id == experiment4.id}.variants == expectedExperiment4Variants
-
-        when:
-        stopExperiment(experiment3.id as String)
-        experiments = fetchClientExperiments()
-
-        then:
-        experimentIds.remove(experiment3.id)
-        experiments.collect {it.id}.containsAll(experimentIds)
-        !experiments.collect {it.id}.contains(experiment2.id)
-        !experiments.collect {it.id}.contains(experiment3.id)
-
-        and:
-        experiments.find {it.id == experiment1.id}.variants == expectedExperiment1Variants
-        experiments.find {it.id == experiment4.id}.variants == expectedExperiment4Variants
-
-        when:
-        pauseExperiment(experiment1.id as String)
-        experiments = fetchClientExperiments()
-
-        then:
-        experimentIds.remove(experiment1.id)
-        experiments.collect {it.id}.containsAll(experimentIds)
-        !experiments.collect {it.id}.contains(experiment1.id)
-        !experiments.collect {it.id}.contains(experiment2.id)
-        !experiments.collect {it.id}.contains(experiment3.id)
-
-        and:
-        experiments.find {it.id == experiment4.id}.variants == expectedExperiment4Variants
-
-        when:
-        resumeExperiment(experiment1.id as String)
-        experiments = fetchClientExperiments()
-
-        then:
-        experimentIds.add(experiment1.id)
-        experiments.collect {it.id}.containsAll(experimentIds)
-        !experiments.collect {it.id}.contains(experiment2.id)
-        !experiments.collect {it.id}.contains(experiment3.id)
-
-        and:
-        experiments.find {it.id == experiment1.id}.variants == expectedExperiment1Variants
-        experiments.find {it.id == experiment4.id}.variants == expectedExperiment4Variants
-
-        when:
-        resumeExperiment(experiment2.id as String)
-        experiments = fetchClientExperiments()
-
-        then:
-        experimentIds.add(experiment2.id)
-        experiments.collect {it.id}.containsAll(experimentIds)
-        !experiments.collect {it.id}.contains(experiment3.id)
-
-        and:
-        experiments.find {it.id == experiment1.id}.variants == expectedExperiment1Variants
-        experiments.find {it.id == experiment2.id}.variants == expectedExperiment2Variants
-        experiments.find {it.id == experiment4.id}.variants == expectedExperiment4Variants
-    }
-
-    List expectedExperiment1State(String experimentId) {
-        [
-                [
-                        name      : 'base',
-                        predicates: [
-                                [
-                                        type  : 'SHRED_HASH',
-                                        ranges: [[from: 95, to: 100]],
-                                        salt  : experimentId
-                                ]
-                        ]
-                ],
-                [
-                        name      : 'v1',
-                        predicates: [
-                                [
-                                        type  : 'SHRED_HASH',
-                                        ranges: [[from: 0, to: 5]],
-                                        salt  : experimentId
-                                ]
-                        ]
-                ]
-        ]
-    }
-
-    List expectedExperiment2State(String experimentId) {
-        [
-                [
-                        name      : 'base',
-                        predicates: [
-                                [
-                                        type  : 'SHRED_HASH',
-                                        ranges: [[from: 90, to: 100]],
-                                        salt  : experimentId
-                                ]
-                        ]
-                ],
-                [
-                        name      : 'v1',
-                        predicates: [
-                                [
-                                        type  : 'SHRED_HASH',
-                                        ranges: [[from: 5, to: 15]],
-                                        salt  : experimentId
-                                ]
-                        ]
-                ]
-        ]
-    }
-
-    List expectedExperiment3State(String experimentId) {
-        [
-                [
-                        name      : 'base',
-                        predicates: [
-                                [
-                                        type  : 'SHRED_HASH',
-                                        ranges: [[from: 80, to: 100]],
-                                        salt  : experimentId
-                                ]
-                        ]
-                ],
-                [
-                        name      : 'v1',
-                        predicates: [
-                                [
-                                        type  : 'SHRED_HASH',
-                                        ranges: [[from: 15, to: 35]],
-                                        salt  : experimentId
-                                ]
-                        ]
-                ]
-        ]
-    }
-
-    List expectedExperiment4State(String experimentId) {
-        [
-                [
-                        name      : 'base',
-                        predicates: [
-                                [
-                                        type  : 'SHRED_HASH',
-                                        ranges: [[from: 85, to: 100]],
-                                        salt  : experimentId
-                                ]
-                        ]
-                ],
-                [
-                        name      : 'v1',
-                        predicates: [
-                                [
-                                        type  : 'SHRED_HASH',
-                                        ranges: [[from: 35, to: 50]],
-                                        salt  : experimentId
-                                ]
-                        ]
-                ]
-        ]
     }
 }

@@ -66,10 +66,10 @@ class ExperimentsE2ESpec extends BaseE2EIntegrationSpec {
     def "should append experiment group if experiment is in group"() {
         given:
         def experiment1 = startedExperiment()
+        def experiment2 = draftExperiment()
 
         and:
-        def groupId = UUID.randomUUID().toString()
-        def experiment2 = pairedExperiment([experiment1.id], groupId)
+        def groupId = createExperimentGroup([experiment1.id, experiment2.id])
 
         expect:
         fetchExperiment(experiment2.id as String).experimentGroup == [

@@ -50,9 +50,11 @@ trait CommandActionUtils {
         experimentActions.delete(experimentId)
     }
 
-    void createExperimentGroup(List<String> experimentIds, String groupId = UUID.randomUUID().toString()) {
-        def request = new AddExperimentToGroupRequest(groupId, experimentIds)
-        experimentActions.createExperimentGroup(request)
+    String createExperimentGroup(List<String> experimentIds, String groupId = UUID.randomUUID().toString()) {
+        experimentIds.each {
+            experimentActions.addExperimentToGroup(new AddExperimentToGroupRequest(groupId, it))
+        }
+        groupId
     }
 
     void updateExperimentEventDefinitions(String experimentId, List<EventDefinition> eventDefinitions) {

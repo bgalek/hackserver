@@ -15,7 +15,6 @@ import java.util.Objects;
 import java.util.UUID;
 
 import static java.util.stream.Collectors.toList;
-import static pl.allegro.experiments.chi.chiserver.domain.experiments.ExperimentStatus.DRAFT;
 
 public class AddExperimentToGroupCommand implements Command {
     private final ExperimentGroupRepository experimentGroupRepository;
@@ -56,18 +55,9 @@ public class AddExperimentToGroupCommand implements Command {
         experimentGroupRepository.save(experimentGroup);
     }
 
-    private void validateExperiment(ExperimentDefinition experiment) {
-        if (experimentGroupRepository.experimentInGroup(experiment.getId())) {
-            throw new ExperimentCommandException("Experiment already in another group");
-        }
-    }
-
     private ExperimentGroup addAnotherExperiment(ExperimentGroup experimentGroup, final ExperimentDefinition experiment) {
         validateEnoughPercentageSpace((List)Lists.asList(experiment.getId(),experimentGroup.getExperiments().toArray()));
-
-        if (!experiment.isDraft()) {
-            throw new ExperimentCommandException("Can't add non-draft experiment to existing group");
-        }
+        validateNextExperiment(experiment);
 
         return experimentGroup.addExperiment(experiment.getId());
     }
@@ -78,18 +68,19 @@ public class AddExperimentToGroupCommand implements Command {
         return experimentGroup;
     }
 
-    private void validateExperiments(List<ExperimentDefinition> experiments) {
-        validateGroupContainsAtLeast2Experiments(experiments);
-        validateGroupContainsMax1NonDraftExperiment(experiments);
-        validateNoExperimentIsFullOn(experiments);
+    private void validateExperiment(ExperimentDefinition experiment) {
+        if (experiment.isFullOn()) {
+            throw new ExperimentCommandException("Full-on experiment can't be added to the group");
+        }
+        if (experimentGroupRepository.experimentInGroup(experiment.getId())) {
+            throw new ExperimentCommandException("Experiment already in another group");
+        }
     }
 
-    private String getSalt(List<ExperimentDefinition> experiments) {
-        return experiments.stream()
-                .filter(it -> !it.isDraft())
-                .findFirst()
-                .map(ExperimentDefinition::getId)
-                .orElse(UUID.randomUUID().toString());
+    private void validateNextExperiment(ExperimentDefinition experiment) {
+        if (!experiment.isDraft()) {
+            throw new ExperimentCommandException("Can't add non-draft experiment to the existing group");
+        }
     }
 
     private void validateEnoughPercentageSpace(List<String> experimentIds) {
@@ -112,33 +103,6 @@ public class AddExperimentToGroupCommand implements Command {
 
         if (maxBasePercentage + percentageSum > 100) {
             throw new ExperimentCommandException("Cannot create group - there is no enough percentage space");
-        }
-    }
-
-    private void validateGroupContainsMax1NonDraftExperiment(List<ExperimentDefinition> experiments) {
-        long numberOfNonDraftExperiments = experiments.stream()
-                .filter(it -> !it.getStatus().equals(DRAFT))
-                .count();
-        if (numberOfNonDraftExperiments > 1) {
-            throw new ExperimentCommandException("Cannot create group with more than 1 active experiment");
-        }
-    }
-
-    private void validateGroupIdIsUnique(String id) {
-        if (experimentGroupRepository.exists(id)) {
-            throw new ExperimentCommandException("Provided group name is not unique");
-        }
-    }
-
-    private void validateGroupContainsAtLeast2Experiments(List<ExperimentDefinition> experiments) {
-        if (experiments.size() < 2) {
-            throw new ExperimentCommandException("Cannot create group with less than 2 experiments");
-        }
-    }
-
-    private void validateNoExperimentIsFullOn(List<ExperimentDefinition> experiments) {
-        if (experiments.stream().anyMatch(ExperimentDefinition::isFullOn)) {
-            throw new ExperimentCommandException("Cannot create group if one of the experiments is full-on");
         }
     }
 }

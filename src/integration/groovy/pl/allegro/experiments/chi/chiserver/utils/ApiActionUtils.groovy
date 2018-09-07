@@ -87,12 +87,6 @@ trait ApiActionUtils {
         post("$ADMIN_API_PATH/groups/", request)
     }
 
-    void createPairedExperiment(Map experimentRequest, List<String> experimentIds, String groupId = UUID.randomUUID().toString()) {
-        def groupRequest = [id: groupId, experiments: experimentIds + [experimentRequest.id]]
-        def request = [experimentCreationRequest: experimentRequest, experimentGroupCreationRequest: groupRequest]
-        post ("$ADMIN_API_PATH/create-paired-experiment", request)
-    }
-
     void updateExperimentEventDefinitions(String experimentId, List eventDefinitions) {
         put("$ADMIN_API_PATH/$experimentId/update-event-definitions", eventDefinitions)
     }

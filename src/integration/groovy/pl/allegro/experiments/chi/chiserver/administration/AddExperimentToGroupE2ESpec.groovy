@@ -5,6 +5,8 @@ import org.springframework.web.client.HttpClientErrorException
 import pl.allegro.experiments.chi.chiserver.BaseE2EIntegrationSpec
 import spock.lang.Unroll
 
+import static pl.allegro.experiments.chi.chiserver.domain.experiments.ExperimentStatus.*
+
 class AddExperimentToGroupE2ESpec extends BaseE2EIntegrationSpec {
 
     def "should create experiment group"() {
@@ -31,6 +33,23 @@ class AddExperimentToGroupE2ESpec extends BaseE2EIntegrationSpec {
         then:
         def exception = thrown HttpClientErrorException
         exception.statusCode == HttpStatus.BAD_REQUEST
+    }
+
+    @Unroll
+    def "should not add #status experiment to a group"() {
+        given:
+        def experiment1 = draftExperiment()
+        def experiment2 = experimentWithStatus(status)
+
+        when:
+        createExperimentGroup([experiment1.id, experiment2.id])
+
+        then:
+        def exception = thrown HttpClientErrorException
+        exception.statusCode == HttpStatus.BAD_REQUEST
+
+        where:
+        status << allExperimentStatusValuesExcept(DRAFT, ACTIVE)
     }
 
     def "should not add non-existing experiment to a group"(){
@@ -80,7 +99,7 @@ class AddExperimentToGroupE2ESpec extends BaseE2EIntegrationSpec {
         exception.statusCode == HttpStatus.BAD_REQUEST
     }
 
-    def "should set group's salt to first experiment"() {
+    def "should set group's salt to Id of the first experiment when it's active"() {
         given:
         def experiment1 = startedExperiment()
         def experiment2 = draftExperiment()
@@ -90,6 +109,20 @@ class AddExperimentToGroupE2ESpec extends BaseE2EIntegrationSpec {
 
         then:
         group.salt == experiment1.id
+    }
+
+    def "should set group's salt to random UUID when the first experiment is draft"() {
+        given:
+        def experiment1 = draftExperiment()
+        def experiment2 = draftExperiment()
+
+        when:
+        def group = createExperimentGroupAndFetch([experiment1.id, experiment2.id])
+
+        then:
+        group.salt != experiment1.id
+        group.salt != experiment2.id
+        group.salt.size() == 36
     }
 
     def "should preserve predicates after adding experiment to group"() {
