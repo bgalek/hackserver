@@ -55,7 +55,6 @@
             <experiment-custom-parameter-editing v-model="customParameter" />
 
             <experiment-variants-editing
-              :experimentToPair="groupWithExperiment"
               :allowModifyRegularVariants="true"
               v-model="variants" />
 
@@ -118,51 +117,6 @@
               </v-layout>
             </v-container>
 
-            <v-container
-              fluid style="margin: 0px; padding: 0px" text-xs-center>
-              <v-layout row align-top>
-
-                <v-flex xs1>
-                  <v-tooltip right  close-delay="1000">
-                    <span>
-                      You can create a group of mutually exclusive experiments.<br/>
-                      Experiments in group will not interfere with each other.<br/>
-                      Useful when you have many experiments in the same area of the system.<br/>
-                      <a target="_blank" style="color: aqua" href="https://rtd.allegrogroup.com/docs/chi/#grupa-eksperymentow">
-                      Read more in χ Docs</a>
-                    </span>
-                    <v-icon
-                      slot="activator">help_outline</v-icon>
-                  </v-tooltip>
-                </v-flex>
-
-                <v-flex xs11 text-xs-left>
-                  <v-switch
-                    label="Group together with another experiment"
-                    v-model="createGroupFlag"
-                  ></v-switch>
-                  <v-select
-                    v-if="createGroupFlag"
-                    id="groupWithExperiment"
-                    :items="experimentNamesThatCanBeGrouped"
-                    v-model="groupWithExperimentName"
-                    label="Group with"
-                    :rules="groupWithExperimentRules"
-                    :autocomplete="true"
-                    single-line
-                  ></v-select>
-                  <v-text-field
-                    v-if="createGroupFlag"
-                    id="experimentGroupName"
-                    v-model="experimentGroupName"
-                    label="Group name"
-                    :rules="experimentGroupIdRules"
-                  ></v-text-field>
-                </v-flex>
-
-              </v-layout>
-            </v-container>
-
             <v-btn
               id="createExperimentFormSubmitButton"
               @click="onSubmit"
@@ -177,7 +131,7 @@
 </template>
 
 <script>
-  import { mapState, mapActions } from 'vuex'
+  import { mapActions } from 'vuex'
   import ExperimentDescEditing from './experiment/ExperimentDescEditing'
   import ExperimentVariantsEditing from './experiment/ExperimentVariantsEditing'
   import ExperimentEventFilters from './experiment/ExperimentEventFilters'
@@ -190,7 +144,6 @@
   export default {
     mounted () {
       this.getExperiments()
-      this.getExperimentGroups()
     },
 
     data () {
@@ -200,13 +153,6 @@
         experimentIdRules: [
           (v) => !!v || 'Experiment ID is required',
           (v) => this.isExperimentIdUnique(v) || 'Experiment ID must be unique.'
-        ],
-        experimentGroupIdRules: [
-          (v) => this.isExperimentGroupIdUnique(v) || 'Experiment group ID must be unique.',
-          (v) => !!v || 'Experiment group ID is required'
-        ],
-        groupWithExperimentRules: [
-          (v) => !!v || 'Pick experiment you want to group together with new experiment.'
         ],
         baseVariant: baseVariant,
         experimentId: '',
@@ -218,35 +164,11 @@
         variants: {},
         reportingType: 'BACKEND',
         availableReportingTypes: ['BACKEND', 'FRONTEND', 'GTM'],
-        eventDefinitions: [],
-
-        groupWithExperiment: null,
-        groupWithExperimentName: null,
-        experimentGroupName: null,
-        createGroupFlag: false
-      }
-    },
-
-    watch: {
-      groupWithExperimentName (val) {
-        this.groupWithExperiment = this.experimentsThatCanBeGrouped.find(e => e.id === val)
-      },
-
-      createGroupFlag (val) {
-        this.groupWithExperimentName = null
+        eventDefinitions: []
       }
     },
 
     computed: {
-      ...mapState({
-        experimentNamesThatCanBeGrouped: state => state.experiments.experiments
-          .filter((e, index, array) => { return e.canBeGrouped() })
-          .map((e, index, array) => { return e.id })
-          .sort(),
-        experimentsThatCanBeGrouped: state => state.experiments.experiments
-          .filter((e, index, array) => { return e.canBeGrouped() })
-      }),
-
       showForm () {
         return !this.sendingDataToServer
       },
@@ -282,8 +204,7 @@
         this.cleanErrors()
 
         if (this.$refs.createForm.validate()) {
-          let createExperimentMethod = this.shouldBeGrouped() ? this.createGroupedExperiment : this.createExperiment
-          createExperimentMethod({data: this.getExperimentDataToSend()}).then(response => {
+          this.createExperiment({data: this.getExperimentDataToSend()}).then(response => {
             this.notSending()
             this.$router.push('/experiments/' + this.experimentIdSlug)
           }).catch(error => {
@@ -323,14 +244,6 @@
         return _.find(this.$store.state.experiments.experiments, e => e.id === this.experimentIdSlug) === undefined
       },
 
-      isExperimentGroupIdUnique () {
-        return _.find(this.$store.state.experimentGroups.experimentGroups, e => e === this.experimentGroupName) === undefined
-      },
-
-      shouldBeGrouped () {
-        return this.groupWithExperimentName != null && this.experimentGroupName != null
-      },
-
       getExperimentDataToSend () {
         let experimentCreationRequest = {
           id: this.experimentIdSlug,
@@ -348,23 +261,11 @@
           eventDefinitions: this.eventDefinitions
         }
 
-        if (this.shouldBeGrouped()) {
-          return {
-            experimentCreationRequest: experimentCreationRequest,
-            addExperimentToGroupRequest: {
-              id: this.experimentGroupName,
-              experiments: [this.experimentIdSlug, this.groupWithExperimentName]
-            }
-          }
-        } else {
-          return experimentCreationRequest
-        }
+        return experimentCreationRequest
       },
       ...mapActions([
         'createExperiment',
-        'getExperiments',
-        'createGroupedExperiment',
-        'getExperimentGroups'
+        'getExperiments'
       ])
     }
   }

@@ -67,8 +67,4 @@ public class ExperimentActions {
     public void addExperimentToGroup(AddExperimentToGroupRequest addExperimentToGroupRequest) {
         commandFactory.createAddExperimentToGroupCommand(addExperimentToGroupRequest).execute();
     }
-
-    public void createPairedExperiment(PairedExperimentCreationRequest pairedExperimentCreationRequest) {
-        commandFactory.createPairedExperimentCommand(pairedExperimentCreationRequest).execute();
-    }
 }

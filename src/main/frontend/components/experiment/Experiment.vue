@@ -226,7 +226,7 @@
           return baseClass
         }
 
-        if (baseClass === 'phone') {
+        if (baseClass && baseClass.startsWith('phone')) {
           return 'smartphone'
         }
 

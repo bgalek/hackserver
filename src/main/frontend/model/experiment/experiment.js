@@ -133,6 +133,10 @@ export default class ExperimentModel extends ExperimentRecord {
     return this.status === 'ACTIVE'
   }
 
+  canJoinAnyGroup () {
+    return this.status === 'DRAFT'
+  }
+
   canChangeVariants () {
     return !this.isEffectivelyEnded() && !this.isInGroup()
   }
@@ -151,7 +155,6 @@ export default class ExperimentModel extends ExperimentRecord {
 
   canBeGrouped () {
     return !this.isInGroup() &&
-      ['BACKEND', 'FRONTEND', 'GTM'].includes(this.reportingType) &&
       ['DRAFT', 'ACTIVE', 'PAUSED'].includes(this.status)
   }
 

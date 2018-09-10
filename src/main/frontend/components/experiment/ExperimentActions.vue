@@ -202,6 +202,36 @@
           </v-list>
         </v-menu>
 
+        <v-menu :close-on-content-click="false"
+                v-model="addToGroupMenuVisible"
+                v-if="this.experiment.canBeGrouped()">
+
+          <v-btn color="gray" slot="activator" style="text-transform: none"
+                 @click="loadExprimentGroups">
+            Group
+            <v-icon right>group_add</v-icon>
+          </v-btn>
+
+          <v-list style="padding:15px; display: block;">
+            <experiment-add-to-group-editing style="margin-bottom: 60px"
+              v-if="loadingExperimentGroupsDone"
+              :experiment="experiment"
+              :experimentGroupNames="experimentGroups"
+              v-model="addExperimentToGroupName"
+            ></experiment-add-to-group-editing>
+
+            <v-btn flat @click="closeAddToGroup()">Cancel</v-btn>
+
+            <v-btn color="gray"
+                   @click="addToGroup"
+                   :disabled="!addToGroupEnabled()"
+                   style="text-transform: none">
+              Add experiment &nbsp; <b>{{ this.experiment.id }}</b>&nbsp; to group &nbsp; <b>{{ this.addExperimentToGroupName}}</b>
+            </v-btn>
+
+          </v-list>
+        </v-menu>
+
         <v-menu bottom offset-y
                 v-if="this.allowDelete">
           <v-btn color="red" slot="activator" class="white--text" style="text-transform: none">
@@ -222,16 +252,18 @@
 
 <script>
   import ExperimentDescEditing from './ExperimentDescEditing.vue'
+  import ExperimentAddToGroupEditing from './ExperimentAddToGroupEditing.vue'
   import ExperimentVariantsEditing from './ExperimentVariantsEditing.vue'
   import ExperimentEventFilters from './ExperimentEventFilters'
   import ChiPanel from '../ChiPanel.vue'
-  import {mapActions} from 'vuex'
+  import {mapState, mapActions} from 'vuex'
   import {slugify} from '../../utils/slugify'
 
   export default {
     props: ['experiment', 'allowDelete'],
 
     components: {
+      ExperimentAddToGroupEditing,
       ChiPanel,
       ExperimentDescEditing,
       ExperimentVariantsEditing,
@@ -247,6 +279,7 @@
         variantsEditingResult: {},
         eventDefinitionsEditingResult: this.experiment.eventDefinitions.toArray(),
         prolongMenuVisible: false,
+        addToGroupMenuVisible: false,
         fullOnMenuVisible: false,
         commandOkMessage: '',
         actionFormValid: true,
@@ -259,10 +292,18 @@
           (v) => v <= 60 || 'more than 60 days? Seems like a long time...',
           (v) => v > 0 || 'try with a positive value'
         ],
+        addExperimentToGroupName: null,
+        loadingExperimentGroupsDone: false,
         sendingDataToServer: false,
         errors: []
       }
     },
+
+    computed: mapState({
+      experimentGroups (state) {
+        return state.experimentGroups.experimentGroups || { }
+      }
+    }),
 
     methods: {
       canRunLifecycleCommand () {
@@ -375,6 +416,10 @@
         this.prolongMenuVisible = false
       },
 
+      closeAddToGroup () {
+        this.addToGroupMenuVisible = false
+      },
+
       allVariantNames () {
         const variantNames = this.experiment.variantNames
         const internalVariantName = this.experiment.internalVariantName
@@ -441,6 +486,10 @@
           JSON.stringify(this.variantsEditingResult.variantNames) !== JSON.stringify(this.experiment.variantNames) ||
           slugify(this.variantsEditingResult.internalVariantName) !== slugify(this.experiment.internalVariantName) ||
           (this.variantsEditingResult.deviceClass || 'all') !== (this.experiment.deviceClass || 'all')
+      },
+
+      addToGroupEnabled () {
+        return this.addExperimentToGroupName
       },
 
       updateVariants () {
@@ -516,6 +565,33 @@
         }
       },
 
+      addToGroup () {
+        if (this.$refs.actionForm.validate()) {
+          this.closeAddToGroup()
+          this.prepareToSend()
+
+          this.addExperimentToGroup({
+            data: {
+              experimentId: this.experiment.id,
+              id: this.addExperimentToGroupName
+            }
+          }).then(response => {
+            this.getExperiment({params: {experimentId: this.experiment.id}})
+            this.commandOkMessage = 'Experiment successfully added to group ' + this.addExperimentToGroupName
+          }).catch(error => {
+            this.showError(error)
+          })
+
+          this.afterSending()
+        }
+      },
+
+      loadExprimentGroups () {
+        this.getExperimentGroups().then(() => {
+          this.loadingExperimentGroupsDone = true
+        })
+      },
+
       showError (error) {
         this.errors.push(JSON.stringify(error))
       },
@@ -545,7 +621,9 @@
         'prolongExperiment',
         'updateExperimentDescriptions',
         'updateExperimentVariants',
-        'updateExperimentEventDefinitions'
+        'updateExperimentEventDefinitions',
+        'addExperimentToGroup',
+        'getExperimentGroups'
       ])
     }
   }
