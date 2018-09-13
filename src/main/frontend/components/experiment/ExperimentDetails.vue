@@ -119,10 +119,10 @@
 
       <v-flex xs7 v-if="experiment.eventDefinitionsAvailable()">
         <h3>NGA event definitions</h3>
-        <experiment-event-filters
-          :readOnly="true"
-          :initData="eventDefinitions">
-        </experiment-event-filters>
+        <experiment-event-filters-editing
+          :experiment="experiment"
+          :readOnly="true">
+        </experiment-event-filters-editing>
 
       </v-flex>
     </v-layout>
@@ -133,18 +133,18 @@
 <script>
   import ChiPanel from '../ChiPanel'
   import ExperimentStatus from './ExperimentStatus'
-  import ExperimentEventFilters from './ExperimentEventFilters'
   import ExperimentGroupInfo from './ExperimentGroupInfo'
+  import ExperimentEventFiltersEditing from './ExperimentEventFiltersEditing'
   import _ from 'lodash'
 
   export default {
-    props: ['experiment', 'eventDefinitions'],
+    props: ['experiment'],
 
     components: {
+      ExperimentEventFiltersEditing,
       ExperimentGroupInfo,
       ExperimentStatus,
-      ChiPanel,
-      ExperimentEventFilters
+      ChiPanel
     },
 
     methods: {

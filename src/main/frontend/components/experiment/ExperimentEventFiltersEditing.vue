@@ -79,18 +79,45 @@
 
         </template>
       </v-data-table>
+
+      <v-layout row align-center v-if="showButtons">
+        <v-flex>
+          <v-btn flat @click="closeEventDefinitions">Cancel</v-btn>
+        </v-flex>
+
+        <v-flex>
+          <v-btn color="gray"
+                 :disabled="!eventDefinitionsChanged() || !this.eventDefinitionValid"
+                 @click="updateEventDefinitions"
+                 style="text-transform: none">
+            Update NGA event definitions of &nbsp;<b>{{ this.experiment.id }}</b>
+          </v-btn>
+        </v-flex>
+      </v-layout>
     </div>
 </template>
 
 <script>
   import {startsOrEndsWithSpace} from '../../utils/startsOrEndsWithSpace'
+  import { Record, List } from 'immutable'
+
+  const EventDefinitionRecord = Record({
+    boxName: '',
+    category: '',
+    label: '',
+    action: '',
+    value: ''
+  })
 
   export default {
-    props: ['readOnly', 'initData'],
+    props: ['readOnly', 'experiment', 'showButtons'],
 
     data () {
-      const initial = this.initData || []
+      const initialValue = this.init(this.experiment)
+
       return {
+        givenValue: this.buildResult(initialValue),
+        items: initialValue,
         eventDefinitionValid: true,
         editing: false,
         editedItem: {},
@@ -109,7 +136,6 @@
           { text: 'Action', value: 'action', align: 'left', sortable: false },
           { text: 'Value', value: 'value', align: 'left', sortable: false }
         ],
-        items: initial,
         filterRules: [
           (v) => this.containsNo(v, '*') || 'no *',
           (v) => this.containsNo(v, '?') || 'no ?',
@@ -124,12 +150,26 @@
     },
 
     watch: {
-      initData (newValue) {
-        this.items = newValue
+      items: {
+        handler: function (newValue) {
+          console.log("watch")
+          if (this.validate()) {
+            this.$emit('input', this.buildResultFromValue())
+          }
+        },
+        deep: true
       }
     },
 
     methods: {
+      init (experiment) {
+        if (!experiment || !experiment.eventDefinitions) {
+          return []
+        }
+
+        return experiment.eventDefinitions.toArray()
+      },
+
       containsNo (str, char) {
         if (!str) {
           return true
@@ -166,7 +206,6 @@
       deleteItem (item) {
         const index = this.items.indexOf(item)
         this.items.splice(index, 1)
-        this.$emit('eventDefinitionsChanged', this.items)
       },
 
       saveEditing () {
@@ -177,8 +216,44 @@
             this.items.push(this.editedItem)
           }
           this.close()
-          this.$emit('eventDefinitionsChanged', this.items)
         }
+      },
+
+      validate () {
+        return this.$refs.eventDefinitionForm.validate()
+      },
+
+      buildResult (value) {
+        if (!value) {
+          return List()
+        }
+
+        return List(value.map(item => new EventDefinitionRecord({
+          boxName: item.boxName,
+          category: item.category,
+          label: item.label,
+          action: item.action,
+          value: item.value
+        })))
+      },
+
+      buildResultFromValue () {
+        return this.buildResult(this.items)
+      },
+
+      updateEventDefinitions () {
+        const newValue = this.buildResultFromValue()
+        this.givenValue = newValue
+        this.$emit('updateEventDefinitions', newValue)
+      },
+
+      closeEventDefinitions () {
+        this.value = this.init(this.experiment)
+        this.$emit('closeEventDefinitions')
+      },
+
+      eventDefinitionsChanged () {
+        return !this.givenValue.equals(this.buildResultFromValue())
       }
     }
   }

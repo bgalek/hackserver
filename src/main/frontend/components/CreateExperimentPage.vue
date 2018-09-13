@@ -110,10 +110,9 @@
                   </v-tooltip>
                 </v-flex>
                 <v-flex xs11 text-xs-left>
-                  <experiment-event-filters
-                    v-on:eventDefinitionsChanged="onEventDefinitionsChanged"
-                    :read-only="false">
-                  </experiment-event-filters>
+                  <experiment-event-filters-editing
+                    v-model="eventDefinitions">
+                  </experiment-event-filters-editing>
                 </v-flex>
 
               </v-layout>
@@ -135,11 +134,10 @@
 <script>
   import { mapActions } from 'vuex'
   import ExperimentDescEditing from './experiment/ExperimentDescEditing'
-  import ExperimentVariantsEditing from './experiment/ExperimentVariantsEditing'
-  import ExperimentEventFilters from './experiment/ExperimentEventFilters'
+  import ExperimentVariantsEditing from './experiment/ExperimentVariantsEditing.vue'
+  import ExperimentEventFiltersEditing from './experiment/ExperimentEventFiltersEditing'
   import { slugify } from '../utils/slugify'
   import _ from 'lodash'
-
   import ChiPanel from './ChiPanel.vue'
   import ExperimentCustomParameterEditing from './experiment/ExperimentCustomParameterEditing'
 
@@ -192,15 +190,11 @@
       ChiPanel,
       ExperimentDescEditing,
       ExperimentVariantsEditing,
-      ExperimentEventFilters,
+      ExperimentEventFiltersEditing,
       ExperimentCustomParameterEditing
     },
 
     methods: {
-      onEventDefinitionsChanged (newEventDefinitions) {
-        this.eventDefinitions = JSON.parse(JSON.stringify(newEventDefinitions))
-      },
-
       onSubmit () {
         this.sending()
         this.cleanErrors()

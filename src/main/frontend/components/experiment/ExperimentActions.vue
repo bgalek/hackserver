@@ -177,17 +177,12 @@
           </v-btn>
 
           <v-list style="padding:15px; display: block;">
-            <experiment-event-filters
-              :readOnly="false"
-              :initData="eventDefinitionsEditingResult">
-            </experiment-event-filters>
-
-            <v-btn flat @click="closeEventDefinitions()">Cancel</v-btn>
-            <v-btn color="gray"
-                   @click="updateEventDefinitions"
-                   style="text-transform: none">
-              Update NGA event definitions of &nbsp;<b>{{ this.experiment.id }}</b>
-            </v-btn>
+            <experiment-event-filters-editing
+              :experiment="experiment"
+              :showButtons="true"
+              @updateEventDefinitions="updateEventDefinitions"
+              @closeEventDefinitions="closeEventDefinitions">
+            </experiment-event-filters-editing>
           </v-list>
         </v-menu>
 
@@ -243,10 +238,9 @@
   import ExperimentDescEditing from './ExperimentDescEditing.vue'
   import ExperimentAddToGroupEditing from './ExperimentAddToGroupEditing.vue'
   import ExperimentVariantsEditing from './ExperimentVariantsEditing.vue'
-  import ExperimentEventFilters from './ExperimentEventFilters'
+  import ExperimentEventFiltersEditing from './ExperimentEventFiltersEditing'
   import ChiPanel from '../ChiPanel.vue'
   import {mapState, mapActions} from 'vuex'
-  import {slugify} from '../../utils/slugify'
 
   export default {
     props: ['experiment', 'allowDelete'],
@@ -256,7 +250,7 @@
       ChiPanel,
       ExperimentDescEditing,
       ExperimentVariantsEditing,
-      ExperimentEventFilters
+      ExperimentEventFiltersEditing
     },
 
     data () {
@@ -264,7 +258,6 @@
         descriptionsMenuVisible: false,
         variantsMenuVisible: false,
         eventDefinitionsMenuVisible: false,
-        eventDefinitionsEditingResult: this.experiment.eventDefinitions.toArray(),
         prolongMenuVisible: false,
         addToGroupMenuVisible: false,
         fullOnMenuVisible: false,
@@ -348,13 +341,13 @@
           params: {experimentId: this.experiment.id},
           data: {variantName: this.selectedFullOnVariant}
         }).then(response => {
-          this.afterSending()
           this.getExperiment({params: {experimentId: this.experiment.id}})
           this.commandOkMessage = 'Experiment made full-on'
         }).catch(error => {
-          this.afterSending()
           this.showError(error)
         })
+
+        this.afterSending()
       },
 
       stop () {
@@ -362,13 +355,13 @@
         this.stopExperiment({
           params: {experimentId: this.experiment.id}
         }).then(response => {
-          this.afterSending()
           this.getExperiment({params: {experimentId: this.experiment.id}})
           this.commandOkMessage = 'Experiment successfully stopped'
         }).catch(error => {
-          this.afterSending()
           this.showError(error)
         })
+
+        this.afterSending()
       },
 
       pause () {
@@ -376,13 +369,13 @@
         this.pauseExperiment({
           params: {experimentId: this.experiment.id}
         }).then(response => {
-          this.afterSending()
           this.getExperiment({params: {experimentId: this.experiment.id}})
           this.commandOkMessage = 'Experiment successfully paused'
         }).catch(error => {
-          this.afterSending()
           this.showError(error)
         })
+
+        this.afterSending()
       },
 
       resume () {
@@ -390,13 +383,13 @@
         this.resumeExperiment({
           params: {experimentId: this.experiment.id}
         }).then(response => {
-          this.afterSending()
           this.getExperiment({params: {experimentId: this.experiment.id}})
           this.commandOkMessage = 'Experiment successfully resumed'
         }).catch(error => {
-          this.afterSending()
           this.showError(error)
         })
+
+        this.afterSending()
       },
 
       closeProlong () {
@@ -482,24 +475,23 @@
         }
       },
 
-      updateEventDefinitions () {
+      updateEventDefinitions (eventDefinitionsEditingResult) {
         if (this.$refs.actionForm.validate()) {
           this.closeEventDefinitions()
           this.prepareToSend()
           this.updateExperimentEventDefinitions({
-            data: this.eventDefinitionsEditingResult,
+            data: eventDefinitionsEditingResult,
             params: {
               experimentId: this.experiment.id
             }
           }).then(response => {
-            this.afterSending()
             this.getExperiment({params: {experimentId: this.experiment.id}})
             this.commandOkMessage = 'Experiment successfully updated'
           }).catch(error => {
-            this.afterSending()
             this.showError(error)
           })
 
+          this.afterSending()
           this.closeEventDefinitions()
         }
       },
