@@ -75,7 +75,6 @@
           </v-flex>
       </v-layout>
 
-      {{this.showButtons}}
       <v-layout row align-center v-if="showButtons">
           <v-flex>
             <v-btn flat
@@ -134,11 +133,10 @@
 
     watch: {
       value: {
-        handler: function(newValue) {
-          this.$emit('input', {
-            result: this.buildResultFromValue(),
-            valid: this.$refs.descEditingForm.validate()
-          })
+        handler: function (newValue) {
+          if (this.validate()) {
+            this.$emit('input', this.buildResultFromValue())
+          }
         },
         deep: true
       }
@@ -151,7 +149,12 @@
           description: experiment && experiment.description,
           groups: experiment && Array.from(experiment.groups)
         }
+        this.$emit('input', this.buildResult(value))
         return value
+      },
+
+      validate () {
+        return this.$refs.descEditingForm.validate()
       },
 
       getExpId () {
@@ -180,7 +183,9 @@
       },
 
       updateDescriptions () {
-        this.$emit('updateDescriptions', this.buildResultFromValue())
+        const newValue = this.buildResultFromValue()
+        this.givenValue = newValue
+        this.$emit('updateDescriptions', newValue)
       },
 
       closeDescriptions () {
@@ -190,7 +195,7 @@
 
       descriptionsChanged () {
         return !this.givenValue.equals(this.buildResultFromValue())
-      },
+      }
     }
   }
 </script>

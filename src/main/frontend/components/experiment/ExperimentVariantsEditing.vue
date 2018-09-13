@@ -1,5 +1,6 @@
 <template>
   <v-form ref="variantsEditingForm" v-model="formValid">
+
     <v-container fluid style="margin: 0px; padding: 0px" text-xs-center>
       <v-layout row align-center>
 
@@ -102,6 +103,21 @@
 
       </v-layout>
 
+      <v-layout row align-center v-if="showButtons">
+        <v-flex>
+          <v-btn flat @click="closeVariants()">Cancel</v-btn>
+        </v-flex>
+
+        <v-flex>
+        <v-btn color="gray"
+               :disabled="!variantsChanged() || !this.formValid"
+               @click="updateVariants"
+               style="text-transform: none">
+          Update variants of &nbsp;<b>{{ this.experiment.id }}</b>
+        </v-btn>
+        </v-flex>
+      </v-layout>
+
     </v-container>
 
   </v-form>
@@ -117,13 +133,14 @@
     variantNames: List(),
     percentage: 0,
     internalVariantName: '',
-    slugifiedInternalVariantName: '',
     deviceClass: ''
   })
 
   export default {
     props: {
       experiment: {},
+
+      showButtons: false,
 
       allowModifyRegularVariants: {
         default: false,
@@ -159,18 +176,22 @@
           variantNames: (experiment && Array.from(experiment.variantNames)) || ['base'],
           percentage: (experiment && experiment.percentage) || 1,
           internalVariantName: experiment && experiment.internalVariantName,
-          slugifiedInternalVariantName: experiment && this.slugify(experiment.internalVariantName),
+          slugifiedInternalVariantName: experiment && slugify(experiment.internalVariantName),
           deviceClass: (experiment && experiment.deviceClass) || 'all'
         }
+        this.$emit('input', this.buildResult(value))
         return value
+      },
+
+      validate () {
+        return this.$refs.variantsEditingForm.validate()
       },
 
       buildResult (value) {
         return new ExperimentVariantsEditingRecord({
           variantNames: value.variantNames,
           percentage: value.percentage,
-          internalVariantName: value.internalVariantName,
-          slugifiedInternalVariantName: value.internalVariantName,
+          internalVariantName: slugify(value.internalVariantName),
           deviceClass: value.deviceClass
         })
       },
@@ -214,7 +235,7 @@
       },
 
       internalVariantSet () {
-        const slugified = this.slugify(this.value.internalVariantName)
+        const slugified = slugify(this.value.internalVariantName)
         return !!slugified && slugified !== ''
       },
 
@@ -222,16 +243,31 @@
         return variantName === this.baseVariant || this.allowModifyRegularVariants === false
       },
 
-      slugify (str) {
-        return slugify(str)
-      },
-
       onInternalVariantNameChange (event) {
-        this.value.slugifiedInternalVariantName = this.slugify(event)
+        this.value.slugifiedInternalVariantName = slugify(event)
       },
 
       computeMaxPercentagePerVariant (numberOfVariants) {
-          return 100 / numberOfVariants
+        return 100 / numberOfVariants
+      },
+
+      updateVariants () {
+        const newValue = this.buildResultFromValue()
+        this.givenValue = newValue
+        this.$emit('updateVariants', newValue)
+      },
+
+      closeVariants () {
+        this.value = this.init(this.experiment)
+        this.$emit('closeVariants')
+      },
+
+      variantsChanged () {
+        return !this.givenValue.equals(this.buildResultFromValue())
+      },
+
+      slugify (value) {
+        return slugify(value)
       }
     },
 
@@ -241,10 +277,9 @@
           this.maxPercentPerVariant = Math.floor(this.computeMaxPercentagePerVariant(newValue.variantNames.length))
           this.blockPercentageSlider = this.shouldBlockPercentageSlider(newValue)
 
-          this.$emit('input', {
-            result: this.buildResultFromValue(),
-            valid: this.$refs.variantsEditingForm.validate()
-          })
+          if (this.validate()) {
+            this.$emit('input', this.buildResultFromValue())
+          }
         },
 
         deep: true
@@ -258,3 +293,5 @@
     }
   }
 </script>
+
+

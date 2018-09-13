@@ -68,7 +68,7 @@
         return cookieBakerLink(experimentId, variantName, preserveOther)
       },
 
-      distinctVariants() {
+      distinctVariants () {
         return this.experiment.variants
       }
     }

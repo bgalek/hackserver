@@ -159,17 +159,11 @@
 
           <v-list style="padding:15px; display: block;">
             <experiment-variants-editing :experiment="experiment"
+                                         show-buttons="true"
+                                         @updateVariants="updateVariants"
+                                         @closeVariants="closeVariants"
                                          :allowModifyRegularVariants="false"
-                                         v-model="variantsEditingResult"
             ></experiment-variants-editing>
-
-            <v-btn flat @click="closeVariants()">Cancel</v-btn>
-            <v-btn color="gray"
-                   :disabled="!variantsChanged()"
-                   @click="updateVariants"
-                   style="text-transform: none">
-              Update variants of &nbsp;<b>{{ this.experiment.id }}</b>
-            </v-btn>
           </v-list>
         </v-menu>
 
@@ -270,7 +264,6 @@
         descriptionsMenuVisible: false,
         variantsMenuVisible: false,
         eventDefinitionsMenuVisible: false,
-        variantsEditingResult: {},
         eventDefinitionsEditingResult: this.experiment.eventDefinitions.toArray(),
         prolongMenuVisible: false,
         addToGroupMenuVisible: false,
@@ -452,7 +445,7 @@
         }
       },
 
-      closeDescriptions() {
+      closeDescriptions () {
         this.descriptionsMenuVisible = false
       },
 
@@ -464,41 +457,27 @@
         this.eventDefinitionsMenuVisible = false
       },
 
-      variantsChanged () {
-        return this.variantsEditingResult.percentage !== this.experiment.percentage ||
-          JSON.stringify(this.variantsEditingResult.variantNames) !== JSON.stringify(this.experiment.variantNames) ||
-          slugify(this.variantsEditingResult.internalVariantName) !== slugify(this.experiment.internalVariantName) ||
-          (this.variantsEditingResult.deviceClass || 'all') !== (this.experiment.deviceClass || 'all')
-      },
-
       addToGroupEnabled () {
         return this.addExperimentToGroupName
       },
 
-      updateVariants () {
+      updateVariants (variantsEditingResult) {
         if (this.$refs.actionForm.validate()) {
-          this.closeVariants()
           this.prepareToSend()
-          this.variantsEditingResult.internalVariantName = this.variantsEditingResult.internalVariantName !== '' ? this.variantsEditingResult.slugifiedInternalVariantName : null
+
           this.updateExperimentVariants({
-            data: {
-              percentage: this.variantsEditingResult.percentage,
-              variantNames: this.variantsEditingResult.variantNames,
-              internalVariantName: this.variantsEditingResult.internalVariantName,
-              deviceClass: this.variantsEditingResult.deviceClass !== 'all' ? this.variantsEditingResult.deviceClass : null
-            },
+            data: variantsEditingResult,
             params: {
               experimentId: this.experiment.id
             }
           }).then(response => {
-            this.afterSending()
             this.getExperiment({params: {experimentId: this.experiment.id}})
             this.commandOkMessage = 'Experiment successfully updated'
           }).catch(error => {
-            this.afterSending()
             this.showError(error)
           })
 
+          this.afterSending()
           this.closeVariants()
         }
       },

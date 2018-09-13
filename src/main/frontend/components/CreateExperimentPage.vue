@@ -50,12 +50,14 @@
               </v-layout>
             </v-container>
 
-            <experiment-desc-editing v-model="descriptions"
-            />
+            <experiment-desc-editing ref="experimentDescEditing"
+                                     v-model="descriptions"/>
 
-            <experiment-custom-parameter-editing v-model="customParameter" />
+            <experiment-custom-parameter-editing ref="experimentCustomParamEditing"
+                                                 v-model="customParameter" />
 
             <experiment-variants-editing v-model="variants"
+                                         ref="experimentVariantsEditing"
                                          :allowModifyRegularVariants="true"/>
 
             <v-container fluid style="margin: 0px; padding: 0px" text-xs-center>
@@ -182,7 +184,7 @@
       },
 
       slugifiedVariants () {
-        return _.map(this.variants.result.variantNames, v => slugify(v))
+        return _.map(this.variants.variantNames, v => slugify(v))
       }
     },
 
@@ -221,18 +223,11 @@
       },
 
       validate () {
-        const descriptionsValid = !this.descriptions || this.descriptions.valid
-        const variantsValid = this.variants === null ? false : this.variants.valid
+        // this.$refs.experimentCustomParamEditing.validate()
+        const descValid = this.$refs.experimentDescEditing.validate()
+        const variantsValid = this.$refs.experimentVariantsEditing.validate()
 
-        console.log('this.descriptions',this.descriptions)
-        console.log('this.variants',this.variants)
-
-        console.log('variantsValid',variantsValid)
-        console.log('descriptionsValid',descriptionsValid)
-
-        return this.$refs.createForm.validate() &&
-               descriptionsValid &&
-               variantsValid
+        return this.$refs.createForm.validate() && descValid && variantsValid
       },
 
       setPermissionsError () {
@@ -262,16 +257,16 @@
       getExperimentDataToSend () {
         let experimentCreationRequest = {
           id: this.experimentIdSlug,
-          description: this.descriptions.result.description,
-          documentLink: this.descriptions.result.documentLink,
+          description: this.descriptions.description,
+          documentLink: this.descriptions.documentLink,
           customParameterName: this.customParameter.name,
           customParameterValue: this.customParameter.value,
-          groups: this.descriptions.result.groups,
+          groups: this.descriptions.groups,
           reportingEnabled: this.reportingEnabled,
           variantNames: this.slugifiedVariants,
-          internalVariantName: this.variants.result.internalVariantName !== '' ? this.variants.result.slugifiedInternalVariantName : null,
-          deviceClass: this.variants.result.deviceClass !== 'all' ? this.variants.result.deviceClass : null,
-          percentage: this.variants.result.percentage,
+          internalVariantName: this.variants.internalVariantName !== '' ? this.variants.slugifiedInternalVariantName : null,
+          deviceClass: this.variants.deviceClass !== 'all' ? this.variants.deviceClass : null,
+          percentage: this.variants.percentage,
           reportingType: this.reportingType,
           eventDefinitions: this.eventDefinitions
         }
