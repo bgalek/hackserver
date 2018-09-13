@@ -1,5 +1,5 @@
 <template>
-  <v-form>
+  <v-form ref="variantsEditingForm" v-model="formValid">
     <v-container fluid style="margin: 0px; padding: 0px" text-xs-center>
       <v-layout row align-center>
 
@@ -17,14 +17,14 @@
       <v-layout row align-center>
 
         <v-flex offset-xs1>
-          <v-select
+          <v-combobox
+            multiple
             id="experimentVariants"
             label="Variants"
             :rules="variantsRules"
             :readonly="!allowModifyRegularVariants"
             chips
             append-icon=""
-            tags
             v-model="value.variantNames">
             <template slot="selection" slot-scope="data">
 
@@ -44,7 +44,7 @@
               </v-chip>
 
             </template>
-          </v-select>
+          </v-combobox>
         </v-flex>
 
       </v-layout>
@@ -111,11 +111,18 @@
   import _ from 'lodash'
   import { slugify } from '../../utils/slugify'
   import { startsOrEndsWithSpace } from '../../utils/startsOrEndsWithSpace'
+  import { Record, List } from 'immutable'
+
+  const ExperimentVariantsEditingRecord = Record({
+    variantNames: List(),
+    percentage: 0,
+    internalVariantName: '',
+    slugifiedInternalVariantName: '',
+    deviceClass: ''
+  })
 
   export default {
     props: {
-      experimentToPair: {},
-
       experiment: {},
 
       allowModifyRegularVariants: {
@@ -125,12 +132,13 @@
     },
 
     data () {
-      const baseVariant = 'base'
       const initialValue = this.init(this.experiment)
       return {
+        givenValue: this.buildResult(initialValue),
         value: initialValue,
+        formValid: true,
         deviceClasses: ['all', 'phone', 'phone-android', 'phone-iphone', 'desktop'],
-        baseVariant: baseVariant,
+        baseVariant: 'base',
         variantsRules: [
           (v) => this.baseVariantPresent() || 'base variant is mandatory',
           (v) => this.variantsUnique() || 'Slugified variant names must be unique.',
@@ -154,8 +162,21 @@
           slugifiedInternalVariantName: experiment && this.slugify(experiment.internalVariantName),
           deviceClass: (experiment && experiment.deviceClass) || 'all'
         }
-        this.$emit('input', value)
         return value
+      },
+
+      buildResult (value) {
+        return new ExperimentVariantsEditingRecord({
+          variantNames: value.variantNames,
+          percentage: value.percentage,
+          internalVariantName: value.internalVariantName,
+          slugifiedInternalVariantName: value.internalVariantName,
+          deviceClass: value.deviceClass
+        })
+      },
+
+      buildResultFromValue () {
+        return this.buildResult(this.value)
       },
 
       shouldBlockPercentageSlider (value) {
@@ -163,10 +184,6 @@
           return true
         }
         return value.variantNames.length <= 1
-      },
-
-      inputEntered () {
-        this.$emit('input', this.value)
       },
 
       variantsUnique () {
@@ -180,8 +197,7 @@
 
       removeVariantName (variantName) {
         const i = this.value.variantNames.indexOf(variantName)
-        this.value.variantNames = this.value.variantNames.splice(i, 1)
-        this.inputEntered()
+        this.value.variantNames.splice(i, 1)
       },
 
       remove (arrayName, toRemove) {
@@ -214,29 +230,21 @@
         this.value.slugifiedInternalVariantName = this.slugify(event)
       },
 
-      computeMaxPercentagePerVariant (experimentToPair, numberOfVariants) {
-        if (experimentToPair) {
-          let percentageLeft = 100 - (experimentToPair.variants.length - 1) * experimentToPair.percentage
-          if (percentageLeft / numberOfVariants >= experimentToPair.percentage) {
-            return percentageLeft / numberOfVariants
-          } else {
-            return (100 - (experimentToPair.variants.length) * experimentToPair.percentage) / (numberOfVariants - 1)
-          }
-        } else {
+      computeMaxPercentagePerVariant (numberOfVariants) {
           return 100 / numberOfVariants
-        }
       }
     },
 
     watch: {
-      experimentToPair (newExperimentToPair) {
-        this.maxPercentPerVariant = Math.floor(this.computeMaxPercentagePerVariant(newExperimentToPair, this.value.variantNames.length))
-      },
-
       value: {
         handler (newValue) {
-          this.maxPercentPerVariant = Math.floor(this.computeMaxPercentagePerVariant(this.experimentToPair, newValue.variantNames.length))
+          this.maxPercentPerVariant = Math.floor(this.computeMaxPercentagePerVariant(newValue.variantNames.length))
           this.blockPercentageSlider = this.shouldBlockPercentageSlider(newValue)
+
+          this.$emit('input', {
+            result: this.buildResultFromValue(),
+            valid: this.$refs.variantsEditingForm.validate()
+          })
         },
 
         deep: true
@@ -247,8 +255,6 @@
       slugifiedVariants () {
         return _.map(this.value.variantNames, v => slugify(v))
       }
-
     }
-
   }
 </script>

@@ -158,26 +158,6 @@ public class CommandFactory {
         );
     }
 
-    Command createPairedExperimentCommand(
-            PairedExperimentCreationRequest pairedExperimentCreationRequest) {
-        return new CreatePairedExperimentCommand(
-                new CreateExperimentCommand(
-                        experimentsRepository,
-                        userProvider,
-                        pairedExperimentCreationRequest.getExperimentCreationRequest()),
-                new AddExperimentToGroupCommand(
-                        experimentGroupRepository,
-                        userProvider,
-                        pairedExperimentCreationRequest.getAddExperimentToGroupRequest(),
-                        permissionsAwareExperimentRepository),
-                new DeleteExperimentCommand(
-                        experimentsRepository,
-                        permissionsAwareExperimentRepository,
-                        pairedExperimentCreationRequest.getExperimentCreationRequest().getId(),
-                        statisticsRepository,
-                        experimentGroupRepository));
-    }
-
     Command makeExperimentFullOnCommand(
             String experimentId,
             MakeExperimentFullOnProperties properties) {

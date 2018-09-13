@@ -1,5 +1,5 @@
 <template>
-  <v-form>
+  <v-form ref="customParameterForm">
     <v-container fluid style="margin: 0px; padding: 0px" text-xs-center>
 
       <v-layout row align-center>

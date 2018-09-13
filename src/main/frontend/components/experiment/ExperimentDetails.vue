@@ -5,27 +5,30 @@
         <h3>Description</h3>
         {{ experiment.description || '-'}}
 
-      <h3>Experiment group
-      <v-tooltip right  close-delay="1000">
-          <span>
-              <a target="_blank" style="color: aqua" href="https://rtd.allegrogroup.com/docs/chi/#grupa-eksperymentow">
-               Read about groups in χ Docs</a>
-          </span>
-        <v-icon slot="activator">help_outline</v-icon>
-      </v-tooltip>
-      </h3>
-      {{experiment.experimentGroup || '-'}}
-
-      <h3>Documentation link</h3>
+      <h3 class="mt-2">Documentation link</h3>
       <a v-if=" experiment.documentLink !== '' " :href="experiment.documentLink">
-        {{ experiment.documentLink }}
+        {{ documentLinkText() }}
       </a>
       <div v-else>-</div>
+
+      <h3 class="mt-2"> Experiment group
+        <v-tooltip right  close-delay="1000">
+          <span>
+            You can create a group of mutually exclusive experiments.<br/>
+            Experiments in a group will not intersect with each other.<br/>
+            Useful when you have many experiments in the same area of the system.<br/>
+            <a target="_blank" style="color: aqua" href="https://rtd.allegrogroup.com/docs/chi/#grupa-eksperymentow">
+            Read more about groups in χ Docs</a>
+          </span>
+          <v-icon slot="activator">help_outline</v-icon>
+        </v-tooltip>
+      </h3>
+      <experiment-group-info :experiment="experiment"/>
 
       <h3 class="mt-2">Author</h3>
       {{ experiment.author }}
 
-      <h3>Authorized groups</h3>
+      <h3 class="mt-2">Authorized groups</h3>
        {{ experiment.groups.join(', ') || '-' }}
 
       <div v-if="experiment.activityPeriod">
@@ -38,10 +41,10 @@
         </v-layout>
       </div>
 
-        <h3 class="mt-2">Status</h3>
-        <v-layout row>
-            <experiment-status :experiment="experiment" :show-reporting-status="true"/>
-        </v-layout>
+      <h3 class="mt-2">Status</h3>
+      <v-layout row>
+          <experiment-status :experiment="experiment" :show-reporting-status="true"/>
+      </v-layout>
 
     </v-flex>
 
@@ -107,6 +110,11 @@
         <v-chip outline disabled :color="'black'">
           {{ experiment.reportingType }}
         </v-chip>
+
+        <v-chip outline :color="reportingEnabledButtonClass()" >
+          {{ reportingEnabledButtonText() }}
+        </v-chip>
+
       </v-flex>
 
       <v-flex xs7 v-if="experiment.eventDefinitionsAvailable()">
@@ -126,14 +134,33 @@
   import ChiPanel from '../ChiPanel'
   import ExperimentStatus from './ExperimentStatus'
   import ExperimentEventFilters from './ExperimentEventFilters'
+  import ExperimentGroupInfo from './ExperimentGroupInfo'
+  import _ from 'lodash'
 
   export default {
     props: ['experiment', 'eventDefinitions'],
 
     components: {
+      ExperimentGroupInfo,
       ExperimentStatus,
       ChiPanel,
       ExperimentEventFilters
+    },
+
+    methods: {
+      documentLinkText () {
+        return _.truncate(this.experiment.documentLink, {
+          'length': 40
+        })
+      },
+
+      reportingEnabledButtonClass () {
+        return this.experiment.reportingEnabled ? 'green' : 'red'
+      },
+
+      reportingEnabledButtonText () {
+        return this.experiment.reportingEnabled ? 'enabled' : 'disabled'
+      }
     }
   }
 </script>

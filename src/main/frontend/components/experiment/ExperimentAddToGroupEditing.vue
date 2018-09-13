@@ -1,16 +1,15 @@
 <template>
-  <v-form>
+  <v-form ref="addToGroupEditingForm">
   <v-container fluid style="margin: 0px; padding: 0px" text-xs-center>
   <v-layout row align-center>
 
   <v-flex xs1>
     <v-tooltip right close-delay="1000">
       <span>
-        You can create a group of mutually exclusive experiments.<br/>
-        Experiments in a group will not intersect with each other.<br/>
-        Useful when you have many experiments in the same area of the system.<br/>
+        Experiment Draft can join an existing group or can init a new one.<br/>
+        Started experiment (Active or Paused) can only init a new group.<br/>
         <a target="_blank" style="color: aqua" href="https://rtd.allegrogroup.com/docs/chi/#grupa-eksperymentow">
-        Read more in χ Docs</a>
+        Read more about groups in χ Docs</a>
       </span>
       <v-icon
         slot="activator">help_outline</v-icon>
@@ -32,8 +31,6 @@
       :rules="createGroupRules"
     ></v-text-field>
   </v-flex>
-
-   {{ this.experimentGroupNames }}
   </v-layout>
   </v-container>
   </v-form>
@@ -41,6 +38,7 @@
 
 <script>
   import { slugify } from '../../utils/slugify'
+  import _ from 'lodash'
 
   export default {
     props: ['experiment', 'experimentGroupNames'],
@@ -54,13 +52,13 @@
         ],
         createGroupRules: [
           (v) => !!v || 'Group name can not be empty',
-          (v) => this.isExperimentGroupIdUnique(v) || 'Experiment group ID must be unique',
+          (v) => this.isExperimentGroupIdUnique(v) || 'Experiment group ID must be unique'
         ]
       }
     },
 
     methods: {
-      isExperimentGroupIdUnique(name) {
+      isExperimentGroupIdUnique (name) {
         return _.find(this.experimentGroupNames, e => e === name) === undefined
       }
     },

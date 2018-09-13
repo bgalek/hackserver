@@ -7,7 +7,7 @@
       <v-flex>
         <assignment-button
           v-if="experiment"
-          v-for="variant in experiment.variants"
+          v-for="variant in distinctVariants()"
           :key="variant.name"
           :color="variant.color"
           :title="variant.name"
@@ -66,6 +66,10 @@
     methods: {
       cookieBakerLink (experimentId, variantName, preserveOther) {
         return cookieBakerLink(experimentId, variantName, preserveOther)
+      },
+
+      distinctVariants() {
+        return this.experiment.variants
       }
     }
   }

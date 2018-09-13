@@ -50,13 +50,13 @@
               </v-layout>
             </v-container>
 
-            <experiment-desc-editing v-model="descriptions" />
+            <experiment-desc-editing v-model="descriptions"
+            />
 
             <experiment-custom-parameter-editing v-model="customParameter" />
 
-            <experiment-variants-editing
-              :allowModifyRegularVariants="true"
-              v-model="variants" />
+            <experiment-variants-editing v-model="variants"
+                                         :allowModifyRegularVariants="true"/>
 
             <v-container fluid style="margin: 0px; padding: 0px" text-xs-center>
               <v-layout row align-top>
@@ -159,9 +159,9 @@
         reportingEnabled: true,
         sendingDataToServer: false,
         errors: [],
-        descriptions: {},
+        descriptions: null,
         customParameter: {},
-        variants: {},
+        variants: null,
         reportingType: 'BACKEND',
         availableReportingTypes: ['BACKEND', 'FRONTEND', 'GTM'],
         eventDefinitions: []
@@ -182,7 +182,7 @@
       },
 
       slugifiedVariants () {
-        return _.map(this.variants.variantNames, v => slugify(v))
+        return _.map(this.variants.result.variantNames, v => slugify(v))
       }
     },
 
@@ -203,7 +203,7 @@
         this.sending()
         this.cleanErrors()
 
-        if (this.$refs.createForm.validate()) {
+        if (this.validate()) {
           this.createExperiment({data: this.getExperimentDataToSend()}).then(response => {
             this.notSending()
             this.$router.push('/experiments/' + this.experimentIdSlug)
@@ -218,6 +218,21 @@
         } else {
           this.notSending()
         }
+      },
+
+      validate () {
+        const descriptionsValid = !this.descriptions || this.descriptions.valid
+        const variantsValid = this.variants === null ? false : this.variants.valid
+
+        console.log('this.descriptions',this.descriptions)
+        console.log('this.variants',this.variants)
+
+        console.log('variantsValid',variantsValid)
+        console.log('descriptionsValid',descriptionsValid)
+
+        return this.$refs.createForm.validate() &&
+               descriptionsValid &&
+               variantsValid
       },
 
       setPermissionsError () {
@@ -247,16 +262,16 @@
       getExperimentDataToSend () {
         let experimentCreationRequest = {
           id: this.experimentIdSlug,
-          description: this.descriptions.description,
-          documentLink: this.descriptions.documentLink,
+          description: this.descriptions.result.description,
+          documentLink: this.descriptions.result.documentLink,
           customParameterName: this.customParameter.name,
           customParameterValue: this.customParameter.value,
-          groups: this.descriptions.groups,
+          groups: this.descriptions.result.groups,
           reportingEnabled: this.reportingEnabled,
           variantNames: this.slugifiedVariants,
-          internalVariantName: this.variants.internalVariantName !== '' ? this.variants.slugifiedInternalVariantName : null,
-          deviceClass: this.variants.deviceClass !== 'all' ? this.variants.deviceClass : null,
-          percentage: this.variants.percentage,
+          internalVariantName: this.variants.result.internalVariantName !== '' ? this.variants.result.slugifiedInternalVariantName : null,
+          deviceClass: this.variants.result.deviceClass !== 'all' ? this.variants.result.deviceClass : null,
+          percentage: this.variants.result.percentage,
           reportingType: this.reportingType,
           eventDefinitions: this.eventDefinitions
         }

@@ -129,6 +129,7 @@
           </v-list>
         </v-menu>
       </div>
+
       <div v-if="canRunOtherCommand()">
         <h4 style="margin-top: 15px">Other actions</h4>
 
@@ -141,16 +142,10 @@
 
           <v-list style="padding:15px; display: block;">
             <experiment-desc-editing :experiment="experiment"
-                                     v-model="descriptionsEditingResult"
+                                     show-buttons="true"
+                                     @updateDescriptions="updateDescriptions"
+                                     @closeDescriptions="closeDescriptions"
             ></experiment-desc-editing>
-
-            <v-btn flat @click="closeDescriptions()">Cancel</v-btn>
-            <v-btn color="gray"
-                   :disabled="!descriptionsChanged()"
-                   @click="updateDescriptions"
-                   style="text-transform: none">
-              Update descriptions of &nbsp;<b>{{ this.experiment.id }}</b>
-            </v-btn>
           </v-list>
         </v-menu>
 
@@ -213,7 +208,7 @@
           </v-btn>
 
           <v-list style="padding:15px; display: block;">
-            <experiment-add-to-group-editing style="margin-bottom: 60px"
+            <experiment-add-to-group-editing style="margin-bottom: 15px"
               v-if="loadingExperimentGroupsDone"
               :experiment="experiment"
               :experimentGroupNames="experimentGroups"
@@ -273,7 +268,6 @@
     data () {
       return {
         descriptionsMenuVisible: false,
-        descriptionsEditingResult: {},
         variantsMenuVisible: false,
         eventDefinitionsMenuVisible: false,
         variantsEditingResult: {},
@@ -416,10 +410,6 @@
         this.prolongMenuVisible = false
       },
 
-      closeAddToGroup () {
-        this.addToGroupMenuVisible = false
-      },
-
       allVariantNames () {
         const variantNames = this.experiment.variantNames
         const internalVariantName = this.experiment.internalVariantName
@@ -437,40 +427,33 @@
         this.fullOnMenuVisible = false
       },
 
-      closeDescriptions () {
-        this.descriptionsMenuVisible = false
+      closeAddToGroup () {
+        this.addToGroupMenuVisible = false
+        this.addExperimentToGroupName = null
       },
 
-      descriptionsChanged () {
-        return this.descriptionsEditingResult.description !== this.experiment.description ||
-          JSON.stringify(this.descriptionsEditingResult.groups) !== JSON.stringify(this.experiment.groups) ||
-          this.descriptionsEditingResult.documentLink !== this.experiment.documentLink
-      },
-
-      updateDescriptions () {
+      updateDescriptions (experimentDescEditingRecord) {
         if (this.$refs.actionForm.validate()) {
-          this.closeDescriptions()
           this.prepareToSend()
           this.updateExperimentDescriptions({
-            data: {
-              description: this.descriptionsEditingResult.description,
-              groups: this.descriptionsEditingResult.groups,
-              documentLink: this.descriptionsEditingResult.documentLink
-            },
+            data: experimentDescEditingRecord,
             params: {
               experimentId: this.experiment.id
             }
           }).then(response => {
-            this.afterSending()
             this.getExperiment({params: {experimentId: this.experiment.id}})
             this.commandOkMessage = 'Experiment  successfully updated'
           }).catch(error => {
-            this.afterSending()
             this.showError(error)
           })
 
+          this.afterSending()
           this.closeDescriptions()
         }
+      },
+
+      closeDescriptions() {
+        this.descriptionsMenuVisible = false
       },
 
       closeVariants () {
@@ -567,7 +550,6 @@
 
       addToGroup () {
         if (this.$refs.actionForm.validate()) {
-          this.closeAddToGroup()
           this.prepareToSend()
 
           this.addExperimentToGroup({
@@ -583,6 +565,7 @@
           })
 
           this.afterSending()
+          this.closeAddToGroup()
         }
       },
 

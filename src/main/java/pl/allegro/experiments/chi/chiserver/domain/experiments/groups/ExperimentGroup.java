@@ -1,14 +1,12 @@
 package pl.allegro.experiments.chi.chiserver.domain.experiments.groups;
 
-import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
-import pl.allegro.experiments.chi.chiserver.domain.experiments.ExperimentDefinition;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class ExperimentGroup {
+public class ExperimentGroup implements Comparable<ExperimentGroup> {
     private final String id;
     private final String salt;
     private final List<String> experiments;
@@ -49,5 +47,10 @@ public class ExperimentGroup {
         List<String> extendedExperiments = new ArrayList<>(experiments);
         extendedExperiments.add(experimentId);
         return new ExperimentGroup(id, salt, extendedExperiments);
+    }
+
+    @Override
+    public int compareTo(ExperimentGroup o) {
+        return this.id.compareTo(o.id);
     }
 }

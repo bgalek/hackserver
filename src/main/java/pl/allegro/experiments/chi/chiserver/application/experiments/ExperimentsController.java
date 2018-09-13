@@ -83,7 +83,7 @@ public class ExperimentsController {
     @MeteredEndpoint
     @GetMapping(path = "{experimentId}")
     ResponseEntity<String> getExperiment(@PathVariable String experimentId) {
-        logger.info("Single experiment request received");
+        logger.info("AdminExperiment request received, experimentId:{}", experimentId);
         return experimentsRepository.getExperiment(experimentId)
                 .map(clientExperimentFactory::adminExperiment)
                 .map(it -> it.withMeasurements(measurementsRepository.getMeasurements(it.getId())))
@@ -208,7 +208,8 @@ public class ExperimentsController {
     @PostMapping(path = "groups")
     ResponseEntity<String> addExperimentToGroup(
             @RequestBody AddExperimentToGroupRequest addExperimentToGroupRequest) {
-        logger.info("Add experiment to group creation request received", addExperimentToGroupRequest);
+        logger.info("Add experiment to group request received, groupId:{}, expId:{}",
+                addExperimentToGroupRequest.getId(), addExperimentToGroupRequest.getExperimentId());
         experimentActions.addExperimentToGroup(addExperimentToGroupRequest);
         return new ResponseEntity<>(HttpStatus.OK);
     }
@@ -227,7 +228,9 @@ public class ExperimentsController {
     @GetMapping(path = "groups")
     String getExperimentGroups() {
         logger.info("All experiment group request received");
-        return jsonConverter.toJson(experimentGroupRepository.findAll());
+        return jsonConverter.toJson(
+                experimentGroupRepository.findAll().stream().sorted().collect(Collectors.toList())
+        );
     }
 
     @ExceptionHandler(AuthorizationException.class)

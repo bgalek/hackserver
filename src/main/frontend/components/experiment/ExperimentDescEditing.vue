@@ -1,5 +1,6 @@
 <template>
-  <v-form>
+  <v-form ref="descEditingForm" v-model="formValid">
+
     <v-container fluid style="margin: 0px; padding: 0px" text-xs-center>
       <v-layout row align-center>
 
@@ -15,8 +16,7 @@
             id="experimentDescriptionFormField"
             v-model="value.description"
             :rules="stringsRules"
-            label="Description"
-            v-on:input="inputEntered()">
+            label="Description">
           ></v-text-field>
         </v-flex>
 
@@ -28,12 +28,12 @@
             id="experimentDocumentationLinkFormField"
             v-model="value.documentLink"
             :rules="documentLinkRules"
-            v-on:input="inputEntered()"
             label="Documentation link"
           ></v-text-field>
         </v-flex>
 
       </v-layout>
+
       <v-layout row align-center>
 
           <v-flex xs1>
@@ -54,14 +54,13 @@
             </v-tooltip>
           </v-flex>
           <v-flex xs11>
-            <v-select
+            <v-combobox
+              multiple
               id="experimentAuthorizationGroupsFormField"
               label="Authorization groups"
               slot="activator"
               chips
               append-icon=""
-              tags
-              v-on:input="inputEntered()"
               v-model="value.groups"
               :rules="groupsRules">
               <template slot="selection" slot-scope="data">
@@ -72,10 +71,29 @@
                   <strong>{{ data.item }}</strong>&nbsp;
                 </v-chip>
               </template>
-            </v-select>
+            </v-combobox>
+          </v-flex>
+      </v-layout>
+
+      {{this.showButtons}}
+      <v-layout row align-center v-if="showButtons">
+          <v-flex>
+            <v-btn flat
+                   @click="closeDescriptions()">
+              Cancel
+            </v-btn>
           </v-flex>
 
+          <v-flex>
+          <v-btn  color="gray"
+                 :disabled="!descriptionsChanged() || !this.formValid"
+                 @click="updateDescriptions"
+                 style="text-transform: none">
+            Update descriptions of &nbsp;<b>{{ this.getExpId() }}</b>
+          </v-btn>
+          </v-flex>
       </v-layout>
+
     </v-container>
 
   </v-form>
@@ -84,13 +102,23 @@
 <script>
   import { isUri } from 'valid-url'
   import { startsOrEndsWithSpace } from '../../utils/startsOrEndsWithSpace'
+  import { Record, List } from 'immutable'
+
+  const ExperimentDescEditingRecord = Record({
+    documentLink: null,
+    description: null,
+    groups: List()
+  })
 
   export default {
-    props: ['experiment'],
+    props: ['experiment', 'showButtons'],
 
     data () {
+      const initialValue = this.init(this.experiment)
       return {
-        value: this.init(this.experiment),
+        givenValue: this.buildResult(initialValue),
+        value: initialValue,
+        formValid: true,
         documentLinkRules: [
           (v) => this.isUrlValid(v) || 'not a valid URL',
           (v) => !startsOrEndsWithSpace(v) || 'Do not start nor end url with space'
@@ -104,20 +132,30 @@
       }
     },
 
+    watch: {
+      value: {
+        handler: function(newValue) {
+          this.$emit('input', {
+            result: this.buildResultFromValue(),
+            valid: this.$refs.descEditingForm.validate()
+          })
+        },
+        deep: true
+      }
+    },
+
     methods: {
       init (experiment) {
         const value = {
           documentLink: experiment && experiment.documentLink,
-          groups: experiment && Array.from(experiment.groups),
-          description: experiment && experiment.description
+          description: experiment && experiment.description,
+          groups: experiment && Array.from(experiment.groups)
         }
-
-        this.$emit('input', value)
         return value
       },
 
-      inputEntered () {
-        this.$emit('input', this.value)
+      getExpId () {
+        return this.experiment && this.experiment.id
       },
 
       isUrlValid (value) {
@@ -126,9 +164,33 @@
 
       removeGroup (group) {
         const i = this.value.groups.indexOf(group)
-        this.groups = this.value.groups.splice(i, 1)
-        this.inputEntered()
-      }
+        this.value.groups.splice(i, 1)
+      },
+
+      buildResult (value) {
+        return new ExperimentDescEditingRecord({
+          documentLink: value.documentLink,
+          description: value.description,
+          groups: List(value.groups)
+        })
+      },
+
+      buildResultFromValue () {
+        return this.buildResult(this.value)
+      },
+
+      updateDescriptions () {
+        this.$emit('updateDescriptions', this.buildResultFromValue())
+      },
+
+      closeDescriptions () {
+        this.value = this.init(this.experiment)
+        this.$emit('closeDescriptions')
+      },
+
+      descriptionsChanged () {
+        return !this.givenValue.equals(this.buildResultFromValue())
+      },
     }
   }
 </script>

@@ -3,6 +3,7 @@ import _ from 'lodash'
 import moment from 'moment'
 import ExperimentVariantModel from './experiment-variant'
 import ActivityPeriod from './activity-period'
+import ExperimentGroup from './experiment-group'
 
 const ExperimentRecord = Record({
   id: null,
@@ -36,17 +37,22 @@ const ExperimentRecord = Record({
 export default class ExperimentModel extends ExperimentRecord {
   constructor (experimentObject) {
     experimentObject = Object.assign({}, experimentObject)
-    experimentObject.activityPeriod = experimentObject.activityPeriod && new ActivityPeriod(experimentObject.activityPeriod)
+
+    experimentObject.activityPeriod = experimentObject.activityPeriod &&
+      new ActivityPeriod(experimentObject.activityPeriod)
+
     experimentObject.variants = List(experimentObject.renderedVariants).map((variant, i) =>
       new ExperimentVariantModel(experimentObject.status === 'DRAFT', variant, i)).toArray()
+
+    experimentObject.experimentGroup = experimentObject.experimentGroup &&
+      new ExperimentGroup(experimentObject.experimentGroup)
+
     experimentObject.hasBase = _.includes(_.map(experimentObject.variants, v => v.name), 'base')
     experimentObject.isMeasured = experimentObject.hasBase && experimentObject.reportingEnabled
     experimentObject.groups = List(experimentObject.groups)
     experimentObject.variantNames = List(experimentObject.variantNames)
     experimentObject.eventDefinitions = List(experimentObject.eventDefinitions)
-    if (experimentObject.experimentGroup) {
-      experimentObject.experimentGroup = experimentObject.experimentGroup.id
-    }
+
     super(experimentObject)
   }
 
