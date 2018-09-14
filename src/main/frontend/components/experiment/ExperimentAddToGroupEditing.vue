@@ -25,6 +25,7 @@
     ></v-combobox>
 
     <v-text-field
+      :hide-details="false"
       v-if="!experiment.canJoinAnyGroup()"
       v-model="value"
       label="Name of a new group"

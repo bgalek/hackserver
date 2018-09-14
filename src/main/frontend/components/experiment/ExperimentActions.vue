@@ -207,8 +207,8 @@
               v-if="loadingExperimentGroupsDone"
               :experiment="experiment"
               :experimentGroupNames="experimentGroups"
-              @addToGroup="addToGroup()"
-              @closeAddToGroup="closeAddToGroup()"
+              @addToGroup="addToGroup"
+              @closeAddToGroup="closeAddToGroup"
             ></experiment-add-to-group-editing>
           </v-list>
         </v-menu>
@@ -549,7 +549,15 @@
       },
 
       showError (error) {
-        this.errors.push(JSON.stringify(error))
+        if (error.response && error.response) {
+          this.errors.push({
+            responseData: error.response.data,
+            responseStatus: error.response.status,
+            responseStatusText: error.response.statusText
+          })
+        } else {
+          this.errors.push(error)
+        }
       },
 
       clearMessages () {
