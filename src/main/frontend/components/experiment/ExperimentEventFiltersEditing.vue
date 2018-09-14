@@ -113,11 +113,8 @@
     props: ['readOnly', 'experiment', 'showButtons'],
 
     data () {
-      const initialValue = this.init(this.experiment)
-
       return {
-        givenValue: this.buildResult(initialValue),
-        items: initialValue,
+        items: this.initFromExperiment(),
         eventDefinitionValid: true,
         editing: false,
         editedItem: {},
@@ -130,11 +127,11 @@
         },
         editedIndex: -1,
         headers: [
-          { text: 'BoxName', value: 'boxName', align: 'left', sortable: false },
-          { text: 'Category', value: 'category', align: 'left', sortable: false },
-          { text: 'Label', value: 'label', align: 'left', sortable: false },
-          { text: 'Action', value: 'action', align: 'left', sortable: false },
-          { text: 'Value', value: 'value', align: 'left', sortable: false }
+          {text: 'BoxName', value: 'boxName', align: 'left', sortable: false},
+          {text: 'Category', value: 'category', align: 'left', sortable: false},
+          {text: 'Label', value: 'label', align: 'left', sortable: false},
+          {text: 'Action', value: 'action', align: 'left', sortable: false},
+          {text: 'Value', value: 'value', align: 'left', sortable: false}
         ],
         filterRules: [
           (v) => this.containsNo(v, '*') || 'no *',
@@ -149,25 +146,36 @@
       }
     },
 
+    computed: {
+      givenValue: function () {
+        return this.buildResult(this.initFromExperiment())
+      }
+    },
+
     watch: {
       items: {
         handler: function (newValue) {
-          console.log("watch")
           if (this.validate()) {
             this.$emit('input', this.buildResultFromValue())
           }
+        },
+        deep: true
+      },
+      experiment: {
+        handler: function (newValue) {
+          this.items = this.initFromExperiment()
         },
         deep: true
       }
     },
 
     methods: {
-      init (experiment) {
-        if (!experiment || !experiment.eventDefinitions) {
+      initFromExperiment () {
+        if (!this.experiment || !this.experiment.eventDefinitions) {
           return []
         }
 
-        return experiment.eventDefinitions.toArray()
+        return this.experiment.eventDefinitions.toArray().map(it => Object.assign({}, it))
       },
 
       containsNo (str, char) {
@@ -243,12 +251,11 @@
 
       updateEventDefinitions () {
         const newValue = this.buildResultFromValue()
-        this.givenValue = newValue
         this.$emit('updateEventDefinitions', newValue)
       },
 
       closeEventDefinitions () {
-        this.value = this.init(this.experiment)
+        this.items = this.initFromExperiment()
         this.$emit('closeEventDefinitions')
       },
 

@@ -3,7 +3,7 @@
     <v-layout>
     <v-flex xs5>
         <h3>Description</h3>
-        {{ experiment.description || '-'}}
+        {{ experimentDescription()}}
 
       <h3 class="mt-2">Documentation link</h3>
       <a v-if=" experiment.documentLink !== '' " :href="experiment.documentLink">
@@ -152,6 +152,10 @@
         return _.truncate(this.experiment.documentLink, {
           'length': 40
         })
+      },
+
+      experimentDescription () {
+        return this.experiment.description || '-'
       },
 
       reportingEnabledButtonClass () {

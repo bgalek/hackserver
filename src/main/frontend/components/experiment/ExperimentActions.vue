@@ -12,10 +12,16 @@
       Not much to do here.
     </span>
 
-    <v-alert v-if="commandOkMessage" outline icon="info" type="success" v-model="commandOkMessage"
+    <v-alert v-if="commandOkMessage" outline type="success" v-model="commandOkMessage"
              dismissible>
       {{commandOkMessage}}
     </v-alert>
+
+    <v-alert v-if="descriptionsWarning" outline icon="sentiment_very_dissatisfied" type="warning" v-model="descriptionsWarning"
+             dismissible>
+      {{descriptionsWarning}}
+    </v-alert>
+
 
     <v-form ref="actionForm"
             v-model="actionFormValid"
@@ -201,18 +207,9 @@
               v-if="loadingExperimentGroupsDone"
               :experiment="experiment"
               :experimentGroupNames="experimentGroups"
-              v-model="addExperimentToGroupName"
+              @addToGroup="addToGroup()"
+              @closeAddToGroup="closeAddToGroup()"
             ></experiment-add-to-group-editing>
-
-            <v-btn flat @click="closeAddToGroup()">Cancel</v-btn>
-
-            <v-btn color="gray"
-                   @click="addToGroup"
-                   :disabled="!addToGroupEnabled()"
-                   style="text-transform: none">
-              Add experiment &nbsp; <b>{{ this.experiment.id }}</b>&nbsp; to group &nbsp; <b>{{ this.addExperimentToGroupName}}</b>
-            </v-btn>
-
           </v-list>
         </v-menu>
 
@@ -262,6 +259,8 @@
         addToGroupMenuVisible: false,
         fullOnMenuVisible: false,
         commandOkMessage: '',
+        descriptionsWarning: '',
+        warningMessage: '',
         actionFormValid: true,
         durationDays: '14',
         selectedFullOnVariant: null,
@@ -272,7 +271,6 @@
           (v) => v <= 60 || 'more than 60 days? Seems like a long time...',
           (v) => v > 0 || 'try with a positive value'
         ],
-        addExperimentToGroupName: null,
         loadingExperimentGroupsDone: false,
         sendingDataToServer: false,
         errors: []
@@ -314,7 +312,7 @@
       },
 
       start () {
-        if (this.$refs.actionForm.validate()) {
+        if (this.validate() && this.descriptionsAreFine()) {
           this.prepareToSend()
 
           this.startExperiment({
@@ -415,27 +413,41 @@
 
       closeAddToGroup () {
         this.addToGroupMenuVisible = false
-        this.addExperimentToGroupName = null
+      },
+
+      descriptionsAreFine () {
+        this.clearMessages()
+
+        if (!this.experiment.description || this.experiment.description.length < 10) {
+          this.descriptionsWarning = "Experiment's description '" + this.experiment.description + "' doesn't seem very descriptive." +
+            ' Please update it. What feature are you going to test and where it is?'
+          return false
+        }
+
+        if (!this.experiment.documentLink) {
+          this.descriptionsWarning = 'Documentation link is missing. Please add it. For example https://wiki.allegrogroup.com/pages/viewpage.action?pageId=328926207'
+          return false
+        }
+
+        return true
       },
 
       updateDescriptions (experimentDescEditingRecord) {
-        if (this.$refs.actionForm.validate()) {
-          this.prepareToSend()
-          this.updateExperimentDescriptions({
-            data: experimentDescEditingRecord,
-            params: {
-              experimentId: this.experiment.id
-            }
-          }).then(response => {
-            this.getExperiment({params: {experimentId: this.experiment.id}})
-            this.commandOkMessage = 'Experiment  successfully updated'
-          }).catch(error => {
-            this.showError(error)
-          })
+        this.prepareToSend()
+        this.updateExperimentDescriptions({
+          data: experimentDescEditingRecord,
+          params: {
+            experimentId: this.experiment.id
+          }
+        }).then(response => {
+          this.getExperiment({params: {experimentId: this.experiment.id}})
+          this.commandOkMessage = 'Experiment  successfully updated'
+        }).catch(error => {
+          this.showError(error)
+        })
 
-          this.afterSending()
-          this.closeDescriptions()
-        }
+        this.afterSending()
+        this.closeDescriptions()
       },
 
       closeDescriptions () {
@@ -450,54 +462,46 @@
         this.eventDefinitionsMenuVisible = false
       },
 
-      addToGroupEnabled () {
-        return this.addExperimentToGroupName
-      },
-
       updateVariants (variantsEditingResult) {
-        if (this.$refs.actionForm.validate()) {
-          this.prepareToSend()
+        this.prepareToSend()
 
-          this.updateExperimentVariants({
-            data: variantsEditingResult,
-            params: {
-              experimentId: this.experiment.id
-            }
-          }).then(response => {
-            this.getExperiment({params: {experimentId: this.experiment.id}})
-            this.commandOkMessage = 'Experiment successfully updated'
-          }).catch(error => {
-            this.showError(error)
-          })
+        this.updateExperimentVariants({
+          data: variantsEditingResult,
+          params: {
+            experimentId: this.experiment.id
+          }
+        }).then(response => {
+          this.getExperiment({params: {experimentId: this.experiment.id}})
+          this.commandOkMessage = 'Experiment successfully updated'
+        }).catch(error => {
+          this.showError(error)
+        })
 
-          this.afterSending()
-          this.closeVariants()
-        }
+        this.afterSending()
+        this.closeVariants()
       },
 
       updateEventDefinitions (eventDefinitionsEditingResult) {
-        if (this.$refs.actionForm.validate()) {
-          this.closeEventDefinitions()
-          this.prepareToSend()
-          this.updateExperimentEventDefinitions({
-            data: eventDefinitionsEditingResult,
-            params: {
-              experimentId: this.experiment.id
-            }
-          }).then(response => {
-            this.getExperiment({params: {experimentId: this.experiment.id}})
-            this.commandOkMessage = 'Experiment successfully updated'
-          }).catch(error => {
-            this.showError(error)
-          })
+        this.closeEventDefinitions()
+        this.prepareToSend()
+        this.updateExperimentEventDefinitions({
+          data: eventDefinitionsEditingResult,
+          params: {
+            experimentId: this.experiment.id
+          }
+        }).then(response => {
+          this.getExperiment({params: {experimentId: this.experiment.id}})
+          this.commandOkMessage = 'Experiment successfully updated'
+        }).catch(error => {
+          this.showError(error)
+        })
 
-          this.afterSending()
-          this.closeEventDefinitions()
-        }
+        this.afterSending()
+        this.closeEventDefinitions()
       },
 
       prolong () {
-        if (this.$refs.actionForm.validate()) {
+        if (this.validate()) {
           this.closeProlong()
           this.prepareToSend()
 
@@ -519,25 +523,23 @@
         }
       },
 
-      addToGroup () {
-        if (this.$refs.actionForm.validate()) {
-          this.prepareToSend()
+      addToGroup (groupName) {
+        this.prepareToSend()
 
-          this.addExperimentToGroup({
-            data: {
-              experimentId: this.experiment.id,
-              id: this.addExperimentToGroupName
-            }
-          }).then(response => {
-            this.getExperiment({params: {experimentId: this.experiment.id}})
-            this.commandOkMessage = 'Experiment successfully added to group ' + this.addExperimentToGroupName
-          }).catch(error => {
-            this.showError(error)
-          })
+        this.addExperimentToGroup({
+          data: {
+            experimentId: this.experiment.id,
+            id: groupName
+          }
+        }).then(response => {
+          this.getExperiment({params: {experimentId: this.experiment.id}})
+          this.commandOkMessage = 'Experiment successfully added to group ' + groupName
+        }).catch(error => {
+          this.showError(error)
+        })
 
-          this.afterSending()
-          this.closeAddToGroup()
-        }
+        this.afterSending()
+        this.closeAddToGroup()
       },
 
       loadExprimentGroups () {
@@ -550,8 +552,13 @@
         this.errors.push(JSON.stringify(error))
       },
 
-      prepareToSend () {
+      clearMessages () {
         this.commandOkMessage = ''
+        this.descriptionsWarning = ''
+      },
+
+      prepareToSend () {
+        this.clearMessages()
         this.errors = []
         this.sendingDataToServer = true
       },
@@ -562,6 +569,10 @@
 
       showProgressBar () {
         return this.sendingDataToServer
+      },
+
+      validate () {
+        return this.$refs.actionForm.validate()
       },
 
       ...mapActions([

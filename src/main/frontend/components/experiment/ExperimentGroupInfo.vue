@@ -39,9 +39,9 @@
   export default {
     props: ['experiment'],
 
-    data () {
-      return {
-        experimentGroup: this.experiment.experimentGroup
+    computed: {
+      experimentGroup: function () {
+        return this.experiment.experimentGroup
       }
     },
 

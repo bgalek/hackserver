@@ -1,5 +1,5 @@
 <template>
-  <v-form ref="addToGroupEditingForm">
+  <v-form ref="addToGroupEditingForm" v-model="formValid">
   <v-container fluid style="margin: 0px; padding: 0px" text-xs-center>
   <v-layout row align-center>
 
@@ -32,6 +32,23 @@
     ></v-text-field>
   </v-flex>
   </v-layout>
+
+  <v-layout>
+    <v-flex>
+      <v-btn flat @click="closeAddToGroup()">Cancel</v-btn>
+    </v-flex>
+
+    <v-flex>
+      <v-btn color="gray"
+             @click="addToGroup()"
+             :disabled="!groupNameChanged() || !this.formValid"
+             style="text-transform: none">
+        Add experiment &nbsp; <b>{{ this.experiment.id }}</b>&nbsp; to group &nbsp; <b>{{ this.slugifiedValue}}</b>
+      </v-btn>
+    </v-flex>
+
+  </v-layout>
+
   </v-container>
   </v-form>
 </template>
@@ -57,15 +74,36 @@
       }
     },
 
-    methods: {
-      isExperimentGroupIdUnique (name) {
-        return _.find(this.experimentGroupNames, e => e === name) === undefined
+    computed: {
+      givenGroup: function () {
+        return this.experiment.experimentGroup
+      },
+
+      slugifiedValue: function () {
+        return slugify(this.value)
       }
     },
 
-    watch: {
-      value (value) {
-        this.$emit('input', slugify(value))
+    methods: {
+      isExperimentGroupIdUnique (name) {
+        return _.find(this.experimentGroupNames, e => e === name) === undefined
+      },
+
+      validate () {
+        return this.$refs.addToGroupEditingForm.validate()
+      },
+
+      closeAddToGroup () {
+        this.value = this.givenGroup
+        this.$emit('closeAddToGroup')
+      },
+
+      addToGroup () {
+        this.$emit('addToGroup', this.slugifiedValue)
+      },
+
+      groupNameChanged () {
+        return this.slugifiedValue !== this.givenGroup
       }
     }
   }
