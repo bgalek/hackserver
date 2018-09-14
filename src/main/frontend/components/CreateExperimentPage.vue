@@ -258,7 +258,7 @@
           groups: this.descriptions.groups,
           reportingEnabled: this.reportingEnabled,
           variantNames: this.slugifiedVariants,
-          internalVariantName: this.variants.internalVariantName !== '' ? this.variants.slugifiedInternalVariantName : null,
+          internalVariantName: this.variants.internalVariantName,
           deviceClass: this.variants.deviceClass !== 'all' ? this.variants.deviceClass : null,
           percentage: this.variants.percentage,
           reportingType: this.reportingType,

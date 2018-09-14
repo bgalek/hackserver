@@ -199,7 +199,7 @@
           <v-btn color="gray" slot="activator" style="text-transform: none"
                  @click="loadExprimentGroups">
             Group
-            <v-icon right>group_add</v-icon>
+            <v-icon right>view_quilt</v-icon>
           </v-btn>
 
           <v-list style="padding:15px; display: block;">
