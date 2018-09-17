@@ -5,9 +5,7 @@ import org.springframework.web.client.HttpClientErrorException
 import pl.allegro.experiments.chi.chiserver.BaseE2EIntegrationSpec
 import pl.allegro.experiments.chi.chiserver.domain.experiments.ExperimentStatus
 import spock.lang.Unroll
-
-import static pl.allegro.experiments.chi.chiserver.domain.experiments.ExperimentStatus.DRAFT
-import static pl.allegro.experiments.chi.chiserver.domain.experiments.ExperimentStatus.FULL_ON
+import static pl.allegro.experiments.chi.chiserver.domain.experiments.ExperimentStatus.*
 
 class ExperimentGroupE2ESpec extends BaseE2EIntegrationSpec {
 
@@ -45,7 +43,7 @@ class ExperimentGroupE2ESpec extends BaseE2EIntegrationSpec {
         exception.statusCode == HttpStatus.BAD_REQUEST
 
         where:
-        status << allExperimentStatusValuesExcept(DRAFT, FULL_ON)
+        status << [ACTIVE, PAUSED]
     }
 
     def "should set experiment as list tail when starting"() {
