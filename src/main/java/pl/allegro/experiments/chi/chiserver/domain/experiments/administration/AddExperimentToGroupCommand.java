@@ -72,6 +72,9 @@ public class AddExperimentToGroupCommand implements Command {
         if (experiment.isFullOn()) {
             throw new ExperimentCommandException("Full-on experiment can't be added to the group");
         }
+        if (experiment.isEnded()) {
+            throw new ExperimentCommandException("Ended experiment can't be added to the group");
+        }
         if (experimentGroupRepository.experimentInGroup(experiment.getId())) {
             throw new ExperimentCommandException("Experiment already in another group");
         }

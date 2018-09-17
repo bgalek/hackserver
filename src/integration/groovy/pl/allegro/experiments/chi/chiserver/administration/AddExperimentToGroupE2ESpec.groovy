@@ -12,7 +12,7 @@ class AddExperimentToGroupE2ESpec extends BaseE2EIntegrationSpec {
 
     def "should create experiment group"() {
         given:
-        def experiment1 = draftExperiment()
+        def experiment1 = startedExperiment()
         def experiment2 = draftExperiment()
         def experiment3 = draftExperiment()
 
@@ -23,21 +23,40 @@ class AddExperimentToGroupE2ESpec extends BaseE2EIntegrationSpec {
         group.experiments == [experiment1.id, experiment2.id, experiment3.id]
     }
 
-    def "should not add active experiment to existing group"() {
+    @Unroll
+    def "should add #status experiment to a new group"() {
         given:
-        def experiment1 = draftExperiment()
-        def experiment2 = startedExperiment()
+        def experiment = experimentWithStatus(status)
 
         when:
-        createExperimentGroup([experiment1.id, experiment2.id])
+        def group = createExperimentGroup([experiment.id])
+
+        then:
+        def freshExperiment = fetchExperiment(experiment.id)
+        freshExperiment.experimentGroup.id == group
+
+        where:
+        status << [ACTIVE, PAUSED, DRAFT]
+    }
+
+    @Unroll
+    def "should prevent from adding #status experiment to a new group"() {
+        given:
+        def experiment = experimentWithStatus(status)
+
+        when:
+        createExperimentGroup([experiment.id])
 
         then:
         def exception = thrown HttpClientErrorException
         exception.statusCode == HttpStatus.BAD_REQUEST
+
+        where:
+        status << [ENDED, FULL_ON]
     }
 
     @Unroll
-    def "should not add #status experiment to a group"() {
+    def "should prevent from adding #status experiment to the existing group"() {
         given:
         def experiment1 = draftExperiment()
         def experiment2 = experimentWithStatus(status)
@@ -50,7 +69,7 @@ class AddExperimentToGroupE2ESpec extends BaseE2EIntegrationSpec {
         exception.statusCode == HttpStatus.BAD_REQUEST
 
         where:
-        status << allExperimentStatusValuesExcept(DRAFT, ACTIVE)
+        status << allExperimentStatusValuesExcept(DRAFT)
     }
 
     def "should not add non-existing experiment to a group"(){
