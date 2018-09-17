@@ -63,7 +63,7 @@ public class AddExperimentToGroupCommand implements Command {
     }
 
     private ExperimentGroup createGroup(final String groupId, final ExperimentDefinition experiment) {
-        var salt = experiment.isActive() ? experiment.getId() : UUID.randomUUID().toString();
+        var salt = experiment.isDraft() ? UUID.randomUUID().toString() :experiment.getId();
         var experimentGroup = new ExperimentGroup(groupId, salt, ImmutableList.of(experiment.getId()));
         return experimentGroup;
     }

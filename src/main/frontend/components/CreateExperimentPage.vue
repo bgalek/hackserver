@@ -217,11 +217,11 @@
       },
 
       validate () {
-        // this.$refs.experimentCustomParamEditing.validate()
+        const customParamValid = this.$refs.experimentCustomParamEditing.validate()
         const descValid = this.$refs.experimentDescEditing.validate()
         const variantsValid = this.$refs.experimentVariantsEditing.validate()
 
-        return this.$refs.createForm.validate() && descValid && variantsValid
+        return this.$refs.createForm.validate() && descValid && variantsValid && customParamValid
       },
 
       setPermissionsError () {

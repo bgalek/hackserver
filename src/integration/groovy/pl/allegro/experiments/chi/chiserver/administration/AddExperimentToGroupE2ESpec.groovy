@@ -3,6 +3,7 @@ package pl.allegro.experiments.chi.chiserver.administration
 import org.springframework.http.HttpStatus
 import org.springframework.web.client.HttpClientErrorException
 import pl.allegro.experiments.chi.chiserver.BaseE2EIntegrationSpec
+import pl.allegro.experiments.chi.chiserver.domain.experiments.ExperimentStatus
 import spock.lang.Unroll
 
 import static pl.allegro.experiments.chi.chiserver.domain.experiments.ExperimentStatus.*
@@ -99,9 +100,10 @@ class AddExperimentToGroupE2ESpec extends BaseE2EIntegrationSpec {
         exception.statusCode == HttpStatus.BAD_REQUEST
     }
 
-    def "should set group's salt to Id of the first experiment when it's active"() {
+    @Unroll
+    def "should set group's salt to Id of the first experiment when it's #status"() {
         given:
-        def experiment1 = startedExperiment()
+        def experiment1 = experimentWithStatus(status)
         def experiment2 = draftExperiment()
 
         when:
@@ -109,6 +111,9 @@ class AddExperimentToGroupE2ESpec extends BaseE2EIntegrationSpec {
 
         then:
         group.salt == experiment1.id
+
+        where:
+        status << [ExperimentStatus.ACTIVE, ExperimentStatus.PAUSED]
     }
 
     def "should set group's salt to random UUID when the first experiment is draft"() {

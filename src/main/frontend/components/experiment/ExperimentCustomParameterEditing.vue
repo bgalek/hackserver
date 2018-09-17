@@ -33,16 +33,13 @@
             v-model="value.name"
             :rules="customParameterNameRules"
             label="Custom parameter name"
-            v-on:input="inputEntered()">
-            >
-          </v-text-field>
+          ></v-text-field>
           <v-text-field
             v-if="defineCustomParameter"
             id="experimentCustomParameterValueFormField"
             v-model="value.value"
             :rules="customParameterValueRules"
             label="Custom parameter value"
-            v-on:input="inputEntered()"
           ></v-text-field>
         </v-flex>
 
@@ -57,6 +54,12 @@
 <script>
   import {startsOrEndsWithSpace} from '../../utils/startsOrEndsWithSpace'
   import { slugify } from '../../utils/slugify'
+  import { Record } from 'immutable'
+
+  const CustomParamEditingRecord = Record({
+    name: null,
+    value: null
+  })
 
   export default {
     props: ['experiment'],
@@ -76,31 +79,45 @@
       }
     },
 
+    watch: {
+      value: {
+        handler: function (newValue) {
+          if (this.validate()) {
+            this.$emit('input', this.buildResultFromValue())
+          }
+        },
+        deep: true
+      }
+    },
+
     methods: {
       init (experiment) {
-        const value = {
+        return {
           name: null,
           value: null
         }
-
-        this.$emit('input', value)
-        return value
-      },
-
-      inputEntered () {
-        this.value.name = slugify(this.value.name)
-        this.value.value = slugify(this.value.value)
-        this.$emit('input', this.value)
       },
 
       onDefineCustomParameterChange (newVal) {
         if (!newVal) {
-          this.value.name = null
-          this.value.value = null
-          this.$emit('input', this.value)
+          this.$emit('input', this.buildResult({}))
         }
-      }
+      },
 
+      buildResult (value) {
+        return new CustomParamEditingRecord({
+          name: slugify(value.name),
+          value: slugify(value.value)
+        })
+      },
+
+      buildResultFromValue () {
+        return this.buildResult(this.value)
+      },
+
+      validate () {
+        return this.$refs.customParameterForm.validate()
+      },
     }
   }
 </script>
