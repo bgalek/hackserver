@@ -117,7 +117,7 @@
 
       validate () {
         return this.$refs.customParameterForm.validate()
-      },
+      }
     }
   }
 </script>
