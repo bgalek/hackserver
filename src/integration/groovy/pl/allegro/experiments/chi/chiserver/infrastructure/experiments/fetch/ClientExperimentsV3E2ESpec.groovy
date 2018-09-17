@@ -193,6 +193,6 @@ class ClientExperimentsV3E2ESpec extends BaseE2EIntegrationSpec {
         !experimentIds.contains(firstExperiment.id)
 
         where:
-        status << allExperimentStatusValuesExcept(DRAFT, ACTIVE, FULL_ON)
+        status << [PAUSED]
     }
 }
