@@ -113,4 +113,8 @@ trait ApiActionUtils {
         ]
         put("$ADMIN_API_PATH/$experimentId/update-variants", properties)
     }
+
+    List fetchExperimentsInfo() {
+        get("/api/experiments-info", List).body as List
+    }
 }

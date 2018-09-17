@@ -1,21 +1,18 @@
 package pl.allegro.experiments.chi.chiserver.application.experiments;
 
-import com.google.common.collect.ImmutableList;
 import com.google.gson.Gson;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import pl.allegro.experiments.chi.chiserver.domain.experiments.ExperimentDefinition;
+import pl.allegro.experiments.chi.chiserver.domain.experiments.ExperimentVariant;
 import pl.allegro.experiments.chi.chiserver.domain.experiments.ExperimentsRepository;
 import pl.allegro.tech.common.andamio.metrics.MeteredEndpoint;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import java.util.stream.Collectors;
 
 import static java.util.stream.Collectors.toList;
-import static java.util.stream.Collectors.toMap;
 import static org.springframework.http.MediaType.APPLICATION_JSON_UTF8_VALUE;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
@@ -38,9 +35,37 @@ public class ClientExperimentsInfoController {
     @MeteredEndpoint
     @GetMapping(path = {""})
     String experiments() {
-        Map<String, List<String>> response = experimentsRepository
+        List<ClientExperimentInfo> response = experimentsRepository
             .assignable()
-            .stream().collect(toMap(ExperimentDefinition::getId, it -> new ArrayList<>(it.allVariantNames())));
-        return jsonConverter.toJson(response, Map.class);
+            .stream()
+            .map(ClientExperimentInfo::new)
+            .collect(toList());
+        return jsonConverter.toJson(response);
+    }
+
+    public static class ClientExperimentInfo {
+        private final String name;
+        private final List<String> variants;
+
+        ClientExperimentInfo(ExperimentDefinition experiment) {
+            name = experiment.getId();
+            variants = experiment.prepareExperimentVariants()
+                    .stream()
+                    .map(ExperimentVariant::getName)
+                    .collect(Collectors.toList());
+        }
+
+        ClientExperimentInfo(String id, List<String> variants) {
+            this.name = id;
+            this.variants = variants;
+        }
+
+        public String getName() {
+            return name;
+        }
+
+        public List<String> getVariants() {
+            return variants;
+        }
     }
 }
