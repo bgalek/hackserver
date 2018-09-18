@@ -16,7 +16,8 @@ public class InteractionsMetricsReporter {
     private final LoadingCache slugCache;
     private final static String PARSED_INTERACTIONS = "interactions.parsed.all";
     private final static String ACCEPTED_INTERACTIONS = "interactions.received";
-    private final static String IGNORED_INTERACTIONS = "interactions.ignored";
+    private final static String IGNORED_INTERACTIONS_BY_EXP = "interactions.ignored.experiment";
+    private final static String IGNORED_INTERACTIONS_BY_CLIENT = "interactions.ignored.client";
 
     public InteractionsMetricsReporter(MeterRegistry metricRegistry) {
         this.meterRegistry = metricRegistry;
@@ -36,7 +37,8 @@ public class InteractionsMetricsReporter {
     }
 
     public void meterIgnored(Interaction interaction) {
-        meterRegistry.counter(IGNORED_INTERACTIONS + "."+interaction.getExperimentId()).increment();
+        meterRegistry.counter(IGNORED_INTERACTIONS_BY_EXP + "." + interaction.getExperimentId()).increment();
+        meterRegistry.counter(IGNORED_INTERACTIONS_BY_CLIENT + "." + interaction.getAppId()).increment();
     }
 
     public void meterAccepted(List<Interaction> interactions) {
