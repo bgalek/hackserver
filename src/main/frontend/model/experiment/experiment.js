@@ -161,7 +161,7 @@ export default class ExperimentModel extends ExperimentRecord {
 
   canBeGrouped () {
     return !this.isInGroup() &&
-      ['DRAFT', 'ACTIVE', 'PAUSED'].includes(this.status)
+      ['DRAFT'].includes(this.status)
   }
 
   canRunLifecycleCommand () {
