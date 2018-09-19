@@ -6,7 +6,7 @@ channels:
 sources:
   graphite:
     lost_rate:
-      metric: absolute(diffSeries(sum(stats.experiments.chi.chi-server.*.interactions.received.all.m1_rate, stats.experiments.chi.chi-server.*.interactions.ignored.*.m1_rate),sum(stats.*.*.*.*.chi.client.interactions.reporter.items.sent.m1_rate)))
+      metric: absolute(diffSeries(sum(stats.experiments.chi.chi-server.*.interactions.received.all.m1_rate, stats.experiments.chi.chi-server.*.interactions.ignored.experiment.*.m1_rate),sum(stats.*.*.*.*.chi.client.interactions.reporter.items.sent.m1_rate)))
 
 checks:
   lost_rate:

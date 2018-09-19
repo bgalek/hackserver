@@ -3,5 +3,5 @@ import { cookieBakerHost } from './cookieBakerHost'
 export function cookieBakerLink (experimentId, variantName, preserveOther) {
   let host = cookieBakerHost()
   let other = preserveOther === true ? '' : ',-'
-  return `https://${host}/chi/cookie-baker.html?chi=${experimentId}!${variantName}${other}&redirect=${`https://${host}/`}`
+  return `https://${host}/chi/cookie-baker.html?chi=${experimentId}!${variantName}${other}&expireDays=30&redirect=${`https://${host}/`}`
 }

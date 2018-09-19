@@ -6,6 +6,7 @@ public enum DeviceClass {
     phone_android,
     desktop,
     tablet,
+    other,
     all;
 
     public static DeviceClass fromString(String deviceClass) {
