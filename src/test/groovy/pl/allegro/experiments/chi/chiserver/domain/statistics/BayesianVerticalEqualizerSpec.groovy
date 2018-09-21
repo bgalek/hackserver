@@ -6,6 +6,8 @@ import pl.allegro.experiments.chi.chiserver.domain.statistics.bayes.BayesianExpe
 import pl.allegro.experiments.chi.chiserver.domain.statistics.bayes.BayesianVerticalEqualizer
 import spock.lang.Specification
 
+import java.math.RoundingMode
+
 class BayesianVerticalEqualizerSpec extends Specification {
 
     def "should build simple Vertical Equalizer from raw Bayesian stats"() {
@@ -30,9 +32,13 @@ class BayesianVerticalEqualizerSpec extends Specification {
         equalizer.bars.size() == 2
         def bar = equalizer.bars.find{it.variantName.get() == "test-a" }
 
-      bar.improvingProbabilities[0] + bar.worseningProbabilities[0] == 1.0
-      bar.improvingProbabilities == [0.7969, 0.5866, 0.3506, 0.1636, 0.0577]
-      bar.worseningProbabilities == [0.2031, 0.0735, 0.0191, 0.0035, 0.0006]
+        bar.improvingProbabilities[0] + bar.worseningProbabilities[0] == 1.0
+        bar.improvingProbabilities.collect{round4(it)} == [0.7969, 0.5866, 0.3506, 0.1636, 0.0577]
+        bar.worseningProbabilities.collect{round4(it)} == [0.2031, 0.0735, 0.0191, 0.0035, 0.0006]
+    }
+
+    BigDecimal round4(BigDecimal val) {
+        val.setScale(4, RoundingMode.HALF_DOWN)
     }
 
     static BayesianExperimentStatistics stats() {

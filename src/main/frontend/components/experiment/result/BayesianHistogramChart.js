@@ -21,8 +21,10 @@ export default {
       const redDataset = histogramData.frequencies.slice(0, RADIUS)
       const greenDataset = new Array(RADIUS).fill(0).concat(histogramData.frequencies.slice(RADIUS, RADIUS * 2))
 
+      const labels = histogramData.values.map(x => (x * 100).toFixed(1) + '%')
+
       this.renderChart({
-        labels: histogramData.values.map(x => (x * 100).toFixed(1) + '%'),
+        labels: labels,
         datasets: [
           {
             label: `There is ${worseThanBase} risk that variant ${variantName} is worse than Base`,
@@ -32,6 +34,7 @@ export default {
           {
             label: `There is ${betterThanBase} chance that variant ${variantName} is better than Base`,
             backgroundColor: new Array(RADIUS * 2).fill('#00b300'),
+            borderWidth: 0,
             data: greenDataset
           }
         ]
@@ -44,6 +47,7 @@ export default {
         maintainAspectRatio: false,
         scales: {
           xAxes: [{
+            type: 'category',
             scaleLabel: {
               display: true,
               labelString: 'Diff to Base'
@@ -52,8 +56,8 @@ export default {
             gridLines: {
               display: false
             },
-            barPercentage: 1.11,
-            categoryPercentage: 1.11,
+            barPercentage: 0.9,
+            categoryPercentage: 1,
             ticks: {
               autoskip: true
             }

@@ -13,7 +13,7 @@ import java.util.stream.Stream;
 public class BayesianHistograms {
     private final BayesianChartMetadata metadata;
     private final List<VariantHistogram> histograms;
-    private static final double BOX_SIZE = 0.001;
+    private static final double BOX_SIZE = 0.002;
 
     public BayesianHistograms(BayesianExperimentStatistics experimentStatistics) {
         this(new BayesianChartMetadata(experimentStatistics,BOX_SIZE),
@@ -32,11 +32,12 @@ public class BayesianHistograms {
 
         var statistics = rawStatistics.noiseReduction();
 
+
         var frequencies = statistics.calculateFrequencies();
         var improvingLabels = statistics.calculateImprovingProbabilities(BOX_SIZE, statistics.radius());
         var worseningLabels = statistics.calculateWorseningProbabilities(BOX_SIZE, statistics.radius());
 
-        Stream<BigDecimal> allLabels = Streams.concat(Lists.reverse(worseningLabels).stream(), improvingLabels.stream());
+        Stream<BigDecimal> allLabels = Streams.concat(worseningLabels.stream(), improvingLabels.stream());
 
         return new VariantHistogram(
                 statistics.getVariantName(),

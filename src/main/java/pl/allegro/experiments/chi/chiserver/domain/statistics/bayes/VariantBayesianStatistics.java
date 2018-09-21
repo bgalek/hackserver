@@ -109,11 +109,11 @@ public class VariantBayesianStatistics {
             result.add(toRatio(sum, samplesCount));
             box --;
         }
-        return Lists.reverse(result);
+        return result;
     }
 
     private static BigDecimal toRatio(int sampleCount, int allCount) {
-        return BigDecimal.valueOf(sampleCount / (double) allCount).setScale(4, RoundingMode.HALF_DOWN);
+        return BigDecimal.valueOf(sampleCount / (double) allCount).setScale(6, RoundingMode.HALF_DOWN);
     }
 
     public int getOutliersLeft() {
@@ -129,6 +129,25 @@ public class VariantBayesianStatistics {
         return samples.getCounts().stream()
                 .map(it -> toRatio(it,allCount))
                 .collect(Collectors.toList());
+    }
+
+    BigDecimal massLeft(int to) {
+        int sum = 0;
+        for (int i=0; i<to; i++) {
+            sum += samples.getCounts().get(i);
+        }
+
+        return toRatio(sum + outliersLeft, allCount());
+    }
+
+
+    BigDecimal massRight(int from) {
+        int sum = 0;
+        for (int i=from; i<samples.getCounts().size(); i++) {
+            sum += samples.getCounts().get(i);
+        }
+
+        return toRatio(sum + outliersRight, allCount());
     }
 
     static class Sample {

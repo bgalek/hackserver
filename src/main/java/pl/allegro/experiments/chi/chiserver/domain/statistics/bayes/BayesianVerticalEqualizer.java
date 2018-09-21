@@ -1,6 +1,7 @@
 package pl.allegro.experiments.chi.chiserver.domain.statistics.bayes;
 
 import com.google.common.base.Preconditions;
+import com.google.common.collect.Lists;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -29,7 +30,7 @@ public class BayesianVerticalEqualizer {
     private static EqualizerBar toBar(VariantBayesianStatistics statistics) {
         return new EqualizerBar(statistics.getVariantName(),
                 statistics.calculateImprovingProbabilities(BOX_SIZE, RADIUS),
-                statistics.calculateWorseningProbabilities(BOX_SIZE, RADIUS));
+                Lists.reverse(statistics.calculateWorseningProbabilities(BOX_SIZE, RADIUS)));
     }
 
     private static BigDecimal toRatio(int sampleCount, int allCount) {
