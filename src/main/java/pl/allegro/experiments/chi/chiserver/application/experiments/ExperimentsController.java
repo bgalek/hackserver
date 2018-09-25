@@ -17,7 +17,7 @@ import pl.allegro.experiments.chi.chiserver.domain.experiments.administration.au
 import pl.allegro.experiments.chi.chiserver.domain.experiments.administration.audit.Auditor;
 import pl.allegro.experiments.chi.chiserver.domain.statistics.bayes.BayesianChartsRepository;
 import pl.allegro.experiments.chi.chiserver.domain.statistics.classic.ClassicStatisticsForVariantMetricRepository;
-import pl.allegro.experiments.chi.chiserver.infrastructure.ExperimentFactory;
+import pl.allegro.experiments.chi.chiserver.infrastructure.ClientExperimentFactory;
 import pl.allegro.tech.common.andamio.errors.Error;
 import pl.allegro.tech.common.andamio.errors.ErrorsHolder;
 import pl.allegro.tech.common.andamio.errors.SimpleErrorsHolder;
@@ -41,7 +41,7 @@ public class ExperimentsController {
     private final Gson jsonConverter;
     private final Auditor auditor;
     private final ExperimentGroupRepository experimentGroupRepository;
-    private final ExperimentFactory clientExperimentFactory;
+    private final ClientExperimentFactory clientExperimentFactory;
     private final ClassicStatisticsForVariantMetricRepository classicStatisticsForVariantMetricRepository;
 
     public ExperimentsController(
@@ -52,7 +52,7 @@ public class ExperimentsController {
             Auditor auditor,
             BayesianChartsRepository bayesianChartsRepository,
             ExperimentGroupRepository experimentGroupRepository,
-            ExperimentFactory experimentFactory,
+            ClientExperimentFactory clientExperimentFactory,
             ClassicStatisticsForVariantMetricRepository classicStatisticsForVariantMetricRepository) {
         this.experimentsRepository = experimentsRepository;
         this.measurementsRepository = measurementsRepository;
@@ -61,7 +61,7 @@ public class ExperimentsController {
         this.auditor = auditor;
         this.bayesianChartsRepository = bayesianChartsRepository;
         this.experimentGroupRepository = experimentGroupRepository;
-        this.clientExperimentFactory = experimentFactory;
+        this.clientExperimentFactory = clientExperimentFactory;
         this.classicStatisticsForVariantMetricRepository = classicStatisticsForVariantMetricRepository;
     }
 

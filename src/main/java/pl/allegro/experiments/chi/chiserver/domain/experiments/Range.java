@@ -2,13 +2,15 @@ package pl.allegro.experiments.chi.chiserver.domain.experiments;
 
 import com.google.common.base.Preconditions;
 
+import java.util.Objects;
+
 abstract public class Range {
     private final int from;
     private final int to;
 
     Range(int from, int to) {
         Preconditions.checkArgument(from >= 0, "Range.from < 0");
-        Preconditions.checkArgument(from <= to, "Range.from > Range.to");
+        Preconditions.checkArgument(to > from, "Range: to should be > from, got " + from, " " + to);
         this.from = from;
         this.to = to;
     }
@@ -19,5 +21,19 @@ abstract public class Range {
 
     public int getTo() {
         return to;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Range range = (Range) o;
+        return from == range.from &&
+                to == range.to;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(from, to);
     }
 }

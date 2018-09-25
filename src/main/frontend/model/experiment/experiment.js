@@ -124,7 +124,7 @@ export default class ExperimentModel extends ExperimentRecord {
   }
 
   canBeFullOn () {
-    return this.status === 'ACTIVE'
+    return this.status === 'ACTIVE' && !this.isInGroup()
   }
 
   canBePaused () {
@@ -161,7 +161,7 @@ export default class ExperimentModel extends ExperimentRecord {
 
   canBeGrouped () {
     return !this.isInGroup() &&
-      ['DRAFT'].includes(this.status)
+      ['DRAFT', 'ACTIVE'].includes(this.status)
   }
 
   canRunLifecycleCommand () {

@@ -1,9 +1,18 @@
 <template>
   <v-list-tile @click="goToExperiment(experiment.id)">
     <v-list-tile-content>
-      <v-list-tile-title>
+      <v-list-tile-title style="height: auto">
         <span>{{ experiment.id }}</span>
+
+        <span v-if="experiment.experimentGroup">
+          ∈
+          <v-chip outline color="black" small disabled>
+            {{ experiment.experimentGroup.id }}
+          </v-chip>
+        </span>
+
         <experiment-hotness v-if="linkToData" label="Last day visits" :value="experiment.measurements.lastDayVisits"></experiment-hotness>
+
       </v-list-tile-title>
       <v-list-tile-sub-title v-html="experiment.desc"></v-list-tile-sub-title>
 
@@ -11,6 +20,7 @@
         {{experiment.getStatusDesc()}} {{ experiment.getLastStatusChangeMoment() }}
       </v-list-tile-sub-title>
     </v-list-tile-content>
+
     <v-list-tile-action>
       <div style="display: flex">
         <bayesian-horizontal-equalizer-chart v-if="this.showEqualizer(experiment)"

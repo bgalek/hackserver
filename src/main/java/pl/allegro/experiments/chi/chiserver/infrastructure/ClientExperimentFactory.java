@@ -1,5 +1,7 @@
 package pl.allegro.experiments.chi.chiserver.infrastructure;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 import pl.allegro.experiments.chi.chiserver.application.experiments.AdminExperiment;
 import pl.allegro.experiments.chi.chiserver.domain.UserProvider;
 import pl.allegro.experiments.chi.chiserver.domain.experiments.*;
@@ -11,12 +13,14 @@ import java.util.ArrayList;
 import java.util.List;
 
 // todo refactor/optimize
-public class ExperimentFactory {
+@Service
+public class ClientExperimentFactory {
     private final ExperimentGroupRepository experimentGroupRepository;
     private final ExperimentsRepository experimentsRepository;
     private final UserProvider userProvider;
 
-    public ExperimentFactory(
+    @Autowired
+    public ClientExperimentFactory(
             ExperimentGroupRepository experimentGroupRepository,
             ExperimentsRepository experimentsRepository,
             UserProvider userProvider) {

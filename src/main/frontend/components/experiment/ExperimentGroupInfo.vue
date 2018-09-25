@@ -3,7 +3,7 @@
 
   <template v-if="isPresent()">
 
-    <v-chip outline color="black">
+    <v-chip outline color="black" small disabled>
       {{ this.experimentGroup.id }}
     </v-chip>
 

@@ -7,6 +7,7 @@ import pl.allegro.experiments.chi.chiserver.domain.User;
 import pl.allegro.experiments.chi.chiserver.domain.UserProvider;
 import pl.allegro.experiments.chi.chiserver.domain.experiments.ExperimentDefinition;
 import pl.allegro.experiments.chi.chiserver.domain.experiments.Predicate;
+import pl.allegro.experiments.chi.chiserver.domain.experiments.groups.AllocationTable;
 import pl.allegro.experiments.chi.chiserver.domain.experiments.groups.ExperimentGroup;
 import pl.allegro.experiments.chi.chiserver.domain.experiments.groups.ExperimentGroupRepository;
 
@@ -64,7 +65,7 @@ public class AddExperimentToGroupCommand implements Command {
 
     private ExperimentGroup createGroup(final String groupId, final ExperimentDefinition experiment) {
         var salt = experiment.isDraft() ? UUID.randomUUID().toString() :experiment.getId();
-        var experimentGroup = new ExperimentGroup(groupId, salt, ImmutableList.of(experiment.getId()));
+        var experimentGroup = new ExperimentGroup(groupId, salt, ImmutableList.of(experiment.getId()), AllocationTable.empty());
         return experimentGroup;
     }
 

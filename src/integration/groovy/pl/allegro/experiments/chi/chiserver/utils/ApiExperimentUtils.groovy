@@ -6,6 +6,10 @@ import static pl.allegro.experiments.chi.chiserver.utils.SampleExperimentRequest
 
 trait ApiExperimentUtils implements ApiActionUtils {
 
+    Map fetchClientExperiment(String expId) {
+        get("$CLIENT_API_PATH", List).body.find { it.id == expId }
+    }
+
     List fetchClientExperiments(String apiVersion = "") {
         get("$CLIENT_API_PATH/$apiVersion", List).body as List
     }

@@ -9,8 +9,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import pl.allegro.experiments.chi.chiserver.domain.experiments.ExperimentDefinition;
 import pl.allegro.experiments.chi.chiserver.domain.experiments.groups.ExperimentGroupRepository;
-import pl.allegro.experiments.chi.chiserver.infrastructure.ClientExperiment;
-import pl.allegro.experiments.chi.chiserver.infrastructure.ExperimentFactory;
+import pl.allegro.experiments.chi.chiserver.infrastructure.ClientExperimentFactory;
 import pl.allegro.tech.common.andamio.metrics.MeteredEndpoint;
 
 import java.util.stream.Stream;
@@ -22,7 +21,7 @@ import static java.util.stream.Collectors.toList;
 class ClientExperimentsControllerV4 {
     final Gson jsonConverter;
     final ExperimentGroupRepository experimentGroupRepository;
-    final ExperimentFactory experimentFactory;
+    final ClientExperimentFactory clientExperimentFactory;
 
     private final ClientExperimentsControllerV5 controllerV5;
     private static final Logger logger = LoggerFactory.getLogger(ClientExperimentsControllerV4.class);
@@ -31,7 +30,7 @@ class ClientExperimentsControllerV4 {
         this.controllerV5 = controllerV5;
         this.jsonConverter = controllerV5.jsonConverter;
         this.experimentGroupRepository = controllerV5.experimentGroupRepository;
-        this.experimentFactory = controllerV5.experimentFactory;
+        this.clientExperimentFactory = controllerV5.clientExperimentFactory;
     }
 
     private boolean isV4Compliant(ExperimentDefinition experiment) {
@@ -47,7 +46,7 @@ class ClientExperimentsControllerV4 {
     String experiments() {
         logger.debug("Client V4 experiments request received");
         return jsonConverter.toJson(experimentStream()
-                .map(experimentFactory::clientExperiment)
+                .map(clientExperimentFactory::clientExperiment)
                 .collect(toList())
         );
     }
