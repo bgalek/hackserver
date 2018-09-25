@@ -26,14 +26,21 @@ abstract public class Range {
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (o == null || !(o instanceof Range)) return false;
         Range range = (Range) o;
-        return from == range.from &&
-                to == range.to;
+        return from == range.from && to == range.to;
     }
 
     @Override
     public int hashCode() {
         return Objects.hash(from, to);
+    }
+
+    @Override
+    public String toString() {
+        return "Range{" +
+                "from=" + from +
+                ", to=" + to +
+                '}';
     }
 }

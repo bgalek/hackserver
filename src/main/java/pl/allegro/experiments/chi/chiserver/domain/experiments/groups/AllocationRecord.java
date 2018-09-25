@@ -2,22 +2,22 @@ package pl.allegro.experiments.chi.chiserver.domain.experiments.groups;
 
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.data.annotation.PersistenceConstructor;
 import pl.allegro.experiments.chi.chiserver.domain.experiments.PercentageRange;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-public class AllocationRecord {
+public final class AllocationRecord {
     private final String experimentId;
     private final String variant;
     private final PercentageRange range;
 
     @PersistenceConstructor
     public AllocationRecord(String experimentId, String variant, PercentageRange range) {
-        Preconditions.checkArgument(experimentId != null);
-        Preconditions.checkArgument(variant != null);
+        Preconditions.checkArgument(StringUtils.isNotBlank(experimentId));
+        Preconditions.checkArgument(StringUtils.isNotBlank(variant));
         Preconditions.checkArgument(range != null);
 
         this.experimentId = experimentId;
@@ -26,23 +26,31 @@ public class AllocationRecord {
     }
 
     static AllocationRecord forVariant(String experimentId, String variant, int from, int to) {
-        return new AllocationRecord(experimentId, variant, new PercentageRange(from, to));
+        return AllocationRecord.forVariant(experimentId, variant, new PercentageRange(from, to));
+    }
+
+    static AllocationRecord forVariant(String experimentId, String variant, PercentageRange range) {
+        return new AllocationRecord(experimentId, variant, range);
     }
 
     static AllocationRecord forBase(int from, int to) {
-        return new AllocationRecord("*", "base", new PercentageRange(from, to));
+        return forBase(new PercentageRange(from, to));
+    }
+
+    static AllocationRecord forBase(PercentageRange range) {
+        return new AllocationRecord("*", "base", range);
     }
 
     List<Integer> getBuckets() {
         var result = new ArrayList<Integer>();
-        for(int i=range.getFrom(); i<range.getTo(); i++){
+        for (int i = range.getFrom(); i < range.getTo(); i++) {
             result.add(i);
         }
         return ImmutableList.copyOf(result);
     }
 
     boolean isBase() {
-        return "base".equals(variant);
+        return AllocationTable.BASE.equals(variant);
     }
 
     int getAllocation() {
@@ -61,6 +69,19 @@ public class AllocationRecord {
         return range;
     }
 
+    boolean canJoinWith(AllocationRecord right) {
+        return this.getRange().getTo() == right.getRange().getFrom() &&
+               this.getExperimentId().equals(right.getExperimentId()) &&
+               this.getVariant().equals(right.getVariant());
+    }
+
+    AllocationRecord joined(AllocationRecord right) {
+        return new AllocationRecord(
+               this.getExperimentId(),
+               this.getVariant(),
+               new PercentageRange(this.getRange().getFrom(), right.getRange().getTo()));
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -74,5 +95,14 @@ public class AllocationRecord {
     @Override
     public int hashCode() {
         return Objects.hash(experimentId, variant, range);
+    }
+
+    @Override
+    public String toString() {
+        return "AllocationRecord{" +
+                "experimentId='" + experimentId + '\'' +
+                ", variant='" + variant + '\'' +
+                ", range=" + range +
+                '}';
     }
 }
