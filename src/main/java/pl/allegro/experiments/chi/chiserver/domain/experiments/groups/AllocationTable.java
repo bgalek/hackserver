@@ -43,13 +43,13 @@ public class AllocationTable {
         }
     }
 
+    /**
+     * Allocates percentage for a given variants (including base).
+     */
     AllocationTable allocate(String experimentId, List<String> variantNames, int targetPercentage) {
         return allocate(experimentId, variantNames, targetPercentage, false);
     }
 
-    /**
-     * Allocates percentage for a given variants (including base).
-     */
     AllocationTable allocate(String experimentId, List<String> variantNames, int targetPercentage, boolean sharedBase) {
         validateAllocation(experimentId, variantNames, targetPercentage, sharedBase);
 
@@ -63,6 +63,19 @@ public class AllocationTable {
         return SpaceAllocator.allocateNewRecords(this, newAllocation);
     }
 
+    public AllocationTable evict(String experimentId) {
+        Preconditions.checkArgument(experimentId != null);
+        Preconditions.checkArgument(!experimentId.equals(SHARED_BASE), "cheating!");
+
+        List<AllocationRecord> newRecords = records.stream()
+                .filter(record -> !record.belongsTo(experimentId))
+                .collect(Collectors.toList());
+
+        if (newRecords.size() == 1 && newRecords.get(0).isSharedBase()) {
+            return new AllocationTable(Collections.emptyList());
+        }
+        return new AllocationTable(newRecords);
+    }
 
     AllocationTable merge(AllocationRecord recordToAdd) {
         List<AllocationRecord> newRecords = new ArrayList<>(records);
@@ -181,5 +194,4 @@ public class AllocationTable {
     public int hashCode() {
         return Objects.hash(records);
     }
-
 }

@@ -38,7 +38,7 @@ public final class AllocationRecord {
     }
 
     static AllocationRecord forSharedBase(PercentageRange range) {
-        return new AllocationRecord("*", "base", range);
+        return new AllocationRecord(AllocationTable.SHARED_BASE, "base", range);
     }
 
     List<Integer> getBuckets() {
@@ -80,6 +80,10 @@ public final class AllocationRecord {
                this.getVariant().equals(right.getVariant());
     }
 
+    boolean belongsTo(String experimentId) {
+        return this.experimentId.equals(experimentId);
+    }
+
     AllocationRecord joined(AllocationRecord right) {
         return new AllocationRecord(
                this.getExperimentId(),
@@ -92,7 +96,7 @@ public final class AllocationRecord {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         AllocationRecord that = (AllocationRecord) o;
-        return Objects.equals(experimentId, that.experimentId) &&
+        return  Objects.equals(experimentId, that.experimentId) &&
                 Objects.equals(variant, that.variant) &&
                 Objects.equals(range, that.range);
     }

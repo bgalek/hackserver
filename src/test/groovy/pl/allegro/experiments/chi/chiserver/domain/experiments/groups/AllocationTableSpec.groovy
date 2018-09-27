@@ -193,6 +193,55 @@ class AllocationTableSpec extends Specification {
         table.records[5] == forVariant("exp1",  "base",  90, 100)
     }
 
+    def "should evict experiment allocation upon request"(){
+        given:
+        def table = new AllocationTable([
+                forVariant("exp1", "v1",    0,   10),
+                forVariant("exp2", "v1",    10,  20),
+                forVariant("exp1", "base",  20,  30),
+                forVariant("exp2", "base",  31,  40)
+        ])
+
+        when:
+        table = table.evict("exp1")
+
+        then:
+        table.records.size() == 2
+        table.records[0] == forVariant("exp2", "v1",    10,  20)
+        table.records[1] == forVariant("exp2", "base",  31,  40)
+    }
+
+    def "should not evict shared base when it is used by other experiment"(){
+        given:
+        def table = new AllocationTable([
+                forVariant("exp1", "v1",    0,   10),
+                forVariant("exp2", "v1",    10,  20),
+                forSharedBase(50, 60)
+        ])
+
+        when:
+        table = table.evict("exp1")
+
+        then:
+        table.records.size() == 2
+        table.records[0] == forVariant("exp2", "v1", 10,  20)
+        table.records[1] == forSharedBase(50, 60)
+    }
+
+    def "should evict shared base when it is the last experiment"(){
+        given:
+        def table = new AllocationTable([
+                forVariant("exp1", "v1", 0, 10),
+                forSharedBase(50, 60)
+        ])
+
+        when:
+        table = table.evict("exp1")
+
+        then:
+        table.records.size() == 0
+    }
+
     def "should add second experiment to table and scale with shared base"(){
         given:
         def table = new AllocationTable([]).allocate("exp1", ["v1", "base"], 10, true)
