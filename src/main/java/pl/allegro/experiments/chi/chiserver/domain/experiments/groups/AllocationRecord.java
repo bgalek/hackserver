@@ -33,11 +33,11 @@ public final class AllocationRecord {
         return new AllocationRecord(experimentId, variant, range);
     }
 
-    static AllocationRecord forBase(int from, int to) {
-        return forBase(new PercentageRange(from, to));
+    static AllocationRecord forSharedBase(int from, int to) {
+        return forSharedBase(new PercentageRange(from, to));
     }
 
-    static AllocationRecord forBase(PercentageRange range) {
+    static AllocationRecord forSharedBase(PercentageRange range) {
         return new AllocationRecord("*", "base", range);
     }
 
@@ -51,6 +51,11 @@ public final class AllocationRecord {
 
     boolean isBase() {
         return AllocationTable.BASE.equals(variant);
+    }
+
+
+    public boolean isSharedBase() {
+        return isBase() && AllocationTable.SHARED_BASE.equals(experimentId);
     }
 
     int getAllocation() {

@@ -36,4 +36,12 @@ class Bucket implements Comparable<Bucket> {
     public int compareTo(Bucket o) {
         return Integer.valueOf(this.id).compareTo(o.id);
     }
+
+    @Override
+    public String toString() {
+        return "Bucket{" +
+                "id=" + id +
+                ", free=" + free +
+                '}';
+    }
 }

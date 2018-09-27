@@ -1,12 +1,16 @@
 package pl.allegro.experiments.chi.chiserver.domain.experiments.groups;
 
+import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class AllocationTable {
     final static String BASE = "base";
+    final static String SHARED_BASE = "*";
+
     private final List<AllocationRecord> records;
 
     public AllocationTable(List<AllocationRecord> records) {
@@ -23,23 +27,43 @@ public class AllocationTable {
      * Checks if there is enough space to allocate more percentage
      * for given number of variants (including base).
      */
-    boolean checkAllocation(int numberOfVariants, int percentage) {
-        return getBaseAllocation() + percentage +
-               getNonBaseAllocation() + percentage * (numberOfVariants - 1) <= 100;
+    boolean checkAllocation(final String experimentId, List<String> variantNames, final int targetPercentage, boolean sharedBase) {
+        Preconditions.checkArgument(experimentId != null);
+        Preconditions.checkArgument(variantNames != null);
+
+        if (sharedBase) {
+            return  Math.max(getSharedBaseAllocationSum(), targetPercentage) +
+                    variantNames.stream()
+                            .filter(this::isNotBase)
+                            .mapToInt(v -> getVariantAllocationShortage(experimentId, v, targetPercentage))
+                            .sum() + getNonBaseAllocationSum() <= 100;
+        } else {
+            return variantNames.stream()
+                           .mapToInt(v -> getVariantAllocationShortage(experimentId, v, targetPercentage))
+                           .sum() + getAllocationSum() <= 100;
+        }
     }
 
     /**
      * Allocates percentage for a given variants (including base).
      */
-    AllocationTable allocate(String experimentId, List<String> variantNames, int percentage) {
-        validateAllocation(experimentId, variantNames, percentage);
+    AllocationTable allocate(String experimentId, List<String> variantNames, int targetPercentage, boolean sharedBase) {
+        validateAllocation(experimentId, variantNames, targetPercentage, sharedBase);
 
-        return SpaceAllocator.allocateNewRecords(this, experimentId, variantNames, percentage);
+        var newAllocation = variantNames.stream().map(v -> {
+                    if(isBase(v) && sharedBase) {
+                        return AllocationRequest.forSharedBase(targetPercentage);
+                    }
+                    return new AllocationRequest(experimentId, v, targetPercentage);
+                }).collect(Collectors.toList());
+
+        return SpaceAllocator.allocateNewRecords(this, newAllocation);
     }
 
-    AllocationTable merge(List<AllocationRecord> recordsToAdd) {
+
+    AllocationTable merge(AllocationRecord recordToAdd) {
         List<AllocationRecord> newRecords = new ArrayList<>(records);
-        newRecords.addAll(recordsToAdd);
+        newRecords.add(recordToAdd);
         Collections.sort(newRecords, Comparator.comparingInt(r -> r.getRange().getFrom()));
 
         return new AllocationTable(joinAdjacent(newRecords));
@@ -63,8 +87,8 @@ public class AllocationTable {
         return Lists.reverse(buckets());
     }
 
-    private void validateAllocation(String experimentId, List<String> variantNames, int percentage) {
-        if (!checkAllocation(variantNames.size(), percentage)) {
+    private void validateAllocation(String experimentId, List<String> variantNames, int percentage, boolean sharedBase) {
+        if (!checkAllocation(experimentId, variantNames, percentage, sharedBase)) {
             throw new IllegalArgumentException("You are pushing to hard, relax!");
         }
 
@@ -73,15 +97,26 @@ public class AllocationTable {
         }
     }
 
-    int getBaseAllocation() {
-        return records.stream().filter(it -> it.isBase()).mapToInt(it -> it.getAllocation()).sum();
+    int getSharedBaseAllocationSum() {
+        return records.stream().filter(it -> it.isSharedBase()).mapToInt(it -> it.getAllocation()).sum();
     }
 
-    int getNonBaseAllocation() {
+    int getNonBaseAllocationSum() {
         return records.stream().filter(it -> !it.isBase()).mapToInt(it -> it.getAllocation()).sum();
     }
 
-    int getVariantAllocation( String experimentId, String variant) {
+    int getAllocationSum() {
+        return records.stream().mapToInt(it -> it.getAllocation()).sum();
+    }
+
+    int getVariantAllocationShortage(String experimentId, String variant, int targetAllocation) {
+        if (targetAllocation > getVariantAllocation(experimentId, variant)) {
+            return targetAllocation - getVariantAllocation(experimentId, variant);
+        }
+        return 0;
+    }
+
+    int getVariantAllocation(String experimentId, String variant) {
         return records.stream().filter(it -> it.getExperimentId().equals(experimentId) && it.getVariant().equals(variant)).mapToInt(it -> it.getAllocation()).sum();
     }
 
@@ -101,12 +136,6 @@ public class AllocationTable {
                     throw new IllegalArgumentException("Ranges clash on bucket " + b);
                 }
                 allBuckets.add(b);
-            }
-        }
-
-        for (AllocationRecord r : records) {
-            if (r.isBase() && !"*".equals(r.getExperimentId())) {
-                throw new IllegalArgumentException("Attempt to assign base range exclusively to experiment "+ r.getExperimentId());
             }
         }
     }
@@ -129,6 +158,13 @@ public class AllocationTable {
         return joined;
     }
 
+    private boolean isNotBase(String variant) {
+        return !isBase(variant);
+    }
+
+    private boolean isBase(String variant) {
+        return BASE.equals(variant);
+    }
 
     @Override
     public boolean equals(Object o) {
