@@ -22,7 +22,6 @@ public class AllocationTable {
         return records;
     }
 
-
     /**
      * Checks if there is enough space to allocate more percentage
      * for given number of variants (including base).
@@ -42,6 +41,10 @@ public class AllocationTable {
                            .mapToInt(v -> getVariantAllocationShortage(experimentId, v, targetPercentage))
                            .sum() + getAllocationSum() <= 100;
         }
+    }
+
+    AllocationTable allocate(String experimentId, List<String> variantNames, int targetPercentage) {
+        return allocate(experimentId, variantNames, targetPercentage, false);
     }
 
     /**

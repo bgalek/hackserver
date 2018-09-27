@@ -125,40 +125,95 @@ class AllocationTableSpec extends Specification {
         table.getVariantAllocation("exp1","v1") == 77
     }
 
-    def "should allocate free space on empty table and allow adding experiments and scaling"(){
+    @Unroll
+    def "should allocate on empty table and scale #desc shared base"(){
         given:
         def table = new AllocationTable([])
 
         when:
-        table = table.allocate("exp1", ["v1","v2", "base"], 5)
+        table = table.allocate("exp1", ["v1", "base"], 10, sharedBase)
 
         then:
-        table.records[0] == forVariant("exp1", "v1",  0,   5)
-        table.records[1] == forVariant("exp1", "v2",  5,  10)
-        table.records[2] == forSharedBase(95, 100)
+        table.records.size() == 2
+        table.records[0] == forVariant("exp1", "v1",         0,   10)
+        table.records[1] == forVariant(expectedId,  "base",  90, 100)
 
         when:
-        table = table.allocate("exp1", ["v1", "v2", "base"], 10)
+        table = table.allocate("exp1", ["v1", "base"], 20, sharedBase)
 
         then:
-        table.records[0] == forVariant("exp1", "v1",  0,   5)
-        table.records[1] == forVariant("exp1", "v2",  5,  10)
-        table.records[2] == forVariant("exp1", "v1",  10, 15)
-        table.records[3] == forVariant("exp1", "v2",  15, 20)
-        table.records[4] == forSharedBase(90, 100)
+        table.records.size() == 2
+        table.records[0] == forVariant("exp1", "v1",        0,   20)
+        table.records[1] == forVariant(expectedId, "base",  80, 100)
+
+        where:
+        sharedBase | desc      | expectedId
+        true       | "with"    | "*"
+        false      | "without" | "exp1"
+    }
+
+    def "should allocate up to 100 variants"(){
+      given:
+      def variants = (1..99).collect{it+""} + "base"
+
+      when:
+      def table = new AllocationTable([]).allocate("exp1", variants, 1)
+
+      then:
+      table.records.size() == 100
+      table.getVariantAllocation("exp1", "base") == 1
+      table.getVariantAllocation("exp1", "1")    == 1
+      table.getVariantAllocation("exp1", "99")   == 1
+    }
+
+    def "should add second experiment to table and scale (without shared base)"(){
+        given:
+        def table = new AllocationTable([]).allocate("exp1", ["v1", "base"], 10)
 
         when:
         table = table.allocate("exp2", ["v1", "base"], 10)
 
         then:
-        table.sharedBaseAllocationSum == 10
-        table.nonBaseAllocationSum == 30
-        table.records[0] == forVariant("exp1", "v1",  0,   5)
-        table.records[1] == forVariant("exp1", "v2",  5,  10)
-        table.records[2] == forVariant("exp1", "v1",  10, 15)
-        table.records[3] == forVariant("exp1", "v2",  15, 20)
-        table.records[4] == forVariant("exp2", "v1",  20, 30)
-        table.records[5] == forSharedBase(90, 100)
+        table.records.size() == 4
+        table.records[0] == forVariant("exp1",  "v1",    0,   10)
+        table.records[1] == forVariant("exp2",  "v1",    10,  20)
+        table.records[2] == forVariant("exp2",  "base",  80,  90)
+        table.records[3] == forVariant("exp1",  "base",  90, 100)
 
+        when:
+        table = table.allocate("exp1", ["v1", "base"], 20)
+
+        then:
+        table.records.size() == 6
+        table.records[0] == forVariant("exp1",  "v1",    0,   10)
+        table.records[1] == forVariant("exp2",  "v1",    10,  20)
+        table.records[2] == forVariant("exp1",  "v1",    20,  30)
+        table.records[3] == forVariant("exp1",  "base",  70,  80)
+        table.records[4] == forVariant("exp2",  "base",  80,  90)
+        table.records[5] == forVariant("exp1",  "base",  90, 100)
+    }
+
+    def "should add second experiment to table and scale with shared base"(){
+        given:
+        def table = new AllocationTable([]).allocate("exp1", ["v1", "base"], 10, true)
+
+        when:
+        table = table.allocate("exp2", ["v1", "base"], 10, true)
+
+        then:
+        table.records.size() == 3
+        table.records[0] == forVariant("exp1",  "v1",     0,  10)
+        table.records[1] == forVariant("exp2",  "v1",    10,  20)
+        table.records[2] == forVariant("*",     "base",  90, 100)
+
+        when:
+        table = table.allocate("exp1", ["v1", "base"], 20, true)
+
+        then:
+        table.records.size() == 4
+        table.records[0] == forVariant("exp1",  "v1",     0,  10)
+        table.records[1] == forVariant("exp2",  "v1",    10,  20)
+        table.records[2] == forVariant("exp1",  "v1",    20,  30)
+        table.records[3] == forVariant("*",     "base",  80, 100)
     }
 }
