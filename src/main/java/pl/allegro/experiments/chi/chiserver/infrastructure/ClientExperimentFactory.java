@@ -12,7 +12,6 @@ import pl.allegro.experiments.chi.chiserver.domain.experiments.groups.ShredHashR
 import java.util.ArrayList;
 import java.util.List;
 
-// todo refactor/optimize
 @Service
 public class ClientExperimentFactory {
     private final ExperimentGroupRepository experimentGroupRepository;
@@ -30,11 +29,14 @@ public class ClientExperimentFactory {
     }
 
     public ClientExperiment clientExperiment(ExperimentDefinition experiment) {
-        return experimentGroupRepository.findByExperimentId(experiment.getId())
-                .map(it -> clientExperimentFromGroupedExperiment(experiment, it))
-                .orElseGet(() -> new ClientExperiment(experiment));
+        ClientExperimentRenderer renderer = new ClientExperimentRenderer(experiment, experimentGroupRepository.findByExperimentId(experiment.getId()).orElse(null));
+        return renderer.render();
     }
 
+    /**
+     * legacy on-the-fly renderer
+     */
+    @Deprecated
     private ClientExperiment clientExperimentFromGroupedExperiment(ExperimentDefinition experiment, ExperimentGroup experimentGroup) {
         int percentageRangeStart = 0;
         for (String experimentId: experimentGroup.getExperiments()) {

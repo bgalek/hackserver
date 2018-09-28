@@ -9,15 +9,11 @@ import org.javers.core.metamodel.annotation.PropertyName;
 import org.javers.core.metamodel.annotation.TypeName;
 import org.springframework.data.annotation.Transient;
 import org.springframework.data.mongodb.core.mapping.Document;
-import pl.allegro.experiments.chi.chiserver.domain.experiments.administration.ExperimentDefinitionException;
 
 import java.time.LocalDateTime;
 import java.time.ZonedDateTime;
 import java.util.*;
-import java.util.stream.IntStream;
 
-import static java.util.stream.Collectors.toList;
-import static java.util.stream.Stream.concat;
 import static pl.allegro.experiments.chi.chiserver.domain.experiments.ExperimentDefinitionBuilder.experimentDefinition;
 
 @Document(collection = "experimentDefinitions")
@@ -277,21 +273,6 @@ public class ExperimentDefinition {
                 .build();
     }
 
-    private ExperimentVariant convertVariantByIndex(int i, int maxPercentageVariant) {
-        return convertVariant(
-                variantNames.get(i),
-                i * maxPercentageVariant,
-                i * maxPercentageVariant + percentage);
-    }
-
-    private ExperimentVariant convertVariant(String variantName, int from, int to) {
-        final var predicates = new ArrayList<Predicate>();
-        predicates.add(new HashRangePredicate(new PercentageRange(from, to)));
-        getDeviceClass().ifPresent(d -> predicates.add(new DeviceClassPredicate(d.toJsonString())));
-        getCustomParameter().ifPresent(c -> predicates.add(new CustomParameterPredicate(c.getName(), c.getValue())));
-        return new ExperimentVariant(variantName, predicates);
-    }
-
     public ExperimentDefinitionBuilder mutate() {
         return  experimentDefinition()
                     .id(id)
@@ -308,51 +289,6 @@ public class ExperimentDefinition {
                     .reportingDefinition(reportingDefinition)
                     .explicitStatus(explicitStatus)
                     .customParameter(customParameter);
-    }
-
-    public List<ExperimentVariant> prepareExperimentVariants() {
-        return isFullOn()
-                ? prepareFullOnVariants()
-                : concat(prepareInternalVariants().stream(), prepareNormalVariants().stream())
-                        .collect(toList());
-    }
-
-    private List<ExperimentVariant> prepareFullOnVariants() {
-        return allVariantNames()
-                .stream()
-                .map(this::convertToFullOnVariant)
-                .collect(toList());
-    }
-
-    private ExperimentVariant convertToFullOnVariant(String variantName) {
-        List<Predicate> predicates = new ArrayList<>();
-        if (variantName.equals(fullOnVariantName)) {
-            predicates.add(new FullOnPredicate());
-            getDeviceClass().ifPresent(d -> predicates.add(new DeviceClassPredicate(deviceClass.toJsonString())));
-        }
-        return new ExperimentVariant(variantName, predicates);
-    }
-
-    private List<ExperimentVariant> prepareInternalVariants() {
-        return internalVariantName != null
-                ? List.of(new ExperimentVariant(internalVariantName, ImmutableList.of(new InternalPredicate())))
-                : List.of();
-    }
-
-    private List<ExperimentVariant> prepareNormalVariants() {
-        if (percentage != null && !variantNames.isEmpty()) {
-            int maxPercentageVariant = 100 / variantNames.size();
-            if (percentage > maxPercentageVariant) {
-                throw new ExperimentDefinitionException(
-                        String.format("Percentage exceeds maximum value (%s > %s)",
-                        percentage, maxPercentageVariant));
-            }
-            return IntStream.range(0, variantNames.size())
-                    .mapToObj(i -> convertVariantByIndex(i, maxPercentageVariant))
-                    .collect(toList());
-        }  else {
-            return List.of();
-        }
     }
 
     public ZonedDateTime getLastStatusChange() {

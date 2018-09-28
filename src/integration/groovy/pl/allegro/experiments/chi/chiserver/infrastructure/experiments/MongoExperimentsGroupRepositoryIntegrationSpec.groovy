@@ -1,10 +1,10 @@
 package pl.allegro.experiments.chi.chiserver.infrastructure.experiments
 
+
 import org.bson.Document
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.data.mongodb.core.MongoTemplate
 import pl.allegro.experiments.chi.chiserver.BaseIntegrationSpec
-import pl.allegro.experiments.chi.chiserver.domain.experiments.groups.AllocationRecord
 import pl.allegro.experiments.chi.chiserver.domain.experiments.groups.AllocationTable
 import pl.allegro.experiments.chi.chiserver.domain.experiments.groups.ExperimentGroup
 import pl.allegro.experiments.chi.chiserver.domain.experiments.groups.ExperimentGroupRepository
@@ -26,8 +26,8 @@ class MongoExperimentsGroupRepositoryIntegrationSpec extends BaseIntegrationSpec
         given:
         def id = UUID.randomUUID().toString()
         def group = new ExperimentGroup(id, 'salt', ['exp1', 'exp2'],
-                new AllocationTable([new AllocationRecord('exp1', 'v1', 0, 50),
-                                     new AllocationRecord('exp2', 'v2', 50, 100)]))
+                new AllocationTable().allocate ('exp1', ['v1','base'], 10)
+                                     .allocate ('exp2', ['v1','base'], 10))
 
         when:
         experimentGroupRepository.save(group)
@@ -51,18 +51,35 @@ class MongoExperimentsGroupRepositoryIntegrationSpec extends BaseIntegrationSpec
                         experimentId: 'exp1',
                         variant: 'v1',
                         range: [
-                            from: 0,
-                            to: 50
+                            from:  0,
+                            to:   10
                         ]
                 ],
                 [
                         experimentId: 'exp2',
-                        variant: 'v2',
+                        variant: 'v1',
                         range: [
-                            from: 50,
-                            to: 100
+                            from: 10,
+                            to:   20
+                        ]
+                ],
+                [
+                        experimentId: 'exp2',
+                        variant: 'base',
+                        range: [
+                                from: 80,
+                                to:   90
+                        ]
+                ],
+                [
+                        experimentId: 'exp1',
+                        variant: 'base',
+                        range: [
+                                from: 90,
+                                to:  100
                         ]
                 ]
+
         ]
     }
 }

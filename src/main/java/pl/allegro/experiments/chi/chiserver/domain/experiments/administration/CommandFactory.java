@@ -51,7 +51,6 @@ public class CommandFactory {
                 experimentsRepository,
                 properties,
                 permissionsAwareExperimentRepository,
-                experimentGroupRepository,
                 experimentId
         );
         return new NotificationDecoratorCommand(experimentCommand, notificator, userProvider);

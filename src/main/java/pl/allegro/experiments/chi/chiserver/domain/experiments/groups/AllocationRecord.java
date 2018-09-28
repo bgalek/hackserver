@@ -9,13 +9,13 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-public final class AllocationRecord {
+final class AllocationRecord {
     private final String experimentId;
     private final String variant;
     private final PercentageRange range;
 
     @PersistenceConstructor
-    public AllocationRecord(String experimentId, String variant, PercentageRange range) {
+    AllocationRecord(String experimentId, String variant, PercentageRange range) {
         Preconditions.checkArgument(StringUtils.isNotBlank(experimentId));
         Preconditions.checkArgument(StringUtils.isNotBlank(variant));
         Preconditions.checkArgument(range != null);
@@ -53,8 +53,7 @@ public final class AllocationRecord {
         return AllocationTable.BASE.equals(variant);
     }
 
-
-    public boolean isSharedBase() {
+    boolean isSharedBase() {
         return isBase() && AllocationTable.SHARED_BASE.equals(experimentId);
     }
 
@@ -82,6 +81,16 @@ public final class AllocationRecord {
 
     boolean belongsTo(String experimentId) {
         return this.experimentId.equals(experimentId);
+    }
+
+    boolean belongsTo(String experimentId, String variant) {
+        return this.experimentId.equals(experimentId) &&
+                this.variant.equals(variant);
+    }
+
+    boolean belongsToOrShared(String experimentId, String variant) {
+        return this.variant.equals(variant) &&
+              (this.experimentId.equals(experimentId) || isSharedBase());
     }
 
     AllocationRecord joined(AllocationRecord right) {

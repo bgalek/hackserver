@@ -3,6 +3,7 @@ package pl.allegro.experiments.chi.chiserver.domain.experiments.groups;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
+import pl.allegro.experiments.chi.chiserver.domain.experiments.ExperimentDefinition;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -13,9 +14,9 @@ public class AllocationTable {
 
     private final List<AllocationRecord> records;
 
-    public AllocationTable(List<AllocationRecord> records) {
-        validateRecords(records);
-        this.records = ImmutableList.copyOf(records);
+    AllocationTable(List<AllocationRecord> records) {
+        this.records = records == null ? Collections.emptyList() : ImmutableList.copyOf(records);
+        validateRecords(this.records);
     }
 
     List<AllocationRecord> getRecords() {
@@ -26,6 +27,14 @@ public class AllocationTable {
      * Checks if there is enough space to allocate more percentage
      * for given number of variants (including base).
      */
+    boolean checkAllocation(ExperimentDefinition experiment) {
+        return checkAllocation(experiment.getId(), experiment.getVariantNames(), experiment.getPercentage().get());
+    }
+
+    boolean checkAllocation(final String experimentId, List<String> variantNames, final int targetPercentage) {
+        return checkAllocation(experimentId, variantNames, targetPercentage, false);
+    }
+
     boolean checkAllocation(final String experimentId, List<String> variantNames, final int targetPercentage, boolean sharedBase) {
         Preconditions.checkArgument(experimentId != null);
         Preconditions.checkArgument(variantNames != null);
@@ -44,13 +53,17 @@ public class AllocationTable {
     }
 
     /**
-     * Allocates percentage for a given variants (including base).
+     * Allocates percentage for a given experiment
      */
-    AllocationTable allocate(String experimentId, List<String> variantNames, int targetPercentage) {
+    public AllocationTable allocate(ExperimentDefinition experiment) {
+        return allocate(experiment.getId(), experiment.getVariantNames(), experiment.getPercentage().get());
+    }
+
+    public AllocationTable allocate(String experimentId, List<String> variantNames, int targetPercentage) {
         return allocate(experimentId, variantNames, targetPercentage, false);
     }
 
-    AllocationTable allocate(String experimentId, List<String> variantNames, int targetPercentage, boolean sharedBase) {
+    public AllocationTable allocate(String experimentId, List<String> variantNames, int targetPercentage, boolean sharedBase) {
         validateAllocation(experimentId, variantNames, targetPercentage, sharedBase);
 
         var newAllocation = variantNames.stream().map(v -> {
@@ -63,7 +76,7 @@ public class AllocationTable {
         return SpaceAllocator.allocateNewRecords(this, newAllocation);
     }
 
-    public AllocationTable evict(String experimentId) {
+    AllocationTable evict(String experimentId) {
         Preconditions.checkArgument(experimentId != null);
         Preconditions.checkArgument(!experimentId.equals(SHARED_BASE), "cheating!");
 

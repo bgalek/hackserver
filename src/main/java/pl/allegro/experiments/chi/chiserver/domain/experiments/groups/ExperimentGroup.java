@@ -2,8 +2,12 @@ package pl.allegro.experiments.chi.chiserver.domain.experiments.groups;
 
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
+import org.springframework.data.annotation.PersistenceConstructor;
+import pl.allegro.experiments.chi.chiserver.domain.experiments.ExperimentDefinition;
+import pl.allegro.experiments.chi.chiserver.domain.experiments.PercentageRange;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -13,15 +17,19 @@ public class ExperimentGroup implements Comparable<ExperimentGroup> {
     private final List<String> experiments;
     private final AllocationTable allocationTable;
 
-    public ExperimentGroup(String id, String salt, List<String> experiments, AllocationTable allocationTable) {
+    @PersistenceConstructor
+    ExperimentGroup(String id, String salt, List<String> experiments, AllocationTable allocationTable) {
         Preconditions.checkArgument(id != null);
         Preconditions.checkArgument(salt != null);
         Preconditions.checkArgument(experiments != null);
-        Preconditions.checkArgument(allocationTable != null);
         this.id = id;
         this.salt = salt;
         this.experiments = ImmutableList.copyOf(experiments);
-        this.allocationTable = allocationTable;
+        this.allocationTable = allocationTable == null ? AllocationTable.empty() : allocationTable;
+    }
+
+    public static ExperimentGroup empty(String id, String salt) {
+        return new ExperimentGroup(id, salt, Collections.emptyList(), AllocationTable.empty());
     }
 
     /**
@@ -29,6 +37,20 @@ public class ExperimentGroup implements Comparable<ExperimentGroup> {
      */
     public AllocationTable getAllocationTable() {
         return allocationTable;
+    }
+
+    public List<PercentageRange> getAllocationFor(String experimentId, String variant) {
+        if (hasSharedBase()) {
+            return getAllocationTable().getRecords().stream()
+                    .filter(r -> r.belongsToOrShared(experimentId, variant))
+                    .map(r -> r.getRange())
+                    .collect(Collectors.toList());
+        } else {
+            return getAllocationTable().getRecords().stream()
+                    .filter(r -> r.belongsTo(experimentId, variant))
+                    .map(r -> r.getRange())
+                    .collect(Collectors.toList());
+        }
     }
 
     public String getId() {
@@ -47,24 +69,38 @@ public class ExperimentGroup implements Comparable<ExperimentGroup> {
         return experiments.contains(experimentId);
     }
 
+    public boolean hasSharedBase() {
+        return allocationTable.getSharedBaseAllocationSum() > 0;
+    }
+
     public ExperimentGroup removeExperiment(String experimentId) {
         return new ExperimentGroup(id, salt, experiments.stream()
                 .filter(e -> !e.equals(experimentId))
                 .collect(Collectors.toList()), AllocationTable.empty());
     }
 
-    public ExperimentGroup moveExperimentToTail(String experimentId) {
-        return removeExperiment(experimentId).addExperiment(experimentId);
-    }
+    public ExperimentGroup addExperiment(ExperimentDefinition experiment) {
+        Preconditions.checkArgument(experiment != null);
 
-    public ExperimentGroup addExperiment(String experimentId) {
+        allocationTable.checkAllocation(experiment);
+
         List<String> extendedExperiments = new ArrayList<>(experiments);
-        extendedExperiments.add(experimentId);
-        return new ExperimentGroup(id, salt, extendedExperiments, AllocationTable.empty());
+        extendedExperiments.add(experiment.getId());
+
+        AllocationTable extendedTable = allocationTable.allocate(experiment);
+
+        return new ExperimentGroup(id, salt, extendedExperiments, extendedTable);
     }
 
     @Override
     public int compareTo(ExperimentGroup o) {
         return this.id.compareTo(o.id);
+    }
+
+    @Override
+    public String toString() {
+        return "ExperimentGroup{" +
+                "id='" + id + '\'' +
+                '}';
     }
 }
