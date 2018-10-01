@@ -1,33 +1,28 @@
-package pl.allegro.experiments.chi.chiserver.infrastructure;
+package pl.allegro.experiments.chi.chiserver.domain.experiments.client;
 
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
 import pl.allegro.experiments.chi.chiserver.domain.experiments.*;
-import pl.allegro.experiments.chi.chiserver.domain.experiments.administration.ExperimentDefinitionException;
 import pl.allegro.experiments.chi.chiserver.domain.experiments.groups.ExperimentGroup;
 import pl.allegro.experiments.chi.chiserver.domain.experiments.groups.ShredHashRangePredicate;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
-import java.util.stream.IntStream;
 
 import static java.util.stream.Collectors.toList;
 
-class ClientExperimentRenderer {
+public class ClientExperimentRenderer {
 
     private final ExperimentDefinition experiment;
     private final ExperimentGroup group;
 
-    ClientExperimentRenderer(ExperimentDefinition experiment, ExperimentGroup group) {
+    public ClientExperimentRenderer(ExperimentDefinition experiment, ExperimentGroup group) {
         Preconditions.checkArgument(experiment != null);
         this.experiment = experiment;
         this.group = group;
     }
 
-    ClientExperiment render() {
-        System.out.println("rendering experiment = " + experiment.getId() +", group: " + group);
-
+    public ClientExperiment render() {
         return new ClientExperiment(
                 experiment.getId(),
                 renderVariants(),
@@ -51,7 +46,8 @@ class ClientExperimentRenderer {
 
     private List<ExperimentVariant> renderRegularVariants() {
         if (group == null) {
-            return renderRegularVariantsSolo();
+            return experiment.renderRegularVariantsSolo().stream()
+                    .map(a -> renderVariantWithTopLevelPredicates(a.getVariantName(), new HashRangePredicate(a.getRange()))).collect(toList());
         }
         return renderRegularVariantsInGroup();
     }
@@ -60,34 +56,33 @@ class ClientExperimentRenderer {
         return experiment.getVariantNames().stream()
                 .map(v -> {
                     List<PercentageRange> ranges = group.getAllocationFor(experiment.getId(), v);
-                    return mapTpExperimentVariant(ranges, v);
+                    return trimAndMapToExperimentVariant(ranges, v);
                 })
                 .collect(toList());
     }
 
-    private List<ExperimentVariant> renderRegularVariantsSolo() {
-        if (!experiment.getPercentage().isPresent() || experiment.getVariantNames().isEmpty()) {
-            return Collections.emptyList();
+    private ExperimentVariant trimAndMapToExperimentVariant(List<PercentageRange> allocatedRanges, String variantName) {
+        int renderedPoints = 0;
+        int targetPoints = experiment.getPercentage().get();
+        List<PercentageRange> renderedRanges = new ArrayList();
+
+        for (PercentageRange allocatedRange : allocatedRanges) {
+            int missingPoints = targetPoints - renderedPoints;
+            if (missingPoints <= 0) {
+                break;
+            }
+
+            if (allocatedRange.size() < missingPoints) {
+                renderedPoints += allocatedRange.size();
+                renderedRanges.add(allocatedRange);
+            }
+            else {
+                renderedPoints += missingPoints;
+                renderedRanges.add(new PercentageRange(allocatedRange.getFrom(), allocatedRange.getFrom() + missingPoints));
+            }
         }
 
-        int percentage = experiment.getPercentage().get();
-
-        final int maxPercentageVariant = 100 / experiment.getVariantNames().size();
-        if (percentage > maxPercentageVariant) {
-            throw new ExperimentDefinitionException(String.format("Percentage exceeds maximum value (%s > %s)", percentage, maxPercentageVariant));
-        }
-
-        return IntStream.range(0, experiment.getVariantNames().size())
-                .mapToObj(i -> {
-                    Predicate hash = convertToHashRangePredicateByIndex(i, maxPercentageVariant, experiment.getPercentage().get());
-                    return renderVariantWithTopLevelPredicates(experiment.getVariantNames().get(i), hash);
-                })
-                .collect(toList());
-    }
-
-    private ExperimentVariant mapTpExperimentVariant(List<PercentageRange> ranges, String variantName) {
-        //TODO shared base TRIM!
-        ShredHashRangePredicate mainPredicate = new ShredHashRangePredicate(ranges, group.getSalt());
+        ShredHashRangePredicate mainPredicate = new ShredHashRangePredicate(renderedRanges, group.getSalt());
         return renderVariantWithTopLevelPredicates(variantName, mainPredicate);
     }
 
@@ -109,10 +104,5 @@ class ClientExperimentRenderer {
         experiment.getCustomParameter().ifPresent(p -> predicates.add(new CustomParameterPredicate(p.getName(), p.getValue())));
 
         return new ExperimentVariant(variantName, predicates);
-    }
-
-    private Predicate convertToHashRangePredicateByIndex(int i, int maxPercentageVariant, int percentage) {
-        return new HashRangePredicate(new PercentageRange(i * maxPercentageVariant,
-                i * maxPercentageVariant + percentage));
     }
 }

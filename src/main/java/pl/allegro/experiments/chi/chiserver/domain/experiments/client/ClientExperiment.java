@@ -1,4 +1,4 @@
-package pl.allegro.experiments.chi.chiserver.infrastructure;
+package pl.allegro.experiments.chi.chiserver.domain.experiments.client;
 
 import com.google.common.collect.ImmutableList;
 import pl.allegro.experiments.chi.chiserver.domain.experiments.ActivityPeriod;
@@ -14,7 +14,7 @@ public class ClientExperiment {
     private final ActivityPeriod activityPeriod;
     private final ExperimentStatus status;
 
-    ClientExperiment(
+    public ClientExperiment(
             String id,
             List<ExperimentVariant> variants,
             ActivityPeriod activityPeriod,

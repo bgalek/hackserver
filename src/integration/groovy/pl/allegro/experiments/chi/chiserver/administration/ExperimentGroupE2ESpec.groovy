@@ -34,12 +34,17 @@ class ExperimentGroupE2ESpec extends BaseE2EIntegrationSpec {
         def experiment2 = draftExperiment()
         def group = createExperimentGroupAndFetch([experiment1.id, experiment2.id])
 
+        assert fetchExperimentGroup(group.id).allocationTable.size() == 4
+
         when:
         deleteExperiment(experiment1.id as String)
 
         then:
-        fetchExperimentGroup(group.id as String).experiments == [experiment2.id]
-        //TODO "should free allocated space "
+        def fetchedGroup = fetchExperimentGroup(group.id)
+        fetchedGroup.experiments == [experiment2.id]
+        fetchedGroup.allocationTable.size() == 2
+        fetchedGroup.allocationTable[0].experimentId == experiment2.id
+        fetchedGroup.allocationTable[1].experimentId == experiment2.id
 
         when:
         fetchExperiment(experiment1.id as String)

@@ -46,9 +46,6 @@ public class DeleteExperimentCommand implements ExperimentCommand {
         if (statisticsRepository.hasAnyStatistics(experimentId)) {
             throw new ExperimentCommandException("Experiment with statistics cannot be deleted: " + experimentId);
         }
-        if (experimentGroupRepository.experimentInGroup(experimentId) && !experiment.isDraft()) {
-            throw new ExperimentCommandException("Non-DRAFT experiment bounded to a group can not be deleted");
-        }
     }
 
     @Override

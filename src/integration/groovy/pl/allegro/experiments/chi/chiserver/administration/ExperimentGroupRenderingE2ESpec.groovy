@@ -55,13 +55,13 @@ class ExperimentGroupRenderingE2ESpec extends BaseE2EIntegrationSpec {
         assert exp2.status == 'DRAFT'
         assert exp3.status == 'DRAFT'
 
-        assertShredRange(exp1, 'base', 95, 100, salt)
-        assertShredRange(exp1, 'v1',    0,   5, salt)
+        assertShredRange(exp1, 'base',  0,  5, salt)
+        assertShredRange(exp1, 'v1',   50, 55, salt)
 
         assertShredRange(exp2, 'base', 90, 100, salt)
         assertShredRange(exp2, 'v1',    5,  15, salt)
 
-        assertShredRange(exp3, 'base', 80, 100, salt)
+        assertShredRange(exp3, 'base', 70,  90, salt)
         assertShredRange(exp3, 'v1',   15,  35, salt)
 
         when: 'third experiment is started'
@@ -76,13 +76,13 @@ class ExperimentGroupRenderingE2ESpec extends BaseE2EIntegrationSpec {
         assert exp2_v2.status == 'DRAFT'
         assert exp3_v2.status == 'ACTIVE'
 
-        assertShredRange(exp1_v2, 'base', 95, 100, salt)
-        assertShredRange(exp1_v2, 'v1',    0,   5, salt)
+        assertShredRange(exp1_v2, 'base',  0,   5, salt)
+        assertShredRange(exp1_v2, 'v1',   50,  55, salt)
 
         assertShredRange(exp2_v2, 'base', 90, 100, salt)
         assertShredRange(exp2_v2, 'v1',    5,  15, salt)
 
-        assertShredRange(exp3_v2, 'base', 80, 100, salt)
+        assertShredRange(exp3_v2, 'base', 70,  90, salt)
         assertShredRange(exp3_v2, 'v1',   15,  35, salt)
 
         when: 'second experiment is started'
@@ -97,13 +97,13 @@ class ExperimentGroupRenderingE2ESpec extends BaseE2EIntegrationSpec {
         exp2_v3.status == 'ACTIVE'
         exp3_v3.status == 'ACTIVE'
 
-        assertShredRange(exp1_v3, 'base', 95, 100, salt)
-        assertShredRange(exp1_v3, 'v1',    0,   5, salt)
+        assertShredRange(exp1_v3, 'base',  0,   5, salt)
+        assertShredRange(exp1_v3, 'v1',   50,  55, salt)
 
         assertShredRange(exp2_v3, 'base', 90, 100, salt)
         assertShredRange(exp2_v3, 'v1',    5,  15, salt)
 
-        assertShredRange(exp3_v3, 'base', 80, 100, salt)
+        assertShredRange(exp3_v3, 'base', 70,  90, salt)
         assertShredRange(exp3_v3, 'v1',   15,  35, salt)
 
         when: 'second experiment is stopped'
@@ -115,13 +115,13 @@ class ExperimentGroupRenderingE2ESpec extends BaseE2EIntegrationSpec {
         def exp3_v4 = fetchClientExperiment(experiment3.id)
 
         exp1_v4.status == 'ACTIVE'
-        exp2_v4.status == 'ENDED'
+        exp2_v4        == null
         exp3_v4.status == 'ACTIVE'
 
-        assertShredRange(exp1_v4, 'base', 95, 100, salt)
-        assertShredRange(exp1_v4, 'v1',    0,   5, salt)
+        assertShredRange(exp1_v4, 'base',  0,   5, salt)
+        assertShredRange(exp1_v4, 'v1',   50,  55, salt)
 
-        assertShredRange(exp3_v4, 'base', 80, 100, salt)
+        assertShredRange(exp3_v4, 'base', 70,  90, salt)
         assertShredRange(exp3_v4, 'v1',   15,  35, salt)
     }
 }

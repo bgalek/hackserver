@@ -7,6 +7,7 @@ import org.springframework.context.annotation.Configuration;
 import pl.allegro.experiments.chi.chiserver.application.experiments.AdminExperiment;
 import pl.allegro.experiments.chi.chiserver.application.experiments.v1.*;
 import pl.allegro.experiments.chi.chiserver.domain.experiments.*;
+import pl.allegro.experiments.chi.chiserver.domain.experiments.client.ClientExperiment;
 import pl.allegro.experiments.chi.chiserver.domain.experiments.groups.ExperimentGroup;
 import pl.allegro.experiments.chi.chiserver.domain.experiments.groups.ShredHashRangePredicate;
 import pl.allegro.experiments.chi.chiserver.domain.statistics.bayes.BayesianExperimentStatisticsForVariant;

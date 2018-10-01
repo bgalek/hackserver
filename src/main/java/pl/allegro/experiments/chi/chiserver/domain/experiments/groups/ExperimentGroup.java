@@ -9,7 +9,6 @@ import pl.allegro.experiments.chi.chiserver.domain.experiments.PercentageRange;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.UUID;
 import java.util.stream.Collectors;
 
 public class ExperimentGroup implements Comparable<ExperimentGroup> {
@@ -29,8 +28,12 @@ public class ExperimentGroup implements Comparable<ExperimentGroup> {
         this.allocationTable = allocationTable == null ? AllocationTable.empty() : allocationTable;
     }
 
-    public static ExperimentGroup fromExistingExperiment(String id, ExperimentDefinition experiment) {
-        var salt = experiment.isDraft() ? UUID.randomUUID().toString() :experiment.getId();
+    public static ExperimentGroup fromExistingExperiment(String id, String salt, ExperimentDefinition experimentDefinition) {
+        List<AllocationRecord> records = experimentDefinition.renderRegularVariantsSolo().stream()
+                .map(a -> new AllocationRecord(experimentDefinition.getId(), a.getVariantName(), a.getRange()))
+                .collect(Collectors.toList());
+
+        return new ExperimentGroup(id, salt, ImmutableList.of(experimentDefinition.getId()), new AllocationTable(records));
     }
 
     public static ExperimentGroup empty(String id, String salt) {
@@ -43,6 +46,14 @@ public class ExperimentGroup implements Comparable<ExperimentGroup> {
 
     public boolean checkAllocation(ExperimentDefinition experiment) {
         return allocationTable.checkAllocation(experiment);
+    }
+
+    public int getAllocationSumFor(String experimentId, String variant) {
+        return allocationTable.getVariantAllocation(experimentId, variant);
+    }
+
+    public int getSharedBaseAllocationSum() {
+        return allocationTable.getSharedBaseAllocationSum();
     }
 
     public List<PercentageRange> getAllocationFor(String experimentId, String variant) {
@@ -82,7 +93,7 @@ public class ExperimentGroup implements Comparable<ExperimentGroup> {
     public ExperimentGroup removeExperiment(String experimentId) {
         return new ExperimentGroup(id, salt, experiments.stream()
                 .filter(e -> !e.equals(experimentId))
-                .collect(Collectors.toList()), AllocationTable.empty());
+                .collect(Collectors.toList()), getAllocationTable().evict(experimentId));
     }
 
     public ExperimentGroup addExperiment(ExperimentDefinition experiment) {

@@ -9,11 +9,14 @@ import org.javers.core.metamodel.annotation.PropertyName;
 import org.javers.core.metamodel.annotation.TypeName;
 import org.springframework.data.annotation.Transient;
 import org.springframework.data.mongodb.core.mapping.Document;
+import pl.allegro.experiments.chi.chiserver.domain.experiments.administration.ExperimentDefinitionException;
 
 import java.time.LocalDateTime;
 import java.time.ZonedDateTime;
 import java.util.*;
+import java.util.stream.IntStream;
 
+import static java.util.stream.Collectors.toList;
 import static pl.allegro.experiments.chi.chiserver.domain.experiments.ExperimentDefinitionBuilder.experimentDefinition;
 
 @Document(collection = "experimentDefinitions")
@@ -289,6 +292,25 @@ public class ExperimentDefinition {
                     .reportingDefinition(reportingDefinition)
                     .explicitStatus(explicitStatus)
                     .customParameter(customParameter);
+    }
+
+    public List<VariantPercentageAllocation> renderRegularVariantsSolo() {
+        if (percentage == null|| variantNames.isEmpty()) {
+            return Collections.emptyList();
+        }
+
+        final int maxPercentageVariant = 100 / variantNames.size();
+        if (percentage > maxPercentageVariant) {
+            throw new ExperimentDefinitionException(String.format("Percentage exceeds maximum value (%s > %s)", percentage, maxPercentageVariant));
+        }
+
+        return IntStream.range(0, variantNames.size())
+                .mapToObj(i -> convertToPercentageAllocationByIndex(i, maxPercentageVariant, percentage))
+                .collect(toList());
+    }
+
+    private VariantPercentageAllocation convertToPercentageAllocationByIndex(int i, int maxPercentageVariant, int percentage) {
+        return new VariantPercentageAllocation(variantNames.get(i), new PercentageRange(i * maxPercentageVariant, i * maxPercentageVariant + percentage));
     }
 
     public ZonedDateTime getLastStatusChange() {

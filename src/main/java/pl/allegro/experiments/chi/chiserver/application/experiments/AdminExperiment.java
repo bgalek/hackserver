@@ -6,7 +6,7 @@ import pl.allegro.experiments.chi.chiserver.domain.experiments.*;
 import pl.allegro.experiments.chi.chiserver.domain.experiments.groups.ExperimentGroup;
 import pl.allegro.experiments.chi.chiserver.domain.statistics.bayes.BayesianHorizontalEqualizer;
 import pl.allegro.experiments.chi.chiserver.domain.statistics.ExperimentMeasurements;
-import pl.allegro.experiments.chi.chiserver.infrastructure.ClientExperiment;
+import pl.allegro.experiments.chi.chiserver.domain.experiments.client.ClientExperiment;
 
 import java.time.ZonedDateTime;
 import java.util.List;

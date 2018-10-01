@@ -19,7 +19,7 @@ public class AllocationTable {
         validateRecords(this.records);
     }
 
-    List<AllocationRecord> getRecords() {
+    public List<AllocationRecord> getRecords() {
         return records;
     }
 
