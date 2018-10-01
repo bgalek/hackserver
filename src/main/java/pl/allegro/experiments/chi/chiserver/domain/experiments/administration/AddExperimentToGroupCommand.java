@@ -54,12 +54,17 @@ public class AddExperimentToGroupCommand implements Command {
         validatePermissionsToAllExperiments(experimentGroup);
         validateNextExperiment(experiment);
 
+        if (!experimentGroup.checkAllocation(experiment)) {
+            throw new ExperimentCommandException("not enough space in a group " + experimentGroup.getId() +
+                    " to add experiment " + experiment.getId());
+        }
+
         return experimentGroup.addExperiment(experiment);
     }
 
     private ExperimentGroup createGroup(final String groupId, final ExperimentDefinition experiment) {
         var salt = experiment.isDraft() ? UUID.randomUUID().toString() :experiment.getId();
-        return ExperimentGroup.empty(groupId, salt).addExperiment(experiment);
+        return ExperimentGroup.fromExistingExperiment(groupId, salt, experiment);
     }
 
     private void validateExperiment(ExperimentDefinition experiment) {

@@ -30,7 +30,7 @@ class ExperimentGroupRenderingE2ESpec extends BaseE2EIntegrationSpec {
         assertShredRange(freshExp, 'v1',   50,  55, salt)
     }
 
-    def "should recycle allocation space"(){
+    def "should recycle percentage space"(){
         expect:
         false //TODO
     }

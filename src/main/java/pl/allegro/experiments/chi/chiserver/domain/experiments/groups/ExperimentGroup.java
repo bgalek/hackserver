@@ -9,6 +9,7 @@ import pl.allegro.experiments.chi.chiserver.domain.experiments.PercentageRange;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 public class ExperimentGroup implements Comparable<ExperimentGroup> {
@@ -28,15 +29,20 @@ public class ExperimentGroup implements Comparable<ExperimentGroup> {
         this.allocationTable = allocationTable == null ? AllocationTable.empty() : allocationTable;
     }
 
+    public static ExperimentGroup fromExistingExperiment(String id, ExperimentDefinition experiment) {
+        var salt = experiment.isDraft() ? UUID.randomUUID().toString() :experiment.getId();
+    }
+
     public static ExperimentGroup empty(String id, String salt) {
         return new ExperimentGroup(id, salt, Collections.emptyList(), AllocationTable.empty());
     }
 
-    /**
-     * @return null for legacy experiments
-     */
     public AllocationTable getAllocationTable() {
         return allocationTable;
+    }
+
+    public boolean checkAllocation(ExperimentDefinition experiment) {
+        return allocationTable.checkAllocation(experiment);
     }
 
     public List<PercentageRange> getAllocationFor(String experimentId, String variant) {
