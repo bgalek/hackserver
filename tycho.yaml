@@ -37,6 +37,7 @@ vars:
     mem: 1024
     env_vars:
       JAVA_OPTS: "-Xmx700m -Xms700m -XX:MetaspaceSize=100m
+                  -Xlog:gc -Xlog:gc*:file=gc.log
                   -Dcom.sun.management.jmxremote -Dcom.sun.management.jmxremote.port=$PORT1 -Dcom.sun.management.jmxremote.local.only=false
                   -Dcom.sun.management.jmxremote.authenticate=false -Dcom.sun.management.jmxremote.ssl=false -Djava.rmi.server.hostname=$MESOS_HOSTNAME"
 
@@ -44,7 +45,8 @@ vars:
     cpus: 2
     mem: 2048
     env_vars:
-      JAVA_OPTS: "-Xmx1400m -Xms1400m -XX:MetaspaceSize=100m"
+      JAVA_OPTS: "-Xmx1400m -Xms1400m -XX:MetaspaceSize=100m
+                  -Xlog:gc -Xlog:gc*:file=gc.log"
 
 deploy:
   dev:
