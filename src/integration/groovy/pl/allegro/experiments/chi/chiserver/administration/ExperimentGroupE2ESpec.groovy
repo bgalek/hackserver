@@ -1,31 +1,21 @@
 package pl.allegro.experiments.chi.chiserver.administration
 
+import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.HttpStatus
 import org.springframework.web.client.HttpClientErrorException
 import pl.allegro.experiments.chi.chiserver.BaseE2EIntegrationSpec
-import pl.allegro.experiments.chi.chiserver.domain.experiments.ExperimentStatus
+import pl.allegro.experiments.chi.chiserver.domain.experiments.groups.AllocationTable
+import pl.allegro.experiments.chi.chiserver.domain.experiments.groups.ExperimentGroup
+import pl.allegro.experiments.chi.chiserver.domain.experiments.groups.ExperimentGroupRepository
 import spock.lang.Unroll
+
 import static pl.allegro.experiments.chi.chiserver.domain.experiments.ExperimentStatus.*
-import static pl.allegro.experiments.chi.chiserver.infrastructure.experiments.fetch.ClientExperimentAssertions.assertShredRange
-import static pl.allegro.experiments.chi.chiserver.infrastructure.experiments.fetch.ClientExperimentAssertions.assertShredRange
-import static pl.allegro.experiments.chi.chiserver.infrastructure.experiments.fetch.ClientExperimentAssertions.assertShredRange
-import static pl.allegro.experiments.chi.chiserver.infrastructure.experiments.fetch.ClientExperimentAssertions.assertShredRange
-import static pl.allegro.experiments.chi.chiserver.infrastructure.experiments.fetch.ClientExperimentAssertions.assertShredRange
-import static pl.allegro.experiments.chi.chiserver.infrastructure.experiments.fetch.ClientExperimentAssertions.assertShredRange
-import static pl.allegro.experiments.chi.chiserver.infrastructure.experiments.fetch.ClientExperimentAssertions.assertShredRange
-import static pl.allegro.experiments.chi.chiserver.infrastructure.experiments.fetch.ClientExperimentAssertions.assertShredRange
-import static pl.allegro.experiments.chi.chiserver.infrastructure.experiments.fetch.ClientExperimentAssertions.assertShredRange
-import static pl.allegro.experiments.chi.chiserver.infrastructure.experiments.fetch.ClientExperimentAssertions.assertShredRange
-import static pl.allegro.experiments.chi.chiserver.infrastructure.experiments.fetch.ClientExperimentAssertions.assertShredRange
-import static pl.allegro.experiments.chi.chiserver.infrastructure.experiments.fetch.ClientExperimentAssertions.assertShredRange
-import static pl.allegro.experiments.chi.chiserver.infrastructure.experiments.fetch.ClientExperimentAssertions.assertShredRange
-import static pl.allegro.experiments.chi.chiserver.infrastructure.experiments.fetch.ClientExperimentAssertions.assertShredRange
-import static pl.allegro.experiments.chi.chiserver.infrastructure.experiments.fetch.ClientExperimentAssertions.assertShredRange
-import static pl.allegro.experiments.chi.chiserver.infrastructure.experiments.fetch.ClientExperimentAssertions.assertShredRange
-import static pl.allegro.experiments.chi.chiserver.infrastructure.experiments.fetch.ClientExperimentAssertions.assertShredRange
-import static pl.allegro.experiments.chi.chiserver.infrastructure.experiments.fetch.ClientExperimentAssertions.assertShredRange
 
 class ExperimentGroupE2ESpec extends BaseE2EIntegrationSpec {
+    @Autowired
+    ExperimentGroupRepository experimentGroupRepository
+
+    //TODO fronted?
 
     @Unroll
     def "should delete #status experiment bounded to a group and free allocated space"() {
@@ -54,25 +44,36 @@ class ExperimentGroupE2ESpec extends BaseE2EIntegrationSpec {
         exception.statusCode == HttpStatus.NOT_FOUND
 
         where:
-        status << [ACTIVE, DRAFT, PAUSED, ENDED]
+        status << [ACTIVE, DRAFT, PAUSED]
     }
 
-    def "should free allocated space when an experiment ends"(){
+    def "should delete ENDED experiment bounded to a group and free allocated space "() {
+        given:
+        def exp = experimentWithStatus(ENDED)
+        def group = new ExperimentGroup(UUID.randomUUID().toString(), "salt", [exp.id],
+                new AllocationTable([]).allocate (exp.id, ['v1', 'base'], 10))
+
+        experimentGroupRepository.save(group)
+        assert fetchExperimentGroup(group.id).allocationTable.size() == 2
+
+        when:
+        deleteExperiment(exp.id as String)
+
+        then:
+        assert fetchExperimentGroup(group.id).allocationTable.size() == 0
+    }
+
+    def "should free allocated space when an experiment ends"() {
         expect:
         false //TODO
     }
 
-    def "should free allocated space when an experiment is deleted"(){
-        expect:
-        false //TODO
-    }
-
-    def "should allow to scale grouped experiment when there is enough space"(){
+    def "should allow to scale grouped experiment when there is enough space"() {
         expect:
         false //TODO FRONT!!
     }
 
-    def "should not allow to scale grouped experiment when there is not enough space"(){
+    def "should not allow to scale grouped experiment when there is not enough space"() {
         expect:
         false //TODO
     }
