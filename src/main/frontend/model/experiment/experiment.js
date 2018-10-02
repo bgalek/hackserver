@@ -168,6 +168,7 @@ export default class ExperimentModel extends ExperimentRecord {
     return this.canBeStarted() ||
       this.canBeStopped() ||
       this.canBePaused() ||
-      this.canBeResumed()
+      this.canBeResumed() ||
+      this.canBeProlonged()
   }
 };
