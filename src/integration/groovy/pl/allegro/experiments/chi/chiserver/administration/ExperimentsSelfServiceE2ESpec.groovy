@@ -82,11 +82,11 @@ class ExperimentsSelfServiceE2ESpec extends BaseE2EIntegrationSpec {
                 renderedVariants        : [
                         [
                                 name      : 'v1',
-                                predicates: [[type: 'INTERNAL']]
+                                predicates: [[type: 'INTERNAL'],               [type: 'DEVICE_CLASS', device: 'phone']]
                         ],
                         [
                                 name      : 'v2',
-                                predicates: [[type: 'HASH', from: 0, to: 10], [type: 'DEVICE_CLASS', device: 'phone']]
+                                predicates: [[type: 'HASH', from: 0, to: 10],  [type: 'DEVICE_CLASS', device: 'phone']]
                         ],
                         [
                                 name      : 'v3',
@@ -217,10 +217,6 @@ class ExperimentsSelfServiceE2ESpec extends BaseE2EIntegrationSpec {
                 [
                         name      : 'v1',
                         predicates: [[type: 'FULL_ON']]
-                ],
-                [
-                        name      : 'v2',
-                        predicates: []
                 ]
         ]
         experiment.variantNames    == ['v1', 'v2']
@@ -250,10 +246,6 @@ class ExperimentsSelfServiceE2ESpec extends BaseE2EIntegrationSpec {
                                 [type: 'FULL_ON'],
                                 [type: 'DEVICE_CLASS', device: deviceClass.toJsonString()]
                         ]
-                ],
-                [
-                        name      : 'v2',
-                        predicates: []
                 ]
         ]
         experiment.variantNames    == ['v1', 'v2']

@@ -66,7 +66,6 @@ class ExperimentGroupE2ESpec extends BaseE2EIntegrationSpec {
         assertShredRange(exp2_v2, 'simplified',    25,  30, salt)
     }
 
-    //TODO fronted?
     @Unroll
     def "should delete #status experiment bounded to a group and free allocated space"() {
         given:
@@ -121,20 +120,5 @@ class ExperimentGroupE2ESpec extends BaseE2EIntegrationSpec {
     def "should not allow to scale grouped experiment when there is not enough space"() {
         expect:
         false //TODO
-    }
-
-    def "should set experiment as list tail when starting"() {
-        given:
-        def experiment1 = draftExperiment()
-        def experiment2 = draftExperiment()
-
-        def group = createExperimentGroupAndFetch([experiment1.id, experiment2.id])
-        startExperiment(experiment2.id as String, 30)
-
-        when:
-        startExperiment(experiment1.id as String, 30)
-
-        then:
-        fetchExperimentGroup(group.id as String).experiments == [experiment2.id, experiment1.id]
     }
 }
