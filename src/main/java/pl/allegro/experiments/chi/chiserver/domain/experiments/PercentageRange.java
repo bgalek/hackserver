@@ -16,4 +16,14 @@ public final class PercentageRange extends Range {
     public boolean equals(Object o) {
         return super.equals(o);
     }
+
+    public PercentageRange trim(int newSize, boolean fromRight) {
+        Preconditions.checkArgument(newSize <= size());
+
+        if (fromRight) {
+            return new PercentageRange(getTo() - newSize, getTo());
+        } else {
+            return new PercentageRange(getFrom(), getFrom() + newSize);
+        }
+    }
 }

@@ -7,6 +7,7 @@ import pl.allegro.experiments.chi.chiserver.domain.experiments.groups.Experiment
 import pl.allegro.experiments.chi.chiserver.domain.experiments.groups.ShredHashRangePredicate;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import static java.util.stream.Collectors.toList;
@@ -53,37 +54,16 @@ public class ClientExperimentRenderer {
     }
 
     private List<ExperimentVariant> renderRegularVariantsInGroup() {
+        if (!experiment.hasAnyPercentagePredicate()) {
+            return Collections.emptyList();
+        }
         return experiment.getVariantNames().stream()
-                .map(v -> {
-                    List<PercentageRange> ranges = group.getAllocationFor(experiment.getId(), v);
-                    return trimAndMapToExperimentVariant(ranges, v);
+                .map(vName -> {
+                    List<PercentageRange> ranges = group.getAllocationFor(experiment.getId(), experiment.getPercentage().get(), vName);
+                    ShredHashRangePredicate mainPredicate = new ShredHashRangePredicate(ranges, group.getSalt());
+                    return renderVariantWithTopLevelPredicates(vName, mainPredicate);
                 })
                 .collect(toList());
-    }
-
-    private ExperimentVariant trimAndMapToExperimentVariant(List<PercentageRange> allocatedRanges, String variantName) {
-        int renderedPoints = 0;
-        int targetPoints = experiment.getPercentage().get();
-        List<PercentageRange> renderedRanges = new ArrayList();
-
-        for (PercentageRange allocatedRange : allocatedRanges) {
-            int missingPoints = targetPoints - renderedPoints;
-            if (missingPoints <= 0) {
-                break;
-            }
-
-            if (allocatedRange.size() < missingPoints) {
-                renderedPoints += allocatedRange.size();
-                renderedRanges.add(allocatedRange);
-            }
-            else {
-                renderedPoints += missingPoints;
-                renderedRanges.add(new PercentageRange(allocatedRange.getFrom(), allocatedRange.getFrom() + missingPoints));
-            }
-        }
-
-        ShredHashRangePredicate mainPredicate = new ShredHashRangePredicate(renderedRanges, group.getSalt());
-        return renderVariantWithTopLevelPredicates(variantName, mainPredicate);
     }
 
     private ExperimentVariant renderFullOnVariant() {

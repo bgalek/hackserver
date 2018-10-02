@@ -10,7 +10,7 @@ abstract public class Range {
 
     Range(int from, int to) {
         Preconditions.checkArgument(from >= 0, "Range.from < 0");
-        Preconditions.checkArgument(to > from, "Range: to should be > from, got " + from, " " + to);
+        Preconditions.checkArgument(to > from, "malformed Range: " + from + ", " + to);
         this.from = from;
         this.to = to;
     }

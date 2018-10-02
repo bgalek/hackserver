@@ -1,5 +1,7 @@
 package pl.allegro.experiments.chi.chiserver.infrastructure;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import pl.allegro.experiments.chi.chiserver.application.experiments.AdminExperiment;
@@ -13,9 +15,12 @@ import pl.allegro.experiments.chi.chiserver.domain.experiments.groups.ShredHashR
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class ClientExperimentFactory {
+    private static final Logger logger = LoggerFactory.getLogger(ClientExperimentFactory.class);
+
     private final ExperimentGroupRepository experimentGroupRepository;
     private final ExperimentsRepository experimentsRepository;
     private final UserProvider userProvider;
@@ -36,7 +41,42 @@ public class ClientExperimentFactory {
     }
 
     /**
-     * legacy on-the-fly renderer
+     * remove after migration
+     */
+    @Deprecated
+    public void persistAllocationForLegacyGroup(ExperimentGroup group) {
+        logger.info("persisting AlloctionTable for group " + group.getId() );
+
+        List<ClientExperiment> ces = group.getExperiments().stream()
+                .map(expId -> experimentsRepository.getExperiment(expId).get())
+                .map(e -> clientExperimentFromGroupedExperiment(e, group))
+                .collect(Collectors.toList());
+
+
+        ExperimentGroup mutatedGroup = group;
+        for (ClientExperiment ce : ces) {
+            logger.info(".. creating records for experiment " + ce.getId() + ", " + ce.getStatus() );
+
+            List<VariantPercentageAllocation> currentAllocation = new ArrayList<>();
+            for (ExperimentVariant ev : ce.getVariants()) {
+                ev.getPredicates().stream()
+                        .filter(p -> p instanceof ShredHashRangePredicate)
+                        .map(sh -> new VariantPercentageAllocation(ev.getName(), ((ShredHashRangePredicate) sh).getRanges().get(0)))
+                        .forEach(it -> {
+                            logger.info(".. .. record: "+ it.getVariantName() + " "+ it.getRange());
+                            currentAllocation.add(it);
+                        });
+            }
+
+            mutatedGroup = mutatedGroup.allocateExistingExperimentLegacy(ce.getId(), currentAllocation);
+
+            experimentGroupRepository.save(mutatedGroup);
+
+        }
+    }
+
+    /**
+     * legacy on-the-fly renderer, remove it after migration
      */
     @Deprecated
     private ClientExperiment clientExperimentFromGroupedExperiment(ExperimentDefinition experiment, ExperimentGroup experimentGroup) {

@@ -4,12 +4,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import pl.allegro.experiments.chi.chiserver.domain.experiments.*;
-import pl.allegro.experiments.chi.chiserver.domain.experiments.groups.ExperimentGroup;
+import pl.allegro.experiments.chi.chiserver.domain.experiments.ExperimentsRepository;
 import pl.allegro.experiments.chi.chiserver.domain.experiments.groups.ExperimentGroupRepository;
 
 import javax.annotation.PostConstruct;
-import java.util.Arrays;
 
 @Service
 public class DbMigrateTool {
@@ -17,11 +15,13 @@ public class DbMigrateTool {
 
     private final ExperimentsRepository experimentsRepository;
     private final ExperimentGroupRepository experimentGroupRepository;
+    private final ClientExperimentFactory clientExperimentFactory;
 
     @Autowired
-    public DbMigrateTool(ExperimentsRepository experimentsRepository, ExperimentGroupRepository experimentGroupRepository) {
+    public DbMigrateTool(ExperimentsRepository experimentsRepository, ExperimentGroupRepository experimentGroupRepository, ClientExperimentFactory clientExperimentFactory) {
         this.experimentsRepository = experimentsRepository;
         this.experimentGroupRepository = experimentGroupRepository;
+        this.clientExperimentFactory = clientExperimentFactory;
     }
 
     @PostConstruct
@@ -32,11 +32,9 @@ public class DbMigrateTool {
     }
 
     private void persistAllocationTables() {
-        for (ExperimentGroup group : experimentGroupRepository.findAll()) {
-            if (!group.getAllocationTable().isEmpty()) continue;
-
-            logger.info("persisting group " + group.getId() );
-        }
+        experimentGroupRepository.findAll().stream()
+                .filter(g -> g.getAllocationTable().isEmpty())
+                .forEach(g ->  clientExperimentFactory.persistAllocationForLegacyGroup(g));
     }
 
 }

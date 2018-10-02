@@ -73,6 +73,10 @@ final class AllocationRecord {
         return range;
     }
 
+    int size() {
+        return range.size();
+    }
+
     boolean canJoinWith(AllocationRecord right) {
         return this.getRange().getTo() == right.getRange().getFrom() &&
                this.getExperimentId().equals(right.getExperimentId()) &&

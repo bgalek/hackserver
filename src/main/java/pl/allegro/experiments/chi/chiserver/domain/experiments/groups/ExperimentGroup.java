@@ -4,12 +4,19 @@ import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
 import org.springframework.data.annotation.PersistenceConstructor;
 import pl.allegro.experiments.chi.chiserver.domain.experiments.ExperimentDefinition;
+import pl.allegro.experiments.chi.chiserver.domain.experiments.ExperimentVariant;
 import pl.allegro.experiments.chi.chiserver.domain.experiments.PercentageRange;
+import pl.allegro.experiments.chi.chiserver.domain.experiments.VariantPercentageAllocation;
+import pl.allegro.experiments.chi.chiserver.util.Lists;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
+
+import static com.google.common.collect.Lists.reverse;
+import static pl.allegro.experiments.chi.chiserver.util.Lists.join;
 
 public class ExperimentGroup implements Comparable<ExperimentGroup> {
     private final String id;
@@ -28,6 +35,25 @@ public class ExperimentGroup implements Comparable<ExperimentGroup> {
         this.allocationTable = allocationTable == null ? AllocationTable.empty() : allocationTable;
     }
 
+    /**
+     * TODO remove after migration
+     *
+     *  @Deprecated
+     */
+    @Deprecated
+    public ExperimentGroup allocateExistingExperimentLegacy(String expId, List<VariantPercentageAllocation> legacyAllocation) {
+        List<AllocationRecord> kosherAllocation = legacyAllocation.stream()
+                .filter(l -> !l.getVariantName().equals("base") || (l.getVariantName().equals("base") && l.getRange().size() > getSharedBaseAllocationSum()))
+                .map(a -> {
+                    if (a.getVariantName().equals("base"))
+                        return AllocationRecord.forSharedBase(a.getRange());
+                    else
+                        return new AllocationRecord(expId, a.getVariantName(), a.getRange());
+                }).collect(Collectors.toList());
+
+        return new ExperimentGroup(id, salt, experiments, new AllocationTable(join(allocationTable.getRecords(),kosherAllocation)));
+    }
+
     public static ExperimentGroup fromExistingExperiment(String id, String salt, ExperimentDefinition experimentDefinition) {
         List<AllocationRecord> records = experimentDefinition.renderRegularVariantsSolo().stream()
                 .map(a -> new AllocationRecord(experimentDefinition.getId(), a.getVariantName(), a.getRange()))
@@ -38,6 +64,17 @@ public class ExperimentGroup implements Comparable<ExperimentGroup> {
 
     public static ExperimentGroup empty(String id, String salt) {
         return new ExperimentGroup(id, salt, Collections.emptyList(), AllocationTable.empty());
+    }
+
+    public ExperimentGroup addExperiment(ExperimentDefinition experiment) {
+        Preconditions.checkArgument(experiment != null);
+
+        allocationTable.checkAllocation(experiment);
+
+        List<String> extendedExperiments = join(experiments, experiment.getId());
+        AllocationTable extendedTable = allocationTable.allocate(experiment);
+
+        return new ExperimentGroup(id, salt, extendedExperiments, extendedTable);
     }
 
     public AllocationTable getAllocationTable() {
@@ -56,18 +93,50 @@ public class ExperimentGroup implements Comparable<ExperimentGroup> {
         return allocationTable.getSharedBaseAllocationSum();
     }
 
-    public List<PercentageRange> getAllocationFor(String experimentId, String variant) {
+    public List<PercentageRange> getAllocationFor(String experimentId, int percentage, String variant) {
+        Preconditions.checkArgument(percentage > 0);
+        List<AllocationRecord> allocatedRecords = getFullAllocationFor(experimentId, variant);
+        return trimToCurrentAllocation(allocatedRecords, percentage, variant);
+    }
+
+    private List<AllocationRecord> getFullAllocationFor(String experimentId, String variant) {
         if (hasSharedBase()) {
             return getAllocationTable().getRecords().stream()
                     .filter(r -> r.belongsToOrShared(experimentId, variant))
-                    .map(r -> r.getRange())
                     .collect(Collectors.toList());
         } else {
             return getAllocationTable().getRecords().stream()
                     .filter(r -> r.belongsTo(experimentId, variant))
-                    .map(r -> r.getRange())
                     .collect(Collectors.toList());
         }
+    }
+
+    private List<PercentageRange> trimToCurrentAllocation(List<AllocationRecord> allocation, int targetPoints, String variant) {
+        boolean fromRight = AllocationTable.BASE.equals(variant);
+
+        List<AllocationRecord> sortedAllocation = allocation;
+        if (fromRight) {
+            sortedAllocation = reverse(sortedAllocation);
+        }
+
+        int renderedPoints = 0;
+        List<PercentageRange> renderedRanges = new ArrayList();
+        for (AllocationRecord allocatedRecord : sortedAllocation) {
+            int missingPoints = targetPoints - renderedPoints;
+            if (missingPoints <= 0) {
+                break;
+            }
+
+            if (allocatedRecord.size() < missingPoints) {
+                renderedPoints += allocatedRecord.size();
+                renderedRanges.add(allocatedRecord.getRange());
+            }
+            else {
+                renderedPoints += missingPoints;
+                renderedRanges.add(allocatedRecord.getRange().trim(missingPoints,fromRight));
+            }
+        }
+        return Collections.unmodifiableList(renderedRanges);
     }
 
     public String getId() {
@@ -94,19 +163,6 @@ public class ExperimentGroup implements Comparable<ExperimentGroup> {
         return new ExperimentGroup(id, salt, experiments.stream()
                 .filter(e -> !e.equals(experimentId))
                 .collect(Collectors.toList()), getAllocationTable().evict(experimentId));
-    }
-
-    public ExperimentGroup addExperiment(ExperimentDefinition experiment) {
-        Preconditions.checkArgument(experiment != null);
-
-        allocationTable.checkAllocation(experiment);
-
-        List<String> extendedExperiments = new ArrayList<>(experiments);
-        extendedExperiments.add(experiment.getId());
-
-        AllocationTable extendedTable = allocationTable.allocate(experiment);
-
-        return new ExperimentGroup(id, salt, extendedExperiments, extendedTable);
     }
 
     @Override

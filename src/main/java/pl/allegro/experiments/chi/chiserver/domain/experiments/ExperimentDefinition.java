@@ -295,7 +295,7 @@ public class ExperimentDefinition {
     }
 
     public List<VariantPercentageAllocation> renderRegularVariantsSolo() {
-        if (percentage == null|| variantNames.isEmpty()) {
+        if (!hasAnyPercentagePredicate()) {
             return Collections.emptyList();
         }
 
@@ -307,6 +307,10 @@ public class ExperimentDefinition {
         return IntStream.range(0, variantNames.size())
                 .mapToObj(i -> convertToPercentageAllocationByIndex(i, maxPercentageVariant, percentage))
                 .collect(toList());
+    }
+
+    public boolean hasAnyPercentagePredicate() {
+        return  percentage != null && variantNames.size() > 0 && percentage > 0;
     }
 
     private VariantPercentageAllocation convertToPercentageAllocationByIndex(int i, int maxPercentageVariant, int percentage) {
