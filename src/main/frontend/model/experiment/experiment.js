@@ -136,7 +136,7 @@ export default class ExperimentModel extends ExperimentRecord {
   }
 
   canBeProlonged () {
-    return this.status === 'ACTIVE'
+    return this.status !== 'DRAFT' && this.status !== 'FULL_ON'
   }
 
   canJoinAnyGroup () {

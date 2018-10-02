@@ -1,8 +1,7 @@
 package pl.allegro.experiments.chi.chiserver.commands
 
+import pl.allegro.experiments.chi.chiserver.domain.experiments.ExperimentStatus
 import pl.allegro.experiments.chi.chiserver.domain.experiments.administration.ExperimentCommandException
-
-import static pl.allegro.experiments.chi.chiserver.domain.experiments.ExperimentStatus.*
 
 class ProlongExperimentCommandIntegrationSpec extends BaseCommandIntegrationSpec {
 
@@ -27,10 +26,10 @@ class ProlongExperimentCommandIntegrationSpec extends BaseCommandIntegrationSpec
 
         then:
          def exception = thrown ExperimentCommandException
-        exception.message == "Experiment cant be prolonged if it is not ACTIVE"
+        exception.message == "Experiment cant be prolonged if it is DRAFT or FULL_ON"
 
         where:
-        status << allExperimentStatusValuesExcept(ACTIVE)
+        status << [ExperimentStatus.DRAFT, ExperimentStatus.FULL_ON]
     }
 
     def "should not prolong experiment when given by #duration days"() {

@@ -35,8 +35,8 @@ public class ProlongExperimentCommand implements ExperimentCommand {
     }
 
     private void validate(ExperimentDefinition experiment) {
-        if (!experiment.isActive()) {
-            throw new ExperimentCommandException("Experiment cant be prolonged if it is not ACTIVE");
+        if (experiment.isDraft() || experiment.isFullOn()) {
+            throw new ExperimentCommandException("Experiment cant be prolonged if it is DRAFT or FULL_ON");
         }
     }
 
