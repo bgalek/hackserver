@@ -102,8 +102,8 @@ class ClientExperimentsV3E2ESpec extends BaseE2EIntegrationSpec {
 
         exp1.status == 'ACTIVE'
 
-        assertShredRange(exp1, 'base', 95, 100, salt)
-        assertShredRange(exp1, 'v1',    0,   5, salt)
+        assertShredRange(exp1, 'base',   0,  5, salt)
+        assertShredRange(exp1, 'v1',    50, 55, salt)
 
         where:
         description | apiVersion
