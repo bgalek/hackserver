@@ -31,7 +31,8 @@ class ClientExperimentRendererSpec extends Specification {
         clientExp.getVariants()[0].predicates[0].ranges[0] == new PercentageRange( 0,  4)
         clientExp.getVariants()[0].predicates[0].ranges[1] == new PercentageRange(14, 15)
         clientExp.getVariants()[1].name == "base"
-        clientExp.getVariants()[1].predicates[0].ranges[0] == new PercentageRange(80,  85)
+        clientExp.getVariants()[1].predicates[0].ranges[0] == new PercentageRange(96,  100)
+        clientExp.getVariants()[1].predicates[0].ranges[1] == new PercentageRange(85,  86)
     }
 
     def "should trim rendered base when shared base allocation is greater then target"(){
@@ -54,6 +55,6 @@ class ClientExperimentRendererSpec extends Specification {
         clientExp.getVariants()[0].name == "v1"
         clientExp.getVariants()[0].predicates[0].ranges[0] == new PercentageRange(0, 10)
         clientExp.getVariants()[1].name == "base"
-        clientExp.getVariants()[1].predicates[0].ranges[0] == new PercentageRange(80, 90)
+        clientExp.getVariants()[1].predicates[0].ranges[0] == new PercentageRange(90, 100)
     }
 }

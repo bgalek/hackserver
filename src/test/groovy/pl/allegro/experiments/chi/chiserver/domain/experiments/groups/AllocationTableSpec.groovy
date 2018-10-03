@@ -41,8 +41,8 @@ class AllocationTableSpec extends Specification {
         given:
         def table = new AllocationTable([
                 forSharedBase(0, 10),
-                forSharedBase(50, 60),
                 forVariant('exp1', 'v1', 10, 30), // 20
+                forSharedBase(50, 60),
                 forVariant('exp1', 'v2', 60, 65), //  5
                 forVariant('exp1', 'v2', 70, 75), //  5
                 forVariant('exp1', 'v2', 80, 90)  // 10
@@ -88,8 +88,8 @@ class AllocationTableSpec extends Specification {
     def "should prevent from allocating more than 100"(){
         given:
         def table = new AllocationTable([
-                forSharedBase(50, 80),            //30
                 forVariant('exp1', 'v1', 0, 30),  //30
+                forSharedBase(50, 80),            //30
         ])
 
         when:
@@ -109,8 +109,8 @@ class AllocationTableSpec extends Specification {
     def "should prevent from allocating without base"(){
         given:
         def table = new AllocationTable([
-                forSharedBase(50, 80),
                 forVariant('exp1', 'v1', 0, 30),
+                forSharedBase(50, 80)
         ])
 
         when:
