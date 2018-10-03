@@ -4,10 +4,8 @@ import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
 import org.springframework.data.annotation.PersistenceConstructor;
 import pl.allegro.experiments.chi.chiserver.domain.experiments.ExperimentDefinition;
-import pl.allegro.experiments.chi.chiserver.domain.experiments.ExperimentVariant;
 import pl.allegro.experiments.chi.chiserver.domain.experiments.PercentageRange;
 import pl.allegro.experiments.chi.chiserver.domain.experiments.VariantPercentageAllocation;
-import pl.allegro.experiments.chi.chiserver.util.Lists;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -35,25 +33,6 @@ public class ExperimentGroup implements Comparable<ExperimentGroup> {
         this.allocationTable = allocationTable == null ? AllocationTable.empty() : allocationTable;
     }
 
-    /**
-     * TODO remove after migration
-     *
-     *  @Deprecated
-     */
-    @Deprecated
-    public ExperimentGroup allocateExistingExperimentLegacy(String expId, List<VariantPercentageAllocation> legacyAllocation) {
-        List<AllocationRecord> kosherAllocation = legacyAllocation.stream()
-                .filter(l -> !l.getVariantName().equals("base") || (l.getVariantName().equals("base") && l.getRange().size() > getSharedBaseAllocationSum()))
-                .map(a -> {
-                    if (a.getVariantName().equals("base"))
-                        return AllocationRecord.forSharedBase(a.getRange());
-                    else
-                        return new AllocationRecord(expId, a.getVariantName(), a.getRange());
-                }).collect(Collectors.toList());
-
-        return new ExperimentGroup(id, salt, experiments, new AllocationTable(join(allocationTable.getRecords(),kosherAllocation)));
-    }
-
     public static ExperimentGroup fromExistingExperiment(String id, String salt, ExperimentDefinition experimentDefinition) {
         List<AllocationRecord> records = experimentDefinition.renderRegularVariantsSolo().stream()
                 .map(a -> new AllocationRecord(experimentDefinition.getId(), a.getVariantName(), a.getRange()))
@@ -69,20 +48,29 @@ public class ExperimentGroup implements Comparable<ExperimentGroup> {
     public ExperimentGroup addExperiment(ExperimentDefinition experiment) {
         Preconditions.checkArgument(experiment != null);
 
-        allocationTable.checkAllocation(experiment);
-
         List<String> extendedExperiments = join(experiments, experiment.getId());
         AllocationTable extendedTable = allocationTable.allocate(experiment);
 
         return new ExperimentGroup(id, salt, extendedExperiments, extendedTable);
     }
 
+    public ExperimentGroup updateExperimentAllocation(ExperimentDefinition experiment) {
+        Preconditions.checkArgument(experiment != null);
+
+        AllocationTable extendedTable = allocationTable.allocate(experiment);
+        return new ExperimentGroup(id, salt, experiments, extendedTable);
+    }
+
     public AllocationTable getAllocationTable() {
         return allocationTable;
     }
 
-    public boolean checkAllocation(ExperimentDefinition experiment) {
-        return allocationTable.checkAllocation(experiment);
+    public int getMaxPossibleScaleUp(ExperimentDefinition experiment) {
+        return allocationTable.getMaxPossibleAllocation(experiment.getId(), experiment.getNumberOfRegularVariants());
+    }
+
+    public boolean isAllocationPossible(ExperimentDefinition experiment) {
+        return allocationTable.checkAllocation(experiment.getId(), experiment.getVariantNames(), experiment.getPercentage().get(), false);
     }
 
     public int getAllocationSumFor(String experimentId, String variant) {
@@ -175,5 +163,24 @@ public class ExperimentGroup implements Comparable<ExperimentGroup> {
         return "ExperimentGroup{" +
                 "id='" + id + '\'' +
                 '}';
+    }
+
+    /**
+     * TODO remove after migration
+     *
+     *  @Deprecated
+     */
+    @Deprecated
+    public ExperimentGroup allocateExistingExperimentLegacy(String expId, List<VariantPercentageAllocation> legacyAllocation) {
+        List<AllocationRecord> kosherAllocation = legacyAllocation.stream()
+                .filter(l -> !l.getVariantName().equals("base") || (l.getVariantName().equals("base") && l.getRange().size() > getSharedBaseAllocationSum()))
+                .map(a -> {
+                    if (a.getVariantName().equals("base"))
+                        return AllocationRecord.forSharedBase(a.getRange());
+                    else
+                        return new AllocationRecord(expId, a.getVariantName(), a.getRange());
+                }).collect(Collectors.toList());
+
+        return new ExperimentGroup(id, salt, experiments, allocationTable.mergeAll(kosherAllocation));
     }
 }

@@ -3,12 +3,9 @@ package pl.allegro.experiments.chi.chiserver.domain.experiments.administration;
 import pl.allegro.experiments.chi.chiserver.domain.User;
 import pl.allegro.experiments.chi.chiserver.domain.UserProvider;
 import pl.allegro.experiments.chi.chiserver.domain.experiments.ExperimentDefinition;
-import pl.allegro.experiments.chi.chiserver.domain.experiments.ExperimentVariant;
 import pl.allegro.experiments.chi.chiserver.domain.experiments.groups.ExperimentGroup;
 import pl.allegro.experiments.chi.chiserver.domain.experiments.groups.ExperimentGroupRepository;
-import pl.allegro.experiments.chi.chiserver.infrastructure.ClientExperimentFactory;
 
-import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
 
@@ -57,7 +54,7 @@ public class AddExperimentToGroupCommand implements Command {
         validatePermissionsToAllExperiments(experimentGroup);
         validateNextExperiment(experiment);
 
-        if (!experimentGroup.checkAllocation(experiment)) {
+        if (!experimentGroup.isAllocationPossible(experiment)) {
             throw new ExperimentCommandException("not enough space in a group " + experimentGroup.getId() +
                     " to add experiment " + experiment.getId());
         }

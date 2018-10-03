@@ -66,6 +66,25 @@ class AllocationTableSpec extends Specification {
     }
 
     @Unroll
+    def "should calc max possible allocation"(){
+      given:
+        given:
+        def table = new AllocationTable([
+                forVariant('exp1', 'v1',   10,  25),
+                forVariant('exp1', 'v2',   30,  45),
+                forVariant('exp1', 'base', 85, 100)
+        ])
+
+       expect:
+        table.getMaxPossibleAllocation(experimentId, 3) == maxPossible
+
+       where:
+        experimentId   || maxPossible
+        'exp1'         || 33
+        'exp2'         || 18
+    }
+
+    @Unroll
     def "should prevent from allocating more than 100"(){
         given:
         def table = new AllocationTable([

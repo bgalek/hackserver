@@ -57,8 +57,16 @@ final class AllocationRecord {
         return isBase() && AllocationTable.SHARED_BASE.equals(experimentId);
     }
 
-    int getAllocation() {
-        return range.getTo() - range.getFrom();
+    int getFrom() {
+        return range.getFrom();
+    }
+
+    int getTo() {
+        return range.getTo();
+    }
+
+    int size() {
+        return range.size();
     }
 
     String getExperimentId() {
@@ -73,12 +81,8 @@ final class AllocationRecord {
         return range;
     }
 
-    int size() {
-        return range.size();
-    }
-
     boolean canJoinWith(AllocationRecord right) {
-        return this.getRange().getTo() == right.getRange().getFrom() &&
+        return this.getTo() == right.getFrom() &&
                this.getExperimentId().equals(right.getExperimentId()) &&
                this.getVariant().equals(right.getVariant());
     }
@@ -89,7 +93,7 @@ final class AllocationRecord {
 
     boolean belongsTo(String experimentId, String variant) {
         return this.experimentId.equals(experimentId) &&
-                this.variant.equals(variant);
+               this.variant.equals(variant);
     }
 
     boolean belongsToOrShared(String experimentId, String variant) {
@@ -101,7 +105,7 @@ final class AllocationRecord {
         return new AllocationRecord(
                this.getExperimentId(),
                this.getVariant(),
-               new PercentageRange(this.getRange().getFrom(), right.getRange().getTo()));
+               new PercentageRange(this.getFrom(), right.getTo()));
     }
 
     @Override

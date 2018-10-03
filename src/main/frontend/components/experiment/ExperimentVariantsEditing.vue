@@ -59,7 +59,7 @@
             thumb-label
             :label="parseInt(value.percentage) + '% per variant'"
             step="1"
-            v-bind:max="maxPercentPerVariant"
+            v-bind:max="computeMaxPercentagePerVariant()"
             v-bind:min="1"
             :disabled="blockPercentageSlider"
             ticks></v-slider>
@@ -139,9 +139,7 @@
   export default {
     props: {
       experiment: {},
-
       showButtons: false,
-
       allowModifyRegularVariants: {
         default: false,
         type: Boolean
@@ -165,7 +163,6 @@
         internalVariantNameRules: [
           (v) => !startsOrEndsWithSpace(v) || 'Do not start nor end variant name with space'
         ],
-        maxPercentPerVariant: 100,
         blockPercentageSlider: this.shouldBlockPercentageSlider(initialValue)
       }
     },
@@ -247,8 +244,15 @@
         this.value.slugifiedInternalVariantName = slugify(event)
       },
 
-      computeMaxPercentagePerVariant (numberOfVariants) {
-        return 100 / numberOfVariants
+      computeMaxPercentagePerVariant () {
+        if (this.allowModifyRegularVariants) {
+          if (!this.value.variantNames) {
+            return 100
+          }
+          return Math.floor(100 / this.value.variantNames.length)
+        } else {
+          return this.experiment.maxPossibleAllocation
+        }
       },
 
       updateVariants () {
@@ -274,7 +278,6 @@
     watch: {
       value: {
         handler (newValue) {
-          this.maxPercentPerVariant = Math.floor(this.computeMaxPercentagePerVariant(newValue.variantNames.length))
           this.blockPercentageSlider = this.shouldBlockPercentageSlider(newValue)
 
           if (this.validate()) {

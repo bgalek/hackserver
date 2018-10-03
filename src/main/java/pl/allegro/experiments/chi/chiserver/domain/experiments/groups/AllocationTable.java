@@ -8,6 +8,8 @@ import pl.allegro.experiments.chi.chiserver.domain.experiments.ExperimentDefinit
 import java.util.*;
 import java.util.stream.Collectors;
 
+import static java.util.Comparator.comparingInt;
+
 public class AllocationTable {
     final static String BASE = "base";
     final static String SHARED_BASE = "*";
@@ -16,25 +18,22 @@ public class AllocationTable {
 
     AllocationTable(List<AllocationRecord> records) {
         this.records = records == null ? Collections.emptyList() : ImmutableList.copyOf(records);
-        validateRecords(this.records);
+        validateRecords();
     }
 
     public List<AllocationRecord> getRecords() {
         return records;
     }
 
+    int getMaxPossibleAllocation(String experimentId, int numberOfVariants) {
+        Preconditions.checkArgument(experimentId != null);
+        return (getExperimentAllocation(experimentId) + getFreeSum()) / numberOfVariants;
+    }
+
     /**
      * Checks if there is enough space to allocate more percentage
      * for given number of variants (including base).
      */
-    boolean checkAllocation(ExperimentDefinition experiment) {
-        return checkAllocation(experiment.getId(), experiment.getVariantNames(), experiment.getPercentage().get());
-    }
-
-    boolean checkAllocation(final String experimentId, List<String> variantNames, final int targetPercentage) {
-        return checkAllocation(experimentId, variantNames, targetPercentage, false);
-    }
-
     boolean checkAllocation(final String experimentId, List<String> variantNames, final int targetPercentage, boolean sharedBase) {
         Preconditions.checkArgument(experimentId != null);
         Preconditions.checkArgument(variantNames != null);
@@ -93,9 +92,19 @@ public class AllocationTable {
     AllocationTable merge(AllocationRecord recordToAdd) {
         List<AllocationRecord> newRecords = new ArrayList<>(records);
         newRecords.add(recordToAdd);
-        Collections.sort(newRecords, Comparator.comparingInt(r -> r.getRange().getFrom()));
+        Collections.sort(newRecords, comparingInt(r -> r.getFrom()));
 
         return new AllocationTable(joinAdjacent(newRecords));
+    }
+
+    AllocationTable mergeAll(List<AllocationRecord> recordsToAdd) {
+        AllocationTable result = this;
+
+        for (AllocationRecord record : recordsToAdd) {
+            result = result.merge(record);
+        }
+
+        return result;
     }
 
     List<Bucket> buckets() {
@@ -127,15 +136,19 @@ public class AllocationTable {
     }
 
     int getSharedBaseAllocationSum() {
-        return records.stream().filter(it -> it.isSharedBase()).mapToInt(it -> it.getAllocation()).sum();
+        return records.stream().filter(it -> it.isSharedBase()).mapToInt(it -> it.size()).sum();
     }
 
     int getNonBaseAllocationSum() {
-        return records.stream().filter(it -> !it.isBase()).mapToInt(it -> it.getAllocation()).sum();
+        return records.stream().filter(it -> !it.isBase()).mapToInt(it -> it.size()).sum();
     }
 
     int getAllocationSum() {
-        return records.stream().mapToInt(it -> it.getAllocation()).sum();
+        return records.stream().mapToInt(it -> it.size()).sum();
+    }
+
+    int getFreeSum() {
+        return 100 - getAllocationSum();
     }
 
     int getVariantAllocationShortage(String experimentId, String variant, int targetAllocation) {
@@ -146,7 +159,15 @@ public class AllocationTable {
     }
 
     int getVariantAllocation(String experimentId, String variant) {
-        return records.stream().filter(it -> it.getExperimentId().equals(experimentId) && it.getVariant().equals(variant)).mapToInt(it -> it.getAllocation()).sum();
+        return records.stream()
+                .filter(it -> it.belongsTo(experimentId, variant))
+                .mapToInt(it -> it.size()).sum();
+    }
+
+    int getExperimentAllocation(String experimentId) {
+        return records.stream()
+                .filter(it -> it.belongsTo(experimentId))
+                .mapToInt(it -> it.size()).sum();
     }
 
     public static AllocationTable empty() {
@@ -157,7 +178,7 @@ public class AllocationTable {
         return records.size() == 0;
     }
 
-    private void validateRecords(List<AllocationRecord> records) {
+    private void validateRecords() {
         var allBuckets = new HashSet<Integer>();
         for (AllocationRecord r : records) {
             for (int b : r.getBuckets()) {
@@ -165,6 +186,16 @@ public class AllocationTable {
                     throw new IllegalArgumentException("Ranges clash on bucket " + b);
                 }
                 allBuckets.add(b);
+            }
+        }
+
+        for (int i=0; i<records.size()-1; i++) {
+            AllocationRecord l = records.get(i);
+            AllocationRecord r = records.get(i+1);
+
+            if (l.getFrom() > r.getFrom()) {
+                throw new IllegalArgumentException("Allocation records should be sorted, "+
+                        "record["+i+"].from = " + l.getFrom()+" and record["+(i+1)+"].from = " + r.getFrom());
             }
         }
     }

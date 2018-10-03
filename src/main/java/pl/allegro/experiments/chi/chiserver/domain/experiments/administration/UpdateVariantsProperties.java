@@ -8,18 +8,14 @@ import java.util.Objects;
 import java.util.Optional;
 
 public class UpdateVariantsProperties {
-    private final List<String> variantNames;
     private final String internalVariantName;
     private final Integer percentage;
     private final String deviceClass;
 
     @JsonCreator
-    public UpdateVariantsProperties(@JsonProperty("variantNames") List<String> variantNames,
-                                    @JsonProperty("internalVariantName") String internalVariantName,
+    public UpdateVariantsProperties(@JsonProperty("internalVariantName") String internalVariantName,
                                     @JsonProperty("percentage") int percentage,
                                     @JsonProperty("deviceClass") String deviceClass) {
-        Objects.requireNonNull(variantNames);
-        this.variantNames = variantNames;
         this.internalVariantName = internalVariantName;
         this.percentage = percentage;
         this.deviceClass = deviceClass;
@@ -27,10 +23,6 @@ public class UpdateVariantsProperties {
 
     public int getPercentage() {
         return this.percentage;
-    }
-
-    public List<String> getVariantNames() {
-        return variantNames;
     }
 
     public Optional<String> getInternalVariantName() {
@@ -44,7 +36,6 @@ public class UpdateVariantsProperties {
     @Override
     public String toString() {
         return "UpdateVariantsProperties{" +
-                "variantNames=" + variantNames +
                 ", internalVariantName='" + internalVariantName + '\'' +
                 ", percentage=" + percentage +
                 ", deviceClass='" + deviceClass + '\'' +

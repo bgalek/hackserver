@@ -1,7 +1,9 @@
 package pl.allegro.experiments.chi.chiserver.administration
 
-
+import org.springframework.http.HttpStatus
+import org.springframework.web.client.HttpClientErrorException
 import pl.allegro.experiments.chi.chiserver.BaseE2EIntegrationSpec
+import pl.allegro.experiments.chi.chiserver.domain.experiments.PercentageRange
 import spock.lang.Unroll
 
 import static pl.allegro.experiments.chi.chiserver.infrastructure.experiments.fetch.ClientExperimentAssertions.assertHashRange
@@ -28,11 +30,6 @@ class ExperimentGroupRenderingE2ESpec extends BaseE2EIntegrationSpec {
         then:
         assertShredRange(freshExp, 'base',  0,   5, salt)
         assertShredRange(freshExp, 'v1',   50,  55, salt)
-    }
-
-    def "should recycle percentage space when an experiment is deleted"(){
-        expect:
-        false //TODO
     }
 
     @Unroll
@@ -123,5 +120,70 @@ class ExperimentGroupRenderingE2ESpec extends BaseE2EIntegrationSpec {
 
         assertShredRange(exp3_v4, 'base', 70,  90, salt)
         assertShredRange(exp3_v4, 'v1',   15,  35, salt)
+    }
+
+    def "should allow to scale-up a grouped experiment"() {
+        given:
+        def experiment1 = startedExperiment()
+        def experiment2 = draftExperiment()
+
+        def group = createExperimentGroupAndFetch([experiment1.id, experiment2.id])
+        def salt = group.salt
+
+        when:
+        def exp1_v1 = fetchClientExperiment(experiment1.id)
+
+        then:
+        assertShredRange(exp1_v1,   'v1', [new PercentageRange(50, 60)], salt)
+        assertShredRange(exp1_v1, 'base', [new PercentageRange(0, 10)],  salt)
+
+        when:
+        updateExperimentVariants(experiment1.id, null, 20, 'all')
+        def exp1_v2 = fetchClientExperiment(experiment1.id)
+
+        then:
+        assertShredRange(exp1_v2,   'v1', [new PercentageRange(20, 30), new PercentageRange(50, 60)], salt)
+        assertShredRange(exp1_v2, 'base', [new PercentageRange(80, 90), new PercentageRange(0, 10)],  salt)
+    }
+
+    def "should not free allocated space when experiment is scaled-down"(){
+        given:
+        def experiment1 = startedExperiment()
+        def experiment2 = draftExperiment()
+
+        def group = createExperimentGroupAndFetch([experiment1.id, experiment2.id])
+
+        when:
+        updateExperimentVariants(experiment1.id, null, 5, 'all')
+        def exp1_v2 = fetchClientExperiment(experiment1.id)
+        def group_v2 = fetchExperimentGroup(group.id)
+
+        then:
+        assertShredRange(exp1_v2,   'v1', [new PercentageRange(50, 55)], group.salt)
+        assertShredRange(exp1_v2, 'base', [new PercentageRange(5,  10)],  group.salt)
+
+        group_v2.allocationTable.size() == 4
+        group_v2.allocationTable[0].experimentId == experiment1.id
+        group_v2.allocationTable[0].variant == "base"
+        group_v2.allocationTable[0].range == [from:0,  to:10]
+        group_v2.allocationTable[2].experimentId == experiment1.id
+        group_v2.allocationTable[2].variant == "v1"
+        group_v2.allocationTable[2].range == [from:50, to:60]
+    }
+
+    def "should not allow to scale grouped experiment when there is not enough space"() {
+        given:
+        def experiment1 = startedExperiment()
+        def experiment2 = draftExperiment()
+
+        def group = createExperimentGroupAndFetch([experiment1.id, experiment2.id])
+
+        when:
+        updateExperimentVariants(experiment1.id, null, 50, 'all')
+
+        then:
+        def exception = thrown HttpClientErrorException
+        exception.statusCode == HttpStatus.BAD_REQUEST
+        println exception
     }
 }

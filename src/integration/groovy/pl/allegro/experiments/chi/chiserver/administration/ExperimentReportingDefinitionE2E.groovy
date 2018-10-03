@@ -19,7 +19,7 @@ class ExperimentReportingDefinitionE2E extends BaseE2EIntegrationSpec {
         when:
         startExperiment(experiment.id as String, 30)
         updateExperimentDescriptions(experiment.id as String, 'chi rulez', 'new link', ['group c'])
-        updateExperimentVariants(experiment.id as String, ['v2'], 'internV', 18, 'phone')
+        updateExperimentVariants(experiment.id as String, 'internV', 18, 'phone')
         pauseExperiment(experiment.id as String)
         resumeExperiment(experiment.id as String)
         prolongExperiment(experiment.id as String, 30)

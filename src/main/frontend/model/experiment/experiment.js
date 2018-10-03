@@ -31,6 +31,7 @@ const ExperimentRecord = Record({
   deviceClass: null,
   experimentGroup: null,
   bonferroniCorrection: 1,
+  maxPossibleAllocation: 0,
   lastStatusChange: null
 })
 
@@ -144,7 +145,7 @@ export default class ExperimentModel extends ExperimentRecord {
   }
 
   canChangeVariants () {
-    return !this.isEffectivelyEnded() && !this.isInGroup()
+    return !this.isEffectivelyEnded()
   }
 
   isEffectivelyEnded () {

@@ -181,6 +181,17 @@ public class ExperimentDefinition {
         return Collections.unmodifiableSet(allVariants);
     }
 
+    public int getNumberOfRegularVariants() {
+        return variantNames.size();
+    }
+
+    public int getMaxPossibleScaleUp() {
+        if (getNumberOfRegularVariants() == 0) {
+            return 100;
+        }
+        return 100/getNumberOfRegularVariants();
+    }
+
     public boolean isDraft() {
         return getStatus() == ExperimentStatus.DRAFT;
     }

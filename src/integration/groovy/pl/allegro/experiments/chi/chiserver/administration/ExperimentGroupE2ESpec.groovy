@@ -5,6 +5,7 @@ import org.springframework.http.HttpStatus
 import org.springframework.web.client.HttpClientErrorException
 import pl.allegro.experiments.chi.chiserver.BaseE2EIntegrationSpec
 import pl.allegro.experiments.chi.chiserver.domain.experiments.ExperimentsRepository
+import pl.allegro.experiments.chi.chiserver.domain.experiments.PercentageRange
 import pl.allegro.experiments.chi.chiserver.domain.experiments.groups.AllocationTable
 import pl.allegro.experiments.chi.chiserver.domain.experiments.groups.ExperimentGroup
 import pl.allegro.experiments.chi.chiserver.domain.experiments.groups.ExperimentGroupRepository
@@ -110,15 +111,5 @@ class ExperimentGroupE2ESpec extends BaseE2EIntegrationSpec {
 
         then:
         assert fetchExperimentGroup(group.id).allocationTable.size() == 0
-    }
-
-    def "should allow to scale grouped experiment when there is enough space"() {
-        expect:
-        false //TODO FRONT!!
-    }
-
-    def "should not allow to scale grouped experiment when there is not enough space"() {
-        expect:
-        false //TODO
     }
 }

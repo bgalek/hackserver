@@ -15,6 +15,7 @@ import pl.allegro.experiments.chi.chiserver.domain.experiments.groups.ShredHashR
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -36,11 +37,24 @@ public class ClientExperimentFactory {
     }
 
     public ClientExperiment clientExperiment(ExperimentDefinition experiment) {
-        ClientExperimentRenderer renderer = new ClientExperimentRenderer(experiment, experimentGroupRepository.findByExperimentId(experiment.getId()).orElse(null));
+        ClientExperimentRenderer renderer = new ClientExperimentRenderer(experiment, getGroup(experiment).orElse(null));
         return renderer.render();
     }
 
+    public AdminExperiment adminExperiment(ExperimentDefinition experiment) {
+        int maxPossibleAllocation = getGroup(experiment)
+                .map(g -> g.getMaxPossibleScaleUp(experiment))
+                .orElse(experiment.getMaxPossibleScaleUp());
+
+        return new AdminExperiment(experiment, userProvider.getCurrentUser(), clientExperiment(experiment), maxPossibleAllocation);
+    }
+
+    private Optional<ExperimentGroup> getGroup(ExperimentDefinition experiment) {
+        return experimentGroupRepository.findByExperimentId(experiment.getId());
+    }
+
     /**
+     *
      * remove after migration
      */
     @Deprecated
@@ -134,9 +148,5 @@ public class ClientExperimentFactory {
 
     private void addCustomParameterPredicateIfFound(List<Predicate> predicates, ExperimentDefinition experiment) {
         experiment.getCustomParameter().ifPresent(p -> predicates.add(new CustomParameterPredicate(p.getName(), p.getValue())));
-    }
-
-    public AdminExperiment adminExperiment(ExperimentDefinition experiment) {
-        return new AdminExperiment(experiment, userProvider.getCurrentUser(), clientExperiment(experiment));
     }
 }

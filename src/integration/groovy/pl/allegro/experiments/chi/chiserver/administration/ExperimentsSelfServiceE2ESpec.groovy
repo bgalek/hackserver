@@ -96,7 +96,8 @@ class ExperimentsSelfServiceE2ESpec extends BaseE2EIntegrationSpec {
                 variantNames       : ['v2', 'v3'],
                 internalVariantName: 'v1',
                 deviceClass        : 'phone',
-                percentage         : 10
+                percentage         : 10,
+                maxPossibleAllocation: 50
         ]
         experiment == expectedExperiment
         experiment.definition == expectedExperiment.definition
@@ -122,13 +123,13 @@ class ExperimentsSelfServiceE2ESpec extends BaseE2EIntegrationSpec {
         experiment.groups == ['group c']
 
         when:
-        updateExperimentVariants(experiment.id as String, ['a', 'b', 'c'], 'internV', 18, 'phone')
+        updateExperimentVariants(experiment.id as String, 'internV', 18, 'phone')
         experiment = fetchExperiment(experiment.id as String)
 
         then:
         experiment.percentage == 18
         experiment.internalVariantName == 'internV'
-        experiment.variantNames == ['a', 'b', 'c']
+        experiment.variantNames == ['v2', 'v3']
         experiment.deviceClass == 'phone'
 
         when:

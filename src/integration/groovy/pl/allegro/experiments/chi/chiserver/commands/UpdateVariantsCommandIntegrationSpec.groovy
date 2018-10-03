@@ -11,7 +11,7 @@ class UpdateVariantsCommandIntegrationSpec extends BaseCommandIntegrationSpec {
         def experiment = experimentWithStatus(status)
 
         when:
-        updateExperimentVariants(experiment.id, ['va', 'vb'], 'iname', 13, 'phone')
+        updateExperimentVariants(experiment.id, 'iname', 13, 'phone')
 
         then:
         def definition = fetchExperiment(experiment.id)
@@ -29,7 +29,7 @@ class UpdateVariantsCommandIntegrationSpec extends BaseCommandIntegrationSpec {
         def experiment = experimentWithStatus(status)
 
         when:
-        updateExperimentVariants(experiment.id, ['va', 'vb'], 'iname', 13, 'phone')
+        updateExperimentVariants(experiment.id, 'iname', 13, 'phone')
 
         then:
         def exception = thrown ExperimentCommandException
@@ -37,18 +37,5 @@ class UpdateVariantsCommandIntegrationSpec extends BaseCommandIntegrationSpec {
 
         where:
         status << [ENDED, FULL_ON]
-    }
-
-    def "should not change grouped experiment's variants configuration"() {
-        given:
-        def experiment = startedExperiment()
-        createExperimentGroup([experiment.id, draftExperiment().id])
-
-        when:
-        updateExperimentVariants(experiment.id, ['va', 'vb'], 'iname', 13, 'phone')
-
-        then:
-        def exception = thrown ExperimentCommandException
-        exception.message == "Can not change variants of experiment bounded to a group"
     }
 }
