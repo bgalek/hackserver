@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 import pl.allegro.experiments.chi.chiserver.domain.statistics.classic.ClassicExperimentStatisticsForVariantMetric;
 import pl.allegro.experiments.chi.chiserver.domain.statistics.classic.ClassicStatisticsForVariantMetricRepository;
 import pl.allegro.experiments.chi.chiserver.domain.statistics.classic.StatisticsRepository;
+import pl.allegro.tech.common.andamio.endpoint.PublicEndpoint;
 import pl.allegro.tech.common.andamio.metrics.MeteredEndpoint;
 
 import static org.springframework.http.MediaType.APPLICATION_JSON_UTF8_VALUE;
@@ -51,6 +52,7 @@ public class ClassicStatisticsController {
 
     @MeteredEndpoint
     @PostMapping(value = "/statistics", consumes = {APPLICATION_JSON_VALUE, APPLICATION_JSON_UTF8_VALUE})
+    @PublicEndpoint
     ResponseEntity postStatistics(@RequestBody String stats) {
         var classicStats = jsonConverter.fromJson(stats, ClassicExperimentStatisticsForVariantMetric.class);
 
