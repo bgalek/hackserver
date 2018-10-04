@@ -24,6 +24,7 @@ public class ClassicStatisticsController {
     private final Gson jsonConverter;
     private final ClassicStatisticsForVariantMetricRepository classicStatisticsForVariantMetricRepository;
     private final StatisticsRepository statisticsRepository;
+    private static final String CHI_TOKEN = "AD34C2FAB59636A423F8A2D7F7696";
 
     public ClassicStatisticsController(Gson jsonConverter,
                                        ClassicStatisticsForVariantMetricRepository classicStatisticsForVariantMetricRepository,
@@ -49,9 +50,9 @@ public class ClassicStatisticsController {
     @PublicEndpoint
     ResponseEntity postStatistics(
             @RequestBody String stats,
-            @RequestHeader("Chi-Token") String chiToken) {
+            @RequestHeader(value = "Chi-Token", defaultValue = "") String chiToken) {
 
-        if (!chiToken.equals("chi-rulez")) {
+        if (!chiToken.equals(CHI_TOKEN)) {
             return ResponseEntity.badRequest().build();
         }
 

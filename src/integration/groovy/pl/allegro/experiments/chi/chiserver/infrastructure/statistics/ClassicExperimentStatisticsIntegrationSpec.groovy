@@ -1,5 +1,6 @@
 package pl.allegro.experiments.chi.chiserver.infrastructure.statistics
 
+import org.springframework.web.client.HttpClientErrorException
 import pl.allegro.experiments.chi.chiserver.BaseE2EIntegrationSpec
 import spock.lang.Unroll
 
@@ -60,6 +61,21 @@ class ClassicExperimentStatisticsIntegrationSpec extends BaseE2EIntegrationSpec 
         gmv.diff == 0.0003
         gmv.pValue == 0.3
         gmv.count == 1684500
+    }
+
+    def "should not allow saving statistics if Chi-Token not passed"() {
+        given:
+        def experiment = startedExperiment()
+        def request = sampleClassicStatisticsRequest([
+                experimentId: experiment.id,
+                metricName  : "tx_daily"
+        ])
+
+        when:
+        post("/api/statistics/", request)
+
+        then:
+        thrown(HttpClientErrorException)
     }
 
     @Unroll
