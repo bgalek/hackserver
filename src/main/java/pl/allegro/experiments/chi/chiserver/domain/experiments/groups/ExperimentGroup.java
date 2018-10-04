@@ -168,7 +168,6 @@ public class ExperimentGroup implements Comparable<ExperimentGroup> {
     /**
      * TODO remove after migration
      *
-     *  @Deprecated
      */
     @Deprecated
     public ExperimentGroup allocateExistingExperimentLegacy(String expId, List<VariantPercentageAllocation> legacyAllocation) {
