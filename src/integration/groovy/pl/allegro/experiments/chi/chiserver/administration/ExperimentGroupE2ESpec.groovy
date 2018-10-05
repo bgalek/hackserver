@@ -104,6 +104,89 @@ class ExperimentGroupE2ESpec extends BaseE2EIntegrationSpec {
         assertShredRange(fetched_started, 'simplified',    5,  10, salt)
     }
 
+    /**
+     * remove after migration
+     * simulates production
+     * TODO check INTERNAL
+     */
+    @Deprecated
+    def "should preserve percentage ranges on group listingi"() {
+        given:
+        def listingi = prepareListingi()
+        def salt = "mweb-spa-listing-final"
+
+        when:
+        clientExperimentFactory.persistAllocationForLegacyGroup(listingi)
+
+        then:
+        def freshLisingi = experimentGroupRepository.findById(listingi.id).get()
+
+        freshLisingi.experiments == ["listing_interline", "listing_average_product_rating", "mweb_spa_listing_extended"]
+        freshLisingi.salt == salt
+        freshLisingi.allocationTable.records.size() == 16
+
+        def mweb_spa_listing_extended = fetchClientExperiment("mweb_spa_listing_extended")
+
+        assertShredRange(mweb_spa_listing_extended, 'base',90, 100, salt)
+        assertShredRange(mweb_spa_listing_extended, 'enabled',65, 75, salt)
+        assertShredRange(mweb_spa_listing_extended, 'simplified',75, 85, salt)
+
+    }
+
+    def prepareListingi() {
+        def listing_interline = experimentDefinition().id("listing_interline")
+                .variantNames([
+                    "base",
+                    "rating-popover-cheaper-index5",
+                    "rating-list-cheaper-index10",
+                    "rating-popover-no-coins-shipping-index5",
+                    "rating-list-no-coins-shipping-index10",
+                    "no-coins-suggested-filters-index5",
+                    "suggested-filters-index10",
+                    "suggested-links-index5",
+                    "suggested-links-index10"
+                ])
+                .percentage(5)
+                .activityPeriod(ZonedDateTime.now().minusDays(2), ZonedDateTime.now().minusDays(1))
+                .build()
+
+        def listing_average_product_rating = experimentDefinition().id("listing_average_product_rating")
+            .variantNames([
+                    "base",
+                    "rating-popover-cheaper-index5",
+                    "rating-list-cheaper-index10",
+                    "rating-popover-no-coins-shipping-index5",
+                    "rating-list-no-coins-shipping-index10",
+                    "no-coins-suggested-filters-index5"
+            ])
+            .percentage(5)
+            .activityPeriod(ZonedDateTime.now().minusDays(2), ZonedDateTime.now().minusDays(1))
+            .build()
+
+        def mweb_spa_listing_extended = experimentDefinition().id("mweb_spa_listing_extended")
+                .variantNames([
+                    "base",
+                    "enabled",
+                    "simplified"
+                ])
+                .percentage(10)
+                .activityPeriod(ZonedDateTime.now(), ZonedDateTime.now().plusDays(10))
+                .build()
+
+        experimentsRepository.save(listing_interline)
+        experimentsRepository.save(listing_average_product_rating)
+        experimentsRepository.save(mweb_spa_listing_extended)
+
+        def group = new ExperimentGroup(
+                UUID.randomUUID().toString(),
+                "mweb-spa-listing-final",
+                [listing_interline.id, listing_average_product_rating.id, mweb_spa_listing_extended.id],
+                AllocationTable.empty())
+
+        experimentGroupRepository.save(group)
+        group
+    }
+
     @Unroll
     def "should delete #status experiment bounded to a group and free allocated space"() {
         given:

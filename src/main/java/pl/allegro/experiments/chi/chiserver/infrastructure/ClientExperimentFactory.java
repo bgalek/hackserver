@@ -67,8 +67,16 @@ public class ClientExperimentFactory {
                 .filter(e -> !e.getStatus().equals(ExperimentStatus.DRAFT))
                 .collect(Collectors.toList());
 
-
         ExperimentGroup mutatedGroup = group;
+        List<ExperimentDefinition> draftsToRemoveFromGroup = group.getExperiments().stream()
+                .map(expId -> experimentsRepository.getExperiment(expId).get())
+                .filter(ExperimentDefinition::isDraft)
+                .collect(Collectors.toList());
+        for (ExperimentDefinition e: draftsToRemoveFromGroup) {
+            mutatedGroup = mutatedGroup.removeExperiment(e.getId());
+        }
+        experimentGroupRepository.save(mutatedGroup);
+
         for (ClientExperiment ce : ces) {
             logger.info(".. creating records for experiment " + ce.getId() + ", " + ce.getStatus() );
 
@@ -78,21 +86,14 @@ public class ClientExperimentFactory {
                         .filter(p -> p instanceof ShredHashRangePredicate)
                         .map(sh -> new VariantPercentageAllocation(ev.getName(), ((ShredHashRangePredicate) sh).getRanges().get(0)))
                         .forEach(it -> {
-                            logger.info(".. .. record: "+ it.getVariantName() + " "+ it.getRange());
+                            logger.info(".. .. record: "+ it.getVariantName() + " " + it.getRange());
                             currentAllocation.add(it);
                         });
             }
 
             mutatedGroup = mutatedGroup.allocateExistingExperimentLegacy(ce.getId(), currentAllocation);
-            List<ExperimentDefinition> draftsToRemoveFromGroup = group.getExperiments().stream()
-                    .map(expId -> experimentsRepository.getExperiment(expId).get())
-                    .filter(ExperimentDefinition::isDraft)
-                    .collect(Collectors.toList());
-            for (ExperimentDefinition e: draftsToRemoveFromGroup) {
-                mutatedGroup = mutatedGroup.removeExperiment(e.getId());
-            }
             experimentGroupRepository.save(mutatedGroup);
-
+            var x = 0;
         }
     }
 

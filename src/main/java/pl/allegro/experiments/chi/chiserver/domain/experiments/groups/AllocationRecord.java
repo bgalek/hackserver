@@ -9,6 +9,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
+import static pl.allegro.experiments.chi.chiserver.domain.experiments.groups.AllocationTable.SHARED_BASE;
+
 final class AllocationRecord {
     private final String experimentId;
     private final String variant;
@@ -38,7 +40,7 @@ final class AllocationRecord {
     }
 
     static AllocationRecord forSharedBase(PercentageRange range) {
-        return new AllocationRecord(AllocationTable.SHARED_BASE, "base", range);
+        return new AllocationRecord(SHARED_BASE, "base", range);
     }
 
     List<Integer> getBuckets() {
@@ -54,7 +56,7 @@ final class AllocationRecord {
     }
 
     boolean isSharedBase() {
-        return isBase() && AllocationTable.SHARED_BASE.equals(experimentId);
+        return isBase() && SHARED_BASE.equals(experimentId);
     }
 
     int getFrom() {
@@ -82,9 +84,10 @@ final class AllocationRecord {
     }
 
     boolean canJoinWith(AllocationRecord right) {
-        return this.getTo() == right.getFrom() &&
-               this.getExperimentId().equals(right.getExperimentId()) &&
-               this.getVariant().equals(right.getVariant());
+        return (this.getExperimentId().equals(SHARED_BASE) && right.getExperimentId().equals(SHARED_BASE)) ||
+                (this.getTo() == right.getFrom() &&
+                    this.getExperimentId().equals(right.getExperimentId()) &&
+                    this.getVariant().equals(right.getVariant()));
     }
 
     boolean belongsTo(String experimentId) {
