@@ -64,6 +64,7 @@ public class ClientExperimentFactory {
         List<ClientExperiment> ces = group.getExperiments().stream()
                 .map(expId -> experimentsRepository.getExperiment(expId).get())
                 .map(e -> clientExperimentFromGroupedExperiment(e, group))
+                .filter(e -> !e.getStatus().equals(ExperimentStatus.DRAFT))
                 .collect(Collectors.toList());
 
 
@@ -83,7 +84,13 @@ public class ClientExperimentFactory {
             }
 
             mutatedGroup = mutatedGroup.allocateExistingExperimentLegacy(ce.getId(), currentAllocation);
-
+            List<ExperimentDefinition> draftsToRemoveFromGroup = group.getExperiments().stream()
+                    .map(expId -> experimentsRepository.getExperiment(expId).get())
+                    .filter(ExperimentDefinition::isDraft)
+                    .collect(Collectors.toList());
+            for (ExperimentDefinition e: draftsToRemoveFromGroup) {
+                mutatedGroup = mutatedGroup.removeExperiment(e.getId());
+            }
             experimentGroupRepository.save(mutatedGroup);
 
         }

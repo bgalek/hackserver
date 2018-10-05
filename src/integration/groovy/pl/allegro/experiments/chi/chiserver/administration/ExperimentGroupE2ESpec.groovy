@@ -67,6 +67,43 @@ class ExperimentGroupE2ESpec extends BaseE2EIntegrationSpec {
         assertShredRange(exp2_v2, 'simplified',    25,  30, salt)
     }
 
+    /**
+     * remove after migration
+     */
+    @Deprecated
+    def "should remove DRAFTs from legacy groups during migration"() {
+        given:
+        def salt = 'salt'
+        def draft = experimentDefinition().id(UUID.randomUUID().toString())
+                .variantNames(["base","enabled","simplified"])
+                .percentage(10).build()
+
+        def started = experimentDefinition().id(UUID.randomUUID().toString())
+                .variantNames(["base","enabled","simplified"])
+                .percentage(5).activityPeriod(ZonedDateTime.now(), ZonedDateTime.now().plusDays(1)).build()
+
+        experimentsRepository.save(draft)
+        experimentsRepository.save(started)
+
+        def group = new ExperimentGroup(UUID.randomUUID().toString(), salt, [draft.id, started.id], AllocationTable.empty())
+        experimentGroupRepository.save(group)
+
+        when:
+        clientExperimentFactory.persistAllocationForLegacyGroup(group)
+
+        then:
+        def fresh = experimentGroupRepository.findById(group.id).get()
+        fresh.experiments == [started.id]
+        fresh.salt == salt
+        fresh.allocationTable.records.size() == 3
+
+        def fetched_started = fetchClientExperiment(started.id)
+
+        assertShredRange(fetched_started, 'base',          95, 100, salt)
+        assertShredRange(fetched_started, 'enabled',       0,  5, salt)
+        assertShredRange(fetched_started, 'simplified',    5,  10, salt)
+    }
+
     @Unroll
     def "should delete #status experiment bounded to a group and free allocated space"() {
         given:
