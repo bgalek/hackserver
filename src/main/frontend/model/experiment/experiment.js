@@ -31,6 +31,7 @@ const ExperimentRecord = Record({
   deviceClass: null,
   experimentGroup: null,
   bonferroniCorrection: 1,
+  maxPossibleAllocation: 0,
   lastStatusChange: null
 })
 
@@ -124,7 +125,7 @@ export default class ExperimentModel extends ExperimentRecord {
   }
 
   canBeFullOn () {
-    return this.status === 'ACTIVE'
+    return this.status === 'ACTIVE' && !this.isInGroup()
   }
 
   canBePaused () {
@@ -144,7 +145,7 @@ export default class ExperimentModel extends ExperimentRecord {
   }
 
   canChangeVariants () {
-    return !this.isEffectivelyEnded() && !this.isInGroup()
+    return !this.isEffectivelyEnded()
   }
 
   isEffectivelyEnded () {
@@ -161,7 +162,7 @@ export default class ExperimentModel extends ExperimentRecord {
 
   canBeGrouped () {
     return !this.isInGroup() &&
-      ['DRAFT'].includes(this.status)
+      ['DRAFT', 'ACTIVE'].includes(this.status)
   }
 
   canRunLifecycleCommand () {

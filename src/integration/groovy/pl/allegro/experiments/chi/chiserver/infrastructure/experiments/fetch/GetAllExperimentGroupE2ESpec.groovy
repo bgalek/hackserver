@@ -11,10 +11,11 @@ class GetAllExperimentGroupE2ESpec extends BaseE2EIntegrationSpec {
         def group = createExperimentGroupAndFetch([firstExperiment.id, secondExperiment.id])
 
         expect:
-        fetchExperimentGroup(group.id as String) == [
-                id         : group.id,
-                salt       : firstExperiment.id,
-                experiments: [firstExperiment.id, secondExperiment.id]
-        ]
+        def fetchedGroup = fetchExperimentGroup(group.id as String)
+
+        fetchedGroup.id        == group.id
+        fetchedGroup.salt      == firstExperiment.id
+        fetchedGroup.experiments == [firstExperiment.id, secondExperiment.id]
+        fetchedGroup.allocationTable.size() == 4
     }
 }

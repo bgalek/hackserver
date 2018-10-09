@@ -101,12 +101,10 @@ trait ApiActionUtils {
     }
 
     void updateExperimentVariants(String experimentId,
-                                  List variantNames,
                                   String internalVariantName,
                                   int percentage,
                                   String deviceClass) {
         def properties = [
-                variantNames: variantNames,
                 internalVariantName: internalVariantName,
                 percentage: percentage,
                 deviceClass: deviceClass

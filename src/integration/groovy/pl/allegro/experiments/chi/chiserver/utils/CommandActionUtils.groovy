@@ -62,11 +62,10 @@ trait CommandActionUtils {
     }
 
     void updateExperimentVariants(String experimentId,
-                                  List<String> variantNames,
                                   String internalVariantName,
                                   int percentage,
                                   String deviceClass) {
-        def properties = new UpdateVariantsProperties(variantNames, internalVariantName, percentage, deviceClass)
+        def properties = new UpdateVariantsProperties(internalVariantName, percentage, deviceClass)
         experimentActions.updateVariants(experimentId, properties)
     }
 }

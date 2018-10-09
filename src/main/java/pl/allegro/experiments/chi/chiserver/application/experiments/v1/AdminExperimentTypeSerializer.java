@@ -5,6 +5,7 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonSerializationContext;
 import com.google.gson.JsonSerializer;
 import pl.allegro.experiments.chi.chiserver.application.experiments.AdminExperiment;
+import pl.allegro.experiments.chi.chiserver.domain.experiments.groups.ExperimentGroup;
 
 import java.lang.reflect.Type;
 
@@ -32,6 +33,7 @@ public class AdminExperimentTypeSerializer implements JsonSerializer<AdminExperi
         jsonObject.add("activityPeriod", context.serialize(src.getActivityPeriod()));
         jsonObject.add("editable", context.serialize(src.getEditable()));
         jsonObject.add("status", context.serialize(src.getStatus()));
+        jsonObject.add("maxPossibleAllocation", context.serialize(src.getMaxPossibleAllocation()));
         jsonObject.add("reportingType", context.serialize(src.getReportingType()));
         jsonObject.add("eventDefinitions", context.serialize(src.getEventDefinitions()));
         jsonObject.add("measurements", context.serialize(src.getMeasurements()));
@@ -39,11 +41,22 @@ public class AdminExperimentTypeSerializer implements JsonSerializer<AdminExperi
             jsonObject.add("bayesianEqualizer", context.serialize(src.getBayesianHorizontalEqualizer()));
         }
         if (src.getExperimentGroup() != null) {
-            jsonObject.add("experimentGroup", context.serialize(src.getExperimentGroup()));
+            jsonObject.add("experimentGroup", serializeExperimentGroup(src.getExperimentGroup(), context));
         }
         if (src.getLastStatusChange() != null) {
             jsonObject.add("lastStatusChange", context.serialize(src.getLastStatusChange()));
         }
         return jsonObject;
     }
+
+    private JsonObject serializeExperimentGroup(ExperimentGroup group, JsonSerializationContext context) {
+        JsonObject jsonObject = new JsonObject();
+
+        jsonObject.addProperty("id", group.getId());
+        jsonObject.add("experiments", context.serialize(group.getExperiments()));
+        jsonObject.addProperty("salt", group.getSalt());
+
+        return jsonObject;
+    }
 }
+

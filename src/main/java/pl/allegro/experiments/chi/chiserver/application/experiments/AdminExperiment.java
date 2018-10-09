@@ -6,7 +6,7 @@ import pl.allegro.experiments.chi.chiserver.domain.experiments.*;
 import pl.allegro.experiments.chi.chiserver.domain.experiments.groups.ExperimentGroup;
 import pl.allegro.experiments.chi.chiserver.domain.statistics.bayes.BayesianHorizontalEqualizer;
 import pl.allegro.experiments.chi.chiserver.domain.statistics.ExperimentMeasurements;
-import pl.allegro.experiments.chi.chiserver.infrastructure.ClientExperiment;
+import pl.allegro.experiments.chi.chiserver.domain.experiments.client.ClientExperiment;
 
 import java.time.ZonedDateTime;
 import java.util.List;
@@ -16,6 +16,7 @@ public class AdminExperiment {
     private ExperimentDefinition experimentDefinition;
     private final boolean editable;
     private final ClientExperiment clientExperiment;
+    private final int maxPossibleAllocation;
     private ExperimentMeasurements experimentMeasurements;
     private BayesianHorizontalEqualizer bayesianHorizontalEqualizer;
     private ExperimentGroup experimentGroup;
@@ -24,10 +25,12 @@ public class AdminExperiment {
     public AdminExperiment(
             ExperimentDefinition experimentDefinition,
             User currentUser,
-            ClientExperiment clientExperiment) {
+            ClientExperiment clientExperiment,
+            int maxPossibleAllocation) {
         this.experimentDefinition = experimentDefinition;
         this.editable = currentUser.isOwner(experimentDefinition);
         this.clientExperiment = clientExperiment;
+        this.maxPossibleAllocation = maxPossibleAllocation;
     }
 
     AdminExperiment withHorizontalEqualizer(BayesianHorizontalEqualizer equalizer) {
@@ -114,6 +117,10 @@ public class AdminExperiment {
 
     public ExperimentStatus getStatus() {
         return this.experimentDefinition.getStatus();
+    }
+
+    public int getMaxPossibleAllocation() {
+        return maxPossibleAllocation;
     }
 
     public boolean isActive() {

@@ -2,7 +2,6 @@ package pl.allegro.experiments.chi.chiserver.domain.experiments.administration;
 
 import pl.allegro.experiments.chi.chiserver.domain.experiments.ExperimentDefinition;
 import pl.allegro.experiments.chi.chiserver.domain.experiments.ExperimentsRepository;
-import pl.allegro.experiments.chi.chiserver.domain.experiments.groups.ExperimentGroupRepository;
 
 import java.util.Objects;
 
@@ -11,34 +10,26 @@ public class StartExperimentCommand implements ExperimentCommand {
     private final StartExperimentProperties startExperimentProperties;
     private final PermissionsAwareExperimentRepository permissionsAwareExperimentRepository;
     private final String experimentId;
-    private final ExperimentGroupRepository experimentGroupRepository;
 
     StartExperimentCommand(
             ExperimentsRepository experimentsRepository,
             StartExperimentProperties startExperimentProperties,
             PermissionsAwareExperimentRepository permissionsAwareExperimentRepository,
-            ExperimentGroupRepository experimentGroupRepository,
             String experimentId) {
         Objects.requireNonNull(experimentsRepository);
         Objects.requireNonNull(startExperimentProperties);
         Objects.requireNonNull(permissionsAwareExperimentRepository);
-        Objects.requireNonNull(experimentGroupRepository);
         Objects.requireNonNull(experimentId);
         this.experimentsRepository = experimentsRepository;
         this.startExperimentProperties = startExperimentProperties;
         this.permissionsAwareExperimentRepository = permissionsAwareExperimentRepository;
         this.experimentId = experimentId;
-        this.experimentGroupRepository = experimentGroupRepository;
     }
 
     public void execute() {
         ExperimentDefinition experiment = permissionsAwareExperimentRepository.getExperimentOrException(experimentId);
         validate(experiment);
         ExperimentDefinition started = experiment.start(startExperimentProperties.getExperimentDurationDays());
-        experimentGroupRepository.findByExperimentId(experimentId)
-                .ifPresent(experimentGroup ->
-                    experimentGroupRepository.save(experimentGroup.moveExperimentToTail(experimentId))
-                );
         experimentsRepository.save(started);
     }
 

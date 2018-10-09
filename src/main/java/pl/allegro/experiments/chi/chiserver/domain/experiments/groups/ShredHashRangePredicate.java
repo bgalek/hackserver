@@ -13,7 +13,7 @@ public class ShredHashRangePredicate implements Predicate {
     public ShredHashRangePredicate(List<PercentageRange> ranges, String salt) {
         Preconditions.checkNotNull(ranges);
         Preconditions.checkNotNull(salt);
-        Preconditions.checkArgument(!ranges.isEmpty());
+        Preconditions.checkArgument(!ranges.isEmpty(), "empty ranges");
         this.ranges = ranges;
         this.salt = salt;
     }

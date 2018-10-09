@@ -5,12 +5,10 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import pl.allegro.experiments.chi.chiserver.domain.experiments.ExperimentDefinition;
-import pl.allegro.experiments.chi.chiserver.domain.experiments.ExperimentVariant;
 import pl.allegro.experiments.chi.chiserver.domain.experiments.ExperimentsRepository;
 import pl.allegro.tech.common.andamio.metrics.MeteredEndpoint;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 import static java.util.stream.Collectors.toList;
 import static org.springframework.http.MediaType.APPLICATION_JSON_UTF8_VALUE;
@@ -49,10 +47,7 @@ public class ClientExperimentsInfoController {
 
         ClientExperimentInfo(ExperimentDefinition experiment) {
             name = experiment.getId();
-            variants = experiment.prepareExperimentVariants()
-                    .stream()
-                    .map(ExperimentVariant::getName)
-                    .collect(Collectors.toList());
+            variants = experiment.getVariantNames();
         }
 
         ClientExperimentInfo(String id, List<String> variants) {

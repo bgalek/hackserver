@@ -4,45 +4,37 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import pl.allegro.experiments.chi.chiserver.domain.experiments.*;
+import pl.allegro.experiments.chi.chiserver.domain.experiments.ExperimentsRepository;
+import pl.allegro.experiments.chi.chiserver.domain.experiments.groups.ExperimentGroupRepository;
 
 import javax.annotation.PostConstruct;
-import java.util.Arrays;
 
 @Service
 public class DbMigrateTool {
     private static final Logger logger = LoggerFactory.getLogger(DbMigrateTool.class);
 
     private final ExperimentsRepository experimentsRepository;
+    private final ExperimentGroupRepository experimentGroupRepository;
+    private final ClientExperimentFactory clientExperimentFactory;
 
     @Autowired
-    public DbMigrateTool(ExperimentsRepository experimentsRepository) {
+    public DbMigrateTool(ExperimentsRepository experimentsRepository, ExperimentGroupRepository experimentGroupRepository, ClientExperimentFactory clientExperimentFactory) {
         this.experimentsRepository = experimentsRepository;
+        this.experimentGroupRepository = experimentGroupRepository;
+        this.clientExperimentFactory = clientExperimentFactory;
     }
 
     @PostConstruct
     public void action() throws Exception {
-       logger.info("running DbMigrateTool");
+        logger.info("running DbMigrateTool ...");
 
-       String eName = "structure-navigation-electronics";
+        persistAllocationTables();
+    }
 
-       experimentsRepository.getExperiment(eName)
-       .ifPresent(e -> {
-           if (e.getReportingDefinition().getType() != ReportingType.FRONTEND) {
-               logger.info("updating " + eName + "...");
-
-               ReportingDefinition newDef = ReportingDefinition.frontend(
-                       Arrays.asList(new EventDefinition(null, "boxView", null, null, "Navigation 2 - above - Kopia od 16.04"),
-                                     new EventDefinition(null, "boxView", null, null, "Navigation 2 - below - Kopia od 16.04"),
-                                     new EventDefinition(null, "boxView", null, null, "Navigation 1 - above - Kopia od 16.04"),
-                                     new EventDefinition(null, "boxView", null, null, "Navigation 1 - below - Kopia od 16.04"),
-                                     new EventDefinition(null, "boxView", null, null, "Showcase Rotator"))
-               );
-
-               experimentsRepository.save(e.updateReportingDefinition(newDef));
-               logger.info("experiment updated");
-           }
-       });
+    private void persistAllocationTables() {
+        experimentGroupRepository.findAll().stream()
+                .filter(g -> g.getAllocationTable().isEmpty())
+                .forEach(g ->  clientExperimentFactory.persistAllocationForLegacyGroup(g));
     }
 
 }

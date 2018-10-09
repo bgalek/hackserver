@@ -1,5 +1,6 @@
-package pl.allegro.experiments.chi.chiserver.infrastructure;
+package pl.allegro.experiments.chi.chiserver.domain.experiments.client;
 
+import com.google.common.collect.ImmutableList;
 import pl.allegro.experiments.chi.chiserver.domain.experiments.ActivityPeriod;
 import pl.allegro.experiments.chi.chiserver.domain.experiments.ExperimentDefinition;
 import pl.allegro.experiments.chi.chiserver.domain.experiments.ExperimentStatus;
@@ -13,20 +14,13 @@ public class ClientExperiment {
     private final ActivityPeriod activityPeriod;
     private final ExperimentStatus status;
 
-    public ClientExperiment(ExperimentDefinition experiment) {
-        id = experiment.getId();
-        variants = experiment.prepareExperimentVariants();
-        activityPeriod = experiment.getActivityPeriod();
-        status = experiment.getStatus();
-    }
-
-    ClientExperiment(
+    public ClientExperiment(
             String id,
             List<ExperimentVariant> variants,
             ActivityPeriod activityPeriod,
             ExperimentStatus status) {
         this.id = id;
-        this.variants = variants;
+        this.variants = ImmutableList.copyOf(variants);
         this.activityPeriod = activityPeriod;
         this.status = status;
     }

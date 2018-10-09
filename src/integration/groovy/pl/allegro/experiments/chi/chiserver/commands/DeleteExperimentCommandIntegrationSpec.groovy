@@ -44,8 +44,6 @@ class DeleteExperimentCommandIntegrationSpec extends BaseCommandIntegrationSpec 
         experimentsExists(experiment.id)
     }
 
-
-
     static ClassicExperimentStatisticsForVariantMetric sampleClassicExperimentStatisticsForVariantMetric(ExperimentDefinition experiment) {
         new ClassicExperimentStatisticsForVariantMetric(
                 experiment.id,

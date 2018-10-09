@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.RestController;
 import pl.allegro.experiments.chi.chiserver.domain.experiments.ExperimentDefinition;
 import pl.allegro.experiments.chi.chiserver.domain.experiments.ExperimentsRepository;
 import pl.allegro.experiments.chi.chiserver.domain.experiments.groups.ExperimentGroupRepository;
-import pl.allegro.experiments.chi.chiserver.infrastructure.ExperimentFactory;
+import pl.allegro.experiments.chi.chiserver.infrastructure.ClientExperimentFactory;
 import pl.allegro.tech.common.andamio.metrics.MeteredEndpoint;
 
 import java.util.stream.Stream;
@@ -22,7 +22,7 @@ import static java.util.stream.Collectors.toList;
 class ClientExperimentsControllerV5 {
     final Gson jsonConverter;
     final ExperimentGroupRepository experimentGroupRepository;
-    final ExperimentFactory experimentFactory;
+    final ClientExperimentFactory clientExperimentFactory;
 
     private final ExperimentsRepository experimentsRepository;
     private final CrisisManagementFilter crisisManagementFilter;
@@ -33,12 +33,12 @@ class ClientExperimentsControllerV5 {
             Gson jsonConverter,
             CrisisManagementFilter crisisManagementFilter,
             ExperimentGroupRepository experimentGroupRepository,
-            ExperimentFactory experimentFactory) {
+            ClientExperimentFactory clientExperimentFactory) {
         this.experimentsRepository = experimentsRepository;
         this.jsonConverter = jsonConverter;
         this.crisisManagementFilter = crisisManagementFilter;
         this.experimentGroupRepository = experimentGroupRepository;
-        this.experimentFactory = experimentFactory;
+        this.clientExperimentFactory = clientExperimentFactory;
     }
 
     Stream<ExperimentDefinition> experimentStream() {
@@ -53,7 +53,7 @@ class ClientExperimentsControllerV5 {
     String experiments() {
         logger.debug("Client V5 experiments request received");
         return jsonConverter.toJson(experimentStream()
-                .map(experimentFactory::clientExperiment)
+                .map(clientExperimentFactory::clientExperiment)
                 .collect(toList())
         );
     }

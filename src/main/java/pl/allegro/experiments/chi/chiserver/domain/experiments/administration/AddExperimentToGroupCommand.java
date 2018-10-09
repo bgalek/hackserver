@@ -1,16 +1,11 @@
 package pl.allegro.experiments.chi.chiserver.domain.experiments.administration;
 
-import com.google.common.base.Preconditions;
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.Lists;
 import pl.allegro.experiments.chi.chiserver.domain.User;
 import pl.allegro.experiments.chi.chiserver.domain.UserProvider;
 import pl.allegro.experiments.chi.chiserver.domain.experiments.ExperimentDefinition;
-import pl.allegro.experiments.chi.chiserver.domain.experiments.Predicate;
 import pl.allegro.experiments.chi.chiserver.domain.experiments.groups.ExperimentGroup;
 import pl.allegro.experiments.chi.chiserver.domain.experiments.groups.ExperimentGroupRepository;
 
-import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
 
@@ -56,16 +51,21 @@ public class AddExperimentToGroupCommand implements Command {
     }
 
     private ExperimentGroup addAnotherExperiment(ExperimentGroup experimentGroup, final ExperimentDefinition experiment) {
-        validateEnoughPercentageSpace((List)Lists.asList(experiment.getId(),experimentGroup.getExperiments().toArray()));
+        validatePermissionsToAllExperiments(experimentGroup);
         validateNextExperiment(experiment);
 
-        return experimentGroup.addExperiment(experiment.getId());
+        if (!experimentGroup.isAllocationPossible(experiment)) {
+            throw new ExperimentCommandException("not enough space in a group " + experimentGroup.getId() +
+                    " to add experiment " + experiment.getId());
+        }
+
+        return experimentGroup.addExperiment(experiment);
     }
 
     private ExperimentGroup createGroup(final String groupId, final ExperimentDefinition experiment) {
         var salt = experiment.isDraft() ? UUID.randomUUID().toString() :experiment.getId();
-        var experimentGroup = new ExperimentGroup(groupId, salt, ImmutableList.of(experiment.getId()));
-        return experimentGroup;
+
+        return ExperimentGroup.fromExistingExperiment(groupId, salt, experiment);
     }
 
     private void validateExperiment(ExperimentDefinition experiment) {
@@ -86,26 +86,9 @@ public class AddExperimentToGroupCommand implements Command {
         }
     }
 
-    private void validateEnoughPercentageSpace(List<String> experimentIds) {
-        Preconditions.checkArgument(!experimentIds.isEmpty());
-
-        List<ExperimentDefinition> experiments = experimentIds.stream()
+    private void validatePermissionsToAllExperiments(ExperimentGroup group) {
+        group.getExperiments().stream()
                 .map(it -> permissionsAwareExperimentRepository.getExperimentOrException(it))
                 .collect(toList());
-
-        int maxBasePercentage = experiments.stream()
-                .map(e -> e.getPercentage().get())
-                .max(Integer::compare)
-                .get();
-        int percentageSum = experiments.stream()
-                .mapToInt(e -> {
-                    int percentage = e.getPercentage().get();
-                    int numberOfVariantsDifferentThanBase = e.getVariantNames().size() - 1;
-                    return numberOfVariantsDifferentThanBase * percentage;
-                }).sum();
-
-        if (maxBasePercentage + percentageSum > 100) {
-            throw new ExperimentCommandException("Cannot create group - there is no enough percentage space");
-        }
     }
 }

@@ -36,7 +36,7 @@
         <experiment-actions
           v-if="loadingExperimentDone && loadingStatsDone"
           :experiment="experiment"
-          :allowDelete="metricsNotAvailable && !isInGroup"
+          :allowDelete="metricsNotAvailable"
         ></experiment-actions>
 
         <assignment-panel
