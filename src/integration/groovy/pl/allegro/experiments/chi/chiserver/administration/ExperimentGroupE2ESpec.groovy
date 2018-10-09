@@ -4,8 +4,8 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.HttpStatus
 import org.springframework.web.client.HttpClientErrorException
 import pl.allegro.experiments.chi.chiserver.BaseE2EIntegrationSpec
+import pl.allegro.experiments.chi.chiserver.domain.experiments.DeviceClass
 import pl.allegro.experiments.chi.chiserver.domain.experiments.ExperimentsRepository
-import pl.allegro.experiments.chi.chiserver.domain.experiments.PercentageRange
 import pl.allegro.experiments.chi.chiserver.domain.experiments.groups.AllocationTable
 import pl.allegro.experiments.chi.chiserver.domain.experiments.groups.ExperimentGroup
 import pl.allegro.experiments.chi.chiserver.domain.experiments.groups.ExperimentGroupRepository
@@ -14,7 +14,9 @@ import spock.lang.Unroll
 import java.time.ZonedDateTime
 import static pl.allegro.experiments.chi.chiserver.domain.experiments.ExperimentDefinitionBuilder.experimentDefinition
 import static pl.allegro.experiments.chi.chiserver.domain.experiments.ExperimentStatus.*
+import static pl.allegro.experiments.chi.chiserver.infrastructure.experiments.fetch.ClientExperimentAssertions.assertHasSpecifiedInternalVariantWithDeviceClass
 import static pl.allegro.experiments.chi.chiserver.infrastructure.experiments.fetch.ClientExperimentAssertions.assertShredRange
+import static pl.allegro.experiments.chi.chiserver.infrastructure.experiments.fetch.ClientExperimentAssertions.assertShredRangeWithDeviceClass
 
 class ExperimentGroupE2ESpec extends BaseE2EIntegrationSpec {
     @Autowired
@@ -192,7 +194,6 @@ class ExperimentGroupE2ESpec extends BaseE2EIntegrationSpec {
     /**
      * remove after migration
      * simulates production
-     * TODO check INTERNAL
      */
     @Deprecated
     def "should preserve percentage ranges on group listingi"() {
@@ -212,9 +213,10 @@ class ExperimentGroupE2ESpec extends BaseE2EIntegrationSpec {
 
         def mweb_spa_listing_extended = fetchClientExperiment("mweb_spa_listing_extended")
 
-        assertShredRange(mweb_spa_listing_extended, 'base',90, 100, salt)
-        assertShredRange(mweb_spa_listing_extended, 'enabled',65, 75, salt)
-        assertShredRange(mweb_spa_listing_extended, 'simplified',75, 85, salt)
+        assertShredRangeWithDeviceClass(mweb_spa_listing_extended, 'base', 'phone-android', 90, 100, salt)
+        assertShredRangeWithDeviceClass(mweb_spa_listing_extended, 'enabled', 'phone-android', 65, 75, salt)
+        assertShredRangeWithDeviceClass(mweb_spa_listing_extended, 'simplified', 'phone-android', 75, 85, salt)
+        assertHasSpecifiedInternalVariantWithDeviceClass(mweb_spa_listing_extended, 'base', 'phone-android')
     }
 
     def prepareListingi() {
@@ -255,6 +257,8 @@ class ExperimentGroupE2ESpec extends BaseE2EIntegrationSpec {
                 ])
                 .percentage(10)
                 .activityPeriod(ZonedDateTime.now(), ZonedDateTime.now().plusDays(10))
+                .deviceClass(DeviceClass.phone_android)
+                .internalVariantName("base")
                 .build()
 
         experimentsRepository.save(listing_interline)
