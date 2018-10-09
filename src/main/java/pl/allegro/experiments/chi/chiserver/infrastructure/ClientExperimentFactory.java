@@ -93,7 +93,6 @@ public class ClientExperimentFactory {
 
             mutatedGroup = mutatedGroup.allocateExistingExperimentLegacy(ce.getId(), currentAllocation);
             experimentGroupRepository.save(mutatedGroup);
-            var x = 0;
         }
     }
 
