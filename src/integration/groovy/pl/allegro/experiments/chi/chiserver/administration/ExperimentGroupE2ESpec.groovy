@@ -107,6 +107,91 @@ class ExperimentGroupE2ESpec extends BaseE2EIntegrationSpec {
     /**
      * remove after migration
      * simulates production
+     */
+    @Deprecated
+    def "should preserve percentage ranges on group fod"() {
+        given:
+        def fod = prepareFod()
+        def salt = "fod"
+
+        when:
+        clientExperimentFactory.persistAllocationForLegacyGroup(fod)
+
+        then:
+        def freshFod = experimentGroupRepository.findById(fod.id).get()
+
+        freshFod.experiments == [
+                "fod_generaldelivery_show_delivery_points",
+                "delivery-groups-experiment-09_2018_v1",
+                "fod_generaldelivery_show_delivery_points_v2"
+        ]
+        freshFod.salt == salt
+        freshFod.allocationTable.records.size() == 6
+
+        def delivery_groups_experiment_09_2018_v1 = fetchClientExperiment("delivery-groups-experiment-09_2018_v1")
+
+        assertShredRange(delivery_groups_experiment_09_2018_v1, 'base',95, 100, salt)
+        assertShredRange(delivery_groups_experiment_09_2018_v1, 'base1',1, 6, salt)
+        assertShredRange(delivery_groups_experiment_09_2018_v1, 'radio',6, 11, salt)
+        assertShredRange(delivery_groups_experiment_09_2018_v1, 'tile',11, 16, salt)
+
+        def fod_generaldelivery_show_delivery_points_v2 = fetchClientExperiment("fod_generaldelivery_show_delivery_points_v2")
+
+        assertShredRange(fod_generaldelivery_show_delivery_points_v2, 'base',70, 100, salt)
+        assertShredRange(fod_generaldelivery_show_delivery_points_v2, 'showallpoints',16, 46, salt)
+    }
+
+    def prepareFod() {
+        def fod_generaldelivery_show_delivery_points = experimentDefinition().id("fod_generaldelivery_show_delivery_points")
+                .variantNames([
+                    "base",
+                    "showallpoints"
+                ])
+                .percentage(1)
+                .activityPeriod(ZonedDateTime.now().minusDays(2), ZonedDateTime.now().minusDays(1))
+                .build()
+
+        def delivery_groups_experiment_09_2018_v1 = experimentDefinition().id("delivery-groups-experiment-09_2018_v1")
+                .variantNames([
+                    "base",
+                    "base1",
+                    "radio",
+                    "tile"
+                ])
+                .percentage(5)
+                .activityPeriod(ZonedDateTime.now(), ZonedDateTime.now().plusDays(10))
+                .build()
+
+        def fod_generaldelivery_show_delivery_points_v2 = experimentDefinition().id("fod_generaldelivery_show_delivery_points_v2")
+                .variantNames([
+                    "base",
+                    "showallpoints"
+                ])
+                .percentage(30)
+                .activityPeriod(ZonedDateTime.now(), ZonedDateTime.now().plusDays(10))
+                .build()
+
+        experimentsRepository.save(fod_generaldelivery_show_delivery_points)
+        experimentsRepository.save(delivery_groups_experiment_09_2018_v1)
+        experimentsRepository.save(fod_generaldelivery_show_delivery_points_v2)
+
+        def group = new ExperimentGroup(
+                UUID.randomUUID().toString(),
+                "fod",
+                [
+                        fod_generaldelivery_show_delivery_points.id,
+                        delivery_groups_experiment_09_2018_v1.id,
+                        fod_generaldelivery_show_delivery_points_v2.id
+                ],
+                AllocationTable.empty())
+
+        experimentGroupRepository.save(group)
+        group
+    }
+
+    /**
+     * remove after migration
+     * simulates production
      * TODO check INTERNAL
      */
     @Deprecated
@@ -130,7 +215,6 @@ class ExperimentGroupE2ESpec extends BaseE2EIntegrationSpec {
         assertShredRange(mweb_spa_listing_extended, 'base',90, 100, salt)
         assertShredRange(mweb_spa_listing_extended, 'enabled',65, 75, salt)
         assertShredRange(mweb_spa_listing_extended, 'simplified',75, 85, salt)
-
     }
 
     def prepareListingi() {
