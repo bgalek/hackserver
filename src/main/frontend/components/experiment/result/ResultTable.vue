@@ -6,11 +6,9 @@
       :selectedDevice="selectedDevice"
     ></device-selector>
 
-    <p v-if="experimentStatistics.durationDays > 0">
+    <p v-if="experimentStatistics.toDate">
           Data calculated on
           <span id="toDate">{{ experimentStatistics.toDate }}</span>
-          for
-          <b>{{ experimentStatistics.durationDays }}</b> days.
     </p>
 
     <div v-if="experimentStatistics.metrics">
