@@ -1,9 +1,10 @@
 package pl.allegro.experiments.chi.chiserver.utils
 
+import org.springframework.http.HttpEntity
+import org.springframework.http.HttpHeaders
 import org.springframework.http.ResponseEntity
 import org.springframework.web.client.RestTemplate
-import pl.allegro.experiments.chi.chiserver.domain.experiments.DeviceClass
-import pl.allegro.experiments.chi.chiserver.domain.statistics.classic.ClassicExperimentStatistics
+import pl.allegro.experiments.chi.chiserver.application.statistics.ClassicStatisticsController
 
 trait ApiActionUtils {
     String CLIENT_API_PATH = "/api/experiments"
@@ -40,7 +41,10 @@ trait ApiActionUtils {
     }
 
     ResponseEntity postClassicStatistics(Map statistics) {
-        post("/api/statistics/", statistics)
+        HttpHeaders headers = new HttpHeaders();
+        headers.set("Chi-Token", ClassicStatisticsController.CHI_TOKEN)
+        HttpEntity<Map> request = new HttpEntity<>(statistics, headers)
+        post("/api/statistics/", request)
     }
 
     ResponseEntity postBayesianStatistics(Map statistics) {
