@@ -53,12 +53,12 @@
             <experiment-desc-editing ref="experimentDescEditing"
                                      v-model="descriptions"/>
 
-            <experiment-custom-parameter-editing ref="experimentCustomParamEditing"
-                                                 v-model="customParameter" />
-
             <experiment-variants-editing v-model="variants"
                                          ref="experimentVariantsEditing"
                                          :allowModifyRegularVariants="true"/>
+
+            <experiment-custom-parameter-editing ref="experimentCustomParamEditing"
+                                                 v-model="customParameter" />
 
             <v-container fluid style="margin: 0px; padding: 0px" text-xs-center>
               <v-layout row align-top>
@@ -82,6 +82,7 @@
                 </v-flex>
                 <v-flex xs11 id="reportingTypeDropdown">
                   <v-select
+                    style="width: 250px"
                     :items="availableReportingTypes"
                     v-model="reportingType"
                     label="Reporting type"

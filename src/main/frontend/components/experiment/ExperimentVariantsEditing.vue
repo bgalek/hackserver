@@ -4,17 +4,29 @@
     <v-container fluid style="margin: 0px; padding: 0px" text-xs-center>
       <v-layout row align-center>
 
-        <v-flex offset-xs1 id="deviceClassDropdown">
-          <v-select
+        <v-flex xs1>
+          <v-tooltip right>
+            <ul>
+              <li>all = any kind of device</li>
+              <li>desktop = classic web browser on desktop or laptop</li>
+              <li>phone = mobile web browser</li>
+              <li>mobilapp = native mobile app (for buyers) including mobile-opbox</li>
+            </ul>
+            <v-icon
+              slot="activator">help_outline</v-icon>
+          </v-tooltip>
+        </v-flex>
+        <v-flex xs11 id="deviceClassDropdown">
+            <v-select
+            style="width: 250px"
             v-bind:items="deviceClasses"
             v-model="value.deviceClass"
             label="Device class"
             item-value="text"
-          ></v-select>
+           ></v-select>
         </v-flex>
 
       </v-layout>
-
       <v-layout row align-center>
 
         <v-flex offset-xs1>
@@ -49,10 +61,26 @@
         </v-flex>
 
       </v-layout>
-
       <v-layout row align-center>
 
-        <v-flex offset-xs1>
+        <v-flex xs1>
+          <v-tooltip right>
+            <span>
+              Percent of traffic eligible for experiments to be assigned for each variant.
+              <br/>
+              Remember that large part of our traffic is not eligible for experiments,
+              for example:
+              <ul>
+                <li>anonymous traffic without cmuid</li>
+                <li>cached traffic</li>
+              </ul>
+
+            </span>
+            <v-icon
+              slot="activator">help_outline</v-icon>
+          </v-tooltip>
+        </v-flex>
+        <v-flex xs11>
           <v-slider
             id="percentageVariantSlider"
             v-model="value.percentage"
@@ -71,7 +99,7 @@
 
         <v-flex xs1>
           <v-tooltip right>
-            <span><b>Internal</b> means &mdash; available only in Allegro intranet.</span>
+            <span><b>Internal</b> means &mdash; available only in Allegro intranet</span>
             <v-icon
               slot="activator">help_outline</v-icon>
           </v-tooltip>
@@ -152,7 +180,16 @@
         givenValue: this.buildResult(initialValue),
         value: initialValue,
         formValid: true,
-        deviceClasses: ['all', 'phone', 'phone-android', 'phone-iphone', 'desktop'],
+        deviceClasses: [
+          'all',
+          'desktop',
+          'phone',
+          'phone-android',
+          'phone-iphone',
+          'mobileapp',
+          'mobileapp-android',
+          'mobileapp-iphone'
+        ],
         baseVariant: 'base',
         variantsRules: [
           (v) => this.baseVariantPresent() || 'base variant is mandatory',

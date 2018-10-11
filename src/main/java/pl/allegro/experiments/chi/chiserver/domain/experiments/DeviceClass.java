@@ -7,7 +7,10 @@ public enum DeviceClass {
     desktop,
     tablet,
     other,
-    all;
+    all,
+    mobileapp,
+    mobileapp_iphone,
+    mobileapp_android;
 
     public static DeviceClass fromString(String deviceClass) {
         if (deviceClass == null || deviceClass.isEmpty()) {
