@@ -32,7 +32,7 @@ plugins {
     id 'application'
     id "com.moowork.node" version "1.2.0"
     id 'maven-publish'
-    id 'pl.allegro.tech.build.axion-release' version '1.7.2'
+    id 'pl.allegro.tech.build.axion-release' version '1.9.3'
 }
 
 apply plugin: 'axion'
