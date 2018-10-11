@@ -17,7 +17,8 @@ buildscript {
     }
 
     repositories {
-        maven { url 'https://artifactory.allegrogroup.com/artifactory/group-maven/' }
+        maven { url 'https://artifactory.allegrogroup.com/artifactory/group-allegro/' }
+        maven { url 'https://artifactory.allegrogroup.com/artifactory/remote-repos/' }
         mavenCentral()
     }
 
