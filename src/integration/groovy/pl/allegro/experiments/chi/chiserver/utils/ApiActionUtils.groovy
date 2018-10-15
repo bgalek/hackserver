@@ -41,14 +41,17 @@ trait ApiActionUtils {
     }
 
     ResponseEntity postClassicStatistics(Map statistics) {
-        HttpHeaders headers = new HttpHeaders();
-        headers.set("Chi-Token", ClassicStatisticsController.CHI_TOKEN)
-        HttpEntity<Map> request = new HttpEntity<>(statistics, headers)
-        post("/api/statistics/", request)
+        post("/api/statistics/", prepareStatisticsRequest(statistics))
     }
 
     ResponseEntity postBayesianStatistics(Map statistics) {
-        post("/api/bayes/statistics/", statistics)
+        post("/api/bayes/statistics/", prepareStatisticsRequest(statistics))
+    }
+
+    HttpEntity prepareStatisticsRequest(Map statistics) {
+        HttpHeaders headers = new HttpHeaders()
+        headers.set("Chi-Token", ClassicStatisticsController.CHI_TOKEN)
+        new HttpEntity<>(statistics, headers)
     }
 
     Map fetchStatistics(String experimentId) {

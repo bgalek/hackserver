@@ -24,7 +24,7 @@ public class ClassicStatisticsController {
     private final Gson jsonConverter;
     private final ClassicStatisticsForVariantMetricRepository classicStatisticsForVariantMetricRepository;
     private final StatisticsRepository statisticsRepository;
-    private static final String CHI_TOKEN = "AD34C2FAB59636A423F8A2D7F7696";
+    public static final String CHI_TOKEN = "AD34C2FAB59636A423F8A2D7F7696";
 
     public ClassicStatisticsController(Gson jsonConverter,
                                        ClassicStatisticsForVariantMetricRepository classicStatisticsForVariantMetricRepository,

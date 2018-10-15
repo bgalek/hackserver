@@ -1,11 +1,13 @@
 package pl.allegro.experiments.chi.chiserver.infrastructure.statistics
 
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.web.client.HttpClientErrorException
 import pl.allegro.experiments.chi.chiserver.BaseE2EIntegrationSpec
 import pl.allegro.experiments.chi.chiserver.domain.statistics.bayes.BayesianExperimentStatistics
 import pl.allegro.experiments.chi.chiserver.domain.statistics.bayes.BayesianStatisticsRepository
 
 import static pl.allegro.experiments.chi.chiserver.utils.SampleStatisticsRequests.sampleBayesianStatisticsRequest
+import static pl.allegro.experiments.chi.chiserver.utils.SampleStatisticsRequests.sampleClassicStatisticsRequest
 
 class BayesianExperimentStatisticsIntegrationSpec extends BaseE2EIntegrationSpec {
 
@@ -45,6 +47,21 @@ class BayesianExperimentStatisticsIntegrationSpec extends BaseE2EIntegrationSpec
         variant.outliersLeft == 10
         variant.outliersRight == 122
         variant.allCount() == 100 + 200 + 250 + 150 + 10 + 122
+    }
+
+    def "should not allow saving bayes statistics if Chi-Token not passed"() {
+        given:
+        def experiment = startedExperiment()
+        def request = sampleBayesianStatisticsRequest([-0.2, -0.1, 0.1, 0.2], [100, 200, 250, 150], [
+                experimentId: experiment.id,
+                toDate      : '2018-04-01',
+        ])
+
+        when:
+        post("/api/bayes/statistics/", request)
+
+        then:
+        thrown(HttpClientErrorException)
     }
 
     def "should evict old stats when new are coming"() {

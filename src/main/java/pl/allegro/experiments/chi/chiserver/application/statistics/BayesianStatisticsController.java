@@ -8,10 +8,12 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import pl.allegro.experiments.chi.chiserver.domain.experiments.DeviceClass;
 import pl.allegro.experiments.chi.chiserver.domain.statistics.bayes.*;
+import pl.allegro.tech.common.andamio.endpoint.PublicEndpoint;
 import pl.allegro.tech.common.andamio.metrics.MeteredEndpoint;
 
 import static org.springframework.http.MediaType.APPLICATION_JSON_UTF8_VALUE;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
+import static pl.allegro.experiments.chi.chiserver.application.statistics.ClassicStatisticsController.CHI_TOKEN;
 
 @RestController
 @RequestMapping(value = {"/api/bayes"}, produces = {APPLICATION_JSON_VALUE, APPLICATION_JSON_UTF8_VALUE})
@@ -54,7 +56,15 @@ public class BayesianStatisticsController {
 
     @MeteredEndpoint
     @PostMapping(value = "/statistics", consumes = {APPLICATION_JSON_VALUE, APPLICATION_JSON_UTF8_VALUE})
-    ResponseEntity postStatistics(@RequestBody String stats) {
+    @PublicEndpoint
+    ResponseEntity postStatistics(
+            @RequestBody String stats,
+            @RequestHeader(value = "Chi-Token", defaultValue = "") String chiToken) {
+
+        if (!chiToken.equals(CHI_TOKEN)) {
+            return ResponseEntity.badRequest().build();
+        }
+
         var bayesianStats = jsonConverter.fromJson(stats, BayesianExperimentStatisticsForVariant.class);
 
         logger.info("Bayesian stats received: {} {} {} {}",
