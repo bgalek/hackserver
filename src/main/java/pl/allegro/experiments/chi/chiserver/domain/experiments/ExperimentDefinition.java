@@ -221,7 +221,7 @@ public class ExperimentDefinition {
     }
 
     public boolean isAssignable() {
-        return !isEnded() && !isPaused();
+        return !isEnded() && !isPaused() && !variantNames.isEmpty();
     }
 
     public boolean shouldSaveInteractions() {

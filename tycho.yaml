@@ -32,6 +32,7 @@ vars:
   labels: &LABELS
     default-monitoring: tag
     public: tag
+    log-scraping: logstash # use Logger 2.0
 
   test_resources: &TEST_RESOURCES
     cpus: 0.2

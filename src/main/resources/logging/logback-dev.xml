@@ -1,12 +1,20 @@
 <configuration>
 
-    <appender name="LOGSTASH" class="pl.allegro.tech.bootstrap.log.appender.LogstashAppender">
-        <host>json.entry.logger-test.qxlint</host>
-        <port>515</port>
+    <appender name="JSON" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder class="pl.allegro.tech.secdev.seclib.log.encoder.SecureLayoutWrappingEncoder">
+            <layout class="pl.allegro.tech.bootstrap.log.layout.LogstashLayout"/>
+        </encoder>
+    </appender>
+
+    <appender name="ASYNC_JSON" class="ch.qos.logback.classic.AsyncAppender">
+        <queueSize>512</queueSize>
+        <neverBlock>true</neverBlock>
+        <discardingThreshold>100</discardingThreshold>
+        <appender-ref ref="JSON"/>
     </appender>
 
     <root level="INFO">
-        <appender-ref ref="LOGSTASH"/>
+        <appender-ref ref="ASYNC_JSON"/>
     </root>
 
 </configuration>
