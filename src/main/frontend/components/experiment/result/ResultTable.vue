@@ -1,6 +1,5 @@
 <template>
   <v-container>
-
     <device-selector
       @deviceChanged="deviceChanged"
       :selectedDevice="selectedDevice"
@@ -135,8 +134,8 @@
       durationDays () {
         let dateFormat = 'YYYY-MM-DD'
         let end = moment(this.experimentStatistics.toDate, dateFormat)
-        let start = moment(this.experiment.activityPeriod.activeFrom.format(dateFormat), dateFormat)
-        return start.diff(start, end) + 1
+        let start = moment(this.experiment.activityPeriod.activeFrom, dateFormat)
+        return end.diff(start, 'days') + 1
       },
 
       diffToolTip (metricVariant) {
