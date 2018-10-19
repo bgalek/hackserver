@@ -135,7 +135,7 @@
         let dateFormat = 'YYYY-MM-DD'
         let end = moment(this.experimentStatistics.toDate, dateFormat)
         let start = moment(this.experiment.activityPeriod.activeFrom, dateFormat)
-        return end.diff(start, 'days') + 1
+        return end.diff(start, 'days')
       },
 
       diffToolTip (metricVariant) {
