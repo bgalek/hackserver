@@ -57,6 +57,8 @@
                                          ref="experimentVariantsEditing"
                                          :allowModifyRegularVariants="true"/>
 
+            <experiment-goal-editing v-model="goal" :selectedDevice="this.variants && this.variants.deviceClass"/>
+
             <experiment-custom-parameter-editing ref="experimentCustomParamEditing"
                                                  v-model="customParameter" />
 
@@ -135,6 +137,7 @@
 <script>
   import { mapActions } from 'vuex'
   import ExperimentDescEditing from './experiment/ExperimentDescEditing'
+  import ExperimentGoalEditing from './experiment/ExperimentGoalEditing'
   import ExperimentVariantsEditing from './experiment/ExperimentVariantsEditing.vue'
   import ExperimentEventFiltersEditing from './experiment/ExperimentEventFiltersEditing'
   import { slugify } from '../utils/slugify'
@@ -162,6 +165,7 @@
         errors: [],
         descriptions: null,
         customParameter: {},
+        goal: {},
         variants: null,
         reportingType: 'BACKEND',
         availableReportingTypes: ['BACKEND', 'FRONTEND', 'GTM'],
@@ -192,7 +196,8 @@
       ExperimentDescEditing,
       ExperimentVariantsEditing,
       ExperimentEventFiltersEditing,
-      ExperimentCustomParameterEditing
+      ExperimentCustomParameterEditing,
+      ExperimentGoalEditing
     },
 
     methods: {

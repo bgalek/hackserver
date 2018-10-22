@@ -88,6 +88,7 @@
   import {mapActions} from 'vuex'
   import TurniloLink from '../../TurniloLink.vue'
   import DeviceSelector from './DeviceSelector'
+  import {allMetricLabels} from '../../../model/experiment/metrics'
 
   export default {
     props: ['experiment', 'experimentStatistics', 'experimentStatisticsError', 'experimentStatisticsPending', 'selectedDevice'],
@@ -108,14 +109,7 @@
           {text: 'Sample Count', sortable: false, align: 'right'}
         ],
         hiddenMetrics: ['tx_avg', 'tx_avg_daily'],
-        metricNames: {
-          'tx_visit': 'Visits conversion',
-          'tx_daily': 'Daily conversion - BETA',
-          'tx_avg': 'Transactions per visit',
-          'tx_avg_daily': 'Transactions daily - BETA',
-          'gmv': 'GMV per visit',
-          'gmv_daily': 'GMV daily - BETA'
-        },
+        metricNames: allMetricLabels(),
         metricFormatter: {
           'tx_visit': (it) => this.formatAsPercent(it),
           'tx_daily': (it) => this.formatAsPercent(it),
