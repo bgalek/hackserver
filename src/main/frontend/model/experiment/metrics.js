@@ -1,5 +1,4 @@
-import { Record } from 'immutable'
-import { List } from 'immutable'
+import { Record, List } from 'immutable'
 
 const MetricRecord = Record({
   key: '',
@@ -13,25 +12,25 @@ export class MetricModel extends MetricRecord {
     super({
       key: key,
       label: label,
-      isLegacy: flags && flags.legacy == true,
-      isBinary: flags && flags.binary == true
+      isLegacy: flags && flags.legacy === true,
+      isBinary: flags && flags.binary === true
     })
   }
 }
 
 const allMetrics = List(
   [
-    new MetricModel('tx_visit', 'Visits conversion', {binary:true}),
-    new MetricModel('gmv', 'GMV per visit',),
-    new MetricModel('tx_daily', 'Daily conversion - BETA', {legacy:true}),
-    new MetricModel('tx_avg', 'Transactions per visit', {legacy:true}),
-    new MetricModel('tx_avg_daily', 'Transactions daily - BETA', {legacy:true}),
-    new MetricModel('gmv_daily', 'GMV daily - BETA', {legacy:true})
+    new MetricModel('tx_visit', 'Visits conversion', {binary: true}),
+    new MetricModel('gmv', 'GMV per visit'),
+    new MetricModel('tx_daily', 'Daily conversion - BETA', {legacy: true}),
+    new MetricModel('tx_avg', 'Transactions per visit', {legacy: true}),
+    new MetricModel('tx_avg_daily', 'Transactions daily - BETA', {legacy: true}),
+    new MetricModel('gmv_daily', 'GMV daily - BETA', {legacy: true})
   ]
 )
 
-export function getMetricByKey(metricKey) {
-  return allMetrics.find(v => v.key == metricKey)
+export function getMetricByKey (metricKey) {
+  return allMetrics.find(v => v.key === metricKey)
 }
 
 export function nonLegacyMetrics () {
@@ -40,10 +39,8 @@ export function nonLegacyMetrics () {
 
 export function allMetricLabels () {
   const result = {}
-  allMetrics.forEach(v => result[v.key] = v.label)
+  allMetrics.forEach(v => {
+    result[v.key] = v.label
+  })
   return result
-}
-
-export function activeMetricNames () {
-
 }

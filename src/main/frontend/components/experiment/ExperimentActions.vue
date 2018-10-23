@@ -238,6 +238,7 @@
   import ExperimentEventFiltersEditing from './ExperimentEventFiltersEditing'
   import ChiPanel from '../ChiPanel.vue'
   import {mapState, mapActions} from 'vuex'
+  import { formatError } from '../../model/errors'
 
   export default {
     props: ['experiment', 'allowDelete'],
@@ -549,15 +550,7 @@
       },
 
       showError (error) {
-        if (error.response && error.response) {
-          this.errors.push({
-            responseData: error.response.data,
-            responseStatus: error.response.status,
-            responseStatusText: error.response.statusText
-          })
-        } else {
-          this.errors.push(error)
-        }
+        this.errors.push(formatError(error))
       },
 
       clearMessages () {

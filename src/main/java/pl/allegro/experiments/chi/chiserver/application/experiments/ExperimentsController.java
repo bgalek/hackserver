@@ -7,6 +7,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageConversionException;
 import org.springframework.web.bind.annotation.*;
+import pl.allegro.experiments.chi.chiserver.domain.calculator.SampleSizeCalculator;
+import pl.allegro.experiments.chi.chiserver.domain.calculator.SampleSizeCalculatorRequest;
 import pl.allegro.experiments.chi.chiserver.domain.experiments.DeviceClass;
 import pl.allegro.experiments.chi.chiserver.domain.experiments.EventDefinition;
 import pl.allegro.experiments.chi.chiserver.domain.experiments.ExperimentsRepository;
@@ -34,6 +36,7 @@ import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 public class ExperimentsController {
     private static final Logger logger = LoggerFactory.getLogger(ExperimentsController.class);
 
+    private final SampleSizeCalculator sampleSizeCalculator;
     private final ExperimentsRepository experimentsRepository;
     private final MeasurementsRepository measurementsRepository;
     private final BayesianChartsRepository bayesianChartsRepository;
@@ -45,6 +48,7 @@ public class ExperimentsController {
     private final ClassicStatisticsForVariantMetricRepository classicStatisticsForVariantMetricRepository;
 
     public ExperimentsController(
+            SampleSizeCalculator sampleSizeCalculator,
             ExperimentsRepository experimentsRepository,
             MeasurementsRepository measurementsRepository,
             ExperimentActions experimentActions,
@@ -54,6 +58,7 @@ public class ExperimentsController {
             ExperimentGroupRepository experimentGroupRepository,
             ClientExperimentFactory clientExperimentFactory,
             ClassicStatisticsForVariantMetricRepository classicStatisticsForVariantMetricRepository) {
+        this.sampleSizeCalculator = sampleSizeCalculator;
         this.experimentsRepository = experimentsRepository;
         this.measurementsRepository = measurementsRepository;
         this.experimentActions = experimentActions;
@@ -233,6 +238,14 @@ public class ExperimentsController {
         );
     }
 
+    @MeteredEndpoint
+    @GetMapping(path = "calculate-sample-size")
+    long calculateSampleSize(@ModelAttribute SampleSizeCalculatorRequest request) {
+        logger.info("CalculateSampleSize request received - {}", request);
+
+        return sampleSizeCalculator.calculateSampleSize(request);
+    }
+
     @ExceptionHandler(AuthorizationException.class)
     ResponseEntity<ErrorsHolder> handle(AuthorizationException exception) {
         logger.error("Command error: " + exception.getClass().getSimpleName() + "cause: " + exception.getMessage());
@@ -256,6 +269,11 @@ public class ExperimentsController {
 
     @ExceptionHandler(ExperimentCommandException.class)
     ResponseEntity<ErrorsHolder> handle(ExperimentCommandException exception) {
+        return handleBadRequest(exception, exception.getClass().getSimpleName());
+    }
+
+    @ExceptionHandler(IllegalArgumentException.class)
+    ResponseEntity<ErrorsHolder> handle(IllegalArgumentException exception) {
         return handleBadRequest(exception, exception.getClass().getSimpleName());
     }
 
