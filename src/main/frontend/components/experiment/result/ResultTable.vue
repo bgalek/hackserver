@@ -1,6 +1,5 @@
 <template>
   <v-container>
-
     <device-selector
       @deviceChanged="deviceChanged"
       :selectedDevice="selectedDevice"
@@ -8,7 +7,7 @@
 
     <p v-if="experimentStatistics.toDate">
           Data calculated on
-          <span id="toDate">{{ experimentStatistics.toDate }}</span>
+          <span id="toDate">{{ experimentStatistics.toDate }}({{ durationDays() }} days)</span>
     </p>
 
     <div v-if="experimentStatistics.metrics">
@@ -88,6 +87,7 @@
   import {mapActions} from 'vuex'
   import TurniloLink from '../../TurniloLink.vue'
   import DeviceSelector from './DeviceSelector'
+  import moment from 'moment'
   import {allMetricLabels} from '../../../model/experiment/metrics'
 
   export default {
@@ -124,6 +124,13 @@
 
     methods: {
       ...mapActions(['getExperimentStatistics']),
+
+      durationDays () {
+        let dateFormat = 'YYYY-MM-DD'
+        let end = moment(this.experimentStatistics.toDate, dateFormat)
+        let start = moment(this.experiment.activityPeriod.activeFrom, dateFormat)
+        return end.diff(start, 'days')
+      },
 
       diffToolTip (metricVariant) {
         const testSignificance = this.testSignificance(metricVariant)
