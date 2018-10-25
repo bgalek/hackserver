@@ -4,6 +4,7 @@ import moment from 'moment'
 import ExperimentVariantModel from './experiment-variant'
 import ActivityPeriod from './activity-period'
 import ExperimentGroup from './experiment-group'
+import ExperimentGoal from './experiment-goal'
 
 const ExperimentRecord = Record({
   id: null,
@@ -33,15 +34,7 @@ const ExperimentRecord = Record({
   bonferroniCorrection: 1,
   maxPossibleAllocation: 0,
   lastStatusChange: null,
-  goal: Record({
-    hasHypothesis: false,
-    leadingMetric: '',
-    expectedDiffPercent: 0,
-    testAlpha: 0,
-    leadingMetricBaselineValue: 0,
-    testPower: 0,
-    requiredSampleSize: 0
-  })
+  goal: null
 })
 
 export default class ExperimentModel extends ExperimentRecord {
@@ -57,6 +50,9 @@ export default class ExperimentModel extends ExperimentRecord {
     experimentObject.experimentGroup = experimentObject.experimentGroup &&
       new ExperimentGroup(experimentObject.experimentGroup)
 
+    experimentObject.goal = experimentObject.goal &&
+      new ExperimentGoal(experimentObject.goal)
+
     experimentObject.hasBase = _.includes(_.map(experimentObject.variants, v => v.name), 'base')
     experimentObject.isMeasured = experimentObject.hasBase && experimentObject.reportingEnabled
     experimentObject.groups = List(experimentObject.groups)
@@ -64,8 +60,6 @@ export default class ExperimentModel extends ExperimentRecord {
     experimentObject.eventDefinitions = List(experimentObject.eventDefinitions)
 
     super(experimentObject)
-
-    console.log('ExperimentModel', this)
   }
 
   desiredAlpha () {

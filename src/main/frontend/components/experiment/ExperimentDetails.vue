@@ -1,5 +1,8 @@
 <template>
   <chi-panel title="Details">
+
+    goal: {{ experiment.goal }}
+
     <v-layout>
     <v-flex xs5>
         <h3>Description</h3>

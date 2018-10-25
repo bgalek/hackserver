@@ -61,8 +61,6 @@
                                      v-model="goal"
                                      :selectedDevice="this.variants && this.variants.deviceClass"/>
 
-            {{ goal }}
-
             <experiment-custom-parameter-editing ref="experimentCustomParamEditing"
                                                  v-model="customParameter" />
 

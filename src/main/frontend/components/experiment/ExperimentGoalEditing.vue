@@ -45,7 +45,7 @@
               <div slot="header">
                 Required sample size:
                 <span style="display:inline-block" class="mt-2" v-if="!sendingDataToServer">
-                 <b>{{ requiredSampleSize }}</b>
+                 <b>{{ value.requiredSampleSize }}</b>
                 </span>
                 <v-progress-circular indeterminate color="purple" v-if="sendingDataToServer"/>
                 for each variant.
@@ -90,7 +90,7 @@
   import { Record } from 'immutable'
   import { nonLegacyMetrics, getMetricByKey } from '../../model/experiment/metrics'
   import { formatError } from '../../model/errors'
-  import { mapState, mapActions } from 'vuex'
+  import { mapActions } from 'vuex'
 
   const ExperimentGoalEditingRecord = Record({
     hasHypothesis: false,
@@ -98,7 +98,8 @@
     expectedDiffPercent: 0,
     testAlpha: 0,
     leadingMetricBaselineValue: 0,
-    testPower: 0
+    testPower: 0,
+    requiredSampleSize: 0
   })
 
   export default {
@@ -147,14 +148,7 @@
           return 'I have the hypothesis:'
         }
         return 'I don\'h have any hypothesis, I\'m feeling lucky.'
-      },
-
-      ...mapState({
-        requiredSampleSize (state) {
-          const sampleSize = state.calculateSampleSize.requiredSampleSize
-          return sampleSize && sampleSize.toLocaleString('pl')
-        }
-      })
+      }
     },
 
     watch: {
@@ -178,7 +172,8 @@
           expectedDiffPercent: 2,
           testAlpha: 0.05,
           leadingMetricBaselineValue: 5,
-          testPower: 0.85
+          testPower: 0.85,
+          requiredSampleSize: null
         }
 
         return value
@@ -197,7 +192,7 @@
             result.leadingMetricBaselineValue = parseFloat(value.leadingMetricBaselineValue)
             result.testPower = value.testPower
             result.testAlpha = value.testAlpha
-            result.requiredSampleSize = this.requiredSampleSize
+            result.requiredSampleSize = value.requiredSampleSize
           }
         }
 
@@ -224,6 +219,8 @@
             expectedDiffPercent: value.expectedDiffPercent,
             baselineMetricValue: value.leadingMetricBaselineValue
           }
+        }).then(response => {
+          this.value.requiredSampleSize = response.data
         }).catch(error => {
           this.showError(error)
         })
