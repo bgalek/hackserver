@@ -7,7 +7,7 @@
 
     <p v-if="experimentStatistics.toDate">
           Data calculated on
-          <span id="toDate">{{ experimentStatistics.toDate }}({{ durationDays() }} days)</span>
+          <span id="toDate">{{ experimentStatistics.toDate }} ({{ durationDays() }} days)</span>
     </p>
 
     <div v-if="experimentStatistics.metrics">
