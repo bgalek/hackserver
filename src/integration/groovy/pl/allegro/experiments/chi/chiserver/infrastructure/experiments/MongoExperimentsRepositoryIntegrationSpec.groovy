@@ -8,6 +8,7 @@ import pl.allegro.experiments.chi.chiserver.BaseIntegrationSpec
 import pl.allegro.experiments.chi.chiserver.domain.experiments.CustomParameter
 import pl.allegro.experiments.chi.chiserver.domain.experiments.DeviceClass
 import pl.allegro.experiments.chi.chiserver.domain.experiments.EventDefinition
+import pl.allegro.experiments.chi.chiserver.domain.experiments.ExperimentGoal
 import pl.allegro.experiments.chi.chiserver.domain.experiments.ExperimentStatus
 import pl.allegro.experiments.chi.chiserver.domain.experiments.ExperimentsRepository
 import pl.allegro.experiments.chi.chiserver.domain.experiments.ReportingDefinition
@@ -54,6 +55,8 @@ class MongoExperimentsRepositoryIntegrationSpec extends BaseIntegrationSpec {
                 .reportingDefinition(new ReportingDefinition([new EventDefinition('c','a','v','l','b')], ReportingType.FRONTEND))
                 .deviceClass(DeviceClass.phone_android)
                 .customParameter(new CustomParameter('k','v'))
+                .goal(new ExperimentGoal.Hypothesis("tx_visit", 2),
+                      new ExperimentGoal.TestConfiguration(5, 0.05, 0.8, 100_000))
                 .build()
 
         when:
@@ -76,6 +79,12 @@ class MongoExperimentsRepositoryIntegrationSpec extends BaseIntegrationSpec {
         loaded.reportingDefinition == experiment.reportingDefinition
         loaded.deviceClass == experiment.deviceClass
         loaded.customParameter == experiment.customParameter
+        loaded.goal.hypothesis.leadingMetric == 'tx_visit'
+        loaded.goal.hypothesis.expectedDiffPercent == 2
+        loaded.goal.testConfiguration.leadingMetricBaselineValue == 5
+        loaded.goal.testConfiguration.requiredSampleSize == 100_000
+        loaded.goal.testConfiguration.testAlpha == 0.05
+        loaded.goal.testConfiguration.testPower == 0.8
 
         when:
         Document doc = mongoTemplate.findById(experiment.id, Document, "experimentDefinitions")
@@ -105,6 +114,16 @@ class MongoExperimentsRepositoryIntegrationSpec extends BaseIntegrationSpec {
         doc.getString('deviceClass') =='phone-android'
         doc.get('customParameter').getString('name') =='k'
         doc.get('customParameter').getString('value') =='v'
+        with(doc.get('goal').get('hypothesis')) {
+            assert it.getString('leadingMetric') == 'tx_visit'
+            assert it.getString ('expectedDiffPercent') == '2.00'
+        }
+        with(doc.get('goal').get('testConfiguration')) {
+            assert it.getString ('leadingMetricBaselineValue') == '5.00'
+            assert it.get ('requiredSampleSize') == 100_000
+            assert it.getString ('testAlpha') == '0.05'
+            assert it.getString ('testPower') == '0.80'
+        }
     }
 
     def "should remove experiments not tracked by javers"() {

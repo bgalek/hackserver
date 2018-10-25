@@ -57,7 +57,11 @@
                                          ref="experimentVariantsEditing"
                                          :allowModifyRegularVariants="true"/>
 
-            <experiment-goal-editing v-model="goal" :selectedDevice="this.variants && this.variants.deviceClass"/>
+            <experiment-goal-editing ref="experimentGoalEditing"
+                                     v-model="goal"
+                                     :selectedDevice="this.variants && this.variants.deviceClass"/>
+
+            {{ goal }}
 
             <experiment-custom-parameter-editing ref="experimentCustomParamEditing"
                                                  v-model="customParameter" />
@@ -226,8 +230,9 @@
         const customParamValid = this.$refs.experimentCustomParamEditing.validate()
         const descValid = this.$refs.experimentDescEditing.validate()
         const variantsValid = this.$refs.experimentVariantsEditing.validate()
+        const goalValid = this.$refs.experimentGoalEditing.validate()
 
-        return this.$refs.createForm.validate() && descValid && variantsValid && customParamValid
+        return this.$refs.createForm.validate() && goalValid && descValid && variantsValid && customParamValid
       },
 
       setPermissionsError () {
@@ -268,7 +273,8 @@
           deviceClass: this.variants.deviceClass !== 'all' ? this.variants.deviceClass : null,
           percentage: this.variants.percentage,
           reportingType: this.reportingType,
-          eventDefinitions: this.eventDefinitions
+          eventDefinitions: this.eventDefinitions,
+          goal: this.goal
         }
 
         return experimentCreationRequest

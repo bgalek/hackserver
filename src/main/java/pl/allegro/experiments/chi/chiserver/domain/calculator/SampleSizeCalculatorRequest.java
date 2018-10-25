@@ -1,8 +1,5 @@
 package pl.allegro.experiments.chi.chiserver.domain.calculator;
 
-import com.fasterxml.jackson.annotation.JsonCreator;
-import com.fasterxml.jackson.annotation.JsonProperty;
-
 import static pl.allegro.experiments.chi.chiserver.domain.calculator.SampleSizeCalculator.TestType.CHI_SQUARED;
 
 public class SampleSizeCalculatorRequest {
@@ -13,12 +10,11 @@ public class SampleSizeCalculatorRequest {
     private final double baselineMetricValue;
     private final double expectedDiffPercent;
 
-    @JsonCreator
     public SampleSizeCalculatorRequest(
-            @JsonProperty("id") double testAlpha,
-            @JsonProperty("testPower") double testPower,
-            @JsonProperty("baselineMetricValue") double baselineMetricValue,
-            @JsonProperty("expectedDiffPercent") double expectedDiffPercent) {
+            double testAlpha,
+            double testPower,
+            double baselineMetricValue,
+            double expectedDiffPercent) {
         this.testAlpha = testAlpha;
         this.testPower = testPower;
         this.baselineMetricValue = baselineMetricValue;

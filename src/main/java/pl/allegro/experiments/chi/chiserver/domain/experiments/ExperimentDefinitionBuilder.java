@@ -4,9 +4,6 @@ import java.time.ZonedDateTime;
 import java.util.Collections;
 import java.util.List;
 
-/**
- * @author bartosz.walacik
- */
 public class ExperimentDefinitionBuilder {
 
     private String id;
@@ -24,6 +21,7 @@ public class ExperimentDefinitionBuilder {
     private ReportingDefinition reportingDefinition = ReportingDefinition.createDefault();
     private CustomParameter customParameter;
     private ZonedDateTime lastExplicitStatusChange;
+    private ExperimentGoal goal;
 
     private ExperimentDefinitionBuilder() {
     }
@@ -118,6 +116,16 @@ public class ExperimentDefinitionBuilder {
         return this;
     }
 
+    public ExperimentDefinitionBuilder goal(ExperimentGoal goal) {
+        this.goal = goal;
+        return this;
+    }
+
+    public ExperimentDefinitionBuilder goal(ExperimentGoal.Hypothesis hypothesis, ExperimentGoal.TestConfiguration testConfiguration) {
+        this.goal = new ExperimentGoal(hypothesis, testConfiguration);
+        return this;
+    }
+
     public ExperimentDefinitionBuilder customParameter(CustomParameter customParameter) {
         this.customParameter = customParameter;
         return this;
@@ -139,6 +147,7 @@ public class ExperimentDefinitionBuilder {
                 explicitStatus,
                 reportingDefinition,
                 customParameter,
-                lastExplicitStatusChange);
+                lastExplicitStatusChange,
+                goal);
     }
 }

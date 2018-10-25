@@ -1,5 +1,4 @@
 import Vapi from 'vuex-rest-api'
-import apiError from "./apiError";
 
 export default new Vapi({
   baseURL: '/api'

@@ -37,32 +37,50 @@
       </div>
 
       <div v-if="calculatorEnabled">
-        <h4>Sample size calculator</h4>
+        <h4 slot="header">Sample size calculator</h4>
 
-        Baseline value of {{ leadingMetricLabel }}:
-        <span style="border-bottom: 1px solid; display:inline-block" class="pb-1 mt-1">
-          {{value.leadingMetricBaselineValue}}
-        </span>%
-        <br/>
+          <v-expansion-panel style="-webkit-box-shadow: 0px 0px; box-shadow: 0px 0px;">
+            <v-expansion-panel-content>
 
-        Significance level (𝜶):
-        <span style="border-bottom: 1px solid; display:inline-block" class="pb-1 mt-1">
-          {{value.testAlpha}}
-        </span>
-        <br/>
+              <div slot="header">
+                Required sample size:
+                <span style="display:inline-block" class="mt-2" v-if="!sendingDataToServer">
+                 <b>{{ requiredSampleSize }}</b>
+                </span>
+                <v-progress-circular indeterminate color="purple" v-if="sendingDataToServer"/>
+                for each variant.
+              </div>
 
-        Test power:
-        <span style="border-bottom: 1px solid; display:inline-block" class="pb-1 mt-1">
-          {{value.testPower}}
-        </span>
-        <br/>
+              <v-card>
+                  <div>
+                  Baseline value of {{ leadingMetricLabel }}: &nbsp;
+                  <v-text-field class="pa-0 ma-0"
+                              style="width: 35px; display: inline-block"
+                              v-model="value.leadingMetricBaselineValue"
+                              :rules="ratioRules"
+                  ></v-text-field>%
+                  </div>
 
-        Required sample size:
-        <span style="display:inline-block" class="mt-2" v-if="!sendingDataToServer">
-          <b>{{ requiredSampleSize }}</b>
-        </span>
-        <v-progress-circular indeterminate color="purple" v-if="sendingDataToServer"/>
-        for each variant.
+                  <div>Significance level (𝜶): &nbsp;
+                  <v-select class="pa-0"
+                            style="width: 35px; display: inline-block"
+                            v-bind:items="alphaLevels"
+                            v-model="value.testAlpha"
+                  ></v-select>
+                  </div>
+
+                  <div>Test power: &nbsp;
+                  <v-select class="pa-0"
+                            style="width: 35px; display: inline-block"
+                            v-bind:items="powerLevels"
+                            v-model="value.testPower"
+                  ></v-select>
+                  </div>
+              </v-card>
+
+            </v-expansion-panel-content>
+          </v-expansion-panel>
+
       </div>
     </v-card>
   </v-form>
@@ -93,8 +111,10 @@
         value: initialValue,
         formValid: true,
         metrics: nonLegacyMetrics(),
+        alphaLevels: [0.01, 0.02, 0.03, 0.04, 0.05, 0.06, 0.07, 0.08, 0.09, 0.10],
+        powerLevels: [0.80, 0.85, 0.90, 0.95],
         ratioRules: [
-          (v) => parseFloat(v).toString() === v || 'number!',
+          (v) => this.isNumber(v) || 'number!',
           (v) => v > 0 || 'c\'mon',
           (v) => v <= 100 || 'seriously?'
         ],
@@ -126,7 +146,7 @@
         if (this.value.hasHypothesis) {
           return 'I have the hypothesis:'
         }
-        return 'I don\'h have hypothesis, I\'m feeling lucky.'
+        return 'I don\'h have any hypothesis, I\'m feeling lucky.'
       },
 
       ...mapState({
@@ -142,8 +162,6 @@
         handler: function (newValue) {
           if (this.validate()) {
             const result = this.buildResult(newValue)
-            console.log('emit value ', result)
-
             this.calculate(result)
             this.$emit('input', result)
           }
@@ -157,7 +175,7 @@
         const value = {
           hasHypothesis: false,
           leadingMetric: 'tx_visit',
-          expectedDiffPercent: '2',
+          expectedDiffPercent: 2,
           testAlpha: 0.05,
           leadingMetricBaselineValue: 5,
           testPower: 0.85
@@ -176,9 +194,10 @@
           result.expectedDiffPercent = parseFloat(value.expectedDiffPercent)
 
           if (this.isCalculatorEnabled(value)) {
-            result.leadingMetricBaselineValue = value.leadingMetricBaselineValue
+            result.leadingMetricBaselineValue = parseFloat(value.leadingMetricBaselineValue)
             result.testPower = value.testPower
             result.testAlpha = value.testAlpha
+            result.requiredSampleSize = this.requiredSampleSize
           }
         }
 
@@ -188,6 +207,7 @@
       isCalculatorEnabled (value) {
         return value &&
                value.hasHypothesis &&
+               value.leadingMetric &&
                getMetricByKey(value.leadingMetric).isBinary
       },
 
@@ -204,8 +224,6 @@
             expectedDiffPercent: value.expectedDiffPercent,
             baselineMetricValue: value.leadingMetricBaselineValue
           }
-        }).then(response => {
-          console.log('received calculator query result:', response.data)
         }).catch(error => {
           this.showError(error)
         })
@@ -223,7 +241,7 @@
       },
 
       showError (error) {
-          this.errors.push(formatError(error))
+        this.errors.push(formatError(error))
       },
 
       validate () {
@@ -232,7 +250,14 @@
 
       ...mapActions([
         'calculateSampleSize'
-      ])
+      ]),
+
+      isNumber (v) {
+        if (typeof v === 'number') {
+          return true
+        }
+        return parseFloat(v).toString() === v
+      }
     }
   }
 </script>

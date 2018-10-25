@@ -12,6 +12,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+import static pl.allegro.experiments.chi.chiserver.domain.experiments.ExperimentDefinitionBuilder.experimentDefinition;
+import static pl.allegro.experiments.chi.chiserver.util.BigDecimals.round2;
+
 public class ExperimentCreationRequest {
     @NotNull
     private final String id;
@@ -25,6 +28,7 @@ public class ExperimentCreationRequest {
     private final List<String> groups;
     private final ReportingDefinition reportingDefinition;
     private final CustomParameter customParameter;
+    private final ExperimentGoalRequest goal;
 
     @JsonCreator
     public ExperimentCreationRequest(
@@ -39,7 +43,8 @@ public class ExperimentCreationRequest {
             @JsonProperty("eventDefinitions") List<EventDefinition> eventDefinitions,
             @JsonProperty("reportingType") ReportingType reportingType,
             @JsonProperty("customParameterName") String customParameterName,
-            @JsonProperty("customParameterValue") String customParameterValue) {
+            @JsonProperty("customParameterValue") String customParameterValue,
+            @JsonProperty("goal") ExperimentGoalRequest goal) {
         Preconditions.checkArgument(id != null, "experiment id is null");
         Preconditions.checkArgument(variantNames != null, "experiment variantNames are null");
         Preconditions.checkArgument(percentage != null, "experiment percentage is null");
@@ -69,6 +74,7 @@ public class ExperimentCreationRequest {
         } else {
             this.customParameter = null;
         }
+        this.goal = goal;
     }
 
     public String getId() {
@@ -91,10 +97,14 @@ public class ExperimentCreationRequest {
         return groups;
     }
 
+    public ExperimentGoalRequest getGoal() {
+        return goal;
+    }
+
     ExperimentDefinition toExperimentDefinition(String author) {
         Preconditions.checkNotNull(author);
         try {
-            return ExperimentDefinitionBuilder.experimentDefinition()
+            var builder =  experimentDefinition()
                     .id(this.id)
                     .variantNames(variantNames)
                     .internalVariantName(internalVariantName)
@@ -105,9 +115,18 @@ public class ExperimentCreationRequest {
                     .author(author)
                     .groups(this.groups)
                     .reportingDefinition(this.reportingDefinition)
-                    .customParameter(this.customParameter)
-                    .build();
+                    .customParameter(this.customParameter);
 
+            if (goal != null && StringUtils.isNotBlank(goal.getLeadingMetric())) {
+                var hypothesis = new ExperimentGoal.Hypothesis(goal.getLeadingMetric(), round2(goal.getExpectedDiffPercent()));
+                var config = new ExperimentGoal.TestConfiguration(
+                        round2(goal.getLeadingMetricBaselineValue()),
+                        round2(goal.getTestAlpha()),
+                        round2(goal.getTestPower()),
+                        goal.getRequiredSampleSize());
+                builder.goal(hypothesis, config);
+            }
+            return builder.build();
         } catch (Exception e) {
             throw new ExperimentCommandException("Cannot create experiment from request", e);
         }
@@ -205,9 +224,9 @@ public class ExperimentCreationRequest {
                     eventDefinitions,
                     reportingType,
                     customParameterName,
-                    customParameterValue);
+                    customParameterValue,
+                    null);
         }
     }
-
 }
 

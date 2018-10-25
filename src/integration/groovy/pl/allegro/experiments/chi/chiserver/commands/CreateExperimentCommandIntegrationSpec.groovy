@@ -20,7 +20,7 @@ class CreateExperimentCommandIntegrationSpec extends BaseCommandIntegrationSpec 
         experimentsExists(request.id)
     }
 
-    def "should not create experiment where experiment with given id exists"() {
+    def "should not create experiment if experiment with given id exists"() {
         given:
         def experiment = draftExperiment()
 

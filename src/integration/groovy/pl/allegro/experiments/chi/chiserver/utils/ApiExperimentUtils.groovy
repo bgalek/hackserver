@@ -62,12 +62,6 @@ trait ApiExperimentUtils implements ApiActionUtils {
         fetchExperiment(experiment.id as String)
     }
 
-    Map pausedExperiment(Map customProperties = [:]) {
-        def experiment = startedExperiment(customProperties)
-        pauseExperiment(experiment.id as String)
-        fetchExperiment(experiment.id as String)
-    }
-
     Map fullOnExperiment(Map customProperties = [:], String fullOnVariantName = "v1") {
         def experiment = startedExperiment(customProperties)
         makeExperimentFullOn(experiment.id as String, fullOnVariantName)

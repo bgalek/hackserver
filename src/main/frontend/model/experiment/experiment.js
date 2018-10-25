@@ -32,7 +32,16 @@ const ExperimentRecord = Record({
   experimentGroup: null,
   bonferroniCorrection: 1,
   maxPossibleAllocation: 0,
-  lastStatusChange: null
+  lastStatusChange: null,
+  goal: Record({
+    hasHypothesis: false,
+    leadingMetric: '',
+    expectedDiffPercent: 0,
+    testAlpha: 0,
+    leadingMetricBaselineValue: 0,
+    testPower: 0,
+    requiredSampleSize: 0
+  })
 })
 
 export default class ExperimentModel extends ExperimentRecord {
@@ -55,6 +64,8 @@ export default class ExperimentModel extends ExperimentRecord {
     experimentObject.eventDefinitions = List(experimentObject.eventDefinitions)
 
     super(experimentObject)
+
+    console.log('ExperimentModel', this)
   }
 
   desiredAlpha () {

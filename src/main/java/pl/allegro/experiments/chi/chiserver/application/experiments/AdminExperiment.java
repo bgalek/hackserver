@@ -87,6 +87,10 @@ public class AdminExperiment {
         return this.experimentDefinition.getDeviceClass().map(it -> it.toJsonString());
     }
 
+    public ExperimentGoal getGoal() {
+        return experimentDefinition.getGoal();
+    }
+
     public BayesianHorizontalEqualizer getBayesianHorizontalEqualizer() {
         return bayesianHorizontalEqualizer;
     }

@@ -5,17 +5,20 @@ import com.google.common.collect.ImmutableMap;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
-import java.math.RoundingMode;
 import java.util.Map;
+
+import static pl.allegro.experiments.chi.chiserver.util.BigDecimals.round2;
 
 @Service
 public class SampleSizeCalculator {
 
-    private static final Map<BigDecimal, Double> alphaZScores = ImmutableMap.of(
-        round2(0.05), 1.96
+    private static final Map<BigDecimal, Double> alphaTwoTailedZValues = ImmutableMap.of(
+        round2(0.10), 1.645,
+        round2(0.05), 1.96,
+        round2(0.01), 2.576
     );
 
-    private static final Map<BigDecimal, Double> powerZScores = ImmutableMap.of(
+    private static final Map<BigDecimal, Double> powerOneTailedZValues = ImmutableMap.of(
         round2(0.80), 0.84,
         round2(0.85), 1.04,
         round2(0.90), 1.282,
@@ -27,8 +30,8 @@ public class SampleSizeCalculator {
         Preconditions.checkArgument(isValidPercent(request.getBaselineMetricValue()), "baselineMetricValue should be valid in range (0,100), got:" + request.getBaselineMetricValue());
         Preconditions.checkArgument(isValidPercent(request.getExpectedDiffPercent()), "expectedDiffPercent should be valid in range (0,100), got:" + request.getExpectedDiffPercent());
 
-        Double alphaZScore = alphaZScores.get(round2(request.getTestAlpha()));
-        Double powerZScore = powerZScores.get(round2(request.getTestPower()));
+        Double alphaZScore = alphaTwoTailedZValues.get(round2(request.getTestAlpha()));
+        Double powerZScore = powerOneTailedZValues.get(round2(request.getTestPower()));
 
         Preconditions.checkArgument(alphaZScore != null, "missing z-score for test alpha " + round2(request.getTestAlpha()));
         Preconditions.checkArgument(powerZScore != null, "missing z-score for test power " + round2(request.getTestPower()));
@@ -52,7 +55,4 @@ public class SampleSizeCalculator {
         return !(val <= 0 || val >= 100);
     }
 
-    static BigDecimal round2(double value) {
-        return new BigDecimal(value).setScale(2, RoundingMode.HALF_DOWN);
-    }
 }

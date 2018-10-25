@@ -5,6 +5,7 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonSerializationContext;
 import com.google.gson.JsonSerializer;
 import pl.allegro.experiments.chi.chiserver.application.experiments.AdminExperiment;
+import pl.allegro.experiments.chi.chiserver.domain.experiments.ExperimentGoal;
 import pl.allegro.experiments.chi.chiserver.domain.experiments.groups.ExperimentGroup;
 
 import java.lang.reflect.Type;
@@ -15,9 +16,7 @@ public class AdminExperimentTypeSerializer implements JsonSerializer<AdminExperi
         JsonObject jsonObject = new JsonObject();
 
         jsonObject.addProperty("id", src.getId());
-
         jsonObject.add("renderedVariants", context.serialize(src.getRenderedVariants()));
-
         jsonObject.add("variantNames", context.serialize(src.getVariantNames()));
         jsonObject.addProperty("internalVariantName", src.getInternalVariantName().orElse(null));
         jsonObject.addProperty("deviceClass", src.getDeviceClass().orElse(null));
@@ -46,6 +45,24 @@ public class AdminExperimentTypeSerializer implements JsonSerializer<AdminExperi
         if (src.getLastStatusChange() != null) {
             jsonObject.add("lastStatusChange", context.serialize(src.getLastStatusChange()));
         }
+        System.out.println("goal " + src.getGoal());
+        if (src.getGoal() != null) {
+            jsonObject.add("goal", serializeExperimentGoal(src.getGoal(), context));
+        }
+        System.out.println("admin jsonObject " + jsonObject);
+        return jsonObject;
+    }
+
+    private JsonObject serializeExperimentGoal(ExperimentGoal goal, JsonSerializationContext context) {
+        JsonObject jsonObject = new JsonObject();
+        jsonObject.addProperty("leadingMetric", goal.getHypothesis().getLeadingMetric());
+        jsonObject.addProperty("expectedDiffPercent", goal.getHypothesis().getExpectedDiffPercent());
+
+        jsonObject.addProperty("leadingMetricBaselineValue", goal.getTestConfiguration().getLeadingMetricBaselineValue());
+        jsonObject.addProperty("testAlpha", goal.getTestConfiguration().getTestAlpha());
+        jsonObject.addProperty("testPower", goal.getTestConfiguration().getTestPower());
+        jsonObject.addProperty("requiredSampleSize", goal.getTestConfiguration().getRequiredSampleSize());
+
         return jsonObject;
     }
 
