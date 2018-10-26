@@ -1,7 +1,6 @@
 import { Record } from 'immutable'
 
 const ExperimentGoalRecord = Record({
-  hasHypothesis: false,
   leadingMetric: '',
   expectedDiffPercent: 0,
   testAlpha: 0,

@@ -1,8 +1,5 @@
 <template>
   <chi-panel title="Details">
-
-    goal: {{ experiment.goal }}
-
     <v-layout>
     <v-flex xs5>
         <h3>Description</h3>
@@ -27,6 +24,9 @@
         </v-tooltip>
       </h3>
       <experiment-group-info :experiment="experiment"/>
+
+      <h3>Experiment's goal</h3>
+      <experiment-goal-info :experiment="experiment" :experimentStatistics="experimentStatistics"/>
 
       <h3 class="mt-2">Author</h3>
       {{ experiment.author }}
@@ -137,15 +137,17 @@
   import ChiPanel from '../ChiPanel'
   import ExperimentStatus from './ExperimentStatus'
   import ExperimentGroupInfo from './ExperimentGroupInfo'
+  import ExperimentGoalInfo from './ExperimentGoalInfo'
   import ExperimentEventFiltersEditing from './ExperimentEventFiltersEditing'
   import _ from 'lodash'
 
   export default {
-    props: ['experiment'],
+    props: ['experiment', 'experimentStatistics'],
 
     components: {
       ExperimentEventFiltersEditing,
       ExperimentGroupInfo,
+      ExperimentGoalInfo,
       ExperimentStatus,
       ChiPanel
     },

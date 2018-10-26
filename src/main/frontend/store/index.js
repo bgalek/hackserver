@@ -24,6 +24,7 @@ import {userPreferences} from './userPreferences'
 import createPersistedState from 'vuex-persistedstate'
 import makeExperimentFullOn from './makeExperimentFullOn'
 import calculateSampleSize from './calculateSampleSize'
+import enrichedGoal from './enrichedGoal'
 
 Vue.use(Vuex)
 
@@ -55,6 +56,7 @@ export default new Vuex.Store({
     updateExperimentVariants,
     updateExperimentEventDefinitions,
     user,
-    calculateSampleSize
+    calculateSampleSize,
+    enrichedGoal
   }
 })

@@ -126,6 +126,12 @@
       ...mapActions(['getExperimentStatistics']),
 
       durationDays () {
+        if (!(this.experimentStatistics &&
+              this.experimentStatistics.toDate &&
+              this.experiment.activityPeriod)) {
+          return
+        }
+
         let dateFormat = 'YYYY-MM-DD'
         let end = moment(this.experimentStatistics.toDate, dateFormat)
         let start = moment(this.experiment.activityPeriod.activeFrom, dateFormat)

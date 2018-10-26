@@ -7,6 +7,7 @@
 
         <experiment-details
           :experiment="experiment"
+          :experimentStatistics="experimentStatistics"
           v-if="loadingExperimentDone"
         ></experiment-details>
 
@@ -68,31 +69,39 @@
 
   export default {
     mounted () {
-      this.getExperiment({ params: { experimentId: this.$route.params.experimentId } }).then(() => {
+      this.getExperiment({params: {experimentId: this.$route.params.experimentId}}).then(() => {
         this.loadingExperimentDone = true
+        const leadingDevice = this.experiment.getBaseDeviceClass()
         this.selectedDevice = this.calcInitialDevice(this.experiment)
-      })
 
-      this.loadExperimentStatistics('all', this.$route.params.experimentId).then(() => {
-        this.metricsNotAvailable = this.experimentStatistics.metrics.length === 0
-        console.log('loading stats for "' + this.experimentId + '" done')
-        this.loadingStatsDone = true
-      }).catch(() => {
-        this.metricsNotAvailable = true
-        this.loadingStatsDone = true
-      })
+        this.loadExperimentStatistics(leadingDevice, this.$route.params.experimentId).then(() => {
+          this.metricsNotAvailable = this.experimentStatistics.metrics.length === 0
 
-      this.loadExperimentBayesianResult('all', this.$route.params.experimentId).then(() => {
-        this.loadingBayesianResultDone = true
-      }).catch(() => {
-        this.loadingBayesianResultDone = true
-      })
+          if (this.experiment.goal && !this.metricsNotAvailable) {
+            this.$store.commit('enrichedGoal/update', {
+              experimentStatistics: this.experimentStatistics,
+              goal: this.experiment.goal,
+              leadingDevice: leadingDevice
+            });
+          }
+          this.loadingStatsDone = true
+        }).catch(() => {
+          this.metricsNotAvailable = true
+          this.loadingStatsDone = true
+        })
 
-      this.loadExperimentBayesianEqualizerResult('all', this.$route.params.experimentId).then(() => {
-        this.loadingBayesianEqualizerResultDone = true
-      }).catch(() => {
-        this.loadingBayesianEqualizerResultDone = true
-      })
+        this.loadExperimentBayesianResult(leadingDevice, this.$route.params.experimentId).then(() => {
+          this.loadingBayesianResultDone = true
+        }).catch(() => {
+          this.loadingBayesianResultDone = true
+        })
+
+        this.loadExperimentBayesianEqualizerResult(leadingDevice, this.$route.params.experimentId).then(() => {
+          this.loadingBayesianEqualizerResultDone = true
+        }).catch(() => {
+          this.loadingBayesianEqualizerResultDone = true
+        })
+      });
     },
 
     data () {
@@ -183,6 +192,7 @@
       ...mapActions(['getExperiment', 'getExperimentStatistics', 'getBayesianHistograms', 'getBayesianEqualizer']),
 
       loadExperimentStatistics (device, experimentId) {
+        console.log('loading classic stats for', experimentId, 'device', device)
         return this.getExperimentStatistics({
           params: {
             experimentId,
@@ -192,6 +202,7 @@
       },
 
       loadExperimentBayesianResult (device, experimentId) {
+        console.log('loading bayesian stats for', experimentId, 'device', device)
         return this.getBayesianHistograms({
           params: {
             experimentId,

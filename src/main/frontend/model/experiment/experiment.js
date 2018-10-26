@@ -104,9 +104,7 @@ export default class ExperimentModel extends ExperimentRecord {
   }
 
   getBaseDeviceClass () {
-    if (this.getBaseVariant()) {
-      return this.getBaseVariant().deviceClass
-    }
+    return (this.getBaseVariant() && this.getBaseVariant().deviceClass) || 'all'
   }
 
   eventDefinitionsAvailable () {

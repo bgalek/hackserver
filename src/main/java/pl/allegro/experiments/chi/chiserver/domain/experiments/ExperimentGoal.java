@@ -1,7 +1,6 @@
 package pl.allegro.experiments.chi.chiserver.domain.experiments;
 
 import com.google.common.base.Preconditions;
-import org.javers.core.metamodel.annotation.DiffIgnore;
 import org.javers.core.metamodel.annotation.DiffInclude;
 
 import java.math.BigDecimal;

@@ -30,10 +30,7 @@
           v-model="value.expectedDiffPercent"
           :rules="ratioRules"
         ></v-text-field>
-        % &nbsp; on &nbsp;
-        <span style=" border-bottom: 1px solid" class="pb-2">
-          {{leadingDevice}}
-        </span>
+        % &nbsp; on {{leadingDevice}}
       </div>
 
       <div v-if="calculatorEnabled">
@@ -93,7 +90,6 @@
   import { mapActions } from 'vuex'
 
   const ExperimentGoalEditingRecord = Record({
-    hasHypothesis: false,
     leadingMetric: '',
     expectedDiffPercent: 0,
     testAlpha: 0,
@@ -112,7 +108,7 @@
         value: initialValue,
         formValid: true,
         metrics: nonLegacyMetrics(),
-        alphaLevels: [0.01, 0.02, 0.03, 0.04, 0.05, 0.06, 0.07, 0.08, 0.09, 0.10],
+        alphaLevels: [0.01, 0.05, 0.10],
         powerLevels: [0.80, 0.85, 0.90, 0.95],
         ratioRules: [
           (v) => this.isNumber(v) || 'number!',
@@ -169,7 +165,7 @@
         const value = {
           hasHypothesis: false,
           leadingMetric: 'tx_visit',
-          expectedDiffPercent: 2,
+          expectedDiffPercent: 2.5,
           testAlpha: 0.05,
           leadingMetricBaselineValue: 5,
           testPower: 0.85,
@@ -180,9 +176,7 @@
       },
 
       buildResult (value) {
-        let result = {
-          hasHypothesis: value.hasHypothesis
-        }
+        let result = {}
 
         if (value.hasHypothesis) {
           result.leadingMetric = value.leadingMetric
