@@ -20,7 +20,6 @@ class BonferroniCorrectionSpec extends BaseE2EIntegrationSpec {
     }
 
     Map DEFAULT_PROPERTIES = [
-            durationMillis: 1,
             toDate: "10 Stycznia",
             deviceClass: DeviceClass.phone,
             variantName: "v1",
@@ -32,7 +31,6 @@ class BonferroniCorrectionSpec extends BaseE2EIntegrationSpec {
         def properties = DEFAULT_PROPERTIES + customProperties
         new ClassicExperimentStatisticsForVariantMetric(
                 experimentId,
-                properties.durationMillis as long,
                 properties.toDate as String,
                 properties.deviceClass as DeviceClass,
                 properties.variantName as String,

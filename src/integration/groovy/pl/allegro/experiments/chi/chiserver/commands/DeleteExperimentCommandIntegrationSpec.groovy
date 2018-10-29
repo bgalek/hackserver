@@ -47,7 +47,6 @@ class DeleteExperimentCommandIntegrationSpec extends BaseCommandIntegrationSpec 
     static ClassicExperimentStatisticsForVariantMetric sampleClassicExperimentStatisticsForVariantMetric(ExperimentDefinition experiment) {
         new ClassicExperimentStatisticsForVariantMetric(
                 experiment.id,
-                1,
                 LocalDate.now().toString(),
                 experiment.deviceClass.orElse(DeviceClass.all),
                 experiment.variantNames.first(),

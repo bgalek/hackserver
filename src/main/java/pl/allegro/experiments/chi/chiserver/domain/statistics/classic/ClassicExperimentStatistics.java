@@ -16,14 +16,12 @@ public class ClassicExperimentStatistics {
 
     private final String experimentId;
     private final LocalDate toDate;
-    private final Duration duration;
     private final DeviceClass device;
     //                metric      variant
     private final Map<String, Map<String, VariantStatistics>> metrics;
 
     public ClassicExperimentStatistics(String experimentId,
                                        LocalDate toDate,
-                                       Duration duration,
                                        DeviceClass device,
                                        Map<String, Map<String, VariantStatistics>> metrics) {
         Preconditions.checkNotNull(experimentId, "experimentId cannot be null");
@@ -33,7 +31,6 @@ public class ClassicExperimentStatistics {
 
         this.experimentId = experimentId;
         this.toDate = toDate;
-        this.duration = duration;
         this.device = device;
         this.metrics = Map.copyOf(validateStatistics(metrics));
     }
@@ -68,10 +65,6 @@ public class ClassicExperimentStatistics {
 
     public DeviceClass getDevice() {
         return device;
-    }
-
-    public Duration getDuration() {
-        return duration;
     }
 
     public LocalDate getToDate() {

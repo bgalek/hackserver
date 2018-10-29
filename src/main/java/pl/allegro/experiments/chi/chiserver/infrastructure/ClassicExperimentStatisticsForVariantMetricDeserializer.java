@@ -17,13 +17,12 @@ class ClassicExperimentStatisticsForVariantMetricDeserializer implements JsonDes
     public ClassicExperimentStatisticsForVariantMetric deserialize(JsonElement jsonElement, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
         JsonObject json = jsonElement.getAsJsonObject();
         String id = json.get("experimentId").getAsString();
-        long durationMillis = json.get("durationMillis").getAsLong();
         String toDate = json.get("toDate").getAsString();
         DeviceClass deviceClass = DeviceClass.fromString(json.get("device").getAsString());
         String variantName = json.get("variantName").getAsString();
         String metricName = json.get("metricName").getAsString();
         VariantStatistics data = context.deserialize(json.getAsJsonObject("data"), VariantStatistics.class);
 
-        return new ClassicExperimentStatisticsForVariantMetric(id, durationMillis, toDate, deviceClass, variantName, metricName, data);
+        return new ClassicExperimentStatisticsForVariantMetric(id, toDate, deviceClass, variantName, metricName, data);
     }
 }

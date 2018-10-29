@@ -85,8 +85,7 @@ class ClassicExperimentStatisticsIntegrationSpec extends BaseE2EIntegrationSpec 
         def request = sampleClassicStatisticsRequest([
                 experimentId  : experiment.id,
                 variantName   : "variant-a",
-                toDate        : '2018-06-01',
-                durationMillis: 691200000L
+                toDate        : '2018-06-01'
         ])
 
         when:
@@ -99,8 +98,7 @@ class ClassicExperimentStatisticsIntegrationSpec extends BaseE2EIntegrationSpec 
         request = sampleClassicStatisticsRequest([
                 experimentId  : experiment.id,
                 variantName   : "variant-b",
-                toDate        : toDate,
-                durationMillis: durationMillis
+                toDate        : toDate
         ])
 
         and:
@@ -116,9 +114,8 @@ class ClassicExperimentStatisticsIntegrationSpec extends BaseE2EIntegrationSpec 
         result == null
 
         where:
-        description         | toDate       | durationMillis
-        'date mismatch'     | '2018-06-02' | 691200000L
-        'duration mismatch' | '2018-06-01' | 961200000L
+        description         | toDate
+        'date mismatch'     | '2018-06-02'
     }
 
     def "should return nothing variant mismatch"() {

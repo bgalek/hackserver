@@ -51,8 +51,7 @@ public class ClassicStatisticsRepository implements StatisticsRepository {
         }
 
         LocalDate toDate = LocalDate.parse(stats.get(0).getToDate());
-        Duration duration = Duration.ofMillis(stats.get(0).getDurationMillis());
-        return Optional.of(new ClassicExperimentStatistics(experimentId, toDate, duration, device, metricStatistics));
+        return Optional.of(new ClassicExperimentStatistics(experimentId, toDate, device, metricStatistics));
     }
 
     private boolean validateDateAndDuration(String experimentId, DeviceClass device, List<ClassicExperimentStatisticsForVariantMetric> stats) {
@@ -60,12 +59,6 @@ public class ClassicStatisticsRepository implements StatisticsRepository {
         if (distinctDates.size() != 1) {
             logger.error("Corrupted classic statistics data for {} {}, toDate is not unique", experimentId, device);
             stats.forEach(it -> logger.error("- {} {} {} {} {}", it.getExperimentId(), it.getDevice(), it.getToDate(), it.getVariantName(), it.getMetricName()));
-            return false;
-        }
-        Set<Long> distinctDurations = stats.stream().map(it -> it.getDurationMillis()).collect(Collectors.toSet());
-        if (distinctDurations.size() != 1) {
-            logger.error("Corrupted classic statistics data for {} {}, duration is not unique", experimentId, device);
-            stats.forEach(it -> logger.error("- {} {} {} {} {} {}", it.getExperimentId(), it.getDevice(), it.getToDate(), it.getDurationMillis(), it.getVariantName(), it.getMetricName()));
             return false;
         }
         return true;

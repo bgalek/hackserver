@@ -63,8 +63,7 @@ public class ClassicStatisticsController {
                 classicStats.getDevice(),
                 classicStats.getToDate(),
                 classicStats.getVariantName(),
-                classicStats.getMetricName(),
-                classicStats.getDurationMillis());
+                classicStats.getMetricName());
 
         classicStatisticsForVariantMetricRepository.save(classicStats);
 
