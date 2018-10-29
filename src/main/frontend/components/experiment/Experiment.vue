@@ -78,11 +78,7 @@
           this.metricsNotAvailable = this.experimentStatistics.metrics.length === 0
 
           if (this.experiment.goal && !this.metricsNotAvailable) {
-            this.$store.commit('enrichedGoal/update', {
-              experimentStatistics: this.experimentStatistics,
-              goal: this.experiment.goal,
-              leadingDevice: leadingDevice
-            });
+            this.$store.dispatch('enrichedGoal/update')
           }
           this.loadingStatsDone = true
         }).catch(() => {
@@ -101,7 +97,7 @@
         }).catch(() => {
           this.loadingBayesianEqualizerResultDone = true
         })
-      });
+      })
     },
 
     data () {

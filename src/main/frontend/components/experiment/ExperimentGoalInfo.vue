@@ -9,7 +9,7 @@
 
       <div v-if="sampleSizeCalculatorEnabled" class="mt-2">
         Required samples: <span style="display:inline-block; border-bottom:1px solid black;">{{ goal.requiredSampleSize}}</span> ,
-        gathered: {{ gatheredSampleSize }} (1%)
+        gathered: {{ enrichedGoal.leadingStatsBaseCount }} ({{ enrichedGoal.getProgressPercent() }}%)
       </div>
 
     </template>
@@ -23,7 +23,6 @@
 <script>
   import { getMetricByKey } from '../../model/experiment/metrics'
   import {mapState} from 'vuex'
-
 
   export default {
     data () {
@@ -40,10 +39,6 @@
         return getMetricByKey(this.goal.leadingMetric).label
       },
 
-      gatheredSampleSize () {
-        return  this.enrichedGoal.leadingStatsBase.count
-      },
-
       leadingDevice () {
         let device = this.enrichedGoal.leadingDevice
 
@@ -56,7 +51,7 @@
 
       ...mapState({
         enrichedGoal: state => state.enrichedGoal.enrichedGoal,
-        goal: state => state.enrichedGoal.enrichedGoal.goal
+        goal: state => state.enrichedGoal.enrichedGoal.experimentGoal
       })
     }
   }
