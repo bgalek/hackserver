@@ -1,11 +1,17 @@
 <template>
   <v-form ref="customParameterForm">
-    <v-container fluid style="margin: 0px; padding: 0px" text-xs-center>
+    <v-container fluid class="pa-0 ma-0">
 
-      <v-layout row align-center>
+      <v-layout row v-if="showHeader">
+        <v-flex offset-xs1>
+          <h3 class="mt-3">Custom parameter</h3>
+        </v-flex>
+      </v-layout>
 
-        <v-flex xs1>
-          <v-tooltip right>
+      <v-layout row text-xs-center align-center>
+
+        <v-flex xs1 right>
+          <v-tooltip top>
             <span>
               Custom parameter
               <br/>
@@ -13,11 +19,8 @@
                <br/>
               <a target="_blank" style="color: aqua" href="https://rtd.allegrogroup.com/docs/chi/">
               Read more in χ Docs</a>
-
             </span>
-            <v-icon
-              slot="activator">help_outline
-            </v-icon>
+            <v-icon slot="activator">help_outline</v-icon>
           </v-tooltip>
         </v-flex>
 
@@ -27,8 +30,12 @@
             v-model="defineCustomParameter"
             v-on:change="onDefineCustomParameterChange"
           ></v-switch>
+        </v-flex>
+      </v-layout>
+
+      <v-layout row v-if="defineCustomParameter">
+          <v-flex offset-xs1 lg6>
           <v-text-field
-            v-if="defineCustomParameter"
             id="experimentCustomParameterNameFormField"
             v-model="value.name"
             :rules="customParameterNameRules"
@@ -41,10 +48,8 @@
             :rules="customParameterValueRules"
             label="Custom parameter value"
           ></v-text-field>
-        </v-flex>
-
+          </v-flex>
       </v-layout>
-
     </v-container>
   </v-form>
 
@@ -62,7 +67,7 @@
   })
 
   export default {
-    props: ['experiment'],
+    props: ['experiment', 'showHeader'],
 
     data () {
       return {

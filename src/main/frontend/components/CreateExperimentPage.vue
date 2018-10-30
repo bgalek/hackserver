@@ -14,11 +14,11 @@
                 ref="createForm"
                 lazy-validation>
 
-            <v-container fluid style="margin: 0px; padding: 0px" text-xs-center>
+            <v-container fluid class="pa-0 ma-0" text-xs-center>
               <v-layout row align-center>
 
                 <v-flex xs1>
-                  <v-tooltip right >
+                  <v-tooltip top >
                     <span>Unique ID used by Chi and other applications to identify your experiment. Keep it concise.</span>
                     <v-icon
                       slot="activator">help_outline</v-icon>
@@ -64,13 +64,19 @@
                                      :showHeader="true"/>
 
             <experiment-custom-parameter-editing ref="experimentCustomParamEditing"
-                                                 v-model="customParameter" />
+                                                 v-model="customParameter"
+                                                 :showHeader="true"/>
 
-            <v-container fluid style="margin: 0px; padding: 0px" text-xs-center>
-              <v-layout row align-top>
+            <v-container fluid class="pa-0 ma-0">
+              <v-layout row>
+                <v-flex offset-xs1>
+                  <h3 class="mt-3">Interactions reporting</h3>
+                </v-flex>
+              </v-layout>
 
+              <v-layout row text-xs-center align-center>
                 <v-flex xs1>
-                  <v-tooltip right close-delay="1000">
+                  <v-tooltip top close-delay="1000">
                     <span>
                       If you are going to experiment using Opbox and you want to filter
                       users' interactions by defining NGA events &mdash;
@@ -86,7 +92,7 @@
                       slot="activator">help_outline</v-icon>
                   </v-tooltip>
                 </v-flex>
-                <v-flex xs11 id="reportingTypeDropdown">
+                <v-flex id="reportingTypeDropdown">
                   <v-select
                     style="width: 250px"
                     :items="availableReportingTypes"

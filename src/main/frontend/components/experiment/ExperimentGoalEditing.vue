@@ -153,7 +153,7 @@
         ratioRules: [
           (v) => this.isNumber(v) || 'number!',
           (v) => v > 0 || 'c\'mon',
-          (v) => v <= 100 || 'seriously?'
+          (v) => v < 100 || 'seriously?'
         ],
         sendingDataToServer: false,
         errors: []
@@ -183,7 +183,7 @@
         if (this.value.hasHypothesis) {
           return 'I have the hypothesis:'
         }
-        return 'I don\'h have any hypothesis, I\'m feeling lucky.'
+        return 'I don\'t have any hypothesis, I\'m feeling lucky.'
       }
     },
 
@@ -241,7 +241,7 @@
       },
 
       calculate (value) {
-        if (!this.isCalculatorEnabled(value)) {
+        if (!this.isCalculatorEnabled(value) || !this.validate()) {
           return
         }
 

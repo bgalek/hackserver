@@ -5,7 +5,7 @@
       <v-layout row align-center>
 
         <v-flex xs1>
-          <v-tooltip right>
+          <v-tooltip top>
             <span>Describe shortly what you are going to test.</span>
             <v-icon
               slot="activator">help_outline</v-icon>
@@ -21,7 +21,7 @@
         </v-flex>
 
       </v-layout>
-      <v-layout row align-center>
+      <v-layout top align-center>
 
         <v-flex offset-xs1 lg10>
           <v-text-field
@@ -35,9 +35,8 @@
       </v-layout>
 
       <v-layout row align-center>
-
           <v-flex xs1>
-            <v-tooltip right close-delay="1000">
+            <v-tooltip top close-delay="1000">
               <span>
                 Let your team manage this experiment.
                 Provide a group name, for example: <code>Tech Content Team</code>.
