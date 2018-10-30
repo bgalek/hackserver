@@ -1,7 +1,7 @@
 <template>
   <v-form ref="descEditingForm" v-model="formValid">
 
-    <v-container fluid style="margin: 0px; padding: 0px" text-xs-center>
+    <v-container fluid class="pa-0 ma-0" text-xs-center>
       <v-layout row align-center>
 
         <v-flex xs1>
@@ -11,7 +11,7 @@
               slot="activator">help_outline</v-icon>
           </v-tooltip>
         </v-flex>
-        <v-flex xs11>
+        <v-flex xs11 lg10>
           <v-text-field
             id="experimentDescriptionFormField"
             v-model="value.description"
@@ -23,7 +23,7 @@
       </v-layout>
       <v-layout row align-center>
 
-        <v-flex offset-xs1>
+        <v-flex offset-xs1 lg10>
           <v-text-field
             id="experimentDocumentationLinkFormField"
             v-model="value.documentLink"
@@ -53,7 +53,8 @@
                 slot="activator">help_outline</v-icon>
             </v-tooltip>
           </v-flex>
-          <v-flex xs11>
+
+          <v-flex xs11 lg6>
             <v-combobox
               multiple
               id="experimentAuthorizationGroupsFormField"

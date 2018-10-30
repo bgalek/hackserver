@@ -23,7 +23,7 @@ export default {
 
         if (leadingStats) {
           context.commit('update', new EnrichedGoal({
-            experimentGoal: experimentGoal,
+            requiredSampleSize: experimentGoal.requiredSampleSize,
             leadingStatsBaseCount: leadingStats.base.count
           }))
         }

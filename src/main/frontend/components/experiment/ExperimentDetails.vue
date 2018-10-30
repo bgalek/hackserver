@@ -26,7 +26,7 @@
       <experiment-group-info :experiment="experiment"/>
 
       <h3>Experiment's goal</h3>
-      <experiment-goal-info :experiment="experiment" :experimentStatistics="experimentStatistics"/>
+      <experiment-goal-info :experiment="experiment"/>
 
       <h3 class="mt-2">Author</h3>
       {{ experiment.author }}

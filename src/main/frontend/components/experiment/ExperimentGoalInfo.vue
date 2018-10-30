@@ -1,20 +1,20 @@
 <template>
   <div>
-    <template v-if="goal">
+    <template v-if="experiment.goal">
       <div>
         Improve the <span style="display:inline-block; border-bottom:1px solid black;">{{ leadingMetricLabel }}</span>
-        by at least <span style="display:inline-block; border-bottom:1px solid black;">{{ goal.expectedDiffPercent}}</span>%
+        by at least <span style="display:inline-block; border-bottom:1px solid black;">{{ experiment.goal.expectedDiffPercent}}</span>%
         <span v-if="leadingDevice" style="display:inline-block; border-bottom:1px solid black;">{{ leadingDevice }}</span>
       </div>
 
       <div v-if="sampleSizeCalculatorEnabled" class="mt-2">
-        Required samples: <span style="display:inline-block; border-bottom:1px solid black;">{{ goal.requiredSampleSize}}</span> ,
-        gathered: {{ enrichedGoal.leadingStatsBaseCount }} ({{ enrichedGoal.getProgressPercent() }}%)
+        Required samples: <span style="display:inline-block; border-bottom:1px solid black;">{{ this.experiment.goal.requiredSampleSize}}</span> ,
+        gathered: {{ leadingStatsBaseCount }} ({{ progressPercent }}%)
       </div>
 
     </template>
 
-    <template v-if="!goal">
+    <template v-if="!experiment.goal">
       No hypothesis
     </template>
   </div>
@@ -25,6 +25,8 @@
   import {mapState} from 'vuex'
 
   export default {
+    props: ['experiment'],
+
     data () {
       return {
       }
@@ -32,15 +34,15 @@
 
     computed: {
       sampleSizeCalculatorEnabled () {
-        return this.goal.testAlpha > 0
+        return this.experiment.goal.testAlpha > 0
       },
 
       leadingMetricLabel () {
-        return getMetricByKey(this.goal.leadingMetric).label
+        return getMetricByKey(this.experiment.goal.leadingMetric).label
       },
 
       leadingDevice () {
-        let device = this.enrichedGoal.leadingDevice
+        let device = this.experiment.getBaseDeviceClass()
 
         if (!device || device === 'all') {
           return ''
@@ -49,9 +51,22 @@
         }
       },
 
+      leadingStatsBaseCount () {
+        if (this.enrichedGoal && this.enrichedGoal.leadingStatsBaseCount > 0) {
+          return this.enrichedGoal.leadingStatsBaseCount
+        }
+        return 0
+      },
+
+      progressPercent () {
+        if (this.leadingStatsBaseCount && this.enrichedGoal.getProgressPercent()) {
+          return this.enrichedGoal.getProgressPercent()
+        }
+        return 0
+      },
+
       ...mapState({
-        enrichedGoal: state => state.enrichedGoal.enrichedGoal,
-        goal: state => state.enrichedGoal.enrichedGoal.experimentGoal
+        enrichedGoal: state => state.enrichedGoal.enrichedGoal
       })
     }
   }

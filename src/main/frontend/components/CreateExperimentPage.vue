@@ -24,7 +24,7 @@
                       slot="activator">help_outline</v-icon>
                   </v-tooltip>
                 </v-flex>
-                <v-flex xs11>
+                <v-flex xs11 lg6>
                   <v-text-field
                     id="experimentIdFormField"
                     v-model="experimentId"
@@ -36,7 +36,7 @@
               </v-layout>
               <v-layout row align-center>
 
-                <v-flex offset-xs1>
+                <v-flex offset-xs1 lg6>
                   <v-text-field
                     id="experimentIdSlug"
                     style="width: 300px"
@@ -55,11 +55,13 @@
 
             <experiment-variants-editing v-model="variants"
                                          ref="experimentVariantsEditing"
-                                         :allowModifyRegularVariants="true"/>
+                                         :allowModifyRegularVariants="true"
+                                         :showHeader="true"/>
 
             <experiment-goal-editing ref="experimentGoalEditing"
                                      v-model="goal"
-                                     :selectedDevice="this.variants && this.variants.deviceClass"/>
+                                     :selectedDevice="this.variants && this.variants.deviceClass"
+                                     :showHeader="true"/>
 
             <experiment-custom-parameter-editing ref="experimentCustomParamEditing"
                                                  v-model="customParameter" />

@@ -1,10 +1,16 @@
 <template>
   <v-form ref="variantsEditingForm" v-model="formValid">
 
-    <v-container fluid style="margin: 0px; padding: 0px" text-xs-center>
-      <v-layout row align-center>
+    <v-container fluid class="pa-0 ma-0">
 
-        <v-flex xs1>
+      <v-layout row v-if="showHeader">
+        <v-flex offset-xs1>
+          <h3 class="mt-3">Variants</h3>
+        </v-flex>
+      </v-layout>
+
+      <v-layout row text-xs-center align-center>
+        <v-flex xs1 >
           <v-tooltip right>
             <ul>
               <li>all = any kind of device</li>
@@ -16,9 +22,8 @@
               slot="activator">help_outline</v-icon>
           </v-tooltip>
         </v-flex>
-        <v-flex xs11 id="deviceClassDropdown">
+        <v-flex xs11 lg6 id="deviceClassDropdown">
             <v-select
-            style="width: 250px"
             v-bind:items="deviceClasses"
             v-model="value.deviceClass"
             label="Device class"
@@ -27,9 +32,9 @@
         </v-flex>
 
       </v-layout>
-      <v-layout row align-center>
+      <v-layout row text-xs-center align-center>
 
-        <v-flex offset-xs1>
+        <v-flex offset-xs1 lg6>
           <v-combobox
             multiple
             id="experimentVariants"
@@ -61,7 +66,7 @@
         </v-flex>
 
       </v-layout>
-      <v-layout row align-center>
+      <v-layout row align-center text-xs-center>
 
         <v-flex xs1>
           <v-tooltip right>
@@ -80,7 +85,7 @@
               slot="activator">help_outline</v-icon>
           </v-tooltip>
         </v-flex>
-        <v-flex xs11>
+        <v-flex xs11 lg6>
           <v-slider
             id="percentageVariantSlider"
             v-model="value.percentage"
@@ -94,8 +99,7 @@
         </v-flex>
 
       </v-layout>
-
-      <v-layout row align-center>
+      <v-layout row align-center text-xs-center>
 
         <v-flex xs1>
           <v-tooltip right>
@@ -104,7 +108,7 @@
               slot="activator">help_outline</v-icon>
           </v-tooltip>
         </v-flex>
-        <v-flex xs11>
+        <v-flex xs11 lg6>
           <v-text-field
             id="internalVariantFormField"
             :rules="internalVariantNameRules"
@@ -171,7 +175,8 @@
       allowModifyRegularVariants: {
         default: false,
         type: Boolean
-      }
+      },
+      showHeader: false
     },
 
     data () {

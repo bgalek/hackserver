@@ -1,85 +1,125 @@
 <template>
   <v-form ref="goalEditingForm" v-model="formValid">
 
-    <v-card  class="pa-3">
-      <h3 class="pa-0">Experiment goal</h3>
+    <v-container fluid class="pa-0 ma-0">
 
-      <v-alert v-for="error in errors"
-               color="error" icon="warning" value="true" :key="error">
-        {{ error }}
-      </v-alert>
+    <v-layout row v-if="showHeader">
+      <v-flex offset-xs1>
+        <h3 class="mt-3">Experiment goal</h3>
+      </v-flex>
+    </v-layout>
 
-      <v-switch :label="hypothesisSwitchLabel"
-                v-model="value.hasHypothesis"
-                color="orange darken-3"
-                class="pa-0">
-      </v-switch>
+    <v-alert v-for="error in errors"
+             color="error" icon="warning" value="true" :key="error">
+      {{ error }}
+    </v-alert>
 
-      <div v-if="value.hasHypothesis">
-        I want to improve the &nbsp;
-        <v-select class="pa-0"
-          style="width: 200px; display: inline-block"
-          v-bind:items="metrics"
-          v-model="value.leadingMetric"
-          item-value="key"
-          item-text="label"
-        ></v-select>
-        &nbsp; metric by at least &nbsp;
-        <v-text-field class="pa-0"
-          style="width: 35px; display: inline-block"
-          v-model="value.expectedDiffPercent"
-          :rules="ratioRules"
-        ></v-text-field>
-        % &nbsp; on {{leadingDevice}}
-      </div>
+    <v-layout row>
+      <v-flex offset-xs1>
+        <v-switch :label="hypothesisSwitchLabel"
+                  v-model="value.hasHypothesis"
+                  color="orange darken-3"
+                  class="pa-0">
+        </v-switch>
+      </v-flex>
+    </v-layout>
 
-      <div v-if="calculatorEnabled">
-        <h4 slot="header">Sample size calculator</h4>
+    <v-layout row v-if="value.hasHypothesis">
+      <v-flex offset-xs1>
+          I want to improve the &nbsp;
+          <v-select class="pa-0"
+            style="width: 200px; display: inline-block"
+            v-bind:items="metrics"
+            v-model="value.leadingMetric"
+            item-value="key"
+            item-text="label"
+          ></v-select>
+          &nbsp; metric by at least &nbsp;
+          <v-text-field class="pa-0"
+            style="width: 35px; display: inline-block"
+            v-model="value.expectedDiffPercent"
+            :rules="ratioRules"
+          ></v-text-field>
+          % &nbsp; on {{leadingDevice}}
+      </v-flex>
+    </v-layout>
 
-          <v-expansion-panel style="-webkit-box-shadow: 0px 0px; box-shadow: 0px 0px;">
-            <v-expansion-panel-content>
+    <v-layout row v-if="calculatorEnabled">
+      <v-flex offset-xs1 lg6>
+        <v-expansion-panel style="-webkit-box-shadow: 0px 0px; box-shadow: 0px 0px;">
+          <v-expansion-panel-content>
 
-              <div slot="header">
-                Required sample size:
-                <span style="display:inline-block" class="mt-2" v-if="!sendingDataToServer">
-                 <b>{{ value.requiredSampleSize }}</b>
-                </span>
-                <v-progress-circular indeterminate color="purple" v-if="sendingDataToServer"/>
-                for each variant.
+            <div slot="header">
+              <b>Sample size calculator</b>
+            </div>
+
+            <v-card>
+
+              <div>
+                <v-tooltip top>
+                  This is just a rough estimation.
+                  Chi will adjust this parameter after first day of the experiment.
+                  <v-icon slot="activator">help_outline</v-icon>  &nbsp;
+                </v-tooltip>
+
+                Baseline value of {{ leadingMetricLabel }}: &nbsp;
+
+                <v-text-field class="pa-0 ma-0"
+                            style="width: 35px; display: inline-block"
+                            v-model="value.leadingMetricBaselineValue"
+                            :rules="ratioRules"
+                ></v-text-field>%
               </div>
 
-              <v-card>
-                  <div>
-                  Baseline value of {{ leadingMetricLabel }}: &nbsp;
-                  <v-text-field class="pa-0 ma-0"
-                              style="width: 35px; display: inline-block"
-                              v-model="value.leadingMetricBaselineValue"
-                              :rules="ratioRules"
-                  ></v-text-field>%
-                  </div>
+              <div>
+                <v-tooltip top>
+                  Risk of obtaining false positive results &mdash;
+                  finding an non existing difference.
 
-                  <div>Significance level (𝜶): &nbsp;
-                  <v-select class="pa-0"
-                            style="width: 35px; display: inline-block"
-                            v-bind:items="alphaLevels"
-                            v-model="value.testAlpha"
-                  ></v-select>
-                  </div>
+                  <v-icon slot="activator">help_outline</v-icon>  &nbsp;
+                </v-tooltip>
 
-                  <div>Test power: &nbsp;
-                  <v-select class="pa-0"
-                            style="width: 35px; display: inline-block"
-                            v-bind:items="powerLevels"
-                            v-model="value.testPower"
-                  ></v-select>
-                  </div>
-              </v-card>
+                Significance level (𝜶): &nbsp;
 
-            </v-expansion-panel-content>
-          </v-expansion-panel>
+                <v-select class="pa-0"
+                          style="width: 35px; display: inline-block"
+                          v-bind:items="alphaLevels"
+                          v-model="value.testAlpha"
+                ></v-select>
+              </div>
 
-      </div>
-    </v-card>
+              <div>
+                <v-tooltip top>
+                  Chance of obtaining true positive results &mdash;
+                  finding a difference when it really exists.
+                  <v-icon slot="activator">help_outline</v-icon>  &nbsp;
+                </v-tooltip>
+
+                Test power: &nbsp;
+
+                <v-select class="pa-0"
+                          style="width: 35px; display: inline-block"
+                          v-bind:items="powerLevels"
+                          v-model="value.testPower"
+                ></v-select>
+              </div>
+            </v-card>
+          </v-expansion-panel-content>
+        </v-expansion-panel>
+
+        <div>
+          Required sample size:
+          <span style="display:inline-block" class="mt-2" v-if="!sendingDataToServer">
+               <b>{{ value.requiredSampleSize }}</b>
+              </span>
+          <v-progress-circular indeterminate color="purple" v-if="sendingDataToServer"/>
+          for each variant.
+        </div>
+
+      </v-flex>
+    </v-layout>
+
+    </v-container>
   </v-form>
 </template>
 
@@ -99,7 +139,7 @@
   })
 
   export default {
-    props: ['experiment', 'selectedDevice'],
+    props: ['experiment', 'selectedDevice', 'showHeader'],
 
     data () {
       const initialValue = this.init(this.experiment)
@@ -152,7 +192,7 @@
         handler: function (newValue) {
           if (this.validate()) {
             const result = this.buildResult(newValue)
-            this.calculate(result)
+            this.calculate(newValue)
             this.$emit('input', result)
           }
         },
@@ -169,7 +209,7 @@
           testAlpha: 0.05,
           leadingMetricBaselineValue: 5,
           testPower: 0.85,
-          requiredSampleSize: null
+          requiredSampleSize: 0
         }
 
         return value
