@@ -112,11 +112,13 @@
         metricNames: allMetricLabels(),
         metricFormatter: {
           'tx_visit': (it) => this.formatAsPercent(it),
+          'tx_cmuid': (it) => this.formatAsPercent(it),
           'tx_daily': (it) => this.formatAsPercent(it),
           'tx_avg': (it) => this.formatNumber(it, 4),
           'tx_avg_daily': (it) => this.formatNumber(it, 4),
           'gmv': (it) => this.formatCurrency(it, 'PLN'),
-          'gmv_daily': (it) => this.formatCurrency(it, 'PLN')
+          'gmv_daily': (it) => this.formatCurrency(it, 'PLN'),
+          'gmv_cmuid': (it) => this.formatCurrency(it, 'PLN')
         },
         hiddenMetricsTurnilo: ['tx_daily', 'tx_avg_daily', 'gmv_daily']
       }
