@@ -8,7 +8,6 @@ import pl.allegro.experiments.chi.chiserver.domain.experiments.DeviceClass;
  */
 public class ClassicExperimentStatisticsForVariantMetric {
     private final String experimentId;
-    private final long durationMillis;
     private final String toDate;
     private final DeviceClass device;
     private final String variantName;
@@ -18,14 +17,12 @@ public class ClassicExperimentStatisticsForVariantMetric {
 
     public ClassicExperimentStatisticsForVariantMetric(
             String experimentId,
-            long durationMillis,
             String toDate,
             DeviceClass device,
             String variantName,
             String metricName,
             VariantStatistics data) {
         this.experimentId = experimentId;
-        this.durationMillis = durationMillis;
         this.toDate = toDate;
         this.device = device;
         this.variantName = variantName;
@@ -35,10 +32,6 @@ public class ClassicExperimentStatisticsForVariantMetric {
 
     public String getExperimentId() {
         return experimentId;
-    }
-
-    public long getDurationMillis() {
-        return durationMillis;
     }
 
     public String getToDate() {

@@ -58,7 +58,7 @@ public class MongoClassicStatisticsForVariantMetricRepository implements Classic
                     Criteria.where("experimentId").is(experimentId)
                             .and("variantName").ne("base")
                             .and("device").ne("other")
-                            .and("metricName").in("gmv", "gmv_daily", "tx_visit", "tx_daily"));
+                            .and("metricName").in("gmv", "gmv_daily", "tx_visit", "tx_daily", "gmv_cmuid", "tx_cmuid"));
 
             return Math.toIntExact(timer.wrap(() -> mongoTemplate.count(query, ENTITY, COLLECTION)).call());
         } catch (Exception e) {

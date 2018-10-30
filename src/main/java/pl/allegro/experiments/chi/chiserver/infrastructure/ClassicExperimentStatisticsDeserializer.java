@@ -23,10 +23,9 @@ class ClassicExperimentStatisticsDeserializer implements JsonDeserializer<Classi
         JsonObject json = jsonElement.getAsJsonObject();
         String id = json.get("experimentId").getAsString();
         LocalDate toDate = context.deserialize(json.get("toDate"), LocalDate.class);
-        Duration duration = context.deserialize(json.get("duration"), Duration.class);
         DeviceClass device = DeviceClass.fromString(json.get("device").getAsString());
         Map<String, Map<String, VariantStatistics>> metrics = context.deserialize(json.get("metrics"), mapType);
 
-        return new ClassicExperimentStatistics(id, toDate, duration, device, metrics);
+        return new ClassicExperimentStatistics(id, toDate, device, metrics);
     }
 }

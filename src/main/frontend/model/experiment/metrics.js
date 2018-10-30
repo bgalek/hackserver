@@ -20,7 +20,9 @@ export class MetricModel extends MetricRecord {
 
 const allMetrics = List(
   [
-    new MetricModel('tx_visit', 'Visits conversion', {binary: true}),
+    new MetricModel('tx_visit', 'Visit conversion', {binary: true}),
+    new MetricModel('tx_cmuid', 'Client(cmuid) conversion', {binary: true}),
+    new MetricModel('gmv_cmuid', 'GMV per Client(cmuid) '),
     new MetricModel('gmv', 'GMV per visit'),
     new MetricModel('tx_daily', 'Daily conversion - BETA', {legacy: true}),
     new MetricModel('tx_avg', 'Transactions per visit', {legacy: true}),
