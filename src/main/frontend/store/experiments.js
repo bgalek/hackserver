@@ -1,6 +1,6 @@
 import Vapi from 'vuex-rest-api'
 import _ from 'lodash'
-import ExperimentDefinitionModel from '../model/experiment/experiment'
+import ExperimentDefinitionModel from '../model/experiment/experimentDefinition'
 
 export default new Vapi({
   baseURL: '/api',

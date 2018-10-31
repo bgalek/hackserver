@@ -1,5 +1,5 @@
 import Vapi from 'vuex-rest-api'
-import ExperimentDefinitionModel from '../model/experiment/experiment'
+import ExperimentDefinitionModel from '../model/experiment/experimentDefinition'
 import router from '../router'
 
 export default new Vapi({
