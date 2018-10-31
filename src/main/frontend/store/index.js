@@ -3,7 +3,7 @@ import Vuex from 'vuex'
 
 import experiments from './experiments'
 import experimentGroups from './experimentGroups'
-import experiment from './experiment'
+import experimentDefinitionStore from './experimentDefinitionStore'
 import experimentAuditLog from './experimentAuditLog'
 import experimentStatistics from './experimentStatistics'
 import bayesianHistograms from './bayesianHistograms'
@@ -35,7 +35,7 @@ export default new Vuex.Store({
       paths: ['userPreferences']
     })],
   modules: {
-    experiment,
+    experimentDefinitionStore,
     experiments,
     experimentGroups,
     experimentAuditLog,
