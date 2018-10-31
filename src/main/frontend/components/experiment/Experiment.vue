@@ -123,12 +123,12 @@
     },
 
     computed: mapState({
-      experiment: state => state.experiment.experiment,
-      error: state => state.experiment.error.experiment,
-      pending: state => state.experiment.pending.experiment,
-      experimentId: state => state.experiment.experiment.id,
+      experiment: state => state.experimentDefinitionStore.experiment,
+      error: state => state.experimentDefinitionStore.error.experiment,
+      pending: state => state.experimentDefinitionStore.pending.experiment,
+      experimentId: state => state.experimentDefinitionStore.experiment.id,
       isInGroup: state => {
-        return state.experiment.experiment.isInGroup()
+        return state.experimentDefinitionStore.experiment.isInGroup()
       },
       experimentStatistics (state) {
         const stats = state.experimentStatistics.experimentStatistics
