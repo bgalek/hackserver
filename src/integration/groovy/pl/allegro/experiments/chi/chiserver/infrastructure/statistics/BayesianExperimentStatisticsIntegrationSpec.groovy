@@ -31,7 +31,7 @@ class BayesianExperimentStatisticsIntegrationSpec extends BaseE2EIntegrationSpec
         response.statusCode.value() == 200
 
         when:
-        def result = fetchBayesianStatistics(experiment.id as String)
+        def result = fetchBayesianStatistics(experiment.id as String)[0]
 
         then:
         result.device == 'all'
@@ -47,6 +47,57 @@ class BayesianExperimentStatisticsIntegrationSpec extends BaseE2EIntegrationSpec
         variant.outliersLeft == 10
         variant.outliersRight == 122
         variant.allCount() == 100 + 200 + 250 + 150 + 10 + 122
+    }
+
+    def "should save and return bayesian statistics for multiple devices"() {
+        given:
+        def experiment = startedExperiment()
+
+        and:
+        def requestSmartphone = sampleBayesianStatisticsRequest([-0.1, 0, 0.1, 0.2], [101, 201, 251, 151], [
+                experimentId: experiment.id,
+                toDate      : '2018-04-01',
+                device      : 'smartphone'
+        ])
+
+        and:
+        def requestAll = sampleBayesianStatisticsRequest([-0.2, -0.1, 0.1, 0.2], [100, 200, 250, 150], [
+                experimentId: experiment.id,
+                toDate      : '2018-04-01',
+                device      : 'all'
+        ])
+
+        when:
+        def responseSmartphone = postBayesianStatistics(requestSmartphone)
+        def responseAll = postBayesianStatistics(requestAll)
+
+        then:
+        responseSmartphone.statusCode.value() == 200
+        responseAll.statusCode.value() == 200
+
+        when:
+        def result = fetchBayesianStatistics(experiment.id as String)
+        def resultSmartphone = result.find {it -> it.device == 'phone'}
+        def resultAll = result.find {it -> it.device == 'all'}
+
+        then:
+        def variantSmartphone = resultSmartphone.variantBayesianStatistics[0]
+        variantSmartphone.variantName == 'variant-a'
+        variantSmartphone.samples.values == [-0.2, -0.1, 0.1, 0.2]
+        variantSmartphone.samples.counts == [100, 200, 250, 150]
+        variantSmartphone.outliersLeft == 10
+        variantSmartphone.outliersRight == 122
+        variantSmartphone.allCount() == 100 + 200 + 250 + 150 + 10 + 122
+
+        and:
+        def variantAll = resultAll.variantBayesianStatistics[0]
+        variantAll.variantName == 'variant-a'
+        variantAll.samples.values == [-0.2, -0.1, 0.1, 0.2]
+        variantAll.samples.counts == [100, 200, 250, 150]
+        variantAll.outliersLeft == 10
+        variantAll.outliersRight == 122
+        variantAll.allCount() == 100 + 200 + 250 + 150 + 10 + 122
+
     }
 
     def "should not allow saving bayes statistics if Chi-Token not passed"() {
@@ -105,7 +156,7 @@ class BayesianExperimentStatisticsIntegrationSpec extends BaseE2EIntegrationSpec
         ]))
 
         and:
-        def result = fetchBayesianStatistics(experiment.id as String)
+        def result = fetchBayesianStatistics(experiment.id as String)[0]
 
         then:
         result.device == 'all'
@@ -146,7 +197,7 @@ class BayesianExperimentStatisticsIntegrationSpec extends BaseE2EIntegrationSpec
         response.statusCode.value() == 200
 
         when:
-        def statistics = fetchBayesianStatistics(experiment.id as String)
+        def statistics = fetchBayesianStatistics(experiment.id as String)[0]
 
         then:
         statistics.device == 'all'
@@ -169,7 +220,7 @@ class BayesianExperimentStatisticsIntegrationSpec extends BaseE2EIntegrationSpec
         variantC.allCount() == 593
     }
 
-    BayesianExperimentStatistics fetchBayesianStatistics(String experimentId) {
-        bayesianStatisticsRepository.experimentStatistics(experimentId as String)[0]
+    List<BayesianExperimentStatistics> fetchBayesianStatistics(String experimentId) {
+        bayesianStatisticsRepository.experimentStatistics(experimentId as String)
     }
 }

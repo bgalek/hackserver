@@ -34,7 +34,7 @@ public class BayesianStatisticsRepository {
             }
             statsPerDevice.get(deviceStats.getDevice()).add(deviceStats);
         }
-        return statsPerDevice.keySet().stream()
+        var result = statsPerDevice.keySet().stream()
                 .map(deviceClass ->
                         new BayesianExperimentStatistics(
                                 experimentId,
@@ -45,13 +45,16 @@ public class BayesianStatisticsRepository {
                                     .collect(Collectors.toList())
                         )
                 ).collect(Collectors.toList());
+
+        return result;
     }
 
     private boolean isValid(String experimentId, List<BayesianExperimentStatisticsForVariant> stats) {
         var distinctVariantNames = stats.stream().map(it -> it.getVariantName()).collect(Collectors.toSet());
+        var distinctDeviceClasses = stats.stream().map(it -> it.getDevice()).collect(Collectors.toSet());
         var distinctDates = stats.stream().map(it -> it.getToDate()).collect(Collectors.toSet());
 
-        if (distinctVariantNames.size() != stats.size()) {
+        if (distinctVariantNames.size() * distinctDeviceClasses.size() != stats.size()) {
             logger.error("Corrupted bayesian statistics data for {}, variant names are not unique", experimentId);
             stats.forEach(it -> logger.error("- {} {} {} {}", it.getExperimentId(), it.getDevice(), it.getToDate(), it.getVariantName()));
             return false;
