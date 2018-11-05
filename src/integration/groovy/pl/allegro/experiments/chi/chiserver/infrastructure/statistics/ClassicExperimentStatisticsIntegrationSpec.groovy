@@ -43,20 +43,23 @@ class ClassicExperimentStatisticsIntegrationSpec extends BaseE2EIntegrationSpec 
         def statistics = fetchStatistics(experiment.id as String)
 
         then:
-        statistics.device == "all"
-        statistics.experimentId == experiment.id
-        statistics.toDate == '2018-06-01'
-        statistics.metrics.size() == 2
+        statistics.size() == 1
 
         and:
-        def txDaily = statistics.metrics.tx_daily.someVariant
+        statistics[0].device == "all"
+        statistics[0].experimentId == experiment.id
+        statistics[0].toDate == '2018-06-01'
+        statistics[0].metrics.size() == 2
+
+        and:
+        def txDaily = statistics[0].metrics.tx_daily.someVariant
         txDaily.value == 0.07
         txDaily.diff == 0.0003
         txDaily.pValue == 0.3
         txDaily.count == 1684500
 
         and:
-        def gmv = statistics.metrics.gmv.someVariant
+        def gmv = statistics[0].metrics.gmv.someVariant
         gmv.value == 1.23
         gmv.diff == 0.0003
         gmv.pValue == 0.3
@@ -111,7 +114,7 @@ class ClassicExperimentStatisticsIntegrationSpec extends BaseE2EIntegrationSpec 
         def result = fetchStatistics(experiment.id as String)
 
         then:
-        result == null
+        result.size() == 0
 
         where:
         description         | toDate
@@ -150,7 +153,7 @@ class ClassicExperimentStatisticsIntegrationSpec extends BaseE2EIntegrationSpec 
         def result = fetchStatistics(experiment.id as String)
 
         then:
-        result == null
+        result.size() == 0
     }
 
     def "should evict old stats when new are coming"() {
@@ -172,7 +175,7 @@ class ClassicExperimentStatisticsIntegrationSpec extends BaseE2EIntegrationSpec 
                 [experimentId: experiment.id, variantName: 'variant-b', toDate: '2018-01-02', data : [value : 0.14, diff  : 0.014]]))
 
         and:
-        def statistics = fetchStatistics(experiment.id as String)
+        def statistics = fetchStatistics(experiment.id as String)[0]
 
         then:
         statistics.device == "all"
@@ -229,7 +232,7 @@ class ClassicExperimentStatisticsIntegrationSpec extends BaseE2EIntegrationSpec 
         response.statusCode.value() == 200
 
         when:
-        def statistics = fetchStatistics(experiment.id as String)
+        def statistics = fetchStatistics(experiment.id as String)[0]
 
         then:
         statistics.device == "all"

@@ -11,13 +11,8 @@ import pl.allegro.experiments.chi.chiserver.domain.statistics.classic.ClassicExp
 import pl.allegro.experiments.chi.chiserver.domain.statistics.classic.ClassicExperimentStatisticsForVariantMetric;
 import pl.allegro.experiments.chi.chiserver.domain.statistics.classic.ClassicStatisticsForVariantMetricRepository;
 
-import java.time.Duration;
 import java.time.LocalDate;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Repository
@@ -31,33 +26,37 @@ public class ClassicStatisticsRepository implements StatisticsRepository {
         this.classicStatisticsForVariantMetricRepository = classicStatisticsForVariantMetricRepository;
     }
 
-    public Optional<ClassicExperimentStatistics> getExperimentStatistics(String experimentId, DeviceClass device) {
+    @Override
+    public List<ClassicExperimentStatistics> getExperimentStatistics(String experimentId) {
         List<ClassicExperimentStatisticsForVariantMetric> stats =
-                classicStatisticsForVariantMetricRepository.getLatestForAllMetricsAndVariants(experimentId, device);
+                classicStatisticsForVariantMetricRepository.getLatestForAllMetricsAndVariants(experimentId);
 
-        if (stats.isEmpty()) {
-            return Optional.empty();
+        if (!validateDate(experimentId, stats)) {
+            return Collections.emptyList();
         }
-        Map<String, Map<String, VariantStatistics>> metricStatistics = new HashMap<>();
+
+        // Device       metric       variant
+        Map<String, Map<String, Map<String, VariantStatistics>>> metricStatisticsPerDevice = new HashMap<>();
         for (ClassicExperimentStatisticsForVariantMetric metric: stats) {
-            metricStatistics
+            metricStatisticsPerDevice
+                    .computeIfAbsent(metric.getDevice().toJsonString(), deviceClassName -> new HashMap<>())
                     .computeIfAbsent(metric.getMetricName(), metricName -> new HashMap<>())
                     .computeIfAbsent(metric.getVariantName(), variantName -> metric.getData());
 
         }
-
-        if (! validateDateAndDuration(experimentId, device, stats)) {
-            return Optional.empty();
-        }
-
         LocalDate toDate = LocalDate.parse(stats.get(0).getToDate());
-        return Optional.of(new ClassicExperimentStatistics(experimentId, toDate, device, metricStatistics));
+        return metricStatisticsPerDevice.keySet().stream().map(deviceClassName ->
+                new ClassicExperimentStatistics(
+                        experimentId,
+                        toDate,
+                        DeviceClass.fromString(deviceClassName),
+                        metricStatisticsPerDevice.get(deviceClassName))).collect(Collectors.toList());
     }
 
-    private boolean validateDateAndDuration(String experimentId, DeviceClass device, List<ClassicExperimentStatisticsForVariantMetric> stats) {
+    private boolean validateDate(String experimentId, List<ClassicExperimentStatisticsForVariantMetric> stats) {
         Set<String> distinctDates = stats.stream().map(it -> it.getToDate()).collect(Collectors.toSet());
         if (distinctDates.size() != 1) {
-            logger.error("Corrupted classic statistics data for {} {}, toDate is not unique", experimentId, device);
+            logger.error("Corrupted classic statistics data for {}, toDate is not unique", experimentId);
             stats.forEach(it -> logger.error("- {} {} {} {} {}", it.getExperimentId(), it.getDevice(), it.getToDate(), it.getVariantName(), it.getMetricName()));
             return false;
         }
@@ -65,12 +64,7 @@ public class ClassicStatisticsRepository implements StatisticsRepository {
     }
 
     @Override
-    public Optional<ClassicExperimentStatistics> getExperimentStatistics(String experimentId, String device) {
-        return getExperimentStatistics(experimentId, DeviceClass.fromString(device));
-    }
-
-    @Override
     public boolean hasAnyStatistics(String experimentId) {
-        return getExperimentStatistics(experimentId, DeviceClass.all).isPresent();
+        return !getExperimentStatistics(experimentId).isEmpty();
     }
 }
