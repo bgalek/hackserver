@@ -66,6 +66,63 @@ class ClassicExperimentStatisticsIntegrationSpec extends BaseE2EIntegrationSpec 
         gmv.count == 1684500
     }
 
+    def "should save and return classic statistics for multiple devices"() {
+        given:
+        def experiment = startedExperiment()
+        def requestSmartphone = sampleClassicStatisticsRequest([
+                experimentId: experiment.id,
+                metricName  : "gmv",
+                device      : "phone"
+        ])
+        def requestAll = sampleClassicStatisticsRequest([
+                experimentId: experiment.id,
+                metricName  : "gmv",
+                device      : "all"
+        ])
+
+        when:
+        def responseSmartphone = postClassicStatistics(requestSmartphone)
+        def responseAll = postClassicStatistics(requestAll)
+
+        then:
+        responseSmartphone.statusCode.value() == 200
+        responseAll.statusCode.value() == 200
+
+        when:
+        def statistics = fetchStatistics(experiment.id as String)
+        def statisticsSmartphone = statistics.find {it.device == 'phone'}
+        def statisticsAll = statistics.find {it.device == 'all'}
+
+        then:
+        statistics.size() == 2
+
+        and:
+        statisticsAll.device == "all"
+        statisticsAll.experimentId == experiment.id
+        statisticsAll.toDate == '2018-06-01'
+        statisticsAll.metrics.size() == 1
+
+        and:
+        def txDailyAll = statisticsAll.metrics.gmv.someVariant
+        txDailyAll.value == 0.07
+        txDailyAll.diff == 0.0003
+        txDailyAll.pValue == 0.3
+        txDailyAll.count == 1684500
+
+        and:
+        statisticsSmartphone.device == "phone"
+        statisticsSmartphone.experimentId == experiment.id
+        statisticsSmartphone.toDate == '2018-06-01'
+        statisticsSmartphone.metrics.size() == 1
+
+        and:
+        def txDailySmartphone = statisticsSmartphone.metrics.gmv.someVariant
+        txDailySmartphone.value == 0.07
+        txDailySmartphone.diff == 0.0003
+        txDailySmartphone.pValue == 0.3
+        txDailySmartphone.count == 1684500
+    }
+
     def "should not allow saving statistics if Chi-Token not passed"() {
         given:
         def experiment = startedExperiment()

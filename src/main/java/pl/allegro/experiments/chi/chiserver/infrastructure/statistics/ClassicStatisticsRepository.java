@@ -39,7 +39,7 @@ public class ClassicStatisticsRepository implements StatisticsRepository {
         Map<String, Map<String, Map<String, VariantStatistics>>> metricStatisticsPerDevice = new HashMap<>();
         for (ClassicExperimentStatisticsForVariantMetric metric: stats) {
             metricStatisticsPerDevice
-                    .computeIfAbsent(metric.getDevice().toJsonString(), deviceClassName -> new HashMap<>())
+                    .computeIfAbsent(metric.getDevice().toString(), deviceClassName -> new HashMap<>())
                     .computeIfAbsent(metric.getMetricName(), metricName -> new HashMap<>())
                     .computeIfAbsent(metric.getVariantName(), variantName -> metric.getData());
 
