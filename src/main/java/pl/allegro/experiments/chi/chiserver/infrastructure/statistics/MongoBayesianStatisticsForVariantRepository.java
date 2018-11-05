@@ -35,13 +35,12 @@ public class MongoBayesianStatisticsForVariantRepository implements BayesianStat
     }
 
     @Override
-    public List<BayesianExperimentStatisticsForVariant> getLatestForAllVariants(String experimentId, String device) {
+    public List<BayesianExperimentStatisticsForVariant> getLatestForAllVariants(String experimentId) {
         Timer timer = experimentsMongoMetricsReporter.timerReadBayesianExperimentStatistics();
         try {
             Query query = new Query();
 
             query.addCriteria(Criteria.where("experimentId").is(experimentId));
-            query.addCriteria(Criteria.where("device").is(device));
 
             return (List)(timer.wrap(() -> mongoTemplate.find(query, ENTITY, COLLECTION)).call());
         } catch (Exception e) {

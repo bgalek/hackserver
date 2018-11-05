@@ -36,22 +36,15 @@ public class BayesianStatisticsController {
     @MeteredEndpoint
     @GetMapping("/verticalEqualizer/{experimentId}")
     ResponseEntity<String> verticalEqualizer(
-            @PathVariable String experimentId,
-            @RequestParam(value = "device", required = false) final String device) {
-        return bayesianChartsRepository.getVerticalEqualizer(experimentId, DeviceClass.fromString(device))
-                        .map(s -> ResponseEntity.ok(jsonConverter.toJson(s)))
-                        .orElse(new ResponseEntity<>(HttpStatus.NO_CONTENT));
+            @PathVariable String experimentId) {
+        return ResponseEntity.ok(jsonConverter.toJson(bayesianChartsRepository.getVerticalEqualizer(experimentId)));
     }
 
     @MeteredEndpoint
-    @GetMapping("/histograms/{experimentId}/{device}")
+    @GetMapping("/histograms/{experimentId}")
     ResponseEntity<String> histogram(
-            @PathVariable String experimentId,
-            @PathVariable(value = "device", required = false) final String device) {
-
-        return bayesianChartsRepository.getHistograms(experimentId, DeviceClass.fromString(device))
-                .map(s -> ResponseEntity.ok(jsonConverter.toJson(s)))
-                .orElse(new ResponseEntity<>(HttpStatus.NO_CONTENT));
+            @PathVariable String experimentId) {
+        return ResponseEntity.ok(jsonConverter.toJson(bayesianChartsRepository.getHistograms(experimentId)));
     }
 
     @MeteredEndpoint

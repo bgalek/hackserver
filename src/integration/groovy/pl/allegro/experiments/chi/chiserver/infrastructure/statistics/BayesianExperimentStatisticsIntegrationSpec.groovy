@@ -170,6 +170,6 @@ class BayesianExperimentStatisticsIntegrationSpec extends BaseE2EIntegrationSpec
     }
 
     BayesianExperimentStatistics fetchBayesianStatistics(String experimentId) {
-        bayesianStatisticsRepository.experimentStatistics(experimentId as String, 'all').get()
+        bayesianStatisticsRepository.experimentStatistics(experimentId as String)[0]
     }
 }
