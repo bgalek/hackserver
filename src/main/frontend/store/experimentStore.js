@@ -1,8 +1,9 @@
 import axios from 'axios'
-import ExperimentDefinitionModel from "../model/experiment/experimentDefinition"
-import ExperimentStatisticsModel from "../model/experiment/experimentStatistics"
-import PENDING_STATE from "./pendingState"
-import ERROR_STATE from "./errorState"
+import ExperimentDefinitionModel from '../model/experiment/experimentDefinition'
+import ExperimentStatisticsModel from '../model/experiment/experimentStatistics'
+import ExperimentBayesianStatisticsModel from '../model/experiment/experimentBayesianStatistics'
+import PENDING_STATE from './pendingState'
+import ERROR_STATE from './errorState'
 
 export default {
   state: {
@@ -24,9 +25,14 @@ export default {
           const [experimentDefinition, experimentStatistics, experimentBayesianHistograms, experimentBayesianEqualizers] = response.map(it => it.data)
           context.commit('setExperimentDefinition', experimentDefinition)
           context.commit('setExperimentStatistics', experimentStatistics)
+          context.commit('setExperimentBayesianHistograms', experimentBayesianHistograms)
+          context.commit('setExperimentBayesianEqualizers', experimentBayesianEqualizers)
         }).catch((response) => {
+          console.log(response)
           context.commit('experimentStatisticsError')
           context.commit('experimentDefinitionError')
+          context.commit('experimentBayesianHistogramsError')
+          context.commit('experimentBayesianEqualizersError')
         })
     }
   },
@@ -40,12 +46,28 @@ export default {
       state.experimentStatistics = new ExperimentStatisticsModel(experimentStatistics)
     },
 
+    setExperimentBayesianHistograms (state, experimentBayesianHistograms) {
+      state.experimentBayesianHistograms = new ExperimentBayesianStatisticsModel(experimentBayesianHistograms)
+    },
+
+    setExperimentBayesianEqualizers (state, experimentBayesianEqualizers) {
+      state.experimentBayesianEqualizers = new ExperimentBayesianStatisticsModel(experimentBayesianEqualizers)
+    },
+
     experimentStatisticsError (state) {
       state.experimentStatistics = ERROR_STATE
     },
 
     experimentDefinitionError (state) {
       state.experimentDefinition = ERROR_STATE
+    },
+
+    experimentBayesianHistogramsError (state) {
+      state.experimentBayesianHistograms = ERROR_STATE
+    },
+
+    experimentBayesianEqualizersError (state) {
+      state.experimentBayesianEqualizers = ERROR_STATE
     }
   }
 }

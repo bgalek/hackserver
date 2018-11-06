@@ -1,4 +1,5 @@
 import { Record } from 'immutable'
+import _ from 'lodash'
 
 const ExperimentStatisticsRecord = Record({
   deviceStatistics: {}
@@ -6,18 +7,13 @@ const ExperimentStatisticsRecord = Record({
 
 export default class ExperimentStatisticsModel extends ExperimentStatisticsRecord {
   constructor (experimentStatisticsObject) {
-    console.log('mapping stats')
-    console.log(experimentStatisticsObject)
     const deviceStatistics = new Map(experimentStatisticsObject.map(it => {
-      console.log(it)
       const stats = it
       const mappedMetrics = []
 
       _.forIn(stats.metrics, (metricValuePerVariant, metricName) => {
-        console.log('1')
         let mappedVariants = []
         _.forIn(metricValuePerVariant, (metricValue, variantName) => {
-          console.log('2')
           mappedVariants[(variantName !== 'base') ? 'push' : 'unshift']({
             variant: variantName,
             value: metricValue.value,
@@ -26,7 +22,6 @@ export default class ExperimentStatisticsModel extends ExperimentStatisticsRecor
             pValue: metricValue.pValue
           })
         })
-        console.log('3')
         mappedMetrics.push({
           'key': metricName,
           'variants': mappedVariants,
@@ -41,7 +36,6 @@ export default class ExperimentStatisticsModel extends ExperimentStatisticsRecor
             'gmv_daily': 8
           }[metricName]
         })
-        console.log('4')
       })
 
       return [stats.device, {
@@ -51,11 +45,7 @@ export default class ExperimentStatisticsModel extends ExperimentStatisticsRecor
         metrics: mappedMetrics.sort((x, y) => x.order - y.order),
         metricsNotAvailable: stats.metrics && stats.metrics.length === 0
       }]
-
     }))
-
-    console.log('creating stats')
-    console.log(deviceStatistics)
 
     super({deviceStatistics: deviceStatistics})
   }

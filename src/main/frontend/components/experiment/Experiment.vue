@@ -23,16 +23,16 @@
           ></result-table>
         </chi-panel>
 
-        <!--<chi-panel title="Bayesian analysis">-->
-          <!--<bayesian-result-->
-            <!--@deviceChangedOnBayesian="onDeviceChanged"-->
-            <!--v-if="loadingExperimentDone && loadingBayesianResultDone"-->
-            <!--:experiment="experiment"-->
-            <!--:selectedDevice="selectedDevice"-->
-            <!--:bayesianHistograms="bayesianHistograms"-->
-            <!--:bayesianEqualizer="bayesianEqualizer"-->
-          <!--&gt;</bayesian-result>-->
-        <!--</chi-panel>-->
+        <chi-panel title="Bayesian analysis">
+          <bayesian-result
+            @deviceChangedOnBayesian="onDeviceChanged"
+            v-if="experimentBayesianHistograms.isReady() && experimentBayesianEqualizers.isReady()"
+            :experiment="experimentDefinition"
+            :selectedDevice="selectedDevice"
+            :bayesianHistograms="selectedExperimentBayesianHistograms"
+            :bayesianEqualizer="selectedExperimentBayesianEqualizers"
+          ></bayesian-result>
+        </chi-panel>
 
         <experiment-actions
           v-if="experimentDefinition.isReady() && experimentStatistics.isReady()"
@@ -69,22 +69,25 @@
   export default {
     mounted () {
       this.getExperiment(this.$route.params.experimentId).then(() => {
-        console.log('Loaded experiment')
         this.selectedDevice = this.experimentDefinition.getInitialDevice()
-        this.selectedExperimentStatistics = this.experimentStatistics.getForDevice(this.selectedDevice)
+        this.refreshStatistics(this.experimentDefinition.getInitialDevice())
       })
     },
 
     data () {
       return {
         selectedDevice: null,
-        selectedExperimentStatistics: null
+        selectedExperimentStatistics: null,
+        selectedExperimentBayesianHistograms: null,
+        selectedExperimentBayesianEqualizers: null
       }
     },
 
     computed: mapState({
       experimentDefinition: state => state.experimentStore.experimentDefinition,
-      experimentStatistics: state => state.experimentStore.experimentStatistics
+      experimentStatistics: state => state.experimentStore.experimentStatistics,
+      experimentBayesianHistograms: state => state.experimentStore.experimentBayesianHistograms,
+      experimentBayesianEqualizers: state => state.experimentStore.experimentBayesianEqualizers
     }),
 
     components: {
@@ -102,9 +105,14 @@
 
       onDeviceChanged (device) {
         this.selectedDevice = device.device
-        this.selectedExperimentStatistics = this.experimentStatistics.getForDevice(device.device)
+        this.refreshStatistics(device)
       },
 
+      refreshStatistics (device) {
+        this.selectedExperimentStatistics = this.experimentStatistics.getForDevice(device.device)
+        this.selectedExperimentBayesianHistograms = this.experimentBayesianHistograms.getForDevice(device.device)
+        this.selectedExperimentBayesianEqualizers = this.experimentBayesianEqualizers.getForDevice(device.device)
+      }
     }
   }
 </script>
