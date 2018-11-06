@@ -175,4 +175,30 @@ export default class ExperimentDefinitionModel extends ExperimentDefinitionRecor
       this.canBeResumed() ||
       this.canBeProlonged()
   }
+
+  getInitialDevice () {
+    const baseClass = this.getBaseDeviceClass()
+
+    if (baseClass === 'desktop') {
+      return baseClass
+    }
+
+    if (baseClass && baseClass.startsWith('phone')) {
+      return 'smartphone'
+    }
+
+    return 'all'
+  }
+
+  isPending () {
+    return false
+  }
+
+  getError () {
+    return false
+  }
+
+  isReady () {
+    return true
+  }
 };

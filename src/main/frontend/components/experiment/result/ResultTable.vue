@@ -65,7 +65,7 @@
     </div>
 
     <v-alert v-if="experimentStatisticsError" color="error" icon="warning" value="true">
-      Couldn't load statistics for {{ this.experiment.id }} : {{ experimentStatisticsError.message }}
+      Couldn't load statistics for {{ this.experiment.id }} : {{ experimentStatisticsError }}
     </v-alert>
 
     <p class="text-xs-center">
