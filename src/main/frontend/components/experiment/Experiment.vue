@@ -26,7 +26,7 @@
         <chi-panel title="Bayesian analysis">
           <bayesian-result
             @deviceChangedOnBayesian="onDeviceChanged"
-            v-if="experimentBayesianHistograms.isReady() && experimentBayesianEqualizers.isReady()"
+            v-if="selectedExperimentBayesianHistograms && selectedExperimentBayesianEqualizers"
             :experiment="experimentDefinition"
             :selectedDevice="selectedDevice"
             :bayesianHistograms="selectedExperimentBayesianHistograms"
@@ -70,6 +70,7 @@
     mounted () {
       this.getExperiment(this.$route.params.experimentId).then(() => {
         this.selectedDevice = this.experimentDefinition.getInitialDevice()
+        console.log(this.experimentDefinition.getInitialDevice())
         this.refreshStatistics(this.experimentDefinition.getInitialDevice())
       })
     },
@@ -105,13 +106,13 @@
 
       onDeviceChanged (device) {
         this.selectedDevice = device.device
-        this.refreshStatistics(device)
+        this.refreshStatistics(this.selectedDevice)
       },
 
       refreshStatistics (device) {
-        this.selectedExperimentStatistics = this.experimentStatistics.getForDevice(device.device)
-        this.selectedExperimentBayesianHistograms = this.experimentBayesianHistograms.getForDevice(device.device)
-        this.selectedExperimentBayesianEqualizers = this.experimentBayesianEqualizers.getForDevice(device.device)
+        this.selectedExperimentStatistics = this.experimentStatistics.getForDevice(device)
+        this.selectedExperimentBayesianHistograms = this.experimentBayesianHistograms.getForDevice(device)
+        this.selectedExperimentBayesianEqualizers = this.experimentBayesianEqualizers.getForDevice(device)
       }
     }
   }

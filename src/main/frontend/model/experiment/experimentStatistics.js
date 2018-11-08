@@ -37,10 +37,11 @@ export default class ExperimentStatisticsModel extends ExperimentStatisticsRecor
           }[metricName]
         })
       })
+      const device = stats.device.startsWith('phone') ? 'smartphone': stats.device
 
-      return [stats.device, {
+      return [device, {
         id: stats.id,
-        device: stats.device,
+        device: device,
         toDate: stats.toDate,
         metrics: mappedMetrics.sort((x, y) => x.order - y.order),
         metricsNotAvailable: stats.metrics && stats.metrics.length === 0

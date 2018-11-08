@@ -6,7 +6,7 @@
       :selectedDevice="selectedDevice"
     ></device-selector>
 
-    <p v-if="this.showHistogram() && this.histogramsToDate">
+    <p v-if="this.histogramData && this.histogramsToDate">
       Data calculated on
       <b>{{ this.histogramsToDate }}</b>.
     </p>
@@ -22,7 +22,7 @@
     <br/>
     </v-container>
 
-    <v-container v-if="this.showHistogram()">
+    <v-container v-if="this.histogramData">
       <h4>Visits conversion histogram</h4>
       <v-layout row>
         <v-spacer></v-spacer>
@@ -33,7 +33,7 @@
           :showBase="false"
         ></variant-selector>
       </v-layout>
-      <bayesian-histogram-chart v-if="this.showHistogram()"
+      <bayesian-histogram-chart v-if="this.histogramData"
         :histogramData="histogramData"
       >
       </bayesian-histogram-chart>
