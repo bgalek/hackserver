@@ -27,8 +27,8 @@ export default {
           context.commit('setExperimentStatistics', experimentStatistics)
           context.commit('setExperimentBayesianHistograms', experimentBayesianHistograms)
           context.commit('setExperimentBayesianEqualizers', experimentBayesianEqualizers)
+          context.dispatch('enrichedGoal/update')
         }).catch((response) => {
-          console.log(response)
           context.commit('experimentStatisticsError')
           context.commit('experimentDefinitionError')
           context.commit('experimentBayesianHistogramsError')

@@ -52,7 +52,7 @@ export default class ExperimentStatisticsModel extends ExperimentStatisticsRecor
   }
 
   getForDevice (device) {
-    return this.deviceStatistics.get(device) || {}
+    return this.deviceStatistics.get(device.startsWith('phone') ? 'smartphone': device) || {}
   }
 
   any () {
