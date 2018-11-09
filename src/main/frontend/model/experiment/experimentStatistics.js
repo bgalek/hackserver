@@ -1,11 +1,9 @@
 import { Record } from 'immutable'
 import _ from 'lodash'
 
-
 const ExperimentStatisticsRecord = Record({
   deviceStatistics: {}
 })
-
 
 const ExperimentDeviceStatisticsRecord = Record({
   id: null,
@@ -47,7 +45,8 @@ class ExperimentDeviceStatisticsModel extends ExperimentDeviceStatisticsRecord {
         }[metricName]
       })
     })
-    const device = stats.device.startsWith('phone') ? 'smartphone': stats.device
+
+    const device = stats.device.startsWith('phone') ? 'smartphone' : stats.device
     const result = {
       id: stats.id,
       device: device,
@@ -58,7 +57,6 @@ class ExperimentDeviceStatisticsModel extends ExperimentDeviceStatisticsRecord {
     super(result)
   }
 }
-
 
 export default class ExperimentStatisticsModel extends ExperimentStatisticsRecord {
   constructor (experimentStatisticsObject) {
@@ -71,7 +69,7 @@ export default class ExperimentStatisticsModel extends ExperimentStatisticsRecor
   }
 
   getForDevice (device) {
-    return this.deviceStatistics.get(device.startsWith('phone') ? 'smartphone': device) || {}
+    return this.deviceStatistics.get(device.startsWith('phone') ? 'smartphone' : device) || {}
   }
 
   any () {

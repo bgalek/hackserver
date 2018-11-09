@@ -7,7 +7,7 @@ const ExperimentBayesianStatisticsRecord = Record({
 export default class ExperimentBayesianStatisticsModel extends ExperimentBayesianStatisticsRecord {
   constructor (experimentBayesianStatisticsObject) {
     const deviceStatistics = new Map(experimentBayesianStatisticsObject.map(it => {
-      return [it.metadata.deviceClass.startsWith('phone')? 'smartphone': it.metadata.deviceClass, it]
+      return [it.metadata.deviceClass.startsWith('phone') ? 'smartphone' : it.metadata.deviceClass, it]
     }))
 
     super({deviceStatistics: deviceStatistics})

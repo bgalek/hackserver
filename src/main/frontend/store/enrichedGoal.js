@@ -19,11 +19,9 @@ export default {
       const experimentStatistics = context.rootState.experimentStore.experimentStatistics.getForDevice(experiment.getBaseDeviceClass())
       const experimentGoal = experiment && experiment.goal
       let leadingDevice = experiment.getBaseDeviceClass()
-      leadingDevice = leadingDevice.startsWith('phone') ? 'smartphone': leadingDevice
+      leadingDevice = leadingDevice.startsWith('phone') ? 'smartphone' : leadingDevice
 
-      if (experimentGoal && leadingDevice && experimentStatistics && experimentStatistics.metrics &&
-          experimentStatistics.device === leadingDevice) {
-
+      if (experimentGoal && leadingDevice && experimentStatistics && experimentStatistics.metrics && experimentStatistics.device === leadingDevice) {
         const leadingStats = experimentStatistics.metrics.filter(it => it.key === experimentGoal.leadingMetric)[0]
 
         if (leadingStats) {
