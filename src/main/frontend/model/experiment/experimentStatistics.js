@@ -76,16 +76,4 @@ export default class ExperimentStatisticsModel extends ExperimentStatisticsRecor
     console.log(this.deviceStatistics.size)
     return this.deviceStatistics.size !== 0
   }
-
-  isPending () {
-    return false
-  }
-
-  getError () {
-    return false
-  }
-
-  isReady () {
-    return true
-  }
 }

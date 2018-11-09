@@ -8,16 +8,16 @@
         <experiment-details
           :experiment="experimentDefinition"
           :experimentStatistics="selectedExperimentStatistics"
-          v-if="experimentDefinition.isReady()"
+          v-if="experimentReady"
         ></experiment-details>
 
         <chi-panel title="Statistical hypothesis testing">
           <result-table
             @deviceChangedOnStats="onDeviceChanged"
             :experimentStatistics="selectedExperimentStatistics"
-            :experimentStatisticsError="experimentStatistics.getError()"
-            :experimentStatisticsPending="experimentStatistics.isPending()"
-            v-if="experimentStatistics.isReady()"
+            :experimentStatisticsError="experimentError"
+            :experimentStatisticsPending="!experimentReady"
+            v-if="experimentReady"
             :experiment="experimentDefinition"
             :selectedDevice="selectedDevice"
           ></result-table>
@@ -26,7 +26,7 @@
         <chi-panel title="Bayesian analysis">
           <bayesian-result
             @deviceChangedOnBayesian="onDeviceChanged"
-            v-if="selectedExperimentBayesianHistograms && selectedExperimentBayesianEqualizers"
+            v-if="experimentReady"
             :experiment="experimentDefinition"
             :selectedDevice="selectedDevice"
             :bayesianHistograms="selectedExperimentBayesianHistograms"
@@ -35,18 +35,18 @@
         </chi-panel>
 
         <experiment-actions
-          v-if="experimentDefinition.isReady() && experimentStatistics.isReady()"
+          v-if="experimentReady"
           :experiment="experimentDefinition"
-          :allowDelete="experimentDefinition.isReady() && experimentStatistics.isReady() && !experimentStatistics.any()"
+          :allowDelete="experimentReady && !experimentStatistics.any()"
         ></experiment-actions>
 
         <assignment-panel
-          v-if="experimentDefinition.isReady() && experimentDefinition.status !== 'ENDED'"
+          v-if="experimentReady && experimentDefinition.status !== 'ENDED'"
           :experiment="experimentDefinition"
         ></assignment-panel>
 
         <audit-log-panel
-          v-if="experimentDefinition.isReady()"
+          v-if="experimentReady"
           :experiment="experimentDefinition"
         ></audit-log-panel>
 
@@ -70,7 +70,6 @@
     mounted () {
       this.getExperiment(this.$route.params.experimentId).then(() => {
         this.selectedDevice = this.experimentDefinition.getInitialDevice()
-        console.log(this.experimentDefinition.getInitialDevice())
         this.refreshStatistics(this.experimentDefinition.getInitialDevice())
       })
     },
@@ -88,7 +87,9 @@
       experimentDefinition: state => state.experimentStore.experimentDefinition,
       experimentStatistics: state => state.experimentStore.experimentStatistics,
       experimentBayesianHistograms: state => state.experimentStore.experimentBayesianHistograms,
-      experimentBayesianEqualizers: state => state.experimentStore.experimentBayesianEqualizers
+      experimentBayesianEqualizers: state => state.experimentStore.experimentBayesianEqualizers,
+      experimentReady: state => state.experimentStore.experimentReady,
+      experimentError: state => state.experimentStore.experimentError
     }),
 
     components: {

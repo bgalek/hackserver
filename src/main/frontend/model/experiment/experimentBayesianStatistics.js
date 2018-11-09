@@ -20,16 +20,4 @@ export default class ExperimentBayesianStatisticsModel extends ExperimentBayesia
   any () {
     return this.deviceStatistics.size !== 0
   }
-
-  isPending () {
-    return false
-  }
-
-  getError () {
-    return false
-  }
-
-  isReady () {
-    return true
-  }
 }

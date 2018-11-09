@@ -189,16 +189,4 @@ export default class ExperimentDefinitionModel extends ExperimentDefinitionRecor
 
     return 'all'
   }
-
-  isPending () {
-    return false
-  }
-
-  getError () {
-    return false
-  }
-
-  isReady () {
-    return true
-  }
 };
