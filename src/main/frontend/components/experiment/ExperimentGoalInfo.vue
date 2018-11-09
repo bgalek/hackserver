@@ -4,7 +4,11 @@
       <div>
         Improve the <span style="display:inline-block; border-bottom:1px solid black;">{{ leadingMetricLabel }}</span>
         by at least <span style="display:inline-block; border-bottom:1px solid black;">{{ experiment.goal.expectedDiffPercent}}</span>%
-        <span v-if="leadingDevice" style="display:inline-block; border-bottom:1px solid black;">{{ leadingDevice }}</span>
+        <span v-if="leadingDevice" style="display:inline-block; border-bottom:1px solid black;">{{ leadingDevice }}</span>,
+        starting from
+        <span style="display:inline-block; border-bottom:1px solid black;">
+          {{ experiment.goal.leadingMetricBaselineValue}}
+        </span>% baseline.
       </div>
 
       <div v-if="sampleSizeCalculatorEnabled" class="mt-2">

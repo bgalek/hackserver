@@ -88,7 +88,7 @@ public class AdminExperiment {
     }
 
     public ExperimentGoal getGoal() {
-        return experimentDefinition.getGoal();
+        return experimentDefinition.getGoal().orElse(null);
     }
 
     public BayesianHorizontalEqualizer getBayesianHorizontalEqualizer() {

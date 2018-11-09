@@ -5,7 +5,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import pl.allegro.experiments.chi.chiserver.domain.experiments.DeviceClass;
 
-import java.time.Duration;
 import java.time.LocalDate;
 import java.util.Map;
 import java.util.Set;

@@ -173,8 +173,8 @@ public class ExperimentDefinition {
     }
 
     @DiffInclude
-    public ExperimentGoal getGoal() {
-        return goal;
+    public Optional<ExperimentGoal> getGoal() {
+        return Optional.ofNullable(goal);
     }
 
     public ZonedDateTime getLastExplicitStatusChange() {

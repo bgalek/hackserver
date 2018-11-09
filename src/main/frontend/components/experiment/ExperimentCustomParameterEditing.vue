@@ -11,7 +11,7 @@
       <v-layout row text-xs-center align-center>
 
         <v-flex xs1 right>
-          <v-tooltip top>
+          <v-tooltip right close-delay="1000">
             <span>
               Custom parameter
               <br/>

@@ -4,10 +4,12 @@ import com.google.common.base.Preconditions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import pl.allegro.experiments.chi.chiserver.domain.UserProvider;
+import pl.allegro.experiments.chi.chiserver.domain.calculator.SampleSizeCalculator;
 import pl.allegro.experiments.chi.chiserver.domain.experiments.EventDefinition;
 import pl.allegro.experiments.chi.chiserver.domain.experiments.ExperimentsRepository;
 import pl.allegro.experiments.chi.chiserver.domain.experiments.administration.notifications.Notificator;
 import pl.allegro.experiments.chi.chiserver.domain.experiments.groups.ExperimentGroupRepository;
+import pl.allegro.experiments.chi.chiserver.domain.statistics.classic.ClassicExperimentStatisticsForVariantMetric;
 import pl.allegro.experiments.chi.chiserver.domain.statistics.classic.StatisticsRepository;
 
 import java.util.List;
@@ -20,6 +22,7 @@ public class CommandFactory {
     private final StatisticsRepository statisticsRepository;
     private final ExperimentGroupRepository experimentGroupRepository;
     private final Notificator notificator;
+    private final SampleSizeCalculator sampleSizeCalculator;
 
     @Autowired
     public CommandFactory(ExperimentsRepository experimentsRepository,
@@ -27,13 +30,15 @@ public class CommandFactory {
                           PermissionsAwareExperimentRepository permissionsAwareExperimentRepository,
                           StatisticsRepository statisticsRepository,
                           ExperimentGroupRepository experimentGroupRepository,
-                          Notificator emailService) {
+                          Notificator emailService,
+                          SampleSizeCalculator sampleSizeCalculator) {
         this.experimentsRepository = experimentsRepository;
         this.userProvider = userProvider;
         this.permissionsAwareExperimentRepository = permissionsAwareExperimentRepository;
         this.statisticsRepository = statisticsRepository;
         this.experimentGroupRepository = experimentGroupRepository;
         this.notificator = emailService;
+        this.sampleSizeCalculator = sampleSizeCalculator;
     }
 
     Command createExperimentCommand(ExperimentCreationRequest request) {
@@ -68,6 +73,12 @@ public class CommandFactory {
                 experimentId
         );
         return new NotificationDecoratorCommand(experimentCommand, notificator, userProvider);
+    }
+
+    public Command updateBaselineMetricValueCommand(
+            ClassicExperimentStatisticsForVariantMetric currentStats) {
+        Preconditions.checkNotNull(currentStats);
+        return new UpdateBaselineMetricValueCommand(currentStats, experimentsRepository, sampleSizeCalculator);
     }
 
     Command stopExperimentCommand(String experimentId) {

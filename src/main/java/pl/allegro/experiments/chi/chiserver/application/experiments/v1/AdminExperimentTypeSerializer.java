@@ -60,6 +60,7 @@ public class AdminExperimentTypeSerializer implements JsonSerializer<AdminExperi
         jsonObject.addProperty("testAlpha", goal.getTestConfiguration().getTestAlpha());
         jsonObject.addProperty("testPower", goal.getTestConfiguration().getTestPower());
         jsonObject.addProperty("requiredSampleSize", goal.getTestConfiguration().getRequiredSampleSize());
+        jsonObject.addProperty("currentSampleSize", goal.getTestConfiguration().getCurrentSampleSize());
 
         return jsonObject;
     }

@@ -6,7 +6,7 @@ public class ExperimentGoalRequest {
     private double leadingMetricBaselineValue;
     private double testAlpha;
     private double testPower;
-    private long requiredSampleSize;
+    private int requiredSampleSize;
 
     private ExperimentGoalRequest() {
     }
@@ -31,7 +31,7 @@ public class ExperimentGoalRequest {
         return testPower;
     }
 
-    public long getRequiredSampleSize() {
+    public int getRequiredSampleSize() {
         return requiredSampleSize;
     }
 }

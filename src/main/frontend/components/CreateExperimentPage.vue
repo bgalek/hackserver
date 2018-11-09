@@ -18,7 +18,7 @@
               <v-layout row align-center>
 
                 <v-flex xs1>
-                  <v-tooltip top >
+                  <v-tooltip right >
                     <span>Unique ID used by Chi and other applications to identify your experiment. Keep it concise.</span>
                     <v-icon
                       slot="activator">help_outline</v-icon>
@@ -76,7 +76,7 @@
 
               <v-layout row text-xs-center align-center>
                 <v-flex xs1>
-                  <v-tooltip top close-delay="1000">
+                  <v-tooltip right close-delay="1000">
                     <span>
                       If you are going to experiment using Opbox and you want to filter
                       users' interactions by defining NGA events &mdash;
