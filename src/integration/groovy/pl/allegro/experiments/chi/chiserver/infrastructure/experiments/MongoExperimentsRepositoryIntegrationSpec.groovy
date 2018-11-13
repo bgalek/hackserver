@@ -56,7 +56,7 @@ class MongoExperimentsRepositoryIntegrationSpec extends BaseIntegrationSpec {
                 .deviceClass(DeviceClass.phone_android)
                 .customParameter(new CustomParameter('k','v'))
                 .goal(new ExperimentGoal.Hypothesis("tx_visit", 2),
-                      new ExperimentGoal.TestConfiguration(5, 0.05, 0.8, 100_000))
+                      new ExperimentGoal.TestConfiguration(5, 0.05, 0.8, 100_000, 44))
                 .build()
 
         when:
@@ -79,12 +79,12 @@ class MongoExperimentsRepositoryIntegrationSpec extends BaseIntegrationSpec {
         loaded.reportingDefinition == experiment.reportingDefinition
         loaded.deviceClass == experiment.deviceClass
         loaded.customParameter == experiment.customParameter
-        loaded.goal.hypothesis.leadingMetric == 'tx_visit'
-        loaded.goal.hypothesis.expectedDiffPercent == 2
-        loaded.goal.testConfiguration.leadingMetricBaselineValue == 5
-        loaded.goal.testConfiguration.requiredSampleSize == 100_000
-        loaded.goal.testConfiguration.testAlpha == 0.05
-        loaded.goal.testConfiguration.testPower == 0.8
+        loaded.goal.get().hypothesis.leadingMetric == 'tx_visit'
+        loaded.goal.get().hypothesis.expectedDiffPercent == 2
+        loaded.goal.get().testConfiguration.leadingMetricBaselineValue == 5
+        loaded.goal.get().testConfiguration.requiredSampleSize == 100_000
+        loaded.goal.get().testConfiguration.testAlpha == 0.05
+        loaded.goal.get().testConfiguration.testPower == 0.8
 
         when:
         Document doc = mongoTemplate.findById(experiment.id, Document, "experimentDefinitions")
@@ -123,6 +123,7 @@ class MongoExperimentsRepositoryIntegrationSpec extends BaseIntegrationSpec {
             assert it.get ('requiredSampleSize') == 100_000
             assert it.getString ('testAlpha') == '0.05'
             assert it.getString ('testPower') == '0.80'
+            assert it.get ('currentSampleSize') == 44
         }
     }
 
