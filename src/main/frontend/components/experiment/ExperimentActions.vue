@@ -324,7 +324,7 @@
               experimentId: this.experiment.id
             }
           }).then(response => {
-            this.getExperiment({params: {experimentId: this.experiment.id}})
+            this.getExperiment(this.experiment.id)
             this.commandOkMessage = 'Experiment successfully started'
           }).catch(error => {
             this.showError(error)
@@ -340,7 +340,7 @@
           params: {experimentId: this.experiment.id},
           data: {variantName: this.selectedFullOnVariant}
         }).then(response => {
-          this.getExperiment({params: {experimentId: this.experiment.id}})
+          this.getExperiment(this.experiment.id)
           this.commandOkMessage = 'Experiment made full-on'
         }).catch(error => {
           this.showError(error)
@@ -354,7 +354,7 @@
         this.stopExperiment({
           params: {experimentId: this.experiment.id}
         }).then(response => {
-          this.getExperiment({params: {experimentId: this.experiment.id}})
+          this.getExperiment(this.experiment.id)
           this.commandOkMessage = 'Experiment successfully stopped'
         }).catch(error => {
           this.showError(error)
@@ -368,7 +368,7 @@
         this.pauseExperiment({
           params: {experimentId: this.experiment.id}
         }).then(response => {
-          this.getExperiment({params: {experimentId: this.experiment.id}})
+          this.getExperiment(this.experiment.id)
           this.commandOkMessage = 'Experiment successfully paused'
         }).catch(error => {
           this.showError(error)
@@ -382,7 +382,7 @@
         this.resumeExperiment({
           params: {experimentId: this.experiment.id}
         }).then(response => {
-          this.getExperiment({params: {experimentId: this.experiment.id}})
+          this.getExperiment(this.experiment.id)
           this.commandOkMessage = 'Experiment successfully resumed'
         }).catch(error => {
           this.showError(error)
@@ -441,7 +441,7 @@
             experimentId: this.experiment.id
           }
         }).then(response => {
-          this.getExperiment({params: {experimentId: this.experiment.id}})
+          this.getExperiment(this.experiment.id)
           this.commandOkMessage = 'Experiment  successfully updated'
         }).catch(error => {
           this.showError(error)
@@ -472,7 +472,7 @@
             experimentId: this.experiment.id
           }
         }).then(response => {
-          this.getExperiment({params: {experimentId: this.experiment.id}})
+          this.getExperiment(this.experiment.id)
           this.commandOkMessage = 'Experiment successfully updated'
         }).catch(error => {
           this.showError(error)
@@ -491,7 +491,7 @@
             experimentId: this.experiment.id
           }
         }).then(response => {
-          this.getExperiment({params: {experimentId: this.experiment.id}})
+          this.getExperiment(this.experiment.id)
           this.commandOkMessage = 'Experiment successfully updated'
         }).catch(error => {
           this.showError(error)
@@ -514,7 +514,7 @@
               experimentId: this.experiment.id
             }
           }).then(response => {
-            this.getExperiment({params: {experimentId: this.experiment.id}})
+            this.getExperiment(this.experiment.id)
             this.commandOkMessage = 'Experiment successfully prolonged'
           }).catch(error => {
             this.showError(error)
@@ -533,7 +533,7 @@
             id: groupName
           }
         }).then(response => {
-          this.getExperiment({params: {experimentId: this.experiment.id}})
+          this.getExperiment(this.experiment.id)
           this.commandOkMessage = 'Experiment successfully added to group ' + groupName
         }).catch(error => {
           this.showError(error)

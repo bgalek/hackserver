@@ -6,7 +6,7 @@ import ActivityPeriod from './activity-period'
 import ExperimentGroup from './experiment-group'
 import ExperimentGoal from './experiment-goal'
 
-const ExperimentRecord = Record({
+const ExperimentDefinitionRecord = Record({
   id: null,
   variants: [],
   description: '',
@@ -37,29 +37,29 @@ const ExperimentRecord = Record({
   goal: null
 })
 
-export default class ExperimentModel extends ExperimentRecord {
-  constructor (experimentObject) {
-    experimentObject = Object.assign({}, experimentObject)
+export default class ExperimentDefinitionModel extends ExperimentDefinitionRecord {
+  constructor (experimentDefinitionObject) {
+    experimentDefinitionObject = Object.assign({}, experimentDefinitionObject)
 
-    experimentObject.activityPeriod = experimentObject.activityPeriod &&
-      new ActivityPeriod(experimentObject.activityPeriod)
+    experimentDefinitionObject.activityPeriod = experimentDefinitionObject.activityPeriod &&
+      new ActivityPeriod(experimentDefinitionObject.activityPeriod)
 
-    experimentObject.variants = List(experimentObject.renderedVariants).map((variant, i) =>
-      new ExperimentVariantModel(experimentObject.status === 'DRAFT', variant, i)).toArray()
+    experimentDefinitionObject.variants = List(experimentDefinitionObject.renderedVariants).map((variant, i) =>
+      new ExperimentVariantModel(experimentDefinitionObject.status === 'DRAFT', variant, i)).toArray()
 
-    experimentObject.experimentGroup = experimentObject.experimentGroup &&
-      new ExperimentGroup(experimentObject.experimentGroup)
+    experimentDefinitionObject.experimentGroup = experimentDefinitionObject.experimentGroup &&
+      new ExperimentGroup(experimentDefinitionObject.experimentGroup)
 
-    experimentObject.goal = experimentObject.goal &&
-      new ExperimentGoal(experimentObject.goal)
+    experimentDefinitionObject.goal = experimentDefinitionObject.goal &&
+      new ExperimentGoal(experimentDefinitionObject.goal)
 
-    experimentObject.hasBase = _.includes(_.map(experimentObject.variants, v => v.name), 'base')
-    experimentObject.isMeasured = experimentObject.hasBase && experimentObject.reportingEnabled
-    experimentObject.groups = List(experimentObject.groups)
-    experimentObject.variantNames = List(experimentObject.variantNames)
-    experimentObject.eventDefinitions = List(experimentObject.eventDefinitions)
+    experimentDefinitionObject.hasBase = _.includes(_.map(experimentDefinitionObject.variants, v => v.name), 'base')
+    experimentDefinitionObject.isMeasured = experimentDefinitionObject.hasBase && experimentDefinitionObject.reportingEnabled
+    experimentDefinitionObject.groups = List(experimentDefinitionObject.groups)
+    experimentDefinitionObject.variantNames = List(experimentDefinitionObject.variantNames)
+    experimentDefinitionObject.eventDefinitions = List(experimentDefinitionObject.eventDefinitions)
 
-    super(experimentObject)
+    super(experimentDefinitionObject)
   }
 
   desiredAlpha () {
@@ -174,5 +174,19 @@ export default class ExperimentModel extends ExperimentRecord {
       this.canBePaused() ||
       this.canBeResumed() ||
       this.canBeProlonged()
+  }
+
+  getInitialDevice () {
+    const baseClass = this.getBaseDeviceClass()
+
+    if (baseClass === 'desktop') {
+      return baseClass
+    }
+
+    if (baseClass && baseClass.startsWith('phone')) {
+      return 'smartphone'
+    }
+
+    return 'all'
   }
 };

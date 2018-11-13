@@ -39,14 +39,10 @@ public class ClassicStatisticsController {
     }
 
     @MeteredEndpoint
-    @GetMapping("/statistics/{experimentId}")
-    ResponseEntity<String> experimentsStatistics(
-            @PathVariable String experimentId,
-            @RequestParam(value = "device", required = false, defaultValue = "all") String device) {
+    @GetMapping("/admin/statistics/{experimentId}")
+    ResponseEntity<String> experimentStatistics(@PathVariable String experimentId) {
         logger.debug("Experiment statistics request received");
-        return statisticsRepository.getExperimentStatistics(experimentId, device)
-                .map(jsonConverter::toJson).map(ResponseEntity::ok)
-                .orElse(new ResponseEntity<>(HttpStatus.NO_CONTENT));
+        return ResponseEntity.ok(jsonConverter.toJson(statisticsRepository.getExperimentStatistics(experimentId)));
     }
 
     @MeteredEndpoint

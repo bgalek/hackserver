@@ -35,13 +35,12 @@ public class MongoClassicStatisticsForVariantMetricRepository implements Classic
     }
 
     @Override
-    public List<ClassicExperimentStatisticsForVariantMetric> getLatestForAllMetricsAndVariants(String experimentId, DeviceClass device) {
+    public List<ClassicExperimentStatisticsForVariantMetric> getLatestForAllMetricsAndVariants(String experimentId) {
         Timer timer = experimentsMongoMetricsReporter.timerReadClassicExperimentStatistics();
         try {
             Query query = new Query();
 
             query.addCriteria(Criteria.where("experimentId").is(experimentId));
-            query.addCriteria(Criteria.where("device").is(device.name()));
 
             return (timer.wrap(() -> mongoTemplate.find(query, ENTITY, COLLECTION)).call());
         } catch (Exception e) {

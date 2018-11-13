@@ -78,7 +78,11 @@ public class ExperimentsController {
                  experimentsRepository.getAll().stream()
                 .map(clientExperimentFactory::adminExperiment)
                 .map(it -> it.withMeasurements(measurementsRepository.getMeasurements(it.getId())))
-                .map(it -> it.withHorizontalEqualizer(bayesianChartsRepository.getHorizontalEqualizer(it.getId(), DeviceClass.all).orElse(null)))
+                .map(it -> it.withHorizontalEqualizer(
+                        bayesianChartsRepository.getHorizontalEqualizer(it.getId()).stream()
+                                .filter(eq -> eq.getMetadata().getDeviceClass().equals(DeviceClass.all))
+                                .findFirst()
+                                .orElse(null)))
                 .map(it -> experimentGroupRepository.findByExperimentId(it.getId())
                         .map(g -> it.withExperimentGroup(g))
                         .orElse(it))

@@ -1,5 +1,6 @@
 <template>
   <div>
+
     <template v-if="experiment.goal">
       <div>
         Improve the <span style="display:inline-block; border-bottom:1px solid black;">{{ leadingMetricLabel }}</span>

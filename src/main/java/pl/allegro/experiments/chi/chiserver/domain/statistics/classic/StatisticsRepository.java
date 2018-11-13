@@ -1,9 +1,9 @@
 package pl.allegro.experiments.chi.chiserver.domain.statistics.classic;
 
-import java.util.Optional;
+import java.util.List;
 
 public interface StatisticsRepository {
-    Optional<ClassicExperimentStatistics> getExperimentStatistics(String experimentId, String device);
+    List<ClassicExperimentStatistics> getExperimentStatistics(String experimentId);
 
     boolean hasAnyStatistics(String experimentId);
 }

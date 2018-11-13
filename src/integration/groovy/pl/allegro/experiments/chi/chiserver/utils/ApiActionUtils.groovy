@@ -16,7 +16,7 @@ trait ApiActionUtils {
         return "http://localhost:$port$endpoint"
     }
 
-    ResponseEntity get(String endpoint, Class type = Map) {
+    ResponseEntity get(String endpoint, Class type = List) {
         restTemplate.getForEntity(localUrl(endpoint), type)
     }
 
@@ -54,8 +54,8 @@ trait ApiActionUtils {
         new HttpEntity<>(statistics, headers)
     }
 
-    Map fetchStatistics(String experimentId) {
-        get("/api/statistics/$experimentId", Map).body as Map
+    List fetchStatistics(String experimentId) {
+        get("/api/admin/statistics/$experimentId", List).body as List
     }
 
     void startExperiment(String experimentId, long experimentDurationDays) {

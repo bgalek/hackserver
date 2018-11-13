@@ -3,11 +3,8 @@ import Vuex from 'vuex'
 
 import experiments from './experiments'
 import experimentGroups from './experimentGroups'
-import experiment from './experiment'
 import experimentAuditLog from './experimentAuditLog'
 import experimentStatistics from './experimentStatistics'
-import bayesianHistograms from './bayesianHistograms'
-import bayesianEqualizer from './bayesianEqualizer'
 import deleteExperiment from './deleteExperiment'
 import startExperiment from './startExperiment'
 import createExperiment from './createExperiment'
@@ -25,6 +22,7 @@ import createPersistedState from 'vuex-persistedstate'
 import makeExperimentFullOn from './makeExperimentFullOn'
 import calculateSampleSize from './calculateSampleSize'
 import enrichedGoal from './enrichedGoal'
+import experimentStore from './experimentStore'
 
 Vue.use(Vuex)
 
@@ -35,13 +33,11 @@ export default new Vuex.Store({
       paths: ['userPreferences']
     })],
   modules: {
-    experiment,
+    experimentStore,
     experiments,
     experimentGroups,
     experimentAuditLog,
     experimentStatistics,
-    bayesianHistograms,
-    bayesianEqualizer,
     createExperiment,
     addExperimentToGroup,
     startExperiment,
