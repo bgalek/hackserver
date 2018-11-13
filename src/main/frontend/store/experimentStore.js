@@ -15,9 +15,7 @@ export default {
 
   actions: {
     getExperiment (context, experimentId) {
-      console.log('before')
       context.dispatch('clearExperiment')
-      console.log('after dispatch')
       const experimentDefinitionPromise = axios.get(`/api/admin/experiments/${experimentId}`)
       const experimentStatisticsPromise = axios.get(`/api/admin/statistics/${experimentId}`)
       const experimentBayesianHistogramsPromise = axios.get(`/api/bayes/histograms/${experimentId}`)
@@ -30,10 +28,8 @@ export default {
           context.commit('setExperimentStatistics', experimentStatistics)
           context.commit('setExperimentBayesianHistograms', experimentBayesianHistograms)
           context.commit('setExperimentBayesianEqualizers', experimentBayesianEqualizers)
-          context.dispatch('enrichedGoal/update')
           context.commit('setExperimentReady', true)
         }).catch(response => {
-          console.log(response)
           context.commit('setExperimentError', response.toString())
         })
     },

@@ -53,7 +53,7 @@ public class ClassicStatisticsController {
             @RequestHeader(value = "Chi-Token", defaultValue = "") String chiToken) {
 
         if (!chiToken.equals(CHI_TOKEN)) {
-            return ResponseEntity.badRequest().build();
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
 
         var classicStats = jsonConverter.fromJson(stats, ClassicExperimentStatisticsForVariantMetric.class);

@@ -13,8 +13,8 @@
       </div>
 
       <div v-if="sampleSizeCalculatorEnabled" class="mt-2">
-        Required samples: <span style="display:inline-block; border-bottom:1px solid black;">{{ this.experiment.goal.requiredSampleSize}}</span> ,
-        gathered: {{ leadingStatsBaseCount }} ({{ progressPercent }}%)
+        Required samples: <span style="display:inline-block; border-bottom:1px solid black;">{{ experiment.goal.requiredSampleSize}}</span> ,
+        gathered: {{ experiment.goal.currentSampleSize }} ({{ progressPercent }}%)
       </div>
 
     </template>
@@ -27,7 +27,6 @@
 
 <script>
   import { getMetricByKey } from '../../model/experiment/metrics'
-  import {mapState} from 'vuex'
 
   export default {
     props: ['experiment'],
@@ -64,15 +63,8 @@
       },
 
       progressPercent () {
-        if (this.leadingStatsBaseCount && this.enrichedGoal.getProgressPercent()) {
-          return this.enrichedGoal.getProgressPercent()
-        }
-        return 0
-      },
-
-      ...mapState({
-        enrichedGoal: state => state.enrichedGoal.enrichedGoal
-      })
+        return this.goal && this.goal.getProgressPercent()
+      }
     }
   }
 </script>
