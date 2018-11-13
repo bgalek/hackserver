@@ -24,11 +24,8 @@ export default {
       return axios.all([experimentDefinitionPromise, experimentStatisticsPromise, experimentBayesianHistogramsPromise, experimentBayesianEqualizersPromise])
         .then((response) => {
           const [experimentDefinition, experimentStatistics, experimentBayesianHistograms, experimentBayesianEqualizers] = response.map(it => it.data)
-          context.commit('setExperimentDefinition', experimentDefinition)
-          context.commit('setExperimentStatistics', experimentStatistics)
-          context.commit('setExperimentBayesianHistograms', experimentBayesianHistograms)
-          context.commit('setExperimentBayesianEqualizers', experimentBayesianEqualizers)
-          context.commit('setExperimentReady', true)
+          context.commit('setFullExperiment', {experimentDefinition, experimentStatistics, experimentBayesianHistograms, experimentBayesianEqualizers})
+          context.dispatch('enrichedGoal/update')
         }).catch(response => {
           context.commit('setExperimentError', response.toString())
         })
@@ -41,20 +38,12 @@ export default {
   },
 
   mutations: {
-    setExperimentDefinition (state, experimentDefinition) {
+    setFullExperiment (state, {experimentDefinition, experimentStatistics, experimentBayesianHistograms, experimentBayesianEqualizers}) {
       state.experimentDefinition = new ExperimentDefinitionModel(experimentDefinition)
-    },
-
-    setExperimentStatistics (state, experimentStatistics) {
       state.experimentStatistics = new ExperimentStatisticsModel(experimentStatistics)
-    },
-
-    setExperimentBayesianHistograms (state, experimentBayesianHistograms) {
       state.experimentBayesianHistograms = new ExperimentBayesianStatisticsModel(experimentBayesianHistograms)
-    },
-
-    setExperimentBayesianEqualizers (state, experimentBayesianEqualizers) {
       state.experimentBayesianEqualizers = new ExperimentBayesianStatisticsModel(experimentBayesianEqualizers)
+      state.experimentReady = true
     },
 
     setExperimentReady (state, isReady) {
