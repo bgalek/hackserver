@@ -49,9 +49,6 @@ trait ApiActionUtils {
     }
 
     HttpEntity prepareStatisticsRequest(Map statistics) {
-
-        println "post" + statistics
-
         HttpHeaders headers = new HttpHeaders()
         headers.set("Chi-Token", ClassicStatisticsController.CHI_TOKEN)
         new HttpEntity<>(statistics, headers)
