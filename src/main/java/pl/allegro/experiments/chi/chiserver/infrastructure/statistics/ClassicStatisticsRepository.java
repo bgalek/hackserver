@@ -44,13 +44,17 @@ public class ClassicStatisticsRepository implements StatisticsRepository {
                     .computeIfAbsent(metric.getVariantName(), variantName -> metric.getData());
 
         }
-        LocalDate toDate = LocalDate.parse(stats.get(0).getToDate());
-        return metricStatisticsPerDevice.keySet().stream().map(deviceClassName ->
-                new ClassicExperimentStatistics(
-                        experimentId,
-                        toDate,
-                        DeviceClass.fromString(deviceClassName),
-                        metricStatisticsPerDevice.get(deviceClassName))).collect(Collectors.toList());
+        if (stats.size() >= 1) {
+            LocalDate toDate = LocalDate.parse(stats.get(0).getToDate());
+            return metricStatisticsPerDevice.keySet().stream().map(deviceClassName ->
+                    new ClassicExperimentStatistics(
+                            experimentId,
+                            toDate,
+                            DeviceClass.fromString(deviceClassName),
+                            metricStatisticsPerDevice.get(deviceClassName))).collect(Collectors.toList());
+        } else {
+            return Collections.emptyList();
+        }
     }
 
     private boolean validateDate(String experimentId, List<ClassicExperimentStatisticsForVariantMetric> stats) {
