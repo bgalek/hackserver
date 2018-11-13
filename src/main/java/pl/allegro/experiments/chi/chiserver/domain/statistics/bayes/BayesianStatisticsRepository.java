@@ -60,7 +60,7 @@ public class BayesianStatisticsRepository {
             return false;
         }
 
-        if (distinctDates.size() != 1) {
+        if (distinctDates.size() > 1) {
             logger.error("Corrupted bayesian statistics data for {}, toDate is not unique", experimentId);
             stats.forEach(it -> logger.error("- {} {} {} {}", it.getExperimentId(), it.getDevice(), it.getToDate(), it.getVariantName()));
             return false;

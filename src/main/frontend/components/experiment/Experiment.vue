@@ -94,7 +94,6 @@
           const initialDevice = state.experimentStore.experimentDefinition.getInitialDevice()
           const histograms = state.experimentStore.experimentBayesianHistograms
             .getForDevice(initialDevice)
-          console.log(histograms)
           return histograms.size > 0 ? histograms.metadata.toDate : null
         } else {
           return null

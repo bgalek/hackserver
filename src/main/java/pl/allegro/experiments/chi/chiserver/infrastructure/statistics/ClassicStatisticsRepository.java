@@ -55,7 +55,7 @@ public class ClassicStatisticsRepository implements StatisticsRepository {
 
     private boolean validateDate(String experimentId, List<ClassicExperimentStatisticsForVariantMetric> stats) {
         Set<String> distinctDates = stats.stream().map(it -> it.getToDate()).collect(Collectors.toSet());
-        if (distinctDates.size() != 1) {
+        if (distinctDates.size() > 1) {
             logger.error("Corrupted classic statistics data for {}, toDate is not unique", experimentId);
             stats.forEach(it -> logger.error("- {} {} {} {} {}", it.getExperimentId(), it.getDevice(), it.getToDate(), it.getVariantName(), it.getMetricName()));
             return false;
