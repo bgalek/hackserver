@@ -70,7 +70,7 @@
             <v-container fluid class="pa-0 ma-0">
               <v-layout row>
                 <v-flex offset-xs1>
-                  <h3 class="mt-3">Interactions reporting</h3>
+                  <h3 class="mt-3 blue--text">Interactions reporting</h3>
                 </v-flex>
               </v-layout>
 

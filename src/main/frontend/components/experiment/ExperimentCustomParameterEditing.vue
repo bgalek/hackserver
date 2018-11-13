@@ -4,7 +4,7 @@
 
       <v-layout row v-if="showHeader">
         <v-flex offset-xs1>
-          <h3 class="mt-3">Custom parameter</h3>
+          <h3 class="mt-3 blue--text">Custom parameter</h3>
         </v-flex>
       </v-layout>
 

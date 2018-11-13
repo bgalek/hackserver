@@ -5,7 +5,7 @@
 
       <v-layout row v-if="showHeader">
         <v-flex offset-xs1>
-          <h3 class="mt-3">Variants</h3>
+          <h3 class="mt-3 blue--text">Variants</h3>
         </v-flex>
       </v-layout>
 

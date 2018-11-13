@@ -5,7 +5,7 @@
 
     <v-layout row v-if="showHeader">
       <v-flex offset-xs1>
-        <h3 class="mt-3">Experiment goal</h3>
+        <h3 class="mt-3 blue--text">Experiment goal</h3>
       </v-flex>
     </v-layout>
 
@@ -162,7 +162,10 @@
 
     computed: {
       leadingDevice () {
-        let device = this.selectedDevice || this.experiment.deviceClass
+        let device = this.selectedDevice
+        if (this.experiment && this.experiment.deviceClass) {
+          device = this.experiment.deviceClass
+        }
 
         if (!device || device === 'all') {
           return 'all devices'
@@ -192,7 +195,9 @@
         handler: function (newValue) {
           if (this.validate()) {
             const result = this.buildResult(newValue)
-            this.calculate(newValue)
+            if (this.validate()) {
+              this.calculate(newValue)
+            }
             this.$emit('input', result)
           }
         },
@@ -203,7 +208,7 @@
     methods: {
       init (experiment) {
         const value = {
-          hasHypothesis: false,
+          hasHypothesis: true,
           leadingMetric: 'tx_visit',
           expectedDiffPercent: 2.5,
           testAlpha: 0.05,
@@ -212,6 +217,7 @@
           requiredSampleSize: 0
         }
 
+        this.calculate(value)
         return value
       },
 
@@ -241,7 +247,7 @@
       },
 
       calculate (value) {
-        if (!this.isCalculatorEnabled(value) || !this.validate()) {
+        if (!this.isCalculatorEnabled(value)) {
           return
         }
 
@@ -287,7 +293,7 @@
         if (typeof v === 'number') {
           return true
         }
-        return parseFloat(v).toString() === v
+        return !isNaN(v)
       }
     }
   }
