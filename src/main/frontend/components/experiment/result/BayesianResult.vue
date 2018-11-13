@@ -48,7 +48,7 @@
   import VariantSelector from './VariantSelector'
 
   export default {
-    props: ['experiment', 'bayesianHistograms', 'bayesianEqualizer', 'selectedDevice'],
+    props: ['experiment', 'bayesianHistograms', 'bayesianEqualizer', 'selectedDevice', 'histogramsToDate', 'initialVariantName'],
 
     components: {
       BayesianHistogramChart,
@@ -59,15 +59,13 @@
 
     data () {
       return {
-        histogramsToDate: this.bayesianHistograms.metadata && this.bayesianHistograms.metadata.toDate,
-        variantName: this.experiment.getFirstVariant() && this.experiment.getFirstVariant().name
+        variantName: this.initialVariantName
       }
     },
 
     computed: {
       histogramData: function () {
         const histograms = this.bayesianHistograms.histograms
-
         return histograms && histograms.find(x => x.variantName === this.variantName)
       }
     },

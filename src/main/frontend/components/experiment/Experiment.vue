@@ -31,6 +31,8 @@
             :selectedDevice="selectedDevice"
             :bayesianHistograms="selectedExperimentBayesianHistograms"
             :bayesianEqualizer="selectedExperimentBayesianEqualizers"
+            :histogramsToDate="selectedExperimentBayesianHistograms.metadata.toDate"
+            :initialVariantName="experimentDefinition.getFirstVariant().name"
           ></bayesian-result>
         </chi-panel>
 
