@@ -14,7 +14,10 @@
 
       <div v-if="sampleSizeCalculatorEnabled" class="mt-2">
         Required samples: <span style="display:inline-block; border-bottom:1px solid black;">{{ experiment.goal.requiredSampleSize}}</span> ,
-        gathered: {{ experiment.goal.currentSampleSize }} ({{ progressPercent }}%)
+        gathered:
+        <v-progress-circular rotate="270" color="blue" size="45" :value="experiment.goal.getProgressPercent()">
+          <span class="black--text">{{ experiment.goal.getProgressPercent() + '%' }}</span>
+        </v-progress-circular>
       </div>
 
     </template>
@@ -53,17 +56,6 @@
         } else {
           return 'on ' + device
         }
-      },
-
-      leadingStatsBaseCount () {
-        if (this.enrichedGoal && this.enrichedGoal.leadingStatsBaseCount > 0) {
-          return this.enrichedGoal.leadingStatsBaseCount
-        }
-        return 0
-      },
-
-      progressPercent () {
-        return this.goal && this.goal.getProgressPercent()
       }
     }
   }

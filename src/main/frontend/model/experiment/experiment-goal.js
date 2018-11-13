@@ -16,6 +16,6 @@ export default class ExperimentGoal extends ExperimentGoalRecord {
       return 0
     }
 
-    return (100 * this.currentSampleSize / this.requiredSampleSize).toFixed(1)
+    return Math.floor((100 * this.currentSampleSize / this.requiredSampleSize))
   }
 }
