@@ -17,7 +17,7 @@
             :experimentStatistics="selectedExperimentStatistics"
             :experimentStatisticsError="experimentError"
             :experimentStatisticsPending="!experimentReady"
-            v-if="experimentReady"
+            v-if="resultsReady()"
             :experiment="experimentDefinition"
             :selectedDevice="selectedDevice"
           ></result-table>
@@ -26,13 +26,13 @@
         <chi-panel title="Bayesian analysis">
           <bayesian-result
             @deviceChangedOnBayesian="onDeviceChanged"
-            v-if="experimentReady"
+            v-if="bayesianResultsReady()"
             :experiment="experimentDefinition"
             :selectedDevice="selectedDevice"
             :bayesianHistograms="selectedExperimentBayesianHistograms"
             :bayesianEqualizer="selectedExperimentBayesianEqualizers"
-            :histogramsToDate="selectedExperimentBayesianHistograms.metadata.toDate"
-            :initialVariantName="experimentDefinition.getFirstVariant().name"
+            :histogramsToDate="histogramsToDate"
+            :initialVariantName="initialVariantName"
           ></bayesian-result>
         </chi-panel>
 
@@ -89,6 +89,24 @@
       experimentDefinition: state => state.experimentStore.experimentDefinition,
       experimentStatistics: state => state.experimentStore.experimentStatistics,
       experimentBayesianHistograms: state => state.experimentStore.experimentBayesianHistograms,
+      histogramsToDate: state => {
+        if (state.experimentStore.experimentBayesianHistograms && state.experimentStore.experimentDefinition) {
+          const initialDevice = state.experimentStore.experimentDefinition.getInitialDevice()
+          const histograms = state.experimentStore.experimentBayesianHistograms
+            .getForDevice(initialDevice)
+          return histograms.size > 0 ? histograms.metadata.toDate : null
+        } else {
+          return null
+        }
+      },
+
+      initialVariantName: state => {
+        if (state.experimentStore.experimentDefinition) {
+          return state.experimentStore.experimentDefinition.getFirstVariant().name
+        } else {
+          return null
+        }
+      },
       experimentBayesianEqualizers: state => state.experimentStore.experimentBayesianEqualizers,
       experimentReady: state => state.experimentStore.experimentReady,
       experimentError: state => state.experimentStore.experimentError
@@ -116,6 +134,14 @@
         this.selectedExperimentStatistics = this.experimentStatistics.getForDevice(device)
         this.selectedExperimentBayesianHistograms = this.experimentBayesianHistograms.getForDevice(device)
         this.selectedExperimentBayesianEqualizers = this.experimentBayesianEqualizers.getForDevice(device)
+      },
+
+      bayesianResultsReady () {
+        return this.experimentReady && this.selectedExperimentBayesianHistograms && this.selectedExperimentBayesianEqualizers
+      },
+
+      resultsReady () {
+        return this.experimentReady && this.selectedExperimentStatistics
       }
     }
   }
