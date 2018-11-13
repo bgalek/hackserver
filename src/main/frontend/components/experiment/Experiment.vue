@@ -101,7 +101,7 @@
       },
 
       initialVariantName: state => {
-        if (state.experimentStore.experimentDefinition) {
+        if (state.experimentStore.experimentDefinition && state.experimentStore.experimentDefinition.getFirstVariant()) {
           return state.experimentStore.experimentDefinition.getFirstVariant().name
         } else {
           return null
@@ -137,7 +137,7 @@
       },
 
       bayesianResultsReady () {
-        return this.experimentReady && this.selectedExperimentBayesianHistograms && this.selectedExperimentBayesianEqualizers
+        return this.experimentReady && this.selectedExperimentBayesianHistograms && this.selectedExperimentBayesianEqualizers && this.initialVariantName
       },
 
       resultsReady () {
