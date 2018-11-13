@@ -15,7 +15,7 @@
       <div v-if="sampleSizeCalculatorEnabled" class="mt-2">
         Required samples: <span style="display:inline-block; border-bottom:1px solid black;">{{ experiment.goal.requiredSampleSize}}</span> ,
         gathered:
-        <v-progress-circular rotate="270" color="blue" size="45" :value="experiment.goal.getProgressPercent()">
+        <v-progress-circular :rotate="270" color="blue" size="45" :value="experiment.goal.getProgressPercent()">
           <span class="black--text">{{ experiment.goal.getProgressPercent() + '%' }}</span>
         </v-progress-circular>
       </div>
