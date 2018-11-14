@@ -11,11 +11,12 @@ import pl.allegro.experiments.chi.chiserver.domain.experiments.groups.Experiment
 import pl.allegro.experiments.chi.chiserver.domain.experiments.groups.ExperimentGroupRepository
 import pl.allegro.experiments.chi.chiserver.infrastructure.ClientExperimentFactory
 import spock.lang.Unroll
+
 import java.time.ZonedDateTime
+
 import static pl.allegro.experiments.chi.chiserver.domain.experiments.ExperimentDefinitionBuilder.experimentDefinition
 import static pl.allegro.experiments.chi.chiserver.domain.experiments.ExperimentStatus.*
 import static pl.allegro.experiments.chi.chiserver.infrastructure.experiments.fetch.ClientExperimentAssertions.assertHasSpecifiedInternalVariantWithDeviceClass
-import static pl.allegro.experiments.chi.chiserver.infrastructure.experiments.fetch.ClientExperimentAssertions.assertShredRange
 import static pl.allegro.experiments.chi.chiserver.infrastructure.experiments.fetch.ClientExperimentAssertions.assertShredRangeWithDeviceClass
 
 class ExperimentGroupE2ESpec extends BaseE2EIntegrationSpec {
@@ -27,121 +28,6 @@ class ExperimentGroupE2ESpec extends BaseE2EIntegrationSpec {
 
     @Autowired
     ClientExperimentFactory clientExperimentFactory
-
-    /**
-     * remove after migration
-     */
-    @Deprecated
-    def "should migrate legacy group"(){
-        given:
-        def salt = 'salt'
-        def experiment1 = experimentDefinition().id(UUID.randomUUID().toString())
-                                                .variantNames(["base","enabled","simplified"])
-                                                .percentage(10).activityPeriod(ZonedDateTime.now(), ZonedDateTime.now().plusDays(1)).build()
-
-        def experiment2 = experimentDefinition().id(UUID.randomUUID().toString())
-                                                .variantNames(["base","enabled","simplified"])
-                                                .percentage(5).activityPeriod(ZonedDateTime.now(), ZonedDateTime.now().plusDays(1)).build()
-
-        experimentsRepository.save(experiment1)
-        experimentsRepository.save(experiment2)
-
-        def group = new ExperimentGroup(UUID.randomUUID().toString(), salt, [experiment1.id, experiment2.id], AllocationTable.empty())
-        experimentGroupRepository.save(group)
-
-        when:
-        clientExperimentFactory.persistAllocationForLegacyGroup(group)
-
-        then:
-        def fresh = experimentGroupRepository.findById(group.id).get()
-        fresh.experiments == [experiment1.id, experiment2.id]
-        fresh.salt == salt
-        fresh.allocationTable.records.size() == 5
-
-        def exp1_v2 = fetchClientExperiment(experiment1.id)
-        def exp2_v2 = fetchClientExperiment(experiment2.id)
-
-        assertShredRange(exp1_v2, 'base',          90, 100, salt)
-        assertShredRange(exp1_v2, 'enabled',        0,  10, salt)
-        assertShredRange(exp1_v2, 'simplified',    10,  20, salt)
-        assertShredRange(exp2_v2, 'base',          95, 100, salt)
-        assertShredRange(exp2_v2, 'enabled',       20,  25, salt)
-        assertShredRange(exp2_v2, 'simplified',    25,  30, salt)
-    }
-
-    /**
-     * remove after migration
-     */
-    @Deprecated
-    def "should remove DRAFTs from legacy groups during migration"() {
-        given:
-        def salt = 'salt'
-        def draft = experimentDefinition().id(UUID.randomUUID().toString())
-                .variantNames(["base","enabled","simplified"])
-                .percentage(10).build()
-
-        def started = experimentDefinition().id(UUID.randomUUID().toString())
-                .variantNames(["base","enabled","simplified"])
-                .percentage(5).activityPeriod(ZonedDateTime.now(), ZonedDateTime.now().plusDays(1)).build()
-
-        experimentsRepository.save(draft)
-        experimentsRepository.save(started)
-
-        def group = new ExperimentGroup(UUID.randomUUID().toString(), salt, [draft.id, started.id], AllocationTable.empty())
-        experimentGroupRepository.save(group)
-
-        when:
-        clientExperimentFactory.persistAllocationForLegacyGroup(group)
-
-        then:
-        def fresh = experimentGroupRepository.findById(group.id).get()
-        fresh.experiments == [started.id]
-        fresh.salt == salt
-        fresh.allocationTable.records.size() == 3
-
-        def fetched_started = fetchClientExperiment(started.id)
-
-        assertShredRange(fetched_started, 'base',          95, 100, salt)
-        assertShredRange(fetched_started, 'enabled',       0,  5, salt)
-        assertShredRange(fetched_started, 'simplified',    5,  10, salt)
-    }
-
-    /**
-     * remove after migration
-     * simulates production
-     */
-    @Deprecated
-    def "should preserve percentage ranges on group fod"() {
-        given:
-        def fod = prepareFod()
-        def salt = "fod"
-
-        when:
-        clientExperimentFactory.persistAllocationForLegacyGroup(fod)
-
-        then:
-        def freshFod = experimentGroupRepository.findById(fod.id).get()
-
-        freshFod.experiments == [
-                "fod_generaldelivery_show_delivery_points",
-                "delivery-groups-experiment-09_2018_v1",
-                "fod_generaldelivery_show_delivery_points_v2"
-        ]
-        freshFod.salt == salt
-        freshFod.allocationTable.records.size() == 6
-
-        def delivery_groups_experiment_09_2018_v1 = fetchClientExperiment("delivery-groups-experiment-09_2018_v1")
-
-        assertShredRange(delivery_groups_experiment_09_2018_v1, 'base',95, 100, salt)
-        assertShredRange(delivery_groups_experiment_09_2018_v1, 'base1',1, 6, salt)
-        assertShredRange(delivery_groups_experiment_09_2018_v1, 'radio',6, 11, salt)
-        assertShredRange(delivery_groups_experiment_09_2018_v1, 'tile',11, 16, salt)
-
-        def fod_generaldelivery_show_delivery_points_v2 = fetchClientExperiment("fod_generaldelivery_show_delivery_points_v2")
-
-        assertShredRange(fod_generaldelivery_show_delivery_points_v2, 'base',70, 100, salt)
-        assertShredRange(fod_generaldelivery_show_delivery_points_v2, 'showallpoints',16, 46, salt)
-    }
 
     def prepareFod() {
         def fod_generaldelivery_show_delivery_points = experimentDefinition().id("fod_generaldelivery_show_delivery_points")
@@ -189,34 +75,6 @@ class ExperimentGroupE2ESpec extends BaseE2EIntegrationSpec {
 
         experimentGroupRepository.save(group)
         group
-    }
-
-    /**
-     * remove after migration
-     * simulates production
-     */
-    @Deprecated
-    def "should preserve percentage ranges on group listingi"() {
-        given:
-        def listingi = prepareListingi()
-        def salt = "mweb-spa-listing-final"
-
-        when:
-        clientExperimentFactory.persistAllocationForLegacyGroup(listingi)
-
-        then:
-        def freshLisingi = experimentGroupRepository.findById(listingi.id).get()
-
-        freshLisingi.experiments == ["listing_interline", "listing_average_product_rating", "mweb_spa_listing_extended"]
-        freshLisingi.salt == salt
-        freshLisingi.allocationTable.records.size() == 16
-
-        def mweb_spa_listing_extended = fetchClientExperiment("mweb_spa_listing_extended")
-
-        assertShredRangeWithDeviceClass(mweb_spa_listing_extended, 'base', 'phone-android', 90, 100, salt)
-        assertShredRangeWithDeviceClass(mweb_spa_listing_extended, 'enabled', 'phone-android', 65, 75, salt)
-        assertShredRangeWithDeviceClass(mweb_spa_listing_extended, 'simplified', 'phone-android', 75, 85, salt)
-        assertHasSpecifiedInternalVariantWithDeviceClass(mweb_spa_listing_extended, 'base', 'phone-android')
     }
 
     def prepareListingi() {

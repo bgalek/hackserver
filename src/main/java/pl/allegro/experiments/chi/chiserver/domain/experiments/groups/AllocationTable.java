@@ -4,6 +4,7 @@ import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 import pl.allegro.experiments.chi.chiserver.domain.experiments.ExperimentDefinition;
+import pl.allegro.experiments.chi.chiserver.domain.experiments.ExperimentVariant;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -11,7 +12,7 @@ import java.util.stream.Collectors;
 import static java.util.Comparator.comparingInt;
 
 public class AllocationTable {
-    final static String BASE = "base";
+    final static String BASE = ExperimentVariant.BASE;
     final static String SHARED_BASE = "*";
 
     private final List<AllocationRecord> records;

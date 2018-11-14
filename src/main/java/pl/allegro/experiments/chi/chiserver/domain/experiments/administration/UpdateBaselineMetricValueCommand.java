@@ -6,8 +6,11 @@ import org.slf4j.LoggerFactory;
 import pl.allegro.experiments.chi.chiserver.domain.calculator.SampleSizeCalculator;
 import pl.allegro.experiments.chi.chiserver.domain.experiments.DeviceClass;
 import pl.allegro.experiments.chi.chiserver.domain.experiments.ExperimentDefinition;
+import pl.allegro.experiments.chi.chiserver.domain.experiments.ExperimentVariant;
 import pl.allegro.experiments.chi.chiserver.domain.experiments.ExperimentsRepository;
 import pl.allegro.experiments.chi.chiserver.domain.statistics.classic.ClassicExperimentStatisticsForVariantMetric;
+
+import static pl.allegro.experiments.chi.chiserver.domain.experiments.ExperimentVariant.isBase;
 
 class UpdateBaselineMetricValueCommand implements ExperimentCommand {
     private static final Logger logger = LoggerFactory.getLogger(UpdateBaselineMetricValueCommand.class);
@@ -25,26 +28,26 @@ class UpdateBaselineMetricValueCommand implements ExperimentCommand {
     }
 
     public void execute() {
-        ExperimentDefinition experiment = experimentsRepository.getExperiment(currentStats.getExperimentId())
-                .orElse(null);
+        experimentsRepository.getExperiment(currentStats.getExperimentId()).ifPresent(experiment -> {
+            if (shouldBeExecuted(experiment)) {
+                var newBaselineMetricValuePercent = currentStats.getData().getValue() * 100;
+                var newCurrentSampleSize = currentStats.getData().getCount();
 
-        if (shouldBeExecuted(experiment)) {
-            var newBaselineMetricValuePercent = currentStats.getData().getValue() * 100;
-            var newCurrentSampleSize = currentStats.getData().getCount();
+                logger.info("updating baselineMetricValue of experiment {} to {}, device: {}, metric: {}, count: {}", experiment
+                        .getId(), newBaselineMetricValuePercent, currentStats.getDevice(), currentStats.getMetricName(), newCurrentSampleSize);
+                var mutatedGoal = experiment.getGoal().get().updateBaselineMetricValue(newBaselineMetricValuePercent);
 
-            logger.info("updating baselineMetricValue of experiment {} to {}, device: {}, metric: {}, count: {}", experiment.getId(), newBaselineMetricValuePercent, currentStats.getDevice(), currentStats.getMetricName(), newCurrentSampleSize);
-            var mutatedGoal = experiment.getGoal().get().updateBaselineMetricValue(newBaselineMetricValuePercent);
+                var newRequiredSampleSize = sampleSizeCalculator.calculateSampleSize(mutatedGoal);
+                mutatedGoal = mutatedGoal.updateRequiredSampleSize(newRequiredSampleSize, newCurrentSampleSize);
 
-            var newRequiredSampleSize = sampleSizeCalculator.calculateSampleSize(mutatedGoal);
-            mutatedGoal = mutatedGoal.updateRequiredSampleSize(newRequiredSampleSize, newCurrentSampleSize);
-
-            ExperimentDefinition mutated = experiment.mutate().goal(mutatedGoal).build();
-            experimentsRepository.save(mutated);
-        }
+                ExperimentDefinition mutated = experiment.mutate().goal(mutatedGoal).build();
+                experimentsRepository.save(mutated);
+            }
+        });
     }
 
     private boolean shouldBeExecuted(ExperimentDefinition experiment) {
-        if (experiment == null || !"base".equals(currentStats.getVariantName())) {
+        if (!isBase(currentStats.getVariantName())) {
             return false;
         }
 

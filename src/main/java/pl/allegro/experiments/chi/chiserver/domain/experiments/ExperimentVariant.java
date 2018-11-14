@@ -7,6 +7,8 @@ import joptsimple.internal.Strings;
 import java.util.List;
 
 public class ExperimentVariant {
+    public static final String BASE = "base";
+
     private final String name;
     private final List<Predicate> predicates;
 
@@ -23,5 +25,9 @@ public class ExperimentVariant {
 
     public List<Predicate> getPredicates() {
         return predicates;
+    }
+
+    public static final boolean isBase(String variantName) {
+        return BASE.equalsIgnoreCase(variantName);
     }
 }

@@ -163,22 +163,4 @@ public class ExperimentGroup implements Comparable<ExperimentGroup> {
                 "id='" + id + '\'' +
                 '}';
     }
-
-    /**
-     * TODO remove after migration
-     *
-     */
-    @Deprecated
-    public ExperimentGroup allocateExistingExperimentLegacy(String expId, List<VariantPercentageAllocation> legacyAllocation) {
-        List<AllocationRecord> kosherAllocation = legacyAllocation.stream()
-                .filter(l -> !l.getVariantName().equals("base") || (l.getVariantName().equals("base") && l.getRange().size() > getSharedBaseAllocationSum()))
-                .map(a -> {
-                    if (a.getVariantName().equals("base"))
-                        return AllocationRecord.forSharedBase(a.getRange());
-                    else
-                        return new AllocationRecord(expId, a.getVariantName(), a.getRange());
-                }).collect(Collectors.toList());
-
-        return new ExperimentGroup(id, salt, experiments, allocationTable.mergeAll(kosherAllocation));
-    }
 }

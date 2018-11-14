@@ -40,7 +40,7 @@ final class AllocationRecord {
     }
 
     static AllocationRecord forSharedBase(PercentageRange range) {
-        return new AllocationRecord(SHARED_BASE, "base", range);
+        return new AllocationRecord(SHARED_BASE, AllocationTable.BASE, range);
     }
 
     List<Integer> getBuckets() {
