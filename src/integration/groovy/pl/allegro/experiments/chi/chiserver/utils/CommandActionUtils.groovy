@@ -5,6 +5,7 @@ import pl.allegro.experiments.chi.chiserver.domain.experiments.EventDefinition
 import pl.allegro.experiments.chi.chiserver.domain.experiments.administration.ExperimentActions
 import pl.allegro.experiments.chi.chiserver.domain.experiments.administration.ExperimentCreationRequest
 import pl.allegro.experiments.chi.chiserver.domain.experiments.administration.AddExperimentToGroupRequest
+import pl.allegro.experiments.chi.chiserver.domain.experiments.administration.ExperimentTagCreationRequest
 import pl.allegro.experiments.chi.chiserver.domain.experiments.administration.MakeExperimentFullOnProperties
 import pl.allegro.experiments.chi.chiserver.domain.experiments.administration.ProlongExperimentProperties
 import pl.allegro.experiments.chi.chiserver.domain.experiments.administration.StartExperimentProperties
@@ -17,6 +18,10 @@ trait CommandActionUtils {
 
     void createExperiment(ExperimentCreationRequest request) {
         experimentActions.create(request)
+    }
+
+    void createExperimentTag(ExperimentTagCreationRequest request) {
+        experimentActions.createExperimentTag(request)
     }
 
     void startExperiment(String experimentId, long experimentDurationDays) {

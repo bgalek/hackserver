@@ -14,6 +14,7 @@ import pl.allegro.experiments.chi.chiserver.application.experiments.CrisisManage
 import pl.allegro.experiments.chi.chiserver.application.experiments.WhitelistCrisisManagementFilter;
 import pl.allegro.experiments.chi.chiserver.domain.UserProvider;
 import pl.allegro.experiments.chi.chiserver.domain.experiments.ExperimentDefinition;
+import pl.allegro.experiments.chi.chiserver.domain.experiments.ExperimentTagRepository;
 import pl.allegro.experiments.chi.chiserver.domain.experiments.ExperimentsRepository;
 import pl.allegro.experiments.chi.chiserver.domain.experiments.groups.ExperimentGroupRepository;
 import pl.allegro.experiments.chi.chiserver.domain.statistics.MeasurementsRepository;
@@ -55,6 +56,12 @@ public class ExperimentsRepositoryConfig {
                 r -> r.getAll().stream().filter(ExperimentDefinition::isDraft).count());
 
         return repository;
+    }
+
+    @Bean
+    ExperimentTagRepository experimentTagRepository(
+            MongoExperimentTagRepository mongoExperimentTagRepository) {
+        return mongoExperimentTagRepository;
     }
 
     @Bean

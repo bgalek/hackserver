@@ -20,6 +20,10 @@ public class ExperimentActions {
         commandFactory.createExperimentCommand(experimentCreationRequest).execute();
     }
 
+    public void createExperimentTag(ExperimentTagCreationRequest experimentTagCreationRequest) {
+        commandFactory.createExperimentTagCommand(experimentTagCreationRequest).execute();
+    }
+
     public void start(
             String experimentId,
             StartExperimentProperties properties) {
