@@ -87,7 +87,7 @@ public class AdminExperiment {
         return this.experimentDefinition.getDeviceClass().map(it -> it.toJsonString());
     }
 
-    public ExperimentGoal getGoal() {
+    public Optional<ExperimentGoal> getGoal() {
         return experimentDefinition.getGoal();
     }
 

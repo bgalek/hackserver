@@ -105,7 +105,6 @@ export default class ExperimentStatisticsModel extends ExperimentStatisticsRecor
   }
 
   any () {
-    console.log(this.deviceStatistics.size)
     return this.deviceStatistics.size !== 0
   }
 }

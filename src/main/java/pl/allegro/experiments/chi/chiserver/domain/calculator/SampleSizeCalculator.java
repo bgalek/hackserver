@@ -3,6 +3,7 @@ package pl.allegro.experiments.chi.chiserver.domain.calculator;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableMap;
 import org.springframework.stereotype.Service;
+import pl.allegro.experiments.chi.chiserver.domain.experiments.ExperimentGoal;
 
 import java.math.BigDecimal;
 import java.util.Map;
@@ -25,7 +26,15 @@ public class SampleSizeCalculator {
         round2(0.95), 1.645
     );
 
-    public long calculateSampleSize(SampleSizeCalculatorRequest request) {
+    public int calculateSampleSize(ExperimentGoal goal) {
+        return calculateSampleSize(new SampleSizeCalculatorRequest(
+                goal.getTestConfiguration().getTestAlpha().doubleValue(),
+                goal.getTestConfiguration().getTestPower().doubleValue(),
+                goal.getTestConfiguration().getLeadingMetricBaselineValue().doubleValue(),
+                goal.getHypothesis().getExpectedDiffPercent().doubleValue()));
+    }
+
+    public int calculateSampleSize(SampleSizeCalculatorRequest request) {
         Preconditions.checkArgument(request != null);
         Preconditions.checkArgument(isValidPercent(request.getBaselineMetricValue()), "baselineMetricValue should be valid in range (0,100), got:" + request.getBaselineMetricValue());
         Preconditions.checkArgument(isValidPercent(request.getExpectedDiffPercent()), "expectedDiffPercent should be valid in range (0,100), got:" + request.getExpectedDiffPercent());
@@ -44,7 +53,7 @@ public class SampleSizeCalculator {
         var diff = 0.01 * request.getExpectedDiffPercent();
         var z = 2 * Math.pow(alphaZScore.doubleValue() + powerZScore.doubleValue(), 2);
 
-        return Math.round(z * (cr*(1-cr)) / Math.pow(cr*diff,2));
+        return (int)Math.round(z * (cr*(1-cr)) / Math.pow(cr*diff,2));
     }
 
     public enum TestType {

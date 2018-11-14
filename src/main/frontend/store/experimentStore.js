@@ -25,7 +25,6 @@ export default {
         .then((response) => {
           const [experimentDefinition, experimentStatistics, experimentBayesianHistograms, experimentBayesianEqualizers] = response.map(it => it.data)
           context.commit('setFullExperiment', {experimentDefinition, experimentStatistics, experimentBayesianHistograms, experimentBayesianEqualizers})
-          context.dispatch('enrichedGoal/update')
         }).catch(response => {
           context.commit('setExperimentError', response.toString())
         })

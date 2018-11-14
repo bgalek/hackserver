@@ -4,14 +4,14 @@
 
       <v-layout row v-if="showHeader">
         <v-flex offset-xs1>
-          <h3 class="mt-3">Custom parameter</h3>
+          <h3 class="mt-3 blue--text">Custom parameter</h3>
         </v-flex>
       </v-layout>
 
       <v-layout row text-xs-center align-center>
 
         <v-flex xs1 right>
-          <v-tooltip top>
+          <v-tooltip right close-delay="1000">
             <span>
               Custom parameter
               <br/>

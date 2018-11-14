@@ -5,13 +5,13 @@
 
       <v-layout row v-if="showHeader">
         <v-flex offset-xs1>
-          <h3 class="mt-3">Variants</h3>
+          <h3 class="mt-3 blue--text">Variants</h3>
         </v-flex>
       </v-layout>
 
       <v-layout row text-xs-center align-center>
         <v-flex xs1 >
-          <v-tooltip top>
+          <v-tooltip right>
             <ul>
               <li>all = any kind of device</li>
               <li>desktop = classic web browser on desktop or laptop</li>
@@ -69,7 +69,7 @@
       <v-layout row align-center text-xs-center>
 
         <v-flex xs1>
-          <v-tooltip top>
+          <v-tooltip right>
             <span>
               Percent of traffic eligible for experiments to be assigned for each variant.
               <br/>

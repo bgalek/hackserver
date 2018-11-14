@@ -5,12 +5,19 @@
       <div>
         Improve the <span style="display:inline-block; border-bottom:1px solid black;">{{ leadingMetricLabel }}</span>
         by at least <span style="display:inline-block; border-bottom:1px solid black;">{{ experiment.goal.expectedDiffPercent}}</span>%
-        <span v-if="leadingDevice" style="display:inline-block; border-bottom:1px solid black;">{{ leadingDevice }}</span>
+        <span v-if="leadingDevice" style="display:inline-block; border-bottom:1px solid black;">{{ leadingDevice }}</span>,
+        starting from
+        <span style="display:inline-block; border-bottom:1px solid black;">
+          {{ experiment.goal.leadingMetricBaselineValue}}
+        </span>% baseline.
       </div>
 
       <div v-if="sampleSizeCalculatorEnabled" class="mt-2">
-        Required samples: <span style="display:inline-block; border-bottom:1px solid black;">{{ this.experiment.goal.requiredSampleSize}}</span> ,
-        gathered: {{ leadingStatsBaseCount }} ({{ progressPercent }}%)
+        Required samples: <span style="display:inline-block; border-bottom:1px solid black;">{{ experiment.goal.requiredSampleSize}}</span> ,
+        gathered:
+        <v-progress-circular :rotate="270" color="blue" size="45" :value="experiment.goal.getProgressPercent()">
+          <span class="black--text">{{ experiment.goal.getProgressPercent() + '%' }}</span>
+        </v-progress-circular>
       </div>
 
     </template>
@@ -23,7 +30,6 @@
 
 <script>
   import { getMetricByKey } from '../../model/experiment/metrics'
-  import {mapState} from 'vuex'
 
   export default {
     props: ['experiment'],
@@ -50,25 +56,7 @@
         } else {
           return 'on ' + device
         }
-      },
-
-      leadingStatsBaseCount () {
-        if (this.enrichedGoal && this.enrichedGoal.leadingStatsBaseCount > 0) {
-          return this.enrichedGoal.leadingStatsBaseCount
-        }
-        return 0
-      },
-
-      progressPercent () {
-        if (this.leadingStatsBaseCount && this.enrichedGoal.getProgressPercent()) {
-          return this.enrichedGoal.getProgressPercent()
-        }
-        return 0
-      },
-
-      ...mapState({
-        enrichedGoal: state => state.enrichedGoal.enrichedGoal
-      })
+      }
     }
   }
 </script>

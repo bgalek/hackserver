@@ -45,9 +45,7 @@ public class AdminExperimentTypeSerializer implements JsonSerializer<AdminExperi
         if (src.getLastStatusChange() != null) {
             jsonObject.add("lastStatusChange", context.serialize(src.getLastStatusChange()));
         }
-        if (src.getGoal() != null) {
-            jsonObject.add("goal", serializeExperimentGoal(src.getGoal(), context));
-        }
+        src.getGoal().ifPresent(goal -> jsonObject.add("goal", serializeExperimentGoal(goal, context)));
         return jsonObject;
     }
 
@@ -60,6 +58,7 @@ public class AdminExperimentTypeSerializer implements JsonSerializer<AdminExperi
         jsonObject.addProperty("testAlpha", goal.getTestConfiguration().getTestAlpha());
         jsonObject.addProperty("testPower", goal.getTestConfiguration().getTestPower());
         jsonObject.addProperty("requiredSampleSize", goal.getTestConfiguration().getRequiredSampleSize());
+        jsonObject.addProperty("currentSampleSize", goal.getTestConfiguration().getCurrentSampleSize());
 
         return jsonObject;
     }

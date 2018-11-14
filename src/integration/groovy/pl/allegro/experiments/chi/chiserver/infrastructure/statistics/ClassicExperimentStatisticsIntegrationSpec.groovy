@@ -8,6 +8,47 @@ import static pl.allegro.experiments.chi.chiserver.utils.SampleStatisticsRequest
 
 class ClassicExperimentStatisticsIntegrationSpec extends BaseE2EIntegrationSpec {
 
+    def "should update experiment goal configuration when new stats are coming"(){
+        given:
+        def  goal = [
+                leadingMetric: 'tx_visit',
+                expectedDiffPercent: 2,
+                leadingMetricBaselineValue : 5,
+                testAlpha : 0.05,
+                testPower : 0.85,
+                requiredSampleSize: 1000
+        ]
+
+        def experiment = startedExperiment([goal: goal])
+
+        def newStats = sampleClassicStatisticsRequest([
+                experimentId: experiment.id,
+                metricName  : "tx_visit",
+                variantName:  "base",
+                device:       "all",
+                data        : [
+                    value : 0.025,
+                    count : 877500
+                ]
+        ])
+
+        when:
+        postClassicStatistics(newStats)
+        experiment = fetchExperiment(experiment.id as String)
+
+        then:
+        with(experiment.goal) {
+            println it
+            assert it.leadingMetric == 'tx_visit'
+            assert it.expectedDiffPercent == 2
+            assert it.leadingMetricBaselineValue == 2.5
+            assert it.testAlpha == 0.05
+            assert it.testPower == 0.85
+            assert it.requiredSampleSize == 1755000
+            assert it.currentSampleSize == 877500
+        }
+    }
+
     def "should save and return classic statistics"() {
         given:
         def experiment = startedExperiment()

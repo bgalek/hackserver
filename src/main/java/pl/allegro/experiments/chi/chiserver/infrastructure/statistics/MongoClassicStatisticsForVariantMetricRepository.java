@@ -10,11 +10,14 @@ import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Repository;
 import pl.allegro.experiments.chi.chiserver.domain.experiments.DeviceClass;
+import pl.allegro.experiments.chi.chiserver.domain.experiments.ExperimentVariant;
 import pl.allegro.experiments.chi.chiserver.domain.statistics.classic.ClassicExperimentStatisticsForVariantMetric;
 import pl.allegro.experiments.chi.chiserver.domain.statistics.classic.ClassicStatisticsForVariantMetricRepository;
 import pl.allegro.experiments.chi.chiserver.infrastructure.experiments.ExperimentsMongoMetricsReporter;
 
 import java.util.List;
+
+import static pl.allegro.experiments.chi.chiserver.domain.experiments.ExperimentVariant.BASE;
 
 @Repository
 public class MongoClassicStatisticsForVariantMetricRepository implements ClassicStatisticsForVariantMetricRepository {
@@ -55,7 +58,7 @@ public class MongoClassicStatisticsForVariantMetricRepository implements Classic
             Query query = new Query();
             query.addCriteria(
                     Criteria.where("experimentId").is(experimentId)
-                            .and("variantName").ne("base")
+                            .and("variantName").ne(BASE)
                             .and("device").ne("other")
                             .and("metricName").in("gmv", "gmv_daily", "tx_visit", "tx_daily", "gmv_cmuid", "tx_cmuid"));
 

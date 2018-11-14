@@ -27,14 +27,6 @@ public class DbMigrateTool {
     @PostConstruct
     public void action() throws Exception {
         logger.info("running DbMigrateTool ...");
-
-        persistAllocationTables();
-    }
-
-    private void persistAllocationTables() {
-        experimentGroupRepository.findAll().stream()
-                .filter(g -> g.getAllocationTable().isEmpty())
-                .forEach(g ->  clientExperimentFactory.persistAllocationForLegacyGroup(g));
     }
 
 }

@@ -123,7 +123,8 @@ public class ExperimentCreationRequest {
                         round2(goal.getLeadingMetricBaselineValue()),
                         round2(goal.getTestAlpha()),
                         round2(goal.getTestPower()),
-                        goal.getRequiredSampleSize());
+                        goal.getRequiredSampleSize(),
+                        0);
                 builder.goal(hypothesis, config);
             }
             return builder.build();

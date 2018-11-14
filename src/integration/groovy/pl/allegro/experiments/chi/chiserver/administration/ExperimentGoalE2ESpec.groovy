@@ -27,6 +27,7 @@ class ExperimentGoalE2ESpec extends BaseE2EIntegrationSpec {
           assert it.testAlpha == 0.05
           assert it.testPower == 0.80
           assert it.requiredSampleSize == 1000
+          assert it.currentSampleSize == 0
       }
     }
 }
