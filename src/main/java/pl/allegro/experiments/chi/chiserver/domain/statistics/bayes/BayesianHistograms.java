@@ -1,7 +1,6 @@
 package pl.allegro.experiments.chi.chiserver.domain.statistics.bayes;
 
 import com.google.common.base.Preconditions;
-import com.google.common.collect.Lists;
 import com.google.common.collect.Streams;
 
 import java.math.BigDecimal;
@@ -13,18 +12,18 @@ import java.util.stream.Stream;
 public class BayesianHistograms {
     private final BayesianChartMetadata metadata;
     private final List<VariantHistogram> histograms;
+
+    //admin app needs it
+    private final String metricName;
+
     private static final double BOX_SIZE = 0.002;
 
     public BayesianHistograms(BayesianExperimentStatistics experimentStatistics) {
-        this(new BayesianChartMetadata(experimentStatistics,BOX_SIZE),
-             experimentStatistics.getVariantBayesianStatistics().stream()
-                        .map(BayesianHistograms::toHistogram)
-                        .collect(Collectors.toList()));
-    }
-
-    private BayesianHistograms(BayesianChartMetadata metadata, List<VariantHistogram> histograms) {
-        this.metadata = metadata;
-        this.histograms = histograms;
+        this.metadata = new BayesianChartMetadata(experimentStatistics,BOX_SIZE);
+        this.histograms = experimentStatistics.getVariantBayesianStatistics().stream()
+                .map(BayesianHistograms::toHistogram)
+                .collect(Collectors.toList());
+        this.metricName = experimentStatistics.getMetricName();
     }
 
     private static VariantHistogram toHistogram(VariantBayesianStatistics rawStatistics) {

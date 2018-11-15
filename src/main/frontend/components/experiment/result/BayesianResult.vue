@@ -11,17 +11,6 @@
       <b>{{ this.histogramsToDate }}</b>.
     </p>
 
-    <v-container v-if="this.showEqualizer()">
-      <h4>Visits conversion equalizer</h4>
-      <br/>
-      <bayesian-equalizer-chart v-if="this.showEqualizer()"
-                                :equalizerData="bayesianEqualizer"
-
-      ></bayesian-equalizer-chart>
-      <v-spacer></v-spacer>
-    <br/>
-    </v-container>
-
     <v-container v-if="this.histogramData">
       <h4>Visits conversion histogram</h4>
       <v-layout row>
@@ -33,10 +22,11 @@
           :showBase="false"
         ></variant-selector>
       </v-layout>
+
       <bayesian-histogram-chart v-if="this.histogramData"
-        :histogramData="histogramData"
-      >
+                                :histogramData="histogramData">
       </bayesian-histogram-chart>
+
     </v-container>
   </v-container>
 </template>
@@ -44,15 +34,13 @@
 <script>
   import DeviceSelector from './DeviceSelector'
   import BayesianHistogramChart from './BayesianHistogramChart'
-  import BayesianEqualizerChart from './BayesianEqualizerChart'
   import VariantSelector from './VariantSelector'
 
   export default {
-    props: ['experiment', 'bayesianHistograms', 'bayesianEqualizer', 'selectedDevice'],
+    props: ['experiment', 'bayesianHistograms', 'selectedDevice'],
 
     components: {
       BayesianHistogramChart,
-      BayesianEqualizerChart,
       VariantSelector,
       DeviceSelector
     },
@@ -68,6 +56,8 @@
       histogramData: function () {
         const histograms = this.bayesianHistograms.histograms
 
+        console.log("histograms", histograms)
+
         return histograms && histograms.find(x => x.variantName === this.variantName)
       }
     },
@@ -79,12 +69,6 @@
 
       showHistogram () {
         return this.histogramData
-      },
-
-      showEqualizer () {
-        return this.experiment.isMultiVariant() &&
-               this.bayesianEqualizer &&
-               this.bayesianEqualizer.bars && this.bayesianEqualizer.bars.length > 0
       },
 
       deviceChanged ({device}) {

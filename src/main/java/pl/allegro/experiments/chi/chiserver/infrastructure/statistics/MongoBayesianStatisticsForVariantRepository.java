@@ -9,12 +9,15 @@ import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Repository;
-import pl.allegro.experiments.chi.chiserver.domain.experiments.DeviceClass;
 import pl.allegro.experiments.chi.chiserver.domain.statistics.bayes.BayesianExperimentStatisticsForVariant;
 import pl.allegro.experiments.chi.chiserver.domain.statistics.bayes.BayesianStatisticsForVariantRepository;
 import pl.allegro.experiments.chi.chiserver.infrastructure.experiments.ExperimentsMongoMetricsReporter;
 
+import java.util.Comparator;
 import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Repository
 public class MongoBayesianStatisticsForVariantRepository implements BayesianStatisticsForVariantRepository {
@@ -39,10 +42,20 @@ public class MongoBayesianStatisticsForVariantRepository implements BayesianStat
         Timer timer = experimentsMongoMetricsReporter.timerReadBayesianExperimentStatistics();
         try {
             Query query = new Query();
-
             query.addCriteria(Criteria.where("experimentId").is(experimentId));
 
-            return (List)(timer.wrap(() -> mongoTemplate.find(query, ENTITY, COLLECTION)).call());
+            List<BayesianExperimentStatisticsForVariant> records =
+                    (List)(timer.wrap(() -> mongoTemplate.find(query, ENTITY, COLLECTION)).call());
+
+            Map<String, Optional<BayesianExperimentStatisticsForVariant>> maxDateByMetric = records
+                    .stream()
+                    .collect(Collectors.groupingBy(BayesianExperimentStatisticsForVariant::getMetricName,
+                             Collectors.maxBy(Comparator.comparing(BayesianExperimentStatisticsForVariant::getToDate))));
+
+            //return only latest stats for each metric
+            return records.stream()
+                    .filter(r -> r.getToDate().equals(maxDateByMetric.get(r.getMetricName()).get().getToDate()))
+                    .collect(Collectors.toList());
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
@@ -52,40 +65,23 @@ public class MongoBayesianStatisticsForVariantRepository implements BayesianStat
     public void save(BayesianExperimentStatisticsForVariant newStats) {
         Timer timer = experimentsMongoMetricsReporter.timerWriteBayesianExperimentStatistics();
         timer.record(() -> {
-            int existingVersion = getExistingVersion(newStats);
-            logger.info("Existing version of Bayesian stats for: {} {} {} is {}", newStats.getExperimentId(), newStats.getDevice(), newStats.getVariantName(), existingVersion);
+            removeOldStats(newStats);
 
-            newStats.setVersion(existingVersion + 1);
-            logger.info("Saving new Bayesian stats for: {} {} {} {} {}", newStats.getExperimentId(), newStats.getDevice(), newStats.getVariantName(), newStats.getToDate(), newStats.getVersion());
+            logger.info("Saving new Bayesian stats for: {} {} {} {} {}", newStats.getExperimentId(), newStats.getMetricName(), newStats.getDevice(), newStats.getVariantName(), newStats.getToDate());
             mongoTemplate.save(newStats, COLLECTION);
-
-            removeOldStats(newStats.getExperimentId(), newStats.getDevice(), newStats.getVariantName(), newStats.getVersion());
         });
     }
 
-    private int getExistingVersion(BayesianExperimentStatisticsForVariant stats) {
-        Query select = new Query();
-        select.addCriteria(Criteria.where("experimentId").is(stats.getExperimentId()));
-        select.addCriteria(Criteria.where("device").is(stats.getDevice()));
-        select.addCriteria(Criteria.where("variantName").is(stats.getVariantName()));
-
-        BayesianExperimentStatisticsForVariant existing = (BayesianExperimentStatisticsForVariant)mongoTemplate.findOne(select, ENTITY, COLLECTION);
-
-        if (existing == null) {
-            return 0;
-        }
-        return existing.getVersion();
-    }
-
-    private void removeOldStats(String expId, DeviceClass device, String variantName, int currentVersion) {
+    private void removeOldStats(BayesianExperimentStatisticsForVariant newStats) {
         Query delete = new Query();
 
-        delete.addCriteria(Criteria.where("experimentId").is(expId));
-        delete.addCriteria(Criteria.where("device").is(device));
-        delete.addCriteria(Criteria.where("variantName").is(variantName));
-        delete.addCriteria(Criteria.where("version").lt(currentVersion));
+        delete.addCriteria(Criteria.where("experimentId").is(newStats.getExperimentId()));
+        delete.addCriteria(Criteria.where("device").is(newStats.getDevice()));
+        delete.addCriteria(Criteria.where("variantName").is(newStats.getVariantName()));
+        delete.addCriteria(Criteria.where("toDate").lte(newStats.getToDate()));
+        delete.addCriteria(Criteria.where("metricName").is(newStats.getMetricName()));
 
         DeleteResult remove = mongoTemplate.remove(delete, ENTITY, COLLECTION);
-        logger.info("Removed {} old Bayesian stats for: {} {} {}", remove.getDeletedCount(), expId, device, variantName);
+        logger.info("Removed {} old Bayesian stats for: {} {} {} {} {}", remove.getDeletedCount(), newStats.getExperimentId(), newStats.getDevice(), newStats.getVariantName(), newStats.getToDate(), newStats.getMetricName());
     }
 }

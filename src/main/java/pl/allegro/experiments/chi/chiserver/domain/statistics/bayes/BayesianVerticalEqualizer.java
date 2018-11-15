@@ -8,6 +8,7 @@ import java.math.RoundingMode;
 import java.util.List;
 import java.util.stream.Collectors;
 
+@Deprecated
 public class BayesianVerticalEqualizer {
     private final BayesianChartMetadata metadata;
     private final List<EqualizerBar> bars;

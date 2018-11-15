@@ -1,52 +1,74 @@
 package pl.allegro.experiments.chi.chiserver.infrastructure.statistics
 
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.data.mongodb.core.MongoTemplate
 import org.springframework.web.client.HttpClientErrorException
 import pl.allegro.experiments.chi.chiserver.BaseE2EIntegrationSpec
 import pl.allegro.experiments.chi.chiserver.domain.statistics.bayes.BayesianExperimentStatistics
+import pl.allegro.experiments.chi.chiserver.domain.statistics.bayes.BayesianExperimentStatisticsForVariant
 import pl.allegro.experiments.chi.chiserver.domain.statistics.bayes.BayesianStatisticsRepository
 
 import static pl.allegro.experiments.chi.chiserver.utils.SampleStatisticsRequests.sampleBayesianStatisticsRequest
-import static pl.allegro.experiments.chi.chiserver.utils.SampleStatisticsRequests.sampleClassicStatisticsRequest
 
 class BayesianExperimentStatisticsIntegrationSpec extends BaseE2EIntegrationSpec {
 
     @Autowired
     BayesianStatisticsRepository bayesianStatisticsRepository
 
-    def "should save and return bayesian statistics"() {
+    @Autowired
+    MongoTemplate mongoTemplate
+
+    def "should save and return bayesian statistics, old stats should be removed"() {
         given:
         def experiment = startedExperiment()
 
-        and:
-        def request = sampleBayesianStatisticsRequest([-0.2, -0.1, 0.1, 0.2], [100, 200, 250, 150], [
+        when:
+        def responseVisit1 = postBayesianStatistics(sampleBayesianStatisticsRequest([-0.2, -0.1, 0.1, 0.2], [100, 200, 250, 150], [
+                experimentId: experiment.id,
+                toDate      : '2018-03-15',
+                metricName  : 'tx_visit'
+        ]))
+        def responseVisit2 = postBayesianStatistics(sampleBayesianStatisticsRequest([-0.5, -0.1, 0.1, 0.5], [10, 20, 25, 15], [
+                experimentId: experiment.id,
+                toDate      : '2018-03-01',
+                metricName  : 'tx_visit'
+        ]))
+        def responseCmuid = postBayesianStatistics(sampleBayesianStatisticsRequest([-0.3, -0.1, 0.1, 0.3], [1, 2, 2, 1], [
                 experimentId: experiment.id,
                 toDate      : '2018-04-01',
-        ])
-
-        when:
-        def response = postBayesianStatistics(request)
+                metricName  : 'tx_cmuid'
+        ]))
 
         then:
-        response.statusCode.value() == 200
+        responseVisit1.statusCode.value() == 200
+        responseVisit2.statusCode.value() == 200
+        responseCmuid.statusCode.value() == 200
 
         when:
-        def result = fetchBayesianStatistics(experiment.id as String)[0]
+        def results = fetchBayesianStatistics(experiment.id as String)
 
         then:
-        result.device == 'all'
-        result.experimentId == experiment.id
-        result.toDate == '2018-04-01'
-        result.variantBayesianStatistics.size() == 1
+        results.size == 2
 
-        and:
-        def variant = result.variantBayesianStatistics[0]
+        def resultVisit = results.find {it.metricName == 'tx_visit'}
+        resultVisit.device == 'all'
+        resultVisit.experimentId == experiment.id
+        resultVisit.toDate == '2018-03-15'
+        resultVisit.variantBayesianStatistics.size() == 1
+
+        def variant = resultVisit.variantBayesianStatistics[0]
         variant.variantName == 'variant-a'
         variant.samples.values == [-0.2, -0.1, 0.1, 0.2]
         variant.samples.counts == [100, 200, 250, 150]
         variant.outliersLeft == 10
         variant.outliersRight == 122
         variant.allCount() == 100 + 200 + 250 + 150 + 10 + 122
+
+        def resultCmuid = results.find {it.metricName == 'tx_cmuid'}
+        resultCmuid.device == 'all'
+        resultCmuid.experimentId == experiment.id
+        resultCmuid.toDate == '2018-04-01'
+        resultCmuid.variantBayesianStatistics.size() == 1
     }
 
     def "should save and return bayesian statistics for multiple devices"() {
@@ -57,14 +79,16 @@ class BayesianExperimentStatisticsIntegrationSpec extends BaseE2EIntegrationSpec
         def requestSmartphone = sampleBayesianStatisticsRequest([-0.1, 0, 0.1, 0.2], [101, 201, 251, 151], [
                 experimentId: experiment.id,
                 toDate      : '2018-04-01',
-                device      : 'smartphone'
+                device      : 'smartphone',
+                metricName  : 'tx_visit'
         ])
 
         and:
         def requestAll = sampleBayesianStatisticsRequest([-0.2, -0.1, 0.1, 0.2], [100, 200, 250, 150], [
                 experimentId: experiment.id,
                 toDate      : '2018-04-01',
-                device      : 'all'
+                device      : 'all',
+                metricName  : 'tx_visit'
         ])
 
         when:
@@ -106,6 +130,7 @@ class BayesianExperimentStatisticsIntegrationSpec extends BaseE2EIntegrationSpec
         def request = sampleBayesianStatisticsRequest([-0.2, -0.1, 0.1, 0.2], [100, 200, 250, 150], [
                 experimentId: experiment.id,
                 toDate      : '2018-04-01',
+                metricName  : 'tx_visit'
         ])
 
         when:
@@ -123,36 +148,42 @@ class BayesianExperimentStatisticsIntegrationSpec extends BaseE2EIntegrationSpec
         postBayesianStatistics(sampleBayesianStatisticsRequest([1], [1], [
                 experimentId: experiment.id,
                 variantName: 'variant-a',
-                toDate      : '2018-01-01'
+                toDate      : '2018-01-01',
+                metricName  : 'tx_visit'
         ]))
         postBayesianStatistics(sampleBayesianStatisticsRequest([2], [2], [
                 experimentId: experiment.id,
                 variantName: 'variant-b',
-                toDate      : '2018-01-01'
+                toDate      : '2018-01-01',
+                metricName  : 'tx_visit'
         ]))
 
         and:
         postBayesianStatistics(sampleBayesianStatisticsRequest([11], [16], [
                 experimentId: experiment.id,
                 variantName: 'variant-a',
-                toDate      : '2018-01-01'
+                toDate      : '2018-01-01',
+                metricName  : 'tx_visit'
         ]))
         postBayesianStatistics(sampleBayesianStatisticsRequest([21], [26], [
                 experimentId: experiment.id,
                 variantName: 'variant-b',
-                toDate      : '2018-01-01'
+                toDate      : '2018-01-01',
+                metricName  : 'tx_visit'
         ]))
 
         and:
         postBayesianStatistics(sampleBayesianStatisticsRequest([10], [15], [
                 experimentId: experiment.id,
                 variantName: 'variant-a',
-                toDate      : '2018-01-02'
+                toDate      : '2018-01-02',
+                metricName  : 'tx_visit'
         ]))
         postBayesianStatistics(sampleBayesianStatisticsRequest([20], [25], [
                 experimentId: experiment.id,
                 variantName: 'variant-b',
-                toDate      : '2018-01-02'
+                toDate      : '2018-01-02',
+                metricName  : 'tx_visit'
         ]))
 
         and:
@@ -172,6 +203,8 @@ class BayesianExperimentStatisticsIntegrationSpec extends BaseE2EIntegrationSpec
 
         variantB.samples.values == [20]
         variantB.samples.counts == [25]
+
+        mongoTemplate.findAll(BayesianExperimentStatisticsForVariant, "bayesianExperimentStatistics").size() == 2
     }
 
     def "should update existing stats with new variants and return bayesian statistics"() {
@@ -181,7 +214,8 @@ class BayesianExperimentStatisticsIntegrationSpec extends BaseE2EIntegrationSpec
         when:
         def response = postBayesianStatistics(sampleBayesianStatisticsRequest([-0.2, -0.1], [100, 200], [
                 experimentId: experiment.id,
-                variantName: 'variant-a'
+                variantName : 'variant-a',
+                metricName  : 'tx_visit'
         ]))
 
         then:
@@ -190,7 +224,8 @@ class BayesianExperimentStatisticsIntegrationSpec extends BaseE2EIntegrationSpec
         when:
         response = postBayesianStatistics(sampleBayesianStatisticsRequest([-0.1, -0.2, 0.3, 0.6], [10, 200, 250, 1], [
                 experimentId: experiment.id,
-                variantName: 'variant-c'
+                variantName : 'variant-c',
+                metricName  : 'tx_visit'
         ]))
 
         then:
