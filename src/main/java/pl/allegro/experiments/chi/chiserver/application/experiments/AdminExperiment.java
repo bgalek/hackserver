@@ -9,6 +9,7 @@ import pl.allegro.experiments.chi.chiserver.domain.statistics.ExperimentMeasurem
 import pl.allegro.experiments.chi.chiserver.domain.experiments.client.ClientExperiment;
 
 import java.time.ZonedDateTime;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -21,6 +22,7 @@ public class AdminExperiment {
     private BayesianHorizontalEqualizer bayesianHorizontalEqualizer;
     private ExperimentGroup experimentGroup;
     private int bonferroniCorrection;
+    private List<ExperimentTag> tags;
 
     public AdminExperiment(
             ExperimentDefinition experimentDefinition,
@@ -31,6 +33,7 @@ public class AdminExperiment {
         this.editable = currentUser.isOwner(experimentDefinition);
         this.clientExperiment = clientExperiment;
         this.maxPossibleAllocation = maxPossibleAllocation;
+        this.tags = experimentDefinition.getTags();
     }
 
     AdminExperiment withHorizontalEqualizer(BayesianHorizontalEqualizer equalizer) {
@@ -53,6 +56,10 @@ public class AdminExperiment {
     AdminExperiment withBonferroniCorrection(int bonferroniCorrection) {
         this.bonferroniCorrection = bonferroniCorrection;
         return this;
+    }
+
+    public List<ExperimentTag> getTags() {
+        return tags;
     }
 
     public int getBonferroniCorrection() {

@@ -38,6 +38,8 @@ public class ExperimentsRepositoryConfig {
         converters.add(new ReportingDefinitionDeserializer());
         converters.add(new DeviceClassSerializer());
         converters.add(new DeviceClassDeserializer());
+        converters.add(new ExperimentTagDeserializer());
+        converters.add(new ExperimentTagSerializer());
         return new MongoCustomConversions(converters);
     }
 

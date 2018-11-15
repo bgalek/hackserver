@@ -1,5 +1,7 @@
 package pl.allegro.experiments.chi.chiserver.domain.experiments;
 
+import pl.allegro.experiments.chi.chiserver.application.experiments.v1.ExperimentVariantTypeAdapter;
+
 import java.time.ZonedDateTime;
 import java.util.Collections;
 import java.util.List;
@@ -22,6 +24,7 @@ public class ExperimentDefinitionBuilder {
     private CustomParameter customParameter;
     private ZonedDateTime lastExplicitStatusChange;
     private ExperimentGoal goal;
+    private List<ExperimentTag> tags = Collections.emptyList();
 
     private ExperimentDefinitionBuilder() {
     }
@@ -131,6 +134,11 @@ public class ExperimentDefinitionBuilder {
         return this;
     }
 
+    public ExperimentDefinitionBuilder tags(List<ExperimentTag> tags) {
+        this.tags = tags;
+        return this;
+    }
+
     public ExperimentDefinition build() {
         return new ExperimentDefinition(
                 id,
@@ -148,6 +156,7 @@ public class ExperimentDefinitionBuilder {
                 reportingDefinition,
                 customParameter,
                 lastExplicitStatusChange,
-                goal);
+                goal,
+                tags);
     }
 }

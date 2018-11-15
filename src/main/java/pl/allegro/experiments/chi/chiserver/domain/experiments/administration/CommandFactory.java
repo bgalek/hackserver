@@ -47,7 +47,7 @@ public class CommandFactory {
 
     Command createExperimentCommand(ExperimentCreationRequest request) {
         Preconditions.checkNotNull(request);
-        CreateExperimentCommand experimentCommand = new CreateExperimentCommand(experimentsRepository, userProvider, request);
+        CreateExperimentCommand experimentCommand = new CreateExperimentCommand(experimentsRepository, experimentTagRepository, userProvider, request);
         return new NotificationDecoratorCommand(experimentCommand, notificator, userProvider);
     }
 

@@ -60,7 +60,8 @@ class ExperimentsSelfServiceE2ESpec extends BaseE2EIntegrationSpec {
                 groups             : ['group a', 'group b'],
                 reportingEnabled   : true,
                 reportingType: 'FRONTEND',
-                eventDefinitions: []
+                eventDefinitions: [],
+                tags: []
         ])
 
         when:
@@ -97,7 +98,8 @@ class ExperimentsSelfServiceE2ESpec extends BaseE2EIntegrationSpec {
                 internalVariantName: 'v1',
                 deviceClass        : 'phone',
                 percentage         : 10,
-                maxPossibleAllocation: 50
+                maxPossibleAllocation: 50,
+                tags: []
         ]
         experiment == expectedExperiment
         experiment.definition == expectedExperiment.definition

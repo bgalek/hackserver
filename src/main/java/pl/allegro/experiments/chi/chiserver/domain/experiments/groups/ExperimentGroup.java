@@ -5,7 +5,6 @@ import com.google.common.collect.ImmutableList;
 import org.springframework.data.annotation.PersistenceConstructor;
 import pl.allegro.experiments.chi.chiserver.domain.experiments.ExperimentDefinition;
 import pl.allegro.experiments.chi.chiserver.domain.experiments.PercentageRange;
-import pl.allegro.experiments.chi.chiserver.domain.experiments.VariantPercentageAllocation;
 
 import java.util.ArrayList;
 import java.util.Collections;

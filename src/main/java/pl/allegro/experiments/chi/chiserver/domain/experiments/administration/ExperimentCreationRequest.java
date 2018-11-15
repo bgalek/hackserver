@@ -11,6 +11,7 @@ import javax.validation.constraints.NotNull;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import static pl.allegro.experiments.chi.chiserver.domain.experiments.ExperimentDefinitionBuilder.experimentDefinition;
 import static pl.allegro.experiments.chi.chiserver.util.BigDecimals.round2;
@@ -29,6 +30,7 @@ public class ExperimentCreationRequest {
     private final ReportingDefinition reportingDefinition;
     private final CustomParameter customParameter;
     private final ExperimentGoalRequest goal;
+    private final List<String> tags;
 
     @JsonCreator
     public ExperimentCreationRequest(
@@ -44,7 +46,8 @@ public class ExperimentCreationRequest {
             @JsonProperty("reportingType") ReportingType reportingType,
             @JsonProperty("customParameterName") String customParameterName,
             @JsonProperty("customParameterValue") String customParameterValue,
-            @JsonProperty("goal") ExperimentGoalRequest goal) {
+            @JsonProperty("goal") ExperimentGoalRequest goal,
+            @JsonProperty("tags") List<String> tags) {
         Preconditions.checkArgument(id != null, "experiment id is null");
         Preconditions.checkArgument(variantNames != null, "experiment variantNames are null");
         Preconditions.checkArgument(percentage != null, "experiment percentage is null");
@@ -60,6 +63,11 @@ public class ExperimentCreationRequest {
         this.deviceClass = deviceClass;
         this.description = description;
         this.documentLink = documentLink;
+        if (tags == null) {
+            this.tags = ImmutableList.copyOf(new ArrayList<>());
+        } else {
+            this.tags = ImmutableList.copyOf(tags);
+        }
         if (groups == null) {
             this.groups = ImmutableList.copyOf(new ArrayList<>());
         } else {
@@ -75,6 +83,10 @@ public class ExperimentCreationRequest {
             this.customParameter = null;
         }
         this.goal = goal;
+    }
+
+    public List<String> getTags() {
+        return tags;
     }
 
     public String getId() {
@@ -115,7 +127,8 @@ public class ExperimentCreationRequest {
                     .author(author)
                     .groups(this.groups)
                     .reportingDefinition(this.reportingDefinition)
-                    .customParameter(this.customParameter);
+                    .customParameter(this.customParameter)
+                    .tags(this.tags.stream().map(it -> new ExperimentTag(it)).collect(Collectors.toList()));
 
             if (goal != null && StringUtils.isNotBlank(goal.getLeadingMetric())) {
                 var hypothesis = new ExperimentGoal.Hypothesis(goal.getLeadingMetric(), round2(goal.getExpectedDiffPercent()));
@@ -151,6 +164,7 @@ public class ExperimentCreationRequest {
         private ReportingType reportingType;
         private String customParameterName;
         private String customParameterValue;
+        private List<String> tags;
 
         public Builder id(String id) {
             this.id = id;
@@ -184,6 +198,11 @@ public class ExperimentCreationRequest {
 
         public Builder documentLink(String documentLink) {
             this.documentLink = documentLink;
+            return this;
+        }
+
+        public Builder tags(List<String> tags) {
+            this.tags = tags;
             return this;
         }
 
@@ -226,7 +245,8 @@ public class ExperimentCreationRequest {
                     reportingType,
                     customParameterName,
                     customParameterValue,
-                    null);
+                    null,
+                    tags);
         }
     }
 }
