@@ -12,7 +12,7 @@ public class CreateExperimentTagCommand implements Command {
     private final UserProvider userProvider;
     private final ExperimentTagCreationRequest experimentTagCreationRequest;
 
-    public CreateExperimentTagCommand(
+    CreateExperimentTagCommand(
             ExperimentTagRepository experimentTagRepository,
             UserProvider userProvider,
             ExperimentTagCreationRequest experimentTagCreationRequest) {
@@ -32,6 +32,9 @@ public class CreateExperimentTagCommand implements Command {
         }
         if (experimentTagRepository.get(experimentTagCreationRequest.getExperimentTagId()).isPresent()) {
             throw new ExperimentCommandException("Experiment tag " + experimentTagCreationRequest.getExperimentTagId() + " already exists");
+        }
+        if (experimentTagCreationRequest.getExperimentTagId().length() > 15) {
+            throw new ExperimentCommandException("Maximum experiment tag length is 15");
         }
         experimentTagRepository.save(experimentTagCreationRequest.toExperimentTag());
     }

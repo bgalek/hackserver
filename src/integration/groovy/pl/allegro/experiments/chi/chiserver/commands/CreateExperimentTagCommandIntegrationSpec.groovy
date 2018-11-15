@@ -28,4 +28,13 @@ class CreateExperimentTagCommandIntegrationSpec extends BaseCommandIntegrationSp
         def exception = thrown(ExperimentCommandException)
         exception.message == "Experiment tag $existingTagId already exists"
     }
+
+    def "should not create experiment tag if it is to long"() {
+        when:
+        createExperimentTag('loooooooooooooooooooooooooooooooooooooooooooooooooooooong')
+
+        then:
+        def exception = thrown(ExperimentCommandException)
+        exception.message == "Maximum experiment tag length is 15"
+    }
 }
