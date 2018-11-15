@@ -23,7 +23,7 @@ trait CommandActionUtils {
 
     String createExperimentTag(String tagId = null) {
         if (tagId == null) {
-            tagId = UUID.randomUUID().toString()
+            tagId = UUID.randomUUID().toString().substring(0, 10)
         }
         experimentActions.createExperimentTag(new ExperimentTagCreationRequest(tagId))
         tagId

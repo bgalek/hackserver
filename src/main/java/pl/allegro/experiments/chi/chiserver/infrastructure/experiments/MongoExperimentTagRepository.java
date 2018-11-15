@@ -1,5 +1,6 @@
 package pl.allegro.experiments.chi.chiserver.infrastructure.experiments;
 
+import avro.shaded.com.google.common.collect.Lists;
 import io.micrometer.core.instrument.Timer;
 import org.javers.core.Javers;
 import org.springframework.stereotype.Repository;
@@ -7,6 +8,7 @@ import pl.allegro.experiments.chi.chiserver.domain.UserProvider;
 import pl.allegro.experiments.chi.chiserver.domain.experiments.ExperimentTag;
 import pl.allegro.experiments.chi.chiserver.domain.experiments.ExperimentTagRepository;
 
+import java.util.List;
 import java.util.Optional;
 
 @Repository
@@ -39,5 +41,11 @@ public class MongoExperimentTagRepository implements ExperimentTagRepository {
     public Optional<ExperimentTag> get(String experimentTagId) {
         Timer timer = experimentsMongoMetricsReporter.timerReadExperimentTag();
         return timer.record(() -> experimentTagCrudRepository.findById(experimentTagId));
+    }
+
+    @Override
+    public List<ExperimentTag> all() {
+        Timer timer = experimentsMongoMetricsReporter.timerAllExperimentTags();
+        return timer.record(() -> Lists.newArrayList(experimentTagCrudRepository.findAll()));
     }
 }

@@ -40,6 +40,18 @@ trait ApiActionUtils {
         post("/api/interactions/$apiVersion", interactions, List)
     }
 
+    String createExperimentTag(String experimentTagId = null) {
+        if (experimentTagId == null) {
+            experimentTagId = UUID.randomUUID().toString().substring(0, 10)
+        }
+        post("/api/admin/experiments/tags", [experimentTagId: experimentTagId])
+        experimentTagId
+    }
+
+    List fetchAllExperimentTags() {
+        get('/api/admin/experiments/tags').body as List
+    }
+
     ResponseEntity postClassicStatistics(Map statistics) {
         post("/api/statistics/", prepareStatisticsRequest(statistics))
     }

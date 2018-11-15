@@ -10,4 +10,6 @@ public interface ExperimentTagCrudRepository extends CrudRepository<ExperimentTa
     ExperimentTag save(ExperimentTag entity);
 
     Optional<ExperimentTag> findById(String experimentTagId);
+
+    Iterable<ExperimentTag> findAll();
 }
