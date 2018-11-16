@@ -54,7 +54,7 @@
     computed: {
       shownBayes: function () {
         return this.shownMetricsKeys
-          .filter(metricKey => this.bayesianHistograms.metricStatistics[metricKey])
+          .filter(metricKey => this.bayesianHistograms.metricStatistics && this.bayesianHistograms.metricStatistics[metricKey])
           .map(metricKey => {
             const metricStatistics = this.bayesianHistograms.metricStatistics[metricKey]
             return {

@@ -7,7 +7,7 @@
 
     <p v-if="experimentStatistics.toDate">
           Data calculated on
-          <span id="toDate">{{ experimentStatistics.toDate }} ({{ durationDays() }} days)</span>
+          <b id="toDate">{{ experimentStatistics.toDate }}</b>, days: <b>{{ durationDays() }}</b>
     </p>
 
     <div v-if="experimentStatistics.metrics">
@@ -128,6 +128,7 @@
       ...mapActions(['getExperimentStatistics']),
 
       durationDays () {
+        console.log('durationDays')
         if (!(this.experimentStatistics &&
               this.experimentStatistics.toDate &&
               this.experiment.activityPeriod)) {
@@ -135,9 +136,11 @@
         }
 
         let dateFormat = 'YYYY-MM-DD'
-        let end = moment(this.experimentStatistics.toDate, dateFormat)
+        let end = moment(this.experimentStatistics.toDate, dateFormat).hours(23).minutes(59)
         let start = moment(this.experiment.activityPeriod.activeFrom, dateFormat)
-        return end.diff(start, 'days')
+
+        const durationDays = end.diff(start, 'days', true)
+        return Math.ceil(durationDays)
       },
 
       diffToolTip (metricVariant) {
