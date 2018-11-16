@@ -10,7 +10,7 @@ class ExperimentTagE2ESpec extends BaseE2EIntegrationSpec {
         def tagId2 = createExperimentTag()
 
         then:
-        fetchAllExperimentTags().collect {it -> it.id}  == [tagId1, tagId2]
+        fetchAllExperimentTags().collect {it -> it.id}.containsAll([tagId1, tagId2])
     }
 
     def "should create experiment with tags"() {

@@ -64,7 +64,7 @@ public class ExperimentDefinition {
         Preconditions.checkArgument(!Strings.isNullOrEmpty(id));
         Preconditions.checkNotNull(variantNames);
         Preconditions.checkNotNull(groups);
-        Preconditions.checkNotNull(tags);
+//        Preconditions.checkNotNull(tags);
         Preconditions.checkArgument(internalVariantName == null || !internalVariantName.isEmpty());
         Preconditions.checkArgument(fullOnVariantName == null || !fullOnVariantName.isEmpty());
         this.id = id;
@@ -84,7 +84,7 @@ public class ExperimentDefinition {
         this.customParameter = customParameter;
         this.lastExplicitStatusChange = lastExplicitStatusChange;
         this.goal = goal;
-        this.tags = tags;
+        this.tags = tags == null ? Collections.emptyList() : tags;
     }
 
     @Id
