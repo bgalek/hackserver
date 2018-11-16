@@ -18,7 +18,8 @@ class ExperimentReportingDefinitionE2E extends BaseE2EIntegrationSpec {
 
         when:
         startExperiment(experiment.id as String, 30)
-        updateExperimentDescriptions(experiment.id as String, 'chi rulez', 'new link', ['group c'])
+        def tags = [createExperimentTag(), createExperimentTag()]
+        updateExperimentDescriptions(experiment.id as String, 'chi rulez', 'new link', ['group c'], tags)
         updateExperimentVariants(experiment.id as String, 'internV', 18, 'phone')
         pauseExperiment(experiment.id as String)
         resumeExperiment(experiment.id as String)

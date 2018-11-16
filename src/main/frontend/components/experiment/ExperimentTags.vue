@@ -15,7 +15,7 @@
 
     </template>
 
-    <template v-if="!experimentTags">
+    <template v-if="experimentTags.length < 1">
       -
     </template>
 

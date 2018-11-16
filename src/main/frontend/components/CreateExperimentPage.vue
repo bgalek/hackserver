@@ -51,6 +51,7 @@
             </v-container>
 
             <experiment-desc-editing ref="experimentDescEditing"
+                                     :available-experiment-tags="availableExperimentTags"
                                      v-model="descriptions"/>
 
             <experiment-variants-editing v-model="variants"
@@ -145,7 +146,7 @@
 </template>
 
 <script>
-  import { mapActions } from 'vuex'
+  import { mapState, mapActions } from 'vuex'
   import ExperimentDescEditing from './experiment/ExperimentDescEditing'
   import ExperimentGoalEditing from './experiment/ExperimentGoalEditing'
   import ExperimentVariantsEditing from './experiment/ExperimentVariantsEditing.vue'
@@ -178,14 +179,14 @@
         goal: {},
         variants: null,
         reportingType: 'BACKEND',
-        availableReportingTypes: ['BACKEND', 'FRONTEND', 'GTM'],
+        availableReportingTypes: ['BACKEND', 'FRONTEND'],
         eventDefinitions: []
       }
     },
 
     computed: {
       showForm () {
-        return !this.sendingDataToServer
+        return !this.sendingDataToServer && this.availableExperimentTags
       },
 
       showProgress () {
@@ -198,7 +199,9 @@
 
       slugifiedVariants () {
         return _.map(this.variants.variantNames, v => slugify(v))
-      }
+      },
+
+      ...mapState({availableExperimentTags: state => state.experimentTagStore.experimentTags})
     },
 
     components: {
@@ -273,6 +276,7 @@
           customParameterName: this.customParameter.name,
           customParameterValue: this.customParameter.value,
           groups: this.descriptions.groups,
+          tags: this.descriptions.tags,
           reportingEnabled: this.reportingEnabled,
           variantNames: this.slugifiedVariants,
           internalVariantName: this.variants.internalVariantName,
@@ -287,7 +291,8 @@
       },
       ...mapActions([
         'createExperiment',
-        'getExperiments'
+        'getExperiments',
+        'getAvailableExperimentTags'
       ])
     }
   }

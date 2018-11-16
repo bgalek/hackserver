@@ -9,4 +9,6 @@ public interface ExperimentTagRepository {
     Optional<ExperimentTag> get(String experimentTagId);
 
     List<ExperimentTag> all();
+
+    boolean tagsExist(List<String> experimentTagIds);
 }

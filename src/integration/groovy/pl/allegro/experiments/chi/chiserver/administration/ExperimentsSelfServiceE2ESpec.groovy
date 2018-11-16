@@ -116,7 +116,8 @@ class ExperimentsSelfServiceE2ESpec extends BaseE2EIntegrationSpec {
         fetchExperiment(experiment.id as String).status == "ACTIVE"
 
         when:
-        updateExperimentDescriptions(experiment.id as String, 'chi rulez', 'new link', ['group c'])
+        def tags = [createExperimentTag(), createExperimentTag()]
+        updateExperimentDescriptions(experiment.id as String, 'chi rulez', 'new link', ['group c'], tags)
         experiment = fetchExperiment(experiment.id as String)
 
         then:

@@ -38,20 +38,11 @@ public class CreateExperimentCommand implements ExperimentCommand {
         if (experimentRepository.getExperiment(experimentCreationRequest.getId()).isPresent()) {
             throw new ExperimentCommandException("Experiment with id " + experimentCreationRequest.getId() + " already exists");
         }
-        if (tagsNotExist(experimentCreationRequest.getTags())) {
+        if (!experimentTagRepository.tagsExist(experimentCreationRequest.getTags())) {
             throw new ExperimentCommandException("Tag does not exist");
         }
 
         experimentRepository.save(experimentCreationRequest.toExperimentDefinition(user.getName()));
-    }
-
-    private boolean tagsNotExist(List<String> tags) {
-        for (String tag: tags) {
-            if (!experimentTagRepository.get(tag).isPresent()) {
-                return true;
-            }
-        }
-        return false;
     }
 
     @Override

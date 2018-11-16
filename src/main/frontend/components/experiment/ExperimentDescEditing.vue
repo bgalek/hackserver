@@ -75,6 +75,45 @@
           </v-flex>
       </v-layout>
 
+      <v-layout row align-center>
+        <v-flex xs1>
+          <v-tooltip right close-delay="1000">
+              <span>
+                Make your experiment more descriptive.
+                Add a tag, for example describing where your test is running: <code>Listing</code>.
+                <br/>
+                Hit <b>ENTER</b> to add a tag.
+              </span>
+            You can add more than one tag.
+            <br/>
+            If you can't find tag suitable for your experiment, we can add it for you.<br/>
+            <v-icon
+              slot="activator">help_outline</v-icon>
+          </v-tooltip>
+        </v-flex>
+
+        <v-flex xs11 lg6>
+          <v-combobox
+            multiple
+            id="tagsFormField"
+            label="Tags"
+            slot="activator"
+            :items="availableExperimentTags"
+            chips
+            append-icon=""
+            v-model="value.tags">
+            <template slot="selection" slot-scope="data">
+              <v-chip
+                close
+                @input="removeTag(data.item)"
+                :selected="data.selected">
+                <strong>{{ data.item }}</strong>&nbsp;
+              </v-chip>
+            </template>
+          </v-combobox>
+        </v-flex>
+      </v-layout>
+
       <v-layout row align-center v-if="showButtons">
           <v-flex>
             <v-btn flat
@@ -106,11 +145,12 @@
   const ExperimentDescEditingRecord = Record({
     documentLink: null,
     description: null,
-    groups: List()
+    groups: List(),
+    tags: List()
   })
 
   export default {
-    props: ['experiment', 'showButtons'],
+    props: ['experiment', 'showButtons', 'availableExperimentTags'],
 
     data () {
       const initialValue = this.init(this.experiment)
@@ -147,7 +187,8 @@
         const value = {
           documentLink: experiment && experiment.documentLink,
           description: experiment && experiment.description,
-          groups: experiment && Array.from(experiment.groups)
+          groups: experiment && Array.from(experiment.groups),
+          tags: experiment && experiment.tags
         }
         this.$emit('input', this.buildResult(value))
         return value
@@ -170,11 +211,17 @@
         this.value.groups.splice(i, 1)
       },
 
+      removeTag (tag) {
+        const i = this.value.tags.indexOf(tag)
+        this.value.tags.splice(i, 1)
+      },
+
       buildResult (value) {
         return new ExperimentDescEditingRecord({
           documentLink: value.documentLink,
           description: value.description,
-          groups: List(value.groups)
+          groups: List(value.groups),
+          tags: List(value.tags)
         })
       },
 

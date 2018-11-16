@@ -110,11 +110,12 @@ trait ApiActionUtils {
         put("$ADMIN_API_PATH/$experimentId/update-event-definitions", eventDefinitions)
     }
 
-    void updateExperimentDescriptions(String experimentId, String description, String documentLink, List groups) {
+    void updateExperimentDescriptions(String experimentId, String description, String documentLink, List groups, List tags) {
         def properties = [
                 description: description,
                 documentLink: documentLink,
-                groups: groups
+                groups: groups,
+                tags: tags
         ]
         put("$ADMIN_API_PATH/$experimentId/update-descriptions", properties)
     }

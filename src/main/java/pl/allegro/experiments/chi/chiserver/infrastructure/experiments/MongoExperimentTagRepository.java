@@ -10,6 +10,7 @@ import pl.allegro.experiments.chi.chiserver.domain.experiments.ExperimentTagRepo
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Repository
 public class MongoExperimentTagRepository implements ExperimentTagRepository {
@@ -48,4 +49,13 @@ public class MongoExperimentTagRepository implements ExperimentTagRepository {
         Timer timer = experimentsMongoMetricsReporter.timerAllExperimentTags();
         return timer.record(() -> Lists.newArrayList(experimentTagCrudRepository.findAll()));
     }
+
+    @Override
+    public boolean tagsExist(List<String> experimentTagIds) {
+        return all().stream()
+                .map(it -> it.getId())
+                .collect(Collectors.toSet())
+                .containsAll(experimentTagIds);
+    }
+
 }

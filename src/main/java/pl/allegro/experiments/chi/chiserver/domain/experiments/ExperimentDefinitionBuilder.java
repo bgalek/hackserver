@@ -5,6 +5,7 @@ import pl.allegro.experiments.chi.chiserver.application.experiments.v1.Experimen
 import java.time.ZonedDateTime;
 import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class ExperimentDefinitionBuilder {
 

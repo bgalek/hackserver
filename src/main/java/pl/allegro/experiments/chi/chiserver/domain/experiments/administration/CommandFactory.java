@@ -140,7 +140,8 @@ public class CommandFactory {
                 experimentId,
                 properties,
                 experimentsRepository,
-                permissionsAwareExperimentRepository
+                permissionsAwareExperimentRepository,
+                experimentTagRepository
         );
         return new NotificationDecoratorCommand(experimentCommand, notificator, userProvider);
     }
