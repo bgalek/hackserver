@@ -30,7 +30,6 @@
             :experiment="experimentDefinition"
             :selectedDevice="selectedDevice"
             :bayesianHistograms="selectedExperimentBayesianHistograms"
-            :histogramsToDate="histogramsToDate"
             :initialVariantName="initialVariantName"
           ></bayesian-result>
         </chi-panel>

@@ -18,48 +18,39 @@ const BayesianHistogramsRecord = Record({
 })
 
 const ExperimentBayesianStatisticsRecord = Record({
-  metricStatistics: {}
+  deviceStatistics: {}
 })
 
 export default class ExperimentBayesianStatisticsModel extends ExperimentBayesianStatisticsRecord {
   constructor (experimentBayesianStatisticsObject) {
-    console.log("experimentBayesianStatisticsObject", experimentBayesianStatisticsObject)
-
     if (!experimentBayesianStatisticsObject) {
       super([])
+      return
     }
 
-    //Map<String:{}>
-    const byMetric = experimentBayesianStatisticsObject.reduce((groups, item) => {
-      const metricName = item.metricName
-      groups[metricName] = groups[metricName] || {deviceStatistics:{}}
+    const byDevice = {}
 
+    experimentBayesianStatisticsObject.forEach(item => {
       const device = item.metadata.deviceClass.startsWith('phone') ? 'smartphone' : item.metadata.deviceClass
-      groups[metricName].deviceStatistics[device] = new BayesianHistogramsRecord({
-          histograms: item.histograms.map(it => new HistogramRecord(it)),
-          metadata: new HistogramMetadataRecord(item.metadata)
+      const metricName = item.metricName
+
+      if (!byDevice[device]) {
+        byDevice[device] = {metricStatistics: {}}
+      }
+
+      byDevice[device].metricStatistics[metricName] = new BayesianHistogramsRecord({
+        histograms: item.histograms.map(it => new HistogramRecord(it)),
+        metadata: new HistogramMetadataRecord(item.metadata)
       })
+    })
 
-      console.log("item", groups[metricName].deviceStatistics[device])
-
-      return groups
-    }, {})
-
-    console.log("byMetric", byMetric)
-
-   // super({deviceStatistics: deviceStatistics})
-    super({metricStatistics: byMetric})
-    console.log("this", this)
+    super({deviceStatistics: byDevice})
   }
 
-
-
-  //TODO
   getForDevice (device) {
-    return this.deviceStatistics.get(device) || {}
+    return this.deviceStatistics[device] || {}
   }
 
-  //TODO
   any () {
     return this.deviceStatistics.size !== 0
   }
