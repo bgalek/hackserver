@@ -30,8 +30,6 @@
             :experiment="experimentDefinition"
             :selectedDevice="selectedDevice"
             :bayesianHistograms="selectedExperimentBayesianHistograms"
-            :bayesianEqualizer="selectedExperimentBayesianEqualizers"
-            :histogramsToDate="histogramsToDate"
             :initialVariantName="initialVariantName"
           ></bayesian-result>
         </chi-panel>
@@ -83,8 +81,7 @@
       return {
         selectedDevice: null,
         selectedExperimentStatistics: null,
-        selectedExperimentBayesianHistograms: null,
-        selectedExperimentBayesianEqualizers: null
+        selectedExperimentBayesianHistograms: null
       }
     },
 
@@ -110,7 +107,6 @@
           return null
         }
       },
-      experimentBayesianEqualizers: state => state.experimentStore.experimentBayesianEqualizers,
       experimentReady: state => state.experimentStore.experimentReady,
       experimentError: state => state.experimentStore.experimentError,
       availableExperimentTags: state => state.experimentTagStore.experimentTags
@@ -137,11 +133,10 @@
       refreshStatistics (device) {
         this.selectedExperimentStatistics = this.experimentStatistics.getForDevice(device)
         this.selectedExperimentBayesianHistograms = this.experimentBayesianHistograms.getForDevice(device)
-        this.selectedExperimentBayesianEqualizers = this.experimentBayesianEqualizers.getForDevice(device)
       },
 
       bayesianResultsReady () {
-        return this.experimentReady && this.selectedExperimentBayesianHistograms && this.selectedExperimentBayesianEqualizers && this.initialVariantName
+        return this.experimentReady && this.selectedExperimentBayesianHistograms && this.initialVariantName
       },
 
       resultsReady () {

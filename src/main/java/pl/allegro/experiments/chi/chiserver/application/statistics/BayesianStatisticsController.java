@@ -34,13 +34,6 @@ public class BayesianStatisticsController {
     }
 
     @MeteredEndpoint
-    @GetMapping("/verticalEqualizer/{experimentId}")
-    ResponseEntity<String> verticalEqualizer(
-            @PathVariable String experimentId) {
-        return ResponseEntity.ok(jsonConverter.toJson(bayesianChartsRepository.getVerticalEqualizer(experimentId)));
-    }
-
-    @MeteredEndpoint
     @GetMapping("/histograms/{experimentId}")
     ResponseEntity<String> histogram(
             @PathVariable String experimentId) {
@@ -60,8 +53,9 @@ public class BayesianStatisticsController {
 
         var bayesianStats = jsonConverter.fromJson(stats, BayesianExperimentStatisticsForVariant.class);
 
-        logger.info("Bayesian stats received: {} {} {} {}",
+        logger.info("Bayesian stats received: {} {} {} {} {}",
                 bayesianStats.getExperimentId(),
+                bayesianStats.getMetricName(),
                 bayesianStats.getDevice(),
                 bayesianStats.getToDate(),
                 bayesianStats.getVariantName());

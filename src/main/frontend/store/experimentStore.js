@@ -8,7 +8,6 @@ export default {
     experimentDefinition: null,
     experimentStatistics: null,
     experimentBayesianHistograms: null,
-    experimentBayesianEqualizers: null,
     experimentReady: false,
     experimentError: null
   },
@@ -19,12 +18,11 @@ export default {
       const experimentDefinitionPromise = axios.get(`/api/admin/experiments/${experimentId}`)
       const experimentStatisticsPromise = axios.get(`/api/admin/statistics/${experimentId}`)
       const experimentBayesianHistogramsPromise = axios.get(`/api/bayes/histograms/${experimentId}`)
-      const experimentBayesianEqualizersPromise = axios.get(`/api/bayes/verticalEqualizer/${experimentId}`)
 
-      return axios.all([experimentDefinitionPromise, experimentStatisticsPromise, experimentBayesianHistogramsPromise, experimentBayesianEqualizersPromise])
+      return axios.all([experimentDefinitionPromise, experimentStatisticsPromise, experimentBayesianHistogramsPromise])
         .then((response) => {
-          const [experimentDefinition, experimentStatistics, experimentBayesianHistograms, experimentBayesianEqualizers] = response.map(it => it.data)
-          context.commit('setFullExperiment', {experimentDefinition, experimentStatistics, experimentBayesianHistograms, experimentBayesianEqualizers})
+          const [experimentDefinition, experimentStatistics, experimentBayesianHistograms] = response.map(it => it.data)
+          context.commit('setFullExperiment', {experimentDefinition, experimentStatistics, experimentBayesianHistograms})
         }).catch(response => {
           context.commit('setExperimentError', response.toString())
         })
@@ -37,11 +35,10 @@ export default {
   },
 
   mutations: {
-    setFullExperiment (state, {experimentDefinition, experimentStatistics, experimentBayesianHistograms, experimentBayesianEqualizers}) {
+    setFullExperiment (state, {experimentDefinition, experimentStatistics, experimentBayesianHistograms}) {
       state.experimentDefinition = new ExperimentDefinitionModel(experimentDefinition)
       state.experimentStatistics = new ExperimentStatisticsModel(experimentStatistics)
       state.experimentBayesianHistograms = new ExperimentBayesianStatisticsModel(experimentBayesianHistograms)
-      state.experimentBayesianEqualizers = new ExperimentBayesianStatisticsModel(experimentBayesianEqualizers)
       state.experimentReady = true
     },
 

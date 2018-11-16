@@ -19,7 +19,8 @@ public class BayesianChartsRepository {
         this.bayesianStatisticsRepository = bayesianStatisticsRepository;
     }
 
-    public List<BayesianVerticalEqualizer> getVerticalEqualizer(String experimentId) {
+    @Deprecated
+    private List<BayesianVerticalEqualizer> getVerticalEqualizer(String experimentId) {
         logger.debug("query for bayesian VerticalEqualizer, experimentId: {}", experimentId);
         return bayesianStatisticsRepository.experimentStatistics(experimentId).stream()
                 .map(BayesianVerticalEqualizer::new)

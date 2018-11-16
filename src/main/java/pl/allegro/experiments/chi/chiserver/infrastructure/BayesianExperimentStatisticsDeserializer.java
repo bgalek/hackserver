@@ -19,10 +19,10 @@ public class BayesianExperimentStatisticsDeserializer implements JsonDeserialize
         var toDate = json.get("toDate").getAsString();
         var deviceClass = DeviceClass.fromString(json.get("device").getAsString());
         var variantName = json.get("variantName").getAsString();
-
+        var metricName = json.get("metricName").getAsString();
         var dataNode = json.getAsJsonObject("data");
 
-        return new BayesianExperimentStatisticsForVariant(id, toDate, deviceClass, variantName, deserializeVariantData(dataNode, variantName, context));
+        return new BayesianExperimentStatisticsForVariant(id, toDate, deviceClass, variantName, deserializeVariantData(dataNode, variantName, context), metricName);
     }
 
     private VariantBayesianStatistics deserializeVariantData(JsonObject json, String variantName, JsonDeserializationContext context) {

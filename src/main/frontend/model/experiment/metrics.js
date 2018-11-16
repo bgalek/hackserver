@@ -35,6 +35,10 @@ export function getMetricByKey (metricKey) {
   return allMetrics.find(v => v.key === metricKey)
 }
 
+export function getMetricLabelByKey (metricKey) {
+  return getMetricByKey(metricKey) && getMetricByKey(metricKey).label
+}
+
 export function nonLegacyMetrics () {
   return allMetrics.filter(v => !v.isLegacy).toArray()
 }

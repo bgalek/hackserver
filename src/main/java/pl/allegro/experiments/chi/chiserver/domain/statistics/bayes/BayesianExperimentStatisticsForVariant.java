@@ -1,6 +1,5 @@
 package pl.allegro.experiments.chi.chiserver.domain.statistics.bayes;
 
-
 import com.google.common.base.Preconditions;
 import pl.allegro.experiments.chi.chiserver.domain.experiments.DeviceClass;
 
@@ -13,19 +12,22 @@ public class BayesianExperimentStatisticsForVariant {
     private final DeviceClass device;
     private final String variantName;
     private final VariantBayesianStatistics data;
-    private int version;
+    private final String metricName;
 
-    public BayesianExperimentStatisticsForVariant(String experimentId, String toDate, DeviceClass device, String variantName, VariantBayesianStatistics data) {
-        Preconditions.checkNotNull(experimentId, "experimentId cannot be null");
-        Preconditions.checkNotNull(toDate, "toDate cannot be null");
-        Preconditions.checkNotNull(device, "device cannot be null");
-        Preconditions.checkNotNull(data, "data cannot be null");
+    public BayesianExperimentStatisticsForVariant(String experimentId, String toDate, DeviceClass device, String variantName, VariantBayesianStatistics data, String metricName) {
+        Preconditions.checkNotNull(experimentId, "experimentId can't be null");
+        Preconditions.checkNotNull(toDate, "toDate can't be null");
+        Preconditions.checkNotNull(device, "device can't be null");
+        Preconditions.checkNotNull(data, "data can't be null");
+
+        //Preconditions.checkNotNull(metricName, "metricName can't be null");
 
         this.experimentId = experimentId;
         this.toDate = toDate;
         this.device = device;
         this.variantName = variantName;
         this.data = data;
+        this.metricName = metricName;
     }
 
     public String getExperimentId() {
@@ -48,11 +50,7 @@ public class BayesianExperimentStatisticsForVariant {
         return data;
     }
 
-    public void setVersion(int version) {
-        this.version = version;
-    }
-
-    public int getVersion() {
-        return version;
+    public String getMetricName() {
+        return metricName;
     }
 }

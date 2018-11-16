@@ -21,30 +21,33 @@ public class BayesianStatisticsRepository {
     }
 
     public List<BayesianExperimentStatistics> experimentStatistics(String experimentId) {
-        var stats = bayesianStatisticsForVariantRepository.getLatestForAllVariants(experimentId);
+        List<BayesianExperimentStatistics> result = new ArrayList<>();
 
-        if (!isValid(experimentId, stats)) {
-            return Collections.emptyList();
-        }
+        Map<String, List<BayesianExperimentStatisticsForVariant>> statsByMetric =
+                bayesianStatisticsForVariantRepository.getLatestForAllVariants(experimentId).stream()
+                        .collect(Collectors.groupingBy(it -> it.getMetricName()));
 
-        Map<DeviceClass, List<BayesianExperimentStatisticsForVariant>> statsPerDevice = new HashMap<>();
-        for (BayesianExperimentStatisticsForVariant deviceStats: stats) {
-            if (!statsPerDevice.containsKey(deviceStats.getDevice())) {
-                statsPerDevice.put(deviceStats.getDevice(), new LinkedList<>());
+        statsByMetric.forEach((metricName, statsForMetric) -> {
+            if (!isValid(experimentId, statsForMetric)) {
+                throw new IllegalStateException("Corrupted bayesian statistics data for experimentId: " + experimentId + ", metric: " + metricName);
             }
-            statsPerDevice.get(deviceStats.getDevice()).add(deviceStats);
-        }
-        var result = statsPerDevice.keySet().stream()
-                .map(deviceClass ->
-                        new BayesianExperimentStatistics(
-                                experimentId,
-                                statsPerDevice.get(deviceClass).get(0).getToDate(),
-                                deviceClass.toString(),
-                                statsPerDevice.get(deviceClass).stream()
-                                    .map(it -> it.getData())
-                                    .collect(Collectors.toList())
-                        )
-                ).collect(Collectors.toList());
+
+            var statsPerDevice = statsForMetric.stream().collect(Collectors.groupingBy(it -> it.getDevice()));
+            result.addAll(
+                    statsPerDevice.keySet().stream()
+                            .map(deviceClass ->
+                                    new BayesianExperimentStatistics(
+                                            experimentId,
+                                            metricName,
+                                            statsPerDevice.get(deviceClass).get(0).getToDate(),
+                                            deviceClass.toString(),
+                                            statsPerDevice.get(deviceClass).stream()
+                                                    .map(it -> it.getData())
+                                                    .collect(Collectors.toList())
+                                    )
+                            ).collect(Collectors.toList())
+            );
+        });
 
         return result;
     }
@@ -56,17 +59,16 @@ public class BayesianStatisticsRepository {
 
         if (distinctVariantNames.size() * distinctDeviceClasses.size() != stats.size()) {
             logger.error("Corrupted bayesian statistics data for {}, variant names are not unique", experimentId);
-            stats.forEach(it -> logger.error("- {} {} {} {}", it.getExperimentId(), it.getDevice(), it.getToDate(), it.getVariantName()));
+            stats.forEach(it -> logger.error("- {} {} {} {} {}", it.getExperimentId(), it.getDevice(), it.getToDate(), it.getVariantName(), it.getMetricName()));
             return false;
         }
 
         if (distinctDates.size() > 1) {
             logger.error("Corrupted bayesian statistics data for {}, toDate is not unique", experimentId);
-            stats.forEach(it -> logger.error("- {} {} {} {}", it.getExperimentId(), it.getDevice(), it.getToDate(), it.getVariantName()));
+            stats.forEach(it -> logger.error("- {} {} {} {} {}", it.getExperimentId(), it.getDevice(), it.getToDate(), it.getVariantName(), it.getMetricName()));
             return false;
         }
 
         return true;
     }
-
 }
