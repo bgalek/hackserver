@@ -25,6 +25,9 @@
       </h3>
       <experiment-group-info :experiment="experiment"/>
 
+      <h3>Experiment tags</h3>
+      <experiment-tags :experiment="experiment"/>
+
       <h3>Experiment's goal</h3>
       <experiment-goal-info :experiment="experiment"/>
 
@@ -138,6 +141,7 @@
   import ExperimentStatus from './ExperimentStatus'
   import ExperimentGroupInfo from './ExperimentGroupInfo'
   import ExperimentGoalInfo from './ExperimentGoalInfo'
+  import ExperimentTags from './ExperimentTags'
   import ExperimentEventFiltersEditing from './ExperimentEventFiltersEditing'
   import _ from 'lodash'
 
@@ -149,6 +153,7 @@
       ExperimentGroupInfo,
       ExperimentGoalInfo,
       ExperimentStatus,
+      ExperimentTags,
       ChiPanel
     },
 

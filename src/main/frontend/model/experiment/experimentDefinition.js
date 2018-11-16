@@ -34,7 +34,8 @@ const ExperimentDefinitionRecord = Record({
   bonferroniCorrection: 1,
   maxPossibleAllocation: 0,
   lastStatusChange: null,
-  goal: null
+  goal: null,
+  tags: []
 })
 
 export default class ExperimentDefinitionModel extends ExperimentDefinitionRecord {
@@ -58,6 +59,7 @@ export default class ExperimentDefinitionModel extends ExperimentDefinitionRecor
     experimentDefinitionObject.groups = List(experimentDefinitionObject.groups)
     experimentDefinitionObject.variantNames = List(experimentDefinitionObject.variantNames)
     experimentDefinitionObject.eventDefinitions = List(experimentDefinitionObject.eventDefinitions)
+    experimentDefinitionObject.tags = experimentDefinitionObject.tags.map(it => it.id)
 
     super(experimentDefinitionObject)
   }
