@@ -64,7 +64,6 @@ public class ExperimentDefinition {
         Preconditions.checkArgument(!Strings.isNullOrEmpty(id));
         Preconditions.checkNotNull(variantNames);
         Preconditions.checkNotNull(groups);
-//        Preconditions.checkNotNull(tags);
         Preconditions.checkArgument(internalVariantName == null || !internalVariantName.isEmpty());
         Preconditions.checkArgument(fullOnVariantName == null || !fullOnVariantName.isEmpty());
         this.id = id;
