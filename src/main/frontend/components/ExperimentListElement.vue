@@ -29,7 +29,7 @@
         ></bayesian-horizontal-equalizer-chart>
         &nbsp;&nbsp;&nbsp;&nbsp;
         <span  v-if="experiment.tags">
-          <v-chip v-for="t in experiment.tags" :key="t" color="blue" text-color="white" disabled>
+          <v-chip v-for="t in experiment.tags" :key="t" outline color="black" disabled>
             {{ t }}
           </v-chip>
         </span>
