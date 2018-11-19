@@ -43,7 +43,7 @@ class ExperimentsSelfServiceE2ESpec extends BaseE2EIntegrationSpec {
         new User('Author', ['group a'], true)   | true
         new User('Author', [], false)           | true
         new User('Unknown', [], false)          | false
-        new User('Unknown', ['group a'], false) | true
+        new User('Unknown', ['group A '], false) | true
         new User('Unknown', [], true)           | true
         new User('Unknown', ['group a'], true)  | true
     }
