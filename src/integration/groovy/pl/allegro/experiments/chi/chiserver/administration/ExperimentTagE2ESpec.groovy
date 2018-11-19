@@ -35,4 +35,21 @@ class ExperimentTagE2ESpec extends BaseE2EIntegrationSpec {
         then:
         thrown(HttpClientErrorException)
     }
+
+    def "should not update experiment if provided tag does not exist"() {
+        given:
+        def experiment = draftExperiment()
+
+        when:
+        updateExperimentDescriptions(
+                experiment.id,
+                'ooooooooooooooooooooooooooooooooooooooooooooooong',
+                'http://chi-dev.allegrogroup.com/#/experiments/z-tagami',
+                [],
+                ['nonexistent']
+        )
+
+        then:
+        thrown(HttpClientErrorException)
+    }
 }
