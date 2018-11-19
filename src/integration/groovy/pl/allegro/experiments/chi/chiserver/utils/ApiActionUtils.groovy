@@ -45,6 +45,7 @@ trait ApiActionUtils {
             experimentTagId = UUID.randomUUID().toString().substring(0, 10)
         }
         post("/api/admin/experiments/tags", [experimentTagId: experimentTagId])
+
         experimentTagId
     }
 
