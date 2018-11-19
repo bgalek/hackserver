@@ -80,11 +80,9 @@
           <v-tooltip right close-delay="1000">
               <span>
                 Make your experiment more descriptive.
-                Add a tag, for example describing where your test is running: <code>Listing</code>.
-                <br/>
-                Hit <b>ENTER</b> to add a tag.
+                Choose a tag, for example describing where your test is running: <code>Listing</code>.
               </span>
-            You can add more than one tag.
+            You can choose more than one tag.
             <br/>
             If you can't find tag suitable for your experiment, we can add it for you.<br/>
             <v-icon
