@@ -93,24 +93,14 @@
         </v-flex>
 
         <v-flex xs11 lg6>
-          <v-combobox
-            multiple
+          <v-select
             id="tagsFormField"
             label="Tags"
-            slot="activator"
             :items="availableExperimentTags"
             chips
-            append-icon=""
+            multiple
             v-model="value.tags">
-            <template slot="selection" slot-scope="data">
-              <v-chip
-                close
-                @input="removeTag(data.item)"
-                :selected="data.selected">
-                <strong>{{ data.item }}</strong>&nbsp;
-              </v-chip>
-            </template>
-          </v-combobox>
+          </v-select>
         </v-flex>
       </v-layout>
 
@@ -209,11 +199,6 @@
       removeGroup (group) {
         const i = this.value.groups.indexOf(group)
         this.value.groups.splice(i, 1)
-      },
-
-      removeTag (tag) {
-        const i = this.value.tags.indexOf(tag)
-        this.value.tags.splice(i, 1)
       },
 
       buildResult (value) {

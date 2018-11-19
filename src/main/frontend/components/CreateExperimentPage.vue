@@ -159,6 +159,7 @@
   export default {
     mounted () {
       this.getExperiments()
+      this.getAvailableExperimentTags()
     },
 
     data () {
