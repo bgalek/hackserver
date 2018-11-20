@@ -1,5 +1,5 @@
 <template>
-  <v-list-tile @click="goToExperiment(experiment.id)">
+  <v-list-tile  @click="goToExperiment(experiment.id)">
     <v-list-tile-content>
       <v-list-tile-title style="height: auto">
         <span>{{ experiment.id }}</span>
@@ -11,23 +11,28 @@
           </v-chip>
         </span>
 
+        <v-list-tile-sub-title v-if="experiment.getLastStatusChangeMoment()">
+          {{experiment.getStatusDesc()}} {{ experiment.getLastStatusChangeMoment() }}
+        </v-list-tile-sub-title>
+
+        <div style="display: flex">
+          <bayesian-horizontal-equalizer-chart v-if="this.showEqualizer(experiment)"
+                                             :equalizerData="experiment.bayesianEqualizer"
+                                             :height="20" :width="200"
+          ></bayesian-horizontal-equalizer-chart>
+        </div>
+
         <experiment-hotness v-if="linkToData" label="Last day visits" :value="experiment.measurements.lastDayVisits"></experiment-hotness>
 
       </v-list-tile-title>
       <v-list-tile-sub-title v-html="experiment.desc"></v-list-tile-sub-title>
 
-      <v-list-tile-sub-title v-if="experiment.getLastStatusChangeMoment()">
-        {{experiment.getStatusDesc()}} {{ experiment.getLastStatusChangeMoment() }}
-      </v-list-tile-sub-title>
     </v-list-tile-content>
 
     <v-list-tile-action>
       <div style="display: flex">
-        <bayesian-horizontal-equalizer-chart v-if="this.showEqualizer(experiment)"
-                                             :equalizerData="experiment.bayesianEqualizer"
-                                             :height="20" :width="200"
-        ></bayesian-horizontal-equalizer-chart>
         &nbsp;&nbsp;&nbsp;&nbsp;
+
         <span  v-if="experiment.tags">
           <v-chip v-for="t in experiment.tags" :key="t" outline color="black" disabled>
             {{ t }}

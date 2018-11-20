@@ -122,6 +122,10 @@
       BayesianResult
     },
 
+    beforeRouteUpdate () {
+      this.$router.go(this.$router.currentRoute)
+    },
+
     methods: {
       ...mapActions(['getExperiment', 'getAvailableExperimentTags']),
 

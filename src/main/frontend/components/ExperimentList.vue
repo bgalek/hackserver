@@ -1,5 +1,5 @@
 <template>
-  <v-list two-line>
+  <v-list three-line>
     <experiment-list-element v-for="experiment in experiments" :key="experiment.id"
                              :experiment="experiment"
                              :linkToData="linkToData">

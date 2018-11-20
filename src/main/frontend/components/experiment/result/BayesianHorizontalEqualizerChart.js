@@ -27,7 +27,7 @@ export default {
             xAxes: [{
               display: false,
               stacked: true,
-              barThickness: 20,
+              barThickness: 10,
               barPercentage: 1.0,
               categoryPercentage: 1.0,
               ticks: {
@@ -38,7 +38,7 @@ export default {
               }
             }],
             yAxes: [{
-              barThickness: 20,
+              barThickness: 10,
               display: false,
               stacked: true,
               ticks: {
