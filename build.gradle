@@ -2,15 +2,17 @@ buildscript {
 
     ext {
         versions = [
-                jackson       : '2.9.5',
-                springBoot    : '2.0.1.RELEASE',
-                andamio       : '2.3.4',
-                springKafka   : '2.1.5.RELEASE',
+                jackson       : '2.9.7',
+                springBoot    : '2.1.0.RELEASE',
+                andamio       : '2.5.0',
+                springKafka   : '2.2.0.RELEASE',
+                javers        : '4.0.0-RC1',
                 spock         : '1.1-groovy-2.4',
                 groovy        : '2.4.15',
                 jaxb          : '2.3.0',
                 geb           : '2.1',
-                chromeSelenium: '3.11.0'
+                chromeSelenium: '3.11.0',
+                embeddedMongo : '2.1.1'
         ]
 
         drivers = ["chromeHeadless"]
@@ -57,7 +59,7 @@ repositories {
 }
 
 dependencies {
-    compile 'org.javers:javers-spring-boot-starter-mongo:3.11.3'
+    compile 'org.javers:javers-spring-boot-starter-mongo:' + versions.javers
     compile 'pl.allegro.tech.common:andamio-starter-webmvc:' + versions.andamio
     compile group: 'org.springframework.security.oauth.boot', name: 'spring-security-oauth2-autoconfigure', version: versions.springBoot
     compile group: 'org.springframework.boot', name: 'spring-boot-starter-security', version: versions.springBoot
@@ -91,7 +93,7 @@ dependencies {
     testCompile group: 'org.spockframework', name: 'spock-spring', version: versions.spock
     testCompile group: 'org.springframework.boot', name: 'spring-boot-starter-test', version: versions.springBoot
     testCompile group: 'org.springframework.kafka', name: 'spring-kafka-test', version: versions.springKafka
-    testCompile group: 'com.github.fakemongo', name: 'fongo', version: '2.2.0-RC1'
+    testCompile 'de.flapdoodle.embed:de.flapdoodle.embed.mongo:' + versions.embeddedMongo
 
     testCompile group: 'org.gebish', name: 'geb-spock', version: versions.geb
     testCompile group: 'org.seleniumhq.selenium', name: 'selenium-chrome-driver', version: versions.chromeSelenium

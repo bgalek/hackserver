@@ -10,7 +10,7 @@ import org.springframework.web.client.RestTemplate;
 @Configuration
 public class NotificationConfig {
 
-    @Bean
+    @Bean(name = "HipChatNotificator")
     Notificator notificator(RestTemplate restTemplate,
                             @Value("${notificator.enabled:false}") boolean notificationsEnabled,
                             @Value("${notificator.hipChatPostUrl:}") String hipChatPostUrl

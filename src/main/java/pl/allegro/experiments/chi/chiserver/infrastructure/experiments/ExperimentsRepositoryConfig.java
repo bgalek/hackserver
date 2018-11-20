@@ -30,7 +30,7 @@ public class ExperimentsRepositoryConfig {
     private static final String EXPERIMENTS_COUNT_ACTIVE_METRIC = "experiments.count.active";
     private static final String EXPERIMENTS_COUNT_DRAFT_METRIC = "experiments.count.draft";
 
-    @Bean
+    @Bean(name = "MongoCustomConversions")
     MongoCustomConversions customConversions() {
         List<Converter> converters = new ArrayList<>();
         converters.add(new DateTimeDeserializer());
