@@ -13,6 +13,25 @@ class ExperimentTagE2ESpec extends BaseE2EIntegrationSpec {
         fetchAllExperimentTags().collect {it -> it.id}.containsAll([tagId1, tagId2])
     }
 
+    def "should not create experiment tag if already exists"() {
+        given:
+        def existingTagId = createExperimentTag()
+
+        when:
+        createExperimentTag(existingTagId)
+
+        then:
+        thrown(HttpClientErrorException)
+    }
+
+    def "should not create experiment tag if it is to long"() {
+        when:
+        createExperimentTag('loooooooooooooog')
+
+        then:
+        thrown(HttpClientErrorException)
+    }
+
     def "should create experiment with tags"() {
         given:
         def tagId1 = createExperimentTag()
@@ -43,7 +62,7 @@ class ExperimentTagE2ESpec extends BaseE2EIntegrationSpec {
         when:
         updateExperimentDescriptions(
                 experiment.id,
-                'ooooooooooooooooooooooooooooooooooooooooooooooong',
+                'loooooooooooooog',
                 'http://chi-dev.allegrogroup.com/#/experiments/z-tagami',
                 [],
                 ['nonexistent']

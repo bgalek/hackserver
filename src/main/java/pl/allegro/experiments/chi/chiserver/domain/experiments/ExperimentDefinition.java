@@ -83,7 +83,7 @@ public class ExperimentDefinition {
         this.customParameter = customParameter;
         this.lastExplicitStatusChange = lastExplicitStatusChange;
         this.goal = goal;
-        this.tags = tags == null ? Collections.emptyList() : tags;
+        this.tags = ImmutableList.copyOf(tags == null ? Collections.emptyList() : tags);
     }
 
     @Id

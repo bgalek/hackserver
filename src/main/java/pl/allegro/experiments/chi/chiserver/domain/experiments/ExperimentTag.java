@@ -2,7 +2,6 @@ package pl.allegro.experiments.chi.chiserver.domain.experiments;
 
 import com.google.common.base.Preconditions;
 import org.javers.core.metamodel.annotation.DiffInclude;
-import org.javers.core.metamodel.annotation.Id;
 import org.springframework.data.annotation.PersistenceConstructor;
 import org.springframework.data.mongodb.core.mapping.Document;
 
@@ -18,7 +17,6 @@ public class ExperimentTag {
         this.id = id;
     }
 
-    @Id
     @DiffInclude
     public String getId() {
         return id;

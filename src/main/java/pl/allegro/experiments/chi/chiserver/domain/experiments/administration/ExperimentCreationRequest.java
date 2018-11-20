@@ -63,11 +63,7 @@ public class ExperimentCreationRequest {
         this.deviceClass = deviceClass;
         this.description = description;
         this.documentLink = documentLink;
-        if (tags == null) {
-            this.tags = ImmutableList.copyOf(new ArrayList<>());
-        } else {
-            this.tags = ImmutableList.copyOf(tags);
-        }
+        this.tags = ImmutableList.copyOf(tags == null ? new ArrayList<>() : tags);
         if (groups == null) {
             this.groups = ImmutableList.copyOf(new ArrayList<>());
         } else {
