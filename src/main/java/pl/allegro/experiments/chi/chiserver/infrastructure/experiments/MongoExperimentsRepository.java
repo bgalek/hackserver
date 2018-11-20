@@ -21,7 +21,11 @@ class MongoExperimentsRepository implements ExperimentsRepository {
     private final UserProvider userProvider;
     private final ExperimentDefinitionCrudRepository experimentDefinitionCrudRepository;
 
-    public MongoExperimentsRepository(ExperimentsMongoMetricsReporter experimentsMongoMetricsReporter, Javers javers, UserProvider userProvider, ExperimentDefinitionCrudRepository experimentDefinitionCrudRepository) {
+    public MongoExperimentsRepository(
+            ExperimentsMongoMetricsReporter experimentsMongoMetricsReporter,
+            Javers javers,
+            UserProvider userProvider,
+            ExperimentDefinitionCrudRepository experimentDefinitionCrudRepository) {
         this.experimentsMongoMetricsReporter = experimentsMongoMetricsReporter;
         this.javers = javers;
         this.userProvider = userProvider;

@@ -28,6 +28,11 @@
                                              :height="20" :width="200"
         ></bayesian-horizontal-equalizer-chart>
         &nbsp;&nbsp;&nbsp;&nbsp;
+        <span  v-if="experiment.tags">
+          <v-chip v-for="t in experiment.tags" :key="t" outline color="black" disabled>
+            {{ t }}
+          </v-chip>
+        </span>
         <experiment-status :experiment="experiment" :show-reporting-status="false"/>
       </div>
     </v-list-tile-action>

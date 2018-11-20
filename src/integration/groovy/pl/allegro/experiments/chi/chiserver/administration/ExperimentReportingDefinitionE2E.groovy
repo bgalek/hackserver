@@ -3,6 +3,7 @@ package pl.allegro.experiments.chi.chiserver.administration
 import pl.allegro.experiments.chi.chiserver.BaseE2EIntegrationSpec
 import spock.lang.Unroll
 
+//TODO this test os overambitious, should be focused on reporting definition
 class ExperimentReportingDefinitionE2E extends BaseE2EIntegrationSpec {
 
     @Unroll
@@ -18,7 +19,6 @@ class ExperimentReportingDefinitionE2E extends BaseE2EIntegrationSpec {
 
         when:
         startExperiment(experiment.id as String, 30)
-        updateExperimentDescriptions(experiment.id as String, 'chi rulez', 'new link', ['group c'])
         updateExperimentVariants(experiment.id as String, 'internV', 18, 'phone')
         pauseExperiment(experiment.id as String)
         resumeExperiment(experiment.id as String)

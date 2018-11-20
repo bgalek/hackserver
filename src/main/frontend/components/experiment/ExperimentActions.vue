@@ -148,6 +148,7 @@
 
           <v-list style="padding:15px; display: block;">
             <experiment-desc-editing :experiment="experiment"
+                                     :available-experiment-tags="availableExperimentTags"
                                      show-buttons="true"
                                      @updateDescriptions="updateDescriptions"
                                      @closeDescriptions="closeDescriptions"
@@ -241,7 +242,7 @@
   import { formatError } from '../../model/errors'
 
   export default {
-    props: ['experiment', 'allowDelete'],
+    props: ['experiment', 'allowDelete', 'availableExperimentTags'],
 
     components: {
       ExperimentAddToGroupEditing,

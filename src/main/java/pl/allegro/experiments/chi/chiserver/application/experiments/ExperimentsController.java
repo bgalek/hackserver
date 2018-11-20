@@ -11,6 +11,7 @@ import pl.allegro.experiments.chi.chiserver.domain.calculator.SampleSizeCalculat
 import pl.allegro.experiments.chi.chiserver.domain.calculator.SampleSizeCalculatorRequest;
 import pl.allegro.experiments.chi.chiserver.domain.experiments.DeviceClass;
 import pl.allegro.experiments.chi.chiserver.domain.experiments.EventDefinition;
+import pl.allegro.experiments.chi.chiserver.domain.experiments.ExperimentTagRepository;
 import pl.allegro.experiments.chi.chiserver.domain.experiments.ExperimentsRepository;
 import pl.allegro.experiments.chi.chiserver.domain.experiments.groups.ExperimentGroupRepository;
 import pl.allegro.experiments.chi.chiserver.domain.statistics.MeasurementsRepository;
@@ -44,10 +45,12 @@ public class ExperimentsController {
     private final Gson jsonConverter;
     private final Auditor auditor;
     private final ExperimentGroupRepository experimentGroupRepository;
+    private final ExperimentTagRepository experimentTagRepository;
     private final ClientExperimentFactory clientExperimentFactory;
     private final ClassicStatisticsForVariantMetricRepository classicStatisticsForVariantMetricRepository;
 
     public ExperimentsController(
+            ExperimentTagRepository experimentTagRepository,
             SampleSizeCalculator sampleSizeCalculator,
             ExperimentsRepository experimentsRepository,
             MeasurementsRepository measurementsRepository,
@@ -58,6 +61,7 @@ public class ExperimentsController {
             ExperimentGroupRepository experimentGroupRepository,
             ClientExperimentFactory clientExperimentFactory,
             ClassicStatisticsForVariantMetricRepository classicStatisticsForVariantMetricRepository) {
+        this.experimentTagRepository = experimentTagRepository;
         this.sampleSizeCalculator = sampleSizeCalculator;
         this.experimentsRepository = experimentsRepository;
         this.measurementsRepository = measurementsRepository;
@@ -110,6 +114,22 @@ public class ExperimentsController {
         logger.info("Experiment creation request received", experimentCreationRequest);
         experimentActions.create(experimentCreationRequest);
         return new ResponseEntity<>(HttpStatus.CREATED);
+    }
+
+    @MeteredEndpoint
+    @PostMapping(path = "/tags")
+    ResponseEntity<String> createExperimentTag(
+            @RequestBody ExperimentTagCreationRequest experimentTagCreationRequest) {
+        logger.info("Experiment tag creation request received", experimentTagCreationRequest);
+        experimentActions.createExperimentTag(experimentTagCreationRequest);
+        return new ResponseEntity<>(HttpStatus.CREATED);
+    }
+
+    @MeteredEndpoint
+    @GetMapping(path = "/tags")
+    String allExperimentTags() {
+        logger.info("Get all experiment tags request received");
+        return jsonConverter.toJson(experimentTagRepository.all());
     }
 
     @MeteredEndpoint

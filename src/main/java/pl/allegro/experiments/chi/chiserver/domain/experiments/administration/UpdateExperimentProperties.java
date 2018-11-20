@@ -10,15 +10,18 @@ public class UpdateExperimentProperties {
     private final String description;
     private final String documentLink;
     private final List<String> groups;
+    private final List<String> tags;
 
     @JsonCreator
     public UpdateExperimentProperties(
             @JsonProperty("description") String description,
             @JsonProperty("documentLink") String documentLink,
+            @JsonProperty("tags") List<String> tags,
             @JsonProperty("groups") List<String> groups) {
         this.description = description;
         this.documentLink = documentLink;
         this.groups = groups == null ? Collections.emptyList() : groups;
+        this.tags = tags == null ? Collections.emptyList() : tags;
     }
 
     public String getDescription() {
@@ -31,5 +34,9 @@ public class UpdateExperimentProperties {
 
     public List<String> getGroups() {
         return this.groups;
+    }
+
+    public List<String> getTags() {
+        return tags;
     }
 }

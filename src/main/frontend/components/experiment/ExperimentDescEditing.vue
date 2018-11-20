@@ -75,6 +75,33 @@
           </v-flex>
       </v-layout>
 
+      <v-layout row align-center>
+        <v-flex xs1>
+          <v-tooltip right close-delay="1000">
+              <span>
+                Make your experiment more descriptive.
+                Choose a tag, for example describing where your test is running: <code>Listing</code>.
+              </span>
+            You can choose more than one tag.
+            <br/>
+            If you can't find tag suitable for your experiment, we can add it for you.<br/>
+            <v-icon
+              slot="activator">help_outline</v-icon>
+          </v-tooltip>
+        </v-flex>
+
+        <v-flex xs11 lg6>
+          <v-select
+            id="tagsFormField"
+            label="Tags"
+            :items="availableExperimentTags"
+            chips
+            multiple
+            v-model="value.tags">
+          </v-select>
+        </v-flex>
+      </v-layout>
+
       <v-layout row align-center v-if="showButtons">
           <v-flex>
             <v-btn flat
@@ -106,11 +133,12 @@
   const ExperimentDescEditingRecord = Record({
     documentLink: null,
     description: null,
-    groups: List()
+    groups: List(),
+    tags: List()
   })
 
   export default {
-    props: ['experiment', 'showButtons'],
+    props: ['experiment', 'showButtons', 'availableExperimentTags'],
 
     data () {
       const initialValue = this.init(this.experiment)
@@ -147,7 +175,8 @@
         const value = {
           documentLink: experiment && experiment.documentLink,
           description: experiment && experiment.description,
-          groups: experiment && Array.from(experiment.groups)
+          groups: experiment && Array.from(experiment.groups),
+          tags: experiment && experiment.tags
         }
         this.$emit('input', this.buildResult(value))
         return value
@@ -174,7 +203,8 @@
         return new ExperimentDescEditingRecord({
           documentLink: value.documentLink,
           description: value.description,
-          groups: List(value.groups)
+          groups: List(value.groups),
+          tags: List(value.tags)
         })
       },
 

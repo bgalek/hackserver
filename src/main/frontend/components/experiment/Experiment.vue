@@ -37,6 +37,7 @@
         <experiment-actions
           v-if="experimentReady"
           :experiment="experimentDefinition"
+          :availableExperimentTags="availableExperimentTags"
           :allowDelete="experimentReady && !experimentStatistics.any()"
         ></experiment-actions>
 
@@ -71,6 +72,8 @@
       this.getExperiment(this.$route.params.experimentId).then(() => {
         this.selectedDevice = this.experimentDefinition.getInitialDevice()
         this.refreshStatistics(this.experimentDefinition.getInitialDevice())
+      }).then(() => {
+        this.getAvailableExperimentTags()
       })
     },
 
@@ -105,7 +108,8 @@
         }
       },
       experimentReady: state => state.experimentStore.experimentReady,
-      experimentError: state => state.experimentStore.experimentError
+      experimentError: state => state.experimentStore.experimentError,
+      availableExperimentTags: state => state.experimentTagStore.experimentTags
     }),
 
     components: {
@@ -119,7 +123,7 @@
     },
 
     methods: {
-      ...mapActions(['getExperiment']),
+      ...mapActions(['getExperiment', 'getAvailableExperimentTags']),
 
       onDeviceChanged (device) {
         this.selectedDevice = device.device

@@ -42,6 +42,7 @@ class JsonConfig {
                 .registerTypeAdapter(LocalDate.class, new LocalDateTypeAdapter())
                 .registerTypeAdapter(ZonedDateTime.class, new ZonedDateTimeTypeAdapter())
                 .registerTypeAdapter(Duration.class, new DurationTypeAdapter())
+                .registerTypeAdapter(ExperimentTag.class, new ExperimentTagSerializer())
                 .create();
     }
 }

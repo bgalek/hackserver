@@ -6,6 +6,7 @@ import org.springframework.stereotype.Service;
 import pl.allegro.experiments.chi.chiserver.domain.UserProvider;
 import pl.allegro.experiments.chi.chiserver.domain.calculator.SampleSizeCalculator;
 import pl.allegro.experiments.chi.chiserver.domain.experiments.EventDefinition;
+import pl.allegro.experiments.chi.chiserver.domain.experiments.ExperimentTagRepository;
 import pl.allegro.experiments.chi.chiserver.domain.experiments.ExperimentsRepository;
 import pl.allegro.experiments.chi.chiserver.domain.experiments.administration.notifications.Notificator;
 import pl.allegro.experiments.chi.chiserver.domain.experiments.groups.ExperimentGroupRepository;
@@ -17,6 +18,7 @@ import java.util.List;
 @Service
 public class CommandFactory {
     private final ExperimentsRepository experimentsRepository;
+    private final ExperimentTagRepository experimentTagRepository;
     private final UserProvider userProvider;
     private final PermissionsAwareExperimentRepository permissionsAwareExperimentRepository;
     private final StatisticsRepository statisticsRepository;
@@ -31,8 +33,10 @@ public class CommandFactory {
                           StatisticsRepository statisticsRepository,
                           ExperimentGroupRepository experimentGroupRepository,
                           Notificator emailService,
-                          SampleSizeCalculator sampleSizeCalculator) {
+                          SampleSizeCalculator sampleSizeCalculator,
+                          ExperimentTagRepository experimentTagRepository) {
         this.experimentsRepository = experimentsRepository;
+        this.experimentTagRepository = experimentTagRepository;
         this.userProvider = userProvider;
         this.permissionsAwareExperimentRepository = permissionsAwareExperimentRepository;
         this.statisticsRepository = statisticsRepository;
@@ -43,8 +47,16 @@ public class CommandFactory {
 
     Command createExperimentCommand(ExperimentCreationRequest request) {
         Preconditions.checkNotNull(request);
-        CreateExperimentCommand experimentCommand = new CreateExperimentCommand(experimentsRepository, userProvider, request);
+        CreateExperimentCommand experimentCommand = new CreateExperimentCommand(experimentsRepository, experimentTagRepository, userProvider, request);
         return new NotificationDecoratorCommand(experimentCommand, notificator, userProvider);
+    }
+
+    Command createExperimentTagCommand(ExperimentTagCreationRequest request) {
+        Preconditions.checkNotNull(request);
+        return new CreateExperimentTagCommand(
+                experimentTagRepository,
+                userProvider,
+                request);
     }
 
     Command startExperimentCommand(
@@ -128,7 +140,8 @@ public class CommandFactory {
                 experimentId,
                 properties,
                 experimentsRepository,
-                permissionsAwareExperimentRepository
+                permissionsAwareExperimentRepository,
+                experimentTagRepository
         );
         return new NotificationDecoratorCommand(experimentCommand, notificator, userProvider);
     }

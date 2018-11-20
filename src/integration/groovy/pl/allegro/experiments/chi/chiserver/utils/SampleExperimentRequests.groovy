@@ -16,7 +16,8 @@ class SampleExperimentRequests {
             reportingType      : null,
             customParameterName: null,
             customParamterValue: null,
-            eventDefinitions   : null
+            eventDefinitions   : null,
+            tags               : []
     ]
 
     static Map sampleExperimentCreationRequestProperties(Map customProperties = [:]) {
@@ -38,6 +39,7 @@ class SampleExperimentRequests {
                 .customParameterName(properties.customParameterName as String)
                 .customParameterValue(properties.customParameterValue as String)
                 .eventDefinitions(properties.eventDefinitions as List<EventDefinition>)
+                .tags(properties.tags as List<String>)
                 .build()
     }
 

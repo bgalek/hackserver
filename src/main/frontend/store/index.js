@@ -22,6 +22,7 @@ import createPersistedState from 'vuex-persistedstate'
 import makeExperimentFullOn from './makeExperimentFullOn'
 import calculateSampleSize from './calculateSampleSize'
 import experimentStore from './experimentStore'
+import experimentTagStore from './experimentTagStore'
 
 Vue.use(Vuex)
 
@@ -51,6 +52,7 @@ export default new Vuex.Store({
     updateExperimentVariants,
     updateExperimentEventDefinitions,
     user,
-    calculateSampleSize
+    calculateSampleSize,
+    experimentTagStore
   }
 })

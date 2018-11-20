@@ -2,9 +2,11 @@ package pl.allegro.experiments.chi.chiserver.utils
 
 import org.springframework.beans.factory.annotation.Autowired
 import pl.allegro.experiments.chi.chiserver.domain.experiments.EventDefinition
+import pl.allegro.experiments.chi.chiserver.domain.experiments.ExperimentTag
 import pl.allegro.experiments.chi.chiserver.domain.experiments.administration.ExperimentActions
 import pl.allegro.experiments.chi.chiserver.domain.experiments.administration.ExperimentCreationRequest
 import pl.allegro.experiments.chi.chiserver.domain.experiments.administration.AddExperimentToGroupRequest
+import pl.allegro.experiments.chi.chiserver.domain.experiments.administration.ExperimentTagCreationRequest
 import pl.allegro.experiments.chi.chiserver.domain.experiments.administration.MakeExperimentFullOnProperties
 import pl.allegro.experiments.chi.chiserver.domain.experiments.administration.ProlongExperimentProperties
 import pl.allegro.experiments.chi.chiserver.domain.experiments.administration.StartExperimentProperties
@@ -17,6 +19,14 @@ trait CommandActionUtils {
 
     void createExperiment(ExperimentCreationRequest request) {
         experimentActions.create(request)
+    }
+
+    String createExperimentTag(String tagId = null) {
+        if (tagId == null) {
+            tagId = UUID.randomUUID().toString().substring(0, 10)
+        }
+        experimentActions.createExperimentTag(new ExperimentTagCreationRequest(tagId))
+        tagId
     }
 
     void startExperiment(String experimentId, long experimentDurationDays) {

@@ -14,6 +14,9 @@ public class ExperimentsMongoMetricsReporter {
     private static final String CLASSIC_EXPERIMENT_STATISTICS_WRITE = "mongo.experiments.classic.write";
     private static final String ALL_EXPERIMENT_GROUPS = "mongo.experiments.groups.all";
     private static final String SAVE_EXPERIMENT_GROUP = "mongo.experiments.groups.save";
+    private static final String WRITE_EXPERIMENT_TAG = "mongo.experiments.tags.write";
+    private static final String READ_EXPERIMENT_TAG = "mongo.experiments.tags.read";
+    private static final String ALL_EXPERIMENT_TAGS = "mongo.experiments.tags.all";
 
     private final MeterRegistry metricRegistry;
 
@@ -45,6 +48,18 @@ public class ExperimentsMongoMetricsReporter {
         return metricRegistry.timer(CLASSIC_EXPERIMENT_STATISTICS_WRITE);
     }
 
+    public Timer timerWriteExperimentTag() {
+        return metricRegistry.timer(WRITE_EXPERIMENT_TAG);
+    }
+
+    public Timer timerReadExperimentTag() {
+        return metricRegistry.timer(READ_EXPERIMENT_TAG);
+    }
+
+    public Timer timerAllExperimentTags() {
+        return metricRegistry.timer(ALL_EXPERIMENT_TAGS);
+    }
+
     public Timer timerAllExperimentGroups() {
         return metricRegistry.timer(ALL_EXPERIMENT_GROUPS);
     }
@@ -52,4 +67,5 @@ public class ExperimentsMongoMetricsReporter {
     public Timer timerSaveExperimentGroup() {
         return metricRegistry.timer(SAVE_EXPERIMENT_GROUP);
     }
+
 }
