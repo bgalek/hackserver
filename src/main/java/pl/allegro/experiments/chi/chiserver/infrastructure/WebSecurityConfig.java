@@ -31,8 +31,9 @@ class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         http.headers().addHeaderWriter(new StaticHeadersWriter(HttpHeaders.CACHE_CONTROL, "private"));
 
         if (oauthEnabled) {
-            http.authorizeRequests()
-                    .antMatchers("/", "/login**","/callback/", "/error**").permitAll()
+            http.antMatcher("/**")
+                    .authorizeRequests()
+                    .antMatchers("/", "/login**", "/callback/", "/error**").permitAll()
                     .antMatchers(HttpMethod.GET, "/api/**/*", "/status/**/*", "/explicitStatus/**/*", "/env/**/*").permitAll()
                     .antMatchers(HttpMethod.POST, "/api/**/*").permitAll()
                     .and().authorizeRequests().anyRequest().authenticated()
