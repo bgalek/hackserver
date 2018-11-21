@@ -6,7 +6,7 @@ buildscript {
                 springBoot    : '2.1.0.RELEASE',
                 springData    : '2.1.2.RELEASE',
                 andamio       : '2.5.0',
-                springSessionDataMongodb: '2.0.3.RELEASE',
+                springSessionDataMongodb: '2.1.0.RELEASE',
                 springKafka   : '2.2.0.RELEASE',
                 javers        : '4.0.0-RC2',
                 spock         : '1.1-groovy-2.4',
