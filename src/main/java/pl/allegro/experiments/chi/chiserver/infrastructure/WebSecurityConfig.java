@@ -31,11 +31,12 @@ class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         http.headers().addHeaderWriter(new StaticHeadersWriter(HttpHeaders.CACHE_CONTROL, "private"));
 
         if (oauthEnabled) {
-            http.authorizeRequests()
+            http.antMatcher("/**")
+                .authorizeRequests()
                     .antMatchers(HttpMethod.GET, "/api/**/*", "/status/**/*", "/explicitStatus/**/*", "/env/**/*").permitAll()
                     .antMatchers(HttpMethod.POST, "/api/**/*").permitAll()
                     .antMatchers("/login**", "/login").permitAll()
-                    .and().authorizeRequests().anyRequest().authenticated()
+                    .anyRequest().authenticated()
                     .and().logout().logoutSuccessUrl("/after-logout").permitAll();
         } else {
             http.anonymous()
