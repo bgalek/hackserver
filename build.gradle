@@ -4,6 +4,7 @@ buildscript {
         versions = [
                 jackson       : '2.9.7',
                 springBoot    : '2.1.0.RELEASE',
+                springData    : '2.1.2.RELEASE',
                 andamio       : '2.5.0',
                 springKafka   : '2.2.0.RELEASE',
                 javers        : '4.0.0-RC2',
@@ -64,14 +65,14 @@ dependencies {
     compile group: 'org.springframework.security.oauth.boot', name: 'spring-security-oauth2-autoconfigure', version: versions.springBoot
     compile group: 'org.springframework.boot', name: 'spring-boot-starter-security', version: versions.springBoot
     compile group: 'org.springframework.boot', name: 'spring-boot-starter-data-mongodb', version: versions.springBoot
-    compile group: 'org.springframework.session', name: 'spring-session-data-mongodb', version: '2.0.2.RELEASE'
-    compile group: 'org.springframework.security', name: 'spring-security-jwt', version: '1.0.8.RELEASE'
+    compile group: 'org.springframework.session', name: 'spring-session-data-mongodb', version: versions.springData
+    compile group: 'org.springframework.security', name: 'spring-security-jwt', version: '1.0.9.RELEASE'
     compile group: 'com.fasterxml.jackson.dataformat', name: 'jackson-dataformat-avro', version: versions.jackson
     compile group: 'com.fasterxml.jackson.datatype', name: 'jackson-datatype-jdk8', version: versions.jackson
     compile group: 'com.fasterxml.jackson.datatype', name: 'jackson-datatype-jsr310', version: versions.jackson
     compile group: 'com.fasterxml.jackson.module', name: 'jackson-module-parameter-names', version: versions.jackson
     compile group: 'org.springframework.kafka', name: 'spring-kafka', version: versions.springKafka
-    compile group: 'pl.allegro.tech.common', name: 'spring-boot-starter-andamio-avro', version: '0.7.1'
+    compile group: 'pl.allegro.tech.common', name: 'spring-boot-starter-andamio-avro', version: '0.7.2'
     compile group: 'pl.allegro.tech.common', name: 'andamio-endpoint-discovery-spring', version: '0.8.1'
     compile 'com.squareup.okhttp3:okhttp:3.9.1'
     compile 'com.github.slugify:slugify:2.1.12'
