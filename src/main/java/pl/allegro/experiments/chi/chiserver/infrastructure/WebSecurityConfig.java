@@ -32,8 +32,8 @@ class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
         if (oauthEnabled) {
             http.authorizeRequests()
+                    .antMatchers("/", "/login**","/callback/", "/error**").permitAll()
                     .antMatchers(HttpMethod.GET, "/api/**/*", "/status/**/*", "/explicitStatus/**/*", "/env/**/*").permitAll()
-                    .antMatchers("/login**","/callback/").permitAll()
                     .antMatchers(HttpMethod.POST, "/api/**/*").permitAll()
                     .and().authorizeRequests().anyRequest().authenticated()
                     .and().logout().logoutSuccessUrl("/after-logout").permitAll();
