@@ -2,13 +2,13 @@ buildscript {
 
     ext {
         versions = [
-                jackson       : '2.9.7',
+                jackson       : '2.9.5',
                 springBoot    : '2.0.1.RELEASE',
-                springData    :  '2.0.2.RELEASE',
+                springData    : '2.0.2.RELEASE',
                 springSessionDataMongodb: '2.0.2.RELEASE',
                 andamio       : '2.3.4',
-                springKafka   : '2.2.0.RELEASE',
-                javers        : '4.0.0-RC2',
+                springKafka   : '2.1.5.RELEASE',
+                javers        : '3.14.0',
                 spock         : '1.1-groovy-2.4',
                 groovy        : '2.4.15',
                 jaxb          : '2.3.0',
@@ -72,7 +72,7 @@ dependencies {
     compile group: 'com.fasterxml.jackson.datatype', name: 'jackson-datatype-jsr310', version: versions.jackson
     compile group: 'com.fasterxml.jackson.module', name: 'jackson-module-parameter-names', version: versions.jackson
     compile group: 'org.springframework.kafka', name: 'spring-kafka', version: versions.springKafka
-    compile group: 'pl.allegro.tech.common', name: 'spring-boot-starter-andamio-avro', version: '0.7.2'
+    compile group: 'pl.allegro.tech.common', name: 'spring-boot-starter-andamio-avro', version: '0.7.1'
     compile group: 'pl.allegro.tech.common', name: 'andamio-endpoint-discovery-spring', version: '0.8.1'
     compile 'com.squareup.okhttp3:okhttp:3.9.1'
     compile 'com.github.slugify:slugify:2.1.12'
