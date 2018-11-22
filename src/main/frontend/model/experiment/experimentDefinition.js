@@ -18,9 +18,6 @@ const ExperimentDefinitionRecord = Record({
   hasBase: true,
   isMeasured: true,
   status: '',
-  measurements: Record({
-    lastDayVisits: 0
-  }),
   bayesianEqualizer: null,
   editable: false,
   definition: null,

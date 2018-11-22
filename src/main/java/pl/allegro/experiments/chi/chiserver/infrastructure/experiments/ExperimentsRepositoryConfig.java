@@ -17,7 +17,6 @@ import pl.allegro.experiments.chi.chiserver.domain.experiments.ExperimentDefinit
 import pl.allegro.experiments.chi.chiserver.domain.experiments.ExperimentTagRepository;
 import pl.allegro.experiments.chi.chiserver.domain.experiments.ExperimentsRepository;
 import pl.allegro.experiments.chi.chiserver.domain.experiments.groups.ExperimentGroupRepository;
-import pl.allegro.experiments.chi.chiserver.domain.statistics.MeasurementsRepository;
 import pl.allegro.experiments.chi.chiserver.infrastructure.druid.DruidClient;
 import pl.allegro.experiments.chi.chiserver.infrastructure.experiments.converters.*;
 
@@ -64,14 +63,6 @@ public class ExperimentsRepositoryConfig {
     ExperimentTagRepository experimentTagRepository(
             MongoExperimentTagRepository mongoExperimentTagRepository) {
         return mongoExperimentTagRepository;
-    }
-
-    @Bean
-    MeasurementsRepository measurementsRepository(
-            DruidClient druid,
-            Gson jsonConverter,
-            @Value("${druid.experimentsCube}") String datasource) {
-        return new DruidMeasurementsRepository(druid, jsonConverter, datasource);
     }
 
     @Bean

@@ -22,8 +22,6 @@
           ></bayesian-horizontal-equalizer-chart>
         </div>
 
-        <experiment-hotness v-if="linkToData" label="Last day visits" :value="experiment.measurements.lastDayVisits"></experiment-hotness>
-
       </v-list-tile-title>
       <v-list-tile-sub-title v-html="experiment.desc"></v-list-tile-sub-title>
 

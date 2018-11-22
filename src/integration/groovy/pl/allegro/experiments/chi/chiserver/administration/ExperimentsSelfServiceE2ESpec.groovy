@@ -72,7 +72,6 @@ class ExperimentsSelfServiceE2ESpec extends BaseE2EIntegrationSpec {
                 id              : properties.id,
                 author          : 'Root',
                 status          : 'DRAFT',
-                measurements    : [lastDayVisits: 0],
                 editable        : true,
                 groups          : ['group a', 'group b'],
                 description     : 'desc',

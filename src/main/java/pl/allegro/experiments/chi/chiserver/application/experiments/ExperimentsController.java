@@ -14,7 +14,6 @@ import pl.allegro.experiments.chi.chiserver.domain.experiments.EventDefinition;
 import pl.allegro.experiments.chi.chiserver.domain.experiments.ExperimentTagRepository;
 import pl.allegro.experiments.chi.chiserver.domain.experiments.ExperimentsRepository;
 import pl.allegro.experiments.chi.chiserver.domain.experiments.groups.ExperimentGroupRepository;
-import pl.allegro.experiments.chi.chiserver.domain.statistics.MeasurementsRepository;
 import pl.allegro.experiments.chi.chiserver.domain.experiments.administration.*;
 import pl.allegro.experiments.chi.chiserver.domain.experiments.administration.audit.AuditLog;
 import pl.allegro.experiments.chi.chiserver.domain.experiments.administration.audit.Auditor;
@@ -39,7 +38,6 @@ public class ExperimentsController {
 
     private final SampleSizeCalculator sampleSizeCalculator;
     private final ExperimentsRepository experimentsRepository;
-    private final MeasurementsRepository measurementsRepository;
     private final BayesianChartsRepository bayesianChartsRepository;
     private ExperimentActions experimentActions;
     private final Gson jsonConverter;
@@ -53,7 +51,6 @@ public class ExperimentsController {
             ExperimentTagRepository experimentTagRepository,
             SampleSizeCalculator sampleSizeCalculator,
             ExperimentsRepository experimentsRepository,
-            MeasurementsRepository measurementsRepository,
             ExperimentActions experimentActions,
             Gson jsonConverter,
             Auditor auditor,
@@ -64,7 +61,6 @@ public class ExperimentsController {
         this.experimentTagRepository = experimentTagRepository;
         this.sampleSizeCalculator = sampleSizeCalculator;
         this.experimentsRepository = experimentsRepository;
-        this.measurementsRepository = measurementsRepository;
         this.experimentActions = experimentActions;
         this.jsonConverter = jsonConverter;
         this.auditor = auditor;
@@ -81,7 +77,6 @@ public class ExperimentsController {
         return jsonConverter.toJson(
                  experimentsRepository.getAll().stream()
                 .map(clientExperimentFactory::adminExperiment)
-                .map(it -> it.withMeasurements(measurementsRepository.getMeasurements(it.getId())))
                 .map(it -> it.withHorizontalEqualizer(
                         bayesianChartsRepository.getHorizontalEqualizer(it.getId()).stream()
                                 .filter(eq -> eq.getMetadata().getDeviceClass().equals(DeviceClass.all))
@@ -99,7 +94,6 @@ public class ExperimentsController {
         logger.info("AdminExperiment request received, experimentId:{}", experimentId);
         return experimentsRepository.getExperiment(experimentId)
                 .map(clientExperimentFactory::adminExperiment)
-                .map(it -> it.withMeasurements(measurementsRepository.getMeasurements(it.getId())))
                 .map(it -> experimentGroupRepository.findByExperimentId(it.getId())
                         .map(g -> it.withExperimentGroup(g))
                         .orElse(it))

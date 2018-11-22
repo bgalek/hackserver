@@ -5,11 +5,9 @@ import pl.allegro.experiments.chi.chiserver.domain.User;
 import pl.allegro.experiments.chi.chiserver.domain.experiments.*;
 import pl.allegro.experiments.chi.chiserver.domain.experiments.groups.ExperimentGroup;
 import pl.allegro.experiments.chi.chiserver.domain.statistics.bayes.BayesianHorizontalEqualizer;
-import pl.allegro.experiments.chi.chiserver.domain.statistics.ExperimentMeasurements;
 import pl.allegro.experiments.chi.chiserver.domain.experiments.client.ClientExperiment;
 
 import java.time.ZonedDateTime;
-import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -18,7 +16,6 @@ public class AdminExperiment {
     private final boolean editable;
     private final ClientExperiment clientExperiment;
     private final int maxPossibleAllocation;
-    private ExperimentMeasurements experimentMeasurements;
     private BayesianHorizontalEqualizer bayesianHorizontalEqualizer;
     private ExperimentGroup experimentGroup;
     private int bonferroniCorrection;
@@ -41,12 +38,6 @@ public class AdminExperiment {
         return this;
     }
 
-    AdminExperiment withMeasurements(ExperimentMeasurements experimentMeasurements) {
-        Preconditions.checkState(this.experimentMeasurements == null);
-        this.experimentMeasurements = experimentMeasurements;
-        return this;
-    }
-
     AdminExperiment withExperimentGroup(ExperimentGroup experimentGroup) {
         Preconditions.checkState(this.experimentGroup == null);
         this.experimentGroup = experimentGroup;
@@ -64,10 +55,6 @@ public class AdminExperiment {
 
     public int getBonferroniCorrection() {
         return bonferroniCorrection;
-    }
-
-    public ExperimentMeasurements getMeasurements() {
-        return this.experimentMeasurements;
     }
 
     public List<ExperimentVariant> getRenderedVariants() {
