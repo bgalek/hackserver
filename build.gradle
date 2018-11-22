@@ -67,7 +67,7 @@ dependencies {
     compile group: 'org.springframework.boot', name: 'spring-boot-starter-security', version: versions.springBoot
     compile group: 'org.springframework.boot', name: 'spring-boot-starter-data-mongodb', version: versions.springBoot
     compile group: 'org.springframework.session', name: 'spring-session-data-mongodb', version: versions.springSessionDataMongodb
-    compile group: 'org.springframework.security', name: 'spring-security-jwt', version: '1.0.9.RELEASE'
+    compile group: 'org.springframework.security', name: 'spring-security-jwt', version: '1.0.8.RELEASE'
     compile group: 'com.fasterxml.jackson.dataformat', name: 'jackson-dataformat-avro', version: versions.jackson
     compile group: 'com.fasterxml.jackson.datatype', name: 'jackson-datatype-jdk8', version: versions.jackson
     compile group: 'com.fasterxml.jackson.datatype', name: 'jackson-datatype-jsr310', version: versions.jackson
