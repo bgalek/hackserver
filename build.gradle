@@ -3,9 +3,9 @@ buildscript {
     ext {
         versions = [
                 jackson       : '2.9.7',
-                springBoot    : '2.1.0.RELEASE',
-                springData    : '2.1.2.RELEASE',
-                andamio       : '2.5.0',
+                springBoot    : '2.0.1.RELEASE',
+                springData    : '2.0.2.RELEASE',
+                andamio       : '2.3.4',
                 springSessionDataMongodb: '2.1.0.RELEASE',
                 springKafka   : '2.2.0.RELEASE',
                 javers        : '4.0.0-RC2',
@@ -63,8 +63,8 @@ repositories {
 dependencies {
     compile 'org.javers:javers-spring-boot-starter-mongo:' + versions.javers
     compile 'pl.allegro.tech.common:andamio-starter-webmvc:' + versions.andamio
-    compile group: 'org.springframework.security.oauth.boot', name: 'spring-security-oauth2-autoconfigure', version: '2.0.1.RELEASE'
-    compile group: 'org.springframework.boot', name: 'spring-boot-starter-security', version: '2.0.1.RELEASE'
+    compile group: 'org.springframework.security.oauth.boot', name: 'spring-security-oauth2-autoconfigure', version: versions.springBoot
+    compile group: 'org.springframework.boot', name: 'spring-boot-starter-security', version: versions.springBoot
     compile group: 'org.springframework.boot', name: 'spring-boot-starter-data-mongodb', version: versions.springBoot
     compile group: 'org.springframework.session', name: 'spring-session-data-mongodb', version: versions.springSessionDataMongodb
     compile group: 'com.fasterxml.jackson.dataformat', name: 'jackson-dataformat-avro', version: versions.jackson
