@@ -17,7 +17,6 @@ import pl.allegro.experiments.chi.chiserver.domain.experiments.ExperimentDefinit
 import pl.allegro.experiments.chi.chiserver.domain.experiments.ExperimentTagRepository;
 import pl.allegro.experiments.chi.chiserver.domain.experiments.ExperimentsRepository;
 import pl.allegro.experiments.chi.chiserver.domain.experiments.groups.ExperimentGroupRepository;
-import pl.allegro.experiments.chi.chiserver.infrastructure.druid.DruidClient;
 import pl.allegro.experiments.chi.chiserver.infrastructure.experiments.converters.*;
 
 import java.util.ArrayList;

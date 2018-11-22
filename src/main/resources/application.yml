@@ -76,11 +76,6 @@ avro:
         schemaLocation: /avro/pl.allegro.experiment.chi.chiserver.experiments.EventDefinition.avsc
         remoteSchemaSubject: pl.allegro.experiments.chi.experiments.EventDefinition
 
-druid:
-  apiHost: druidbroker-nga-test.allegrogroup.com
-  experimentsCube: chi_experiments
-  experimentsStatsCube: chi_experiments_stats
-
 status:
   endpoints:
     whitelist:
