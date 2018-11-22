@@ -32,7 +32,7 @@ class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
         if (oauthEnabled) {
             http.authorizeRequests()
-                    .antMatchers("/login").permitAll()
+                    .antMatchers("/login", "/login**").permitAll()
                     .antMatchers("/").authenticated()
                     .anyRequest().permitAll();
         } else {
