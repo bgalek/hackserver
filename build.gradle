@@ -2,13 +2,12 @@ buildscript {
 
     ext {
         versions = [
-                jackson       : '2.9.5',
-                springBoot    : '2.0.1.RELEASE',
-                springData    : '2.0.2.RELEASE',
-                springSessionDataMongodb: '2.0.2.RELEASE',
-                andamio       : '2.3.4',
-                springKafka   : '2.1.5.RELEASE',
-                javers        : '3.14.0',
+                jackson       : '2.9.7',
+                springBoot    : '2.1.0.RELEASE',
+                springData    : '2.1.2.RELEASE',
+                andamio       : '2.5.0',
+                springKafka   : '2.2.0.RELEASE',
+                javers        : '4.0.0-RC2',
                 spock         : '1.1-groovy-2.4',
                 groovy        : '2.4.15',
                 jaxb          : '2.3.0',
@@ -63,10 +62,10 @@ repositories {
 dependencies {
     compile 'org.javers:javers-spring-boot-starter-mongo:' + versions.javers
     compile 'pl.allegro.tech.common:andamio-starter-webmvc:' + versions.andamio
-    compile group: 'org.springframework.security.oauth.boot', name: 'spring-security-oauth2-autoconfigure', version: versions.springBoot
-    compile group: 'org.springframework.boot', name: 'spring-boot-starter-security', version: versions.springBoot
+
+    compile 'pl.allegro.tech.auth:oauth-resource-security:2.1.0'
+
     compile group: 'org.springframework.boot', name: 'spring-boot-starter-data-mongodb', version: versions.springBoot
-    compile group: 'org.springframework.session', name: 'spring-session-data-mongodb', version: versions.springSessionDataMongodb
     compile group: 'com.fasterxml.jackson.dataformat', name: 'jackson-dataformat-avro', version: versions.jackson
     compile group: 'com.fasterxml.jackson.datatype', name: 'jackson-datatype-jdk8', version: versions.jackson
     compile group: 'com.fasterxml.jackson.datatype', name: 'jackson-datatype-jsr310', version: versions.jackson

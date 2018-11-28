@@ -23,6 +23,7 @@ import makeExperimentFullOn from './makeExperimentFullOn'
 import calculateSampleSize from './calculateSampleSize'
 import experimentStore from './experimentStore'
 import experimentTagStore from './experimentTagStore'
+import vuexAuthentication from './vuexAuthentication'
 
 Vue.use(Vuex)
 
@@ -33,6 +34,7 @@ export default new Vuex.Store({
       paths: ['userPreferences']
     })],
   modules: {
+    vuexAuthentication,
     experimentStore,
     experiments,
     experimentGroups,
