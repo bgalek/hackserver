@@ -15,7 +15,6 @@ Vue.use(Clipboard)
 Vue.config.productionTip = false
 
 async function main () {
-
   const configResponse = await axios('/api/env')
   const configuration = configResponse.data
   console.log('configuration', configuration)

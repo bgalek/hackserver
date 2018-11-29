@@ -23,10 +23,10 @@ spring:
 
 security:
   enabled: true
-  rootGroup: "_gr_antifraud_purchase_limits_ru"
+  rootGroup: "Chibox team"
   oauth2:
     client:
-      clientId: client_id
+      clientId: chi-server
       clientSecret: secret
       accessTokenUri: https://oauth-dev.allegrogroup.com/auth/oauth/token
       userAuthorizationUri: https://oauth-dev.allegrogroup.com/auth/oauth/authorize

@@ -6,7 +6,6 @@ import Experiment from '../components/experiment/Experiment'
 import CookieBaker from '../components/CookieBaker'
 import CreateExperimentPage from '../components/CreateExperimentPage'
 
-
 Vue.use(Router)
 
 export default function createRouter (store) {
@@ -18,7 +17,7 @@ export default function createRouter (store) {
       {path: '/cookie_baker', component: CookieBaker},
       {path: '/404', component: NotFound},
       {path: '/', redirect: '/experiments'},
-      {path: '*', redirect: '/404'},
+      {path: '*', redirect: '/404'}
     ]
   })
 

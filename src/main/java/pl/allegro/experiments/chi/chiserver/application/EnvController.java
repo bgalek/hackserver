@@ -13,22 +13,23 @@ import java.util.Map;
 @RequestMapping(value = {"/api/env"}, produces = {MediaType.APPLICATION_JSON_UTF8_VALUE})
 class EnvController {
 
-    private final String userAuthorizationUri;
-    private final boolean securityEnabled;
+    private final Map<String, Object> config;
 
     @Autowired
     public EnvController(
             @Value("${security.oauth2.client.userAuthorizationUri}") String userAuthorizationUri,
-            @Value("${security.enabled}") boolean securityEnabled) {
-        this.userAuthorizationUri = userAuthorizationUri;
-        this.securityEnabled = securityEnabled;
+            @Value("${security.enabled}") boolean securityEnabled,
+            @Value("${security.oauth2.client.clientId}") String oauthClientId) {
+        this.config = new ImmutableMap.Builder()
+                        .put("userAuthorizationUri", userAuthorizationUri)
+                        .put("securityEnabled", securityEnabled)
+                        .put("oauthClientId", oauthClientId)
+                        .build();
+
     }
 
     @GetMapping
     Map<String, Object> getAppConfig() {
-        return new ImmutableMap.Builder()
-                .put("userAuthorizationUri", userAuthorizationUri)
-                .put("securityEnabled", securityEnabled)
-                .build();
+        return config;
     }
 }

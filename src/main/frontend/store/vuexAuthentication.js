@@ -9,13 +9,24 @@ function getRedirectUri () {
   return window.location.origin + '/'
 }
 
-export default function createVuexAuthentication(configuration) {
-  const vueAuth = new VueAuthenticate(Vue.prototype.$http, {
+function buildVueAuth (configuration) {
+  if (!configuration.securityEnabled) {
+    return {
+      isAuthenticated: () => true,
+      authenticate: () => Promise.resolve({}),
+      getPayload: () => ({
+        full_name: 'Mad Kaz',
+        authorities: []
+      })
+    }
+  }
+
+  return new VueAuthenticate(Vue.prototype.$http, {
     loginUrl: '/',
     providers: {
       oauth2: {
         url: '/#/',
-        clientId: 'chi-server',
+        clientId: configuration.oauthClientId,
         authorizationEndpoint: configuration.userAuthorizationUri,
         redirectUri: getRedirectUri(),
         responseParams: {
@@ -40,6 +51,10 @@ export default function createVuexAuthentication(configuration) {
       })
     }
   })
+}
+
+export default function createVuexAuthentication (configuration) {
+  const vueAuth = buildVueAuth(configuration)
 
   const store = {
     state: {
@@ -55,18 +70,17 @@ export default function createVuexAuthentication(configuration) {
     },
 
     mutations: {
-      setAuthentication(state, {isAuthenticated, userName}) {
+      setAuthentication (state, {isAuthenticated, userName}) {
         state.isAuthenticated = isAuthenticated
         state.userName = userName
       }
     },
 
     actions: {
-      login(context, payload) {
+      login (context, payload) {
         return vueAuth.authenticate('oauth2').then((response) => {
           const isAuthenticated = vueAuth.isAuthenticated()
           const userName = vueAuth.getPayload() && vueAuth.getPayload()['full_name']
-          const groups = vueAuth.getPayload() && vueAuth.getPayload()['authorities']
 
           if (isAuthenticated) {
             console.log('authenticated as ' + userName)
@@ -79,16 +93,6 @@ export default function createVuexAuthentication(configuration) {
             userName: userName
           })
         })
-      },
-      logout(context, payload) {
-        return vueAuth.logout()
-        /*return vueAuth.logout().then((response) => {
-          context.commit('setAuthentication', {
-            isAuthenticated: false,
-            groups: [],
-            userName: 'anonymous'
-          })
-        })(*/
       }
     }
   }
