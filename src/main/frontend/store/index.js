@@ -16,45 +16,47 @@ import updateExperimentDescriptions from './updateExperimentDescriptions'
 import updateExperimentVariants from './updateExperimentVariants'
 import updateExperimentEventDefinitions from './updateExperimentEventDefinitions'
 import prolongExperiment from './prolongExperiment'
-import user from './user'
 import {userPreferences} from './userPreferences'
 import createPersistedState from 'vuex-persistedstate'
 import makeExperimentFullOn from './makeExperimentFullOn'
 import calculateSampleSize from './calculateSampleSize'
 import experimentStore from './experimentStore'
 import experimentTagStore from './experimentTagStore'
-import vuexAuthentication from './vuexAuthentication'
+import createVuexAuthentication from './vuexAuthentication'
 
 Vue.use(Vuex)
 
-export default new Vuex.Store({
-  plugins: [
-    createPersistedState({
-      key: 'chi-storage',
-      paths: ['userPreferences']
-    })],
-  modules: {
-    vuexAuthentication,
-    experimentStore,
-    experiments,
-    experimentGroups,
-    experimentAuditLog,
-    experimentStatistics,
-    createExperiment,
-    addExperimentToGroup,
-    startExperiment,
-    deleteExperiment,
-    userPreferences,
-    stopExperiment,
-    makeExperimentFullOn,
-    pauseExperiment,
-    resumeExperiment,
-    prolongExperiment,
-    updateExperimentDescriptions,
-    updateExperimentVariants,
-    updateExperimentEventDefinitions,
-    user,
-    calculateSampleSize,
-    experimentTagStore
-  }
-})
+export default function createStore (configuration) {
+  const vuexAuthentication = createVuexAuthentication(configuration)
+
+  return new Vuex.Store({
+    plugins: [
+      createPersistedState({
+        key: 'chi-storage',
+        paths: ['userPreferences']
+      })],
+    modules: {
+      vuexAuthentication,
+      experimentStore,
+      experiments,
+      experimentGroups,
+      experimentAuditLog,
+      experimentStatistics,
+      createExperiment,
+      addExperimentToGroup,
+      startExperiment,
+      deleteExperiment,
+      userPreferences,
+      stopExperiment,
+      makeExperimentFullOn,
+      pauseExperiment,
+      resumeExperiment,
+      prolongExperiment,
+      updateExperimentDescriptions,
+      updateExperimentVariants,
+      updateExperimentEventDefinitions,
+      calculateSampleSize,
+      experimentTagStore
+    }
+  })
+}
