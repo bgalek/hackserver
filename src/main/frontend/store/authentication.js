@@ -15,7 +15,7 @@ function buildVueAuth (configuration) {
       isAuthenticated: () => true,
       authenticate: () => Promise.resolve({}),
       getPayload: () => ({
-        full_name: 'Mad Kaz',
+        full_name: 'anonymous',
         authorities: []
       })
     }
@@ -62,7 +62,8 @@ export default function createVuexAuthentication (configuration) {
   const store = {
     state: {
       isAuthenticated: initialIsAuthenticated,
-      userName: initialUserName
+      userName: initialUserName,
+      authError: null
     },
 
     getters: {
@@ -73,9 +74,10 @@ export default function createVuexAuthentication (configuration) {
     },
 
     mutations: {
-      setAuthentication (state, {isAuthenticated, userName}) {
+      setAuthentication (state, {isAuthenticated, userName, authError}) {
         state.isAuthenticated = isAuthenticated
         state.userName = userName
+        state.authError = authError
       }
     },
 
@@ -87,13 +89,19 @@ export default function createVuexAuthentication (configuration) {
 
           if (isAuthenticated) {
             console.log('authenticated as ' + userName)
-          } else {
-            console.warn('authentication failed')
           }
 
           context.commit('setAuthentication', {
             isAuthenticated: isAuthenticated,
-            userName: userName
+            userName: userName,
+            authError: null
+          })
+        }).catch((err) => {
+          console.warn('! authentication failed, ', err)
+          context.commit('setAuthentication', {
+            isAuthenticated: false,
+            userName: 'anonymous',
+            authError: err.message
           })
         })
       }

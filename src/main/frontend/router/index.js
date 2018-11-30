@@ -2,6 +2,7 @@ import Vue from 'vue'
 import Router from 'vue-router'
 import Experiments from '../components/Experiments'
 import NotFound from '../components/NotFound'
+import LoginFailed from '../components/LoginFailed'
 import Experiment from '../components/experiment/Experiment'
 import CookieBaker from '../components/CookieBaker'
 import CreateExperimentPage from '../components/CreateExperimentPage'
@@ -16,6 +17,7 @@ export default function createRouter (store) {
       {path: '/experiments/:experimentId', component: Experiment, name: 'experiment', meta: {authRequired: true}},
       {path: '/cookie_baker', component: CookieBaker},
       {path: '/404', component: NotFound},
+      {path: '/loginFailed', component: LoginFailed},
       {path: '/', redirect: '/experiments'},
       {path: '*', redirect: '/404'}
     ]
@@ -28,7 +30,13 @@ export default function createRouter (store) {
 
     if (authRequired && !isAuthenticated) {
       store.dispatch('login').then(() => {
-        next()
+        if (store.getters.isAuthenticated()) {
+          next()
+        } else {
+          next({
+            path: '/loginFailed'
+          })
+        }
       })
     } else {
       next()
