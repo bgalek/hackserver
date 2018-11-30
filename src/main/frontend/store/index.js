@@ -22,12 +22,12 @@ import makeExperimentFullOn from './makeExperimentFullOn'
 import calculateSampleSize from './calculateSampleSize'
 import experimentStore from './experimentStore'
 import experimentTagStore from './experimentTagStore'
-import createVuexAuthentication from './vuexAuthentication'
+import createVuexAuthentication from './authentication'
 
 Vue.use(Vuex)
 
 export default function createStore (configuration) {
-  const vuexAuthentication = createVuexAuthentication(configuration)
+  const authentication = createVuexAuthentication(configuration)
 
   return new Vuex.Store({
     plugins: [
@@ -36,7 +36,7 @@ export default function createStore (configuration) {
         paths: ['userPreferences']
       })],
     modules: {
-      vuexAuthentication,
+      authentication,
       experimentStore,
       experiments,
       experimentGroups,

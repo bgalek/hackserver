@@ -8,7 +8,7 @@ kafka:
   tempalte: "off"
 
 security:
-  enabled: false
+  enabled: true
 
 spring:
   data:

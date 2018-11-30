@@ -68,8 +68,8 @@
     },
 
     computed: mapState({
-      userName: state => state.vuexAuthentication.userName,
-      isAuthenticated: state => state.vuexAuthentication.isAuthenticated
+      userName: state => state.authentication.userName,
+      isAuthenticated: state => state.authentication.isAuthenticated
     })
   }
 </script>
