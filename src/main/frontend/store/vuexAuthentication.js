@@ -56,10 +56,13 @@ function buildVueAuth (configuration) {
 export default function createVuexAuthentication (configuration) {
   const vueAuth = buildVueAuth(configuration)
 
+  const initialIsAuthenticated = vueAuth.isAuthenticated()
+  const initialUserName = initialIsAuthenticated && vueAuth.getPayload()['full_name']
+
   const store = {
     state: {
-      isAuthenticated: false,
-      userName: 'anonymous'
+      isAuthenticated: initialIsAuthenticated,
+      userName: initialUserName
     },
 
     getters: {
