@@ -79,7 +79,7 @@ public class ExperimentsController {
     @MeteredEndpoint
     @GetMapping(path = {""})
     String allExperiments() {
-        logger.info("All experiments request received, user: " + userProvider.getCurrentUser());
+        logger.info("Get all experiments request received, user: " + userProvider.getCurrentUser());
         return jsonConverter.toJson(
                  experimentsRepository.getAll().stream()
                 .map(clientExperimentFactory::adminExperiment)
