@@ -3,42 +3,75 @@
       <v-btn color="primary" class="mb-2" @click="newItem()" v-if="!readOnly">
         Add event
       </v-btn>
-      <v-dialog v-model="editing" max-width="500px">
+      <v-dialog v-model="editing" max-width="450px">
         <v-form v-model="eventDefinitionValid" ref="eventDefinitionForm">
         <v-card>
           <v-card-title>
             <span class="headline">Event definition</span>
           </v-card-title>
           <v-card-text>
-            <v-container grid-list-md>
-              <v-layout wrap>
-                <v-flex xs12 sm6 md4>
-                  <v-text-field label="boxName" v-model="editedItem.boxName" hint="for example: offers_reco"
+
+            <v-container fluid class="pa-3 ma-0">
+
+              <v-layout row align-center>
+                <v-flex xs2>
+                  <v-tooltip top close-delay="3000">
+                    For example: <code>offers_reco</code>
+                    <v-icon slot="activator">help_outline</v-icon>
+                  </v-tooltip>
+                </v-flex>
+                <v-flex>
+                  <v-text-field label="boxName" v-model="editedItem.boxName"
                                 :rules="filterRules"
                   ></v-text-field>
                 </v-flex>
-                <v-flex xs12 sm6 md4>
+              </v-layout>
+
+              <v-layout row align-center>
+                <v-flex offset-xs2>
                   <v-text-field label="category" v-model="editedItem.category"
                                 :rules="filterRules"
                   ></v-text-field>
                 </v-flex>
-                <v-flex xs12 sm6 md4>
+              </v-layout>
+
+              <v-layout row align-center>
+                <v-flex offset-xs2>
                   <v-text-field label="label" v-model="editedItem.label"
                                 :rules="filterRules"
                   ></v-text-field>
                 </v-flex>
-                <v-flex xs12 sm6 md4>
-                  <v-text-field label="action" v-model="editedItem.action" hint="for example: boxView"
+              </v-layout>
+
+              <v-layout row align-center>
+                <v-flex xs2>
+                  <v-tooltip top close-delay="3000">
+                    For example: <br/>
+                    <code>itemView</code><br/>
+                    <code>boxView</code><br/>
+                    <code>suggestionsShow</code><br/>
+                    <code>click</code><br/>
+                    <code>boxInteraction</code>
+                    <v-icon slot="activator">help_outline</v-icon>
+                  </v-tooltip>
+                </v-flex>
+                <v-flex>
+                  <v-text-field label="action" v-model="editedItem.action"
                                 :rules="filterRules"
                   ></v-text-field>
                 </v-flex>
-                <v-flex xs12 sm6 md4>
+              </v-layout>
+
+              <v-layout row align-center>
+                <v-flex offset-xs2>
                   <v-text-field label="value" v-model="editedItem.value"
                                 :rules="filterRules"
                   ></v-text-field>
                 </v-flex>
               </v-layout>
+
             </v-container>
+
           </v-card-text>
           <v-card-actions>
             <v-spacer></v-spacer>
