@@ -26,12 +26,12 @@ security:
   rootGroup: "Chibox team"
   oauth2:
     client:
-      clientId: client_id
+      clientId: chi-server
       clientSecret: secret
-      accessTokenUri: https://oauth-test.allegrogroup.com/auth/oauth/token
-      userAuthorizationUri: https://oauth-test.allegrogroup.com/auth/oauth/authorize
+      accessTokenUri: https://oauth-dev.allegrogroup.com/auth/oauth/token
+      userAuthorizationUri: https://oauth-dev.allegrogroup.com/auth/oauth/authorize
       tokenName: oauth_token
-      logoutUri: https://oauth-test.allegrogroup.com/logout
+      logoutUri: https://oauth-dev.allegrogroup.com/logout
     resource:
       jwt.key-value: "-----BEGIN PUBLIC KEY-----\nMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAqKzg5f5OW6VK0soaHnKq\n/gflnOLfWXw/UK/9RhsUrp5AgSQtjhjZYUhsRCSuw4QWvBMLJoncukGDCiP78PUH\nTDVFQd284TEgfq2fayduitAnJUJGsqf4mUl29ssGjBVRrRxX4nEnT5iEipkK2rY9\nlxwHw8mV/+/xS4CSSAdy92B/vay6AiB1JxQN3zHnqiGLBNd+UEeqTGr+nmIm+fVC\n5WpxJRwK9rYI3a3pgHamxknN+kL4XSjvTKdOWk0w039U0Nb5gqDTubrqyGswjiNK\nhjXsa/9IdSlp2+wEg/MOFivtID/jnXlEUeRJ3CyXHvR7Za98Krk5g9EU3MqwMsT8\nEwIDAQAB\n-----END PUBLIC KEY-----\n"
 

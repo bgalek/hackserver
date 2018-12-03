@@ -3,10 +3,12 @@ package pl.allegro.experiments.chi.chiserver.application.experiments;
 import com.google.gson.Gson;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageConversionException;
 import org.springframework.web.bind.annotation.*;
+import pl.allegro.experiments.chi.chiserver.domain.UserProvider;
 import pl.allegro.experiments.chi.chiserver.domain.calculator.SampleSizeCalculator;
 import pl.allegro.experiments.chi.chiserver.domain.calculator.SampleSizeCalculatorRequest;
 import pl.allegro.experiments.chi.chiserver.domain.experiments.DeviceClass;
@@ -36,6 +38,7 @@ import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 public class ExperimentsController {
     private static final Logger logger = LoggerFactory.getLogger(ExperimentsController.class);
 
+    private final UserProvider userProvider;
     private final SampleSizeCalculator sampleSizeCalculator;
     private final ExperimentsRepository experimentsRepository;
     private final BayesianChartsRepository bayesianChartsRepository;
@@ -47,7 +50,9 @@ public class ExperimentsController {
     private final ClientExperimentFactory clientExperimentFactory;
     private final ClassicStatisticsForVariantMetricRepository classicStatisticsForVariantMetricRepository;
 
+    @Autowired
     public ExperimentsController(
+            UserProvider userProvider,
             ExperimentTagRepository experimentTagRepository,
             SampleSizeCalculator sampleSizeCalculator,
             ExperimentsRepository experimentsRepository,
@@ -68,12 +73,13 @@ public class ExperimentsController {
         this.experimentGroupRepository = experimentGroupRepository;
         this.clientExperimentFactory = clientExperimentFactory;
         this.classicStatisticsForVariantMetricRepository = classicStatisticsForVariantMetricRepository;
+        this.userProvider = userProvider;
     }
 
     @MeteredEndpoint
     @GetMapping(path = {""})
     String allExperiments() {
-        logger.info("All experiments request received");
+        logger.info("All experiments request received, user: " + userProvider.getCurrentUser());
         return jsonConverter.toJson(
                  experimentsRepository.getAll().stream()
                 .map(clientExperimentFactory::adminExperiment)

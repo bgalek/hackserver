@@ -56,4 +56,13 @@ public class User {
     private boolean isAuthor(ExperimentDefinition experiment) {
         return experiment.getAuthor() != null && experiment.getAuthor().equals(name);
     }
+
+    @Override
+    public String toString() {
+        return "User{" +
+                "name='" + name + '\'' +
+                ", isRoot=" + isRoot +
+                ", groups=" + groups +
+                '}';
+    }
 }

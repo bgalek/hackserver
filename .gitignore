@@ -32,6 +32,7 @@ npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 *.test.transformed.js
+src/main/frontend/package-lock.json
 
 # Editor directories and files
 *.swp
