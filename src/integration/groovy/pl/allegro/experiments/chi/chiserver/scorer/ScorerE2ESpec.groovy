@@ -49,7 +49,7 @@ class ScorerE2ESpec extends BaseE2EIntegrationSpec implements ApiActionUtils {
         scores.every {it <= 1 && it >= 0}
     }
 
-    def "should sort scores by value"() {
+    def "should sort scores by value, from high to low"() {
         given:
         postOffers(randomOffers())
 
@@ -57,7 +57,7 @@ class ScorerE2ESpec extends BaseE2EIntegrationSpec implements ApiActionUtils {
         def scores = fetchScores().collect {it.score.value}
 
         then:
-        scores.toSorted() == scores
+        scores.toSorted().reverse() == scores
     }
 
     def "should not allow setting more than 200 offers"() {
@@ -77,12 +77,12 @@ class ScorerE2ESpec extends BaseE2EIntegrationSpec implements ApiActionUtils {
     }
 
     def randomOffers() {
-        def offerIds = (1..99).collect({randomOfferId()})
+        def offerIds = (1..99).collect {randomOfferId()}
         offerIds.collect {it -> [offerId: it]}
     }
 
     def toManyRandomOffers() {
-        def offerIds = (1..201).collect({randomOfferId()})
+        def offerIds = (1..201).collect {randomOfferId()}
         offerIds.collect {it -> [offerId: it]}
     }
 

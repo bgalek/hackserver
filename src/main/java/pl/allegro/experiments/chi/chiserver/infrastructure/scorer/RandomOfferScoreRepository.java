@@ -29,7 +29,7 @@ public class RandomOfferScoreRepository implements OfferScoreRepository {
                 .map(it -> OfferScore.of(
                         it.getOffer(),
                         Score.of(it.getScore().getValue() / randomSum)))
-                .sorted(Comparator.comparingDouble(it -> it.getScore().getValue()))
+                .sorted(Comparator.comparingDouble(it -> -it.getScore().getValue()))
                 .collect(Collectors.toList());
         return ImmutableList.copyOf(result);
     }
