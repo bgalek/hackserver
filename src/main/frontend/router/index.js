@@ -1,6 +1,7 @@
 import Vue from 'vue'
 import Router from 'vue-router'
 import Experiments from '../components/Experiments'
+import Blank from '../components/Blank'
 import NotFound from '../components/NotFound'
 import LoginFailed from '../components/LoginFailed'
 import Experiment from '../components/experiment/Experiment'
@@ -19,7 +20,8 @@ export default function createRouter (store) {
       {path: '/404', component: NotFound},
       {path: '/loginFailed', component: LoginFailed},
       {path: '/', redirect: '/experiments'},
-      {path: '*', redirect: '/404'}
+      {path: '/access_token*', component: Blank},
+      {path: '/*', component: NotFound}
     ]
   })
 
