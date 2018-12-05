@@ -53,7 +53,7 @@
 </template>
 
 <script>
-  import { mapState } from 'vuex'
+  import {isLoggedIn, getUserName} from './auth'
 
   export default {
     data () {
@@ -67,10 +67,14 @@
       }
     },
 
-    computed: mapState({
-      userName: state => state.authentication.userName,
-      isAuthenticated: state => state.authentication.isAuthenticated
-    })
+    computed: {
+      userName: function () {
+        return getUserName()
+      },
+      isAuthenticated: function () {
+        return isLoggedIn()
+      }
+    }
   }
 </script>
 
