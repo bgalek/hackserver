@@ -4,11 +4,9 @@ import com.mongodb.client.result.DeleteResult;
 import io.micrometer.core.instrument.Timer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
-import org.springframework.stereotype.Repository;
 import pl.allegro.experiments.chi.chiserver.domain.statistics.bayes.BayesianExperimentStatisticsForVariant;
 import pl.allegro.experiments.chi.chiserver.domain.statistics.bayes.BayesianStatisticsForVariantRepository;
 import pl.allegro.experiments.chi.chiserver.infrastructure.experiments.ExperimentsMongoMetricsReporter;
@@ -19,7 +17,6 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-@Repository
 public class MongoBayesianStatisticsForVariantRepository implements BayesianStatisticsForVariantRepository {
     private static final Logger logger = LoggerFactory.getLogger(MongoBayesianStatisticsForVariantRepository.class);
 
@@ -29,7 +26,6 @@ public class MongoBayesianStatisticsForVariantRepository implements BayesianStat
     private final MongoTemplate mongoTemplate;
     private final ExperimentsMongoMetricsReporter experimentsMongoMetricsReporter;
 
-    @Autowired
     MongoBayesianStatisticsForVariantRepository(
             MongoTemplate mongoTemplate,
             ExperimentsMongoMetricsReporter experimentsMongoMetricsReporter) {
