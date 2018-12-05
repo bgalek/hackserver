@@ -5,12 +5,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.oauth2.config.annotation.web.configuration.EnableResourceServer;
 import pl.allegro.tech.auth.oauthresourcesecurity.singleauthorization.SingleAuthorizationResourceServerConfigurer;
 
 @Configuration
-@EnableWebSecurity
 @EnableResourceServer
 public class ResourceServerConfiguration extends SingleAuthorizationResourceServerConfigurer {
     private final boolean securityEnabled;
@@ -29,7 +27,7 @@ public class ResourceServerConfiguration extends SingleAuthorizationResourceServ
         if (securityEnabled) {
             http.csrf().disable()
                     .authorizeRequests()
-                    .antMatchers("/api/admin/**", "/api/bayes/**")
+                    .antMatchers("/api/admin/**")
                         .authenticated()
                     .anyRequest()
                         .permitAll();
