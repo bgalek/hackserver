@@ -11,7 +11,7 @@ import {manageAuth, getAccessToken, isLoggedIn} from './auth'
 axios.interceptors.request.use(function (config) {
   if (isLoggedIn()) {
     const token = `Bearer ${getAccessToken()}`
-    const methods = ['get', 'post', 'put']
+    const methods = ['get', 'post', 'put', 'delete']
     methods.forEach(method => { config.headers[method]['Authorization'] = token })
   }
   return config
