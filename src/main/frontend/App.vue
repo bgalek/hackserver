@@ -62,7 +62,7 @@
         drawerItems: [
           { icon: 'bubble_chart', title: 'Experiments', path: '/experiments', requireLogin: false },
           { icon: 'visibility', title: 'Cookie Baker', path: '/cookie_baker', requireLogin: false },
-          { icon: 'add', title: 'Create experiment', path: '/experiments/create', requireLogin: true }
+          { icon: 'add', title: 'Create experiment', path: '/experiments/create', requireLogin: false }
         ]
       }
     },
