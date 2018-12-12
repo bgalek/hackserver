@@ -15,7 +15,7 @@ class ScorerE2ESpec extends BaseE2EIntegrationSpec implements ApiActionUtils {
         fetchScores().size() == offers.size()
     }
 
-    def "should score randomly"() {
+    def "should score randomly when scores are not defined explicitly"() {
         given:
         postOffers(randomOffers())
 
@@ -25,17 +25,6 @@ class ScorerE2ESpec extends BaseE2EIntegrationSpec implements ApiActionUtils {
 
         then:
         firstScores != secondScores
-    }
-
-    def "should score so score sum is always 1"() {
-        given:
-        postOffers(randomOffers())
-
-        when:
-        def scores = fetchScores().collect {it.score.value}
-
-        then:
-        Math.abs(1 - scores.sum()) < 0.0001
     }
 
     def "should score so each score is <0, 1>"() {
@@ -68,24 +57,44 @@ class ScorerE2ESpec extends BaseE2EIntegrationSpec implements ApiActionUtils {
         thrown(HttpClientErrorException)
     }
 
-    def "should update offer scores"() {
+    def "should override default random offer scores by defined offer scores"() {
         given:
         def offers = randomOffers()
         postOffers(offers)
 
-        def newScores = offers.collect {offer -> [
+        def definedScores = offers.collect {offer -> [
                 offer: offer,
                 score: [value: 0.5]
         ]}
 
         when:
-        updateScores(newScores)
+        setScores(definedScores)
 
         then:
         fetchScores().every {it -> it.score.value == 0.5}
     }
 
-    def updateScores(List newScores) {
+    def "should prioritize offer set over defined scores, providing random scores"() {
+        given:
+        def offers = randomOffers()
+        postOffers(offers)
+
+        and:
+        def definedScores = randomOffers(120).collect {offer -> [
+                offer: offer,
+                score: [value: 0.5]
+        ]}
+        setScores(definedScores)
+
+        when:
+        def scores = fetchScores()
+        def scoredOffers = scores.collect {offerScore -> offerScore.offer.offerId} as Set
+
+        then:
+        offers.collect {offer -> offer.offerId} as Set == scoredOffers
+    }
+
+    def setScores(List newScores) {
         post('api/scorer/scores', newScores)
     }
 
@@ -98,7 +107,11 @@ class ScorerE2ESpec extends BaseE2EIntegrationSpec implements ApiActionUtils {
     }
 
     def randomOffers() {
-        def offerIds = (1..99).collect {randomOfferId()}
+        randomOffers(99)
+    }
+
+    def randomOffers(size) {
+        def offerIds = (1..size).collect {randomOfferId()}
         offerIds.collect {it -> [offerId: it]}
     }
 
