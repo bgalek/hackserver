@@ -68,6 +68,24 @@ class ScorerE2ESpec extends BaseE2EIntegrationSpec implements ApiActionUtils {
         thrown(HttpClientErrorException)
     }
 
+    def "should update offer scores"() {
+        given:
+        def offers = randomOffers()
+        postOffers(offers)
+
+        def newScores = offers.collect {it -> [offerId: it.offerId, score: [value: 0.5]]}
+
+        when:
+        updateScores(newScores)
+
+        then:
+        fetchScores().every {it -> it.score.value == 0.5}
+    }
+
+    def updateScores(List newScores) {
+        post('api/scorer/scores', newScores)
+    }
+
     def fetchScores() {
         get('/api/scorer/scores').body as List
     }

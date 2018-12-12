@@ -4,4 +4,6 @@ import java.util.List;
 
 public interface OfferScoreRepository {
     List<OfferScore> scores();
+
+    void updateScores(List<OfferScore> offerScores);
 }
