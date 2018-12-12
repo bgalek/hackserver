@@ -1,31 +1,27 @@
 package pl.allegro.experiments.chi.chiserver.domain.experiments;
 
 import com.google.common.base.Preconditions;
-import org.javers.core.metamodel.annotation.TypeName;
-import org.springframework.data.mongodb.core.mapping.Document;
 
-@Document(collection = "customMetricDefinitions")
-@TypeName("customMetric")
 public class CustomMetricDefinition {
     private final String name;
     private final EventDefinition viewEventDefinition;
-    private final EventDefinition clickEventDefinition;
+    private final EventDefinition successEventDefinition;
 
-    CustomMetricDefinition(
+    public CustomMetricDefinition(
             String name,
             EventDefinition viewEventDefinition,
-            EventDefinition clickEventDefinition) {
+            EventDefinition successEventDefinition) {
         this.name = name;
         this.viewEventDefinition = viewEventDefinition;
-        this.clickEventDefinition = clickEventDefinition;
+        this.successEventDefinition = successEventDefinition;
         Preconditions.checkNotNull(name);
         Preconditions.checkNotNull(viewEventDefinition);
-        Preconditions.checkNotNull(clickEventDefinition);
+        Preconditions.checkNotNull(successEventDefinition);
     }
 
     public String getName() { return name; }
 
     public EventDefinition getViewEventDefinition() { return viewEventDefinition; }
 
-    public EventDefinition getClickEventDefinition() { return  clickEventDefinition; }
+    public EventDefinition getSuccessEventDefinition() { return  successEventDefinition; }
 }

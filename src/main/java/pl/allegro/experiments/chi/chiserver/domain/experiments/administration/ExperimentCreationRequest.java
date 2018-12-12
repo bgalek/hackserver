@@ -31,6 +31,7 @@ public class ExperimentCreationRequest {
     private final CustomParameter customParameter;
     private final ExperimentGoalRequest goal;
     private final List<String> tags;
+    private final CustomMetricDefinition customMetricDefinition;
 
     @JsonCreator
     public ExperimentCreationRequest(
@@ -47,7 +48,10 @@ public class ExperimentCreationRequest {
             @JsonProperty("customParameterName") String customParameterName,
             @JsonProperty("customParameterValue") String customParameterValue,
             @JsonProperty("goal") ExperimentGoalRequest goal,
-            @JsonProperty("tags") List<String> tags) {
+            @JsonProperty("tags") List<String> tags,
+            @JsonProperty("customMetricName") String customMetricName,
+            @JsonProperty("customMetricViewEvent") EventDefinition customMetricViewEventDefinition,
+            @JsonProperty("customMetricSuccessEvent") EventDefinition customMetricSuccessEventDefinition) {
         Preconditions.checkArgument(id != null, "experiment id is null");
         Preconditions.checkArgument(variantNames != null, "experiment variantNames are null");
         Preconditions.checkArgument(percentage != null, "experiment percentage is null");
@@ -55,6 +59,9 @@ public class ExperimentCreationRequest {
         if (StringUtils.isNotBlank(customParameterName) || StringUtils.isNotBlank(customParameterValue)) {
             Preconditions.checkArgument(StringUtils.isNotBlank(customParameterName), "custom parameter name is blank");
             Preconditions.checkArgument(StringUtils.isNotBlank(customParameterValue), "custom parameter value is blank");
+        }
+        if (StringUtils.isNotBlank(customMetricName)) {
+            Preconditions.checkArgument(StringUtils.isNotBlank(customMetricName), "custom metric name is blank");
         }
         this.id = id;
         this.variantNames = ImmutableList.copyOf(variantNames);
@@ -79,6 +86,15 @@ public class ExperimentCreationRequest {
             this.customParameter = null;
         }
         this.goal = goal;
+        if(StringUtils.isNotBlank(customMetricName)) {
+            this.customMetricDefinition = new CustomMetricDefinition(
+                    customMetricName,
+                    customMetricViewEventDefinition,
+                    customMetricSuccessEventDefinition);
+        } else {
+            this.customMetricDefinition = null;
+        }
+
     }
 
     public List<String> getTags() {
@@ -109,6 +125,10 @@ public class ExperimentCreationRequest {
         return goal;
     }
 
+    public CustomMetricDefinition getCustomMetric () {
+        return customMetricDefinition;
+    }
+
     ExperimentDefinition toExperimentDefinition(String author) {
         Preconditions.checkNotNull(author);
         try {
@@ -124,7 +144,8 @@ public class ExperimentCreationRequest {
                     .groups(this.groups)
                     .reportingDefinition(this.reportingDefinition)
                     .customParameter(this.customParameter)
-                    .tags(this.tags.stream().map(it -> new ExperimentTag(it)).collect(Collectors.toList()));
+                    .tags(this.tags.stream().map(it -> new ExperimentTag(it)).collect(Collectors.toList()))
+                    .customMetricDefinition(this.customMetricDefinition);
 
             if (goal != null && StringUtils.isNotBlank(goal.getLeadingMetric())) {
                 var hypothesis = new ExperimentGoal.Hypothesis(goal.getLeadingMetric(), round2(goal.getExpectedDiffPercent()));
@@ -161,6 +182,9 @@ public class ExperimentCreationRequest {
         private String customParameterName;
         private String customParameterValue;
         private List<String> tags;
+        private String customMetricName;
+        private EventDefinition customMetricViewEventDefinition;
+        private EventDefinition customMetricSuccessEventDefinition;
 
         public Builder id(String id) {
             this.id = id;
@@ -227,6 +251,21 @@ public class ExperimentCreationRequest {
             return this;
         }
 
+        public Builder customMetricName(String customMetricName) {
+            this.customMetricName = customMetricName;
+            return this;
+        }
+
+        public Builder customMetricViewEventDefinition(EventDefinition eventDefinition) {
+            this.customMetricViewEventDefinition = eventDefinition;
+            return this;
+        }
+
+        public Builder customMetricSuccessEventDefinition(EventDefinition eventDefinition) {
+            this.customMetricSuccessEventDefinition = eventDefinition;
+            return this;
+        }
+
         public ExperimentCreationRequest build() {
             return new ExperimentCreationRequest(
                     id,
@@ -242,7 +281,11 @@ public class ExperimentCreationRequest {
                     customParameterName,
                     customParameterValue,
                     null,
-                    tags);
+                    tags,
+                    customMetricName,
+                    customMetricViewEventDefinition,
+                    customMetricSuccessEventDefinition
+                    );
         }
     }
 }
