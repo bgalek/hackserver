@@ -92,6 +92,23 @@ class ScorerE2ESpec extends BaseE2EIntegrationSpec implements ApiActionUtils {
 
         then:
         offers.collect {offer -> offer.offerId} as Set == scoredOffers
+
+        when:
+        postOffers([])
+
+        then:
+        fetchScores().size() == 0
+    }
+
+    def "should not allow setting score with value out of <0, 1>"() {
+        when:
+        setScores([[offer: randomOffers()[0], score: [value: value]]])
+
+        then:
+        thrown(HttpClientErrorException)
+
+        where:
+        value << [-1, 1.1]
     }
 
     def setScores(List newScores) {

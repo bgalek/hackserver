@@ -52,7 +52,16 @@ public class OfferScorerController {
     }
 
     @ExceptionHandler(ToManyOffersException.class)
-    ResponseEntity<ErrorsHolder> handle(ToManyOffersException exception) {
+    ResponseEntity<ErrorsHolder> handleToManyOffers(ToManyOffersException exception) {
+        return handleException(exception);
+    }
+
+    @ExceptionHandler(OfferScoreValueOutOfBoundsException.class)
+    ResponseEntity<ErrorsHolder> handleOfferScoreValueOutOfBounds(OfferScoreValueOutOfBoundsException exception) {
+        return handleException(exception);
+    }
+
+    private ResponseEntity<ErrorsHolder> handleException(Exception exception) {
         logger.error(exception.getMessage());
         Error error = Error.error()
                 .fromException(exception)

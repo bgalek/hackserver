@@ -3,6 +3,7 @@ package pl.allegro.experiments.chi.chiserver.infrastructure.scorer;
 import com.google.common.collect.ImmutableList;
 import pl.allegro.experiments.chi.chiserver.domain.scorer.OfferScore;
 import pl.allegro.experiments.chi.chiserver.domain.scorer.OfferScoreRepository;
+import pl.allegro.experiments.chi.chiserver.domain.scorer.OfferScoreValueOutOfBoundsException;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -36,6 +37,9 @@ public class MongoOfferScoreRepository implements OfferScoreRepository {
 
     @Override
     public void setScores(List<OfferScore> offerScores) {
+        if(!offerScores.stream().allMatch(it -> it.getScore().getValue() >= 0 && it.getScore().getValue() <= 1)) {
+            throw new OfferScoreValueOutOfBoundsException();
+        }
         offerScoreCrudRepository.saveAll(offerScores);
     }
 }
