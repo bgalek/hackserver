@@ -50,8 +50,8 @@ public class ExperimentCreationRequest {
             @JsonProperty("goal") ExperimentGoalRequest goal,
             @JsonProperty("tags") List<String> tags,
             @JsonProperty("customMetricName") String customMetricName,
-            @JsonProperty("customMetricViewEvent") EventDefinition customMetricViewEventDefinition,
-            @JsonProperty("customMetricSuccessEvent") EventDefinition customMetricSuccessEventDefinition) {
+            @JsonProperty("customMetricViewEventDefinition") EventDefinition customMetricViewEventDefinition,
+            @JsonProperty("customMetricSuccessEventDefinition") EventDefinition customMetricSuccessEventDefinition) {
         Preconditions.checkArgument(id != null, "experiment id is null");
         Preconditions.checkArgument(variantNames != null, "experiment variantNames are null");
         Preconditions.checkArgument(percentage != null, "experiment percentage is null");
