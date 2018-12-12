@@ -1,18 +1,17 @@
 package pl.allegro.experiments.chi.chiserver.infrastructure.scorer;
 
+import com.google.common.collect.ImmutableList;
 import pl.allegro.experiments.chi.chiserver.domain.scorer.OfferScore;
 import pl.allegro.experiments.chi.chiserver.domain.scorer.OfferScoreRepository;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+import java.util.stream.Collectors;
 
 public class MongoOfferScoreRepository implements OfferScoreRepository {
     private final RandomOfferScoreRepository randomOfferScoreRepository;
     private final OfferScoreCrudRepository offerScoreCrudRepository;
 
-    public MongoOfferScoreRepository(
+    MongoOfferScoreRepository(
             RandomOfferScoreRepository randomOfferScoreRepository,
             OfferScoreCrudRepository offerScoreCrudRepository) {
         this.randomOfferScoreRepository = randomOfferScoreRepository;
@@ -30,7 +29,9 @@ public class MongoOfferScoreRepository implements OfferScoreRepository {
                 result.put(offerScore.getOffer().getOfferId(), offerScore);
             }
         }
-        return new ArrayList<>(result.values());
+        return ImmutableList.copyOf(result.values().stream()
+                .sorted(Comparator.comparingDouble(it -> -it.getScore().getValue()))
+                .collect(Collectors.toList()));
     }
 
     @Override

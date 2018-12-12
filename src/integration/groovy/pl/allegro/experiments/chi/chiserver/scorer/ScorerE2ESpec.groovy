@@ -73,7 +73,10 @@ class ScorerE2ESpec extends BaseE2EIntegrationSpec implements ApiActionUtils {
         def offers = randomOffers()
         postOffers(offers)
 
-        def newScores = offers.collect {it -> [offerId: it.offerId, score: [value: 0.5]]}
+        def newScores = offers.collect {offer -> [
+                offer: offer,
+                score: [value: 0.5]
+        ]}
 
         when:
         updateScores(newScores)
