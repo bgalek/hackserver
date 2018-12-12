@@ -35,7 +35,7 @@ public class MongoOfferScoreRepository implements OfferScoreRepository {
     }
 
     @Override
-    public void updateScores(List<OfferScore> offerScores) {
+    public void setScores(List<OfferScore> offerScores) {
         offerScoreCrudRepository.saveAll(offerScores);
     }
 }

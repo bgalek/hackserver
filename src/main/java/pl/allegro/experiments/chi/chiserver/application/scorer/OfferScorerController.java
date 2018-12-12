@@ -47,8 +47,8 @@ public class OfferScorerController {
 
     @MeteredEndpoint
     @PostMapping(path = {"/scores"})
-    void updateScores(@RequestBody List<OfferScore> offerScores) {
-        scoreRepository.updateScores(offerScores);
+    void setOfferScores(@RequestBody List<OfferScore> offerScores) {
+        scoreRepository.setScores(offerScores);
     }
 
     @ExceptionHandler(ToManyOffersException.class)

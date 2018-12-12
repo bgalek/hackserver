@@ -33,7 +33,7 @@ public class RandomOfferScoreRepository implements OfferScoreRepository {
     }
 
     @Override
-    public void updateScores(List<OfferScore> offerScores) {
-        throw new RuntimeException("RandomOfferScoreRepository.updateScores is not implemented");
+    public void setScores(List<OfferScore> offerScores) {
+        throw new RuntimeException("RandomOfferScoreRepository.setScores is not implemented");
     }
 }
