@@ -1,10 +1,17 @@
-package pl.allegro.tech.leaders.hackathon.challanges.calc;
+package pl.allegro.tech.leaders.hackathon.challenge.calc;
 
-import pl.allegro.tech.leaders.hackathon.challanges.Challenge;
+import org.springframework.stereotype.Component;
+import pl.allegro.tech.leaders.hackathon.challenge.Challenge;
 
 import java.util.List;
 
+@Component
 class Calc implements Challenge {
+    @Override
+    public String getName() {
+        return "Calculator Challange";
+    }
+
     @Override
     public String getDescription() {
         return "Your task is to make calculator api!";
