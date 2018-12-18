@@ -58,11 +58,17 @@
                                          ref="experimentVariantsEditing"
                                          :allowModifyRegularVariants="true"
                                          :showHeader="true"/>
+            <experiment-custom-event-filters-editing
+              ref="experimentCustomEventFiltersEditing"
+              v-model="customMetricDefinition"
+              :showHeader="true"
+              v-on:customMetric="customMetric"/>
 
             <experiment-goal-editing ref="experimentGoalEditing"
                                      v-model="goal"
                                      :selectedDevice="this.variants && this.variants.deviceClass"
-                                     :showHeader="true"/>
+                                     :showHeader="true"
+                                     :haveCustomMetric="customMetricDefinition"/>
 
             <experiment-custom-parameter-editing ref="experimentCustomParamEditing"
                                                  v-model="customParameter"
@@ -155,6 +161,7 @@
   import _ from 'lodash'
   import ChiPanel from './ChiPanel.vue'
   import ExperimentCustomParameterEditing from './experiment/ExperimentCustomParameterEditing'
+  import ExperimentCustomEventFiltersEditing from './experiment/ExperimentCustomEventFiltersEditing'
 
   export default {
     mounted () {
@@ -181,7 +188,8 @@
         variants: null,
         reportingType: 'BACKEND',
         availableReportingTypes: ['BACKEND', 'FRONTEND'],
-        eventDefinitions: []
+        eventDefinitions: [],
+        customMetricDefinition: {}
       }
     },
 
@@ -211,7 +219,8 @@
       ExperimentVariantsEditing,
       ExperimentEventFiltersEditing,
       ExperimentCustomParameterEditing,
-      ExperimentGoalEditing
+      ExperimentGoalEditing,
+      ExperimentCustomEventFiltersEditing
     },
 
     methods: {
@@ -241,8 +250,10 @@
         const descValid = this.$refs.experimentDescEditing.validate()
         const variantsValid = this.$refs.experimentVariantsEditing.validate()
         const goalValid = this.$refs.experimentGoalEditing.validate()
+        const customMetricValid = this.$refs.experimentCustomEventFiltersEditing.validate()
 
-        return this.$refs.createForm.validate() && goalValid && descValid && variantsValid && customParamValid
+        return this.$refs.createForm.validate() && goalValid
+          && descValid && variantsValid && customParamValid && customMetricValid
       },
 
       setPermissionsError () {
@@ -259,6 +270,10 @@
 
       sending () {
         this.sendingDataToServer = true
+      },
+
+      customMetric(val) {
+        this.customMetricDefinition = val
       },
 
       notSending () {
@@ -285,7 +300,8 @@
           percentage: this.variants.percentage,
           reportingType: this.reportingType,
           eventDefinitions: this.eventDefinitions,
-          goal: this.goal
+          goal: this.goal,
+          customMetricDefinition: this.customMetricDefinition
         }
 
         return experimentCreationRequest
