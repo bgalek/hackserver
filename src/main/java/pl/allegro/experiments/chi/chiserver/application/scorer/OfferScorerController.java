@@ -64,24 +64,24 @@ public class OfferScorerController {
 
     @ExceptionHandler(ToManyOffersException.class)
     ResponseEntity<ErrorsHolder> handleToManyOffers(ToManyOffersException exception) {
-        return handleException(exception);
+        return handleException(exception, "400");
     }
 
     @ExceptionHandler(OfferScoreValueOutOfBoundsException.class)
     ResponseEntity<ErrorsHolder> handleOfferScoreValueOutOfBounds(OfferScoreValueOutOfBoundsException exception) {
-        return handleException(exception);
+        return handleException(exception, "400");
     }
 
     @ExceptionHandler(UnauthorizedPublicApiCallException.class)
     ResponseEntity<ErrorsHolder> handleUnauthorizedPublicApiCall(UnauthorizedPublicApiCallException exception) {
-        return handleException(exception);
+        return handleException(exception, "403");
     }
 
-    private ResponseEntity<ErrorsHolder> handleException(Exception exception) {
+    private ResponseEntity<ErrorsHolder> handleException(Exception exception, String statusCode) {
         logger.error(exception.getMessage());
         Error error = Error.error()
                 .fromException(exception)
-                .withCode("400")
+                .withCode(statusCode)
                 .withMessage(exception.getMessage())
                 .build();
 

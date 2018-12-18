@@ -114,6 +114,14 @@ class ScorerE2ESpec extends BaseE2EIntegrationSpec implements ApiActionUtils {
         value << [-1, 1.1]
     }
 
+    def "should not allow setting score without api token"() {
+        when:
+        post('api/scorer/scores', [[offer: randomOffers()[0], score: [value: 1]]])
+
+        then:
+        thrown(HttpClientErrorException)
+    }
+
     def setScores(List newScores) {
         post('api/scorer/scores', prepareScoresRequest(newScores))
     }
