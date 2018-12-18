@@ -1,11 +1,14 @@
 package pl.allegro.experiments.chi.chiserver.commands
 
 import pl.allegro.experiments.chi.chiserver.domain.User
+import pl.allegro.experiments.chi.chiserver.domain.experiments.CustomMetricDefinition
+import pl.allegro.experiments.chi.chiserver.domain.experiments.EventDefinition
 import pl.allegro.experiments.chi.chiserver.domain.experiments.administration.AuthorizationException
 import pl.allegro.experiments.chi.chiserver.domain.experiments.administration.ExperimentCommandException
 import pl.allegro.experiments.chi.chiserver.domain.experiments.administration.ExperimentCreationRequest
 
 import static pl.allegro.experiments.chi.chiserver.utils.SampleExperimentRequests.sampleExperimentCreationRequest
+import static pl.allegro.experiments.chi.chiserver.utils.SampleExperimentRequests.withRandomId
 
 class CreateExperimentCommandIntegrationSpec extends BaseCommandIntegrationSpec {
 
@@ -30,6 +33,18 @@ class CreateExperimentCommandIntegrationSpec extends BaseCommandIntegrationSpec 
         then:
         def exception = thrown ExperimentCommandException
         exception.message == "Experiment with id ${experiment.id} already exists"
+    }
+
+    def "should create experiment with custom metrics"() {
+        given:
+        def cmd = new CustomMetricDefinition("customMetricDefinition",  new EventDefinition('category', 'action', 'value', 'label', 'boxName'),  new EventDefinition('category', 'action', 'value', 'label', 'boxName'),)
+        def experiment = sampleExperimentCreationRequest([customMetricDefinition: cmd])
+
+        when:
+        createExperiment(experiment)
+
+        then:
+        experimentsExists(experiment.id)
     }
 
     def "should not create experiment when user is anonymous"() {

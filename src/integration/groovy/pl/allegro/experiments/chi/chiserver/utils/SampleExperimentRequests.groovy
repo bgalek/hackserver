@@ -1,5 +1,6 @@
 package pl.allegro.experiments.chi.chiserver.utils
 
+import pl.allegro.experiments.chi.chiserver.domain.experiments.CustomMetricDefinition
 import pl.allegro.experiments.chi.chiserver.domain.experiments.EventDefinition
 import pl.allegro.experiments.chi.chiserver.domain.experiments.ReportingType
 import pl.allegro.experiments.chi.chiserver.domain.experiments.administration.ExperimentCreationRequest
@@ -17,7 +18,8 @@ class SampleExperimentRequests {
             customParameterName: null,
             customParamterValue: null,
             eventDefinitions   : null,
-            tags               : []
+            tags               : [],
+            customMetricDefinition: null,
     ]
 
     static Map sampleExperimentCreationRequestProperties(Map customProperties = [:]) {
@@ -40,6 +42,7 @@ class SampleExperimentRequests {
                 .customParameterValue(properties.customParameterValue as String)
                 .eventDefinitions(properties.eventDefinitions as List<EventDefinition>)
                 .tags(properties.tags as List<String>)
+                .customMetricDefinition(properties.customMetricDefinition as CustomMetricDefinition)
                 .build()
     }
 

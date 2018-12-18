@@ -12,7 +12,6 @@ public class EventDefinition {
     private final String value;
     private final String label;
     private final String boxName;
-    private final boolean isCustom;
 
     @JsonCreator
     public EventDefinition(
@@ -20,14 +19,12 @@ public class EventDefinition {
             @JsonProperty("action") String action,
             @JsonProperty("value") String value,
             @JsonProperty("label") String label,
-            @JsonProperty("boxName") String boxName,
-            @JsonProperty("isCustom") boolean isCustom) {
+            @JsonProperty("boxName") String boxName) {
         this.category = Optional.ofNullable(category).orElse("");
         this.action = Optional.ofNullable(action).orElse("");
         this.value = Optional.ofNullable(value).orElse("");
         this.label = Optional.ofNullable(label).orElse("");
         this.boxName = Optional.ofNullable(boxName).orElse("");
-        this.isCustom = Optional.ofNullable(isCustom).orElse(false);
     }
 
     public String getCategory() {
@@ -50,8 +47,6 @@ public class EventDefinition {
         return this.boxName;
     }
 
-    public boolean isCustom() { return this.isCustom; }
-
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -61,18 +56,16 @@ public class EventDefinition {
                 Objects.equals(action, that.action) &&
                 Objects.equals(value, that.value) &&
                 Objects.equals(label, that.label) &&
-                Objects.equals(boxName, that.boxName) &&
-                Objects.equals(isCustom, that.isCustom);
+                Objects.equals(boxName, that.boxName);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(category, action, value, label, boxName, isCustom);
+        return Objects.hash(category, action, value, label, boxName);
     }
 
     @Override
     public String toString() {
-        return "category: " + category + ", action: " + action + ", value: " + value + ", label: " + label + ", boxName: " + boxName + ", isCustom: " +
-                 isCustom;
+        return "category: " + category + ", action: " + action + ", value: " + value + ", label: " + label + ", boxName: " + boxName;
     }
 }
