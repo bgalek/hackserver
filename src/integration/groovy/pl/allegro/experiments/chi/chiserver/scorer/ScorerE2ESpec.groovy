@@ -1,7 +1,10 @@
 package pl.allegro.experiments.chi.chiserver.scorer
 
+import org.springframework.http.HttpEntity
+import org.springframework.http.HttpHeaders
 import org.springframework.web.client.HttpClientErrorException
 import pl.allegro.experiments.chi.chiserver.BaseE2EIntegrationSpec
+import pl.allegro.experiments.chi.chiserver.application.scorer.OfferScorerController
 import pl.allegro.experiments.chi.chiserver.utils.ApiActionUtils
 
 class ScorerE2ESpec extends BaseE2EIntegrationSpec implements ApiActionUtils {
@@ -112,7 +115,13 @@ class ScorerE2ESpec extends BaseE2EIntegrationSpec implements ApiActionUtils {
     }
 
     def setScores(List newScores) {
-        post('api/scorer/scores', newScores)
+        post('api/scorer/scores', prepareScoresRequest(newScores))
+    }
+
+    HttpEntity prepareScoresRequest(List statistics) {
+        HttpHeaders headers = new HttpHeaders()
+        headers.set("Chi-Token", OfferScorerController.CHI_TOKEN)
+        new HttpEntity<>(statistics, headers)
     }
 
     def fetchScores() {

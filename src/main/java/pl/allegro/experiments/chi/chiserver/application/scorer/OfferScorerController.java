@@ -7,6 +7,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import pl.allegro.experiments.chi.chiserver.domain.scorer.*;
+import pl.allegro.tech.common.andamio.endpoint.PublicEndpoint;
 import pl.allegro.tech.common.andamio.errors.Error;
 import pl.allegro.tech.common.andamio.errors.ErrorsHolder;
 import pl.allegro.tech.common.andamio.errors.SimpleErrorsHolder;
@@ -14,6 +15,9 @@ import pl.allegro.tech.common.andamio.metrics.MeteredEndpoint;
 
 import java.util.HashSet;
 import java.util.List;
+
+import static org.springframework.http.MediaType.APPLICATION_JSON_UTF8_VALUE;
+import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
 @RestController
 @RequestMapping(
@@ -25,6 +29,7 @@ public class OfferScorerController {
     private static final Logger logger = LoggerFactory.getLogger(OfferScorerController.class);
     private final OfferScoreRepository scoreRepository;
     private final OfferRepository offerRepository;
+    public static final String CHI_TOKEN = "DSFFT346SF4643332HSSSGHBAUWRTUYAETGNVCH";
 
     public OfferScorerController(
             OfferRepository offerRepository,
@@ -46,8 +51,14 @@ public class OfferScorerController {
     }
 
     @MeteredEndpoint
-    @PostMapping(path = {"/scores"})
-    void setOfferScores(@RequestBody List<OfferScore> offerScores) {
+    @PostMapping(value = "/scores", consumes = {APPLICATION_JSON_VALUE, APPLICATION_JSON_UTF8_VALUE})
+    @PublicEndpoint
+    void setOfferScores(
+            @RequestBody List<OfferScore> offerScores,
+            @RequestHeader(value = "Chi-Token", defaultValue = "") String chiToken) {
+        if (!chiToken.equals(CHI_TOKEN)) {
+            throw new UnauthorizedPublicApiCallException();
+        }
         scoreRepository.setScores(offerScores);
     }
 
@@ -58,6 +69,11 @@ public class OfferScorerController {
 
     @ExceptionHandler(OfferScoreValueOutOfBoundsException.class)
     ResponseEntity<ErrorsHolder> handleOfferScoreValueOutOfBounds(OfferScoreValueOutOfBoundsException exception) {
+        return handleException(exception);
+    }
+
+    @ExceptionHandler(UnauthorizedPublicApiCallException.class)
+    ResponseEntity<ErrorsHolder> handleUnauthorizedPublicApiCall(UnauthorizedPublicApiCallException exception) {
         return handleException(exception);
     }
 
