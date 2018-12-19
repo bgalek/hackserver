@@ -119,13 +119,13 @@
       </v-flex>
     </v-layout>
 
-     </v-container>
+    </v-container>
   </v-form>
 </template>
 
 <script>
   import { Record } from 'immutable'
-  import { nonLegacyMetrics, getMetricByKey, nonLegacyMetricsWithoutCustomMetric } from '../../model/experiment/metrics'
+  import { nonLegacyMetrics, getMetricByKey } from '../../model/experiment/metrics'
   import { formatError } from '../../model/errors'
   import { mapActions } from 'vuex'
 
@@ -139,7 +139,7 @@
   })
 
   export default {
-    props: ['experiment', 'selectedDevice', 'showHeader', 'haveCustomMetric'],
+    props: ['experiment', 'selectedDevice', 'showHeader'],
 
     data () {
       const initialValue = this.init(this.experiment)
@@ -147,7 +147,7 @@
         givenValue: this.buildResult(initialValue),
         value: initialValue,
         formValid: true,
-        metrics: nonLegacyMetricsWithoutCustomMetric(),
+        metrics: nonLegacyMetrics(),
         alphaLevels: [0.01, 0.05, 0.10],
         powerLevels: [0.80, 0.85, 0.90, 0.95],
         ratioRules: [
@@ -202,11 +202,6 @@
           }
         },
         deep: true
-      },
-      haveCustomMetric: {
-        handler: function (isCustomMetricVisible) {
-          this.metrics = isCustomMetricVisible ? nonLegacyMetrics() : nonLegacyMetricsWithoutCustomMetric()
-        }
       }
     },
 
