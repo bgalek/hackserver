@@ -46,22 +46,18 @@
 
     data () {
       return {
-        variantName: this.experiment.getFirstVariant() && this.experiment.getFirstVariant().name,
-        shownMetricsKeys: ['tx_visit', 'tx_cmuid']
-      }
+        variantName: this.experiment.getFirstVariant() && this.experiment.getFirstVariant().name}
     },
 
     computed: {
       shownBayes: function () {
-        return this.shownMetricsKeys
-          .filter(metricKey => this.bayesianHistograms.metricStatistics && this.bayesianHistograms.metricStatistics[metricKey])
-          .map(metricKey => {
-            const metricStatistics = this.bayesianHistograms.metricStatistics[metricKey]
+        return this.bayesianHistograms.metricStatistics &&
+          this.bayesianHistograms.metricStatistics.map(it => {
             return {
-              metricKey: metricKey,
-              metricLabel: getMetricLabelByKey(metricKey),
-              metadata: metricStatistics.metadata,
-              histogram: metricStatistics.histograms.find(x => x.variantName === this.variantName)
+              metricKey: it.metricName,
+              metricLabel: getMetricLabelByKey(it.metricName),
+              metadata: it.metadata,
+              histogram: it.histograms.find(x => x.variantName === this.variantName)
             }
           })
       }

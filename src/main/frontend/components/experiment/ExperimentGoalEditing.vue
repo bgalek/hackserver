@@ -125,7 +125,7 @@
 
 <script>
   import { Record } from 'immutable'
-  import { nonLegacyMetrics, getMetricByKey } from '../../model/experiment/metrics'
+  import { globalMetricsArray, getMetricByKey } from '../../model/experiment/metrics'
   import { formatError } from '../../model/errors'
   import { mapActions } from 'vuex'
 
@@ -143,11 +143,12 @@
 
     data () {
       const initialValue = this.init(this.experiment)
+      this.$emit('input', initialValue)
       return {
         givenValue: this.buildResult(initialValue),
         value: initialValue,
         formValid: true,
-        metrics: nonLegacyMetrics(),
+        metrics: globalMetricsArray(),
         alphaLevels: [0.01, 0.05, 0.10],
         powerLevels: [0.80, 0.85, 0.90, 0.95],
         ratioRules: [

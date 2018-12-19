@@ -3,50 +3,39 @@ import { Record, List } from 'immutable'
 const MetricRecord = Record({
   key: '',
   label: '',
-  isLegacy: true,
-  isBinary: false
+  type: '',
+  order: 0
 })
 
 export class MetricModel extends MetricRecord {
-  constructor (key, label, flags) {
+  constructor (key, label, type, order) {
     super({
       key: key,
       label: label,
-      isLegacy: flags && flags.legacy === true,
-      isBinary: flags && flags.binary === true
+      type: type,
+      order: order
     })
   }
 }
 
-const allMetrics = List(
+const globalMetrics = List(
   [
-    new MetricModel('tx_visit', 'Visit conversion', {binary: true}),
-    new MetricModel('tx_cmuid', 'Client(cmuid) conversion', {binary: true}),
-    new MetricModel('gmv_cmuid', 'GMV per Client(cmuid) '),
-    new MetricModel('gmv', 'GMV per visit'),
-    new MetricModel('tx_daily', 'Daily conversion - BETA', {legacy: true}),
-    new MetricModel('tx_avg', 'Transactions per visit', {legacy: true}),
-    new MetricModel('tx_avg_daily', 'Transactions daily - BETA', {legacy: true}),
-    new MetricModel('gmv_daily', 'GMV daily - BETA', {legacy: true})
+    new MetricModel('tx_visit', 'Visit conversion', 'binary', 1),
+    new MetricModel('gmv', 'GMV per visit', 'currency', 2),
+    new MetricModel('tx_cmuid', 'Client(cmuid) conversion', 'binary', 3),
+    new MetricModel('gmv_cmuid', 'GMV per Client(cmuid)', 'currency', 4)
   ]
 )
 
 export function getMetricByKey (metricKey) {
-  return allMetrics.find(v => v.key === metricKey)
+  return globalMetrics.find(v => v.key === metricKey) ||
+       new MetricModel(metricKey, metricKey, 'binary', 0) // custom metric, probably
 }
 
 export function getMetricLabelByKey (metricKey) {
   return getMetricByKey(metricKey) && getMetricByKey(metricKey).label
 }
 
-export function nonLegacyMetrics () {
-  return allMetrics.filter(v => !v.isLegacy).toArray()
-}
-
-export function allMetricLabels () {
-  const result = {}
-  allMetrics.forEach(v => {
-    result[v.key] = v.label
-  })
-  return result
+export function globalMetricsArray () {
+  return globalMetrics.toArray()
 }

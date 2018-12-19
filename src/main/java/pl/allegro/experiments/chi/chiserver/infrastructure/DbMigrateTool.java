@@ -28,21 +28,5 @@ public class DbMigrateTool {
     @PostConstruct
     public void action() throws Exception {
         logger.info("running DbMigrateTool ...");
-
-        updateBayesianStats();
     }
-
-    private void updateBayesianStats() {
-        Query query = new Query().addCriteria(Criteria.where("metricName").is(null));
-        var oldStats = mongoTemplate.count(query, "bayesianExperimentStatistics");
-
-        logger.info("oldStats: {}", oldStats);
-
-        if (oldStats > 0) {
-            logger.info("migrating {} BayesianExperimentStatisticsForVariant objects", oldStats);
-            var result = mongoTemplate.updateMulti(query, new Update().set("metricName", "tx_visit"), "bayesianExperimentStatistics");
-            logger.info("updated documents: {}", result.getModifiedCount());
-        }
-    }
-
 }

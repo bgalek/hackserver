@@ -14,11 +14,7 @@
       <div v-for="metric in metrics()" :key="metric.order">
 
         <div style="margin-top: 30px;">
-          <b>{{metricNames[metric.key]}}</b>
-
-          <turnilo-link cube-type="metrics" :experiment-id="experiment.id" v-if="showMetricTurniloLink(metric.key)"
-                      :selected-metric-name="metric.key"
-          ></turnilo-link>
+          <b>{{metricLabel(metric.key)}}</b>
         </div>
 
         <v-data-table
@@ -29,7 +25,7 @@
         >
           <template slot="items" slot-scope="props">
             <td>{{ props.item.variant }}</td>
-            <td class="text-xs-right">{{ metricFormatter[metric.key](props.item.value) }}</td>
+            <td class="text-xs-right">{{ formatMetricValue(metric.key,props.item.value) }}</td>
 
             <td class="text-xs-right">
               <v-tooltip top>
@@ -48,10 +44,6 @@
             <td class="text-xs-right">
               <div v-if="showVariant(props.item.variant)">
                 {{ formatNumber(props.item.pValue, 4) }}
-                <turnilo-link cube-type="stats" :experiment-id="experiment.id"
-                            selected-metric-name="p_value" :variant="props.item.variant"
-                            :metric="metric.key"
-                ></turnilo-link>
               </div>
             </td>
 
@@ -85,16 +77,15 @@
 
 <script>
   import {mapActions} from 'vuex'
-  import TurniloLink from '../../TurniloLink.vue'
+  import { getMetricByKey } from '../../../model/experiment/metrics'
   import DeviceSelector from './DeviceSelector'
   import moment from 'moment'
-  import {allMetricLabels} from '../../../model/experiment/metrics'
 
   export default {
     props: ['experiment', 'experimentStatistics', 'experimentStatisticsError', 'experimentStatisticsPending', 'selectedDevice'],
 
     components: {
-      TurniloLink, DeviceSelector
+      DeviceSelector
     },
 
     data () {
@@ -108,24 +99,24 @@
           {text: 'p-Value', sortable: false, align: 'center'},
           {text: 'Sample Count', sortable: false, align: 'right'}
         ],
-        hiddenMetrics: ['tx_avg', 'tx_avg_daily'],
-        metricNames: allMetricLabels(),
-        metricFormatter: {
-          'tx_visit': (it) => this.formatAsPercent(it),
-          'tx_cmuid': (it) => this.formatAsPercent(it),
-          'tx_daily': (it) => this.formatAsPercent(it),
-          'tx_avg': (it) => this.formatNumber(it, 4),
-          'tx_avg_daily': (it) => this.formatNumber(it, 4),
-          'gmv': (it) => this.formatCurrency(it, 'PLN'),
-          'gmv_daily': (it) => this.formatCurrency(it, 'PLN'),
-          'gmv_cmuid': (it) => this.formatCurrency(it, 'PLN')
-        },
-        hiddenMetricsTurnilo: ['tx_daily', 'tx_avg_daily', 'gmv_daily']
+        metricFormatters: {
+          'binary': (it) => this.formatAsPercent(it),
+          'currency': (it) => this.formatCurrency(it, 'PLN')
+        }
       }
     },
 
     methods: {
       ...mapActions(['getExperimentStatistics']),
+
+      formatMetricValue (metricKey, value) {
+        const metricFormatter = this.metricFormatters[getMetricByKey(metricKey).type]
+        return metricFormatter(value)
+      },
+
+      metricLabel (metricKey) {
+        return getMetricByKey(metricKey).label
+      },
 
       durationDays () {
         console.log('durationDays')
@@ -170,10 +161,6 @@
         }
       },
 
-      showMetricTurniloLink (metricKey) {
-        return !this.hiddenMetricsTurnilo.includes(metricKey)
-      },
-
       testSignificance (metricVariant) {
         const pVal = metricVariant.pValue
 
@@ -204,8 +191,7 @@
       },
 
       metrics () {
-        return this.experimentStatistics.metrics &&
-               this.experimentStatistics.metrics.filter(metric => !this.hiddenMetrics.includes(metric.key))
+        return this.experimentStatistics.metrics
       },
 
       diffColor (metricVariant) {
