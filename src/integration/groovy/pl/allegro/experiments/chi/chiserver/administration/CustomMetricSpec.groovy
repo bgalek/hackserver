@@ -16,6 +16,6 @@ class CustomMetricSpec extends BaseE2EIntegrationSpec {
         then:
         experiment.status == "DRAFT"
         def a = experiment
-        def b = 0
+        def b = 0 
     }
 }
