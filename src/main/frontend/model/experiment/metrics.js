@@ -44,8 +44,8 @@ export function nonLegacyMetrics () {
   return allMetrics.filter(v => !v.isLegacy).toArray()
 }
 
-export function nonLegacyMetricsWithoutCustomMetric() {
-  return nonLegacyMetrics().filter(v => v.key !=='custom_metric')
+export function nonLegacyMetricsWithoutCustomMetric () {
+  return nonLegacyMetrics().filter(v => v.key !== 'custom_metric')
 }
 
 export function allMetricLabels () {
