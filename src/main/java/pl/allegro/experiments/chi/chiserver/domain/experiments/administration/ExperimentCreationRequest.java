@@ -81,11 +81,8 @@ public class ExperimentCreationRequest {
             this.customParameter = null;
         }
         this.goal = goal;
-        if (customMetricDefinition == null) {
-            this.customMetricDefinition = null;
-        } else {
-            this.customMetricDefinition = customMetricDefinition;
-        }
+        this.customMetricDefinition = customMetricDefinition;
+
 
     }
 

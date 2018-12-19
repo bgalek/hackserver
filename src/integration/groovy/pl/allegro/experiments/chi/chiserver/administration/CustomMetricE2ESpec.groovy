@@ -43,7 +43,7 @@ class CustomMetricE2ESpec extends BaseE2EIntegrationSpec implements ApiExperimen
     }
 
     @Unroll
-    def "should create customMetric with empty fields if #fieldCase field provided"() {
+    def "should create customMetric with missing fields if #fieldCase field provided"() {
         when:
         def experiment = draftExperiment([customMetricDefinition: customMetricDefinition])
 
