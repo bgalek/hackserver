@@ -27,8 +27,7 @@ const allMetrics = List(
     new MetricModel('tx_daily', 'Daily conversion - BETA', {legacy: true}),
     new MetricModel('tx_avg', 'Transactions per visit', {legacy: true}),
     new MetricModel('tx_avg_daily', 'Transactions daily - BETA', {legacy: true}),
-    new MetricModel('gmv_daily', 'GMV daily - BETA', {legacy: true}),
-    new MetricModel('custom_metric', 'Custom', {binary: true})
+    new MetricModel('gmv_daily', 'GMV daily - BETA', {legacy: true})
   ]
 )
 
@@ -42,10 +41,6 @@ export function getMetricLabelByKey (metricKey) {
 
 export function nonLegacyMetrics () {
   return allMetrics.filter(v => !v.isLegacy).toArray()
-}
-
-export function nonLegacyMetricsWithoutCustomMetric () {
-  return nonLegacyMetrics().filter(v => v.key !== 'custom_metric')
 }
 
 export function allMetricLabels () {

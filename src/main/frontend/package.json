@@ -1,7 +1,6 @@
 {
   "scripts": {
-    "build": "poi test && jest && poi build",
-    "start": "yarn poi"
+    "build": "poi test && jest && poi build"
   },
   "dependencies": {
     "axios": "^0.18.0",
