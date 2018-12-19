@@ -11,8 +11,8 @@
           </v-alert>
 
           <v-form v-model="createFormValid"
-                ref="createForm"
-                lazy-validation>
+                  ref="createForm"
+                  lazy-validation>
 
             <v-container fluid class="pa-0 ma-0" text-xs-center>
               <v-layout row align-center>
@@ -161,6 +161,7 @@
   import _ from 'lodash'
   import ChiPanel from './ChiPanel.vue'
   import ExperimentCustomParameterEditing from './experiment/ExperimentCustomParameterEditing'
+  import ExperimentCustomEventFiltersEditing from './experiment/ExperimentCustomMetricsEditing'
 
   export default {
     mounted () {
@@ -187,7 +188,8 @@
         variants: null,
         reportingType: 'BACKEND',
         availableReportingTypes: ['BACKEND', 'FRONTEND'],
-        eventDefinitions: []
+        eventDefinitions: [],
+        customMetricDefinition: {}
       }
     },
 
@@ -217,7 +219,8 @@
       ExperimentVariantsEditing,
       ExperimentEventFiltersEditing,
       ExperimentCustomParameterEditing,
-      ExperimentGoalEditing
+      ExperimentGoalEditing,
+      ExperimentCustomEventFiltersEditing
     },
 
     methods: {
@@ -230,6 +233,7 @@
             this.notSending()
             this.$router.push('/experiments/' + this.experimentIdSlug)
           }).catch(error => {
+
             if (error.response.status === 401) {
               this.setPermissionsError()
             } else {
