@@ -311,23 +311,23 @@ public class ExperimentDefinition {
 
     public ExperimentDefinitionBuilder mutate() {
         return  experimentDefinition()
-                    .id(id)
-                    .variantNames(variantNames)
-                    .internalVariantName(internalVariantName)
-                    .fullOnVariantName(fullOnVariantName)
-                    .deviceClass(deviceClass)
-                    .percentage(percentage)
-                    .description(description)
-                    .documentLink(documentLink)
-                    .author(author)
-                    .groups(groups)
-                    .activityPeriod(activityPeriod)
-                    .reportingDefinition(reportingDefinition)
-                    .explicitStatus(explicitStatus)
-                    .customParameter(customParameter)
-                    .goal(goal)
-                    .tags(tags)
-                    .customMetricDefinition(customMetricDefinition);
+                .id(id)
+                .variantNames(variantNames)
+                .internalVariantName(internalVariantName)
+                .fullOnVariantName(fullOnVariantName)
+                .deviceClass(deviceClass)
+                .percentage(percentage)
+                .description(description)
+                .documentLink(documentLink)
+                .author(author)
+                .groups(groups)
+                .activityPeriod(activityPeriod)
+                .reportingDefinition(reportingDefinition)
+                .explicitStatus(explicitStatus)
+                .customParameter(customParameter)
+                .goal(goal)
+                .tags(tags)
+                .customMetricDefinition(customMetricDefinition);
     }
 
     public List<VariantPercentageAllocation> renderRegularVariantsSolo() {

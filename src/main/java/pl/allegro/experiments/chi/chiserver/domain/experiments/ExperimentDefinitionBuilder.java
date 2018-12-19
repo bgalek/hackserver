@@ -143,7 +143,7 @@ public class ExperimentDefinitionBuilder {
 
     public ExperimentDefinitionBuilder customMetricDefinition(CustomMetricDefinition cmd) {
         this.customMetricDefinition = cmd;
-        return this; 
+        return this;
     }
 
     public ExperimentDefinition build() {

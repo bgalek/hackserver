@@ -1,7 +1,7 @@
 <template>
   <chi-panel title="Details">
     <v-layout>
-    <v-flex xs5>
+    <v-flex xs5 class="mr-2">
         <h3>Description</h3>
         {{ experimentDescription()}}
 
@@ -99,6 +99,9 @@
         </v-layout>
       </div>
 
+      <experiment-custom-metric
+          :experiment="experiment"/>
+
     </v-flex>
     </v-layout>
 
@@ -143,6 +146,7 @@
   import ExperimentGoalInfo from './ExperimentGoalInfo'
   import ExperimentTags from './ExperimentTags'
   import ExperimentEventFiltersEditing from './ExperimentEventFiltersEditing'
+  import ExperimentCustomMetric from './ExperimentCustomMetric'
   import _ from 'lodash'
 
   export default {
@@ -154,6 +158,7 @@
       ExperimentGoalInfo,
       ExperimentStatus,
       ExperimentTags,
+      ExperimentCustomMetric,
       ChiPanel
     },
 
@@ -174,7 +179,7 @@
 
       reportingEnabledButtonText () {
         return this.experiment.reportingEnabled ? 'enabled' : 'disabled'
-      }
+      },
     }
   }
 </script>
