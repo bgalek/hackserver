@@ -4,6 +4,8 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.common.base.Preconditions;
 
+import java.util.Objects;
+
 public class OfferScore {
     private final Offer offer;
     private final Score score;
@@ -28,5 +30,18 @@ public class OfferScore {
 
     public static OfferScore of(Offer offer, Score score) {
         return new OfferScore(offer, score);
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        OfferScore that = (OfferScore) o;
+        return offer.equals(that.offer);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(offer);
     }
 }

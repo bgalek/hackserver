@@ -1,4 +1,5 @@
 import { Record } from 'immutable'
+import {getMetricByKey} from './metrics'
 
 const HistogramRecord = Record({
   frequencies: [],
@@ -14,7 +15,8 @@ const HistogramMetadataRecord = Record({
 
 const BayesianHistogramsRecord = Record({
   metadata: {},
-  histograms: []
+  histograms: [],
+  metricName: ''
 })
 
 const ExperimentBayesianStatisticsRecord = Record({
@@ -35,13 +37,19 @@ export default class ExperimentBayesianStatisticsModel extends ExperimentBayesia
       const metricName = item.metricName
 
       if (!byDevice[device]) {
-        byDevice[device] = {metricStatistics: {}}
+        byDevice[device] = {metricStatistics: []}
       }
 
-      byDevice[device].metricStatistics[metricName] = new BayesianHistogramsRecord({
+      byDevice[device].metricStatistics.push(new BayesianHistogramsRecord({
         histograms: item.histograms.map(it => new HistogramRecord(it)),
-        metadata: new HistogramMetadataRecord(item.metadata)
-      })
+        metadata: new HistogramMetadataRecord(item.metadata),
+        metricName: metricName
+      }))
+    })
+
+    Object.keys(byDevice).forEach(device => {
+      byDevice[device].metricStatistics =
+        byDevice[device].metricStatistics.sort((x, y) => getMetricByKey(x.metricName).order - getMetricByKey(y.metricName).order)
     })
 
     super({deviceStatistics: byDevice})

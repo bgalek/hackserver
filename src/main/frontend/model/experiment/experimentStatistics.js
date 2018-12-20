@@ -1,5 +1,6 @@
 import { Record } from 'immutable'
 import _ from 'lodash'
+import { getMetricByKey } from './metrics'
 
 const ExperimentStatisticsRecord = Record({
   deviceStatistics: {}
@@ -15,25 +16,14 @@ const ExperimentDeviceStatisticsRecord = Record({
 
 const ExperimentMetricRecord = Record({
   'key': null,
-  'variants': null,
-  'order': null
+  'variants': null
 })
 
 class ExperimentMetricModel extends ExperimentMetricRecord {
   constructor (experimentMetricObject) {
     super({
       'key': experimentMetricObject.metricName,
-      'variants': experimentMetricObject.variants,
-      'order': {
-        'tx_visit': 1,
-        'tx_avg': 2,
-        'gmv': 3,
-        'tx_cmuid': 4,
-        'gmv_cmuid': 5,
-        'tx_daily': 6,
-        'tx_avg_daily': 7,
-        'gmv_daily': 8
-      }[experimentMetricObject.metricName]
+      'variants': experimentMetricObject.variants
     })
   }
 }
@@ -83,7 +73,7 @@ class ExperimentDeviceStatisticsModel extends ExperimentDeviceStatisticsRecord {
       id: stats.id,
       device: device,
       toDate: stats.toDate,
-      metrics: mappedMetrics.sort((x, y) => x.order - y.order),
+      metrics: mappedMetrics.sort((x, y) => getMetricByKey(x.key).order - getMetricByKey(y.key).order),
       metricsNotAvailable: stats.metrics && stats.metrics.length === 0
     }
     super(result)

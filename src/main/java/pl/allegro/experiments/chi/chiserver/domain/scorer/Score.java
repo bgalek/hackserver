@@ -9,7 +9,6 @@ public class Score {
 
     @JsonCreator
     private Score(@JsonProperty("value") double value) {
-        Preconditions.checkArgument(value >= 0 && value <= 1, "Score value out of <0, 1>");
         this.value = value;
     }
 

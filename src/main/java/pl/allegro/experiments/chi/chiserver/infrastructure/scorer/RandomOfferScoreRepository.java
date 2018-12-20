@@ -1,18 +1,16 @@
 package pl.allegro.experiments.chi.chiserver.infrastructure.scorer;
 
 import com.google.common.collect.ImmutableList;
-import org.springframework.stereotype.Repository;
 import pl.allegro.experiments.chi.chiserver.domain.scorer.*;
 
 import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
-@Repository
 public class RandomOfferScoreRepository implements OfferScoreRepository {
     private final OfferRepository offerRepository;
 
-    public RandomOfferScoreRepository(OfferRepository offerRepository) {
+    RandomOfferScoreRepository(OfferRepository offerRepository) {
         this.offerRepository = offerRepository;
     }
 
@@ -32,5 +30,10 @@ public class RandomOfferScoreRepository implements OfferScoreRepository {
                 .sorted(Comparator.comparingDouble(it -> -it.getScore().getValue()))
                 .collect(Collectors.toList());
         return ImmutableList.copyOf(result);
+    }
+
+    @Override
+    public void setScores(List<OfferScore> offerScores) {
+        throw new RuntimeException("RandomOfferScoreRepository.setScores is not implemented");
     }
 }
