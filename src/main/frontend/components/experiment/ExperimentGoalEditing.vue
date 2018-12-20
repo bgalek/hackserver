@@ -206,10 +206,9 @@
       },
       haveCustomMetric: {
         handler: function (customMetric) {
+          this.metrics = globalMetricsArray()
           if (customMetric) {
             this.metrics.push(getMetricByKey(customMetric.name))
-          } else {
-            this.metrics = globalMetricsArray()
           }
         }
       }

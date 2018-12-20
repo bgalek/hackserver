@@ -287,7 +287,7 @@
     watch: {
       items: {
         handler: function (newValue) {
-          if (this.validate()) {
+          if (this.validate() && newValue.length > 0) {
             this.$emit('input', this.buildResultFromValue())
           }
         },
@@ -299,6 +299,7 @@
       customMetricChange (val) {
         if (val === false) {
           this.items = []
+          this.onDefineCustomMetricChange(false)
         }
       },
       getItemName () {
