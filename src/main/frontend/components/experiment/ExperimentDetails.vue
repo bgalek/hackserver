@@ -179,7 +179,7 @@
 
       reportingEnabledButtonText () {
         return this.experiment.reportingEnabled ? 'enabled' : 'disabled'
-      },
+      }
     }
   }
 </script>

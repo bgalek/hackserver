@@ -28,19 +28,18 @@
       }
     },
     methods: {
-      isPresent() {
+      isPresent () {
         return this.customMetric && this.customMetric.name
       },
-      getName() {
+      getName () {
         return this.customMetric.name
       },
-      getSuccessEvent() {
+      getSuccessEvent () {
         return this.customMetric.successEventDefinition
       },
-      getViewEvent() {
+      getViewEvent () {
         return this.customMetric.viewEventDefinition
       }
     }
   }
-
 </script>
