@@ -128,10 +128,10 @@ class CustomMetricE2ESpec extends BaseE2EIntegrationSpec implements ApiExperimen
                 ]
         ]
 
-        fieldCase << ['null', 'empty']
+        fieldCase << ['null', 'missing']
     }
 
-    def "should return 400 response code if not proper customMetricDefinition provided"() {
+    def "should not create experiment with invalid custom metric definition"() {
         when:
         draftExperiment([customMetricDefinition: customMetricDefinition])
 
@@ -182,8 +182,10 @@ class CustomMetricE2ESpec extends BaseE2EIntegrationSpec implements ApiExperimen
 
 
     }
+
     def "should create experiment without customMetric if not provided"() {
         when:
+
         def experiment = draftExperiment()
         then:
         !(experiment.hasProperty("customMetricDefinition"))
