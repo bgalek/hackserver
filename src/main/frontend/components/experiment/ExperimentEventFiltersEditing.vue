@@ -1,10 +1,10 @@
 <template>
-    <div>
-      <v-btn color="primary" class="mb-2" @click="newItem()" v-if="!readOnly">
-        Add event
-      </v-btn>
-      <v-dialog v-model="editing" max-width="450px">
-        <v-form v-model="eventDefinitionValid" ref="eventDefinitionForm">
+  <div>
+    <v-btn color="primary" class="mb-2" @click="newItem()" v-if="!readOnly">
+      Add event
+    </v-btn>
+    <v-dialog v-model="editing" max-width="450px">
+      <v-form v-model="eventDefinitionValid" ref="eventDefinitionForm">
         <v-card>
           <v-card-title>
             <span class="headline">Event definition</span>
@@ -85,49 +85,49 @@
 
           </v-card-actions>
         </v-card>
-        </v-form>
-      </v-dialog>
+      </v-form>
+    </v-dialog>
 
-      <v-data-table
-        :headers="headers"
-        :items="items"
-        hide-actions
-         light
-      >
-        <template slot="items" slot-scope="props">
-          <td>{{ props.item.boxName }}</td>
-          <td>{{ props.item.category }}</td>
-          <td>{{ props.item.label }}</td>
-          <td>{{ props.item.action }}</td>
-          <td>{{ props.item.value }}</td>
+    <v-data-table
+      :headers="headers"
+      :items="items"
+      hide-actions
+      light
+    >
+      <template slot="items" slot-scope="props">
+        <td>{{ props.item.boxName }}</td>
+        <td>{{ props.item.category }}</td>
+        <td>{{ props.item.label }}</td>
+        <td>{{ props.item.action }}</td>
+        <td>{{ props.item.value }}</td>
 
-          <td class="justify-center layout px-0" v-if="!readOnly">
-            <v-btn icon class="mx-0" @click="editItem(props.item)">
-              <v-icon color="teal">edit</v-icon>
-            </v-btn>
-            <v-btn icon class="mx-0" @click="deleteItem(props.item)">
-              <v-icon color="pink">delete</v-icon>
-            </v-btn>
-          </td>
-
-        </template>
-      </v-data-table>
-
-      <v-layout row align-center v-if="showButtons">
-        <v-flex>
-          <v-btn flat @click="closeEventDefinitions">Cancel</v-btn>
-        </v-flex>
-
-        <v-flex>
-          <v-btn color="gray"
-                 :disabled="!eventDefinitionsChanged() || !this.eventDefinitionValid"
-                 @click="updateEventDefinitions"
-                 style="text-transform: none">
-            Update NGA event definitions of &nbsp;<b>{{ this.experiment.id }}</b>
+        <td class="justify-center layout px-0" v-if="!readOnly">
+          <v-btn icon class="mx-0" @click="editItem(props.item)">
+            <v-icon color="teal">edit</v-icon>
           </v-btn>
-        </v-flex>
-      </v-layout>
-    </div>
+          <v-btn icon class="mx-0" @click="deleteItem(props.item)">
+            <v-icon color="pink">delete</v-icon>
+          </v-btn>
+        </td>
+
+      </template>
+    </v-data-table>
+
+    <v-layout row align-center v-if="showButtons">
+      <v-flex>
+        <v-btn flat @click="closeEventDefinitions">Cancel</v-btn>
+      </v-flex>
+
+      <v-flex>
+        <v-btn color="gray"
+               :disabled="!eventDefinitionsChanged() || !this.eventDefinitionValid"
+               @click="updateEventDefinitions"
+               style="text-transform: none">
+          Update NGA event definitions of &nbsp;<b>{{ this.experiment.id }}</b>
+        </v-btn>
+      </v-flex>
+    </v-layout>
+  </div>
 </template>
 
 <script>

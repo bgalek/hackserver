@@ -6,4 +6,3 @@ export function containsNoSpecialCharacters (str) {
 
   return chars.indexOf(str) === -1 || `no ${str}`
 }
-
