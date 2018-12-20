@@ -16,6 +16,10 @@ public class Score {
         return value;
     }
 
+    Score plus(Score score) {
+        return Score.of(value + score.getValue());
+    }
+
     public static Score of(double value) {
         return new Score(value);
     }

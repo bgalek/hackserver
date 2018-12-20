@@ -21,18 +21,31 @@ public class MongoOfferScoreRepository implements OfferScoreRepository {
 
     @Override
     public List<OfferScore> scores() {
-        Map<String, OfferScore> result = new HashMap<>();
-        for (OfferScore offerScore: randomOfferScoreRepository.scores()) {
-            result.put(offerScore.getOffer().getOfferId(), offerScore);
-        }
-        for (OfferScore offerScore: offerScoreCrudRepository.findAll()) {
-            if (result.containsKey(offerScore.getOffer().getOfferId())) {
-                result.put(offerScore.getOffer().getOfferId(), offerScore);
-            }
-        }
+        Map<String, OfferScore> randomScoreDefaults = randomScoreDefaults();
+        Map<String, OfferScore> result = applyCalculatedScores(randomScoreDefaults);
+
         return ImmutableList.copyOf(result.values().stream()
                 .sorted(Comparator.comparingDouble(it -> -it.getScore().getValue()))
                 .collect(Collectors.toList()));
+    }
+
+    private Map<String, OfferScore> randomScoreDefaults() {
+        Map<String, OfferScore> defaults = new HashMap<>();
+        for (OfferScore offerScore: randomOfferScoreRepository.scores()) {
+            defaults.put(offerScore.getOffer().getOfferId(), offerScore);
+        }
+        return defaults;
+    }
+
+    private Map<String, OfferScore> applyCalculatedScores(Map<String, OfferScore> randomDefaults) {
+        for (OfferScore offerScore: offerScoreCrudRepository.findAll()) {
+            if (randomDefaults.containsKey(offerScore.getOffer().getOfferId())) {
+                randomDefaults.put(
+                        offerScore.getOffer().getOfferId(),
+                        offerScore.plus(randomDefaults.get(offerScore.getOffer().getOfferId())));
+            }
+        }
+        return randomDefaults;
     }
 
     @Override

@@ -32,6 +32,10 @@ public class OfferScore {
         return new OfferScore(offer, score);
     }
 
+    public OfferScore plus(OfferScore offerScore) {
+        return OfferScore.of(offer, score.plus(offerScore.getScore()));
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

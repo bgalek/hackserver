@@ -16,20 +16,12 @@ public class RandomOfferScoreRepository implements OfferScoreRepository {
 
     @Override
     public List<OfferScore> scores() {
-        List<Offer> offers = offerRepository.all();
-        List<OfferScore> scores = offers.stream()
+        return ImmutableList.copyOf(offerRepository.all().stream()
                 .map(it -> OfferScore.of(
                         it,
-                        Score.of(Math.random())))
-                .collect(Collectors.toList());
-        double randomSum = scores.stream().mapToDouble(it -> it.getScore().getValue()).sum();
-        var result = scores.stream()
-                .map(it -> OfferScore.of(
-                        it.getOffer(),
-                        Score.of(it.getScore().getValue() / randomSum)))
+                        Score.of(Math.random() / 2)))
                 .sorted(Comparator.comparingDouble(it -> -it.getScore().getValue()))
-                .collect(Collectors.toList());
-        return ImmutableList.copyOf(result);
+                .collect(Collectors.toList()));
     }
 
     @Override

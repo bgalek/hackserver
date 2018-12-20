@@ -60,7 +60,7 @@ class ScorerE2ESpec extends BaseE2EIntegrationSpec implements ApiActionUtils {
         thrown(HttpClientErrorException)
     }
 
-    def "should override default random offer scores by defined offer scores"() {
+    def "should sum default random offer scores with defined offer scores"() {
         given:
         def offers = randomOffers()
         postOffers(offers)
@@ -74,7 +74,7 @@ class ScorerE2ESpec extends BaseE2EIntegrationSpec implements ApiActionUtils {
         setScores(definedScores)
 
         then:
-        fetchScores().every {it -> it.score.value == 0.5}
+        fetchScores().every {it -> it.score.value >= 0.5}
     }
 
     def "should prioritize offer set over defined scores, providing random scores"() {
