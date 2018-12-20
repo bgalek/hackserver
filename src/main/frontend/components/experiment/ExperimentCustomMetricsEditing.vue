@@ -32,148 +32,148 @@
             </v-flex>
           </v-layout>
           <v-layout>
-            <v-flex xs11 lg6>
+          <v-flex xs11 lg6>
 
-              <v-card-title>
-                <span class="headline">View event definition</span>
-              </v-card-title>
-              <v-card-text>
+          <v-card-title>
+            <span class="headline">View event definition</span>
+          </v-card-title>
+          <v-card-text>
 
-                <v-container fluid class="pa-0 ma-0">
+            <v-container fluid class="pa-0 ma-0">
 
-                  <v-layout row align-center>
-                    <v-flex xs2>
-                      <v-tooltip top close-delay="3000">
-                        For example: <code>offers_reco</code>
-                        <v-icon slot="activator">help_outline</v-icon>
-                      </v-tooltip>
-                    </v-flex>
+              <v-layout row align-center>
+                <v-flex xs2>
+                  <v-tooltip top close-delay="3000">
+                    For example: <code>offers_reco</code>
+                    <v-icon slot="activator">help_outline</v-icon>
+                  </v-tooltip>
+                </v-flex>
 
 
-                    <v-flex>
-                      <v-text-field label="boxName" v-model="editedItem.viewEventDefinition.boxName"
-                                    :rules="filterRules"
-                      ></v-text-field>
-                    </v-flex>
-                  </v-layout>
+                <v-flex>
+                  <v-text-field label="boxName" v-model="editedItem.viewEventDefinition.boxName"
+                                :rules="filterRules"
+                  ></v-text-field>
+                </v-flex>
+              </v-layout>
 
-                  <v-layout row align-center>
-                    <v-flex offset-xs2>
-                      <v-text-field label="category" v-model="editedItem.viewEventDefinition.category"
-                                    :rules="filterRules"
-                      ></v-text-field>
-                    </v-flex>
-                  </v-layout>
+              <v-layout row align-center>
+                <v-flex offset-xs2>
+                  <v-text-field label="category" v-model="editedItem.viewEventDefinition.category"
+                                :rules="filterRules"
+                  ></v-text-field>
+                </v-flex>
+              </v-layout>
 
-                  <v-layout row align-center>
-                    <v-flex offset-xs2>
-                      <v-text-field label="label" v-model="editedItem.viewEventDefinition.label"
-                                    :rules="filterRules"
-                      ></v-text-field>
-                    </v-flex>
-                  </v-layout>
+              <v-layout row align-center>
+                <v-flex offset-xs2>
+                  <v-text-field label="label" v-model="editedItem.viewEventDefinition.label"
+                                :rules="filterRules"
+                  ></v-text-field>
+                </v-flex>
+              </v-layout>
 
-                  <v-layout row align-center>
-                    <v-flex xs2>
-                      <v-tooltip top close-delay="3000">
-                        For example: <br/>
-                        <code>itemView</code><br/>
-                        <code>boxView</code><br/>
-                        <code>suggestionsShow</code><br/>
-                        <code>click</code><br/>
-                        <code>boxInteraction</code>
-                        <v-icon slot="activator">help_outline</v-icon>
-                      </v-tooltip>
-                    </v-flex>
-                    <v-flex>
-                      <v-text-field label="action" v-model="editedItem.viewEventDefinition.action"
-                                    :rules="filterRules"
-                      ></v-text-field>
-                    </v-flex>
-                  </v-layout>
+              <v-layout row align-center>
+                <v-flex xs2>
+                  <v-tooltip top close-delay="3000">
+                    For example: <br/>
+                    <code>itemView</code><br/>
+                    <code>boxView</code><br/>
+                    <code>suggestionsShow</code><br/>
+                    <code>click</code><br/>
+                    <code>boxInteraction</code>
+                    <v-icon slot="activator">help_outline</v-icon>
+                  </v-tooltip>
+                </v-flex>
+                <v-flex>
+                  <v-text-field label="action" v-model="editedItem.viewEventDefinition.action"
+                                :rules="filterRules"
+                  ></v-text-field>
+                </v-flex>
+              </v-layout>
 
-                  <v-layout row align-center>
-                    <v-flex offset-xs2>
-                      <v-text-field label="value" v-model="editedItem.viewEventDefinition.value"
-                                    :rules="filterRules"
-                      ></v-text-field>
-                    </v-flex>
-                  </v-layout>
+              <v-layout row align-center>
+                <v-flex offset-xs2>
+                  <v-text-field label="value" v-model="editedItem.viewEventDefinition.value"
+                                :rules="filterRules"
+                  ></v-text-field>
+                </v-flex>
+              </v-layout>
 
-                </v-container>
+            </v-container>
 
-              </v-card-text>
-            </v-flex>
-            <v-flex xs11 lg6>
+          </v-card-text>
+          </v-flex>
+          <v-flex xs11 lg6>
 
-              <v-card-title>
-                <span class="headline">Action event definition</span>
-              </v-card-title>
-              <v-card-text>
+          <v-card-title>
+            <span class="headline">Action event definition</span>
+          </v-card-title>
+          <v-card-text>
 
-                <v-container fluid class="pa-0 ma-0">
+            <v-container fluid class="pa-0 ma-0">
 
-                  <v-layout row align-center>
-                    <v-flex xs2>
-                      <v-tooltip top close-delay="3000">
-                        For example: <code>offers_reco</code>
-                        <v-icon slot="activator">help_outline</v-icon>
-                      </v-tooltip>
-                    </v-flex>
-                    <v-flex>
-                      <v-text-field label="boxName" v-model="editedItem.successEventDefinition.boxName"
-                                    :rules="filterRules"
-                      ></v-text-field>
-                    </v-flex>
-                  </v-layout>
+              <v-layout row align-center>
+                <v-flex xs2>
+                  <v-tooltip top close-delay="3000">
+                    For example: <code>offers_reco</code>
+                    <v-icon slot="activator">help_outline</v-icon>
+                  </v-tooltip>
+                </v-flex>
+                <v-flex>
+                  <v-text-field label="boxName" v-model="editedItem.successEventDefinition.boxName"
+                                :rules="filterRules"
+                  ></v-text-field>
+                </v-flex>
+              </v-layout>
 
-                  <v-layout row align-center>
-                    <v-flex offset-xs2>
-                      <v-text-field label="category" v-model="editedItem.successEventDefinition.category"
-                                    :rules="filterRules"
-                      ></v-text-field>
-                    </v-flex>
-                  </v-layout>
+              <v-layout row align-center>
+                <v-flex offset-xs2>
+                  <v-text-field label="category" v-model="editedItem.successEventDefinition.category"
+                                :rules="filterRules"
+                  ></v-text-field>
+                </v-flex>
+              </v-layout>
 
-                  <v-layout row align-center>
-                    <v-flex offset-xs2>
-                      <v-text-field label="label" v-model="editedItem.successEventDefinition.label"
-                                    :rules="filterRules"
-                      ></v-text-field>
-                    </v-flex>
-                  </v-layout>
+              <v-layout row align-center>
+                <v-flex offset-xs2>
+                  <v-text-field label="label" v-model="editedItem.successEventDefinition.label"
+                                :rules="filterRules"
+                  ></v-text-field>
+                </v-flex>
+              </v-layout>
 
-                  <v-layout row align-center>
-                    <v-flex xs2>
-                      <v-tooltip top close-delay="3000">
-                        For example: <br/>
-                        <code>itemView</code><br/>
-                        <code>boxView</code><br/>
-                        <code>suggestionsShow</code><br/>
-                        <code>click</code><br/>
-                        <code>boxInteraction</code>
-                        <v-icon slot="activator">help_outline</v-icon>
-                      </v-tooltip>
-                    </v-flex>
-                    <v-flex>
-                      <v-text-field label="action" v-model="editedItem.successEventDefinition.action"
-                                    :rules="filterRules"
-                      ></v-text-field>
-                    </v-flex>
-                  </v-layout>
+              <v-layout row align-center>
+                <v-flex xs2>
+                  <v-tooltip top close-delay="3000">
+                    For example: <br/>
+                    <code>itemView</code><br/>
+                    <code>boxView</code><br/>
+                    <code>suggestionsShow</code><br/>
+                    <code>click</code><br/>
+                    <code>boxInteraction</code>
+                    <v-icon slot="activator">help_outline</v-icon>
+                  </v-tooltip>
+                </v-flex>
+                <v-flex>
+                  <v-text-field label="action" v-model="editedItem.successEventDefinition.action"
+                                :rules="filterRules"
+                  ></v-text-field>
+                </v-flex>
+              </v-layout>
 
-                  <v-layout row align-center>
-                    <v-flex offset-xs2>
-                      <v-text-field label="value" v-model="editedItem.successEventDefinition.value"
-                                    :rules="filterRules"
-                      ></v-text-field>
-                    </v-flex>
-                  </v-layout>
+              <v-layout row align-center>
+                <v-flex offset-xs2>
+                  <v-text-field label="value" v-model="editedItem.successEventDefinition.value"
+                                :rules="filterRules"
+                  ></v-text-field>
+                </v-flex>
+              </v-layout>
 
-                </v-container>
+            </v-container>
 
-              </v-card-text>
-            </v-flex>
+          </v-card-text>
+          </v-flex>
           </v-layout>
           <v-card-actions>
             <v-spacer></v-spacer>
@@ -225,6 +225,7 @@
 <script>
   import {startsOrEndsWithSpace} from '../../utils/startsOrEndsWithSpace'
   import {Record} from 'immutable'
+  import {containsNoSpecialCharacters} from '../../utils/containsNoSpecialCharacters'
 
   const CustomMetricDefinitionRecord = Record({
     name: '',
@@ -274,13 +275,7 @@
           {text: 'Value', value: 'value', align: 'left', sortable: false}
         ],
         filterRules: [
-          (v) => this.containsNo(v, '*') || 'no *',
-          (v) => this.containsNo(v, '?') || 'no ?',
-          (v) => this.containsNo(v, '%') || 'no %',
-          (v) => this.containsNo(v, '\'') || 'no \'',
-          (v) => this.containsNo(v, '/') || 'no /',
-          (v) => this.containsNo(v, '\\') || 'no \\',
-          (v) => this.containsNo(v, '"') || 'no "',
+          (v) => containsNoSpecialCharacters(v),
           (v) => !startsOrEndsWithSpace(v) || 'no spaces in the beginning or end'
         ],
         defineCustomMetric: false
@@ -299,14 +294,6 @@
     },
 
     methods: {
-      containsNo (str, char) {
-        if (!str) {
-          return true
-        }
-
-        return str.indexOf(char) === -1
-      },
-
       changed () {
         if (this.editedIndex === -1) {
           return true
@@ -328,7 +315,7 @@
         this.editing = true
         this.editedIndex = -1
         this.editedItem = Object.assign({}, {})
-        this.editedItem.name = Object.assign('', this.name)
+        this.editedItem.name = this.name
         this.editedItem.viewEventDefinition = Object.assign({}, this.defaultItem)
         this.editedItem.successEventDefinition = Object.assign({}, this.defaultItem)
       },
@@ -336,6 +323,7 @@
       editItem (item) {
         this.editing = true
         this.editedIndex = this.items.indexOf(item)
+        this.editedItem.name = item.name
         this.editedItem.viewEventDefinition = Object.assign({}, item.viewEventDefinition)
         this.editedItem.successEventDefinition = Object.assign({}, item.successEventDefinition)
       },

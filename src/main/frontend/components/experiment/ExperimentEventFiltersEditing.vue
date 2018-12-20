@@ -132,6 +132,7 @@
 
 <script>
   import {startsOrEndsWithSpace} from '../../utils/startsOrEndsWithSpace'
+  import {containsNoSpecialCharacters} from '../../utils/containsNoSpecialCharacters'
   import { Record, List } from 'immutable'
 
   const EventDefinitionRecord = Record({
@@ -167,13 +168,7 @@
           {text: 'Value', value: 'value', align: 'left', sortable: false}
         ],
         filterRules: [
-          (v) => this.containsNo(v, '*') || 'no *',
-          (v) => this.containsNo(v, '?') || 'no ?',
-          (v) => this.containsNo(v, '%') || 'no %',
-          (v) => this.containsNo(v, '\'') || 'no \'',
-          (v) => this.containsNo(v, '/') || 'no /',
-          (v) => this.containsNo(v, '\\') || 'no \\',
-          (v) => this.containsNo(v, '"') || 'no "',
+          (v) => containsNoSpecialCharacters(v),
           (v) => !startsOrEndsWithSpace(v) || 'no spaces in the beginning or end'
         ]
       }
