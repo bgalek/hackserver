@@ -30,17 +30,6 @@ class ScorerE2ESpec extends BaseE2EIntegrationSpec implements ApiActionUtils {
         firstScores != secondScores
     }
 
-    def "should score so each score is <0, 1>"() {
-        given:
-        postOffers(randomOffers())
-
-        when:
-        def scores = fetchScores().collect {it.score.value}
-
-        then:
-        scores.every {it <= 1 && it >= 0}
-    }
-
     def "should sort scores by value, from high to low"() {
         given:
         postOffers(randomOffers())
@@ -120,6 +109,29 @@ class ScorerE2ESpec extends BaseE2EIntegrationSpec implements ApiActionUtils {
 
         then:
         thrown(HttpClientErrorException)
+    }
+
+    def "should remove old statistics when setting fresh set"() {
+        given:
+        def offers = randomOffers()
+        postOffers(offers)
+
+        def definedScores = offers.collect {offer -> [
+                offer: offer,
+                score: [value: 0.5]
+        ]}
+
+        when:
+        setScores(definedScores)
+
+        then:
+        fetchScores().every {it -> it.score.value >= 0.5 && it.score.value <= 1.5}
+
+        when:
+        setScores(definedScores)
+
+        then:
+        fetchScores().every {it -> it.score.value >= 0.5 && it.score.value <= 1.5}
     }
 
     def setScores(List newScores) {
