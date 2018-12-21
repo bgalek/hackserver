@@ -24,7 +24,7 @@
     props: ['experiment'],
     computed: {
       customMetric: function () {
-        return this.experiment.customMetricDefinition
+        return this.experiment.customMetricDefinition.value
       }
     },
     methods: {
