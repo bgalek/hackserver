@@ -32,6 +32,7 @@ dependencies {
     implementation("org.springframework.boot:spring-boot-starter-actuator")
     implementation("org.springframework.retry:spring-retry")
     implementation("org.springframework.boot:spring-boot-starter-data-mongodb")
+    implementation("com.fasterxml.jackson.module:jackson-module-jsonSchema:2.9.8")
     runtimeOnly("io.micrometer:micrometer-registry-prometheus:latest.release")
     runtimeOnly("de.flapdoodle.embed:de.flapdoodle.embed.mongo:2.2.0")
     runtimeOnly("org.springframework.boot:spring-boot-devtools")
