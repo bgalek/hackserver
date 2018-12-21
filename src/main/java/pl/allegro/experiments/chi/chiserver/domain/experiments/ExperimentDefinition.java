@@ -189,7 +189,9 @@ public class ExperimentDefinition {
     }
 
     @DiffInclude
-    public CustomMetricDefinition getCustomMetricDefinition() { return customMetricDefinition; }
+    public Optional<CustomMetricDefinition> getCustomMetricDefinition() {
+        return Optional.ofNullable(customMetricDefinition);
+    }
 
     public ZonedDateTime getLastExplicitStatusChange() {
         return lastExplicitStatusChange;

@@ -34,7 +34,8 @@
           <v-layout fluid class="pa-3 ma-0">
             <v-flex>
               <v-text-field label="name" v-model="editedItem.name"
-                            :rules="filterRules"
+                            :rules="customMetricRules"
+
               ></v-text-field>
             </v-flex>
           </v-layout>
@@ -106,7 +107,13 @@
                       ></v-text-field>
                     </v-flex>
                   </v-layout>
-
+                  <v-layout row align-center>
+                    <v-flex offset-xs2>
+                      <div class="error--text" v-if="error.length">
+                        {{error}}
+                      </div>
+                    </v-flex>
+                  </v-layout>
                 </v-container>
 
               </v-card-text>
@@ -114,7 +121,7 @@
             <v-flex xs11 lg6>
 
               <v-card-title>
-                <span class="headline">Action event definition</span>
+                <span class="headline">Success event definition</span>
               </v-card-title>
               <v-card-text>
 
@@ -176,15 +183,10 @@
                       ></v-text-field>
                     </v-flex>
                   </v-layout>
-
                 </v-container>
-
               </v-card-text>
             </v-flex>
           </v-layout>
-          <div class="error--text" v-if="error.length">
-            {{error}}
-          </div>
           <v-card-actions>
             <v-spacer></v-spacer>
             <v-container fluid class="pa-0 ma-0">
@@ -212,6 +214,7 @@
       >
 
         <template slot="items" slot-scope="props">
+          <td>{{ props.item.type }}</td>
           <td>{{ props.item.boxName }}</td>
           <td>{{ props.item.category }}</td>
           <td>{{ props.item.label }}</td>
@@ -270,6 +273,7 @@
         },
         editedIndex: -1,
         headers: [
+          {text: 'Type', value: 'type', align: 'left', sortable: false},
           {text: 'BoxName', value: 'boxName', align: 'left', sortable: false},
           {text: 'Category', value: 'category', align: 'left', sortable: false},
           {text: 'Label', value: 'label', align: 'left', sortable: false},
@@ -277,6 +281,11 @@
           {text: 'Value', value: 'value', align: 'left', sortable: false}
         ],
         filterRules: [
+          (v) => containsNoSpecialCharacters(v),
+          (v) => !startsOrEndsWithSpace(v) || 'no spaces in the beginning or end'
+        ],
+        customMetricRules: [
+          (v) => !!v || 'Name is required',
           (v) => containsNoSpecialCharacters(v),
           (v) => !startsOrEndsWithSpace(v) || 'no spaces in the beginning or end'
         ],
@@ -310,7 +319,9 @@
         let items = []
         for (let item of this.items) {
           let viewEventDefinition = Object.assign({}, item.viewEventDefinition)
+          viewEventDefinition.type = 'View event'
           let successEventDefinition = Object.assign({}, item.successEventDefinition)
+          successEventDefinition.type = 'Success event'
           items.push(viewEventDefinition)
           items.push(successEventDefinition)
         }
@@ -339,7 +350,7 @@
         this.editing = true
         this.editedIndex = -1
         this.editedItem = Object.assign({}, {})
-        this.editedItem.name = this.name
+        this.editedItem.name = ''
         this.editedItem.viewEventDefinition = Object.assign({}, this.defaultItem)
         this.editedItem.successEventDefinition = Object.assign({}, this.defaultItem)
       },
@@ -374,7 +385,7 @@
           this.onDefineCustomMetricChange(this.editedItem)
           this.close()
         } else {
-          this.error = 'You have to fulfill name and atleast 2 fields in each event'
+          this.error = 'You have to fulfil at least 2 fields in each event'
         }
       },
 

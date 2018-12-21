@@ -58,8 +58,9 @@
                                          ref="experimentVariantsEditing"
                                          :allowModifyRegularVariants="true"
                                          :showHeader="true"/>
-            <experiment-custom-event-filters-editing
-              ref="experimentCustomEventFiltersEditing"
+
+            <experiment-custom-metrics-editing
+              ref="experimentCustomMetricsEditing"
               v-model="customMetricDefinition"
               :showHeader="true"
               v-on:customMetric="customMetric"/>
@@ -161,7 +162,7 @@
   import _ from 'lodash'
   import ChiPanel from './ChiPanel.vue'
   import ExperimentCustomParameterEditing from './experiment/ExperimentCustomParameterEditing'
-  import ExperimentCustomEventFiltersEditing from './experiment/ExperimentCustomMetricsEditing'
+  import ExperimentCustomMetricsEditing from './experiment/ExperimentCustomMetricsEditing'
 
   export default {
     mounted () {
@@ -189,7 +190,11 @@
         reportingType: 'BACKEND',
         availableReportingTypes: ['BACKEND', 'FRONTEND'],
         eventDefinitions: [],
-        customMetricDefinition: {}
+        customMetricDefinition: {
+          name: '',
+          viewEventDefinition: {},
+          successEventDefinition: {}
+        },
       }
     },
 
@@ -220,14 +225,13 @@
       ExperimentEventFiltersEditing,
       ExperimentCustomParameterEditing,
       ExperimentGoalEditing,
-      ExperimentCustomEventFiltersEditing
+      ExperimentCustomMetricsEditing
     },
 
     methods: {
       onSubmit () {
         this.sending()
         this.cleanErrors()
-
         if (this.validate()) {
           this.createExperiment({data: this.getExperimentDataToSend()}).then(response => {
             this.notSending()
@@ -250,10 +254,9 @@
         const descValid = this.$refs.experimentDescEditing.validate()
         const variantsValid = this.$refs.experimentVariantsEditing.validate()
         const goalValid = this.$refs.experimentGoalEditing.validate()
-        const customMetricValid = this.$refs.experimentCustomEventFiltersEditing.validate()
 
         return this.$refs.createForm.validate() && goalValid &&
-          descValid && variantsValid && customParamValid && customMetricValid
+          descValid && variantsValid && customParamValid
       },
 
       setPermissionsError () {

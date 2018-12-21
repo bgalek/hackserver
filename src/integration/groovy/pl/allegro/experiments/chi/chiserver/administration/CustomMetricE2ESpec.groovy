@@ -29,21 +29,23 @@ class CustomMetricE2ESpec extends BaseE2EIntegrationSpec implements ApiExperimen
         ]])
 
         then:
-        experiment.customMetricDefinition.name == "customMetricDefinition"
-        experiment.customMetricDefinition.viewEventDefinition.category == "category1"
-        experiment.customMetricDefinition.viewEventDefinition.action == "action1"
-        experiment.customMetricDefinition.viewEventDefinition.value == "value1"
-        experiment.customMetricDefinition.viewEventDefinition.label == "label1"
-        experiment.customMetricDefinition.viewEventDefinition.boxName == "boxName1"
-        experiment.customMetricDefinition.successEventDefinition.category == "category2"
-        experiment.customMetricDefinition.successEventDefinition.action == "action2"
-        experiment.customMetricDefinition.successEventDefinition.value == "value2"
-        experiment.customMetricDefinition.successEventDefinition.label == "label2"
-        experiment.customMetricDefinition.successEventDefinition.boxName == "boxName2"
+        with (experiment.customMetricDefinition) {
+            name == "customMetricDefinition"
+            viewEventDefinition.category == "category1"
+            viewEventDefinition.action == "action1"
+            viewEventDefinition.value == "value1"
+            viewEventDefinition.label == "label1"
+            viewEventDefinition.boxName == "boxName1"
+            successEventDefinition.category == "category2"
+            successEventDefinition.action == "action2"
+            successEventDefinition.value == "value2"
+            successEventDefinition.label == "label2"
+            successEventDefinition.boxName == "boxName2"
+        }
     }
 
     @Unroll
-    def "should create customMetric with missing fields if #fieldCase field provided"() {
+    def "should create customMetric with empty strings if #fieldCase field provided"() {
         when:
         def experiment = draftExperiment([customMetricDefinition: customMetricDefinition])
 
@@ -128,10 +130,11 @@ class CustomMetricE2ESpec extends BaseE2EIntegrationSpec implements ApiExperimen
                 ]
         ]
 
-        fieldCase << ['null', 'missing']
+        fieldCase << ['null', 'empty']
     }
 
-    def "should not create experiment with invalid custom metric definition"() {
+    @Unroll
+    def "should not create experiment if missing #missingCase in request"() {
         when:
         draftExperiment([customMetricDefinition: customMetricDefinition])
 
@@ -180,15 +183,15 @@ class CustomMetricE2ESpec extends BaseE2EIntegrationSpec implements ApiExperimen
 
         ]
 
-
+        missingCase << ["name", "viewEventDefinition", "successEventDefinition"]
     }
 
     def "should create experiment without customMetric if not provided"() {
         when:
-
         def experiment = draftExperiment()
+
         then:
-        !(experiment.hasProperty("customMetricDefinition"))
+        ! experiment.customMetricDefinition
     }
 
 }
