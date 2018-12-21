@@ -194,7 +194,7 @@
           name: '',
           viewEventDefinition: {},
           successEventDefinition: {}
-        },
+        }
       }
     },
 
