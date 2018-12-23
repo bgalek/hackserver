@@ -30,6 +30,14 @@ class ScorerE2ESpec extends BaseE2EIntegrationSpec implements ApiActionUtils {
         firstScores != secondScores
     }
 
+    def "should keep random scores in <0, 5>"() {
+        given:
+        postOffers(randomOffers())
+
+        expect:
+        fetchScores().every {it -> it.score.value >= 0 && it.score.value <= 5}
+    }
+
     def "should sort scores by value, from high to low"() {
         given:
         postOffers(randomOffers())
@@ -60,7 +68,7 @@ class ScorerE2ESpec extends BaseE2EIntegrationSpec implements ApiActionUtils {
         ]}
 
         when:
-        setScores(definedScores)
+        updateScores(definedScores)
 
         then:
         fetchScores().every {it -> it.score.value >= 0.5}
@@ -76,7 +84,7 @@ class ScorerE2ESpec extends BaseE2EIntegrationSpec implements ApiActionUtils {
                 offer: offer,
                 score: [value: 0.5]
         ]}
-        setScores(definedScores)
+        updateScores(definedScores)
 
         when:
         def scores = fetchScores()
@@ -92,17 +100,6 @@ class ScorerE2ESpec extends BaseE2EIntegrationSpec implements ApiActionUtils {
         fetchScores().size() == 0
     }
 
-    def "should not allow setting score with value out of <0, 1>"() {
-        when:
-        setScores([[offer: randomOffers()[0], score: [value: value]]])
-
-        then:
-        thrown(HttpClientErrorException)
-
-        where:
-        value << [-1, 1.1]
-    }
-
     def "should not allow setting score without api token"() {
         when:
         post('api/scorer/scores', [[offer: randomOffers()[0], score: [value: 1]]])
@@ -111,7 +108,7 @@ class ScorerE2ESpec extends BaseE2EIntegrationSpec implements ApiActionUtils {
         thrown(HttpClientErrorException)
     }
 
-    def "should remove old statistics when setting fresh set"() {
+    def "should sum scores during update"() {
         given:
         def offers = randomOffers()
         postOffers(offers)
@@ -122,19 +119,97 @@ class ScorerE2ESpec extends BaseE2EIntegrationSpec implements ApiActionUtils {
         ]}
 
         when:
-        setScores(definedScores)
+        updateScores(definedScores)
 
         then:
-        fetchScores().every {it -> it.score.value >= 0.5 && it.score.value <= 1.5}
+        fetchScores().every {it -> it.score.value >= 0.5 && it.score.value <= 5.5}
 
         when:
-        setScores(definedScores)
+        updateScores(definedScores)
 
         then:
-        fetchScores().every {it -> it.score.value >= 0.5 && it.score.value <= 1.5}
+        fetchScores().every {it -> it.score.value >= 1 && it.score.value <= 6}
     }
 
-    def setScores(List newScores) {
+    def "should reset offer scores when setting new offer set"() {
+        given:
+        def offers = randomOffers()
+        postOffers(offers)
+
+        and:
+        updateScores(offers.collect {offer -> [
+                offer: offer,
+                score: [value: 5]
+        ]})
+
+        and:
+        fetchScores().every {it -> it.score.value >= 5 && it.score.value <= 10}
+
+        when:
+        postOffers(offers)
+
+        then:
+        fetchScores().every {it -> it.score.value >= 0 && it.score.value <= 5}
+    }
+
+    def "should extend defined offer score set when new offer score occurs during update"() {
+        given:
+        def offers = randomOffers()
+        def offersToScoreAtFirst = offers.subList(0, offers.size() - 1)
+        def offerWithoutScore = offers.get(offers.size() - 1)
+
+        and:
+        postOffers(offers)
+
+        when:
+        updateScores(offersToScoreAtFirst.collect {offer -> [
+                offer: offer,
+                score: [value: 5]
+        ]})
+
+        then:
+        fetchScores().find {
+            it -> it.offer == offerWithoutScore && it.score.value >= 0 && it.score.value <= 5
+        }
+
+        when:
+        updateScores([
+            [
+                offer: offerWithoutScore,
+                score: [value: 5]
+            ]
+        ])
+
+        then:
+        fetchScores().find {it -> it.offer == offerWithoutScore && it.score.value >= 5 && it.score.value <= 10}
+    }
+
+    def "should keep offer score even if it does not appear in update"() {
+        given:
+        def offers = randomOffers()
+        def offersToScoreSecondTime = offers.subList(0, offers.size() - 1)
+        def offerWithoutSecondUpdate = offers.get(offers.size() - 1)
+
+        and:
+        postOffers(offers)
+
+        and:
+        updateScores(offers.collect {offer -> [
+                offer: offer,
+                score: [value: 5]
+        ]})
+
+        when:
+        updateScores(offersToScoreSecondTime.collect {offer -> [
+                offer: offer,
+                score: [value: 5]
+        ]})
+
+        then:
+        fetchScores().find {it -> it.offer == offerWithoutSecondUpdate && it.score.value >= 5 && it.score.value <= 10}
+    }
+
+    def updateScores(List newScores) {
         post('api/scorer/scores', prepareScoresRequest(newScores))
     }
 
@@ -153,7 +228,7 @@ class ScorerE2ESpec extends BaseE2EIntegrationSpec implements ApiActionUtils {
     }
 
     def randomOffers() {
-        randomOffers(99)
+        randomOffers(3)
     }
 
     def randomOffers(size) {
