@@ -228,7 +228,7 @@ class ScorerE2ESpec extends BaseE2EIntegrationSpec implements ApiActionUtils {
     }
 
     def randomOffers() {
-        randomOffers(3)
+        randomOffers(99)
     }
 
     def randomOffers(size) {

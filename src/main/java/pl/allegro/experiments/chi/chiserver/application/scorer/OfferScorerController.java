@@ -67,11 +67,6 @@ public class OfferScorerController {
         return handleException(exception, "400");
     }
 
-    @ExceptionHandler(OfferScoreValueOutOfBoundsException.class)
-    ResponseEntity<ErrorsHolder> handleOfferScoreValueOutOfBounds(OfferScoreValueOutOfBoundsException exception) {
-        return handleException(exception, "400");
-    }
-
     @ExceptionHandler(UnauthorizedPublicApiCallException.class)
     ResponseEntity<ErrorsHolder> handleUnauthorizedPublicApiCall(UnauthorizedPublicApiCallException exception) {
         return handleException(exception, "403");
