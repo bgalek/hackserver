@@ -98,10 +98,10 @@
           <v-flex xs5>Used 𝜶: </v-flex><v-flex xs5>{{ experiment.usedAlpha() }}</v-flex>
         </v-layout>
       </div>
-
-      <experiment-custom-metric
-          :experiment="experiment"/>
-
+      <div v-if="experiment.customMetricDefinition.value.name">
+        <h3>Custom metric</h3>
+        <experiment-custom-metrics-editing :experiment= "experiment" :read-only="true"/>
+      </div>
     </v-flex>
     </v-layout>
 
@@ -146,19 +146,19 @@
   import ExperimentGoalInfo from './ExperimentGoalInfo'
   import ExperimentTags from './ExperimentTags'
   import ExperimentEventFiltersEditing from './ExperimentEventFiltersEditing'
-  import ExperimentCustomMetric from './ExperimentCustomMetric'
+  import ExperimentCustomMetricsEditing from './ExperimentCustomMetricsEditing'
   import _ from 'lodash'
 
   export default {
     props: ['experiment', 'experimentStatistics'],
 
     components: {
+      ExperimentCustomMetricsEditing,
       ExperimentEventFiltersEditing,
       ExperimentGroupInfo,
       ExperimentGoalInfo,
       ExperimentStatus,
       ExperimentTags,
-      ExperimentCustomMetric,
       ChiPanel
     },
 

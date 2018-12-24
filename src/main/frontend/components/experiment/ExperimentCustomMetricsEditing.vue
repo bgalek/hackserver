@@ -10,6 +10,7 @@
         label="Define custom metric"
         v-model="defineCustomMetric"
         v-on:change="customMetricChange"
+        v-if="!readOnly"
       ></v-switch>
     </v-flex>
     <v-flex offset-xs1>
@@ -20,6 +21,8 @@
         <v-btn icon class="mx-0" @click="editItem()">
           <v-icon color="teal">edit</v-icon>
         </v-btn>
+      </div>
+      <div v-if="readOnly || (defineCustomMetric && items.length > 0)">
         {{getItemName()}}
       </div>
     </v-flex>
@@ -205,12 +208,11 @@
     </v-dialog>
     <v-flex offset-xs1>
       <v-data-table
-        v-if="defineCustomMetric"
+        v-if="defineCustomMetric || readOnly"
         :headers="headers"
         :items="getItemsForTable()"
         hide-actions
         light
-        offset-xs1
       >
 
         <template slot="items" slot-scope="props">
@@ -251,11 +253,11 @@
   })
 
   export default {
-    props: ['showHeader', 'readOnly'],
+    props: ['showHeader', 'readOnly', 'experiment'],
 
     data () {
       return {
-        items: [],
+        items: this.initFromExperiment(),
         error: '',
         customMetricDefinitionValid: true,
         editing: false,
@@ -305,6 +307,12 @@
     },
 
     methods: {
+      initFromExperiment () {
+        if (!this.experiment || !this.experiment.customMetricDefinition) {
+          return []
+        }
+        return [this.experiment.customMetricDefinition.value]
+      },
       customMetricChange (val) {
         if (val === false) {
           this.items = []
