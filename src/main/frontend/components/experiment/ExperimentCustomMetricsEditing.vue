@@ -1,19 +1,14 @@
 <template>
   <div>
     <v-layout row v-if="showHeader">
-      <v-flex offset-xs1>
         <h3 class="mt-3 blue--text">Custom metrics definition</h3>
-      </v-flex>
     </v-layout>
-    <v-flex offset-xs1>
       <v-switch
         label="Define custom metric"
         v-model="defineCustomMetric"
         v-on:change="customMetricChange"
         v-if="!readOnly"
       ></v-switch>
-    </v-flex>
-    <v-flex offset-xs1>
       <v-btn color="primary" class="mb-2" @click="newItem()" v-if="defineCustomMetric && items.length < 1">
         Add custom metric
       </v-btn>
@@ -21,11 +16,11 @@
         <v-btn icon class="mx-0" @click="editItem()">
           <v-icon color="teal">edit</v-icon>
         </v-btn>
-      </div>
-      <div v-if="readOnly || (defineCustomMetric && items.length > 0)">
         {{getItemName()}}
       </div>
-    </v-flex>
+      <div v-if="readOnly">
+        {{getItemName()}}
+      </div>
 
 
     <v-dialog v-model="editing" max-width="450px">
@@ -206,8 +201,8 @@
         </v-card>
       </v-form>
     </v-dialog>
-    <v-flex offset-xs1>
-      <v-data-table
+
+    <v-data-table
         v-if="defineCustomMetric || readOnly"
         :headers="headers"
         :items="getItemsForTable()"
@@ -225,7 +220,6 @@
 
         </template>
       </v-data-table>
-    </v-flex>
   </div>
 </template>
 

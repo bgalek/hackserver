@@ -59,11 +59,23 @@
                                          :allowModifyRegularVariants="true"
                                          :showHeader="true"/>
 
-            <experiment-custom-metrics-editing
-              ref="experimentCustomMetricsEditing"
-              v-model="customMetricDefinition"
-              :showHeader="true"
-              v-on:customMetric="customMetric"/>
+
+            <v-container fluid style="margin: 0px; padding: 0px" text-xs-center>
+              <v-layout row align-top>
+
+                <v-flex xs1>
+                </v-flex>
+                <v-flex xs11 text-xs-left>
+                  <experiment-custom-metrics-editing
+                    ref="experimentCustomMetricsEditing"
+                    v-model="customMetricDefinition"
+                    :showHeader="true"
+                    v-on:customMetric="customMetric"/>
+                </v-flex>
+
+              </v-layout>
+            </v-container>
+
 
             <experiment-goal-editing ref="experimentGoalEditing"
                                      v-model="goal"
