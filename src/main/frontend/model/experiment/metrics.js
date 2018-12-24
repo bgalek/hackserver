@@ -17,7 +17,7 @@ export class MetricModel extends MetricRecord {
     })
   }
 
-  isBinary() {
+  isBinary () {
     return this.type === 'binary'
   }
 }
