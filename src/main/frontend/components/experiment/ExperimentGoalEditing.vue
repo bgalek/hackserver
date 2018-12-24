@@ -252,7 +252,7 @@
         return value &&
                value.hasHypothesis &&
                value.leadingMetric &&
-               getMetricByKey(value.leadingMetric).isBinary
+               getMetricByKey(value.leadingMetric).isBinary()
       },
 
       calculate (value) {
