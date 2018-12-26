@@ -305,7 +305,7 @@
         if (!this.experiment || !this.experiment.customMetricDefinition) {
           return []
         }
-        return [this.experiment.customMetricDefinition.value]
+        return [this.experiment.customMetricDefinition]
       },
       customMetricChange (val) {
         if (val === false) {

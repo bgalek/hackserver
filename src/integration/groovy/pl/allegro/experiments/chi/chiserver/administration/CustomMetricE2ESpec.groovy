@@ -29,7 +29,7 @@ class CustomMetricE2ESpec extends BaseE2EIntegrationSpec implements ApiExperimen
         ]])
 
         then:
-        with (experiment.customMetricDefinition.value) {
+        with (experiment.customMetricDefinition) {
             name == "customMetricDefinition"
             viewEventDefinition.category == "category1"
             viewEventDefinition.action == "action1"
@@ -50,7 +50,7 @@ class CustomMetricE2ESpec extends BaseE2EIntegrationSpec implements ApiExperimen
         def experiment = draftExperiment([customMetricDefinition: customMetricDefinition])
 
         then:
-        experiment.customMetricDefinition.value == expectedResult
+        experiment.customMetricDefinition == expectedResult
 
         where:
         customMetricDefinition << [

@@ -98,8 +98,7 @@ class ExperimentsSelfServiceE2ESpec extends BaseE2EIntegrationSpec {
                 deviceClass        : 'phone',
                 percentage         : 10,
                 maxPossibleAllocation: 50,
-                tags: [],
-                customMetricDefinition: [:]
+                tags: []
         ]
         experiment == expectedExperiment
         experiment.definition == expectedExperiment.definition
