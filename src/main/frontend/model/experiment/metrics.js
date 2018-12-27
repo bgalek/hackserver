@@ -16,6 +16,10 @@ export class MetricModel extends MetricRecord {
       order: order
     })
   }
+
+  isBinary () {
+    return this.type === 'binary'
+  }
 }
 
 const globalMetrics = List(

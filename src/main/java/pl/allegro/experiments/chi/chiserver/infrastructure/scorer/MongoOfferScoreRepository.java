@@ -3,7 +3,6 @@ package pl.allegro.experiments.chi.chiserver.infrastructure.scorer;
 import com.google.common.collect.ImmutableList;
 import pl.allegro.experiments.chi.chiserver.domain.scorer.OfferScore;
 import pl.allegro.experiments.chi.chiserver.domain.scorer.OfferScoreRepository;
-import pl.allegro.experiments.chi.chiserver.domain.scorer.OfferScoreValueOutOfBoundsException;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -49,12 +48,19 @@ public class MongoOfferScoreRepository implements OfferScoreRepository {
     }
 
     @Override
-    public void setScores(List<OfferScore> offerScores) {
-        if(!offerScores.stream().allMatch(it ->
-                it.getScore().getValue() >= 0 && it.getScore().getValue() <= 1)) {
-            throw new OfferScoreValueOutOfBoundsException();
+    public void updateScores(List<OfferScore> offerScoreUpdate) {
+        Map<String, OfferScore>  currentScores = ImmutableList.copyOf(offerScoreCrudRepository.findAll()).stream()
+                .collect(Collectors.toMap(it -> it.getOffer().getOfferId(), it -> it));
+
+        for (OfferScore offerScore: offerScoreUpdate) {
+            String offerId = offerScore.getOffer().getOfferId();
+            if (currentScores.containsKey(offerId)) {
+                currentScores.put(offerId, currentScores.get(offerId).plus(offerScore));
+            } else {
+                currentScores.put(offerId, offerScore);
+            }
         }
         offerScoreCrudRepository.deleteAll();
-        offerScoreCrudRepository.saveAll(offerScores);
+        offerScoreCrudRepository.saveAll(currentScores.values());
     }
 }

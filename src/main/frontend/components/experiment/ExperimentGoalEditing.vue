@@ -139,7 +139,7 @@
   })
 
   export default {
-    props: ['experiment', 'selectedDevice', 'showHeader'],
+    props: ['experiment', 'selectedDevice', 'showHeader', 'haveCustomMetric'],
 
     data () {
       const initialValue = this.init(this.experiment)
@@ -203,6 +203,14 @@
           }
         },
         deep: true
+      },
+      haveCustomMetric: {
+        handler: function (customMetric) {
+          this.metrics = globalMetricsArray()
+          if (customMetric) {
+            this.metrics.push(getMetricByKey(customMetric.name))
+          }
+        }
       }
     },
 
@@ -244,7 +252,7 @@
         return value &&
                value.hasHypothesis &&
                value.leadingMetric &&
-               getMetricByKey(value.leadingMetric).isBinary
+               getMetricByKey(value.leadingMetric).isBinary()
       },
 
       calculate (value) {

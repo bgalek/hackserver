@@ -19,13 +19,13 @@ public class RandomOfferScoreRepository implements OfferScoreRepository {
         return ImmutableList.copyOf(offerRepository.all().stream()
                 .map(it -> OfferScore.of(
                         it,
-                        Score.of(Math.random() / 2)))
+                        Score.of(Math.random() * 10)))
                 .sorted(Comparator.comparingDouble(it -> -it.getScore().getValue()))
                 .collect(Collectors.toList()));
     }
 
     @Override
-    public void setScores(List<OfferScore> offerScores) {
-        throw new RuntimeException("RandomOfferScoreRepository.setScores is not implemented");
+    public void updateScores(List<OfferScore> offerScores) {
+        throw new RuntimeException("RandomOfferScoreRepository.updateScores is not implemented");
     }
 }

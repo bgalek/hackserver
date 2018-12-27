@@ -12,9 +12,13 @@ import java.util.Set;
 @Repository
 public class MongoOfferRepository implements OfferRepository {
     private final OfferCrudRepository offerCrudRepository;
+    private final OfferScoreCrudRepository offerScoreCrudRepository;
 
-    public MongoOfferRepository(OfferCrudRepository offerCrudRepository) {
+    public MongoOfferRepository(
+            OfferCrudRepository offerCrudRepository,
+            OfferScoreCrudRepository offerScoreCrudRepository) {
         this.offerCrudRepository = offerCrudRepository;
+        this.offerScoreCrudRepository = offerScoreCrudRepository;
     }
 
     @Override
@@ -24,6 +28,7 @@ public class MongoOfferRepository implements OfferRepository {
         }
         offerCrudRepository.deleteAll();
         offerCrudRepository.saveAll(offers);
+        offerScoreCrudRepository.deleteAll();
     }
 
     @Override

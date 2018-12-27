@@ -42,6 +42,7 @@ public class ExperimentDefinition {
     private final ZonedDateTime lastExplicitStatusChange;
     private final ExperimentGoal goal;
     private final List<ExperimentTag> tags;
+    private final CustomMetricDefinition customMetricDefinition;
 
     ExperimentDefinition(
             String id,
@@ -60,7 +61,8 @@ public class ExperimentDefinition {
             CustomParameter customParameter,
             ZonedDateTime lastExplicitStatusChange,
             ExperimentGoal goal,
-            List<ExperimentTag> tags) {
+            List<ExperimentTag> tags,
+            CustomMetricDefinition customMetricDefinition) {
         Preconditions.checkArgument(!Strings.isNullOrEmpty(id));
         Preconditions.checkNotNull(variantNames);
         Preconditions.checkNotNull(groups);
@@ -84,6 +86,7 @@ public class ExperimentDefinition {
         this.lastExplicitStatusChange = lastExplicitStatusChange;
         this.goal = goal;
         this.tags = ImmutableList.copyOf(tags == null ? Collections.emptyList() : tags);
+        this.customMetricDefinition = customMetricDefinition;
     }
 
     @Id
@@ -179,6 +182,11 @@ public class ExperimentDefinition {
     @DiffInclude
     public Optional<ExperimentGoal> getGoal() {
         return Optional.ofNullable(goal);
+    }
+
+    @DiffInclude
+    public Optional<CustomMetricDefinition> getCustomMetricDefinition() {
+        return Optional.ofNullable(customMetricDefinition);
     }
 
     public ZonedDateTime getLastExplicitStatusChange() {
@@ -301,22 +309,23 @@ public class ExperimentDefinition {
 
     public ExperimentDefinitionBuilder mutate() {
         return  experimentDefinition()
-                    .id(id)
-                    .variantNames(variantNames)
-                    .internalVariantName(internalVariantName)
-                    .fullOnVariantName(fullOnVariantName)
-                    .deviceClass(deviceClass)
-                    .percentage(percentage)
-                    .description(description)
-                    .documentLink(documentLink)
-                    .author(author)
-                    .groups(groups)
-                    .activityPeriod(activityPeriod)
-                    .reportingDefinition(reportingDefinition)
-                    .explicitStatus(explicitStatus)
-                    .customParameter(customParameter)
-                    .goal(goal)
-                    .tags(tags);
+                .id(id)
+                .variantNames(variantNames)
+                .internalVariantName(internalVariantName)
+                .fullOnVariantName(fullOnVariantName)
+                .deviceClass(deviceClass)
+                .percentage(percentage)
+                .description(description)
+                .documentLink(documentLink)
+                .author(author)
+                .groups(groups)
+                .activityPeriod(activityPeriod)
+                .reportingDefinition(reportingDefinition)
+                .explicitStatus(explicitStatus)
+                .customParameter(customParameter)
+                .goal(goal)
+                .tags(tags)
+                .customMetricDefinition(customMetricDefinition);
     }
 
     public List<VariantPercentageAllocation> renderRegularVariantsSolo() {

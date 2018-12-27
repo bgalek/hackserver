@@ -140,4 +140,6 @@ public class AdminExperiment {
     public ZonedDateTime getLastStatusChange() {
         return experimentDefinition.getLastStatusChange();
     }
+
+    public Optional<CustomMetricDefinition> getCustomMetricDefinition() { return experimentDefinition.getCustomMetricDefinition(); }
 }

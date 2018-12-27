@@ -11,8 +11,8 @@
           </v-alert>
 
           <v-form v-model="createFormValid"
-                ref="createForm"
-                lazy-validation>
+                  ref="createForm"
+                  lazy-validation>
 
             <v-container fluid class="pa-0 ma-0" text-xs-center>
               <v-layout row align-center>
@@ -59,10 +59,29 @@
                                          :allowModifyRegularVariants="true"
                                          :showHeader="true"/>
 
+
+            <v-container fluid style="margin: 0px; padding: 0px" text-xs-center>
+              <v-layout row align-top>
+
+                <v-flex xs1>
+                </v-flex>
+                <v-flex xs11 text-xs-left>
+                  <experiment-custom-metrics-editing
+                    ref="experimentCustomMetricsEditing"
+                    v-model="customMetricDefinition"
+                    :showHeader="true"
+                    v-on:customMetric="customMetric"/>
+                </v-flex>
+
+              </v-layout>
+            </v-container>
+
+
             <experiment-goal-editing ref="experimentGoalEditing"
                                      v-model="goal"
                                      :selectedDevice="this.variants && this.variants.deviceClass"
-                                     :showHeader="true"/>
+                                     :showHeader="true"
+                                     :haveCustomMetric="customMetricDefinition"/>
 
             <experiment-custom-parameter-editing ref="experimentCustomParamEditing"
                                                  v-model="customParameter"
@@ -155,6 +174,7 @@
   import _ from 'lodash'
   import ChiPanel from './ChiPanel.vue'
   import ExperimentCustomParameterEditing from './experiment/ExperimentCustomParameterEditing'
+  import ExperimentCustomMetricsEditing from './experiment/ExperimentCustomMetricsEditing'
 
   export default {
     mounted () {
@@ -181,7 +201,12 @@
         variants: null,
         reportingType: 'BACKEND',
         availableReportingTypes: ['BACKEND', 'FRONTEND'],
-        eventDefinitions: []
+        eventDefinitions: [],
+        customMetricDefinition: {
+          name: '',
+          viewEventDefinition: {},
+          successEventDefinition: {}
+        }
       }
     },
 
@@ -211,14 +236,14 @@
       ExperimentVariantsEditing,
       ExperimentEventFiltersEditing,
       ExperimentCustomParameterEditing,
-      ExperimentGoalEditing
+      ExperimentGoalEditing,
+      ExperimentCustomMetricsEditing
     },
 
     methods: {
       onSubmit () {
         this.sending()
         this.cleanErrors()
-
         if (this.validate()) {
           this.createExperiment({data: this.getExperimentDataToSend()}).then(response => {
             this.notSending()
@@ -242,7 +267,8 @@
         const variantsValid = this.$refs.experimentVariantsEditing.validate()
         const goalValid = this.$refs.experimentGoalEditing.validate()
 
-        return this.$refs.createForm.validate() && goalValid && descValid && variantsValid && customParamValid
+        return this.$refs.createForm.validate() && goalValid &&
+          descValid && variantsValid && customParamValid
       },
 
       setPermissionsError () {
@@ -259,6 +285,10 @@
 
       sending () {
         this.sendingDataToServer = true
+      },
+
+      customMetric (val) {
+        this.customMetricDefinition = val
       },
 
       notSending () {
@@ -285,7 +315,8 @@
           percentage: this.variants.percentage,
           reportingType: this.reportingType,
           eventDefinitions: this.eventDefinitions,
-          goal: this.goal
+          goal: this.goal,
+          customMetricDefinition: this.customMetricDefinition
         }
 
         return experimentCreationRequest

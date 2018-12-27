@@ -59,16 +59,11 @@ public class OfferScorerController {
         if (!chiToken.equals(CHI_TOKEN)) {
             throw new UnauthorizedPublicApiCallException();
         }
-        scoreRepository.setScores(offerScores);
+        scoreRepository.updateScores(offerScores);
     }
 
     @ExceptionHandler(ToManyOffersException.class)
     ResponseEntity<ErrorsHolder> handleToManyOffers(ToManyOffersException exception) {
-        return handleException(exception, "400");
-    }
-
-    @ExceptionHandler(OfferScoreValueOutOfBoundsException.class)
-    ResponseEntity<ErrorsHolder> handleOfferScoreValueOutOfBounds(OfferScoreValueOutOfBoundsException exception) {
         return handleException(exception, "400");
     }
 
