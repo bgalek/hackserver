@@ -1,7 +1,7 @@
 <template>
   <chi-panel title="Details">
     <v-layout>
-    <v-flex xs5>
+    <v-flex xs5 class="mr-2">
         <h3>Description</h3>
         {{ experimentDescription()}}
 
@@ -98,7 +98,10 @@
           <v-flex xs5>Used 𝜶: </v-flex><v-flex xs5>{{ experiment.usedAlpha() }}</v-flex>
         </v-layout>
       </div>
-
+      <div v-if="experiment.customMetricDefinition && experiment.customMetricDefinition.name">
+        <h3>Custom metric</h3>
+        <experiment-custom-metrics-editing :experiment= "experiment" :read-only="true"/>
+      </div>
     </v-flex>
     </v-layout>
 
@@ -143,12 +146,14 @@
   import ExperimentGoalInfo from './ExperimentGoalInfo'
   import ExperimentTags from './ExperimentTags'
   import ExperimentEventFiltersEditing from './ExperimentEventFiltersEditing'
+  import ExperimentCustomMetricsEditing from './ExperimentCustomMetricsEditing'
   import _ from 'lodash'
 
   export default {
     props: ['experiment', 'experimentStatistics'],
 
     components: {
+      ExperimentCustomMetricsEditing,
       ExperimentEventFiltersEditing,
       ExperimentGroupInfo,
       ExperimentGoalInfo,
