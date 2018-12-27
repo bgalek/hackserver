@@ -52,7 +52,7 @@
     computed: {
       shownBayes: function () {
         return this.bayesianHistograms.metricStatistics &&
-          this.bayesianHistograms.metricStatistics.map(it => {
+          this.filterEmptyHistograms(this.bayesianHistograms.metricStatistics).map(it => {
             return {
               metricKey: it.metricName,
               metricLabel: getMetricLabelByKey(it.metricName),
@@ -71,6 +71,17 @@
       deviceChanged ({device}) {
         this.$emit('deviceChangedOnBayesian', {
           device: device
+        })
+      },
+
+      filterEmptyHistograms (histograms) {
+        return histograms.filter(it => {
+          let filteredHistograms = it.histograms.filter(h => {
+            return h.frequencies.some(f => {
+              return f > 0
+            })
+          })
+          return filteredHistograms.length > 0
         })
       }
     }
