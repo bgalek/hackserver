@@ -19,7 +19,7 @@ public class RandomOfferScoreRepository implements OfferScoreRepository {
         return ImmutableList.copyOf(offerRepository.all().stream()
                 .map(it -> OfferScore.of(
                         it,
-                        Score.of(Math.random() * 5)))
+                        Score.of(Math.random() * 10)))
                 .sorted(Comparator.comparingDouble(it -> -it.getScore().getValue()))
                 .collect(Collectors.toList()));
     }

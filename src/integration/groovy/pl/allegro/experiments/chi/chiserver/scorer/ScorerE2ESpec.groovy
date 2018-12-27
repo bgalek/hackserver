@@ -9,6 +9,8 @@ import pl.allegro.experiments.chi.chiserver.utils.ApiActionUtils
 
 class ScorerE2ESpec extends BaseE2EIntegrationSpec implements ApiActionUtils {
 
+    static MAX_RANDOM = 10
+
     def "should return all offer scores"() {
         given:
         def offers = randomOffers()
@@ -30,12 +32,12 @@ class ScorerE2ESpec extends BaseE2EIntegrationSpec implements ApiActionUtils {
         firstScores != secondScores
     }
 
-    def "should keep random scores in <0, 5>"() {
+    def "should keep random scores in <0, 10>"() {
         given:
         postOffers(randomOffers())
 
         expect:
-        fetchScores().every {it -> it.score.value >= 0 && it.score.value <= 5}
+        fetchScores().every {it -> it.score.value >= 0 && it.score.value <= MAX_RANDOM}
     }
 
     def "should sort scores by value, from high to low"() {
@@ -122,13 +124,13 @@ class ScorerE2ESpec extends BaseE2EIntegrationSpec implements ApiActionUtils {
         updateScores(definedScores)
 
         then:
-        fetchScores().every {it -> it.score.value >= 0.5 && it.score.value <= 5.5}
+        fetchScores().every {it -> it.score.value >= 0.5 && it.score.value <= MAX_RANDOM + 0.5}
 
         when:
         updateScores(definedScores)
 
         then:
-        fetchScores().every {it -> it.score.value >= 1 && it.score.value <= 6}
+        fetchScores().every {it -> it.score.value >= 1 && it.score.value <= MAX_RANDOM + 1}
     }
 
     def "should reset offer scores when setting new offer set"() {
@@ -143,13 +145,13 @@ class ScorerE2ESpec extends BaseE2EIntegrationSpec implements ApiActionUtils {
         ]})
 
         and:
-        fetchScores().every {it -> it.score.value >= 5 && it.score.value <= 10}
+        fetchScores().every {it -> it.score.value >= 5 && it.score.value <= 5 + MAX_RANDOM}
 
         when:
         postOffers(offers)
 
         then:
-        fetchScores().every {it -> it.score.value >= 0 && it.score.value <= 5}
+        fetchScores().every {it -> it.score.value >= 0 && it.score.value <= MAX_RANDOM}
     }
 
     def "should extend defined offer score set when new offer score occurs during update"() {
@@ -169,7 +171,7 @@ class ScorerE2ESpec extends BaseE2EIntegrationSpec implements ApiActionUtils {
 
         then:
         fetchScores().find {
-            it -> it.offer == offerWithoutScore && it.score.value >= 0 && it.score.value <= 5
+            it -> it.offer == offerWithoutScore && it.score.value >= 0 && it.score.value <= MAX_RANDOM
         }
 
         when:
@@ -181,7 +183,7 @@ class ScorerE2ESpec extends BaseE2EIntegrationSpec implements ApiActionUtils {
         ])
 
         then:
-        fetchScores().find {it -> it.offer == offerWithoutScore && it.score.value >= 5 && it.score.value <= 10}
+        fetchScores().find {it -> it.offer == offerWithoutScore && it.score.value >= 5 && it.score.value <= MAX_RANDOM + 5}
     }
 
     def "should keep offer score even if it does not appear in update"() {
@@ -206,7 +208,7 @@ class ScorerE2ESpec extends BaseE2EIntegrationSpec implements ApiActionUtils {
         ]})
 
         then:
-        fetchScores().find {it -> it.offer == offerWithoutSecondUpdate && it.score.value >= 5 && it.score.value <= 10}
+        fetchScores().find {it -> it.offer == offerWithoutSecondUpdate && it.score.value >= 5 && it.score.value <= 5 + MAX_RANDOM}
     }
 
     def updateScores(List newScores) {
