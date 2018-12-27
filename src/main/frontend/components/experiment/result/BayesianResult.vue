@@ -76,9 +76,12 @@
 
       filterEmptyHistograms (histograms) {
         return histograms.filter(it => {
-          return it.histograms[0].frequencies.some(f => {
-            return f > 0
+          let filteredHistograms = it.histograms.filter(h => {
+            return h.frequencies.some(f => {
+              return f > 0
+            })
           })
+          return filteredHistograms.length > 0
         })
       }
     }
