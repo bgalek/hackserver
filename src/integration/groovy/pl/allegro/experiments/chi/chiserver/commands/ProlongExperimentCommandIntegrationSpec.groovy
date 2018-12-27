@@ -25,8 +25,8 @@ class ProlongExperimentCommandIntegrationSpec extends BaseCommandIntegrationSpec
         prolongExperiment(experiment.id, 30)
 
         then:
-         def exception = thrown ExperimentCommandException
-        exception.message == "Experiment cant be prolonged if it is DRAFT or FULL_ON"
+        def exception = thrown ExperimentCommandException
+        exception.message.startsWith("Experiment can't be prolonged")
 
         where:
         status << [ExperimentStatus.DRAFT, ExperimentStatus.FULL_ON]
