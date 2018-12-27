@@ -64,7 +64,7 @@ public class CommandFactory {
             StartExperimentProperties properties) {
         Preconditions.checkNotNull(experimentId);
         Preconditions.checkNotNull(properties);
-        StartExperimentCommand experimentCommand = new StartExperimentCommand(
+        var experimentCommand = new StartExperimentCommand(
                 experimentsRepository,
                 properties,
                 permissionsAwareExperimentRepository,
@@ -78,7 +78,7 @@ public class CommandFactory {
             ProlongExperimentProperties properties) {
         Preconditions.checkNotNull(experimentId);
         Preconditions.checkNotNull(properties);
-        ProlongExperimentCommand experimentCommand = new ProlongExperimentCommand(
+        var experimentCommand = new ProlongExperimentCommand(
                 experimentsRepository,
                 properties,
                 permissionsAwareExperimentRepository,
@@ -94,7 +94,7 @@ public class CommandFactory {
     }
 
     Command stopExperimentCommand(String experimentId) {
-        StopExperimentCommand experimentCommand = new StopExperimentCommand(
+        var experimentCommand = new StopExperimentCommand(
                 experimentId,
                 experimentsRepository,
                 permissionsAwareExperimentRepository
@@ -103,7 +103,7 @@ public class CommandFactory {
     }
 
     Command pauseExperimentCommand(String experimentId) {
-        PauseExperimentCommand experimentCommand = new PauseExperimentCommand(
+        var experimentCommand = new PauseExperimentCommand(
                 experimentId,
                 experimentsRepository,
                 permissionsAwareExperimentRepository
@@ -111,8 +111,17 @@ public class CommandFactory {
         return new NotificationDecoratorCommand(experimentCommand, notificator, userProvider);
     }
 
+    Command ungroupExperimentCommand(String experimentId) {
+        var experimentCommand = new RemoveFromGroupExperimentCommand(
+                experimentId,
+                experimentGroupRepository,
+                permissionsAwareExperimentRepository
+        );
+        return new NotificationDecoratorCommand(experimentCommand, notificator, userProvider);
+    }
+
     Command resumeExperimentCommand(String experimentId) {
-        ResumeExperimentCommand experimentCommand = new ResumeExperimentCommand(
+        var experimentCommand = new ResumeExperimentCommand(
                 experimentId,
                 experimentsRepository,
                 permissionsAwareExperimentRepository
@@ -122,7 +131,7 @@ public class CommandFactory {
 
     Command deleteExperimentCommand(String experimentId) {
         Preconditions.checkNotNull(experimentId);
-        DeleteExperimentCommand experimentCommand = new DeleteExperimentCommand(
+        var experimentCommand = new DeleteExperimentCommand(
                 experimentsRepository,
                 permissionsAwareExperimentRepository,
                 experimentId,
@@ -136,7 +145,7 @@ public class CommandFactory {
         Preconditions.checkNotNull(experimentId);
         Preconditions.checkNotNull(properties);
 
-        UpdateDescriptionsCommand experimentCommand = new UpdateDescriptionsCommand(
+        var experimentCommand = new UpdateDescriptionsCommand(
                 experimentId,
                 properties,
                 experimentsRepository,
@@ -150,7 +159,7 @@ public class CommandFactory {
         Preconditions.checkNotNull(experimentId);
         Preconditions.checkNotNull(properties);
 
-        UpdateVariantsCommand experimentCommand = new UpdateVariantsCommand(
+        var experimentCommand = new UpdateVariantsCommand(
                 experimentId,
                 properties,
                 experimentsRepository,
@@ -163,7 +172,7 @@ public class CommandFactory {
     Command updateExperimentEventDefinitionsCommand(
             String experimentId,
             List<EventDefinition> eventDefinitions) {
-        UpdateExperimentEventDefinitionsCommand experimentCommand = new UpdateExperimentEventDefinitionsCommand(
+        var experimentCommand = new UpdateExperimentEventDefinitionsCommand(
                 experimentId,
                 experimentsRepository,
                 permissionsAwareExperimentRepository,

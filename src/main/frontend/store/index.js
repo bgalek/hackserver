@@ -22,6 +22,7 @@ import makeExperimentFullOn from './makeExperimentFullOn'
 import calculateSampleSize from './calculateSampleSize'
 import experimentStore from './experimentStore'
 import experimentTagStore from './experimentTagStore'
+import ungroupExperiment from './ungroupExperiment'
 
 Vue.use(Vuex)
 
@@ -51,6 +52,7 @@ export default new Vuex.Store({
     updateExperimentVariants,
     updateExperimentEventDefinitions,
     calculateSampleSize,
-    experimentTagStore
+    experimentTagStore,
+    ungroupExperiment
   }
 })

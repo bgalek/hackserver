@@ -200,7 +200,7 @@
           <v-btn color="gray" slot="activator" style="text-transform: none"
                  @click="loadExprimentGroups">
             Group
-            <v-icon right>view_quilt</v-icon>
+            <v-icon right>call_merge</v-icon>
           </v-btn>
 
           <v-list style="padding:15px; display: block;">
@@ -211,6 +211,20 @@
               @addToGroup="addToGroup"
               @closeAddToGroup="closeAddToGroup"
             ></experiment-add-to-group-editing>
+          </v-list>
+        </v-menu>
+
+        <v-menu bottom offset-y
+                v-if="this.experiment.canBeUngrouped()">
+          <v-btn color="gray" slot="activator" style="text-transform: none">
+            Leave the {{this.experiment.experimentGroup.id}} group
+            <v-icon right>call_split</v-icon>
+          </v-btn>
+          <v-list>
+            <v-list-tile @click="ungroup">
+              <v-list-tile-title>I really want to remove experiment <b>{{this.experiment.id}}</b> from group <b>{{this.experiment.experimentGroup.id}}</b> </v-list-tile-title>
+              &nbsp;
+            </v-list-tile>
           </v-list>
         </v-menu>
 
@@ -227,6 +241,7 @@
             </v-list-tile>
           </v-list>
         </v-menu>
+
       </div>
     </v-form>
   </chi-panel>
@@ -307,6 +322,21 @@
         }).then(response => {
           console.log('delete.response', response.status)
           return this.$router.push(`/experiments`)
+        }).catch(error => {
+          this.showError(error)
+        })
+        this.afterSending()
+      },
+
+      ungroup () {
+        this.prepareToSend()
+        this.ungroupExperiment({
+          params: {
+            experimentId: this.experiment.id
+          }
+        }).then(response => {
+          this.getExperiment(this.experiment.id)
+          this.commandOkMessage = 'Experiment successfully removed from the group'
         }).catch(error => {
           this.showError(error)
         })
@@ -590,7 +620,8 @@
         'updateExperimentVariants',
         'updateExperimentEventDefinitions',
         'addExperimentToGroup',
-        'getExperimentGroups'
+        'getExperimentGroups',
+        'ungroupExperiment'
       ])
     }
   }

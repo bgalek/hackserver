@@ -207,6 +207,14 @@ public class ExperimentsController {
     }
 
     @MeteredEndpoint
+    @PutMapping(path = "{experimentId}/remove-from-group")
+    ResponseEntity<String> ungroupExperiment(@PathVariable String experimentId) {
+        logger.info("remove-from-group request received for " + experimentId);
+        experimentActions.ungroup(experimentId);
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    @MeteredEndpoint
     @PutMapping(path = "{experimentId}/full-on")
     ResponseEntity<String> makeExperimentFullOn(
             @PathVariable String experimentId,

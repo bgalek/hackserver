@@ -107,6 +107,10 @@ trait ApiActionUtils {
         post("$ADMIN_API_PATH/groups/", request)
     }
 
+    void removeFromGroup(String experimentId) {
+        put("$ADMIN_API_PATH/$experimentId/remove-from-group")
+    }
+
     void updateExperimentEventDefinitions(String experimentId, List eventDefinitions) {
         put("$ADMIN_API_PATH/$experimentId/update-event-definitions", eventDefinitions)
     }

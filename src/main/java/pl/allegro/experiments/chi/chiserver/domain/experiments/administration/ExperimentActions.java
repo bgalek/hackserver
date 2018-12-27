@@ -59,7 +59,11 @@ public class ExperimentActions {
     public void pause(String experimentId) {
         commandFactory.pauseExperimentCommand(experimentId).execute();
     }
-    
+
+    public void ungroup(String experimentId) {
+        commandFactory.ungroupExperimentCommand(experimentId).execute();
+    }
+
     public void resume(String experimentId) {
         commandFactory.resumeExperimentCommand(experimentId).execute();
     }

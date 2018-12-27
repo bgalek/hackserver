@@ -29,110 +29,6 @@ class ExperimentGroupE2ESpec extends BaseE2EIntegrationSpec {
     @Autowired
     ClientExperimentFactory clientExperimentFactory
 
-    def prepareFod() {
-        def fod_generaldelivery_show_delivery_points = experimentDefinition().id("fod_generaldelivery_show_delivery_points")
-                .variantNames([
-                    "base",
-                    "showallpoints"
-                ])
-                .percentage(1)
-                .activityPeriod(ZonedDateTime.now().minusDays(2), ZonedDateTime.now().minusDays(1))
-                .build()
-
-        def delivery_groups_experiment_09_2018_v1 = experimentDefinition().id("delivery-groups-experiment-09_2018_v1")
-                .variantNames([
-                    "base",
-                    "base1",
-                    "radio",
-                    "tile"
-                ])
-                .percentage(5)
-                .activityPeriod(ZonedDateTime.now(), ZonedDateTime.now().plusDays(10))
-                .build()
-
-        def fod_generaldelivery_show_delivery_points_v2 = experimentDefinition().id("fod_generaldelivery_show_delivery_points_v2")
-                .variantNames([
-                    "base",
-                    "showallpoints"
-                ])
-                .percentage(30)
-                .activityPeriod(ZonedDateTime.now(), ZonedDateTime.now().plusDays(10))
-                .build()
-
-        experimentsRepository.save(fod_generaldelivery_show_delivery_points)
-        experimentsRepository.save(delivery_groups_experiment_09_2018_v1)
-        experimentsRepository.save(fod_generaldelivery_show_delivery_points_v2)
-
-        def group = new ExperimentGroup(
-                UUID.randomUUID().toString(),
-                "fod",
-                [
-                        fod_generaldelivery_show_delivery_points.id,
-                        delivery_groups_experiment_09_2018_v1.id,
-                        fod_generaldelivery_show_delivery_points_v2.id
-                ],
-                AllocationTable.empty())
-
-        experimentGroupRepository.save(group)
-        group
-    }
-
-    def prepareListingi() {
-        def listing_interline = experimentDefinition().id("listing_interline")
-                .variantNames([
-                    "base",
-                    "rating-popover-cheaper-index5",
-                    "rating-list-cheaper-index10",
-                    "rating-popover-no-coins-shipping-index5",
-                    "rating-list-no-coins-shipping-index10",
-                    "no-coins-suggested-filters-index5",
-                    "suggested-filters-index10",
-                    "suggested-links-index5",
-                    "suggested-links-index10"
-                ])
-                .percentage(5)
-                .activityPeriod(ZonedDateTime.now().minusDays(2), ZonedDateTime.now().minusDays(1))
-                .build()
-
-        def listing_average_product_rating = experimentDefinition().id("listing_average_product_rating")
-            .variantNames([
-                    "base",
-                    "rating-popover-cheaper-index5",
-                    "rating-list-cheaper-index10",
-                    "rating-popover-no-coins-shipping-index5",
-                    "rating-list-no-coins-shipping-index10",
-                    "no-coins-suggested-filters-index5"
-            ])
-            .percentage(5)
-            .activityPeriod(ZonedDateTime.now().minusDays(2), ZonedDateTime.now().minusDays(1))
-            .build()
-
-        def mweb_spa_listing_extended = experimentDefinition().id("mweb_spa_listing_extended")
-                .variantNames([
-                    "base",
-                    "enabled",
-                    "simplified"
-                ])
-                .percentage(10)
-                .activityPeriod(ZonedDateTime.now(), ZonedDateTime.now().plusDays(10))
-                .deviceClass(DeviceClass.phone_android)
-                .internalVariantName("base")
-                .build()
-
-        experimentsRepository.save(listing_interline)
-        experimentsRepository.save(listing_average_product_rating)
-        experimentsRepository.save(mweb_spa_listing_extended)
-
-        def group = new ExperimentGroup(
-                UUID.randomUUID().toString(),
-                "mweb-spa-listing-final",
-                [listing_interline.id, listing_average_product_rating.id, mweb_spa_listing_extended.id],
-                AllocationTable.empty())
-
-        experimentGroupRepository.save(group)
-        group
-    }
-
     @Unroll
     def "should delete #status experiment bounded to a group and free allocated space"() {
         given:
@@ -163,7 +59,7 @@ class ExperimentGroupE2ESpec extends BaseE2EIntegrationSpec {
         status << [ACTIVE, DRAFT, PAUSED]
     }
 
-    def "should delete ENDED experiment bounded to a group and free allocated space "() {
+    def "should delete ENDED experiment from a group and free allocated space "() {
         given:
         def exp = experimentWithStatus(ENDED)
         def group = new ExperimentGroup(UUID.randomUUID().toString(), "salt", [exp.id],
@@ -177,5 +73,58 @@ class ExperimentGroupE2ESpec extends BaseE2EIntegrationSpec {
 
         then:
         assert fetchExperimentGroup(group.id).allocationTable.size() == 0
+    }
+
+    def "should removed ENDED experiment from a group and free allocated space"(){
+        given:
+        def experiment1 = experimentWithStatus(ENDED)
+        def experiment2 = draftExperiment()
+        def group = new ExperimentGroup(UUID.randomUUID().toString(), "salt",
+                [experiment1.id, experiment2.id],
+                new AllocationTable([]).allocate (experiment1.id, ['v1', 'base'], 10))
+
+        experimentGroupRepository.save(group)
+        with(fetchExperimentGroup(group.id)) {
+            assert experiments.size() == 2
+            assert allocationTable.size() == 2
+        }
+
+        when:
+        removeFromGroup(experiment1.id)
+
+        then:
+        def newGroup = fetchExperimentGroup(group.id)
+        newGroup.experiments == [experiment2.id]
+        newGroup.allocationTable == []
+
+        fetchExperiment(experiment1.id).status == 'ENDED'
+    }
+
+    def "should remove DRAFT experiments from a group and free allocated space"(){
+        given:
+        def experiment1 = draftExperiment()
+        def experiment2 = draftExperiment()
+        def group = createExperimentGroupAndFetch([experiment1.id, experiment2.id])
+
+        with(fetchExperimentGroup(group.id)) {
+            assert experiments.size() == 2
+            assert allocationTable.size() == 4
+        }
+
+        when:
+        removeFromGroup(experiment1.id)
+        def newGroup = fetchExperimentGroup(group.id)
+
+        then:
+        newGroup.experiments == [experiment2.id]
+        newGroup.allocationTable.size() == 2
+
+        when:
+        removeFromGroup(experiment2.id)
+        newGroup = fetchExperimentGroup(group.id)
+
+        then:
+        newGroup.experiments == []
+        newGroup.allocationTable == []
     }
 }

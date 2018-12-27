@@ -107,10 +107,6 @@ public class ExperimentDefinition {
         return reportingDefinition.withImplicitEventDefinitionsIfGtm(this);
     }
 
-    public ReportingDefinition getReportingDefinitionToSave() {
-        return reportingDefinition;
-    }
-
     @DiffInclude
     public Optional<String> getInternalVariantName() { return Optional.ofNullable(internalVariantName); }
 

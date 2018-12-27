@@ -139,7 +139,7 @@ export default class ExperimentDefinitionModel extends ExperimentDefinitionRecor
   }
 
   canBeProlonged () {
-    return this.status !== 'DRAFT' && this.status !== 'FULL_ON'
+    return !['DRAFT', 'FULL_ON', 'ENDED'].includes(this.status)
   }
 
   canJoinAnyGroup () {
@@ -148,6 +148,10 @@ export default class ExperimentDefinitionModel extends ExperimentDefinitionRecor
 
   canChangeVariants () {
     return !this.isEffectivelyEnded()
+  }
+
+  canBeUngrouped () {
+    return this.isInGroup() && ['DRAFT', 'ENDED'].includes(this.status)
   }
 
   isEffectivelyEnded () {
