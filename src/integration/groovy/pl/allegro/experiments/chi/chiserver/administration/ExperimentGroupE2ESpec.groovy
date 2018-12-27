@@ -59,7 +59,7 @@ class ExperimentGroupE2ESpec extends BaseE2EIntegrationSpec {
         status << [ACTIVE, DRAFT, PAUSED]
     }
 
-    def "should delete ENDED experiment from a group and free allocated space "() {
+    def "should remove experiment from a group after it is deleted"() {
         given:
         def exp = experimentWithStatus(ENDED)
         def group = new ExperimentGroup(UUID.randomUUID().toString(), "salt", [exp.id],
