@@ -127,4 +127,21 @@ class ExperimentGroupE2ESpec extends BaseE2EIntegrationSpec {
         newGroup.experiments == []
         newGroup.allocationTable == []
     }
+
+    @Unroll
+    def "should not allow to remove #status experiment from a group"(){
+        given:
+        def experiment1 = experimentWithStatus(status)
+        def experiment2 = draftExperiment()
+        createExperimentGroupAndFetch([experiment1.id, experiment2.id])
+
+        when:
+        removeFromGroup(experiment1.id)
+
+        then:
+        thrown(HttpClientErrorException.BadRequest)
+
+        where:
+        status << [ACTIVE, PAUSED]
+    }
 }
