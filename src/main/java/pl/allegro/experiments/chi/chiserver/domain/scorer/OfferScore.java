@@ -3,18 +3,14 @@ package pl.allegro.experiments.chi.chiserver.domain.scorer;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.common.base.Preconditions;
-import org.springframework.data.annotation.PersistenceConstructor;
-import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.util.Objects;
 
-@Document
 public class OfferScore {
     private final Offer offer;
     private final Score score;
 
     @JsonCreator
-    @PersistenceConstructor
     private OfferScore(
             @JsonProperty("offer") Offer offer,
             @JsonProperty("score") Score score) {
