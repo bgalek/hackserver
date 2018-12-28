@@ -1,43 +1,56 @@
 package pl.allegro.experiments.chi.chiserver.infrastructure.scorer;
 
 import com.google.common.collect.ImmutableList;
+import org.springframework.stereotype.Repository;
+import pl.allegro.experiments.chi.chiserver.domain.scorer.Offer;
 import pl.allegro.experiments.chi.chiserver.domain.scorer.OfferScore;
 import pl.allegro.experiments.chi.chiserver.domain.scorer.OfferScoreRepository;
+import pl.allegro.experiments.chi.chiserver.domain.scorer.Score;
 
 import java.util.*;
 import java.util.stream.Collectors;
 
+@Repository
 public class MongoOfferScoreRepository implements OfferScoreRepository {
-    private final RandomOfferScoreRepository randomOfferScoreRepository;
-    private final OfferScoreCrudRepository offerScoreCrudRepository;
+    private final MongoExperimentOfferRepository experimentOfferRepository;
 
-    MongoOfferScoreRepository(
-            RandomOfferScoreRepository randomOfferScoreRepository,
-            OfferScoreCrudRepository offerScoreCrudRepository) {
-        this.randomOfferScoreRepository = randomOfferScoreRepository;
-        this.offerScoreCrudRepository = offerScoreCrudRepository;
+    public MongoOfferScoreRepository(MongoExperimentOfferRepository experimentOfferRepository) {
+        this.experimentOfferRepository = experimentOfferRepository;
     }
 
     @Override
     public List<OfferScore> scores() {
-        Map<String, OfferScore> randomScoreDefaults = randomScoreDefaults();
-        Map<String, OfferScore> result = applyCalculatedScores(randomScoreDefaults);
+        ExperimentOffer experimentOffer = experimentOfferRepository.get();
+
+        Map<String, OfferScore> randomScoreDefaults = randomScoreDefaults(experimentOffer.getOffers());
+        Map<String, OfferScore> result = applyCalculatedScores(randomScoreDefaults, experimentOffer.getOfferScores());
 
         return ImmutableList.copyOf(result.values().stream()
                 .sorted(Comparator.comparingDouble(it -> -it.getScore().getValue()))
                 .collect(Collectors.toList()));
     }
 
-    private Map<String, OfferScore> randomScoreDefaults() {
+    private Map<String, OfferScore> randomScoreDefaults(List<Offer> offers) {
         Map<String, OfferScore> defaults = new HashMap<>();
-        for (OfferScore offerScore: randomOfferScoreRepository.scores()) {
+        for (OfferScore offerScore: scoreRandomly(offers)) {
             defaults.put(offerScore.getOffer().getOfferId(), offerScore);
         }
         return defaults;
     }
 
-    private Map<String, OfferScore> applyCalculatedScores(Map<String, OfferScore> randomDefaults) {
-        for (OfferScore offerScore: offerScoreCrudRepository.findAll()) {
+    private List<OfferScore> scoreRandomly(List<Offer> offers) {
+        return ImmutableList.copyOf(offers.stream()
+                .map(it -> OfferScore.of(
+                        it,
+                        Score.of(Math.random() * 10)))
+                .sorted(Comparator.comparingDouble(it -> -it.getScore().getValue()))
+                .collect(Collectors.toList()));
+    }
+
+    private Map<String, OfferScore> applyCalculatedScores(
+            Map<String, OfferScore> randomDefaults,
+            List<OfferScore> offerScores) {
+        for (OfferScore offerScore: offerScores) {
             if (randomDefaults.containsKey(offerScore.getOffer().getOfferId())) {
                 randomDefaults.put(
                         offerScore.getOffer().getOfferId(),
@@ -49,7 +62,9 @@ public class MongoOfferScoreRepository implements OfferScoreRepository {
 
     @Override
     public void updateScores(List<OfferScore> offerScoreUpdate) {
-        Map<String, OfferScore>  currentScores = ImmutableList.copyOf(offerScoreCrudRepository.findAll()).stream()
+        ExperimentOffer experimentOffer = experimentOfferRepository.get();
+
+        Map<String, OfferScore>  currentScores = ImmutableList.copyOf(experimentOffer.getOfferScores()).stream()
                 .collect(Collectors.toMap(it -> it.getOffer().getOfferId(), it -> it));
 
         for (OfferScore offerScore: offerScoreUpdate) {
@@ -60,7 +75,8 @@ public class MongoOfferScoreRepository implements OfferScoreRepository {
                 currentScores.put(offerId, offerScore);
             }
         }
-        offerScoreCrudRepository.deleteAll();
-        offerScoreCrudRepository.saveAll(currentScores.values());
+        experimentOfferRepository.save(
+                experimentOffer.withOfferScores(
+                        ImmutableList.copyOf(currentScores.values())));
     }
 }

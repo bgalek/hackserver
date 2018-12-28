@@ -6,19 +6,17 @@ import pl.allegro.experiments.chi.chiserver.domain.scorer.Offer;
 import pl.allegro.experiments.chi.chiserver.domain.scorer.OfferRepository;
 import pl.allegro.experiments.chi.chiserver.domain.scorer.ToManyOffersException;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
 @Repository
 public class MongoOfferRepository implements OfferRepository {
-    private final OfferCrudRepository offerCrudRepository;
-    private final OfferScoreCrudRepository offerScoreCrudRepository;
+    private final MongoExperimentOfferRepository experimentOfferRepository;
 
     public MongoOfferRepository(
-            OfferCrudRepository offerCrudRepository,
-            OfferScoreCrudRepository offerScoreCrudRepository) {
-        this.offerCrudRepository = offerCrudRepository;
-        this.offerScoreCrudRepository = offerScoreCrudRepository;
+            MongoExperimentOfferRepository experimentOfferRepository) {
+        this.experimentOfferRepository = experimentOfferRepository;
     }
 
     @Override
@@ -26,13 +24,14 @@ public class MongoOfferRepository implements OfferRepository {
         if (offers.size() > 200) {
             throw new ToManyOffersException();
         }
-        offerCrudRepository.deleteAll();
-        offerCrudRepository.saveAll(offers);
-        offerScoreCrudRepository.deleteAll();
+        ExperimentOffer offerExperiment = experimentOfferRepository.get();
+        experimentOfferRepository.save(offerExperiment
+                .withOffers(ImmutableList.copyOf(offers))
+                .withOfferScores(Collections.emptyList()));
     }
 
     @Override
     public List<Offer> all() {
-        return ImmutableList.copyOf(offerCrudRepository.findAll());
+        return ImmutableList.copyOf(experimentOfferRepository.get().getOffers());
     }
 }
