@@ -3,13 +3,11 @@ package pl.allegro.experiments.chi.chiserver.domain.scorer;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.common.base.Preconditions;
-import org.javers.core.metamodel.annotation.Value;
 import org.springframework.data.annotation.PersistenceConstructor;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.util.Objects;
 
-@Value
 @Document
 public class Offer {
 
