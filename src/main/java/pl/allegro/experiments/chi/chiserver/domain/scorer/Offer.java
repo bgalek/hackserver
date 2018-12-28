@@ -10,10 +10,9 @@ import org.springframework.data.mongodb.core.mapping.Document;
 import java.util.Objects;
 
 @Value
-@Document(collection = "offers")
+@Document
 public class Offer {
 
-    @org.springframework.data.annotation.Id
     private final String offerId;
 
     @PersistenceConstructor
