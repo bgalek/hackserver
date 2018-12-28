@@ -6,7 +6,6 @@ import pl.allegro.experiments.chi.chiserver.domain.scorer.Offer;
 import pl.allegro.experiments.chi.chiserver.domain.scorer.OfferRepository;
 import pl.allegro.experiments.chi.chiserver.domain.scorer.ToManyOffersException;
 
-import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
@@ -26,8 +25,7 @@ public class MongoOfferRepository implements OfferRepository {
         }
         ExperimentOffer offerExperiment = experimentOfferRepository.get();
         experimentOfferRepository.save(offerExperiment
-                .withOffers(ImmutableList.copyOf(offers))
-                .withOfferScores(Collections.emptyList()));
+                .withOffers(ImmutableList.copyOf(offers)));
     }
 
     @Override
