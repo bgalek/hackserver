@@ -9,7 +9,7 @@ import pl.allegro.experiments.chi.chiserver.utils.ApiActionUtils
 
 class ScorerE2ESpec extends BaseE2EIntegrationSpec implements ApiActionUtils {
 
-    static MAX_RANDOM = 10
+    static MAX_RANDOM = 0.5
 
     def "should return all offer scores"() {
         given:

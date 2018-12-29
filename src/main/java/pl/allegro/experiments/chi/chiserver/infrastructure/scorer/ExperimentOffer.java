@@ -104,7 +104,7 @@ public class ExperimentOffer {
         return ImmutableList.copyOf(offers.stream()
                 .map(it -> OfferScore.of(
                         it,
-                        Score.of(Math.random() * 10)))
+                        Score.of(Math.random() * 0.5)))
                 .sorted(Comparator.comparingDouble(it -> -it.getScore().getValue()))
                 .collect(Collectors.toList()));
     }
