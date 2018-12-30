@@ -13,11 +13,14 @@ apply(plugin = "io.spring.dependency-management")
 plugins {
     java
     application
-    idea
 }
 
 application {
     mainClassName = "pl.allegro.tech.leaders.HackathonServer"
+}
+
+java {
+    sourceCompatibility = JavaVersion.VERSION_11
 }
 
 group = "pl.allegro.tech.leaders"
@@ -37,5 +40,8 @@ dependencies {
     runtimeOnly("de.flapdoodle.embed:de.flapdoodle.embed.mongo:2.2.0")
     runtimeOnly("org.springframework.boot:spring-boot-devtools")
     compileOnly("org.springframework.boot:spring-boot-configuration-processor")
-    testImplementation("org.springframework.boot:spring-boot-starter-test")
+    testImplementation("org.springframework.boot:spring-boot-starter-test") { exclude("junit", "junit") }
+    testImplementation("org.junit.jupiter:junit-jupiter-api:5.2.0")
+    testCompile("org.junit.jupiter:junit-jupiter-params:5.2.0")
+    testRuntime("org.junit.jupiter:junit-jupiter-engine:5.2.0")
 }
