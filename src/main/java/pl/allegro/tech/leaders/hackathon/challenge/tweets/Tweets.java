@@ -1,4 +1,4 @@
-package pl.allegro.tech.leaders.hackathon.challenge.calc;
+package pl.allegro.tech.leaders.hackathon.challenge.tweets;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.JsonMappingException;
@@ -11,32 +11,32 @@ import pl.allegro.tech.leaders.hackathon.challenge.Challenge;
 import java.util.List;
 
 @Component
-class Calc implements Challenge {
+class Tweets implements Challenge {
 
     private final ObjectMapper objectMapper;
 
-    Calc(ObjectMapper objectMapper) {
+    Tweets(ObjectMapper objectMapper) {
         this.objectMapper = objectMapper;
     }
 
     @Override
     public String getName() {
-        return "Calculator Challenge";
+        return "Twitter Challenge";
     }
 
     @Override
     public String getDescription() {
-        return "Your task is to make calculator api!";
+        return "Your task is to show me my tweets!";
     }
 
     @Override
     public String getChallengeEndpoint() {
-        return "/calc";
+        return "/tweets";
     }
 
     @Override
     public List<QueryParam> getChallengeParams() {
-        return List.of(new QueryParam("query", "equation to calc"));
+        return List.of(new QueryParam("user", "user login"));
     }
 
     @Override
@@ -47,7 +47,7 @@ class Calc implements Challenge {
 
     @Override
     public List<String> getExamples() {
-        return List.of("1+1", "2+2*2", "(3+3)/3)");
+        return List.of("[]", "[{\"content\":\"this is my tweet!\"}]");
     }
 
     private class ChallengeResponse {
