@@ -44,7 +44,7 @@ public class CachedBayesianStatisticsForVariantRepository implements BayesianSta
     }
 
     /**
-     * not cached, used only for Graphite counter
+     * not cached, used only for Graphite gauge
      */
     @Override
     public int countNumberExperimentsWithStats() {
