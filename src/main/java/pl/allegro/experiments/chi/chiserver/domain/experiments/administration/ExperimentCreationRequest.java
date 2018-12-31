@@ -165,7 +165,7 @@ public class ExperimentCreationRequest {
         }
 
         if (round4(goal.getTestPower()).compareTo(round2(0.8)) < 0) {
-            throw new ExperimentCommandException("Invalid experiment.goal.testAlpha: " + goal.getTestPower() + ", it should be >= 0.8");
+            throw new ExperimentCommandException("Invalid experiment.goal.testPower: " + goal.getTestPower() + ", it should be >= 0.8");
         }
 
         return true;
