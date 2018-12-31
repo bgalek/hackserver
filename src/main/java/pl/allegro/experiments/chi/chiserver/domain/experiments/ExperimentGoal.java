@@ -4,15 +4,19 @@ import com.google.common.base.Preconditions;
 import org.apache.commons.lang3.StringUtils;
 import org.javers.core.metamodel.annotation.DiffInclude;
 
+import javax.annotation.Nullable;
 import java.math.BigDecimal;
+import java.util.Optional;
 
 import static pl.allegro.experiments.chi.chiserver.util.BigDecimals.round2;
 
 public class ExperimentGoal {
     private final Hypothesis hypothesis;
+    @Nullable
     private final TestConfiguration testConfiguration;
 
-    public ExperimentGoal(Hypothesis hypothesis, TestConfiguration testConfiguration) {
+    public ExperimentGoal(Hypothesis hypothesis,
+                          @Nullable TestConfiguration testConfiguration) {
         Preconditions.checkArgument(hypothesis != null, "experiment goal is invalid without hypothesis");
         this.hypothesis = hypothesis;
         this.testConfiguration = testConfiguration;
@@ -23,8 +27,12 @@ public class ExperimentGoal {
         return hypothesis;
     }
 
-    public TestConfiguration getTestConfiguration() {
-        return testConfiguration;
+    public Optional<TestConfiguration> getTestConfiguration() {
+        return Optional.ofNullable(testConfiguration);
+    }
+
+    public boolean hasTestConfiguration() {
+        return getTestConfiguration().isPresent();
     }
 
     public ExperimentGoal updateBaselineMetricValue(double baselineMetricValue) {

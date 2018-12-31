@@ -81,10 +81,10 @@ class MongoExperimentsRepositoryIntegrationSpec extends BaseIntegrationSpec {
         loaded.customParameter == experiment.customParameter
         loaded.goal.get().hypothesis.leadingMetric == 'tx_visit'
         loaded.goal.get().hypothesis.expectedDiffPercent == 2
-        loaded.goal.get().testConfiguration.leadingMetricBaselineValue == 5
-        loaded.goal.get().testConfiguration.requiredSampleSize == 100_000
-        loaded.goal.get().testConfiguration.testAlpha == 0.05
-        loaded.goal.get().testConfiguration.testPower == 0.8
+        loaded.goal.get().testConfiguration.get().leadingMetricBaselineValue == 5
+        loaded.goal.get().testConfiguration.get().requiredSampleSize == 100_000
+        loaded.goal.get().testConfiguration.get().testAlpha == 0.05
+        loaded.goal.get().testConfiguration.get().testPower == 0.8
 
         when:
         Document doc = mongoTemplate.findById(experiment.id, Document, "experimentDefinitions")

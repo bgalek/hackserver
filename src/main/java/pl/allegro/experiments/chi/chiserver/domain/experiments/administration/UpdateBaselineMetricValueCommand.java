@@ -55,6 +55,11 @@ class UpdateBaselineMetricValueCommand implements ExperimentCommand {
             return false;
         }
 
+        //if non-binary metric
+        if (!experiment.getGoal().get().hasTestConfiguration()) {
+            return  false;
+        }
+
         var goal = experiment.getGoal().get();
 
         return goal.getHypothesis().getLeadingMetric().equals(currentStats.getMetricName()) &&

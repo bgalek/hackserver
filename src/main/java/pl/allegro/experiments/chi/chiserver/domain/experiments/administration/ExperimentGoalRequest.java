@@ -34,4 +34,8 @@ public class ExperimentGoalRequest {
     public int getRequiredSampleSize() {
         return requiredSampleSize;
     }
+
+    public boolean hasNonEmptyTestConfiguration() {
+        return requiredSampleSize > 0;
+    }
 }

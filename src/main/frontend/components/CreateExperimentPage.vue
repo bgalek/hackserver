@@ -76,6 +76,7 @@
               </v-layout>
             </v-container>
 
+            {{ goal }}
 
             <experiment-goal-editing ref="experimentGoalEditing"
                                      v-model="goal"

@@ -6,6 +6,8 @@ import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
 import org.apache.commons.lang3.StringUtils;
 import pl.allegro.experiments.chi.chiserver.domain.experiments.*;
+import pl.allegro.experiments.chi.chiserver.domain.experiments.ExperimentGoal.TestConfiguration;
+import pl.allegro.experiments.chi.chiserver.util.BigDecimals;
 
 import javax.validation.constraints.NotNull;
 import java.util.ArrayList;
@@ -15,6 +17,7 @@ import java.util.stream.Collectors;
 
 import static pl.allegro.experiments.chi.chiserver.domain.experiments.ExperimentDefinitionBuilder.experimentDefinition;
 import static pl.allegro.experiments.chi.chiserver.util.BigDecimals.round2;
+import static pl.allegro.experiments.chi.chiserver.util.BigDecimals.round4;
 
 public class ExperimentCreationRequest {
     @NotNull
@@ -138,18 +141,34 @@ public class ExperimentCreationRequest {
 
             if (goal != null && StringUtils.isNotBlank(goal.getLeadingMetric())) {
                 var hypothesis = new ExperimentGoal.Hypothesis(goal.getLeadingMetric(), round2(goal.getExpectedDiffPercent()));
-                var config = new ExperimentGoal.TestConfiguration(
-                        round2(goal.getLeadingMetricBaselineValue()),
-                        round2(goal.getTestAlpha()),
-                        round2(goal.getTestPower()),
-                        goal.getRequiredSampleSize(),
-                        0);
+
+                TestConfiguration config = null;
+                if (goal.hasNonEmptyTestConfiguration() && isValid(goal)) {
+                    config = new TestConfiguration(
+                            round2(goal.getLeadingMetricBaselineValue()),
+                            round2(goal.getTestAlpha()),
+                            round2(goal.getTestPower()),
+                            goal.getRequiredSampleSize(),
+                            0);
+                }
                 builder.goal(hypothesis, config);
             }
             return builder.build();
         } catch (Exception e) {
             throw new ExperimentCommandException("Cannot create experiment from request", e);
         }
+    }
+
+    private boolean isValid(ExperimentGoalRequest goal) {
+        if (round4(goal.getTestAlpha()).compareTo(round2(0.01)) < 0) {
+            throw new ExperimentCommandException("Invalid experiment.goal.testAlpha: " + goal.getTestAlpha() + ", it should be >= 0.01");
+        }
+
+        if (round4(goal.getTestPower()).compareTo(round2(0.8)) < 0) {
+            throw new ExperimentCommandException("Invalid experiment.goal.testAlpha: " + goal.getTestPower() + ", it should be >= 0.8");
+        }
+
+        return true;
     }
 
     public static Builder builder() {

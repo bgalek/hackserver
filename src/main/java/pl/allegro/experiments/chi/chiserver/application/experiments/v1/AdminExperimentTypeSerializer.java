@@ -66,11 +66,13 @@ public class AdminExperimentTypeSerializer implements JsonSerializer<AdminExperi
         jsonObject.addProperty("leadingMetric", goal.getHypothesis().getLeadingMetric());
         jsonObject.addProperty("expectedDiffPercent", goal.getHypothesis().getExpectedDiffPercent());
 
-        jsonObject.addProperty("leadingMetricBaselineValue", goal.getTestConfiguration().getLeadingMetricBaselineValue());
-        jsonObject.addProperty("testAlpha", goal.getTestConfiguration().getTestAlpha());
-        jsonObject.addProperty("testPower", goal.getTestConfiguration().getTestPower());
-        jsonObject.addProperty("requiredSampleSize", goal.getTestConfiguration().getRequiredSampleSize());
-        jsonObject.addProperty("currentSampleSize", goal.getTestConfiguration().getCurrentSampleSize());
+        goal.getTestConfiguration().ifPresent(config -> {
+            jsonObject.addProperty("leadingMetricBaselineValue", config.getLeadingMetricBaselineValue());
+            jsonObject.addProperty("testAlpha", config.getTestAlpha());
+            jsonObject.addProperty("testPower", config.getTestPower());
+            jsonObject.addProperty("requiredSampleSize", config.getRequiredSampleSize());
+            jsonObject.addProperty("currentSampleSize", config.getCurrentSampleSize());
+        });
 
         return jsonObject;
     }
