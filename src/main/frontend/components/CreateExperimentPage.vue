@@ -76,8 +76,6 @@
               </v-layout>
             </v-container>
 
-            {{ goal }}
-
             <experiment-goal-editing ref="experimentGoalEditing"
                                      v-model="goal"
                                      :selectedDevice="this.variants && this.variants.deviceClass"
