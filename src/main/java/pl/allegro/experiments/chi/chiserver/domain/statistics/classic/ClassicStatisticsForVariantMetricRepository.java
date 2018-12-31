@@ -7,5 +7,7 @@ public interface ClassicStatisticsForVariantMetricRepository {
 
     int countNumberOfTests(String experimentId);
 
+    int countNumberExperimentsWithStats();
+
     void save(ClassicExperimentStatisticsForVariantMetric experimentStatistics);
 }

@@ -67,5 +67,4 @@ public class ExperimentsMongoMetricsReporter {
     public Timer timerSaveExperimentGroup() {
         return metricRegistry.timer(SAVE_EXPERIMENT_GROUP);
     }
-
 }

@@ -1,5 +1,8 @@
 package pl.allegro.experiments.chi.chiserver.infrastructure.statistics;
 
+import com.google.common.collect.Iterators;
+import com.mongodb.client.model.Accumulators;
+import com.mongodb.client.model.Aggregates;
 import com.mongodb.client.result.DeleteResult;
 import io.micrometer.core.instrument.Timer;
 import org.slf4j.Logger;
@@ -11,10 +14,7 @@ import pl.allegro.experiments.chi.chiserver.domain.statistics.bayes.BayesianExpe
 import pl.allegro.experiments.chi.chiserver.domain.statistics.bayes.BayesianStatisticsForVariantRepository;
 import pl.allegro.experiments.chi.chiserver.infrastructure.experiments.ExperimentsMongoMetricsReporter;
 
-import java.util.Comparator;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public class MongoBayesianStatisticsForVariantRepository implements BayesianStatisticsForVariantRepository {
@@ -55,6 +55,12 @@ public class MongoBayesianStatisticsForVariantRepository implements BayesianStat
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
+    }
+
+    @Override
+    public int countNumberExperimentsWithStats() {
+        Timer timer = experimentsMongoMetricsReporter.timerReadBayesianExperimentStatistics();
+        return MongoQueries.countDistinctKeys(mongoTemplate, timer, COLLECTION, "experimentId");
     }
 
     @Override

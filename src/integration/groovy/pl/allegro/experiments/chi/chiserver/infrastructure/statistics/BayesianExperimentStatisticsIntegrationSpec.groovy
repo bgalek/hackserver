@@ -1,11 +1,11 @@
 package pl.allegro.experiments.chi.chiserver.infrastructure.statistics
 
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.data.mongodb.core.MongoTemplate
 import org.springframework.web.client.HttpClientErrorException
 import pl.allegro.experiments.chi.chiserver.BaseE2EIntegrationSpec
 import pl.allegro.experiments.chi.chiserver.domain.statistics.bayes.BayesianExperimentStatistics
 import pl.allegro.experiments.chi.chiserver.domain.statistics.bayes.BayesianExperimentStatisticsForVariant
+import pl.allegro.experiments.chi.chiserver.domain.statistics.bayes.BayesianStatisticsForVariantRepository
 import pl.allegro.experiments.chi.chiserver.domain.statistics.bayes.BayesianStatisticsRepository
 
 import static pl.allegro.experiments.chi.chiserver.utils.SampleStatisticsRequests.sampleBayesianStatisticsRequest
@@ -16,7 +16,7 @@ class BayesianExperimentStatisticsIntegrationSpec extends BaseE2EIntegrationSpec
     BayesianStatisticsRepository bayesianStatisticsRepository
 
     @Autowired
-    MongoTemplate mongoTemplate
+    BayesianStatisticsForVariantRepository bayesianStatisticsForVariantRepository
 
     def "should save and return bayesian statistics, old stats should be removed"() {
         given:
@@ -147,13 +147,13 @@ class BayesianExperimentStatisticsIntegrationSpec extends BaseE2EIntegrationSpec
         when:
         postBayesianStatistics(sampleBayesianStatisticsRequest([1], [1], [
                 experimentId: experiment.id,
-                variantName: 'variant-a',
+                variantName : 'variant-a',
                 toDate      : '2018-01-01',
                 metricName  : 'tx_visit'
         ]))
         postBayesianStatistics(sampleBayesianStatisticsRequest([2], [2], [
                 experimentId: experiment.id,
-                variantName: 'variant-b',
+                variantName : 'variant-b',
                 toDate      : '2018-01-01',
                 metricName  : 'tx_visit'
         ]))
@@ -161,13 +161,13 @@ class BayesianExperimentStatisticsIntegrationSpec extends BaseE2EIntegrationSpec
         and:
         postBayesianStatistics(sampleBayesianStatisticsRequest([11], [16], [
                 experimentId: experiment.id,
-                variantName: 'variant-a',
+                variantName : 'variant-a',
                 toDate      : '2018-01-01',
                 metricName  : 'tx_visit'
         ]))
         postBayesianStatistics(sampleBayesianStatisticsRequest([21], [26], [
                 experimentId: experiment.id,
-                variantName: 'variant-b',
+                variantName : 'variant-b',
                 toDate      : '2018-01-01',
                 metricName  : 'tx_visit'
         ]))
@@ -175,13 +175,13 @@ class BayesianExperimentStatisticsIntegrationSpec extends BaseE2EIntegrationSpec
         and:
         postBayesianStatistics(sampleBayesianStatisticsRequest([10], [15], [
                 experimentId: experiment.id,
-                variantName: 'variant-a',
+                variantName : 'variant-a',
                 toDate      : '2018-01-02',
                 metricName  : 'tx_visit'
         ]))
         postBayesianStatistics(sampleBayesianStatisticsRequest([20], [25], [
                 experimentId: experiment.id,
-                variantName: 'variant-b',
+                variantName : 'variant-b',
                 toDate      : '2018-01-02',
                 metricName  : 'tx_visit'
         ]))
@@ -253,6 +253,27 @@ class BayesianExperimentStatisticsIntegrationSpec extends BaseE2EIntegrationSpec
         variantC.outliersLeft == 10
         variantC.outliersRight == 122
         variantC.allCount() == 593
+    }
+
+    def "should count number of experiments with bayesian statistics"(){
+        given:
+        5.times {
+            postBayesianStatistics(sampleBayesianStatisticsRequest([1], [1], [
+                    experimentId: ""+it,
+                    variantName : 'base',
+                    toDate      : '2018-01-01',
+                    metricName  : 'tx_visit'
+            ]))
+            postBayesianStatistics(sampleBayesianStatisticsRequest([1], [1], [
+                    experimentId: ""+it,
+                    variantName : 'variant-a',
+                    toDate      : '2018-01-01',
+                    metricName  : 'tx_visit'
+            ]))
+        }
+
+        expect:
+        bayesianStatisticsForVariantRepository.countNumberExperimentsWithStats() == 5
     }
 
     List<BayesianExperimentStatistics> fetchBayesianStatistics(String experimentId) {
