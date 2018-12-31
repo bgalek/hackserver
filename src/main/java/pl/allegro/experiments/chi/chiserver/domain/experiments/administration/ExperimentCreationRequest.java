@@ -143,7 +143,7 @@ public class ExperimentCreationRequest {
                 var hypothesis = new ExperimentGoal.Hypothesis(goal.getLeadingMetric(), round2(goal.getExpectedDiffPercent()));
 
                 TestConfiguration config = null;
-                if (goal.hasNonEmptyTestConfiguration() && isValid(goal)) {
+                if (isTestConfigurationNonEmptyAndValid(goal)) {
                     config = new TestConfiguration(
                             round2(goal.getLeadingMetricBaselineValue()),
                             round2(goal.getTestAlpha()),
@@ -159,7 +159,11 @@ public class ExperimentCreationRequest {
         }
     }
 
-    private boolean isValid(ExperimentGoalRequest goal) {
+    private boolean isTestConfigurationNonEmptyAndValid(ExperimentGoalRequest goal) {
+        if (goal.getRequiredSampleSize() <= 0) {
+            return false;
+        }
+
         if (round4(goal.getTestAlpha()).compareTo(round2(0.01)) < 0) {
             throw new ExperimentCommandException("Invalid experiment.goal.testAlpha: " + goal.getTestAlpha() + ", it should be >= 0.01");
         }
