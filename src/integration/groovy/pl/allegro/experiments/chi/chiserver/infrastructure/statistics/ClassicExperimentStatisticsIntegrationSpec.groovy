@@ -357,6 +357,7 @@ class ClassicExperimentStatisticsIntegrationSpec extends BaseE2EIntegrationSpec 
                 metricName  : "tx_visit",
                 variantName : "base",
                 device      : "all",
+                toDate      : "2018-01-01",
                 data        : [value : 0.025, count : 877500]
         ]))
         postClassicStatistics(sampleClassicStatisticsRequest([
@@ -364,6 +365,7 @@ class ClassicExperimentStatisticsIntegrationSpec extends BaseE2EIntegrationSpec 
                 metricName  : "tx_visit",
                 variantName : "v1",
                 device      : "all",
+                toDate      : "2018-01-01",
                 data        : [value : 0.025, count : 877500]
         ]))
         postClassicStatistics(sampleClassicStatisticsRequest([
@@ -371,6 +373,15 @@ class ClassicExperimentStatisticsIntegrationSpec extends BaseE2EIntegrationSpec 
                 metricName  : "tx_visit",
                 variantName : "base",
                 device      : "all",
+                toDate      : "2018-01-01",
+                data        : [value : 0.025, count : 877500]
+        ]))
+        postClassicStatistics(sampleClassicStatisticsRequest([
+                experimentId: "the old one",
+                metricName  : "tx_visit",
+                variantName : "base",
+                device      : "all",
+                toDate      : "2017-01-01",
                 data        : [value : 0.025, count : 877500]
         ]))
 

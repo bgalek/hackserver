@@ -5,6 +5,7 @@ import com.mongodb.client.model.Accumulators;
 import com.mongodb.client.model.Aggregates;
 import com.mongodb.client.result.DeleteResult;
 import io.micrometer.core.instrument.Timer;
+import org.bson.Document;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.mongodb.core.MongoTemplate;
@@ -16,6 +17,8 @@ import pl.allegro.experiments.chi.chiserver.infrastructure.experiments.Experimen
 
 import java.util.*;
 import java.util.stream.Collectors;
+
+import static java.util.Map.of;
 
 public class MongoBayesianStatisticsForVariantRepository implements BayesianStatisticsForVariantRepository {
     private static final Logger logger = LoggerFactory.getLogger(MongoBayesianStatisticsForVariantRepository.class);
@@ -60,7 +63,9 @@ public class MongoBayesianStatisticsForVariantRepository implements BayesianStat
     @Override
     public int countNumberExperimentsWithStats() {
         Timer timer = experimentsMongoMetricsReporter.timerReadBayesianExperimentStatistics();
-        return MongoQueries.countDistinctKeys(mongoTemplate, timer, COLLECTION, "experimentId");
+
+        var latestDoc = MongoQueries.findMax(mongoTemplate, timer, "toDate", BayesianExperimentStatisticsForVariant.class, COLLECTION);
+        return MongoQueries.countDistinctKeys(mongoTemplate, timer, COLLECTION, "experimentId", new Document(of("toDate",latestDoc.getToDate())));
     }
 
     @Override

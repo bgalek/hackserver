@@ -271,6 +271,12 @@ class BayesianExperimentStatisticsIntegrationSpec extends BaseE2EIntegrationSpec
                     metricName  : 'tx_visit'
             ]))
         }
+        postBayesianStatistics(sampleBayesianStatisticsRequest([1], [1], [
+                experimentId: "the old one",
+                variantName : 'base',
+                toDate      : '2017-01-01',
+                metricName  : 'tx_visit'
+        ]))
 
         expect:
         bayesianStatisticsForVariantRepository.countNumberExperimentsWithStats() == 5
