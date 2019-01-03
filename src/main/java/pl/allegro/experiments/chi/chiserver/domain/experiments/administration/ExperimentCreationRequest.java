@@ -31,7 +31,7 @@ public class ExperimentCreationRequest {
     private final CustomParameter customParameter;
     private final ExperimentGoalRequest goal;
     private final List<String> tags;
-    private final CustomMetricDefinition customMetricDefinition;
+    private final List<CustomMetricDefinition> customMetricsDefinition;
 
     @JsonCreator
     public ExperimentCreationRequest(
@@ -49,7 +49,7 @@ public class ExperimentCreationRequest {
             @JsonProperty("customParameterValue") String customParameterValue,
             @JsonProperty("goal") ExperimentGoalRequest goal,
             @JsonProperty("tags") List<String> tags,
-            @JsonProperty("customMetricDefinition") CustomMetricDefinition customMetricDefinition) {
+            @JsonProperty("customMetricsDefinition") List<CustomMetricDefinition> customMetricsDefinition) {
         Preconditions.checkArgument(id != null, "experiment id is null");
         Preconditions.checkArgument(variantNames != null, "experiment variantNames are null");
         Preconditions.checkArgument(percentage != null, "experiment percentage is null");
@@ -81,7 +81,7 @@ public class ExperimentCreationRequest {
             this.customParameter = null;
         }
         this.goal = goal;
-        this.customMetricDefinition = customMetricDefinition;
+        this.customMetricsDefinition = customMetricsDefinition;
 
 
     }
@@ -114,8 +114,8 @@ public class ExperimentCreationRequest {
         return goal;
     }
 
-    public CustomMetricDefinition getCustomMetric () {
-        return customMetricDefinition;
+    public List<CustomMetricDefinition> getCustomMetrics () {
+        return customMetricsDefinition;
     }
 
     ExperimentDefinition toExperimentDefinition(String author) {
@@ -134,7 +134,7 @@ public class ExperimentCreationRequest {
                     .reportingDefinition(this.reportingDefinition)
                     .customParameter(this.customParameter)
                     .tags(this.tags.stream().map(it -> new ExperimentTag(it)).collect(Collectors.toList()))
-                    .customMetricDefinition(this.customMetricDefinition);
+                    .customMetricsDefinition(this.customMetricsDefinition);
 
             if (goal != null && StringUtils.isNotBlank(goal.getLeadingMetric())) {
                 var hypothesis = new ExperimentGoal.Hypothesis(goal.getLeadingMetric(), round2(goal.getExpectedDiffPercent()));
@@ -171,7 +171,7 @@ public class ExperimentCreationRequest {
         private String customParameterName;
         private String customParameterValue;
         private List<String> tags;
-        private CustomMetricDefinition customMetricDefinition;
+        private List<CustomMetricDefinition> customMetricsDefinition;
 
         public Builder id(String id) {
             this.id = id;
@@ -238,8 +238,8 @@ public class ExperimentCreationRequest {
             return this;
         }
 
-        public Builder customMetricDefinition(CustomMetricDefinition customMetricDefinition) {
-            this.customMetricDefinition = customMetricDefinition;
+        public Builder customMetricDefinition(List<CustomMetricDefinition> customMetricsDefinition) {
+            this.customMetricsDefinition = customMetricsDefinition;
             return this;
         }
 
@@ -259,7 +259,7 @@ public class ExperimentCreationRequest {
                     customParameterValue,
                     null,
                     tags,
-                    customMetricDefinition
+                    customMetricsDefinition
                     );
         }
     }

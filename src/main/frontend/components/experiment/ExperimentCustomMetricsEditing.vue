@@ -336,7 +336,7 @@
       g () {
         return this.defineCustomMetric && this.items.length < this.experimentVariants.length
       },
-      getVariants() {
+      getVariants () {
         let e = Object.assign([], this.experimentVariants)
         for (let item of this.items) {
           if (e.includes(item.variant)) {
@@ -347,28 +347,28 @@
         return e
       },
 
-      f(variants) {
+      f (variants) {
         for (let item of this.items) {
-          if(!variants.includes(item.variant)) {
+          if (!variants.includes(item.variant)) {
             this.deleteItem(item)
           }
         }
       },
 
-      haveOnlyBaseVariant() {
+      haveOnlyBaseVariant () {
         return (this.experimentVariants.length <= 1)
       },
 
-      haveEveryVariantMetric() {
-          return this.experimentVariants.every(experiment => {
-            return this.items.some(it => {
-              return it.variant === experiment
-            })
+      haveEveryVariantMetric () {
+        return this.experimentVariants.every(experiment => {
+          return this.items.some(it => {
+            return it.variant === experiment
           })
-
+        })
       },
-      vaw() {
-        if(this.defineCustomMetric) {
+
+      vaw () {
+        if (this.defineCustomMetric) {
           return this.haveEveryVariantMetric()
         } else {
           return true
@@ -464,7 +464,7 @@
             this.items.push(this.editedItem)
           }
           this.onDefineCustomMetricChange(this.editedItem)
-          if(this.isMetricAssignedToAllVariants) {
+          if (this.isMetricAssignedToAllVariants) {
             this.assignMetricToAllVariants(this.editedItem)
           }
           this.close()
@@ -478,10 +478,9 @@
       },
 
       buildResult (value) {
-        if(!value) {
+        if (!value) {
           return []
         }
-        
         return List(value.map(item => new CustomMetricDefinitionRecord({
           name: item.name,
           variant: item.variant,
@@ -510,14 +509,14 @@
         this.$emit('customMetric', newVal)
       },
 
-      assignMetricToAllVariants(metric) {
+      assignMetricToAllVariants (metric) {
         this.deleteItem(metric)
-        for(let variant of this.experimentVariants) {
+        for (let variant of this.experimentVariants) {
           let e = Object.assign({}, metric)
           e.variant = variant
           this.items.push(e)
         }
-      },
+      }
     }
   }
 </script>
