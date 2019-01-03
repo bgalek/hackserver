@@ -376,10 +376,10 @@
       },
 
       initFromExperiment () {
-        if (!this.experiment || !this.experiment.customMetricDefinition) {
+        if (!this.experiment || !this.experiment.customMetricsDefinition) {
           return []
         }
-        return [this.experiment.customMetricDefinition]
+        return this.experiment.customMetricsDefinition
       },
 
       customMetricChange (val) {

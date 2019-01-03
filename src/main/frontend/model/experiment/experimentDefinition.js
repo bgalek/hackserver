@@ -33,7 +33,7 @@ const ExperimentDefinitionRecord = Record({
   lastStatusChange: null,
   goal: null,
   tags: [],
-  customMetricDefinition: null
+  customMetricsDefinition: null
 })
 
 export default class ExperimentDefinitionModel extends ExperimentDefinitionRecord {

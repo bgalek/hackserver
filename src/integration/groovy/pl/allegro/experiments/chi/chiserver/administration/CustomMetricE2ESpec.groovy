@@ -72,7 +72,7 @@ class CustomMetricE2ESpec extends BaseE2EIntegrationSpec implements ApiExperimen
             viewEventDefinition.action == "action3"
             viewEventDefinition.value == "value3"
             viewEventDefinition.label == "label3"
-            viewEventDefinition.boxName == "boxName4"
+            viewEventDefinition.boxName == "boxName3"
             successEventDefinition.category == "category4"
             successEventDefinition.action == "action4"
             successEventDefinition.value == "value4"
@@ -93,6 +93,7 @@ class CustomMetricE2ESpec extends BaseE2EIntegrationSpec implements ApiExperimen
         customMetricsDefinition << [
                 [
                         name: "customMetricDefinition",
+                        variant: "v1",
                         viewEventDefinition: [
                             category: "category1",
                             action: "action1",
@@ -110,6 +111,7 @@ class CustomMetricE2ESpec extends BaseE2EIntegrationSpec implements ApiExperimen
                 ],
                 [
                         name: "customMetricDefinition",
+                        variant: "v2",
                         viewEventDefinition: [
                                 category: "category1",
                                 action: "action1",
@@ -131,6 +133,7 @@ class CustomMetricE2ESpec extends BaseE2EIntegrationSpec implements ApiExperimen
         expectedResult << [
                 [
                         name: "customMetricDefinition",
+                        "variant": "v1",
                         viewEventDefinition: [
                                 category: "category1",
                                 action: "action1",
@@ -148,6 +151,7 @@ class CustomMetricE2ESpec extends BaseE2EIntegrationSpec implements ApiExperimen
                 ],
                 [
                         name: "customMetricDefinition",
+                        "variant": "v2",
                         viewEventDefinition: [
                                 category: "category1",
                                 action: "action1",
@@ -180,6 +184,7 @@ class CustomMetricE2ESpec extends BaseE2EIntegrationSpec implements ApiExperimen
         where:
         customMetricsDefinition << [
                 [
+                        variant: "v1",
                         viewEventDefinition: [
                                 category: "category1",
                                 action: "action1",
@@ -203,10 +208,29 @@ class CustomMetricE2ESpec extends BaseE2EIntegrationSpec implements ApiExperimen
                                 value: "value2",
                                 label: "label2",
                                 boxName: ""
+                        ],
+                        viewEventDefinition: [
+                                category: "category1",
+                                action: "action1",
+                                value: "value1",
+                                label: null,
+                                boxName: "boxName1"
                         ]
                 ],
                 [
                         name: "customMetricDefinition",
+                        variant: "v1",
+                        successEventDefinition: [
+                                category: "category2",
+                                action: "action2",
+                                value: "value2",
+                                label: "label2",
+                                boxName: ""
+                        ]
+                ],
+                [
+                        name: "customMetricDefinition",
+                        variant: "v1",
                         viewEventDefinition: [
                                 category: "category1",
                                 action: "action1",
@@ -218,7 +242,7 @@ class CustomMetricE2ESpec extends BaseE2EIntegrationSpec implements ApiExperimen
 
         ]
 
-        missingCase << ["name", "viewEventDefinition", "successEventDefinition"]
+        missingCase << ["name", "variant", "viewEventDefinition", "successEventDefinition"]
     }
 
     def "should create experiment without customMetrics if not provided"() {
@@ -230,6 +254,7 @@ class CustomMetricE2ESpec extends BaseE2EIntegrationSpec implements ApiExperimen
     }
 
     def "should not create experiment if custom metric is defined only for part of variants"() {
+        when:
         draftExperiment([variantNames: ["v1", "v2", "v3"], customMetricsDefinition: [
                 [
                         name: "customMetricDefinition",

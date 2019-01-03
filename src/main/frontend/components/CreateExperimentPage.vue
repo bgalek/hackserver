@@ -68,7 +68,7 @@
                 <v-flex xs11 text-xs-left>
                   <experiment-custom-metrics-editing
                     ref="experimentCustomMetricsEditing"
-                    v-model="customMetricDefinition"
+                    v-model="customMetricsDefinition"
                     :showHeader="true"
                     :variants="variants"
                     v-on:customMetric="customMetric"/>
@@ -81,7 +81,7 @@
                                      v-model="goal"
                                      :selectedDevice="this.variants && this.variants.deviceClass"
                                      :showHeader="true"
-                                     :haveCustomMetric="customMetricDefinition"/>
+                                     :haveCustomMetric="customMetricsDefinition"/>
 
             <experiment-custom-parameter-editing ref="experimentCustomParamEditing"
                                                  v-model="customParameter"
@@ -202,7 +202,7 @@
         reportingType: 'BACKEND',
         availableReportingTypes: ['BACKEND', 'FRONTEND'],
         eventDefinitions: [],
-        customMetricDefinition: []
+        customMetricsDefinition: []
       }
     },
 
@@ -262,10 +262,9 @@
         const descValid = this.$refs.experimentDescEditing.validate()
         const variantsValid = this.$refs.experimentVariantsEditing.validate()
         const goalValid = this.$refs.experimentGoalEditing.validate()
-        const customMetricValid = this.$refs.experimentCustomMetricsEditing.vaw()
-        console.log(customMetricValid)
+        const customMetricsValid = this.$refs.experimentCustomMetricsEditing.vaw()
         return this.$refs.createForm.validate() && goalValid &&
-          descValid && variantsValid && customParamValid && customMetricValid
+          descValid && variantsValid && customParamValid && customMetricsValid
       },
 
       setPermissionsError () {
@@ -285,7 +284,7 @@
       },
 
       customMetric (val) {
-        this.customMetricDefinition.push(val)
+        this.customMetricsDefinition.push(val)
       },
 
       notSending () {
@@ -313,7 +312,7 @@
           reportingType: this.reportingType,
           eventDefinitions: this.eventDefinitions,
           goal: this.goal,
-          customMetricDefinition: this.customMetricDefinition
+          customMetricsDefinition: this.customMetricsDefinition
         }
 
         return experimentCreationRequest
