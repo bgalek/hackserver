@@ -7,15 +7,25 @@ import com.fasterxml.jackson.module.jsonSchema.JsonSchema;
 import com.fasterxml.jackson.module.jsonSchema.JsonSchemaGenerator;
 import org.springframework.stereotype.Component;
 import pl.allegro.tech.leaders.hackathon.challenge.Challenge;
+import pl.allegro.tech.leaders.hackathon.challenge.Task;
 
 import java.util.List;
 
 @Component
-class Calc implements Challenge {
+class CalcChallenge implements Challenge {
+
+    private static final String LEVEL1 = "2+2";
+    private static final String LEVEL2 = "2+2*2";
+    private static final String LEVEL3 = "(2+2)*2";
 
     private final ObjectMapper objectMapper;
+    private final List<Task> tasks = List.of(
+            new Task(LEVEL1, "4"),
+            new Task(LEVEL2, "6"),
+            new Task(LEVEL3, "8")
+    );
 
-    Calc(ObjectMapper objectMapper) {
+    CalcChallenge(ObjectMapper objectMapper) {
         this.objectMapper = objectMapper;
     }
 
@@ -36,13 +46,19 @@ class Calc implements Challenge {
 
     @Override
     public List<QueryParam> getChallengeParams() {
-        return List.of(new QueryParam("query", "equation to calc"));
+        return List.of(
+                new QueryParam("query", "equation to calc")
+        );
     }
 
     @Override
     public JsonSchema getChallengeResponse() throws JsonMappingException {
         JsonSchemaGenerator schemaGen = new JsonSchemaGenerator(objectMapper);
         return schemaGen.generateSchema(ChallengeResponse.class);
+    }
+
+    public List<Task> getTasks() {
+        return this.tasks;
     }
 
     @Override

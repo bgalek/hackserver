@@ -7,15 +7,16 @@ import com.fasterxml.jackson.module.jsonSchema.JsonSchema;
 import com.fasterxml.jackson.module.jsonSchema.JsonSchemaGenerator;
 import org.springframework.stereotype.Component;
 import pl.allegro.tech.leaders.hackathon.challenge.Challenge;
+import pl.allegro.tech.leaders.hackathon.challenge.Task;
 
 import java.util.List;
 
 @Component
-class Tweets implements Challenge {
+class TweetsChallenge implements Challenge {
 
     private final ObjectMapper objectMapper;
 
-    Tweets(ObjectMapper objectMapper) {
+    TweetsChallenge(ObjectMapper objectMapper) {
         this.objectMapper = objectMapper;
     }
 
@@ -48,6 +49,11 @@ class Tweets implements Challenge {
     @Override
     public List<String> getExamples() {
         return List.of("[]", "[{\"content\":\"this is my tweet!\"}]");
+    }
+
+    @Override
+    public List<Task> getTasks() {
+        return null;
     }
 
     private class ChallengeResponse {

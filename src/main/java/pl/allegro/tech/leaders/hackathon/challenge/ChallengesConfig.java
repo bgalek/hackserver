@@ -12,5 +12,4 @@ class ChallengesConfig {
     ChallengeService challengeService(List<Challenge> challenges) {
         return new ChallengeService(challenges);
     }
-
 }

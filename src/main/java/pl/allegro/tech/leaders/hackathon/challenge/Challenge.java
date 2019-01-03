@@ -2,10 +2,17 @@ package pl.allegro.tech.leaders.hackathon.challenge;
 
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.module.jsonSchema.JsonSchema;
+import com.github.slugify.Slugify;
 
 import java.util.List;
 
 public interface Challenge {
+
+    Slugify SLUGIFY = new Slugify();
+
+    default String getId() {
+        return SLUGIFY.slugify(getName());
+    }
 
     String getName();
 
@@ -18,6 +25,8 @@ public interface Challenge {
     JsonSchema getChallengeResponse() throws JsonMappingException;
 
     List<String> getExamples();
+
+    List<Task> getTasks();
 
     class QueryParam {
         private final String name;

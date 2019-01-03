@@ -1,0 +1,13 @@
+management:
+  endpoints:
+    web:
+      exposure:
+        include: info, metrics
+info:
+  app:
+    name: Hackserver
+    description: This is hackserver, nice to meet you!
+
+spring:
+  mvc:
+    throw-exception-if-no-handler-found: true
