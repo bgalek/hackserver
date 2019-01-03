@@ -14,79 +14,24 @@ import java.util.stream.Collectors;
 @RequestMapping("/challenges")
 class ChallengeController {
 
-    private final List<Challenge> challenges;
+    private final ChallengeService challengeService;
 
-    ChallengeController(List<Challenge> challenges) {
-        this.challenges = challenges;
+    ChallengeController(ChallengeService challengeService) {
+        this.challengeService = challengeService;
     }
 
     @GetMapping
-    List<ChallengeResponse> getChallanges() {
-        return challenges.stream()
+    List<ChallengeResponse> listChallanges() {
+        return challengeService.getAll().stream()
                 .map(ChallengeResponse::new)
                 .collect(Collectors.toList());
     }
 
-    @GetMapping("/test")
-    String test() {
-        throw new UnsupportedOperationException();
-    }
-
     @GetMapping("/{id}")
     ChallengeDetailsResponse getChallange(@PathVariable String id) {
-        return challenges.stream()
-                .filter(challenge -> challenge.getId().equals(id))
-                .findAny()
+        return challengeService.get(id)
                 .map(ChallengeDetailsResponse::new)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Challenge Not Found"));
     }
 
-    private class ChallengeResponse {
-        private final String id;
-        private final String name;
-        private final String description;
-
-        ChallengeResponse(Challenge challenge) {
-            this.id = challenge.getId();
-            this.name = challenge.getName();
-            this.description = challenge.getDescription();
-        }
-
-        public String getId() {
-            return id;
-        }
-
-        public String getName() {
-            return name;
-        }
-
-        public String getDescription() {
-            return description;
-        }
-    }
-
-    private class ChallengeDetailsResponse {
-
-        private final String name;
-        private final String description;
-        private final List<String> examples;
-
-        ChallengeDetailsResponse(Challenge challenge) {
-            this.name = challenge.getName();
-            this.description = challenge.getDescription();
-            this.examples = challenge.getExamples();
-        }
-
-        public String getName() {
-            return name;
-        }
-
-        public String getDescription() {
-            return description;
-        }
-
-        public List<String> getExamples() {
-            return examples;
-        }
-    }
 }
