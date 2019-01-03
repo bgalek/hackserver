@@ -61,6 +61,7 @@ abstract class BaseIntegrationSpec extends Specification {
 
     def cleanup() {
         mongoTemplate.remove(new Query(), "bayesianExperimentStatistics")
+        mongoTemplate.remove(new Query(), "classicExperimentStatistics")
         mongoTemplate.remove(new Query(), "experimentDefinitions")
     }
 

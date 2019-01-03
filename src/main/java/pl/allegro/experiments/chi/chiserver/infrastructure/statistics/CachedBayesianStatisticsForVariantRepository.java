@@ -43,6 +43,14 @@ public class CachedBayesianStatisticsForVariantRepository implements BayesianSta
         refreshExperimentStatistics(experimentStatistics.getExperimentId());
     }
 
+    /**
+     * not cached, used only for Graphite gauge
+     */
+    @Override
+    public int countNumberExperimentsWithStats() {
+        return delegate.countNumberExperimentsWithStats();
+    }
+
     @Scheduled(fixedDelay = REFRESH_RATE_IN_SECONDS * 1_000,
             initialDelay = REFRESH_RATE_IN_SECONDS * 1_000)
     private void refreshStatistics() {

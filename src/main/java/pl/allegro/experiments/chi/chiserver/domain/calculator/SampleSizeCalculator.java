@@ -27,10 +27,13 @@ public class SampleSizeCalculator {
     );
 
     public int calculateSampleSize(ExperimentGoal goal) {
+        Preconditions.checkArgument(goal.getTestConfiguration().isPresent(), "can't calculate sample size, testConfiguration is missing");
+
+        var config = goal.getTestConfiguration().get();
         return calculateSampleSize(new SampleSizeCalculatorRequest(
-                goal.getTestConfiguration().getTestAlpha().doubleValue(),
-                goal.getTestConfiguration().getTestPower().doubleValue(),
-                goal.getTestConfiguration().getLeadingMetricBaselineValue().doubleValue(),
+                config.getTestAlpha().doubleValue(),
+                config.getTestPower().doubleValue(),
+                config.getLeadingMetricBaselineValue().doubleValue(),
                 goal.getHypothesis().getExpectedDiffPercent().doubleValue()));
     }
 

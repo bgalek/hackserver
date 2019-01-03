@@ -1,7 +1,13 @@
 package pl.allegro.experiments.chi.chiserver.infrastructure.statistics;
 
+import com.google.common.collect.Iterators;
+import com.mongodb.client.model.Accumulators;
+import com.mongodb.client.model.Aggregates;
+import com.mongodb.client.model.Filters;
 import com.mongodb.client.result.DeleteResult;
+import com.mongodb.operation.GroupOperation;
 import io.micrometer.core.instrument.Timer;
+import org.bson.Document;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,8 +21,12 @@ import pl.allegro.experiments.chi.chiserver.domain.statistics.classic.ClassicExp
 import pl.allegro.experiments.chi.chiserver.domain.statistics.classic.ClassicStatisticsForVariantMetricRepository;
 import pl.allegro.experiments.chi.chiserver.infrastructure.experiments.ExperimentsMongoMetricsReporter;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 
+import static java.util.Map.of;
 import static pl.allegro.experiments.chi.chiserver.domain.experiments.ExperimentVariant.BASE;
 
 @Repository
@@ -49,6 +59,13 @@ public class MongoClassicStatisticsForVariantMetricRepository implements Classic
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
+    }
+
+    @Override
+    public int countNumberExperimentsWithStats() {
+        Timer timer = experimentsMongoMetricsReporter.timerReadClassicExperimentStatistics();
+        var latestDoc = MongoQueries.findMax(mongoTemplate, timer, "toDate", ClassicExperimentStatisticsForVariantMetric.class, COLLECTION);
+        return MongoQueries.countDistinctKeys(mongoTemplate, timer, COLLECTION, "experimentId",  new Document(of("toDate",latestDoc.getToDate())));
     }
 
     @Override

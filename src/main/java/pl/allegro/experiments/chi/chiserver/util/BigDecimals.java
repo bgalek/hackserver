@@ -8,6 +8,10 @@ public class BigDecimals {
         return new BigDecimal(value).setScale(2, RoundingMode.HALF_DOWN);
     }
 
+    public static BigDecimal round4(double value) {
+        return new BigDecimal(value).setScale(4, RoundingMode.HALF_DOWN);
+    }
+
     public static BigDecimal round2(BigDecimal value) {
         if (value == null) {
             return round2(BigDecimal.ZERO);

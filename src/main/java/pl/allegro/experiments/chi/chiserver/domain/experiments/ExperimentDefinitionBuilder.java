@@ -1,11 +1,8 @@
 package pl.allegro.experiments.chi.chiserver.domain.experiments;
 
-import pl.allegro.experiments.chi.chiserver.application.experiments.v1.ExperimentVariantTypeAdapter;
-
 import java.time.ZonedDateTime;
 import java.util.Collections;
 import java.util.List;
-import java.util.stream.Collectors;
 
 public class ExperimentDefinitionBuilder {
 

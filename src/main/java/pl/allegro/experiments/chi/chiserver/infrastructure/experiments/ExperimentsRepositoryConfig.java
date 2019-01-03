@@ -1,9 +1,7 @@
 package pl.allegro.experiments.chi.chiserver.infrastructure.experiments;
 
-import com.google.gson.Gson;
 import io.micrometer.core.instrument.MeterRegistry;
 import org.javers.core.Javers;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

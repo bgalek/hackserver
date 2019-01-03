@@ -1,7 +1,11 @@
 package pl.allegro.experiments.chi.chiserver.infrastructure.statistics;
 
+import com.google.common.collect.Iterators;
+import com.mongodb.client.model.Accumulators;
+import com.mongodb.client.model.Aggregates;
 import com.mongodb.client.result.DeleteResult;
 import io.micrometer.core.instrument.Timer;
+import org.bson.Document;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.mongodb.core.MongoTemplate;
@@ -11,11 +15,10 @@ import pl.allegro.experiments.chi.chiserver.domain.statistics.bayes.BayesianExpe
 import pl.allegro.experiments.chi.chiserver.domain.statistics.bayes.BayesianStatisticsForVariantRepository;
 import pl.allegro.experiments.chi.chiserver.infrastructure.experiments.ExperimentsMongoMetricsReporter;
 
-import java.util.Comparator;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
+
+import static java.util.Map.of;
 
 public class MongoBayesianStatisticsForVariantRepository implements BayesianStatisticsForVariantRepository {
     private static final Logger logger = LoggerFactory.getLogger(MongoBayesianStatisticsForVariantRepository.class);
@@ -55,6 +58,14 @@ public class MongoBayesianStatisticsForVariantRepository implements BayesianStat
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
+    }
+
+    @Override
+    public int countNumberExperimentsWithStats() {
+        Timer timer = experimentsMongoMetricsReporter.timerReadBayesianExperimentStatistics();
+
+        var latestDoc = MongoQueries.findMax(mongoTemplate, timer, "toDate", BayesianExperimentStatisticsForVariant.class, COLLECTION);
+        return MongoQueries.countDistinctKeys(mongoTemplate, timer, COLLECTION, "experimentId", new Document(of("toDate",latestDoc.getToDate())));
     }
 
     @Override

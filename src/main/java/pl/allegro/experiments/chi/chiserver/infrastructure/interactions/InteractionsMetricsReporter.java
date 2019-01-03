@@ -16,6 +16,7 @@ public class InteractionsMetricsReporter {
     private final LoadingCache slugCache;
     private final static String PARSED_INTERACTIONS = "interactions.parsed.all";
     private final static String ACCEPTED_INTERACTIONS = "interactions.received";
+    private final static String ACCEPTED_INTERACTIONS_BY_EXP = "interactions.received-by-experiment";
     private final static String IGNORED_INTERACTIONS_BY_EXP = "interactions.ignored.experiment";
     private final static String IGNORED_INTERACTIONS_BY_CLIENT = "interactions.ignored.client";
 
@@ -47,8 +48,11 @@ public class InteractionsMetricsReporter {
             String appId = it.getAppId();
             try {
                 appId = (String)slugCache.get(appId != null ? appId : "");
-                String experiment = (String)slugCache.get(it.getExperimentId() + "-" + it.getVariantName());
-                meterRegistry.counter(ACCEPTED_INTERACTIONS + "." + appId + "." + experiment).increment();
+                String experimentAndVariant = (String)slugCache.get(it.getExperimentId() + "-" + it.getVariantName());
+                String experiment = (String)slugCache.get(it.getExperimentId());
+                meterRegistry.counter(ACCEPTED_INTERACTIONS + "." + appId + "." + experimentAndVariant).increment();
+                meterRegistry.counter(ACCEPTED_INTERACTIONS_BY_EXP +  "." + experiment).increment();
+
             } catch (ExecutionException e) {}
         });
     }

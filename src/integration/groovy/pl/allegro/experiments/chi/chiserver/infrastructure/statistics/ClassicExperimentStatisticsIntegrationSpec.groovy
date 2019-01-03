@@ -1,12 +1,16 @@
 package pl.allegro.experiments.chi.chiserver.infrastructure.statistics
 
+import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.web.client.HttpClientErrorException
 import pl.allegro.experiments.chi.chiserver.BaseE2EIntegrationSpec
+import pl.allegro.experiments.chi.chiserver.domain.statistics.classic.ClassicStatisticsForVariantMetricRepository
 import spock.lang.Unroll
-
 import static pl.allegro.experiments.chi.chiserver.utils.SampleStatisticsRequests.sampleClassicStatisticsRequest
 
 class ClassicExperimentStatisticsIntegrationSpec extends BaseE2EIntegrationSpec {
+
+    @Autowired
+    ClassicStatisticsForVariantMetricRepository classicStatisticsForVariantMetricRepository
 
     def "should update experiment goal configuration when new stats are coming"(){
         given:
@@ -344,5 +348,44 @@ class ClassicExperimentStatisticsIntegrationSpec extends BaseE2EIntegrationSpec 
 
         def variantB = statistics.metrics.gmv.'variant-b'
         variantB.value == 0.2
+    }
+
+    def "should count number of experiments with classic statistics"(){
+        given:
+        postClassicStatistics(sampleClassicStatisticsRequest([
+                experimentId: "1",
+                metricName  : "tx_visit",
+                variantName : "base",
+                device      : "all",
+                toDate      : "2018-01-01",
+                data        : [value : 0.025, count : 877500]
+        ]))
+        postClassicStatistics(sampleClassicStatisticsRequest([
+                experimentId: "1",
+                metricName  : "tx_visit",
+                variantName : "v1",
+                device      : "all",
+                toDate      : "2018-01-01",
+                data        : [value : 0.025, count : 877500]
+        ]))
+        postClassicStatistics(sampleClassicStatisticsRequest([
+                experimentId: "2",
+                metricName  : "tx_visit",
+                variantName : "base",
+                device      : "all",
+                toDate      : "2018-01-01",
+                data        : [value : 0.025, count : 877500]
+        ]))
+        postClassicStatistics(sampleClassicStatisticsRequest([
+                experimentId: "the old one",
+                metricName  : "tx_visit",
+                variantName : "base",
+                device      : "all",
+                toDate      : "2017-01-01",
+                data        : [value : 0.025, count : 877500]
+        ]))
+
+        expect:
+        classicStatisticsForVariantMetricRepository.countNumberExperimentsWithStats() == 2
     }
 }
