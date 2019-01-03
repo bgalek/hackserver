@@ -9,19 +9,9 @@
         v-on:change="customMetricChange"
         v-if="!readOnly"
       ></v-switch>
-      <v-btn color="primary" class="mb-2" @click="newItem()" v-if="defineCustomMetric && items.length < 1">
+      <v-btn color="primary" class="mb-2" @click="newItem()" v-if="g()">
         Add custom metric
       </v-btn>
-      <div v-else-if="defineCustomMetric && items.length > 0">
-        <v-btn icon class="mx-0" @click="editItem()">
-          <v-icon color="teal">edit</v-icon>
-        </v-btn>
-        {{getItemName()}}
-      </div>
-      <div v-if="readOnly">
-        {{getItemName()}}
-      </div>
-
 
     <v-dialog v-model="editing" max-width="450px">
       <v-form v-model="customMetricDefinitionValid" ref="customMetricDefinitionForm">
@@ -32,9 +22,25 @@
           <v-layout fluid class="pa-3 ma-0">
             <v-flex>
               <v-text-field label="name" v-model="editedItem.name"
-                            :rules="customMetricRules"
+                            :rules="customMetricNameRules"
 
               ></v-text-field>
+            </v-flex>
+          </v-layout>
+          <v-layout fluid class="pa-3 ma-0">
+            <v-flex>
+              <v-select label="variant" v-model="editedItem.variant"
+                            :items="getVariants()"
+              ></v-select>
+            </v-flex>
+          </v-layout>
+          <v-layout fluid class="pa-3 ma-0">
+            <v-flex>
+              <v-checkbox
+                label="Assign to all variants"
+                v-model="isMetricAssignedToAllVariants"
+                :disabled="haveOnlyBaseVariant()"
+              ></v-checkbox>
             </v-flex>
           </v-layout>
           <v-layout>
@@ -212,24 +218,36 @@
 
         <template slot="items" slot-scope="props">
           <td>{{ props.item.type }}</td>
+          <td>{{ props.item.name }}</td>
+          <td>{{ props.item.variant }}</td>
           <td>{{ props.item.boxName }}</td>
           <td>{{ props.item.category }}</td>
           <td>{{ props.item.label }}</td>
           <td>{{ props.item.action }}</td>
           <td>{{ props.item.value }}</td>
 
+          <td class="justify-center layout px-0" v-if="!readOnly">
+            <v-btn icon class="mx-0" @click="editItem(props.item)">
+              <v-icon color="teal">edit</v-icon>
+            </v-btn>
+          </td>
+
         </template>
       </v-data-table>
+    <div class="error--text" v-if="defineCustomMetric && !haveEveryVariantMetric()">
+      You have to define custom metric for every variant.
+    </div>
   </div>
 </template>
 
 <script>
   import {startsOrEndsWithSpace} from '../../utils/startsOrEndsWithSpace'
-  import {Record} from 'immutable'
+  import { Record, List } from 'immutable'
   import {containsNoSpecialCharacters} from '../../utils/containsNoSpecialCharacters'
 
   const CustomMetricDefinitionRecord = Record({
     name: '',
+    variant: '',
     viewEventDefinition: {
       boxName: '',
       category: '',
@@ -247,7 +265,7 @@
   })
 
   export default {
-    props: ['showHeader', 'readOnly', 'experiment'],
+    props: ['showHeader', 'readOnly', 'experiment', 'variants'],
 
     data () {
       return {
@@ -257,6 +275,7 @@
         editing: false,
         editedItem: {
           name: '',
+          variant: '',
           viewEventDefinition: {},
           successEventDefinition: {}
         },
@@ -270,6 +289,8 @@
         editedIndex: -1,
         headers: [
           {text: 'Type', value: 'type', align: 'left', sortable: false},
+          {text: 'Name', value: 'name', align: 'left', sortable: false},
+          {text: 'Variant', value: 'variant', align: 'left', sortable: false},
           {text: 'BoxName', value: 'boxName', align: 'left', sortable: false},
           {text: 'Category', value: 'category', align: 'left', sortable: false},
           {text: 'Label', value: 'label', align: 'left', sortable: false},
@@ -280,12 +301,14 @@
           (v) => containsNoSpecialCharacters(v),
           (v) => !startsOrEndsWithSpace(v) || 'no spaces in the beginning or end'
         ],
-        customMetricRules: [
-          (v) => !!v || 'Name is required',
+        customMetricNameRules: [
+          (v) => !!v || 'Name is Required',
           (v) => containsNoSpecialCharacters(v),
           (v) => !startsOrEndsWithSpace(v) || 'no spaces in the beginning or end'
         ],
-        defineCustomMetric: false
+        defineCustomMetric: false,
+        experimentVariants: [],
+        isMetricAssignedToAllVariants: false
       }
     },
 
@@ -297,24 +320,73 @@
           }
         },
         deep: true
+      },
+      variants: {
+        handler: function (variants) {
+          let v = Object.assign([], variants.variantNames)
+          this.experimentVariants = v
+          this.f(this.experimentVariants)
+        },
+        deep: true
       }
     },
 
     methods: {
+
+      g () {
+        return this.defineCustomMetric && this.items.length < this.experimentVariants.length
+      },
+      getVariants() {
+        let e = Object.assign([], this.experimentVariants)
+        for (let item of this.items) {
+          if (e.includes(item.variant)) {
+            const index = this.experimentVariants.indexOf(item.variant)
+            e.splice(index, 1)
+          }
+        }
+        return e
+      },
+
+      f(variants) {
+        for (let item of this.items) {
+          if(!variants.includes(item.variant)) {
+            this.deleteItem(item)
+          }
+        }
+      },
+
+      haveOnlyBaseVariant() {
+        return (this.experimentVariants.length <= 1)
+      },
+
+      haveEveryVariantMetric() {
+          return this.experimentVariants.every(experiment => {
+            return this.items.some(it => {
+              return it.variant === experiment
+            })
+          })
+
+      },
+      vaw() {
+        if(this.defineCustomMetric) {
+          return this.haveEveryVariantMetric()
+        } else {
+          return true
+        }
+      },
+
       initFromExperiment () {
         if (!this.experiment || !this.experiment.customMetricDefinition) {
           return []
         }
         return [this.experiment.customMetricDefinition]
       },
+
       customMetricChange (val) {
         if (val === false) {
           this.items = []
           this.onDefineCustomMetricChange(false)
         }
-      },
-      getItemName () {
-        return this.items[0].name
       },
 
       getItemsForTable () {
@@ -322,8 +394,12 @@
         for (let item of this.items) {
           let viewEventDefinition = Object.assign({}, item.viewEventDefinition)
           viewEventDefinition.type = 'View event'
+          viewEventDefinition.name = item.name
+          viewEventDefinition.variant = item.variant
           let successEventDefinition = Object.assign({}, item.successEventDefinition)
           successEventDefinition.type = 'Success event'
+          successEventDefinition.name = item.name
+          successEventDefinition.variant = item.variant
           items.push(viewEventDefinition)
           items.push(successEventDefinition)
         }
@@ -343,6 +419,7 @@
         this.editedIndex = -1
         this.editedItem = {
           name: '',
+          variant: '',
           viewEventDefinition: {},
           successEventDefinition: {}
         }
@@ -353,6 +430,7 @@
         this.editedIndex = -1
         this.editedItem = Object.assign({}, {})
         this.editedItem.name = ''
+        this.editedItem.variant = ''
         this.editedItem.viewEventDefinition = Object.assign({}, this.defaultItem)
         this.editedItem.successEventDefinition = Object.assign({}, this.defaultItem)
       },
@@ -362,6 +440,7 @@
         this.editing = true
         this.editedIndex = 0
         this.editedItem.name = item.name
+        this.editedItem.variant = item.variant
         this.editedItem.viewEventDefinition = Object.assign({}, item.viewEventDefinition)
         this.editedItem.successEventDefinition = Object.assign({}, item.successEventDefinition)
       },
@@ -385,6 +464,9 @@
             this.items.push(this.editedItem)
           }
           this.onDefineCustomMetricChange(this.editedItem)
+          if(this.isMetricAssignedToAllVariants) {
+            this.assignMetricToAllVariants(this.editedItem)
+          }
           this.close()
         } else {
           this.error = 'You have to fulfil at least 2 fields in each event'
@@ -396,24 +478,28 @@
       },
 
       buildResult (value) {
-        return new CustomMetricDefinitionRecord({
-          name: value[0].name,
+        if(!value) {
+          return []
+        }
+        
+        return List(value.map(item => new CustomMetricDefinitionRecord({
+          name: item.name,
+          variant: item.variant,
           successEventDefinition: {
-            boxName: value[0].successEventDefinition.boxName,
-            category: value[0].successEventDefinition.category,
-            label: value[0].successEventDefinition.label,
-            action: value[0].successEventDefinition.action,
-            value: value[0].successEventDefinition.value
+            boxName: item.successEventDefinition.boxName,
+            category: item.successEventDefinition.category,
+            label: item.successEventDefinition.label,
+            action: item.successEventDefinition.action,
+            item: item.successEventDefinition.item
           },
           viewEventDefinition: {
-            boxName: value[0].viewEventDefinition.boxName,
-            category: value[0].viewEventDefinition.category,
-            label: value[0].viewEventDefinition.label,
-            action: value[0].viewEventDefinition.action,
-            value: value[0].viewEventDefinition.value
+            boxName: item.viewEventDefinition.boxName,
+            category: item.viewEventDefinition.category,
+            label: item.viewEventDefinition.label,
+            action: item.viewEventDefinition.action,
+            item: item.viewEventDefinition.item
           }
-
-        })
+        })))
       },
 
       buildResultFromValue () {
@@ -422,7 +508,16 @@
 
       onDefineCustomMetricChange (newVal) {
         this.$emit('customMetric', newVal)
-      }
+      },
+
+      assignMetricToAllVariants(metric) {
+        this.deleteItem(metric)
+        for(let variant of this.experimentVariants) {
+          let e = Object.assign({}, metric)
+          e.variant = variant
+          this.items.push(e)
+        }
+      },
     }
   }
 </script>

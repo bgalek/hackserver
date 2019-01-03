@@ -70,12 +70,12 @@
                     ref="experimentCustomMetricsEditing"
                     v-model="customMetricDefinition"
                     :showHeader="true"
+                    :variants="variants"
                     v-on:customMetric="customMetric"/>
                 </v-flex>
 
               </v-layout>
             </v-container>
-
 
             <experiment-goal-editing ref="experimentGoalEditing"
                                      v-model="goal"
@@ -202,11 +202,7 @@
         reportingType: 'BACKEND',
         availableReportingTypes: ['BACKEND', 'FRONTEND'],
         eventDefinitions: [],
-        customMetricDefinition: {
-          name: '',
-          viewEventDefinition: {},
-          successEventDefinition: {}
-        }
+        customMetricDefinition: []
       }
     },
 
@@ -266,9 +262,10 @@
         const descValid = this.$refs.experimentDescEditing.validate()
         const variantsValid = this.$refs.experimentVariantsEditing.validate()
         const goalValid = this.$refs.experimentGoalEditing.validate()
-
+        const customMetricValid = this.$refs.experimentCustomMetricsEditing.vaw()
+        console.log(customMetricValid)
         return this.$refs.createForm.validate() && goalValid &&
-          descValid && variantsValid && customParamValid
+          descValid && variantsValid && customParamValid && customMetricValid
       },
 
       setPermissionsError () {
@@ -288,7 +285,7 @@
       },
 
       customMetric (val) {
-        this.customMetricDefinition = val
+        this.customMetricDefinition.push(val)
       },
 
       notSending () {

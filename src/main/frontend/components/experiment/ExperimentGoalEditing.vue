@@ -208,9 +208,12 @@
         handler: function (customMetric) {
           this.metrics = globalMetricsArray()
           if (customMetric) {
-            this.metrics.push(getMetricByKey(customMetric.name))
+            customMetric.map(it => {
+              this.metrics.push(getMetricByKey(it.name))
+            })
           }
-        }
+        },
+        deep: true
       }
     },
 
