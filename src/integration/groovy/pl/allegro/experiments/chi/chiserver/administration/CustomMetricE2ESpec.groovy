@@ -128,8 +128,6 @@ class CustomMetricE2ESpec extends BaseE2EIntegrationSpec implements ApiExperimen
         experiment.customMetricsDefinition == expectedResult
 
         where:
-
-
         expectedResult = [
                 [
                         name: "customMetricDefinition",
@@ -150,20 +148,20 @@ class CustomMetricE2ESpec extends BaseE2EIntegrationSpec implements ApiExperimen
                         ]
                 ],
                 [
-                        name: "customMetricDefinition",
-                        "variant": "v2",
+                        name: "anotherCustomMetricDefinition",
+                        variant: "v2",
                         viewEventDefinition: [
-                                category: "category1",
-                                action: "action1",
-                                value: "value1",
-                                label: "label1",
+                                category: "category3",
+                                action: "action3",
+                                value: "value3",
+                                label: "label3",
                                 boxName: ""
                         ],
                         successEventDefinition: [
-                                category: "category2",
-                                action: "action2",
-                                value: "value2",
-                                label: "label2",
+                                category: "category4",
+                                action: "action4",
+                                value: "value4",
+                                label: "label4",
                                 boxName: ""
                         ]
                 ]
