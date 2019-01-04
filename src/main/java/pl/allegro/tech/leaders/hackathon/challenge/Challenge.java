@@ -8,10 +8,10 @@ import java.util.List;
 
 public interface Challenge {
 
-    Slugify SLUGIFY = new Slugify();
+    Slugify slugify = new Slugify();
 
     default String getId() {
-        return SLUGIFY.slugify(getName());
+        return slugify.slugify(getName());
     }
 
     String getName();
