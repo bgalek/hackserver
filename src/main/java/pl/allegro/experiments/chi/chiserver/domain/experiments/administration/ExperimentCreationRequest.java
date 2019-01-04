@@ -34,7 +34,7 @@ public class ExperimentCreationRequest {
     private final CustomParameter customParameter;
     private final ExperimentGoalRequest goal;
     private final List<String> tags;
-    private final List<CustomMetricDefinition> customMetricsDefinition;
+    private final CustomMetricDefinition customMetricsDefinition;
 
     @JsonCreator
     public ExperimentCreationRequest(
@@ -52,13 +52,13 @@ public class ExperimentCreationRequest {
             @JsonProperty("customParameterValue") String customParameterValue,
             @JsonProperty("goal") ExperimentGoalRequest goal,
             @JsonProperty("tags") List<String> tags,
-            @JsonProperty("customMetricsDefinition") List<CustomMetricDefinition> customMetricsDefinition) {
+            @JsonProperty("customMetricsDefinition") CustomMetricDefinition customMetricsDefinition) {
         Preconditions.checkArgument(id != null, "experiment id is null");
         Preconditions.checkArgument(variantNames != null, "experiment variantNames are null");
         Preconditions.checkArgument(percentage != null, "experiment percentage is null");
         Preconditions.checkArgument(percentage >= 0, "experiment percentage < 0");
-        if(customMetricsDefinition != null && customMetricsDefinition.size() > 0) {
-            Preconditions.checkArgument(areCustomMetricsValid(variantNames, customMetricsDefinition), "not every variant have custom metric");
+        if(customMetricsDefinition != null) {
+            Preconditions.checkArgument(areCustomMetricsValid(variantNames, customMetricsDefinition), "number of variants does not reflect number of custom metrics");
         }
         if (StringUtils.isNotBlank(customParameterName) || StringUtils.isNotBlank(customParameterValue)) {
             Preconditions.checkArgument(StringUtils.isNotBlank(customParameterName), "custom parameter name is blank");
@@ -91,9 +91,9 @@ public class ExperimentCreationRequest {
 
     }
 
-    public boolean areCustomMetricsValid(List<String> variants, List<CustomMetricDefinition> cm) {
-        var cmVariants = cm.stream().map(it -> it.getVariant()).collect(Collectors.toList());
-        return variants.stream().allMatch(it -> cmVariants.contains(it));
+    public boolean areCustomMetricsValid(List<String> variants, CustomMetricDefinition cm) {
+        var cmVariants = cm.getDefinitionForVariant().stream().map(it -> it.getVariantName()).collect(Collectors.toList());
+        return variants.stream().allMatch(it -> cmVariants.contains(it)) && cmVariants.size() == variants.size();
     }
 
     public List<String> getTags() {
@@ -124,7 +124,7 @@ public class ExperimentCreationRequest {
         return goal;
     }
 
-    public List<CustomMetricDefinition> getCustomMetrics () {
+    public CustomMetricDefinition getCustomMetrics () {
         return customMetricsDefinition;
     }
 
@@ -201,7 +201,7 @@ public class ExperimentCreationRequest {
         private String customParameterName;
         private String customParameterValue;
         private List<String> tags;
-        private List<CustomMetricDefinition> customMetricsDefinition;
+        private CustomMetricDefinition customMetricsDefinition;
 
         public Builder id(String id) {
             this.id = id;
@@ -268,7 +268,7 @@ public class ExperimentCreationRequest {
             return this;
         }
 
-        public Builder customMetricDefinition(List<CustomMetricDefinition> customMetricsDefinition) {
+        public Builder customMetricDefinition(CustomMetricDefinition customMetricsDefinition) {
             this.customMetricsDefinition = customMetricsDefinition;
             return this;
         }

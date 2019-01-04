@@ -43,7 +43,7 @@ public class ExperimentDefinition {
     private final ZonedDateTime lastExplicitStatusChange;
     private final ExperimentGoal goal;
     private final List<ExperimentTag> tags;
-    private final List<CustomMetricDefinition> customMetricsDefinition;
+    private final CustomMetricDefinition customMetricsDefinition;
 
     ExperimentDefinition(
             String id,
@@ -63,7 +63,7 @@ public class ExperimentDefinition {
             ZonedDateTime lastExplicitStatusChange,
             ExperimentGoal goal,
             List<ExperimentTag> tags,
-            List<CustomMetricDefinition> customMetricsDefinition) {
+            CustomMetricDefinition customMetricsDefinition) {
         Preconditions.checkArgument(!Strings.isNullOrEmpty(id));
         Preconditions.checkNotNull(variantNames);
         Preconditions.checkNotNull(groups);
@@ -186,7 +186,7 @@ public class ExperimentDefinition {
     }
 
     @DiffInclude
-    public  List<CustomMetricDefinition>  getCustomMetricsDefinition() {
+    public  CustomMetricDefinition  getCustomMetricsDefinition() {
         return customMetricsDefinition;
     }
 

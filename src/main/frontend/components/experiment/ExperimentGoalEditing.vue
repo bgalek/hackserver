@@ -206,6 +206,7 @@
       },
       haveCustomMetric: {
         handler: function (customMetric) {
+          console.log(customMetric)
           this.metrics = globalMetricsArray()
           if (customMetric) {
             customMetric.map(it => {

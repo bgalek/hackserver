@@ -21,15 +21,16 @@
           </v-card-title>
           <v-layout fluid class="pa-3 ma-0">
             <v-flex>
-              <v-text-field label="name" v-model="editedItem.name"
+              <v-text-field label="name" v-model="editedItem.metricName"
                             :rules="customMetricNameRules"
+                            :disabled="isMetricNameSet()"
 
               ></v-text-field>
             </v-flex>
           </v-layout>
           <v-layout fluid class="pa-3 ma-0">
             <v-flex>
-              <v-select label="variant" v-model="editedItem.variant"
+              <v-select label="variant" v-model="editedItem.definitionForVariant.variantName"
                             :items="getVariants()"
               ></v-select>
             </v-flex>
@@ -39,7 +40,7 @@
               <v-checkbox
                 label="Assign to all variants"
                 v-model="isMetricAssignedToAllVariants"
-                :disabled="haveOnlyBaseVariant() || items.length > 0"
+                :disabled="haveOnlyBaseVariant()"
               ></v-checkbox>
             </v-flex>
           </v-layout>
@@ -63,7 +64,7 @@
 
 
                     <v-flex>
-                      <v-text-field label="boxName" v-model="editedItem.viewEventDefinition.boxName"
+                      <v-text-field label="boxName" v-model="editedItem.definitionForVariant.viewEventDefinition.boxName"
                                     :rules="filterRules"
                       ></v-text-field>
                     </v-flex>
@@ -71,7 +72,7 @@
 
                   <v-layout row align-center>
                     <v-flex offset-xs2>
-                      <v-text-field label="category" v-model="editedItem.viewEventDefinition.category"
+                      <v-text-field label="category" v-model="editedItem.definitionForVariant.viewEventDefinition.category"
                                     :rules="filterRules"
                       ></v-text-field>
                     </v-flex>
@@ -79,7 +80,7 @@
 
                   <v-layout row align-center>
                     <v-flex offset-xs2>
-                      <v-text-field label="label" v-model="editedItem.viewEventDefinition.label"
+                      <v-text-field label="label" v-model="editedItem.definitionForVariant.viewEventDefinition.label"
                                     :rules="filterRules"
                       ></v-text-field>
                     </v-flex>
@@ -98,7 +99,7 @@
                       </v-tooltip>
                     </v-flex>
                     <v-flex>
-                      <v-text-field label="action" v-model="editedItem.viewEventDefinition.action"
+                      <v-text-field label="action" v-model="editedItem.definitionForVariant.viewEventDefinition.action"
                                     :rules="filterRules"
                       ></v-text-field>
                     </v-flex>
@@ -106,7 +107,7 @@
 
                   <v-layout row align-center>
                     <v-flex offset-xs2>
-                      <v-text-field label="value" v-model="editedItem.viewEventDefinition.value"
+                      <v-text-field label="value" v-model="editedItem.definitionForVariant.viewEventDefinition.value"
                                     :rules="filterRules"
                       ></v-text-field>
                     </v-flex>
@@ -139,7 +140,7 @@
                       </v-tooltip>
                     </v-flex>
                     <v-flex>
-                      <v-text-field label="boxName" v-model="editedItem.successEventDefinition.boxName"
+                      <v-text-field label="boxName" v-model="editedItem.definitionForVariant.successEventDefinition.boxName"
                                     :rules="filterRules"
                       ></v-text-field>
                     </v-flex>
@@ -147,7 +148,7 @@
 
                   <v-layout row align-center>
                     <v-flex offset-xs2>
-                      <v-text-field label="category" v-model="editedItem.successEventDefinition.category"
+                      <v-text-field label="category" v-model="editedItem.definitionForVariant.successEventDefinition.category"
                                     :rules="filterRules"
                       ></v-text-field>
                     </v-flex>
@@ -155,7 +156,7 @@
 
                   <v-layout row align-center>
                     <v-flex offset-xs2>
-                      <v-text-field label="label" v-model="editedItem.successEventDefinition.label"
+                      <v-text-field label="label" v-model="editedItem.definitionForVariant.successEventDefinition.label"
                                     :rules="filterRules"
                       ></v-text-field>
                     </v-flex>
@@ -174,7 +175,7 @@
                       </v-tooltip>
                     </v-flex>
                     <v-flex>
-                      <v-text-field label="action" v-model="editedItem.successEventDefinition.action"
+                      <v-text-field label="action" v-model="editedItem.definitionForVariant.successEventDefinition.action"
                                     :rules="filterRules"
                       ></v-text-field>
                     </v-flex>
@@ -182,7 +183,7 @@
 
                   <v-layout row align-center>
                     <v-flex offset-xs2>
-                      <v-text-field label="value" v-model="editedItem.successEventDefinition.value"
+                      <v-text-field label="value" v-model="editedItem.definitionForVariant.successEventDefinition.value"
                                     :rules="filterRules"
                       ></v-text-field>
                     </v-flex>
@@ -274,10 +275,12 @@
         customMetricDefinitionValid: true,
         editing: false,
         editedItem: {
-          name: '',
-          variant: '',
-          viewEventDefinition: {},
-          successEventDefinition: {}
+          metricName: '',
+          definitionForVariant: {
+            variantName: '',
+            viewEventDefinition: {},
+            successEventDefinition: {}
+          }
         },
         defaultItem: {
           boxName: '',
@@ -308,7 +311,8 @@
         ],
         defineCustomMetric: false,
         experimentVariants: [],
-        isMetricAssignedToAllVariants: false
+        isMetricAssignedToAllVariants: false,
+        metricName: ''
       }
     },
 
@@ -321,6 +325,7 @@
         },
         deep: true
       },
+
       variants: {
         handler: function (variants) {
           let v = Object.assign([], variants.variantNames)
@@ -332,6 +337,9 @@
     },
 
     methods: {
+      isMetricNameSet () {
+        return !!this.metricName
+      },
       notEveryVariantHaveCustomMetric () {
         return this.defineCustomMetric && this.items.length < this.experimentVariants.length
       },
@@ -385,6 +393,7 @@
       customMetricChange (val) {
         if (val === false) {
           this.items = []
+          this.metricName = ''
           this.onDefineCustomMetricChange(false)
         }
       },
@@ -392,17 +401,20 @@
       getItemsForTable () {
         let items = []
         for (let item of this.items) {
-          let viewEventDefinition = Object.assign({}, item.viewEventDefinition)
+          console.log(item)
+          console.log(item.definitionForVariant.variantName)
+          let viewEventDefinition = Object.assign({}, item.definitionForVariant.viewEventDefinition)
           viewEventDefinition.type = 'View event'
-          viewEventDefinition.name = item.name
-          viewEventDefinition.variant = item.variant
-          let successEventDefinition = Object.assign({}, item.successEventDefinition)
+          viewEventDefinition.metricName = item.metricName
+          // viewEventDefinition.definitionForVariant.variantName = item.definitionForVariant.variantName
+          let successEventDefinition = Object.assign({}, item.definitionForVariant.successEventDefinition)
           successEventDefinition.type = 'Success event'
-          successEventDefinition.name = item.name
-          successEventDefinition.variant = item.variant
+          successEventDefinition.metricName = item.metricName
+          // successEventDefinition.definitionForVariant.variantName = item.definitionForVariant.variantName
           items.push(viewEventDefinition)
           items.push(successEventDefinition)
         }
+        console.log(items)
         return items
       },
 
@@ -418,10 +430,12 @@
         this.editing = false
         this.editedIndex = -1
         this.editedItem = {
-          name: '',
-          variant: '',
-          viewEventDefinition: {},
-          successEventDefinition: {}
+          metricName: '',
+          definitionForVariant: {
+            variantName: '',
+            viewEventDefinition: {},
+            successEventDefinition: {}
+          }
         }
       },
 
@@ -429,20 +443,20 @@
         this.editing = true
         this.editedIndex = -1
         this.editedItem = Object.assign({}, {})
-        this.editedItem.name = ''
-        this.editedItem.variant = ''
-        this.editedItem.viewEventDefinition = Object.assign({}, this.defaultItem)
-        this.editedItem.successEventDefinition = Object.assign({}, this.defaultItem)
+        this.editedItem.definitionForVariant = Object.assign({}, {})
+        this.editedItem.metricName = this.metricName
+        this.editedItem.definitionForVariant.variantName = ''
+        this.editedItem.definitionForVariant.viewEventDefinition = Object.assign({}, this.defaultItem)
+        this.editedItem.definitionForVariant.successEventDefinition = Object.assign({}, this.defaultItem)
       },
 
-      editItem () {
-        let item = this.items[0]
+      editItem (item) {
         this.editing = true
         this.editedIndex = 0
-        this.editedItem.name = item.name
-        this.editedItem.variant = item.variant
-        this.editedItem.viewEventDefinition = Object.assign({}, item.viewEventDefinition)
-        this.editedItem.successEventDefinition = Object.assign({}, item.successEventDefinition)
+        this.editedItem.metricName = this.metricName
+        this.editedItem.definitionForVariant.variantName = item.definitionForVariant.variantName
+        this.editedItem.definitionForVariant.viewEventDefinition = Object.assign({}, item.definitionForVariant.viewEventDefinition)
+        this.editedItem.definitionForVariant.successEventDefinition = Object.assign({}, item.definitionForVariant.successEventDefinition)
       },
 
       deleteItem (item) {
@@ -451,9 +465,9 @@
       },
 
       haveFormRequiredFields () {
-        let successEventDefinitionCounter = Object.keys(this.editedItem.viewEventDefinition).filter(it => this.editedItem.viewEventDefinition[it] !== '').length
-        let viewEventDefinitionCounter = Object.keys(this.editedItem.successEventDefinition).filter(it => this.editedItem.successEventDefinition[it] !== '').length
-        return successEventDefinitionCounter >= 2 && viewEventDefinitionCounter >= 2 && this.editedItem.name !== ''
+        let successEventDefinitionCounter = Object.keys(this.editedItem.definitionForVariant.viewEventDefinition).filter(it => this.editedItem.definitionForVariant.viewEventDefinition[it] !== '').length
+        let viewEventDefinitionCounter = Object.keys(this.editedItem.definitionForVariant.successEventDefinition).filter(it => this.editedItem.definitionForVariant.successEventDefinition[it] !== '').length
+        return successEventDefinitionCounter >= 2 && viewEventDefinitionCounter >= 2 && this.editedItem.metricName !== ''
       },
 
       saveEditing () {
@@ -463,6 +477,8 @@
           } else {
             this.items.push(this.editedItem)
           }
+          this.metricName = this.editedItem.metricName
+          console.log(this.editedItem)
           this.onDefineCustomMetricChange(this.editedItem)
           if (this.isMetricAssignedToAllVariants) {
             this.assignMetricToAllVariants(this.editedItem)
@@ -478,27 +494,26 @@
       },
 
       buildResult (value) {
-        if (!value) {
-          return []
-        }
-        return List(value.map(item => new CustomMetricDefinitionRecord({
-          name: item.name,
-          variant: item.variant,
-          successEventDefinition: {
-            boxName: item.successEventDefinition.boxName,
-            category: item.successEventDefinition.category,
-            label: item.successEventDefinition.label,
-            action: item.successEventDefinition.action,
-            item: item.successEventDefinition.item
-          },
-          viewEventDefinition: {
-            boxName: item.viewEventDefinition.boxName,
-            category: item.viewEventDefinition.category,
-            label: item.viewEventDefinition.label,
-            action: item.viewEventDefinition.action,
-            item: item.viewEventDefinition.item
+        return new CustomMetricDefinitionRecord({
+          metricName: value[0].metricName,
+          definitionForVariant: {
+            variantName: value[0].definitionForVariant.variantName,
+            successEventDefinition: {
+              boxName: value[0].definitionForVariant.successEventDefinition.boxName,
+              category: value[0].definitionForVariant.successEventDefinition.category,
+              label: value[0].definitionForVariant.successEventDefinition.label,
+              action: value[0].definitionForVariant.successEventDefinition.action,
+              item: value[0].definitionForVariant.successEventDefinition.item
+            },
+            viewEventDefinition: {
+              boxName: value[0].definitionForVariant.viewEventDefinition.boxName,
+              category: value[0].definitionForVariant.viewEventDefinition.category,
+              label: value[0].definitionForVariant.viewEventDefinition.label,
+              action: value[0].definitionForVariant.viewEventDefinition.action,
+              item: value[0].definitionForVariant.viewEventDefinition.item
+            }
           }
-        })))
+        })
       },
 
       buildResultFromValue () {
