@@ -18,6 +18,7 @@ public class CustomMetricDefinition {
             @JsonProperty("viewEventDefinition") EventDefinition viewEventDefinition,
             @JsonProperty("successEventDefinition") EventDefinition successEventDefinition) {
         Preconditions.checkNotNull(name);
+        Preconditions.checkNotNull(variant);
         Preconditions.checkNotNull(viewEventDefinition);
         Preconditions.checkNotNull(successEventDefinition);
         this.name = name;

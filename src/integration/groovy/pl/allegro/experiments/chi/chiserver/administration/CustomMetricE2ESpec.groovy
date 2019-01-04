@@ -84,53 +84,53 @@ class CustomMetricE2ESpec extends BaseE2EIntegrationSpec implements ApiExperimen
     @Unroll
     def "should create customMetric with empty strings if #fieldCase field provided"() {
         when:
-        def experiment = draftExperiment([customMetricsDefinition: customMetricsDefinition])
-
-        then:
-        experiment.customMetricsDefinition == expectedResult
-
-        where:
-        customMetricsDefinition << [
+        def experiment = draftExperiment([variantNames: ["v1", "v2"], customMetricsDefinition: [
                 [
                         name: "customMetricDefinition",
                         variant: "v1",
                         viewEventDefinition: [
-                            category: "category1",
-                            action: "action1",
-                            value: "value1",
-                            label: null,
-                            boxName: "boxName1"
-                    ],
-                    successEventDefinition: [
-                            category: "category2",
-                            action: "action2",
-                            value: "value2",
-                            label: "label2",
-                            boxName: null
-                    ]
-                ],
-                [
-                        name: "customMetricDefinition",
-                        variant: "v2",
-                        viewEventDefinition: [
                                 category: "category1",
                                 action: "action1",
                                 value: "value1",
-                                label: "",
+                                label: null,
                                 boxName: "boxName1"
                         ],
                         successEventDefinition: [
                                 category: "category2",
                                 action: "action2",
                                 value: "value2",
-                                label: "label2",
-                                boxName: ""
+                                label: null,
+                                boxName: "boxName2"
                         ]
                 ],
+                [
+                        name: "anotherCustomMetricDefinition",
+                        variant: "v2",
+                        viewEventDefinition: [
+                                category: "category3",
+                                action: "action3",
+                                value: "value3",
+                                label: "label3",
+                                boxName: ""
+                        ],
+                        successEventDefinition: [
+                                category: "category4",
+                                action: "action4",
+                                value: "value4",
+                                label: "label4",
+                                boxName: ""
+                        ]
+                ]
 
-        ]
+        ]])
 
-        expectedResult << [
+        then:
+        experiment.customMetricsDefinition == expectedResult
+
+        where:
+
+
+        expectedResult = [
                 [
                         name: "customMetricDefinition",
                         "variant": "v1",
@@ -145,8 +145,8 @@ class CustomMetricE2ESpec extends BaseE2EIntegrationSpec implements ApiExperimen
                                 category: "category2",
                                 action: "action2",
                                 value: "value2",
-                                label: "label2",
-                                boxName: ""
+                                label: "",
+                                boxName: "boxName2"
                         ]
                 ],
                 [
@@ -156,8 +156,8 @@ class CustomMetricE2ESpec extends BaseE2EIntegrationSpec implements ApiExperimen
                                 category: "category1",
                                 action: "action1",
                                 value: "value1",
-                                label: "",
-                                boxName: "boxName1"
+                                label: "label1",
+                                boxName: ""
                         ],
                         successEventDefinition: [
                                 category: "category2",
@@ -175,7 +175,7 @@ class CustomMetricE2ESpec extends BaseE2EIntegrationSpec implements ApiExperimen
     @Unroll
     def "should not create experiment if missing #missingCase in request"() {
         when:
-        draftExperiment([customMetricsDefinition: customMetricsDefinition])
+        draftExperiment([variantNames: ["v1"], customMetricsDefinition: [customMetricsDefinition]])
 
         then:
         def exception = thrown HttpClientErrorException
