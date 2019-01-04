@@ -26,7 +26,7 @@ class ScorerE2ESpec extends BaseE2EIntegrationSpec implements ApiActionUtils {
         postOffers(offers)
 
         expect:
-        offers.collect {it -> it.offerId} as Set == fetchParameters().collect {it.offer.offerId}
+        offers.collect {it -> it.offerId} as Set == fetchParameters().collect {it.offer.offerId} as Set
     }
 
     def "should keep default parameter value equal DEFAULT_PARAMETER_VALUE"() {
@@ -34,8 +34,8 @@ class ScorerE2ESpec extends BaseE2EIntegrationSpec implements ApiActionUtils {
         postOffers(randomOffers())
 
         when:
-        def parametersAlpha = fetchParameters().collect {it.prior.alpha} as Set
-        def parametersBeta = fetchParameters().collect {it.prior.beta} as Set
+        def parametersAlpha = fetchParameters().collect {it.parameters.alpha} as Set
+        def parametersBeta = fetchParameters().collect {it.parameters.beta} as Set
 
         then:
         parametersAlpha == [DEFAULT_PARAMETER_VALUE] as Set
@@ -116,7 +116,7 @@ class ScorerE2ESpec extends BaseE2EIntegrationSpec implements ApiActionUtils {
         postOffers(offers)
 
         and:
-        def definedParameters = randomOffers(120).collect {offer -> [
+        def definedParameters = offers.collect {offer -> [
                 offer: offer,
                 parameters: [
                         alpha: 80,
@@ -128,7 +128,7 @@ class ScorerE2ESpec extends BaseE2EIntegrationSpec implements ApiActionUtils {
         updateParameters(definedParameters)
 
         when:
-        updateParameters(randomOffers(120).collect {offer -> [
+        updateParameters(offers.collect {offer -> [
                 offer: offer,
                 parameters: [
                         alpha: 90,
@@ -143,7 +143,7 @@ class ScorerE2ESpec extends BaseE2EIntegrationSpec implements ApiActionUtils {
         updateParameters([])
 
         then:
-        fetchParameters().every {it -> it.parameters.alpha == 1 && it.parameters.beta == 1}
+        fetchParameters().every {it -> it.parameters.alpha == DEFAULT_PARAMETER_VALUE && it.parameters.beta == DEFAULT_PARAMETER_VALUE}
     }
 
     def updateParameters(List newParameters) {

@@ -11,11 +11,11 @@ import java.util.Set;
 
 @Repository
 public class MongoOfferRepository implements OfferRepository {
-    private final MongoExperimentOfferRepository experimentOfferRepository;
+    private final MongoScorerContainerRepository scorerContainerRepository;
 
     public MongoOfferRepository(
-            MongoExperimentOfferRepository experimentOfferRepository) {
-        this.experimentOfferRepository = experimentOfferRepository;
+            MongoScorerContainerRepository scorerContainerRepository) {
+        this.scorerContainerRepository = scorerContainerRepository;
     }
 
     @Override
@@ -23,13 +23,13 @@ public class MongoOfferRepository implements OfferRepository {
         if (offers.size() > 200) {
             throw new ToManyOffersException();
         }
-        ExperimentOffer offerExperiment = experimentOfferRepository.get();
-        experimentOfferRepository.save(offerExperiment
+        ScorerContainer scorerContainer = scorerContainerRepository.get();
+        scorerContainerRepository.save(scorerContainer
                 .withOffers(ImmutableList.copyOf(offers)));
     }
 
     @Override
     public List<Offer> all() {
-        return ImmutableList.copyOf(experimentOfferRepository.get().getOffers());
+        return ImmutableList.copyOf(scorerContainerRepository.get().getOffers());
     }
 }
