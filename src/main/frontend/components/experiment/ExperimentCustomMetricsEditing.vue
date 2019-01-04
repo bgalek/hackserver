@@ -39,7 +39,7 @@
               <v-checkbox
                 label="Assign to all variants"
                 v-model="isMetricAssignedToAllVariants"
-                :disabled="haveOnlyBaseVariant()"
+                :disabled="haveOnlyBaseVariant() || items.length > 0"
               ></v-checkbox>
             </v-flex>
           </v-layout>
