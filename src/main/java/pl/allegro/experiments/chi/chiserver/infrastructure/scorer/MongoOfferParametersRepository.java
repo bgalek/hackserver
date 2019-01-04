@@ -5,7 +5,7 @@ import org.springframework.stereotype.Repository;
 import pl.allegro.experiments.chi.chiserver.domain.scorer.Offer;
 import pl.allegro.experiments.chi.chiserver.domain.scorer.OfferParameters;
 import pl.allegro.experiments.chi.chiserver.domain.scorer.OfferParametersRepository;
-import pl.allegro.experiments.chi.chiserver.domain.scorer.Parameters;
+import pl.allegro.experiments.chi.chiserver.domain.scorer.BetaDistributionParameters;
 
 import java.util.*;
 
@@ -23,7 +23,7 @@ public class MongoOfferParametersRepository implements OfferParametersRepository
         List<Offer> offers = scorerContainer.getOffers();
         Map<Offer, OfferParameters> result = new HashMap<>();
         for (Offer offer: offers) {
-            result.put(offer, new OfferParameters(offer, Parameters.defaultParameters()));
+            result.put(offer, new OfferParameters(offer, BetaDistributionParameters.defaultParameters()));
         }
         for (OfferParameters override: scorerContainer.getOffersParameters()) {
             if (result.containsKey(override.getOffer())) {

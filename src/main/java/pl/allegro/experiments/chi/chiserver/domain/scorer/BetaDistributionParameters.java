@@ -3,12 +3,12 @@ package pl.allegro.experiments.chi.chiserver.domain.scorer;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-public class Parameters {
+public class BetaDistributionParameters {
     private final int alpha;
     private final int beta;
 
     @JsonCreator
-    public Parameters(
+    public BetaDistributionParameters(
             @JsonProperty("alpha") int alpha,
             @JsonProperty("beta") int beta) {
         this.alpha = alpha;
@@ -23,7 +23,7 @@ public class Parameters {
         return beta;
     }
 
-    public static Parameters defaultParameters() {
-        return new Parameters(1, 1);
+    public static BetaDistributionParameters defaultParameters() {
+        return new BetaDistributionParameters(1, 1);
     }
 }

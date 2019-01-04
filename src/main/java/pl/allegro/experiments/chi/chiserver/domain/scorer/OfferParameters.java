@@ -6,12 +6,12 @@ import com.google.common.base.Preconditions;
 
 public class OfferParameters {
     private final Offer offer;
-    private final Parameters parameters;
+    private final BetaDistributionParameters parameters;
 
     @JsonCreator
     public OfferParameters(
             @JsonProperty("offer") Offer offer,
-            @JsonProperty("parameters") Parameters parameters) {
+            @JsonProperty("parameters") BetaDistributionParameters parameters) {
         Preconditions.checkNotNull(offer);
         Preconditions.checkNotNull(parameters);
         this.offer = offer;
@@ -22,7 +22,7 @@ public class OfferParameters {
         return offer;
     }
 
-    public Parameters getParameters() {
+    public BetaDistributionParameters getParameters() {
         return parameters;
     }
 }
