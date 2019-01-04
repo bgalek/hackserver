@@ -9,7 +9,7 @@
         v-on:change="customMetricChange"
         v-if="!readOnly"
       ></v-switch>
-      <v-btn color="primary" class="mb-2" @click="newItem()" v-if="g()">
+      <v-btn color="primary" class="mb-2" @click="newItem()" v-if="notEveryVariantHaveCustomMetric()">
         Add custom metric
       </v-btn>
 
@@ -325,17 +325,17 @@
         handler: function (variants) {
           let v = Object.assign([], variants.variantNames)
           this.experimentVariants = v
-          this.f(this.experimentVariants)
+          this.deleteCustomMetricsWithoutVariants(this.experimentVariants)
         },
         deep: true
       }
     },
 
     methods: {
-
-      g () {
+      notEveryVariantHaveCustomMetric () {
         return this.defineCustomMetric && this.items.length < this.experimentVariants.length
       },
+
       getVariants () {
         let e = Object.assign([], this.experimentVariants)
         for (let item of this.items) {
@@ -347,7 +347,7 @@
         return e
       },
 
-      f (variants) {
+      deleteCustomMetricsWithoutVariants (variants) {
         for (let item of this.items) {
           if (!variants.includes(item.variant)) {
             this.deleteItem(item)
@@ -367,7 +367,7 @@
         })
       },
 
-      vaw () {
+      validateCustomMetrics () {
         if (this.defineCustomMetric) {
           return this.haveEveryVariantMetric()
         } else {

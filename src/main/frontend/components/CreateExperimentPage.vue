@@ -262,7 +262,7 @@
         const descValid = this.$refs.experimentDescEditing.validate()
         const variantsValid = this.$refs.experimentVariantsEditing.validate()
         const goalValid = this.$refs.experimentGoalEditing.validate()
-        const customMetricsValid = this.$refs.experimentCustomMetricsEditing.vaw()
+        const customMetricsValid = this.$refs.experimentCustomMetricsEditing.validateCustomMetrics()
         return this.$refs.createForm.validate() && goalValid &&
           descValid && variantsValid && customParamValid && customMetricsValid
       },
