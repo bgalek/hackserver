@@ -14,6 +14,7 @@ import pl.allegro.experiments.chi.chiserver.domain.experiments.administration.Ex
 import java.time.LocalDateTime;
 import java.time.ZonedDateTime;
 import java.util.*;
+import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 import static java.util.stream.Collectors.toList;
@@ -373,4 +374,6 @@ public class ExperimentDefinition {
         }
         return s;
     }
+
+
 }

@@ -57,6 +57,9 @@ public class ExperimentCreationRequest {
         Preconditions.checkArgument(variantNames != null, "experiment variantNames are null");
         Preconditions.checkArgument(percentage != null, "experiment percentage is null");
         Preconditions.checkArgument(percentage >= 0, "experiment percentage < 0");
+        if(customMetricsDefinition != null && customMetricsDefinition.size() > 0) {
+            Preconditions.checkArgument(areCustomMetricsValid(variantNames, customMetricsDefinition), "not every variant have custom metric");
+        }
         if (StringUtils.isNotBlank(customParameterName) || StringUtils.isNotBlank(customParameterValue)) {
             Preconditions.checkArgument(StringUtils.isNotBlank(customParameterName), "custom parameter name is blank");
             Preconditions.checkArgument(StringUtils.isNotBlank(customParameterValue), "custom parameter value is blank");
@@ -86,7 +89,11 @@ public class ExperimentCreationRequest {
         this.goal = goal;
         this.customMetricsDefinition = customMetricsDefinition;
 
+    }
 
+    public boolean areCustomMetricsValid(List<String> variants, List<CustomMetricDefinition> cm) {
+        var cmVariants = cm.stream().map(it -> it.getVariant()).collect(Collectors.toList());
+        return variants.stream().allMatch(it -> cmVariants.contains(it));
     }
 
     public List<String> getTags() {
