@@ -33,12 +33,13 @@ repositories {
 dependencies {
     implementation("org.springframework.boot:spring-boot-starter-web")
     implementation("org.springframework.boot:spring-boot-starter-actuator")
+    implementation("org.springframework.boot:spring-boot-starter-websocket")
     implementation("org.springframework.retry:spring-retry")
     implementation("org.springframework.boot:spring-boot-starter-data-mongodb")
     implementation("com.fasterxml.jackson.module:jackson-module-jsonSchema:2.9.8")
     implementation("org.zalando:problem-spring-web:0.22.0")
     implementation("com.github.slugify:slugify:2.3")
-
+    runtimeOnly("org.springframework.boot:spring-boot-devtools")
     runtimeOnly("de.flapdoodle.embed:de.flapdoodle.embed.mongo:2.2.0")
 
     annotationProcessor("org.springframework.boot:spring-boot-configuration-processor")

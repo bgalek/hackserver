@@ -1,6 +1,8 @@
 package pl.allegro.tech.leaders.hackathon.registration;
 
 import org.springframework.http.ResponseEntity;
+import org.springframework.messaging.handler.annotation.MessageMapping;
+import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -16,6 +18,9 @@ import java.util.stream.Collectors;
 @RequestMapping("/registration")
 class RegistrationController {
 
+    private static final String REGISTRATION_TOPIC = "/topic/registration";
+    private static final String CLIENT_CONNECTED = "/hello";
+
     private final RegistrationService registrationService;
 
     RegistrationController(RegistrationService registrationService) {
@@ -23,6 +28,8 @@ class RegistrationController {
     }
 
     @GetMapping
+    @MessageMapping(CLIENT_CONNECTED)
+    @SendTo(REGISTRATION_TOPIC)
     Set<RegisteredTeamResponse> getRegisteredTeams() {
         return registrationService.getAll()
                 .stream()
@@ -37,6 +44,4 @@ class RegistrationController {
         RegisteredTeam registeredTeam = registrationService.register(teamToRegister);
         return ResponseEntity.created(URI.create(String.format("/teams/%s", registeredTeam.getId()))).build();
     }
-
-
 }

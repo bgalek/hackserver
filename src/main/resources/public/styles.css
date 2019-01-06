@@ -1,0 +1,65 @@
+:root {
+    --spacing: 30px;
+    --active-background: #f1f7fa;
+}
+
+.navbar {
+    border-bottom: 2px solid #eee;
+    background-color: #fff;
+}
+
+.app > * {
+    height: calc(100vh - 58px);
+}
+
+.app > .teams {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    overflow-y: auto;
+}
+
+.app > .teams:empty::after {
+    content: "no teams registered";
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.app > .teams .member {
+    display: flex;
+    padding: var(--spacing);
+    align-items: center;
+    max-height: 120px;
+    border-bottom: 2px solid #eee;
+    text-decoration: none;
+    color: black;
+}
+
+.app > .teams .active .member {
+    background-color: var(--active-background);
+}
+
+.app > .teams .member > .avatar {
+    border-radius: 50%;
+    width: 64px;
+    flex: 0 0;
+}
+
+.app > .teams .member > .details {
+    flex: 1 auto;
+    padding: 0 0 0 var(--spacing);
+    display: flex;
+    flex-direction: column;
+}
+
+.app > .details {
+    padding: var(--spacing);
+    background-color: var(--active-background);
+    position: sticky;
+}
+
+[v-cloak] {
+    display: none
+}

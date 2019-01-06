@@ -11,6 +11,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
@@ -84,7 +85,7 @@ class RegistrationSpec {
                     return new ArrayList<>(storage.values());
                 }
             };
-            return new RegistrationService(teamRepository, new SimpleMeterRegistry());
+            return new RegistrationService(teamRepository, new SimpleMeterRegistry(), new RegistrationEvents(new SimpMessagingTemplate((message, timeout) -> true)));
         }
     }
 }

@@ -1,0 +1,60 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css"
+          integrity="sha384-GJzZqFGwb1QTTN6wy59ffF1BuGJpLSa9DkKMp0DgiMDm4iYMj70gZWKYbI706tWS" crossorigin="anonymous">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/vue/2.5.21/vue.min.js"></script>
+    <title>Hackserver</title>
+</head>
+<body>
+<nav class="navbar stickytop navbar-expand-lg navbar-light">
+    <a class="navbar-brand" href="#">Hackserver</a>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav"
+            aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarNav">
+        <ul class="navbar-nav">
+            <li class="nav-item active">
+                <a class="nav-link" href="#">
+                    Teams <span class="sr-only">(current)</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="#">
+                    Other
+                </a>
+            </li>
+
+        </ul>
+    </div>
+</nav>
+<div class="container-fluid">
+    <div class="app row">
+        <ul class="col-3 teams">
+            <li v-cloak v-for="(team,index) in teams" v-bind:id="team.name" v-bind:class="{ active: team.active }">
+                <a href="#" class="member" @click="selectTeam(team)">
+                    <img class="avatar" alt="bartosz.galek"
+                         src="https://media.licdn.com/dms/image/C4E03AQEgjIjS6YBvMw/profile-displayphoto-shrink_200_200/0?e=1551916800&v=beta&t=ypAJDMpG4W32XE6OPt57gTRs8FapMhXq3neRPH3NCsg"/>
+                    <aside class="details">
+                        <strong>{{team.name}}</strong>
+                        <small>Team</small>
+                    </aside>
+                    <i class="material-icons">chevron_right</i>
+                </a>
+            </li>
+        </ul>
+        <div class="col-9 details" id="test">
+            Team details
+        </div>
+    </div>
+</div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/sockjs-client/1.3.0/sockjs.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/stomp.js/2.3.3/stomp.min.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
