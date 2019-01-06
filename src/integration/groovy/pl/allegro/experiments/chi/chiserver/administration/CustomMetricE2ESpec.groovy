@@ -269,7 +269,7 @@ class CustomMetricE2ESpec extends BaseE2EIntegrationSpec implements ApiExperimen
         ! experiment.customMetricsDefinition
     }
 
-    def "should not create experiment if custom metric is defined only for part of variants"() {
+    def "should not create experiment if is not defined for all variants"() {
         when:
         draftExperiment([variantNames: ["v1", "v2", "v3"], customMetricsDefinition: [
                 metricName: "customMetricDefinition",

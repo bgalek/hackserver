@@ -374,6 +374,4 @@ public class ExperimentDefinition {
         }
         return s;
     }
-
-
 }
