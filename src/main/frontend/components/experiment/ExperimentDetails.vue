@@ -98,7 +98,8 @@
           <v-flex xs5>Used 𝜶: </v-flex><v-flex xs5>{{ experiment.usedAlpha() }}</v-flex>
         </v-layout>
       </div>
-      <div v-if="experiment.customMetricsDefinition && experiment.customMetricsDefinition.length > 0">
+      {{experiment.customMetricsDefinition}}
+      <div v-if="experiment.customMetricsDefinition && experiment.customMetricsDefinition.metricName">
         <h3>Custom metrics</h3>
         <experiment-custom-metrics-editing :experiment= "experiment" :read-only="true"/>
       </div>

@@ -139,7 +139,7 @@
   })
 
   export default {
-    props: ['experiment', 'selectedDevice', 'showHeader', 'haveCustomMetric'],
+    props: ['experiment', 'selectedDevice', 'showHeader', 'customMetricName'],
 
     data () {
       const initialValue = this.init(this.experiment)
@@ -204,17 +204,12 @@
         },
         deep: true
       },
-      haveCustomMetric: {
-        handler: function (customMetric) {
-          console.log(customMetric)
-          this.metrics = globalMetricsArray()
-          if (customMetric) {
-            customMetric.map(it => {
-              this.metrics.push(getMetricByKey(it.name))
-            })
-          }
-        },
-        deep: true
+
+      customMetricName (metricName) {
+        this.metrics = globalMetricsArray()
+        if (metricName) {
+          this.metrics.push(getMetricByKey(metricName))
+        }
       }
     },
 

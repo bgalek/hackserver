@@ -32,6 +32,7 @@
             <v-flex>
               <v-select label="variant" v-model="editedItem.definitionForVariant.variantName"
                             :items="getVariants()"
+                            :disabled="isMetricAssignedToAllVariants"
               ></v-select>
             </v-flex>
           </v-layout>
@@ -40,7 +41,7 @@
               <v-checkbox
                 label="Assign to all variants"
                 v-model="isMetricAssignedToAllVariants"
-                :disabled="haveOnlyBaseVariant()"
+                :disabled="haveOnlyBaseVariant() || this.items.length > 0"
               ></v-checkbox>
             </v-flex>
           </v-layout>
@@ -219,8 +220,8 @@
 
         <template slot="items" slot-scope="props">
           <td>{{ props.item.type }}</td>
-          <td>{{ props.item.name }}</td>
-          <td>{{ props.item.variant }}</td>
+          <td>{{ props.item.metricName }}</td>
+          <td>{{ props.item.definitionForVariant.variantName }}</td>
           <td>{{ props.item.boxName }}</td>
           <td>{{ props.item.category }}</td>
           <td>{{ props.item.label }}</td>
@@ -247,21 +248,23 @@
   import {containsNoSpecialCharacters} from '../../utils/containsNoSpecialCharacters'
 
   const CustomMetricDefinitionRecord = Record({
-    name: '',
-    variant: '',
-    viewEventDefinition: {
-      boxName: '',
-      category: '',
-      label: '',
-      action: '',
-      value: ''
-    },
-    successEventDefinition: {
-      boxName: '',
-      category: '',
-      label: '',
-      action: '',
-      value: ''
+    metricName: '',
+    definitionForVariant: {
+      variantName: '',
+      viewEventDefinition: {
+        boxName: '',
+        category: '',
+        label: '',
+        action: '',
+        value: ''
+      },
+      successEventDefinition: {
+        boxName: '',
+        category: '',
+        label: '',
+        action: '',
+        value: ''
+      }
     }
   })
 
@@ -292,8 +295,8 @@
         editedIndex: -1,
         headers: [
           {text: 'Type', value: 'type', align: 'left', sortable: false},
-          {text: 'Name', value: 'name', align: 'left', sortable: false},
-          {text: 'Variant', value: 'variant', align: 'left', sortable: false},
+          {text: 'Name', value: 'metricName', align: 'left', sortable: false},
+          {text: 'Variant', value: 'variantName', align: 'left', sortable: false},
           {text: 'BoxName', value: 'boxName', align: 'left', sortable: false},
           {text: 'Category', value: 'category', align: 'left', sortable: false},
           {text: 'Label', value: 'label', align: 'left', sortable: false},
@@ -345,32 +348,32 @@
       },
 
       getVariants () {
-        let e = Object.assign([], this.experimentVariants)
+        let variants = Object.assign([], this.experimentVariants)
         for (let item of this.items) {
-          if (e.includes(item.variant)) {
-            const index = this.experimentVariants.indexOf(item.variant)
-            e.splice(index, 1)
+          if (variants.includes(item.definitionForVariant.variantName)) {
+            const index = variants.indexOf(item.definitionForVariant.variantName)
+            variants.splice(index, 1)
           }
         }
-        return e
+        return variants
       },
 
       deleteCustomMetricsWithoutVariants (variants) {
         for (let item of this.items) {
-          if (!variants.includes(item.variant)) {
+          if (!variants.includes(item.definitionForVariant.variantName)) {
             this.deleteItem(item)
           }
         }
       },
 
       haveOnlyBaseVariant () {
-        return (this.experimentVariants.length <= 1)
+        return this.experimentVariants.length <= 1
       },
 
       haveEveryVariantMetric () {
         return this.experimentVariants.every(experiment => {
           return this.items.some(it => {
-            return it.variant === experiment
+            return it.definitionForVariant.variantName === experiment
           })
         })
       },
@@ -387,34 +390,40 @@
         if (!this.experiment || !this.experiment.customMetricsDefinition) {
           return []
         }
-        return this.experiment.customMetricsDefinition
+        let metricName = this.experiment.customMetricsDefinition.definitionForVariant[0].metricName
+        let items = []
+        this.experiment.customMetricsDefinition.definitionForVariant.map(it => {
+          items.push({
+            metricName: metricName,
+            definitionForVariant: it
+          })
+        })
+        return items
       },
 
       customMetricChange (val) {
         if (val === false) {
           this.items = []
           this.metricName = ''
-          this.onDefineCustomMetricChange(false)
         }
       },
 
       getItemsForTable () {
         let items = []
         for (let item of this.items) {
-          console.log(item)
-          console.log(item.definitionForVariant.variantName)
           let viewEventDefinition = Object.assign({}, item.definitionForVariant.viewEventDefinition)
+          viewEventDefinition.definitionForVariant = Object.assign({}, item.definitionForVariant)
           viewEventDefinition.type = 'View event'
           viewEventDefinition.metricName = item.metricName
-          // viewEventDefinition.definitionForVariant.variantName = item.definitionForVariant.variantName
+          viewEventDefinition.definitionForVariant.variantName = item.definitionForVariant.variantName
           let successEventDefinition = Object.assign({}, item.definitionForVariant.successEventDefinition)
+          successEventDefinition.definitionForVariant = Object.assign({}, item.definitionForVariant)
           successEventDefinition.type = 'Success event'
           successEventDefinition.metricName = item.metricName
-          // successEventDefinition.definitionForVariant.variantName = item.definitionForVariant.variantName
+          successEventDefinition.definitionForVariant.variantName = item.definitionForVariant.variantName
           items.push(viewEventDefinition)
           items.push(successEventDefinition)
         }
-        console.log(items)
         return items
       },
 
@@ -454,6 +463,7 @@
         this.editing = true
         this.editedIndex = 0
         this.editedItem.metricName = this.metricName
+
         this.editedItem.definitionForVariant.variantName = item.definitionForVariant.variantName
         this.editedItem.definitionForVariant.viewEventDefinition = Object.assign({}, item.definitionForVariant.viewEventDefinition)
         this.editedItem.definitionForVariant.successEventDefinition = Object.assign({}, item.definitionForVariant.successEventDefinition)
@@ -478,11 +488,10 @@
             this.items.push(this.editedItem)
           }
           this.metricName = this.editedItem.metricName
-          console.log(this.editedItem)
-          this.onDefineCustomMetricChange(this.editedItem)
           if (this.isMetricAssignedToAllVariants) {
             this.assignMetricToAllVariants(this.editedItem)
           }
+          this.isMetricAssignedToAllVariants = false
           this.close()
         } else {
           this.error = 'You have to fulfil at least 2 fields in each event'
@@ -494,41 +503,43 @@
       },
 
       buildResult (value) {
-        return new CustomMetricDefinitionRecord({
-          metricName: value[0].metricName,
+        if (!value) {
+          return List()
+        }
+        return List(value.map(item => new CustomMetricDefinitionRecord({
+          metricName: item.metricName,
           definitionForVariant: {
-            variantName: value[0].definitionForVariant.variantName,
-            successEventDefinition: {
-              boxName: value[0].definitionForVariant.successEventDefinition.boxName,
-              category: value[0].definitionForVariant.successEventDefinition.category,
-              label: value[0].definitionForVariant.successEventDefinition.label,
-              action: value[0].definitionForVariant.successEventDefinition.action,
-              item: value[0].definitionForVariant.successEventDefinition.item
-            },
+            variantName: item.definitionForVariant.variantName,
             viewEventDefinition: {
-              boxName: value[0].definitionForVariant.viewEventDefinition.boxName,
-              category: value[0].definitionForVariant.viewEventDefinition.category,
-              label: value[0].definitionForVariant.viewEventDefinition.label,
-              action: value[0].definitionForVariant.viewEventDefinition.action,
-              item: value[0].definitionForVariant.viewEventDefinition.item
+              boxName: item.definitionForVariant.viewEventDefinition.boxName,
+              category: item.definitionForVariant.viewEventDefinition.category,
+              label: item.definitionForVariant.viewEventDefinition.label,
+              action: item.definitionForVariant.viewEventDefinition.action,
+              item: item.definitionForVariant.viewEventDefinition.item,
+              value: item.definitionForVariant.viewEventDefinition.value
+            },
+            successEventDefinition: {
+              boxName: item.definitionForVariant.successEventDefinition.boxName,
+              category: item.definitionForVariant.successEventDefinition.category,
+              label: item.definitionForVariant.successEventDefinition.label,
+              action: item.definitionForVariant.successEventDefinition.action,
+              item: item.definitionForVariant.successEventDefinition.item,
+              value: item.definitionForVariant.successEventDefinition.value
             }
           }
-        })
+        })))
       },
 
       buildResultFromValue () {
         return this.buildResult(this.items)
       },
 
-      onDefineCustomMetricChange (newVal) {
-        this.$emit('customMetric', newVal)
-      },
-
       assignMetricToAllVariants (metric) {
         this.deleteItem(metric)
         for (let variant of this.experimentVariants) {
           let e = Object.assign({}, metric)
-          e.variant = variant
+          e.definitionForVariant = Object.assign({}, metric.definitionForVariant)
+          e.definitionForVariant.variantName = variant
           this.items.push(e)
         }
       }

@@ -70,18 +70,16 @@
                     ref="experimentCustomMetricsEditing"
                     v-model="customMetricsDefinition"
                     :showHeader="true"
-                    :variants="variants"
-                    v-on:customMetric="customMetric"/>
+                    :variants="variants"/>
                 </v-flex>
 
               </v-layout>
             </v-container>
-
             <experiment-goal-editing ref="experimentGoalEditing"
                                      v-model="goal"
                                      :selectedDevice="this.variants && this.variants.deviceClass"
                                      :showHeader="true"
-                                     :haveCustomMetric="customMetricsDefinition"/>
+                                     :customMetricName="getCustomMetricName()"/>
 
             <experiment-custom-parameter-editing ref="experimentCustomParamEditing"
                                                  v-model="customParameter"
@@ -202,7 +200,7 @@
         reportingType: 'BACKEND',
         availableReportingTypes: ['BACKEND', 'FRONTEND'],
         eventDefinitions: [],
-        customMetricsDefinition: []
+        customMetricsDefinition: null
       }
     },
 
@@ -283,9 +281,6 @@
         this.sendingDataToServer = true
       },
 
-      customMetric (val) {
-        this.customMetricsDefinition.push(val)
-      },
 
       notSending () {
         this.sendingDataToServer = false
@@ -293,6 +288,24 @@
 
       isExperimentIdUnique () {
         return _.find(this.$store.state.experiments.experiments, e => e.id === this.experimentIdSlug) === undefined
+      },
+
+      getCustomMetricName() {
+        return this.customMetricsDefinition ? this.customMetricsDefinition.toArray()[0].metricName : undefined
+      },
+
+      getCustomMetrics () {
+        if(!this.customMetricsDefinition) {
+          return null
+        }
+        let customMetrics = this.customMetricsDefinition.toJSON()
+        let obj = {}
+        obj.metricName = customMetrics[0].metricName
+        obj.definitionForVariant = []
+        customMetrics.map(it => {
+          obj.definitionForVariant.push(it.definitionForVariant)
+        })
+        return obj
       },
 
       getExperimentDataToSend () {
@@ -312,7 +325,7 @@
           reportingType: this.reportingType,
           eventDefinitions: this.eventDefinitions,
           goal: this.goal,
-          customMetricsDefinition: this.customMetricsDefinition
+          customMetricsDefinition: this.getCustomMetrics()
         }
 
         return experimentCreationRequest
