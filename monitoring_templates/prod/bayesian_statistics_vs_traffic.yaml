@@ -1,0 +1,19 @@
+channels:
+  pagerduty:
+    pagerduty_alert:
+      incident_format: Missing bayesian statistics for more than 5 live experiments
+
+sources:
+  graphite:
+    lost_rate:
+      metric: diffSeries(sum(offset(scale(removeBelowValue(groupByNodes(stats.experiments.chi.chi-server.*.interactions.received-by-experiment.*.m1_rate,'sum',7),0.01),0),1)),avg(stats.experiments.chi.chi-server.*.statistics.bayesian.count-by-experiment))
+
+checks:
+  lost_rate:
+    sources: ['lost_rate']
+    frequency: 1
+    triggers:
+      - rule: lost_rate.values > 5
+        debounce: 10
+        severity: critical
+        notify: ['pagerduty_alert']
