@@ -146,6 +146,18 @@ class ScorerE2ESpec extends BaseE2EIntegrationSpec implements ApiActionUtils {
         fetchParameters().every {it -> it.parameters.alpha == DEFAULT_PARAMETER_VALUE && it.parameters.beta == DEFAULT_PARAMETER_VALUE}
     }
 
+    def "should return empty list from deprecated /scores endpoint"() {
+        given:
+        def offers = randomOffers()
+        postOffers(offers)
+
+        when:
+        def scores = get('/api/scorer/scores').body as List
+
+        then:
+        scores == []
+    }
+
     def updateParameters(List newParameters) {
         post('api/scorer/parameters', prepareParametersRequest(newParameters))
     }

@@ -13,6 +13,7 @@ import pl.allegro.tech.common.andamio.errors.ErrorsHolder;
 import pl.allegro.tech.common.andamio.errors.SimpleErrorsHolder;
 import pl.allegro.tech.common.andamio.metrics.MeteredEndpoint;
 
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 
@@ -48,6 +49,14 @@ public class OfferScorerController {
     @GetMapping(path = {"/parameters"})
     List<OfferParameters> parameters() {
         return offerParametersRepository.all();
+    }
+
+    @Deprecated
+    @MeteredEndpoint
+    @GetMapping(path = {"/scores"})
+    List<OfferParameters> scores() {
+        // grouper still uses client that require /scores endpoint
+        return Collections.emptyList();
     }
 
     @MeteredEndpoint
