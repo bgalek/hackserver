@@ -395,7 +395,7 @@
         if (!this.experiment || !this.experiment.customMetricDefinition) {
           return []
         }
-        let metricName = this.experiment.customMetricDefinition.definitionForVariants[0].metricName
+        let metricName = this.experiment.customMetricDefinition.metricName
         let items = []
         this.experiment.customMetricDefinition.definitionForVariants.map(it => {
           items.push({
