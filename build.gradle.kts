@@ -16,7 +16,7 @@ plugins {
 }
 
 application {
-    mainClassName = "pl.allegro.tech.leaders.HackathonServer"
+    mainClassName = "pl.allegro.tech.leaders.hackathon.HackathonServer"
 }
 
 java {
@@ -40,7 +40,6 @@ dependencies {
     implementation("org.zalando:problem-spring-web:0.22.0")
     implementation("com.github.slugify:slugify:2.3")
     runtimeOnly("org.springframework.boot:spring-boot-devtools")
-    runtimeOnly("de.flapdoodle.embed:de.flapdoodle.embed.mongo:2.2.0")
 
     annotationProcessor("org.springframework.boot:spring-boot-configuration-processor")
 
@@ -48,4 +47,5 @@ dependencies {
     testImplementation("org.junit.jupiter:junit-jupiter-api:5.2.0")
     testCompile("org.junit.jupiter:junit-jupiter-params:5.2.0")
     testRuntime("org.junit.jupiter:junit-jupiter-engine:5.2.0")
+    testRuntime("de.flapdoodle.embed:de.flapdoodle.embed.mongo:2.2.0")
 }
