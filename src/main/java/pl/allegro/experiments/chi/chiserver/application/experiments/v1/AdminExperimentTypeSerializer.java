@@ -5,7 +5,6 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonSerializationContext;
 import com.google.gson.JsonSerializer;
 import pl.allegro.experiments.chi.chiserver.application.experiments.AdminExperiment;
-import pl.allegro.experiments.chi.chiserver.domain.experiments.CustomMetricDefinition;
 import pl.allegro.experiments.chi.chiserver.domain.experiments.ExperimentGoal;
 import pl.allegro.experiments.chi.chiserver.domain.experiments.groups.ExperimentGroup;
 
@@ -46,19 +45,10 @@ public class AdminExperimentTypeSerializer implements JsonSerializer<AdminExperi
         if (src.getLastStatusChange() != null) {
             jsonObject.add("lastStatusChange", context.serialize(src.getLastStatusChange()));
         }
-        src.getCustomMetricDefinition().ifPresent(cmd -> jsonObject.add("customMetricDefinition", serializeCustomMetricDefinition(cmd, context)));
+        jsonObject.add("customMetricDefinition", context.serialize(src.getCustomMetricDefinition()));
+
         src.getGoal().ifPresent(goal -> jsonObject.add("goal", serializeExperimentGoal(goal, context)));
         return jsonObject;
-    }
-
-
-    private JsonObject serializeCustomMetricDefinition(CustomMetricDefinition cmd, JsonSerializationContext context) {
-        JsonObject jsonObject = new JsonObject();
-        jsonObject.addProperty("name", cmd.getName());
-        jsonObject.add("successEventDefinition", context.serialize(cmd.getSuccessEventDefinition()));
-        jsonObject.add("viewEventDefinition", context.serialize(cmd.getViewEventDefinition()));
-        return jsonObject;
-
     }
 
     private JsonObject serializeExperimentGoal(ExperimentGoal goal, JsonSerializationContext context) {

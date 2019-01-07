@@ -5,17 +5,22 @@ import org.javers.common.exception.JaversException
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.data.mongodb.core.MongoTemplate
 import pl.allegro.experiments.chi.chiserver.BaseIntegrationSpec
+import pl.allegro.experiments.chi.chiserver.domain.experiments.CustomMetricDefinition
 import pl.allegro.experiments.chi.chiserver.domain.experiments.CustomParameter
 import pl.allegro.experiments.chi.chiserver.domain.experiments.DeviceClass
 import pl.allegro.experiments.chi.chiserver.domain.experiments.EventDefinition
+import pl.allegro.experiments.chi.chiserver.domain.experiments.EventDefinitionForVariant
 import pl.allegro.experiments.chi.chiserver.domain.experiments.ExperimentGoal
 import pl.allegro.experiments.chi.chiserver.domain.experiments.ExperimentStatus
 import pl.allegro.experiments.chi.chiserver.domain.experiments.ExperimentsRepository
 import pl.allegro.experiments.chi.chiserver.domain.experiments.ReportingDefinition
 import pl.allegro.experiments.chi.chiserver.domain.experiments.ReportingType
 
+import java.time.LocalDateTime
 import java.time.ZonedDateTime
+import java.time.format.DateTimeFormatter
 
+import static java.time.format.DateTimeFormatter.*
 import static pl.allegro.experiments.chi.chiserver.domain.experiments.ExperimentDefinitionBuilder.experimentDefinition
 
 class MongoExperimentsRepositoryIntegrationSpec extends BaseIntegrationSpec {
@@ -55,6 +60,13 @@ class MongoExperimentsRepositoryIntegrationSpec extends BaseIntegrationSpec {
                 .reportingDefinition(new ReportingDefinition([new EventDefinition('c','a','v','l','b')], ReportingType.FRONTEND))
                 .deviceClass(DeviceClass.phone_android)
                 .customParameter(new CustomParameter('k','v'))
+                .customMetricDefinition(new CustomMetricDefinition('CTR',[
+                    new EventDefinitionForVariant('base', new EventDefinition('c_base_view','a_base_view','v_base_view','l_base_view','b_base_view'),
+                                                          new EventDefinition('c_base_success','a_base_success','v_base_success','l_base_success','b_base_success'))
+                    ,
+                    new EventDefinitionForVariant('v1', new EventDefinition('c_v1_view','a_v1_view','v_v1_view','l_v1_view','b_v1_view'),
+                                                        new EventDefinition('c_v1_success','a_v1_success','v_v1_success','l_v1_success','b_v1_success'))
+                ]))
                 .goal(new ExperimentGoal.Hypothesis("tx_visit", 2),
                       new ExperimentGoal.TestConfiguration(5, 0.05, 0.8, 100_000, 44))
                 .build()
@@ -85,6 +97,17 @@ class MongoExperimentsRepositoryIntegrationSpec extends BaseIntegrationSpec {
         loaded.goal.get().testConfiguration.get().requiredSampleSize == 100_000
         loaded.goal.get().testConfiguration.get().testAlpha == 0.05
         loaded.goal.get().testConfiguration.get().testPower == 0.8
+        loaded.customMetricDefinition.name == 'CTR'
+        with(loaded.customMetricDefinition.definitionForVariants[0]) {
+            variantName == 'base'
+            viewEventDefinition == new EventDefinition('c_base_view','a_base_view','v_base_view','l_base_view','b_base_view')
+            successEventDefinition == new EventDefinition('c_base_success','a_base_success','v_base_success','l_base_success','b_base_success')
+        }
+        with(loaded.customMetricDefinition.definitionForVariants[1]) {
+            variantName == 'v1'
+            viewEventDefinition == new EventDefinition('c_v1_view','a_v1_view','v_v1_view','l_v1_view','b_v1_view')
+            successEventDefinition == new EventDefinition('c_v1_success','a_v1_success','v_v1_success','l_v1_success','b_v1_success')
+        }
 
         when:
         Document doc = mongoTemplate.findById(experiment.id, Document, "experimentDefinitions")
@@ -94,8 +117,8 @@ class MongoExperimentsRepositoryIntegrationSpec extends BaseIntegrationSpec {
         doc.get('variantNames') == ['base', 'v1']
         doc.get('percentage') == 10
         doc.get('groups') == ['a','b']
-        doc.get('activityPeriod').getString('activeFrom') == trim(from).toString()
-        doc.get('activityPeriod').getString('activeTo') == trim(to).toString()
+        doc.get('activityPeriod').getString('activeFrom') == serialize(trim(from))
+        doc.get('activityPeriod').getString('activeTo') == serialize(trim(to))
         doc.getString('internalVariantName') == 'v1'
         doc.getString('fullOnVariantName') == 'base'
         doc.getString('explicitStatus') == 'FULL_ON'
@@ -125,6 +148,35 @@ class MongoExperimentsRepositoryIntegrationSpec extends BaseIntegrationSpec {
             assert it.getString ('testPower') == '0.80'
             assert it.get ('currentSampleSize') == 44
         }
+        with(doc.get('customMetricDefinition')) {
+            assert it.metricName == 'CTR'
+            with(it.get('definitionForVariants')[0]) {
+                it.variantName == 'base'
+                it.get ('viewEventDefinition')['category'] == 'c_base_view'
+                it.get ('viewEventDefinition')['action'] ==   'a_base_view'
+                it.get ('viewEventDefinition')['value'] ==    'v_base_view'
+                it.get ('viewEventDefinition')['label'] ==    'l_base_view'
+                it.get ('viewEventDefinition')['boxName'] ==  'b_base_view'
+                it.get ('successEventDefinition')['category'] == 'c_base_success'
+                it.get ('successEventDefinition')['action'] ==   'a_base_success'
+                it.get ('successEventDefinition')['value'] ==    'v_base_success'
+                it.get ('successEventDefinition')['label'] ==    'l_base_success'
+                it.get ('successEventDefinition')['boxName'] ==  'b_base_success'
+            }
+            with(it.get('definitionForVariants')[1]) {
+                it.variantName == 'v1'
+                it.get ('viewEventDefinition')['category'] == 'c_v1_view'
+                it.get ('viewEventDefinition')['action'] ==   'a_v1_view'
+                it.get ('viewEventDefinition')['value'] ==    'v_v1_view'
+                it.get ('viewEventDefinition')['label'] ==    'l_v1_view'
+                it.get ('viewEventDefinition')['boxName'] ==  'b_v1_view'
+                it.get ('successEventDefinition')['category'] == 'c_v1_success'
+                it.get ('successEventDefinition')['action'] ==   'a_v1_success'
+                it.get ('successEventDefinition')['value'] ==    'v_v1_success'
+                it.get ('successEventDefinition')['label'] ==    'l_v1_success'
+                it.get ('successEventDefinition')['boxName'] ==  'b_v1_success'
+            }
+        }
     }
 
     def "should remove experiments not tracked by javers"() {
@@ -148,5 +200,9 @@ class MongoExperimentsRepositoryIntegrationSpec extends BaseIntegrationSpec {
 
     private ZonedDateTime trim(ZonedDateTime date) {
         date.withNano(0).withFixedOffsetZone()
+    }
+
+    private String serialize(ZonedDateTime date) {
+        return date.format(ISO_ZONED_DATE_TIME)
     }
 }

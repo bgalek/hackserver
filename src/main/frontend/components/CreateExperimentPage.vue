@@ -70,17 +70,16 @@
                     ref="experimentCustomMetricsEditing"
                     v-model="customMetricDefinition"
                     :showHeader="true"
-                    v-on:customMetric="customMetric"/>
+                    :variants="variants"/>
                 </v-flex>
 
               </v-layout>
             </v-container>
-
             <experiment-goal-editing ref="experimentGoalEditing"
                                      v-model="goal"
                                      :selectedDevice="this.variants && this.variants.deviceClass"
                                      :showHeader="true"
-                                     :haveCustomMetric="customMetricDefinition"/>
+                                     :customMetricName="getCustomMetricName()"/>
 
             <experiment-custom-parameter-editing ref="experimentCustomParamEditing"
                                                  v-model="customParameter"
@@ -201,11 +200,7 @@
         reportingType: 'BACKEND',
         availableReportingTypes: ['BACKEND', 'FRONTEND'],
         eventDefinitions: [],
-        customMetricDefinition: {
-          name: '',
-          viewEventDefinition: {},
-          successEventDefinition: {}
-        }
+        customMetricDefinition: null
       }
     },
 
@@ -265,9 +260,9 @@
         const descValid = this.$refs.experimentDescEditing.validate()
         const variantsValid = this.$refs.experimentVariantsEditing.validate()
         const goalValid = this.$refs.experimentGoalEditing.validate()
-
+        const customMetricsValid = this.$refs.experimentCustomMetricsEditing.validateCustomMetrics()
         return this.$refs.createForm.validate() && goalValid &&
-          descValid && variantsValid && customParamValid
+          descValid && variantsValid && customParamValid && customMetricsValid
       },
 
       setPermissionsError () {
@@ -286,16 +281,30 @@
         this.sendingDataToServer = true
       },
 
-      customMetric (val) {
-        this.customMetricDefinition = val
-      },
-
       notSending () {
         this.sendingDataToServer = false
       },
 
       isExperimentIdUnique () {
         return _.find(this.$store.state.experiments.experiments, e => e.id === this.experimentIdSlug) === undefined
+      },
+
+      getCustomMetricName () {
+        return this.customMetricDefinition ? this.customMetricDefinition.toArray()[0].metricName : undefined
+      },
+
+      getCustomMetrics () {
+        if (!this.customMetricDefinition) {
+          return null
+        }
+        let customMetrics = this.customMetricDefinition.toJSON()
+        let obj = {}
+        obj.metricName = customMetrics[0].metricName
+        obj.definitionForVariants = []
+        customMetrics.map(it => {
+          obj.definitionForVariants.push(it.definitionForVariants)
+        })
+        return obj
       },
 
       getExperimentDataToSend () {
@@ -315,7 +324,7 @@
           reportingType: this.reportingType,
           eventDefinitions: this.eventDefinitions,
           goal: this.goal,
-          customMetricDefinition: this.customMetricDefinition
+          customMetricDefinition: this.getCustomMetrics()
         }
 
         return experimentCreationRequest

@@ -36,3 +36,4 @@ src/main/frontend/package-lock.json
 
 # Editor directories and files
 *.swp
+/GitCommitMessage.template

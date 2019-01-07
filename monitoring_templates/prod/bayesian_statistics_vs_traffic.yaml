@@ -5,15 +5,15 @@ channels:
 
 sources:
   graphite:
-    lost_rate:
+    bayes_lost_rate:
       metric: diffSeries(sum(offset(scale(removeBelowValue(groupByNodes(stats.experiments.chi.chi-server.*.interactions.received-by-experiment.*.m1_rate,'sum',7),0.01),0),1)),avg(stats.experiments.chi.chi-server.*.statistics.bayesian.count-by-experiment))
 
 checks:
-  lost_rate:
-    sources: ['lost_rate']
+  bayes_lost_rate:
+    sources: ['bayes_lost_rate']
     frequency: 1
     triggers:
-      - rule: lost_rate.values > 5
+      - rule: bayes_lost_rate.values > 5
         debounce: 10
         severity: critical
         notify: ['pagerduty_alert']

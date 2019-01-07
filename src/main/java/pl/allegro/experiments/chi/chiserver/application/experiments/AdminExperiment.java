@@ -141,5 +141,5 @@ public class AdminExperiment {
         return experimentDefinition.getLastStatusChange();
     }
 
-    public Optional<CustomMetricDefinition> getCustomMetricDefinition() { return experimentDefinition.getCustomMetricDefinition(); }
+    public CustomMetricDefinition getCustomMetricDefinition() { return experimentDefinition.getCustomMetricDefinition(); }
 }

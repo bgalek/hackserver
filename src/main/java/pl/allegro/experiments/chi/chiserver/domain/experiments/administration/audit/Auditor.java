@@ -22,7 +22,6 @@ public class Auditor {
         final JqlQuery query = QueryBuilder
                 .byInstanceId(experimentId, ExperimentDefinition.class)
                 .withChildValueObjects()
-                .withNewObjectChanges()
                 .build();
         final List<Change> allChanges = javers.findChanges(query);
         final List<CommitDetails> changes = javers.processChangeList(allChanges, new ChangeLogProcessor(zoneId));

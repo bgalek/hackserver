@@ -4,28 +4,24 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.common.base.Preconditions;
 
+import java.util.List;
+
 public class CustomMetricDefinition {
-    private final String name;
-    private final EventDefinition viewEventDefinition;
-    private final EventDefinition successEventDefinition;
+    private final String metricName;
+    private final List<EventDefinitionForVariant> definitionForVariants;
 
     @JsonCreator
     public CustomMetricDefinition(
-            @JsonProperty("name") String name,
-            @JsonProperty("viewEventDefinition") EventDefinition viewEventDefinition,
-            @JsonProperty("successEventDefinition") EventDefinition successEventDefinition) {
-        Preconditions.checkNotNull(name);
-        Preconditions.checkNotNull(viewEventDefinition);
-        Preconditions.checkNotNull(successEventDefinition);
-        this.name = name;
-        this.viewEventDefinition = viewEventDefinition;
-        this.successEventDefinition = successEventDefinition;
+            @JsonProperty("metricName") String metricName,
+            @JsonProperty("definitionForVariants") List<EventDefinitionForVariant> definitionForVariants) {
+        Preconditions.checkNotNull(metricName);
+        Preconditions.checkNotNull(definitionForVariants);
+        this.metricName = metricName;
+        this.definitionForVariants = definitionForVariants;
 
     }
 
-    public String getName() { return name; }
+    public String getName() { return metricName; }
 
-    public EventDefinition getViewEventDefinition() { return viewEventDefinition; }
-
-    public EventDefinition getSuccessEventDefinition() { return  successEventDefinition; }
+    public List<EventDefinitionForVariant> getDefinitionForVariants() { return  definitionForVariants; }
 }
