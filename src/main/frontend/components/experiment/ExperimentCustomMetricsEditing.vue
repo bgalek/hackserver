@@ -210,6 +210,10 @@
       </v-form>
     </v-dialog>
 
+    <div v-if="metricName" class="mt-3">
+      <b>Metric name</b>: {{metricName}}
+    </div>
+
     <v-data-table
         v-if="defineCustomMetric || readOnly"
         :headers="headers"
@@ -238,9 +242,7 @@
     <div class="error--text" v-if="defineCustomMetric && !haveEveryVariantMetric()">
       You have to define custom metric for every variant.
     </div>
-    <div v-if="metricName" class="mt-3">
-      Metric name: {{metricName}}
-    </div>
+
   </div>
 </template>
 
@@ -296,7 +298,7 @@
         },
         editedIndex: -1,
         headers: [
-          {text: 'Type', value: 'type', align: 'left', sortable: false},
+          {text: 'Event type', value: 'type', align: 'left', sortable: false},
           {text: 'Variant', value: 'variantName', align: 'left', sortable: false},
           {text: 'BoxName', value: 'boxName', align: 'left', sortable: false},
           {text: 'Category', value: 'category', align: 'left', sortable: false},
@@ -425,12 +427,12 @@
         for (let item of this.items) {
           let viewEventDefinition = Object.assign({}, item.definitionForVariants.viewEventDefinition)
           viewEventDefinition.definitionForVariants = Object.assign({}, item.definitionForVariants)
-          viewEventDefinition.type = 'View event'
+          viewEventDefinition.type = 'View'
           viewEventDefinition.metricName = item.metricName
           viewEventDefinition.definitionForVariants.variantName = item.definitionForVariants.variantName
           let successEventDefinition = Object.assign({}, item.definitionForVariants.successEventDefinition)
           successEventDefinition.definitionForVariants = Object.assign({}, item.definitionForVariants)
-          successEventDefinition.type = 'Success event'
+          successEventDefinition.type = 'Success'
           successEventDefinition.metricName = item.metricName
           successEventDefinition.definitionForVariants.variantName = item.definitionForVariants.variantName
           items.push(viewEventDefinition)
