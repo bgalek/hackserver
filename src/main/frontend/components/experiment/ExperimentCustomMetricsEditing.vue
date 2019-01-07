@@ -221,6 +221,7 @@
 
         <template slot="items" slot-scope="props">
           <td>{{ props.item.type }}</td>
+          <td>{{ props.item.metricName }}</td>
           <td>{{ props.item.definitionForVariant.variantName }}</td>
           <td>{{ props.item.boxName }}</td>
           <td>{{ props.item.category }}</td>
@@ -295,6 +296,7 @@
         editedIndex: -1,
         headers: [
           {text: 'Type', value: 'type', align: 'left', sortable: false},
+          {text: 'Name', value: 'metricName', align: 'left', sortable: false},
           {text: 'Variant', value: 'variantName', align: 'left', sortable: false},
           {text: 'BoxName', value: 'boxName', align: 'left', sortable: false},
           {text: 'Category', value: 'category', align: 'left', sortable: false},
@@ -418,10 +420,12 @@
           let viewEventDefinition = Object.assign({}, item.definitionForVariant.viewEventDefinition)
           viewEventDefinition.definitionForVariant = Object.assign({}, item.definitionForVariant)
           viewEventDefinition.type = 'View event'
+          viewEventDefinition.metricName = item.metricName
           viewEventDefinition.definitionForVariant.variantName = item.definitionForVariant.variantName
           let successEventDefinition = Object.assign({}, item.definitionForVariant.successEventDefinition)
           successEventDefinition.definitionForVariant = Object.assign({}, item.definitionForVariant)
           successEventDefinition.type = 'Success event'
+          successEventDefinition.metricName = item.metricName
           successEventDefinition.definitionForVariant.variantName = item.definitionForVariant.variantName
           items.push(viewEventDefinition)
           items.push(successEventDefinition)
