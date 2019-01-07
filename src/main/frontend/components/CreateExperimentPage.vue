@@ -281,7 +281,6 @@
         this.sendingDataToServer = true
       },
 
-
       notSending () {
         this.sendingDataToServer = false
       },
@@ -290,12 +289,12 @@
         return _.find(this.$store.state.experiments.experiments, e => e.id === this.experimentIdSlug) === undefined
       },
 
-      getCustomMetricName() {
+      getCustomMetricName () {
         return this.customMetricsDefinition ? this.customMetricsDefinition.toArray()[0].metricName : undefined
       },
 
       getCustomMetrics () {
-        if(!this.customMetricsDefinition) {
+        if (!this.customMetricsDefinition) {
           return null
         }
         let customMetrics = this.customMetricsDefinition.toJSON()
