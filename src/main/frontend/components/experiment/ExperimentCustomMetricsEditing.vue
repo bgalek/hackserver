@@ -347,7 +347,6 @@
       isMetricNameSet () {
         return !!this.metricName
       },
-
       notEveryVariantHaveCustomMetric () {
         return this.defineCustomMetric && this.items.length < this.experimentVariants.length
       },
@@ -455,6 +454,7 @@
       },
 
       newItem () {
+        this.isMetricAssignedToAllVariants = false
         this.editing = true
         this.editedIndex = -1
         this.editedItem = Object.assign({}, {})
@@ -497,7 +497,6 @@
           if (this.isMetricAssignedToAllVariants) {
             this.assignMetricToAllVariants(this.editedItem)
           }
-          this.isMetricAssignedToAllVariants = false
           this.close()
         } else {
           this.error = 'You have to fulfil at least 2 fields in each event'
