@@ -124,7 +124,7 @@ public class ExperimentCreationRequest {
         return goal;
     }
 
-    public CustomMetricDefinition getCustomMetrics () {
+    public CustomMetricDefinition getCustomMetric () {
         return customMetricDefinition;
     }
 
