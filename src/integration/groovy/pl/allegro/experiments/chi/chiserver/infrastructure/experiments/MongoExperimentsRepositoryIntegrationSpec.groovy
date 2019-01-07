@@ -16,8 +16,11 @@ import pl.allegro.experiments.chi.chiserver.domain.experiments.ExperimentsReposi
 import pl.allegro.experiments.chi.chiserver.domain.experiments.ReportingDefinition
 import pl.allegro.experiments.chi.chiserver.domain.experiments.ReportingType
 
+import java.time.LocalDateTime
 import java.time.ZonedDateTime
+import java.time.format.DateTimeFormatter
 
+import static java.time.format.DateTimeFormatter.*
 import static pl.allegro.experiments.chi.chiserver.domain.experiments.ExperimentDefinitionBuilder.experimentDefinition
 
 class MongoExperimentsRepositoryIntegrationSpec extends BaseIntegrationSpec {
@@ -114,8 +117,8 @@ class MongoExperimentsRepositoryIntegrationSpec extends BaseIntegrationSpec {
         doc.get('variantNames') == ['base', 'v1']
         doc.get('percentage') == 10
         doc.get('groups') == ['a','b']
-        doc.get('activityPeriod').getString('activeFrom') == trim(from).toString()
-        doc.get('activityPeriod').getString('activeTo') == trim(to).toString()
+        doc.get('activityPeriod').getString('activeFrom') == serialize(trim(from))
+        doc.get('activityPeriod').getString('activeTo') == serialize(trim(to))
         doc.getString('internalVariantName') == 'v1'
         doc.getString('fullOnVariantName') == 'base'
         doc.getString('explicitStatus') == 'FULL_ON'
@@ -197,5 +200,9 @@ class MongoExperimentsRepositoryIntegrationSpec extends BaseIntegrationSpec {
 
     private ZonedDateTime trim(ZonedDateTime date) {
         date.withNano(0).withFixedOffsetZone()
+    }
+
+    private String serialize(ZonedDateTime date) {
+        return date.format(ISO_ZONED_DATE_TIME)
     }
 }

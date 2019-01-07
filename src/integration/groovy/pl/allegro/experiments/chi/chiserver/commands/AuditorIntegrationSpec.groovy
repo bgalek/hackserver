@@ -22,14 +22,7 @@ class AuditorIntegrationSpec extends BaseCommandIntegrationSpec {
         def experiment = draftExperiment()
 
         then:
-        with(lastChange(experiment.id)) {
-            author == "user1"
-            date
-            changelog.contains("changed on 'id'")
-            changelog.contains("changed on 'status'")
-            changelog.contains("changed on 'author'")
-            changelog.contains("new object: Experiment/${experiment.id}")
-        }
+        !lastChange(experiment.id)
 
         when:
         signInAs(user2)
@@ -57,6 +50,10 @@ class AuditorIntegrationSpec extends BaseCommandIntegrationSpec {
     }
 
     CommitDetails lastChange(String experimentId) {
-        auditor.getAuditLog(experimentId).changes.first()
+        def changes = auditor.getAuditLog(experimentId).changes
+        if (changes) {
+            return changes.first()
+        }
+        return null
     }
 }
