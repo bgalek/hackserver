@@ -29,14 +29,5 @@ public class DbMigrateTool {
     @PostConstruct
     public void action() throws Exception {
         logger.info("running DbMigrateTool ...");
-        customMetricDefinitionMigration();
-    }
-
-    private void customMetricDefinitionMigration() {
-        Query query = new Query();
-        query.addCriteria(Criteria.where("customMetricDefinition").exists(true));
-        Update update = new Update();
-        update.unset("customMetricDefinition");
-        mongoTemplate.updateMulti(query, update, ExperimentDefinition.class);
     }
 }
