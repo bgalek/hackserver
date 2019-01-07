@@ -9,46 +9,37 @@ import pl.allegro.experiments.chi.chiserver.utils.ApiActionUtils
 
 class ScorerE2ESpec extends BaseE2EIntegrationSpec implements ApiActionUtils {
 
-    static MAX_RANDOM = 0.5
+    static DEFAULT_PARAMETER_VALUE = 1
 
-    def "should return all offer scores"() {
+    def "should return all offer parameters"() {
         given:
         def offers = randomOffers()
         postOffers(offers)
 
         expect:
-        fetchScores().size() == offers.size()
+        fetchParameters().size() == offers.size()
     }
 
-    def "should score randomly when scores are not defined explicitly"() {
+    def "should provide default parameters when parameters are not defined explicitly"() {
         given:
-        postOffers(randomOffers())
-
-        when:
-        def firstScores = fetchScores().collect {it.score.value} as Set
-        def secondScores = fetchScores().collect {it.score.value} as Set
-
-        then:
-        firstScores != secondScores
-    }
-
-    def "should keep random scores in <0, 10>"() {
-        given:
-        postOffers(randomOffers())
+        def offers = randomOffers()
+        postOffers(offers)
 
         expect:
-        fetchScores().every {it -> it.score.value >= 0 && it.score.value <= MAX_RANDOM}
+        offers.collect {it -> it.offerId} as Set == fetchParameters().collect {it.offer.offerId} as Set
     }
 
-    def "should sort scores by value, from high to low"() {
+    def "should keep default parameter value equal DEFAULT_PARAMETER_VALUE"() {
         given:
         postOffers(randomOffers())
 
         when:
-        def scores = fetchScores().collect {it.score.value}
+        def parametersAlpha = fetchParameters().collect {it.parameters.alpha} as Set
+        def parametersBeta = fetchParameters().collect {it.parameters.beta} as Set
 
         then:
-        scores.toSorted().reverse() == scores
+        parametersAlpha == [DEFAULT_PARAMETER_VALUE] as Set
+        parametersBeta == [DEFAULT_PARAMETER_VALUE] as Set
     }
 
     def "should not allow setting more than 200 offers"() {
@@ -59,170 +50,126 @@ class ScorerE2ESpec extends BaseE2EIntegrationSpec implements ApiActionUtils {
         thrown(HttpClientErrorException)
     }
 
-    def "should sum default random offer scores with defined offer scores"() {
+    def "should override default offer parameters with explicitly defined offer parameters"() {
         given:
         def offers = randomOffers()
         postOffers(offers)
 
-        def definedScores = offers.collect {offer -> [
+        def definedParameters = offers.collect {offer -> [
                 offer: offer,
-                score: [value: 0.5]
+                parameters: [
+                        alpha: 80,
+                        beta: 100
+                ]
         ]}
 
         when:
-        updateScores(definedScores)
+        updateParameters(definedParameters)
 
         then:
-        fetchScores().every {it -> it.score.value >= 0.5}
+        fetchParameters().every { it -> it.parameters.alpha == 80 && it.parameters.beta == 100}
     }
 
-    def "should prioritize offer set over defined scores, providing random scores"() {
+    def "should prioritize offer set over defined offer parameters, providing default parameters"() {
         given:
         def offers = randomOffers()
         postOffers(offers)
 
         and:
-        def definedScores = randomOffers(120).collect {offer -> [
+        def definedParameters = randomOffers(120).collect {offer -> [
                 offer: offer,
-                score: [value: 0.5]
+                parameters: [
+                        alpha: 80,
+                        beta: 100
+                ]
         ]}
-        updateScores(definedScores)
+        updateParameters(definedParameters)
 
         when:
-        def scores = fetchScores()
-        def scoredOffers = scores.collect {offerScore -> offerScore.offer.offerId} as Set
+        def parameters = fetchParameters()
+        def parametrizedOffers = parameters.collect {it -> it.offer.offerId} as Set
 
         then:
-        offers.collect {offer -> offer.offerId} as Set == scoredOffers
+        offers.collect {offer -> offer.offerId} as Set == parametrizedOffers
 
         when:
         postOffers([])
 
         then:
-        fetchScores().size() == 0
+        fetchParameters().size() == 0
     }
 
-    def "should not allow setting score without api token"() {
+    def "should not allow setting parameters without api token"() {
         when:
-        post('api/scorer/scores', [[offer: randomOffers()[0], score: [value: 1]]])
+        post('api/scorer/parameters', [[offer: randomOffers()[0], parameters: [
+                alpha: 80,
+                beta: 100
+        ]]])
 
         then:
         thrown(HttpClientErrorException)
     }
 
-    def "should sum scores during update"() {
+    def "should clear old parameters when setting new"() {
         given:
         def offers = randomOffers()
         postOffers(offers)
 
-        def definedScores = offers.collect {offer -> [
+        and:
+        def definedParameters = offers.collect {offer -> [
                 offer: offer,
-                score: [value: 0.5]
+                parameters: [
+                        alpha: 80,
+                        beta: 100
+                ]
         ]}
 
-        when:
-        updateScores(definedScores)
-
-        then:
-        fetchScores().every {it -> it.score.value >= 0.5 && it.score.value <= MAX_RANDOM + 0.5}
+        and:
+        updateParameters(definedParameters)
 
         when:
-        updateScores(definedScores)
+        updateParameters(offers.collect {offer -> [
+                offer: offer,
+                parameters: [
+                        alpha: 90,
+                        beta: 900
+                ]
+        ]})
 
         then:
-        fetchScores().every {it -> it.score.value >= 1 && it.score.value <= MAX_RANDOM + 1}
+        fetchParameters().every {it -> it.parameters.alpha == 90 && it.parameters.beta == 900}
+
+        when:
+        updateParameters([])
+
+        then:
+        fetchParameters().every {it -> it.parameters.alpha == DEFAULT_PARAMETER_VALUE && it.parameters.beta == DEFAULT_PARAMETER_VALUE}
     }
 
-    def "should reset offer scores when setting new offer set"() {
+    def "should return empty list from deprecated /scores endpoint"() {
         given:
         def offers = randomOffers()
         postOffers(offers)
 
-        and:
-        updateScores(offers.collect {offer -> [
-                offer: offer,
-                score: [value: 5]
-        ]})
-
-        and:
-        fetchScores().every {it -> it.score.value >= 5 && it.score.value <= 5 + MAX_RANDOM}
-
         when:
-        postOffers(offers)
+        def scores = get('/api/scorer/scores').body as List
 
         then:
-        fetchScores().every {it -> it.score.value >= 0 && it.score.value <= MAX_RANDOM}
+        scores == []
     }
 
-    def "should extend defined offer score set when new offer score occurs during update"() {
-        given:
-        def offers = randomOffers()
-        def offersToScoreAtFirst = offers.subList(0, offers.size() - 1)
-        def offerWithoutScore = offers.get(offers.size() - 1)
-
-        and:
-        postOffers(offers)
-
-        when:
-        updateScores(offersToScoreAtFirst.collect {offer -> [
-                offer: offer,
-                score: [value: 5]
-        ]})
-
-        then:
-        fetchScores().find {
-            it -> it.offer == offerWithoutScore && it.score.value >= 0 && it.score.value <= MAX_RANDOM
-        }
-
-        when:
-        updateScores([
-            [
-                offer: offerWithoutScore,
-                score: [value: 5]
-            ]
-        ])
-
-        then:
-        fetchScores().find {it -> it.offer == offerWithoutScore && it.score.value >= 5 && it.score.value <= MAX_RANDOM + 5}
+    def updateParameters(List newParameters) {
+        post('api/scorer/parameters', prepareParametersRequest(newParameters))
     }
 
-    def "should keep offer score even if it does not appear in update"() {
-        given:
-        def offers = randomOffers()
-        def offersToScoreSecondTime = offers.subList(0, offers.size() - 1)
-        def offerWithoutSecondUpdate = offers.get(offers.size() - 1)
-
-        and:
-        postOffers(offers)
-
-        and:
-        updateScores(offers.collect {offer -> [
-                offer: offer,
-                score: [value: 5]
-        ]})
-
-        when:
-        updateScores(offersToScoreSecondTime.collect {offer -> [
-                offer: offer,
-                score: [value: 5]
-        ]})
-
-        then:
-        fetchScores().find {it -> it.offer == offerWithoutSecondUpdate && it.score.value >= 5 && it.score.value <= 5 + MAX_RANDOM}
-    }
-
-    def updateScores(List newScores) {
-        post('api/scorer/scores', prepareScoresRequest(newScores))
-    }
-
-    HttpEntity prepareScoresRequest(List statistics) {
+    HttpEntity prepareParametersRequest(List statistics) {
         HttpHeaders headers = new HttpHeaders()
         headers.set("Chi-Token", OfferScorerController.CHI_TOKEN)
         new HttpEntity<>(statistics, headers)
     }
 
-    def fetchScores() {
-        get('/api/scorer/scores').body as List
+    def fetchParameters() {
+        get('/api/scorer/parameters').body as List
     }
 
     def postOffers(List offers) {

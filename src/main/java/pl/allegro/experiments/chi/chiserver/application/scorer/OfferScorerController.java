@@ -13,6 +13,7 @@ import pl.allegro.tech.common.andamio.errors.ErrorsHolder;
 import pl.allegro.tech.common.andamio.errors.SimpleErrorsHolder;
 import pl.allegro.tech.common.andamio.metrics.MeteredEndpoint;
 
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 
@@ -27,14 +28,14 @@ import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 public class OfferScorerController {
 
     private static final Logger logger = LoggerFactory.getLogger(OfferScorerController.class);
-    private final OfferScoreRepository scoreRepository;
+    private final OfferParametersRepository offerParametersRepository;
     private final OfferRepository offerRepository;
     public static final String CHI_TOKEN = "DSFFT346SF4643332HSSSGHBAUWRTUYAETGNVCH";
 
     public OfferScorerController(
             OfferRepository offerRepository,
-            OfferScoreRepository scoreRepository) {
-        this.scoreRepository = scoreRepository;
+            OfferParametersRepository offerParametersRepository) {
+        this.offerParametersRepository = offerParametersRepository;
         this.offerRepository = offerRepository;
     }
 
@@ -45,21 +46,29 @@ public class OfferScorerController {
     }
 
     @MeteredEndpoint
+    @GetMapping(path = {"/parameters"})
+    List<OfferParameters> parameters() {
+        return offerParametersRepository.all();
+    }
+
+    @Deprecated
+    @MeteredEndpoint
     @GetMapping(path = {"/scores"})
-    List<OfferScore> scores() {
-        return scoreRepository.scores();
+    List<OfferParameters> scores() {
+        // grouper still uses client that require /scores endpoint
+        return Collections.emptyList();
     }
 
     @MeteredEndpoint
-    @PostMapping(value = "/scores", consumes = {APPLICATION_JSON_VALUE, APPLICATION_JSON_UTF8_VALUE})
+    @PostMapping(value = "/parameters", consumes = {APPLICATION_JSON_VALUE, APPLICATION_JSON_UTF8_VALUE})
     @PublicEndpoint
-    void setOfferScores(
-            @RequestBody List<OfferScore> offerScores,
+    void setOfferParameters(
+            @RequestBody List<OfferParameters> offerParameters,
             @RequestHeader(value = "Chi-Token", defaultValue = "") String chiToken) {
         if (!chiToken.equals(CHI_TOKEN)) {
             throw new UnauthorizedPublicApiCallException();
         }
-        scoreRepository.updateScores(offerScores);
+        offerParametersRepository.update(offerParameters);
     }
 
     @ExceptionHandler(ToManyOffersException.class)
