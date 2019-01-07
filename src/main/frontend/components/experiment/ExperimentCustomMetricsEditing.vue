@@ -239,7 +239,7 @@
     <div class="error--text" v-if="defineCustomMetric && !haveEveryVariantMetric()">
       You have to define custom metric for every variant.
     </div>
-    <div v-if="metricName">
+    <div v-if="metricName" class="mt-3">
       Metric name: {{metricName}}
     </div>
   </div>
@@ -276,7 +276,7 @@
 
     data () {
       return {
-        items: this.initFromExperiment(),
+        items: this.initItemsFromExperiment(),
         error: '',
         customMetricDefinitionValid: true,
         editing: false,
@@ -320,7 +320,7 @@
         defineCustomMetric: false,
         experimentVariants: [],
         isMetricAssignedToAllVariants: false,
-        metricName: ''
+        metricName: this.initNameFromExperiment()
       }
     },
 
@@ -392,7 +392,7 @@
         }
       },
 
-      initFromExperiment () {
+      initItemsFromExperiment () {
         if (!this.experiment || !this.experiment.customMetricDefinition) {
           return []
         }
@@ -405,6 +405,13 @@
           })
         })
         return items
+      },
+
+      initNameFromExperiment() {
+        if (!this.experiment || !this.experiment.customMetricDefinition) {
+          return ''
+        }
+        return this.experiment.customMetricDefinition.metricName
       },
 
       customMetricChange (val) {
