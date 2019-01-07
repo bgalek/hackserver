@@ -10,8 +10,8 @@ sources:
   graphite:
     offers_update_error_rate:
       metric: sumSeries(stats.*.*.*.*.chi.client.offer.scorer.offers.set.error.m1_rate)
-    scores_get_error_rate:
-      metric: sumSeries(stats.*.*.*.*.chi.client.offer.scorer.scores.refresh.error.m1_rate)
+    parameters_get_error_rate:
+      metric: sumSeries(stats.*.*.*.*.chi.client.offer.scorer.priors.refresh.error.m1_rate)
 
 checks:
   last_offers_update_error_rate:
@@ -23,11 +23,11 @@ checks:
         severity: critical
         notify: ['pagerduty_alert']
 
-  last_scores_get_error_rate:
-    sources: ['scores_get_error_rate']
+  last_parameters_get_error_rate:
+    sources: ['parameters_get_error_rate']
     frequency: 1
     triggers:
-      - rule: scores_get_error_rate.values > 0
+      - rule: parameters_get_error_rate.values > 0
         debounce: 2
         severity: critical
         notify: ['pagerduty_alert']
