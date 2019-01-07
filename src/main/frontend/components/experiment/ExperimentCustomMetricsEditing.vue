@@ -221,7 +221,6 @@
 
         <template slot="items" slot-scope="props">
           <td>{{ props.item.type }}</td>
-          <td>{{ props.item.metricName }}</td>
           <td>{{ props.item.definitionForVariants.variantName }}</td>
           <td>{{ props.item.boxName }}</td>
           <td>{{ props.item.category }}</td>
@@ -239,6 +238,9 @@
       </v-data-table>
     <div class="error--text" v-if="defineCustomMetric && !haveEveryVariantMetric()">
       You have to define custom metric for every variant.
+    </div>
+    <div v-if="metricName">
+      Metric name: {{metricName}}
     </div>
   </div>
 </template>
@@ -296,7 +298,6 @@
         editedIndex: -1,
         headers: [
           {text: 'Type', value: 'type', align: 'left', sortable: false},
-          {text: 'Name', value: 'metricName', align: 'left', sortable: false},
           {text: 'Variant', value: 'variantName', align: 'left', sortable: false},
           {text: 'BoxName', value: 'boxName', align: 'left', sortable: false},
           {text: 'Category', value: 'category', align: 'left', sortable: false},
