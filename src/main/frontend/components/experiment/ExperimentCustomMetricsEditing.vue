@@ -466,8 +466,9 @@
       },
 
       editItem (item) {
+        this.isMetricAssignedToAllVariants = false
         this.editing = true
-        this.editedIndex = 0
+        this.editedIndex = this.items.findIndex(it => it.definitionForVariants.variantName === item.definitionForVariants.variantName)
         this.editedItem.metricName = this.metricName
 
         this.editedItem.definitionForVariants.variantName = item.definitionForVariants.variantName
