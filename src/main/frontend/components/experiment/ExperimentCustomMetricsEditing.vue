@@ -33,6 +33,7 @@
               <v-select label="variant" v-model="editedItem.definitionForVariant.variantName"
                             :items="getVariants()"
                             :disabled="isMetricAssignedToAllVariants"
+                            :rules="variantRules"
               ></v-select>
             </v-flex>
           </v-layout>
@@ -312,6 +313,9 @@
           (v) => containsNoSpecialCharacters(v),
           (v) => !startsOrEndsWithSpace(v) || 'no spaces in the beginning or end'
         ],
+        variantRules: [
+          (v) => !!v || this.isMetricAssignedToAllVariants ||'Variant is Required',
+        ],
         defineCustomMetric: false,
         experimentVariants: [],
         isMetricAssignedToAllVariants: false,
@@ -350,7 +354,8 @@
       getVariants () {
         let variants = Object.assign([], this.experimentVariants)
         for (let item of this.items) {
-          if (variants.includes(item.definitionForVariant.variantName)) {
+          if (variants.includes(item.definitionForVariant.variantName) &&
+            !(this.editedItem.definitionForVariant.variantName === item.definitionForVariant.variantName)) {
             const index = variants.indexOf(item.definitionForVariant.variantName)
             variants.splice(index, 1)
           }
