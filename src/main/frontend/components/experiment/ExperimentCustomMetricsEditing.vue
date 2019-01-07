@@ -12,7 +12,6 @@
       <v-btn color="primary" class="mb-2" @click="newItem()" v-if="notEveryVariantHaveCustomMetric()">
         Add custom metric
       </v-btn>
-
     <v-dialog v-model="editing" max-width="450px">
       <v-form v-model="customMetricDefinitionValid" ref="customMetricDefinitionForm">
         <v-card>
@@ -407,7 +406,7 @@
         return items
       },
 
-      initNameFromExperiment() {
+      initNameFromExperiment () {
         if (!this.experiment || !this.experiment.customMetricDefinition) {
           return ''
         }
