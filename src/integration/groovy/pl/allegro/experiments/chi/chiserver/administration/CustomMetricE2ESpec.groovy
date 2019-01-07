@@ -10,9 +10,9 @@ import spock.lang.Unroll
 class CustomMetricE2ESpec extends BaseE2EIntegrationSpec implements ApiExperimentUtils  {
     def "should create customMetric in experiment"() {
         when:
-        def experiment = draftExperiment([variantNames: ["v1", "v2"], customMetricsDefinition: [
+        def experiment = draftExperiment([variantNames: ["v1", "v2"], customMetricDefinition: [
                     metricName: "customMetricDefinition",
-                    definitionForVariant: [
+                    definitionForVariants: [
                         [
                             variantName: "v1",
                             viewEventDefinition: [
@@ -51,9 +51,9 @@ class CustomMetricE2ESpec extends BaseE2EIntegrationSpec implements ApiExperimen
         ]])
 
         then:
-        with (experiment.customMetricsDefinition) {
+        with (experiment.customMetricDefinition) {
             metricName == "customMetricDefinition"
-            with (definitionForVariant[0]) {
+            with (definitionForVariants[0]) {
                 variantName == "v1"
                 viewEventDefinition.category == "category1"
                 viewEventDefinition.action == "action1"
@@ -66,7 +66,7 @@ class CustomMetricE2ESpec extends BaseE2EIntegrationSpec implements ApiExperimen
                 successEventDefinition.label == "label2"
                 successEventDefinition.boxName == "boxName2"
             }
-            with (definitionForVariant[1]) {
+            with (definitionForVariants[1]) {
                 variantName == "v2"
                 viewEventDefinition.category == "category3"
                 viewEventDefinition.action == "action3"
@@ -85,9 +85,9 @@ class CustomMetricE2ESpec extends BaseE2EIntegrationSpec implements ApiExperimen
     @Unroll
     def "should create customMetric with empty strings if #fieldCase field provided"() {
         when:
-        def experiment = draftExperiment([variantNames: ["v1", "v2"], customMetricsDefinition: [
+        def experiment = draftExperiment([variantNames: ["v1", "v2"], customMetricDefinition: [
                 metricName: "customMetricDefinition",
-                definitionForVariant: [
+                definitionForVariants: [
                         [
                                 variantName: "v1",
                                 viewEventDefinition: [
@@ -126,12 +126,12 @@ class CustomMetricE2ESpec extends BaseE2EIntegrationSpec implements ApiExperimen
         ]])
 
         then:
-        experiment.customMetricsDefinition == expectedResult
+        experiment.customMetricDefinition == expectedResult
 
         where:
         expectedResult = [
                 metricName: "customMetricDefinition",
-                definitionForVariant: [
+                definitionForVariants: [
                         [
                                 variantName: "v1",
                                 viewEventDefinition: [
@@ -175,16 +175,16 @@ class CustomMetricE2ESpec extends BaseE2EIntegrationSpec implements ApiExperimen
     @Unroll
     def "should not create experiment if missing #missingCase in request"() {
         when:
-        draftExperiment([variantNames: ["v1"], customMetricsDefinition: customMetricsDefinition])
+        draftExperiment([variantNames: ["v1"], customMetricDefinition: customMetricDefinition])
 
         then:
         def exception = thrown HttpClientErrorException
         exception.statusCode == HttpStatus.BAD_REQUEST
 
         where:
-        customMetricsDefinition << [
+        customMetricDefinition << [
                 [
-                        definitionForVariant: [
+                        definitionForVariants: [
                                 [
                                         variantName: "v1",
                                         viewEventDefinition: [
@@ -206,7 +206,7 @@ class CustomMetricE2ESpec extends BaseE2EIntegrationSpec implements ApiExperimen
                 ],
                 [
                         metricName: "customMetricDefinition",
-                        definitionForVariant: [
+                        definitionForVariants: [
                                 [
                                         viewEventDefinition: [
                                                 category: "category1",
@@ -242,7 +242,7 @@ class CustomMetricE2ESpec extends BaseE2EIntegrationSpec implements ApiExperimen
                 ],
                 [
                         metricName: "customMetricDefinition",
-                        definitionForVariant: [
+                        definitionForVariants: [
                                 [
                                         variantName: "v1",
                                         viewEventDefinition: [
@@ -266,14 +266,14 @@ class CustomMetricE2ESpec extends BaseE2EIntegrationSpec implements ApiExperimen
         def experiment = draftExperiment()
 
         then:
-        ! experiment.customMetricsDefinition
+        ! experiment.customMetricDefinition
     }
 
     def "should not create experiment if is not defined for all variants"() {
         when:
-        draftExperiment([variantNames: ["v1", "v2", "v3"], customMetricsDefinition: [
+        draftExperiment([variantNames: ["v1", "v2", "v3"], customMetricDefinition: [
                 metricName: "customMetricDefinition",
-                definitionForVariant: [
+                definitionForVariants: [
                         [
                                 variantName: "v1",
                                 viewEventDefinition: [
@@ -318,9 +318,9 @@ class CustomMetricE2ESpec extends BaseE2EIntegrationSpec implements ApiExperimen
 
     def "should not create experiment if custom metric is defined for more variants than exists"() {
         when:
-        draftExperiment([variantNames: ["v1", "v2"], customMetricsDefinition: [
+        draftExperiment([variantNames: ["v1", "v2"], customMetricDefinition: [
                 metricName: "customMetricDefinition",
-                definitionForVariant: [
+                definitionForVariants: [
                         [
                                 variantName: "v1",
                                 viewEventDefinition: [

@@ -42,7 +42,7 @@ class SampleExperimentRequests {
                 .customParameterValue(properties.customParameterValue as String)
                 .eventDefinitions(properties.eventDefinitions as List<EventDefinition>)
                 .tags(properties.tags as List<String>)
-                .customMetricDefinition(properties.customMetricsDefinition as CustomMetricDefinition)
+                .customMetricDefinition(properties.customMetricDefinition as CustomMetricDefinition)
                 .build()
     }
 

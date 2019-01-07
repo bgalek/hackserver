@@ -23,7 +23,7 @@ public class ExperimentDefinitionBuilder {
     private ZonedDateTime lastExplicitStatusChange;
     private ExperimentGoal goal;
     private List<ExperimentTag> tags = Collections.emptyList();
-    private CustomMetricDefinition customMetricsDefinition;
+    private CustomMetricDefinition customMetricDefinition;
 
     private ExperimentDefinitionBuilder() {
     }
@@ -138,8 +138,8 @@ public class ExperimentDefinitionBuilder {
         return this;
     }
 
-    public ExperimentDefinitionBuilder customMetricsDefinition(CustomMetricDefinition cmd) {
-        this.customMetricsDefinition = cmd;
+    public ExperimentDefinitionBuilder customMetricDefinition(CustomMetricDefinition cmd) {
+        this.customMetricDefinition = cmd;
         return this;
     }
 
@@ -162,6 +162,6 @@ public class ExperimentDefinitionBuilder {
                 lastExplicitStatusChange,
                 goal,
                 tags,
-                customMetricsDefinition);
+                customMetricDefinition);
     }
 }

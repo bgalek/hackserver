@@ -34,7 +34,7 @@ public class ExperimentCreationRequest {
     private final CustomParameter customParameter;
     private final ExperimentGoalRequest goal;
     private final List<String> tags;
-    private final CustomMetricDefinition customMetricsDefinition;
+    private final CustomMetricDefinition customMetricDefinition;
 
     @JsonCreator
     public ExperimentCreationRequest(
@@ -52,13 +52,13 @@ public class ExperimentCreationRequest {
             @JsonProperty("customParameterValue") String customParameterValue,
             @JsonProperty("goal") ExperimentGoalRequest goal,
             @JsonProperty("tags") List<String> tags,
-            @JsonProperty("customMetricsDefinition") CustomMetricDefinition customMetricsDefinition) {
+            @JsonProperty("customMetricDefinition") CustomMetricDefinition customMetricDefinition) {
         Preconditions.checkArgument(id != null, "experiment id is null");
         Preconditions.checkArgument(variantNames != null, "experiment variantNames are null");
         Preconditions.checkArgument(percentage != null, "experiment percentage is null");
         Preconditions.checkArgument(percentage >= 0, "experiment percentage < 0");
-        if(customMetricsDefinition != null) {
-            Preconditions.checkArgument(areCustomMetricsValid(variantNames, customMetricsDefinition), "number of variants does not reflect number of custom metrics");
+        if(customMetricDefinition != null) {
+            Preconditions.checkArgument(areCustomMetricsValid(variantNames, customMetricDefinition), "number of variants does not reflect number of custom metrics");
         }
         if (StringUtils.isNotBlank(customParameterName) || StringUtils.isNotBlank(customParameterValue)) {
             Preconditions.checkArgument(StringUtils.isNotBlank(customParameterName), "custom parameter name is blank");
@@ -87,12 +87,12 @@ public class ExperimentCreationRequest {
             this.customParameter = null;
         }
         this.goal = goal;
-        this.customMetricsDefinition = customMetricsDefinition;
+        this.customMetricDefinition = customMetricDefinition;
 
     }
 
     public boolean areCustomMetricsValid(List<String> variants, CustomMetricDefinition cm) {
-        var cmVariants = cm.getDefinitionForVariant().stream().map(it -> it.getVariantName()).collect(Collectors.toList());
+        var cmVariants = cm.getDefinitionForVariants().stream().map(it -> it.getVariantName()).collect(Collectors.toList());
         return variants.stream().allMatch(it -> cmVariants.contains(it)) && cmVariants.size() == variants.size();
     }
 
@@ -125,7 +125,7 @@ public class ExperimentCreationRequest {
     }
 
     public CustomMetricDefinition getCustomMetrics () {
-        return customMetricsDefinition;
+        return customMetricDefinition;
     }
 
     ExperimentDefinition toExperimentDefinition(String author) {
@@ -144,7 +144,7 @@ public class ExperimentCreationRequest {
                     .reportingDefinition(this.reportingDefinition)
                     .customParameter(this.customParameter)
                     .tags(this.tags.stream().map(it -> new ExperimentTag(it)).collect(Collectors.toList()))
-                    .customMetricsDefinition(this.customMetricsDefinition);
+                    .customMetricDefinition(this.customMetricDefinition);
 
             if (goal != null && StringUtils.isNotBlank(goal.getLeadingMetric())) {
                 var hypothesis = new ExperimentGoal.Hypothesis(goal.getLeadingMetric(), round2(goal.getExpectedDiffPercent()));
@@ -201,7 +201,7 @@ public class ExperimentCreationRequest {
         private String customParameterName;
         private String customParameterValue;
         private List<String> tags;
-        private CustomMetricDefinition customMetricsDefinition;
+        private CustomMetricDefinition customMetricDefinition;
 
         public Builder id(String id) {
             this.id = id;
@@ -268,8 +268,8 @@ public class ExperimentCreationRequest {
             return this;
         }
 
-        public Builder customMetricDefinition(CustomMetricDefinition customMetricsDefinition) {
-            this.customMetricsDefinition = customMetricsDefinition;
+        public Builder customMetricDefinition(CustomMetricDefinition customMetricDefinition) {
+            this.customMetricDefinition = customMetricDefinition;
             return this;
         }
 
@@ -289,7 +289,7 @@ public class ExperimentCreationRequest {
                     customParameterValue,
                     null,
                     tags,
-                    customMetricsDefinition
+                    customMetricDefinition
                     );
         }
     }

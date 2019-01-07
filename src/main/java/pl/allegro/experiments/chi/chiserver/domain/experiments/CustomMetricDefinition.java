@@ -8,20 +8,20 @@ import java.util.List;
 
 public class CustomMetricDefinition {
     private final String metricName;
-    private final List<EventDefinitionForVariant> definitionForVariant;
+    private final List<EventDefinitionForVariant> definitionForVariants;
 
     @JsonCreator
     public CustomMetricDefinition(
             @JsonProperty("metricName") String metricName,
-            @JsonProperty("definitionForVariant") List<EventDefinitionForVariant> definitionForVariant) {
+            @JsonProperty("definitionForVariants") List<EventDefinitionForVariant> definitionForVariants) {
         Preconditions.checkNotNull(metricName);
-        Preconditions.checkNotNull(definitionForVariant);
+        Preconditions.checkNotNull(definitionForVariants);
         this.metricName = metricName;
-        this.definitionForVariant = definitionForVariant;
+        this.definitionForVariants = definitionForVariants;
 
     }
 
     public String getName() { return metricName; }
 
-    public List<EventDefinitionForVariant> getDefinitionForVariant() { return  definitionForVariant; }
+    public List<EventDefinitionForVariant> getDefinitionForVariants() { return  definitionForVariants; }
 }

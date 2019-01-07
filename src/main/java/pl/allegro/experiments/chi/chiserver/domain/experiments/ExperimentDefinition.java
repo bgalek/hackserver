@@ -43,7 +43,7 @@ public class ExperimentDefinition {
     private final ZonedDateTime lastExplicitStatusChange;
     private final ExperimentGoal goal;
     private final List<ExperimentTag> tags;
-    private final CustomMetricDefinition customMetricsDefinition;
+    private final CustomMetricDefinition customMetricDefinition;
 
     ExperimentDefinition(
             String id,
@@ -63,7 +63,7 @@ public class ExperimentDefinition {
             ZonedDateTime lastExplicitStatusChange,
             ExperimentGoal goal,
             List<ExperimentTag> tags,
-            CustomMetricDefinition customMetricsDefinition) {
+            CustomMetricDefinition customMetricDefinition) {
         Preconditions.checkArgument(!Strings.isNullOrEmpty(id));
         Preconditions.checkNotNull(variantNames);
         Preconditions.checkNotNull(groups);
@@ -87,7 +87,7 @@ public class ExperimentDefinition {
         this.lastExplicitStatusChange = lastExplicitStatusChange;
         this.goal = goal;
         this.tags = ImmutableList.copyOf(tags == null ? Collections.emptyList() : tags);
-        this.customMetricsDefinition = customMetricsDefinition;
+        this.customMetricDefinition = customMetricDefinition;
     }
 
     @Id
@@ -186,8 +186,8 @@ public class ExperimentDefinition {
     }
 
     @DiffInclude
-    public  CustomMetricDefinition  getCustomMetricsDefinition() {
-        return customMetricsDefinition;
+    public  CustomMetricDefinition  getCustomMetricDefinition() {
+        return customMetricDefinition;
     }
 
     public ZonedDateTime getLastExplicitStatusChange() {
@@ -326,7 +326,7 @@ public class ExperimentDefinition {
                 .customParameter(customParameter)
                 .goal(goal)
                 .tags(tags)
-                .customMetricsDefinition(customMetricsDefinition);
+                .customMetricDefinition(customMetricDefinition);
     }
 
     public List<VariantPercentageAllocation> renderRegularVariantsSolo() {

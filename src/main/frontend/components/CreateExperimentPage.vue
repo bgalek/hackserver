@@ -68,7 +68,7 @@
                 <v-flex xs11 text-xs-left>
                   <experiment-custom-metrics-editing
                     ref="experimentCustomMetricsEditing"
-                    v-model="customMetricsDefinition"
+                    v-model="customMetricDefinition"
                     :showHeader="true"
                     :variants="variants"/>
                 </v-flex>
@@ -200,7 +200,7 @@
         reportingType: 'BACKEND',
         availableReportingTypes: ['BACKEND', 'FRONTEND'],
         eventDefinitions: [],
-        customMetricsDefinition: null
+        customMetricDefinition: null
       }
     },
 
@@ -290,19 +290,19 @@
       },
 
       getCustomMetricName () {
-        return this.customMetricsDefinition ? this.customMetricsDefinition.toArray()[0].metricName : undefined
+        return this.customMetricDefinition ? this.customMetricDefinition.toArray()[0].metricName : undefined
       },
 
       getCustomMetrics () {
-        if (!this.customMetricsDefinition) {
+        if (!this.customMetricDefinition) {
           return null
         }
-        let customMetrics = this.customMetricsDefinition.toJSON()
+        let customMetrics = this.customMetricDefinition.toJSON()
         let obj = {}
         obj.metricName = customMetrics[0].metricName
-        obj.definitionForVariant = []
+        obj.definitionForVariants = []
         customMetrics.map(it => {
-          obj.definitionForVariant.push(it.definitionForVariant)
+          obj.definitionForVariants.push(it.definitionForVariants)
         })
         return obj
       },
@@ -324,7 +324,7 @@
           reportingType: this.reportingType,
           eventDefinitions: this.eventDefinitions,
           goal: this.goal,
-          customMetricsDefinition: this.getCustomMetrics()
+          customMetricDefinition: this.getCustomMetrics()
         }
 
         return experimentCreationRequest

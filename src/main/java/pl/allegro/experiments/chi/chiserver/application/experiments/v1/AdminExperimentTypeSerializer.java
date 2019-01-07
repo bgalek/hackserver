@@ -45,7 +45,7 @@ public class AdminExperimentTypeSerializer implements JsonSerializer<AdminExperi
         if (src.getLastStatusChange() != null) {
             jsonObject.add("lastStatusChange", context.serialize(src.getLastStatusChange()));
         }
-        jsonObject.add("customMetricsDefinition", context.serialize(src.getCustomMetricsDefinition()));
+        jsonObject.add("customMetricDefinition", context.serialize(src.getCustomMetricDefinition()));
 
         src.getGoal().ifPresent(goal -> jsonObject.add("goal", serializeExperimentGoal(goal, context)));
         return jsonObject;
