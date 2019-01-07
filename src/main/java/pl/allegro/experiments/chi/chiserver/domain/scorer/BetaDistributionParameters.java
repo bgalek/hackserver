@@ -8,18 +8,18 @@ public class BetaDistributionParameters {
     private final int beta;
 
     @JsonCreator
-    public BetaDistributionParameters(
+    BetaDistributionParameters(
             @JsonProperty("alpha") int alpha,
             @JsonProperty("beta") int beta) {
         this.alpha = alpha;
         this.beta = beta;
     }
 
-    public float getAlpha() {
+    public int getAlpha() {
         return alpha;
     }
 
-    public float getBeta() {
+    public int getBeta() {
         return beta;
     }
 
