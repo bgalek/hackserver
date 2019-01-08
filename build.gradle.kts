@@ -13,6 +13,7 @@ apply(plugin = "io.spring.dependency-management")
 plugins {
     java
     application
+    id("com.gradle.build-scan") version "1.16"
 }
 
 application {
@@ -48,4 +49,9 @@ dependencies {
     testCompile("org.junit.jupiter:junit-jupiter-params:5.2.0")
     testRuntime("org.junit.jupiter:junit-jupiter-engine:5.2.0")
     testRuntime("de.flapdoodle.embed:de.flapdoodle.embed.mongo:2.2.0")
+}
+
+buildScan {
+    setTermsOfServiceUrl("https://gradle.com/terms-of-service")
+    setTermsOfServiceAgree("yes")
 }
