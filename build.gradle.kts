@@ -4,16 +4,17 @@ buildscript {
     }
     dependencies {
         classpath("org.springframework.boot:spring-boot-gradle-plugin:2.1.1.RELEASE")
+        classpath("com.gradle:build-scan-plugin:2.1")
     }
 }
 
 apply(plugin = "org.springframework.boot")
 apply(plugin = "io.spring.dependency-management")
+apply(plugin = "com.gradle.build-scan")
 
 plugins {
     java
     application
-    id("com.gradle.build-scan") version "1.16"
 }
 
 application {
