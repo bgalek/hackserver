@@ -5,7 +5,7 @@ channels:
 
 sources:
   graphite:
-    classic_classic_lost_rate:
+    classic_lost_rate:
       metric: diffSeries(sum(offset(scale(removeBelowValue(groupByNodes(stats.experiments.chi.chi-server.*.interactions.received-by-experiment.*.m1_rate,'sum',7),0.01),0),1)),avg(stats.experiments.chi.chi-server.*.statistics.classic.count-by-experiment))
 
 checks:
