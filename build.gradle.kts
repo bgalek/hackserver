@@ -13,6 +13,7 @@ apply(plugin = "io.spring.dependency-management")
 plugins {
     java
     application
+    checkstyle
     id("com.gradle.build-scan") version "2.1"
 }
 
@@ -54,4 +55,8 @@ dependencies {
 buildScan {
     termsOfServiceUrl = "https://gradle.com/terms-of-service"
     termsOfServiceAgree = "yes"
+}
+
+checkstyle {
+    configFile = rootProject.file("checkstyle.xml")
 }
