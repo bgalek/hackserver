@@ -14,6 +14,7 @@ plugins {
     java
     groovy
     application
+    id("com.gradle.build-scan") version "2.1"
 }
 
 application {
@@ -53,4 +54,9 @@ dependencies {
     testImplementation("org.codehaus.groovy:groovy-all:2.5.4")
     testImplementation("org.spockframework:spock-core:1.2-groovy-2.5")
     testImplementation("org.spockframework:spock-spring:1.2-groovy-2.5")
+}
+
+buildScan {
+    termsOfServiceUrl = "https://gradle.com/terms-of-service"
+    termsOfServiceAgree = "yes"
 }
