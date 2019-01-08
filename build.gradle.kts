@@ -38,6 +38,7 @@ val integrationRuntime: Configuration by configurations.creating {
 
 dependencies {
     implementation("org.springframework.boot:spring-boot-starter-web")
+    implementation("org.springframework.boot:spring-boot-starter-webflux")
     implementation("org.springframework.boot:spring-boot-starter-actuator")
     implementation("org.springframework.boot:spring-boot-starter-websocket")
     implementation("org.springframework.retry:spring-retry")
@@ -45,6 +46,8 @@ dependencies {
     implementation("com.fasterxml.jackson.module:jackson-module-jsonSchema:2.9.8")
     implementation("org.zalando:problem-spring-web:0.22.0")
     implementation("com.github.slugify:slugify:2.3")
+    implementation("io.projectreactor:reactor-core:3.2.4.RELEASE")
+
     runtimeOnly("org.springframework.boot:spring-boot-devtools")
 
     annotationProcessor("org.springframework.boot:spring-boot-configuration-processor")

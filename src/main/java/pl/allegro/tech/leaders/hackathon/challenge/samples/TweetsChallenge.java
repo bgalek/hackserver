@@ -1,4 +1,4 @@
-package pl.allegro.tech.leaders.hackathon.challenge.tweets;
+package pl.allegro.tech.leaders.hackathon.challenge.samples;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.JsonMappingException;
@@ -6,8 +6,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.module.jsonSchema.JsonSchema;
 import com.fasterxml.jackson.module.jsonSchema.JsonSchemaGenerator;
 import org.springframework.stereotype.Component;
-import pl.allegro.tech.leaders.hackathon.challenge.Challenge;
-import pl.allegro.tech.leaders.hackathon.challenge.Task;
+import pl.allegro.tech.leaders.hackathon.challenge.api.Challenge;
 
 import java.util.List;
 
@@ -41,9 +40,13 @@ class TweetsChallenge implements Challenge {
     }
 
     @Override
-    public JsonSchema getChallengeResponse() throws JsonMappingException {
+    public JsonSchema getChallengeResponse() {
         JsonSchemaGenerator schemaGen = new JsonSchemaGenerator(objectMapper);
-        return schemaGen.generateSchema(ChallengeResponse.class);
+        try {
+            return schemaGen.generateSchema(ChallengeResponse.class);
+        } catch (JsonMappingException e) {
+            throw new RuntimeException("Could not create schema", e);
+        }
     }
 
     @Override

@@ -1,6 +1,7 @@
 package pl.allegro.tech.leaders.hackathon.registration;
 
 import org.springframework.messaging.simp.SimpMessagingTemplate;
+import pl.allegro.tech.leaders.hackathon.registration.api.RegisteredTeam;
 
 class RegistrationEvents {
 

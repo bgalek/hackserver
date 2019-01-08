@@ -1,6 +1,4 @@
-package pl.allegro.tech.leaders.hackathon.challenge.calc
-
-import pl.allegro.tech.leaders.hackathon.configuration.ObjectMapperProvider
+package pl.allegro.tech.leaders.hackathon.challenge.samples
 
 import javax.script.ScriptEngine
 import javax.script.ScriptEngineManager
