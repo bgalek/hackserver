@@ -12,6 +12,7 @@ apply(plugin = "io.spring.dependency-management")
 
 plugins {
     java
+    groovy
     application
     id("com.gradle.build-scan") version "2.1"
 }
@@ -44,10 +45,10 @@ dependencies {
 
     annotationProcessor("org.springframework.boot:spring-boot-configuration-processor")
 
-    testImplementation("org.springframework.boot:spring-boot-starter-test") { exclude("junit", "junit") }
-    testImplementation("org.junit.jupiter:junit-jupiter-api:5.2.0")
-    testCompile("org.junit.jupiter:junit-jupiter-params:5.2.0")
-    testRuntime("org.junit.jupiter:junit-jupiter-engine:5.2.0")
+    testImplementation("org.codehaus.groovy:groovy-all:2.5.5")
+    testImplementation("org.spockframework:spock-core:1.2-groovy-2.5")
+    testImplementation("org.spockframework:spock-spring:1.2-groovy-2.5")
+    testImplementation("org.springframework.boot:spring-boot-starter-test")
     testRuntime("de.flapdoodle.embed:de.flapdoodle.embed.mongo:2.2.0")
 }
 
