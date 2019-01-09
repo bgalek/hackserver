@@ -32,6 +32,10 @@ repositories {
     mavenCentral()
 }
 
+val integrationRuntime: Configuration by configurations.creating {
+    extendsFrom(configurations.testRuntime.get())
+}
+
 dependencies {
     implementation("org.springframework.boot:spring-boot-starter-web")
     implementation("org.springframework.boot:spring-boot-starter-actuator")
@@ -49,10 +53,33 @@ dependencies {
     testImplementation("org.spockframework:spock-core:1.2-groovy-2.5")
     testImplementation("org.spockframework:spock-spring:1.2-groovy-2.5")
     testImplementation("org.springframework.boot:spring-boot-starter-test")
-    testRuntime("de.flapdoodle.embed:de.flapdoodle.embed.mongo:2.2.0")
+
+    integrationRuntime("de.flapdoodle.embed:de.flapdoodle.embed.mongo:2.2.0")
 }
 
 buildScan {
     termsOfServiceUrl = "https://gradle.com/terms-of-service"
     termsOfServiceAgree = "yes"
 }
+
+sourceSets {
+    create("integration") {
+        withConvention(GroovySourceSet::class) {
+            groovy.srcDir("src/integration/groovy")
+            resources.srcDir("src/integration/resources")
+            compileClasspath += sourceSets["main"].compileClasspath + sourceSets["test"].compileClasspath
+            runtimeClasspath += sourceSets["main"].runtimeClasspath + sourceSets["test"].runtimeClasspath
+        }
+    }
+}
+
+task<Test>("integrationTest") {
+    description = "Runs the integration tests"
+    group = LifecycleBasePlugin.VERIFICATION_GROUP
+    testClassesDirs = sourceSets["integration"].output.classesDirs
+    classpath = sourceSets["integration"].runtimeClasspath
+    mustRunAfter(tasks["test"])
+    useJUnitPlatform()
+}
+
+tasks["check"].dependsOn("integrationTest")
