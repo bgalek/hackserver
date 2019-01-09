@@ -1,7 +1,7 @@
-package integration
+package pl.allegro.tech.leaders.hackathon
 
-import integration.base.IntegrationSpec
 import org.springframework.test.web.servlet.ResultActions
+import pl.allegro.tech.leaders.hackathon.base.IntegrationSpec
 
 import static java.util.UUID.randomUUID
 import static org.hamcrest.Matchers.empty

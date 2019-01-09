@@ -1,4 +1,4 @@
-package integration.base
+package pl.allegro.tech.leaders.hackathon.base
 
 import groovy.transform.CompileStatic
 import groovy.transform.SelfType
