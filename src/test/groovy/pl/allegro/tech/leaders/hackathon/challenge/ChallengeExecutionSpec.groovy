@@ -1,6 +1,6 @@
 package pl.allegro.tech.leaders.hackathon.challenge
 
-import pl.allegro.tech.leaders.hackathon.challenge.api.ChallengeResultDto
+import pl.allegro.tech.leaders.hackathon.challenge.api.ChallengeResult
 import pl.allegro.tech.leaders.hackathon.challenge.base.SpecSimulatedException
 import pl.allegro.tech.leaders.hackathon.registration.api.RegisteredTeam
 import reactor.core.publisher.Mono
@@ -21,7 +21,7 @@ class ChallengeExecutionSpec extends ChallengeSpec {
         when: 'challenge is executed'
             executeChallenge()
         then: 'challenge result contains information on both teams'
-            List<ChallengeResultDto> results = extract(facade.getChallengeResult(SAMPLE_CHALLENGE.id))
+            List<ChallengeResult> results = extract(facade.getChallengeResult(SAMPLE_CHALLENGE.id))
             results == [
                     invalidChallengeResult(firstTeam.id),
                     invalidChallengeResult(secondTeam.id)
@@ -38,10 +38,10 @@ class ChallengeExecutionSpec extends ChallengeSpec {
                     .recordResponse(team.uri, invalidResult())
                     .recordResponse(team.uri, invalidResult())
         when: 'challenge is executed'
-            List<ChallengeResultDto> results = executeChallenge()
+            List<ChallengeResult> results = executeChallenge()
         then: 'team received 1/3 of the challenge points'
             results == [
-                    new ChallengeResultDto() // TODO: check if the result contains half of the challenge points and proper details
+                    new ChallengeResult() // TODO: check if the result contains half of the challenge points and proper details
             ]
     }
 
@@ -52,14 +52,14 @@ class ChallengeExecutionSpec extends ChallengeSpec {
         and: 'there is no connection to the team service'
             solutionClient.recordResponse(team.uri, SpecSimulatedException.asMono())
         when: 'a challenge is executed'
-            List<ChallengeResultDto> results = executeChallenge()
+            List<ChallengeResult> results = executeChallenge()
         then: 'team receives no points'
             results == [
-                    new ChallengeResultDto() // TODO: check if the result contains 0 points and a proper message
+                    new ChallengeResult() // TODO: check if the result contains 0 points and a proper message
             ]
     }
 
-    private List<ChallengeResultDto> executeChallenge() {
+    private List<ChallengeResult> executeChallenge() {
         return extract(facade.executeChallenge(SAMPLE_CHALLENGE.id))
     }
 
@@ -68,9 +68,9 @@ class ChallengeExecutionSpec extends ChallengeSpec {
         return new RegisteredTeam()
     }
 
-    private ChallengeResultDto invalidChallengeResult(String teamId, String challangeId = SAMPLE_CHALLENGE.id) {
+    private ChallengeResult invalidChallengeResult(String teamId, String challangeId = SAMPLE_CHALLENGE.id) {
         // TOOD: create an invalid challenge result
-        return new ChallengeResultDto()
+        return new ChallengeResult()
     }
 
     private Mono<String> invalidResult() {

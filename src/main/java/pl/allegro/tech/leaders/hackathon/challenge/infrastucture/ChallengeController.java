@@ -6,7 +6,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
 import pl.allegro.tech.leaders.hackathon.challenge.ChallengeFacade;
-import pl.allegro.tech.leaders.hackathon.challenge.api.ChallengeDetailsDto;
+import pl.allegro.tech.leaders.hackathon.challenge.api.ChallengeDetails;
 
 import java.util.List;
 
@@ -22,12 +22,12 @@ class ChallengeController {
     }
 
     @GetMapping
-    List<ChallengeDetailsDto> listActiveChallanges() {
+    List<ChallengeDetails> listActiveChallanges() {
         return challengeFacade.getActiveChallenges();
     }
 
     @GetMapping("/{id}")
-    ChallengeDetailsDto getChallange(@PathVariable String id) {
+    ChallengeDetails getChallange(@PathVariable String id) {
         return challengeFacade.getActiveChallenge(id)
                 .orElseThrow(() -> new ResponseStatusException(NOT_FOUND, "Challenge Not Found"));
     }

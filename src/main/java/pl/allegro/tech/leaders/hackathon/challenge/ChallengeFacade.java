@@ -1,7 +1,6 @@
 package pl.allegro.tech.leaders.hackathon.challenge;
 
 import pl.allegro.tech.leaders.hackathon.challenge.api.*;
-import pl.allegro.tech.leaders.hackathon.registration.RegistrationService;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
@@ -18,29 +17,29 @@ public class ChallengeFacade {
         this.challenges = requireNonNull(challenges);
     }
 
-    public Flux<ChallengeResultDto> executeChallenge(String challengeId) {
+    public Flux<ChallengeResult> executeChallenge(String challengeId) {
         return Flux.empty();
     }
 
-    public Mono<ChallengeResultDto> getChallengeResult(String challengeId, String teamId) {
+    public Mono<ChallengeResult> getChallengeResult(String challengeId, String teamId) {
         return Mono.empty();
     }
 
-    public Flux<ChallengeResultDto> getChallengeResult(String challengeId) {
+    public Flux<ChallengeResult> getChallengeResult(String challengeId) {
         return Flux.empty();
     }
 
-    public Mono<HackatonResultDto> getHackatonResults() {
+    public Mono<HackatonResult> getHackatonResults() {
         return Mono.empty();
     }
 
-    public List<ChallengeDetailsDto> getActiveChallenges() {
+    public List<ChallengeDetails> getActiveChallenges() {
         return challenges.stream()
                 .map(Challenge::toChallengeDetailsDto)
                 .collect(toList());
     }
 
-    public Optional<ChallengeDetailsDto> getActiveChallenge(String challengeId) {
+    public Optional<ChallengeDetails> getActiveChallenge(String challengeId) {
         return challenges.stream()
                 .filter(challenge -> challenge.getId().equals(challengeId))
                 .map(Challenge::toChallengeDetailsDto)

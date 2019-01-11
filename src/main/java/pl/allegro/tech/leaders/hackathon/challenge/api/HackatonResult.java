@@ -1,5 +1,5 @@
 package pl.allegro.tech.leaders.hackathon.challenge.api;
 
-public class HackatonResultDto {
+public class HackatonResult {
 
 }

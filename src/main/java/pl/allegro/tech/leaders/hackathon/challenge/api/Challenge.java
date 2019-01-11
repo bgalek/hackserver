@@ -27,8 +27,8 @@ public interface Challenge {
         return slugify.slugify(getName());
     }
 
-    default ChallengeDetailsDto toChallengeDetailsDto() {
-        return new ChallengeDetailsDto(
+    default ChallengeDetails toChallengeDetailsDto() {
+        return new ChallengeDetails(
                 this.getId(),
                 this.getName(),
                 this.getDescription(),

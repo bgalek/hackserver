@@ -4,7 +4,7 @@ import com.fasterxml.jackson.module.jsonSchema.JsonSchema;
 
 import java.util.List;
 
-public class ChallengeDetailsDto {
+public class ChallengeDetails {
     private final String id;
     private final String name;
     private final String description;
@@ -13,7 +13,7 @@ public class ChallengeDetailsDto {
     private final JsonSchema challengeResponse;
     private final List<String> examples;
 
-    public ChallengeDetailsDto(
+    public ChallengeDetails(
             String id,
             String name,
             String description,
