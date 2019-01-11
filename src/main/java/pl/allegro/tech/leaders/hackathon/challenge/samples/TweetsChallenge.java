@@ -7,8 +7,11 @@ import com.fasterxml.jackson.module.jsonSchema.JsonSchema;
 import com.fasterxml.jackson.module.jsonSchema.JsonSchemaGenerator;
 import org.springframework.stereotype.Component;
 import pl.allegro.tech.leaders.hackathon.challenge.api.Challenge;
+import pl.allegro.tech.leaders.hackathon.challenge.api.ChallengeTask;
 
 import java.util.List;
+
+import static java.util.Collections.emptyList;
 
 @Component
 class TweetsChallenge implements Challenge {
@@ -55,8 +58,8 @@ class TweetsChallenge implements Challenge {
     }
 
     @Override
-    public List<Task> getTasks() {
-        return null;
+    public List<ChallengeTask> getTasks() {
+        return emptyList();
     }
 
     private class ChallengeResponse {

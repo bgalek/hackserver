@@ -7,21 +7,18 @@ import com.fasterxml.jackson.module.jsonSchema.JsonSchema;
 import com.fasterxml.jackson.module.jsonSchema.JsonSchemaGenerator;
 import org.springframework.stereotype.Component;
 import pl.allegro.tech.leaders.hackathon.challenge.api.Challenge;
+import pl.allegro.tech.leaders.hackathon.challenge.api.ChallengeTask;
 
 import java.util.List;
+import java.util.Map;
 
 @Component
 class CalcChallenge implements Challenge {
-
-    private static final String LEVEL1 = "2+2";
-    private static final String LEVEL2 = "2+2*2";
-    private static final String LEVEL3 = "(2+2)*2";
-
     private final ObjectMapper objectMapper;
-    private final List<Task> tasks = List.of(
-            new Task(LEVEL1, "4"),
-            new Task(LEVEL2, "6"),
-            new Task(LEVEL3, "8")
+    private final List<ChallengeTask> tasks = List.of(
+            ChallengeTask.withFixedResult("Should calculate a sum 2+2=4", Map.of("equation", "2+2"), "4"),
+            ChallengeTask.withFixedResult("Should calculate a sum and multiplication 2+2*2=6", Map.of("equation", "2+2*2"), "6"),
+            ChallengeTask.withFixedResult("Should respect parenthesis in equation (2+2)*2 = 8", Map.of("equation", "(2+2)*2"), "8")
     );
 
     CalcChallenge(ObjectMapper objectMapper) {
@@ -60,7 +57,7 @@ class CalcChallenge implements Challenge {
         }
     }
 
-    public List<Task> getTasks() {
+    public List<ChallengeTask> getTasks() {
         return this.tasks;
     }
 

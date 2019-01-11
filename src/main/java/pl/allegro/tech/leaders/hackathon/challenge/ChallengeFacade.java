@@ -18,7 +18,7 @@ public class ChallengeFacade {
         this.challenges = requireNonNull(challenges);
     }
 
-    public Flux<ChallengeResultDto> executeChallange(String challengeId) {
+    public Flux<ChallengeResultDto> executeChallenge(String challengeId) {
         return Flux.empty();
     }
 

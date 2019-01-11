@@ -1,6 +1,7 @@
 package pl.allegro.tech.leaders.hackathon.challenge
 
 import pl.allegro.tech.leaders.hackathon.challenge.api.ChallengeResultDto
+import pl.allegro.tech.leaders.hackathon.challenge.base.SpecSimulatedException
 import pl.allegro.tech.leaders.hackathon.registration.api.RegisteredTeam
 import reactor.core.publisher.Mono
 import spock.lang.Ignore
@@ -11,20 +12,16 @@ import static pl.allegro.tech.leaders.hackathon.challenge.base.SampleChallenges.
 class ChallengeExecutionSpec extends ChallengeSpec {
     @Ignore
     def 'should execute a challenge on all teams'() {
-        given: 'there are two teams registered'
+        given: 'there is a team service returning a valid solution'
             RegisteredTeam firstTeam = registerTeam()
+            solutionClient.recordResponse(firstTeam.uri, validResult()) // TODO: should use task uri instead of team uri
+        and: 'there is a second team service returning an invalid solution'
             RegisteredTeam secondTeam = registerTeam()
-
-        when: 'a challenge is executed'
-            executeChallange()
-        then: 'the first team was challenged with all the tasks'
-            (1.._) * solutionClient.execute(firstTeam.uri) >> invalidResult()
-        and: 'the second team was challenged with all the tasks'
-            (1.._) * solutionClient.execute(secondTeam.uri) >> invalidResult()
-
-        when: 'challenge results are fetched'
-            List<ChallengeResultDto> results = extract(facade.getChallengeResult ( SAMPLE_CHALLENGE.id))
-        then: 'challenge result contains information for both teams'
+            solutionClient.recordResponse(secondTeam.uri, invalidResult())
+        when: 'challenge is executed'
+            executeChallenge()
+        then: 'challenge result contains information on both teams'
+            List<ChallengeResultDto> results = extract(facade.getChallengeResult(SAMPLE_CHALLENGE.id))
             results == [
                     invalidChallengeResult(firstTeam.id),
                     invalidChallengeResult(secondTeam.id)
@@ -33,35 +30,37 @@ class ChallengeExecutionSpec extends ChallengeSpec {
 
     @Ignore
     def 'should calculate a challenge result from resolved tasks'() {
-        given: 'there is a team registered'
+        given: 'there is a registered team service'
             RegisteredTeam team = registerTeam()
-        when: 'a challenge is executed'
-            List<ChallengeResultDto> results = executeChallange()
-        then: 'the team resolved half of the tasks'
-            1 * solutionClient.execute(team.uri) >> invalidResult()
-            1 * solutionClient.execute(team.uri) >> validResult()
-        and: 'team received half of the challenge points'
+        and: 'team provides one 1 valid solution out of 3 tasks'
+            solutionClient
+                    .recordResponse(team.uri, validResult())
+                    .recordResponse(team.uri, invalidResult())
+                    .recordResponse(team.uri, invalidResult())
+        when: 'challenge is executed'
+            List<ChallengeResultDto> results = executeChallenge()
+        then: 'team received 1/3 of the challenge points'
             results == [
                     new ChallengeResultDto() // TODO: check if the result contains half of the challenge points and proper details
             ]
     }
 
     @Ignore
-    def 'when communication fails team should receive no points'() {
+    def 'should assign 0 points when communication to a team service fails'() {
         given: 'there is a team registered'
             RegisteredTeam team = registerTeam()
+        and: 'there is no connection to the team service'
+            solutionClient.recordResponse(team.uri, SpecSimulatedException.asMono())
         when: 'a challenge is executed'
-            List<ChallengeResultDto> results = executeChallange()
-        then: 'the team fails to answer'
-            1 * solutionClient.execute(team.uri) >> Mono.error(new RuntimeException())
+            List<ChallengeResultDto> results = executeChallenge()
         then: 'team receives no points'
             results == [
                     new ChallengeResultDto() // TODO: check if the result contains 0 points and a proper message
             ]
     }
 
-    private List<ChallengeResultDto> executeChallange() {
-        return extract(facade.executeChallange(SAMPLE_CHALLENGE.id))
+    private List<ChallengeResultDto> executeChallenge() {
+        return extract(facade.executeChallenge(SAMPLE_CHALLENGE.id))
     }
 
     private RegisteredTeam registerTeam() {

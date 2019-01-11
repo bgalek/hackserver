@@ -6,6 +6,7 @@ import com.fasterxml.jackson.module.jsonSchema.JsonSchema
 import com.fasterxml.jackson.module.jsonSchema.JsonSchemaGenerator
 import groovy.transform.CompileStatic
 import pl.allegro.tech.leaders.hackathon.challenge.api.Challenge
+import pl.allegro.tech.leaders.hackathon.challenge.api.ChallengeTask
 
 import static pl.allegro.tech.leaders.hackathon.configuration.ObjectMapperProvider.objectMapper
 
@@ -51,10 +52,10 @@ class CountChallenge implements Challenge {
     }
 
     @Override
-    List<Task> getTasks() {
+    List<ChallengeTask> getTasks() {
         return [
-                new Task("abba", "b"),
-                new Task("alphabet", "a")
+                ChallengeTask.withFixedResult("Should find two occurrences", [text: "abba", token: "b"], "2"),
+                ChallengeTask.withFixedResult("Should find one occurrence", [text: "alphabet", token: "b"], "1")
         ]
     }
 
