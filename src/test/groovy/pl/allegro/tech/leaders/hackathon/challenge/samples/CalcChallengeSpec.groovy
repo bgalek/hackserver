@@ -1,6 +1,7 @@
-package pl.allegro.tech.leaders.hackathon.challenge.calc
+package pl.allegro.tech.leaders.hackathon.challenge.samples
 
-import pl.allegro.tech.leaders.hackathon.configuration.ObjectMapperProvider
+import pl.allegro.tech.leaders.hackathon.challenge.api.ChallengeTaskResult
+import spock.lang.Specification
 
 import javax.script.ScriptEngine
 import javax.script.ScriptEngineManager
@@ -8,16 +9,16 @@ import javax.script.ScriptException
 
 import static pl.allegro.tech.leaders.hackathon.configuration.ObjectMapperProvider.objectMapper
 
-class CalcChallengeSpec {
+class CalcChallengeSpec extends Specification {
     def 'should be able to solve all calculator challenge tasks'() {
         given:
             CalcChallenge challenge = new CalcChallenge(objectMapper())
         when:
-            List<Boolean> results = challenge.getTasks().collect {
-                it.checkAnswer(solve(it.getQuestion()))
+            List<ChallengeTaskResult> results = challenge.getTasks().collect {
+                it.scoreSolution(solve(it.getParams().get("equation")))
             }
         then:
-            results.each { assert it }
+            results.every { it.solutionValid }
     }
 
     private String solve(String question) {

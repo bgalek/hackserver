@@ -2,8 +2,10 @@ package pl.allegro.tech.leaders.hackathon.registration;
 
 import io.micrometer.core.instrument.Counter;
 import io.micrometer.core.instrument.MeterRegistry;
+import pl.allegro.tech.leaders.hackathon.registration.api.RegisteredTeam;
 
 import java.util.List;
+import java.util.Optional;
 
 import static java.util.stream.Collectors.toList;
 
@@ -33,5 +35,12 @@ public class RegistrationService {
                 .stream()
                 .map(it -> new RegisteredTeam(it.getName()))
                 .collect(toList());
+    }
+
+    Optional<RegisteredTeam> getTeam(String teamId) {
+        return teamRepository.findAll()
+                .stream()
+                .map(it -> new RegisteredTeam(it.getName()))
+                .findFirst();
     }
 }
