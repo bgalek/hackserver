@@ -5,13 +5,13 @@ import com.fasterxml.jackson.databind.JsonMappingException
 import com.fasterxml.jackson.module.jsonSchema.JsonSchema
 import com.fasterxml.jackson.module.jsonSchema.JsonSchemaGenerator
 import groovy.transform.CompileStatic
-import pl.allegro.tech.leaders.hackathon.challenge.api.Challenge
+import pl.allegro.tech.leaders.hackathon.challenge.api.ChallengeDefinition
 import pl.allegro.tech.leaders.hackathon.challenge.api.ChallengeTask
 
 import static pl.allegro.tech.leaders.hackathon.configuration.ObjectMapperProvider.objectMapper
 
 @CompileStatic
-class SumChallenge implements Challenge {
+class SumChallengeDefinition implements ChallengeDefinition {
     public static final ID = "sum"
     public static final ChallengeTask FIRST_TASK = ChallengeTask.withFixedResult("Should sum 2 numbers to 5", [equation: "2+3"], "5")
     public static final ChallengeTask SECOND_TASK = ChallengeTask.withFixedResult("Should sum 3 numbers to 9", [equation: "2+3+4"], "9")

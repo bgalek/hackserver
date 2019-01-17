@@ -38,6 +38,13 @@ class MockMvcHttpClient {
         return waitForResponse(resultActions)
     }
 
+    ResultActions put(String path) {
+        ResultActions resultActions = mockMvc.perform(
+                MockMvcRequestBuilders.put(path)
+                        .accept(MediaType.APPLICATION_JSON))
+        return waitForResponse(resultActions)
+    }
+
     private ResultActions waitForResponse(ResultActions resultActions) {
         return isAsync(resultActions) ?
                 mockMvc.perform(MockMvcRequestBuilders.asyncDispatch(resultActions.andReturn())) :

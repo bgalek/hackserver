@@ -4,8 +4,9 @@ import com.fasterxml.jackson.module.jsonSchema.JsonSchema;
 import com.github.slugify.Slugify;
 
 import java.util.List;
+import java.util.Objects;
 
-public interface Challenge {
+public interface ChallengeDefinition {
 
     Slugify slugify = new Slugify();
 
@@ -27,18 +28,6 @@ public interface Challenge {
         return slugify.slugify(getName());
     }
 
-    default ChallengeDetails toChallengeDetailsDto() {
-        return new ChallengeDetails(
-                this.getId(),
-                this.getName(),
-                this.getDescription(),
-                this.getChallengeEndpoint(),
-                this.getChallengeParams(),
-                this.getChallengeResponse(),
-                this.getExamples()
-        );
-    }
-
     class QueryParam {
         private final String name;
         private final String desc;
@@ -54,6 +43,20 @@ public interface Challenge {
 
         public String getDesc() {
             return desc;
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) return true;
+            if (o == null || getClass() != o.getClass()) return false;
+            QueryParam that = (QueryParam) o;
+            return Objects.equals(name, that.name) &&
+                    Objects.equals(desc, that.desc);
+        }
+
+        @Override
+        public int hashCode() {
+            return Objects.hash(name, desc);
         }
     }
 }

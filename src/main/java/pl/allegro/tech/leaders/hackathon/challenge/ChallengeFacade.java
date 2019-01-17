@@ -5,16 +5,42 @@ import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 import java.util.List;
-import java.util.Optional;
-
-import static java.util.Objects.requireNonNull;
-import static java.util.stream.Collectors.toList;
+import java.util.Objects;
 
 public class ChallengeFacade {
-    private final List<Challenge> challenges;
+    private final ChallengeActivator challengeActivator;
+    private final ChallengeRepository challengeRepository;
+    private final ChallengeRegistrar challengeRegistrar;
 
-    ChallengeFacade(List<Challenge> challenges) {
-        this.challenges = requireNonNull(challenges);
+    ChallengeFacade(
+            ChallengeActivator challengeActivator,
+            ChallengeRepository challengeRepository,
+            ChallengeRegistrar challengeRegistrar) {
+        this.challengeActivator = challengeActivator;
+        this.challengeRepository = challengeRepository;
+        this.challengeRegistrar = challengeRegistrar;
+    }
+
+    public Flux<ChallengeDetails> registerChallengeDefinitions(List<ChallengeDefinition> challengeDefinitions) {
+        return challengeRegistrar.registerChallengeDefinitions(challengeDefinitions);
+    }
+
+    public Mono<ChallengeActivationResult> activateChallenge(String challengeId) {
+        Objects.requireNonNull(challengeId);
+        return challengeActivator.activateChallenge(challengeId);
+    }
+
+    public Flux<ChallengeDetails> getActiveChallenges() {
+        return challengeRepository.findActivated()
+                .map(Challenge::toChallengeDetailsDto);
+    }
+
+    public Mono<ChallengeDetails> getActiveChallenge(String challengeId) {
+        Objects.requireNonNull(challengeId);
+        return challengeRepository.findById(challengeId)
+                .filter(Challenge::isActive)
+                .switchIfEmpty(Mono.error(new ChallengeNotFoundException(challengeId)))
+                .map(Challenge::toChallengeDetailsDto);
     }
 
     public Flux<ChallengeResult> executeChallenge(String challengeId) {
@@ -31,18 +57,5 @@ public class ChallengeFacade {
 
     public Mono<HackatonResult> getHackatonResults() {
         return Mono.empty();
-    }
-
-    public List<ChallengeDetails> getActiveChallenges() {
-        return challenges.stream()
-                .map(Challenge::toChallengeDetailsDto)
-                .collect(toList());
-    }
-
-    public Optional<ChallengeDetails> getActiveChallenge(String challengeId) {
-        return challenges.stream()
-                .filter(challenge -> challenge.getId().equals(challengeId))
-                .map(Challenge::toChallengeDetailsDto)
-                .findFirst();
     }
 }
