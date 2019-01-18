@@ -6,14 +6,14 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.module.jsonSchema.JsonSchema;
 import com.fasterxml.jackson.module.jsonSchema.JsonSchemaGenerator;
 import org.springframework.stereotype.Component;
-import pl.allegro.tech.leaders.hackathon.challenge.api.Challenge;
+import pl.allegro.tech.leaders.hackathon.challenge.api.ChallengeDefinition;
 import pl.allegro.tech.leaders.hackathon.challenge.api.ChallengeTask;
 
 import java.util.List;
 import java.util.Map;
 
 @Component
-class CalcChallenge implements Challenge {
+class CalcChallengeDefinition implements ChallengeDefinition {
     private final ObjectMapper objectMapper;
     private final List<ChallengeTask> tasks = List.of(
             ChallengeTask.withFixedResult("Should calculate a sum 2+2=4", Map.of("equation", "2+2"), "4"),
@@ -21,7 +21,7 @@ class CalcChallenge implements Challenge {
             ChallengeTask.withFixedResult("Should respect parenthesis in equation (2+2)*2 = 8", Map.of("equation", "(2+2)*2"), "8")
     );
 
-    CalcChallenge(ObjectMapper objectMapper) {
+    CalcChallengeDefinition(ObjectMapper objectMapper) {
         this.objectMapper = objectMapper;
     }
 

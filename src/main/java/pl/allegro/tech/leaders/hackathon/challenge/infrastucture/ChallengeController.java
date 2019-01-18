@@ -2,15 +2,15 @@ package pl.allegro.tech.leaders.hackathon.challenge.infrastucture;
 
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.server.ResponseStatusException;
 import pl.allegro.tech.leaders.hackathon.challenge.ChallengeFacade;
+import pl.allegro.tech.leaders.hackathon.challenge.api.ChallengeActivationResult;
 import pl.allegro.tech.leaders.hackathon.challenge.api.ChallengeDetails;
+import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 
-import java.util.List;
-
-import static org.springframework.http.HttpStatus.NOT_FOUND;
 
 @RestController
 @RequestMapping("/challenges")
@@ -22,13 +22,17 @@ class ChallengeController {
     }
 
     @GetMapping
-    List<ChallengeDetails> listActiveChallanges() {
+    Flux<ChallengeDetails> listActiveChallenges() {
         return challengeFacade.getActiveChallenges();
     }
 
     @GetMapping("/{id}")
-    ChallengeDetails getChallange(@PathVariable String id) {
-        return challengeFacade.getActiveChallenge(id)
-                .orElseThrow(() -> new ResponseStatusException(NOT_FOUND, "Challenge Not Found"));
+    Mono<ChallengeDetails> getActiveChallenge(@PathVariable String id) {
+        return challengeFacade.getActiveChallenge(id);
+    }
+
+    @PutMapping("/{id}/activate")
+    Mono<ChallengeActivationResult> activate(@PathVariable String id) {
+        return challengeFacade.activateChallenge(id);
     }
 }

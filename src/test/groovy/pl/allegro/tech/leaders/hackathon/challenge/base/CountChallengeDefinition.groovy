@@ -5,13 +5,13 @@ import com.fasterxml.jackson.databind.JsonMappingException
 import com.fasterxml.jackson.module.jsonSchema.JsonSchema
 import com.fasterxml.jackson.module.jsonSchema.JsonSchemaGenerator
 import groovy.transform.CompileStatic
-import pl.allegro.tech.leaders.hackathon.challenge.api.Challenge
+import pl.allegro.tech.leaders.hackathon.challenge.api.ChallengeDefinition
 import pl.allegro.tech.leaders.hackathon.challenge.api.ChallengeTask
 
 import static pl.allegro.tech.leaders.hackathon.configuration.ObjectMapperProvider.objectMapper
 
 @CompileStatic
-class CountChallenge implements Challenge {
+class CountChallengeDefinition implements ChallengeDefinition {
     public static final ID = "count"
 
     @Override

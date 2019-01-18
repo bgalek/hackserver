@@ -6,7 +6,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.module.jsonSchema.JsonSchema;
 import com.fasterxml.jackson.module.jsonSchema.JsonSchemaGenerator;
 import org.springframework.stereotype.Component;
-import pl.allegro.tech.leaders.hackathon.challenge.api.Challenge;
+import pl.allegro.tech.leaders.hackathon.challenge.api.ChallengeDefinition;
 import pl.allegro.tech.leaders.hackathon.challenge.api.ChallengeTask;
 
 import java.util.List;
@@ -14,11 +14,11 @@ import java.util.List;
 import static java.util.Collections.emptyList;
 
 @Component
-class TweetsChallenge implements Challenge {
+class TweetsChallengeDefinition implements ChallengeDefinition {
 
     private final ObjectMapper objectMapper;
 
-    TweetsChallenge(ObjectMapper objectMapper) {
+    TweetsChallengeDefinition(ObjectMapper objectMapper) {
         this.objectMapper = objectMapper;
     }
 

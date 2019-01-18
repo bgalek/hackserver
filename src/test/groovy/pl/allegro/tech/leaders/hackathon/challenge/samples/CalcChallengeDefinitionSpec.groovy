@@ -9,10 +9,10 @@ import javax.script.ScriptException
 
 import static pl.allegro.tech.leaders.hackathon.configuration.ObjectMapperProvider.objectMapper
 
-class CalcChallengeSpec extends Specification {
+class CalcChallengeDefinitionSpec extends Specification {
     def 'should be able to solve all calculator challenge tasks'() {
         given:
-            CalcChallenge challenge = new CalcChallenge(objectMapper())
+            CalcChallengeDefinition challenge = new CalcChallengeDefinition(objectMapper())
         when:
             List<ChallengeTaskResult> results = challenge.getTasks().collect {
                 it.scoreSolution(solve(it.getParams().get("equation")))

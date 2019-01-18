@@ -1,21 +1,18 @@
 package pl.allegro.tech.leaders.hackathon.challenge;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import pl.allegro.tech.leaders.hackathon.challenge.api.Challenge;
 
-import java.util.List;
+import java.time.Clock;
 
 @Configuration
 class ChallengeConfiguration {
-
-    private static final Logger logger = LoggerFactory.getLogger(ChallengeConfiguration.class);
-
     @Bean
-    ChallengeFacade challengeService(List<Challenge> challenges) {
-        challenges.forEach(challenge -> logger.info("Initialized challenge: {}, {}, {}", challenge.getId(), challenge.getName(), challenge.getDescription()));
-        return new ChallengeFacade(challenges);
+    ChallengeFacade challengeFacade(Clock clock, ChallengeStateRepository challengeStateRepository) {
+        ChallengeCreator creator = new ChallengeCreator();
+        ChallengeRepository repository = new ChallengeRepository(challengeStateRepository, creator);
+        ChallengeActivator activator = new ChallengeActivator(clock, repository);
+        ChallengeRegistrar registrar = new ChallengeRegistrar(repository, creator);
+        return new ChallengeFacade(activator, repository, registrar);
     }
 }
