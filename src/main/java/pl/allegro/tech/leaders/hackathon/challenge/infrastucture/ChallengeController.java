@@ -35,4 +35,9 @@ class ChallengeController {
     Mono<ChallengeActivationResult> activate(@PathVariable String id) {
         return challengeFacade.activateChallenge(id);
     }
+
+    @PutMapping("/{id}/deactivate")
+    Mono<ChallengeActivationResult> deactivate(@PathVariable String id) {
+        return challengeFacade.deactivateChallenge(id);
+    }
 }
