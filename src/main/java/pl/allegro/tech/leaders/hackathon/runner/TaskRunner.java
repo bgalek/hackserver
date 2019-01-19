@@ -3,12 +3,11 @@ package pl.allegro.tech.leaders.hackathon.runner;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 import pl.allegro.tech.leaders.hackathon.challenge.ChallengeDefinition;
 import pl.allegro.tech.leaders.hackathon.challenge.ChallengeTaskDefinition;
-import pl.allegro.tech.leaders.hackathon.registration.Team;
+import pl.allegro.tech.leaders.hackathon.registration.api.RegisteredTeam;
 import reactor.core.publisher.Mono;
 
 import java.io.IOException;
@@ -22,9 +21,9 @@ public class TaskRunner {
     private final WebClient webClient = WebClient.create();
     private final ObjectMapper objectMapper= new ObjectMapper();
 
-    public <T> Mono<TaskResult> run(ChallengeDefinition<T> challenge, ChallengeTaskDefinition<T> task, Team team) {
+    public <T> Mono<TaskResult> run(ChallengeDefinition<T> challenge, ChallengeTaskDefinition<T> task, RegisteredTeam team) {
 
-        String teamEndpoint = team.getHttpRemoteAddr() + challenge.getChallengeEndpoint();
+        String teamEndpoint = team.getUri() + challenge.getChallengeEndpoint();
         logger.info("running example task of '{}' for team '{}', remote address: {}", challenge.getName(), team.getName(), teamEndpoint);
 
         Mono<String> responseBody =  webClient.get()

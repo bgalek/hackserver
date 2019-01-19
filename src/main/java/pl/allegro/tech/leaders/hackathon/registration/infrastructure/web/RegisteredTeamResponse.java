@@ -1,8 +1,5 @@
-package pl.allegro.tech.leaders.hackathon.registration;
+package pl.allegro.tech.leaders.hackathon.registration.infrastructure.web;
 
-/**
- * Registered Team Api Entity
- */
 class RegisteredTeamResponse {
 
     private final String name;

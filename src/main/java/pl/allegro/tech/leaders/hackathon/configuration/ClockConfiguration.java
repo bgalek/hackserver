@@ -9,6 +9,6 @@ import java.time.Clock;
 class ClockConfiguration {
     @Bean
     Clock clock() {
-        return Clock.systemDefaultZone();
+        return Clock.systemUTC();
     }
 }

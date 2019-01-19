@@ -1,13 +1,34 @@
 package pl.allegro.tech.leaders.hackathon.registration;
 
-import java.util.List;
+import org.springframework.data.repository.Repository;
+import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 
-public interface TeamRepository {
-    void save(Team team);
+class TeamRepository {
 
-    List<Team> findAll();
+    private final PersistenceTeamRepository persistenceTeamRepository;
 
-    Team get(String teamId);
+    TeamRepository(PersistenceTeamRepository persistenceTeamRepository) {
+        this.persistenceTeamRepository = persistenceTeamRepository;
+    }
 
-    void deleteAll();
+    Mono<Team> save(Team team) {
+        return persistenceTeamRepository.save(team);
+    }
+
+    Flux<Team> findAll() {
+        return persistenceTeamRepository.findAll();
+    }
+
+    Mono<Team> findByName(String name) {
+        return persistenceTeamRepository.findByName(name);
+    }
+}
+
+interface PersistenceTeamRepository extends Repository<Team, String> {
+    Mono<Team> save(Team team);
+
+    Mono<Team> findByName(String name);
+
+    Flux<Team> findAll();
 }
