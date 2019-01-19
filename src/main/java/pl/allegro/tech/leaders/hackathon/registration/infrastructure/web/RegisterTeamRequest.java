@@ -1,10 +1,7 @@
-package pl.allegro.tech.leaders.hackathon.registration;
+package pl.allegro.tech.leaders.hackathon.registration.infrastructure.web;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-/**
- * Registered Team Api Entity
- */
 class RegisterTeamRequest {
 
     private final String name;

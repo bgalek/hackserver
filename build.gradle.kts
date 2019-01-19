@@ -41,16 +41,13 @@ val integrationRuntime: Configuration by configurations.creating {
 }
 
 dependencies {
-    implementation("org.springframework.boot:spring-boot-starter-web")
     implementation("org.springframework.boot:spring-boot-starter-webflux")
-    implementation("org.springframework.boot:spring-boot-starter-actuator")
-    implementation("org.springframework.boot:spring-boot-starter-websocket")
     implementation("org.springframework.boot:spring-boot-starter-data-mongodb-reactive")
     implementation("org.springframework.retry:spring-retry")
     implementation("com.fasterxml.jackson.module:jackson-module-jsonSchema:2.9.8")
     implementation("org.zalando:problem-spring-web:0.22.0")
     implementation("com.github.slugify:slugify:2.3")
-    implementation("io.projectreactor:reactor-core:3.2.4.RELEASE")
+    implementation("io.projectreactor:reactor-core:3.2.5.RELEASE")
 
     runtimeOnly("org.springframework.boot:spring-boot-devtools")
 
@@ -58,9 +55,12 @@ dependencies {
 
     testImplementation("org.codehaus.groovy:groovy-all:2.5.5")
     testImplementation("org.spockframework:spock-core:1.2-groovy-2.5")
+    testImplementation("io.projectreactor:reactor-test:3.2.5.RELEASE")
 
     integrationImplementation("org.spockframework:spock-spring:1.2-groovy-2.5")
     integrationImplementation("org.springframework.boot:spring-boot-starter-test")
+    integrationImplementation("org.springframework.boot:spring-boot-starter-tomcat")
+
     integrationRuntime("de.flapdoodle.embed:de.flapdoodle.embed.mongo:2.2.0")
 }
 
@@ -93,12 +93,7 @@ tasks {
         dependsOn("integrationTest")
     }
 
-    wrapper {
-        gradleVersion = "5.1.1"
-        distributionType = Wrapper.DistributionType.ALL
-    }
-
-    withType<Test>() {
+    withType<Test> {
         testLogging {
             setExceptionFormat("full")
             events("passed", "skipped", "failed")

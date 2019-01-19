@@ -1,21 +1,9 @@
-const socket = new SockJS('/gs-guide-websocket');
-const stompClient = Stomp.over(socket);
+const socket = new WebSocket('ws://localhost:8080/ws/registrations');
 const teams = [];
 
-stompClient.connect({}, frame => {
-    console.log('Connected: ' + frame);
-    stompClient.subscribe('/topic/registration', teams => {
-        addTeams(JSON.parse(teams.body));
-    });
-    stompClient.subscribe('/topic/registration/new', team => {
-        addTeam(JSON.parse(team.body));
-    });
-    stompClient.send("/app/hello");
+socket.addEventListener('message', function (event) {
+    addTeam(JSON.parse(event.data));
 });
-
-function addTeams(teams) {
-    teams.forEach(team => addTeam(team));
-}
 
 function addTeam(team) {
     if (teams.length) {
