@@ -1,8 +1,12 @@
 package pl.allegro.tech.leaders.hackathon.challenge.api;
 
 public class ChallengeActivationResult {
-    public static ChallengeActivationResult active(String challengeId) {
+    public static ChallengeActivationResult activated(String challengeId) {
         return new ChallengeActivationResult(challengeId, true);
+    }
+
+    public static ChallengeActivationResult deactivated(String challengeId) {
+        return new ChallengeActivationResult(challengeId, false);
     }
 
     private final String challengeId;

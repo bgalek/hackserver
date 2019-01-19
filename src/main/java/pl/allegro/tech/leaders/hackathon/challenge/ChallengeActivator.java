@@ -18,6 +18,13 @@ class ChallengeActivator {
         return challengeRepository.findByIdOrThrow(challengeId)
                 .doOnNext(challenge -> challenge.activate(clock))
                 .flatMap(challengeRepository::save)
-                .thenReturn(ChallengeActivationResult.active(challengeId));
+                .thenReturn(ChallengeActivationResult.activated(challengeId));
+    }
+
+    Mono<ChallengeActivationResult> deactivateChallenge(String challengeId) {
+        return challengeRepository.findByIdOrThrow(challengeId)
+                .doOnNext(Challenge::deactivate)
+                .flatMap(challengeRepository::save)
+                .thenReturn(ChallengeActivationResult.deactivated(challengeId));
     }
 }

@@ -11,7 +11,8 @@ class ChallengeRepository {
     private final ChallengeStateRepository challengeStateRepository;
     private final ChallengeCreator challengeCreator;
 
-    ChallengeRepository(ChallengeStateRepository challengeStateRepository, ChallengeCreator challengeCreator) {
+    ChallengeRepository(
+            ChallengeStateRepository challengeStateRepository, ChallengeCreator challengeCreator) {
         this.challengeStateRepository = challengeStateRepository;
         this.challengeCreator = challengeCreator;
     }
@@ -31,15 +32,17 @@ class ChallengeRepository {
                 .switchIfEmpty(Mono.error(new ChallengeNotFoundException(id)));
     }
 
-    Flux<Challenge> findActivated() {
-        return challengeStateRepository.findActivated()
+    Flux<Challenge> findActive() {
+        return challengeStateRepository.findActive()
                 .map(challengeCreator::restoreChallenge);
     }
 }
 
 interface ChallengeStateRepository extends Repository<ChallengeState, String> {
     Mono<ChallengeState> save(ChallengeState challengeState);
+
     Mono<ChallengeState> findById(String id);
-    @Query(value ="{ 'active' : true }", sort = "{ activatedAt : -1 }")
-    Flux<ChallengeState> findActivated();
+
+    @Query(value = "{ 'active' : true }", sort = "{ activatedAt : -1 }")
+    Flux<ChallengeState> findActive();
 }

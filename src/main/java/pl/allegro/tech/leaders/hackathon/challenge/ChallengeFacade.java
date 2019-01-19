@@ -35,8 +35,13 @@ public class ChallengeFacade {
         return challengeActivator.activateChallenge(challengeId);
     }
 
+    public Mono<ChallengeActivationResult> deactivateChallenge(String challengeId) {
+        Objects.requireNonNull(challengeId);
+        return challengeActivator.deactivateChallenge(challengeId);
+    }
+
     public Flux<ChallengeDetails> getActiveChallenges() {
-        return challengeRepository.findActivated()
+        return challengeRepository.findActive()
                 .map(Challenge::toChallengeDetailsDto);
     }
 
