@@ -1,46 +1,40 @@
 package pl.allegro.tech.leaders.hackathon.registration;
 
-import io.micrometer.core.instrument.Counter;
-import io.micrometer.core.instrument.MeterRegistry;
+import org.springframework.context.ApplicationEventPublisher;
 import pl.allegro.tech.leaders.hackathon.registration.api.RegisteredTeam;
-
-import java.util.List;
-import java.util.Optional;
-
-import static java.util.stream.Collectors.toList;
+import pl.allegro.tech.leaders.hackathon.registration.api.TeamRegistration;
+import pl.allegro.tech.leaders.hackathon.registration.events.TeamRegisteredEvent;
+import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 
 public class RegistrationService {
 
+    private final ApplicationEventPublisher publisher;
     private final TeamRepository teamRepository;
-    private final Counter registrationCounter;
-    private final RegistrationEvents registrationEvents;
 
-    RegistrationService(TeamRepository teamRepository, MeterRegistry registry, RegistrationEvents registrationEvents) {
+    RegistrationService(ApplicationEventPublisher publisher, TeamRepository teamRepository) {
+        this.publisher = publisher;
         this.teamRepository = teamRepository;
-        this.registrationCounter = registry.counter("registration.created");
-        this.registrationEvents = registrationEvents;
     }
 
-    RegisteredTeam register(TeamToRegister teamToRegister) {
-        registrationCounter.increment();
-        Team team = new Team(teamToRegister.getName(), teamToRegister.getRegistrationIp());
-        teamRepository.save(team);
-        RegisteredTeam registeredTeam = new RegisteredTeam(teamToRegister.getName());
-        registrationEvents.newTeam(registeredTeam);
-        return registeredTeam;
+    public Mono<RegisteredTeam> register(TeamRegistration teamRegistration) {
+        Team team = new Team(teamRegistration.getName(), teamRegistration.getRegistrationIp());
+        return teamRepository.save(team)
+                .map(this::toRegisteredTeam)
+                .doOnSuccess(registeredTeam -> publisher.publishEvent(new TeamRegisteredEvent(registeredTeam)));
     }
 
-    List<RegisteredTeam> getAll() {
+    public Flux<RegisteredTeam> getAll() {
         return teamRepository.findAll()
-                .stream()
-                .map(it -> new RegisteredTeam(it.getName()))
-                .collect(toList());
+                .map(this::toRegisteredTeam);
     }
 
-    Optional<RegisteredTeam> getTeam(String teamId) {
-        return teamRepository.findAll()
-                .stream()
-                .map(it -> new RegisteredTeam(it.getName()))
-                .findFirst();
+    public Mono<RegisteredTeam> getTeamByName(String name) {
+        return teamRepository.findByName(name)
+                .map(this::toRegisteredTeam);
+    }
+
+    private RegisteredTeam toRegisteredTeam(Team team) {
+        return new RegisteredTeam(team.getName());
     }
 }
