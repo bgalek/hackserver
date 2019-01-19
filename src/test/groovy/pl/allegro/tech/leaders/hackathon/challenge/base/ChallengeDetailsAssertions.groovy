@@ -25,7 +25,6 @@ class ChallengeDetailsAssertions {
         assert challengeDetails.challengeEndpoint == definition.challengeEndpoint
         assert challengeDetails.challengeParams == definition.challengeParams
         assert challengeDetails.challengeResponse == definition.challengeResponse
-        assert challengeDetails.examples == definition.examples
         return this
     }
 

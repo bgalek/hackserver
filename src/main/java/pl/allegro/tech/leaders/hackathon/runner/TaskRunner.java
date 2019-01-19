@@ -27,18 +27,15 @@ public class TaskRunner {
         String teamEndpoint = team.getHttpRemoteAddr() + challenge.getChallengeEndpoint();
         logger.info("running example task of '{}' for team '{}', remote address: {}", challenge.getName(), team.getName(), teamEndpoint);
 
-        Mono<ResponseEntity> response =  webClient.get()
+        Mono<String> responseBody =  webClient.get()
                 .uri(uri(teamEndpoint))
                 .retrieve()
-                .bodyToMono(ResponseEntity.class);
+                .bodyToMono(String.class);
 
-        Mono<String> responseBody = response.map(it-> (String)it.getBody());
-
-        Mono<Integer> solutionScore = responseBody
+        return responseBody
                 .map(body -> parse(body, challenge.solutionType()))
-                .map(solution -> task.scoreSolution(solution));
-
-        return solutionScore.map(score -> new TaskResult("", null, 0, score));
+                .map(solution -> task.scoreSolution(solution))
+                .map(score -> new TaskResult("", 200, 1, score)); //TODO status & latency
     }
 
     private <T> T parse(String body, Class<T> solutionType) {

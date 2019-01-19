@@ -23,14 +23,12 @@ public class TaskRunnerController {
     }
 
     @GetMapping("/example/{id}")
-    Mono<Integer> runExampleTask(@PathVariable("id") String challengeId,
+    Mono<TaskResult> runExampleTask(@PathVariable("id") String challengeId,
                                  @RequestParam("team-id") String teamId) {
 
         Team team = teamRepository.get(teamId);
         Mono<ChallengeDefinition> taskDef = challengeFacade.getActiveChallengeDefinition(challengeId);
 
-        Mono<TaskResult> result = taskDef.flatMap(t -> taskRunner.run(t, t.getExample(), team));
-
-        return result.map(it -> it.getScore());
+        return  taskDef.flatMap(t -> taskRunner.run(t, t.getExample(), team));
     }
 }

@@ -8,4 +8,6 @@ public interface TeamRepository {
     List<Team> findAll();
 
     Team get(String teamId);
+
+    void deleteAll();
 }

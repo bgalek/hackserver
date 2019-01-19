@@ -30,4 +30,9 @@ class MongoTeamRepository implements TeamRepository {
     public Team get(String teamId) {
         return delegate.findById(teamId).orElseThrow(() -> new TeamNotFoundException(teamId));
     }
+
+    @Override
+    public void deleteAll() {
+        delegate.deleteAll();
+    }
 }
