@@ -1,4 +1,4 @@
-package pl.allegro.tech.leaders.hackathon.registration;
+package pl.allegro.tech.leaders.hackathon.registration.infrastructure;
 
 import org.springframework.context.ApplicationListener;
 import org.springframework.util.ReflectionUtils;
@@ -15,18 +15,18 @@ class RegistrationEventPublisher implements ApplicationListener<TeamRegisteredEv
     private final Executor executor;
     private final BlockingQueue<TeamRegisteredEvent> queue = new LinkedBlockingQueue<>();
 
-    public RegistrationEventPublisher(Executor executor) {
+    RegistrationEventPublisher(Executor executor) {
         this.executor = executor;
     }
 
     @Override
     public void onApplicationEvent(TeamRegisteredEvent teamRegisteredEvent) {
-        this.queue.offer(teamRegisteredEvent);
+        queue.offer(teamRegisteredEvent);
     }
 
     @Override
     public void accept(FluxSink<TeamRegisteredEvent> sink) {
-        this.executor.execute(() -> {
+        executor.execute(() -> {
             while (true) {
                 try {
                     TeamRegisteredEvent event = queue.take();
