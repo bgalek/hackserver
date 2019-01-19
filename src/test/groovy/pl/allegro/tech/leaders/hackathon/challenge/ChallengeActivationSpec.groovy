@@ -1,6 +1,6 @@
 package pl.allegro.tech.leaders.hackathon.challenge
 
-import pl.allegro.tech.leaders.hackathon.challenge.api.ChallengeDefinition
+
 import pl.allegro.tech.leaders.hackathon.challenge.api.ChallengeDetails
 import pl.allegro.tech.leaders.hackathon.challenge.api.ChallengeNotFoundException
 

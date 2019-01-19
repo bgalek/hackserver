@@ -28,7 +28,7 @@ class ChallengeController {
 
     @GetMapping("/{id}")
     Mono<ChallengeDetails> getActiveChallenge(@PathVariable String id) {
-        return challengeFacade.getActiveChallenge(id);
+        return challengeFacade.getActiveChallengeDetails(id);
     }
 
     @PutMapping("/{id}/activate")

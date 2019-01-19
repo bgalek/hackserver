@@ -1,6 +1,6 @@
 package pl.allegro.tech.leaders.hackathon.challenge.base
 
-import pl.allegro.tech.leaders.hackathon.challenge.api.ChallengeDefinition
+import pl.allegro.tech.leaders.hackathon.challenge.ChallengeDefinition
 import pl.allegro.tech.leaders.hackathon.challenge.api.ChallengeDetails
 
 import java.time.Instant

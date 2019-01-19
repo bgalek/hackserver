@@ -59,6 +59,7 @@ dependencies {
     testImplementation("org.codehaus.groovy:groovy-all:2.5.5")
     testImplementation("org.spockframework:spock-core:1.2-groovy-2.5")
 
+    integrationImplementation("com.github.tomakehurst:wiremock:2.20.0")
     integrationImplementation("org.spockframework:spock-spring:1.2-groovy-2.5")
     integrationImplementation("org.springframework.boot:spring-boot-starter-test")
     integrationRuntime("de.flapdoodle.embed:de.flapdoodle.embed.mongo:2.2.0")

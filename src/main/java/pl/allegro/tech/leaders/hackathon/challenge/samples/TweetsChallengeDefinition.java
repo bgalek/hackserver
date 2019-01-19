@@ -1,26 +1,15 @@
 package pl.allegro.tech.leaders.hackathon.challenge.samples;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.databind.JsonMappingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.module.jsonSchema.JsonSchema;
-import com.fasterxml.jackson.module.jsonSchema.JsonSchemaGenerator;
 import org.springframework.stereotype.Component;
-import pl.allegro.tech.leaders.hackathon.challenge.api.ChallengeDefinition;
-import pl.allegro.tech.leaders.hackathon.challenge.api.ChallengeTask;
+import pl.allegro.tech.leaders.hackathon.challenge.ChallengeDefinition;
+import pl.allegro.tech.leaders.hackathon.challenge.ChallengeTaskDefinition;
 
 import java.util.List;
 
 import static java.util.Collections.emptyList;
 
 @Component
-class TweetsChallengeDefinition implements ChallengeDefinition {
-
-    private final ObjectMapper objectMapper;
-
-    TweetsChallengeDefinition(ObjectMapper objectMapper) {
-        this.objectMapper = objectMapper;
-    }
+class TweetsChallengeDefinition implements ChallengeDefinition<String> {
 
     @Override
     public String getName() {
@@ -38,37 +27,17 @@ class TweetsChallengeDefinition implements ChallengeDefinition {
     }
 
     @Override
+    public Class<String> solutionType() {
+        return String.class;
+    }
+
+    @Override
     public List<QueryParam> getChallengeParams() {
         return List.of(new QueryParam("user", "user login"));
     }
 
     @Override
-    public JsonSchema getChallengeResponse() {
-        JsonSchemaGenerator schemaGen = new JsonSchemaGenerator(objectMapper);
-        try {
-            return schemaGen.generateSchema(ChallengeResponse.class);
-        } catch (JsonMappingException e) {
-            throw new RuntimeException("Could not create schema", e);
-        }
-    }
-
-    @Override
-    public List<String> getExamples() {
-        return List.of("[]", "[{\"content\":\"this is my tweet!\"}]");
-    }
-
-    @Override
-    public List<ChallengeTask> getTasks() {
+    public List<ChallengeTaskDefinition<String>> getTasks() {
         return emptyList();
-    }
-
-    private class ChallengeResponse {
-
-        @JsonProperty(required = true)
-        private String result;
-
-        String getResult() {
-            return result;
-        }
     }
 }
