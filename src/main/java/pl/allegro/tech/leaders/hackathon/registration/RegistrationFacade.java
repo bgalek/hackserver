@@ -7,18 +7,18 @@ import pl.allegro.tech.leaders.hackathon.registration.events.TeamRegisteredEvent
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
-public class RegistrationService {
+public class RegistrationFacade {
 
     private final ApplicationEventPublisher publisher;
     private final TeamRepository teamRepository;
 
-    RegistrationService(ApplicationEventPublisher publisher, TeamRepository teamRepository) {
+    RegistrationFacade(ApplicationEventPublisher publisher, TeamRepository teamRepository) {
         this.publisher = publisher;
         this.teamRepository = teamRepository;
     }
 
     public Mono<RegisteredTeam> register(TeamRegistration teamRegistration) {
-        Team team = new Team(teamRegistration.getName(), teamRegistration.getRegistrationIp());
+        Team team = new Team(teamRegistration.getName(), teamRegistration.getRemoteAddress());
         return teamRepository.save(team)
                 .map(this::toRegisteredTeam)
                 .doOnSuccess(registeredTeam -> publisher.publishEvent(new TeamRegisteredEvent(registeredTeam)));

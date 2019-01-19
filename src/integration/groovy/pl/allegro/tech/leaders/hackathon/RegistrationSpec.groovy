@@ -1,23 +1,27 @@
 package pl.allegro.tech.leaders.hackathon
 
-import org.springframework.test.web.servlet.ResultActions
+import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.test.web.reactive.server.WebTestClient
 import pl.allegro.tech.leaders.hackathon.base.IntegrationSpec
+import reactor.core.publisher.Mono
+import spock.lang.Ignore
 
 import static java.util.UUID.randomUUID
-import static org.hamcrest.Matchers.empty
-import static org.hamcrest.Matchers.is
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.header
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 
+@Ignore // won't work until tomcat is removed
 class RegistrationSpec extends IntegrationSpec {
 
+    @Autowired
+    WebTestClient webClient
+
     def 'empty team registry should serve no teams'() {
-        when:
-            ResultActions response = mockMvcClient.get('/registration')
-        then:
-            response
-                    .andExpect(jsonPath('$', is(empty())))
+        expect:
+            webClient.get()
+                .uri('/registration')
+                .exchange()
+                .expectBody()
+                .jsonPath('$')
+                .isEmpty()
     }
 
     def 'should add a team to a team registry'() {
@@ -25,16 +29,26 @@ class RegistrationSpec extends IntegrationSpec {
             String teamName = randomUUID().toString()
             String registerTeamBody = """{ "name": "$teamName"}"""
         when:
-            ResultActions registerResponse = mockMvcClient.post('/registration', registerTeamBody)
+            WebTestClient.ResponseSpec registerResponse = webClient
+                .post()
+                .uri('/registration')
+                .body(Mono.just(registerTeamBody), String)
+                .exchange()
         then:
             registerResponse
-                    .andExpect(status().isCreated())
-                    .andExpect(header().string('Location', "/teams/$teamName"))
+                .expectStatus()
+                .isCreated()
+                .expectHeader()
+                .valueEquals('Location', "/teams/$teamName")
         when:
-            ResultActions fetchResponse = mockMvcClient.get('/registration')
+            WebTestClient.ResponseSpec fetchResponse = webClient
+                .get()
+                .uri('/registration')
+                .exchange()
         then:
-            fetchResponse
-                    .andExpect(jsonPath('$[0].name', is(teamName)))
+            fetchResponse.expectBody()
+                .jsonPath('$[0].name')
+                .isEqualTo(teamName)
     }
 }
 

@@ -1,20 +1,21 @@
 package pl.allegro.tech.leaders.hackathon.registration.api;
 
+import java.net.InetSocketAddress;
+
 public class TeamRegistration {
     private final String name;
-    private final String registrationIp;
+    private final InetSocketAddress remoteAddress;
 
-    public TeamRegistration(String name, String registrationIp) {
-
+    public TeamRegistration(String name, InetSocketAddress remoteAddress) {
         this.name = name;
-        this.registrationIp = registrationIp;
+        this.remoteAddress = remoteAddress;
     }
 
     public String getName() {
         return name;
     }
 
-    public String getRegistrationIp() {
-        return registrationIp;
+    public InetSocketAddress getRemoteAddress() {
+        return remoteAddress;
     }
 }
