@@ -15,8 +15,6 @@ class ChallengeActivationSpec extends IntegrationSpec {
     @Autowired ChallengeFacade challengeFacade
 
     def 'should return empty result when no challenge is activated'() {
-        given:
-            challengeFacade.deactivateAll()
         when: 'active challenges are fetched before activating any'
             ResultActions response = mockMvcClient.get('/challenges')
         then: 'result is empty'
@@ -25,8 +23,6 @@ class ChallengeActivationSpec extends IntegrationSpec {
     }
 
     def 'should activate the calculator challenge'() {
-        given:
-            challengeFacade.deactivateAll()
         when: 'challenge is successfully activated'
             mockMvcClient.put("/challenges/${CALCULATOR_CHALLENGE_ID}/activate")
                     .andExpect(status().is2xxSuccessful())

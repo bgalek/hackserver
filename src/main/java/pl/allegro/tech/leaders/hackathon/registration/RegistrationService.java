@@ -31,7 +31,8 @@ public class RegistrationService {
 
     public Mono<RegisteredTeam> getTeamByName(String name) {
         return teamRepository.findByName(name)
-                .map(this::toRegisteredTeam);
+                .map(this::toRegisteredTeam)
+                .switchIfEmpty(Mono.error(new TeamNotFoundException(name)));
     }
 
     private RegisteredTeam toRegisteredTeam(Team team) {

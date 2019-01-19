@@ -4,7 +4,6 @@ import com.github.tomakehurst.wiremock.junit.WireMockRule
 import groovy.json.JsonSlurper
 import org.junit.ClassRule
 import pl.allegro.tech.leaders.hackathon.base.IntegrationSpec
-import spock.lang.Ignore
 import spock.lang.Shared
 
 import static com.github.tomakehurst.wiremock.client.WireMock.*
@@ -33,7 +32,6 @@ class TaskRunnerSpec extends IntegrationSpec {
       response.andExpect(status().isNotFound())
     }
 
-    @Ignore //TODO
     def "should return 404 when running an example task on inactive challenge"(){
         given:
         registerTeam(TEAM_ID)
