@@ -24,6 +24,7 @@ abstract class IntegrationSpec extends Specification implements DatabaseCleaner 
     MockMvcHttpClient mockMvcClient
 
     void setup() {
+        dropAllCollections()
         ConfigurableMockMvcBuilder mockMvcBuilder = webAppContextSetup(webApplicationContext)
         MockMvc mockMvc = mockMvcBuilder.build()
         mockMvcClient = new MockMvcHttpClient(mockMvc)
