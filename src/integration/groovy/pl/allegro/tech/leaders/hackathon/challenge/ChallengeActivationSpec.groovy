@@ -1,11 +1,10 @@
 package pl.allegro.tech.leaders.hackathon.challenge
 
+import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.test.web.servlet.ResultActions
 import pl.allegro.tech.leaders.hackathon.base.IntegrationSpec
 
-import static org.hamcrest.Matchers.empty
-import static org.hamcrest.Matchers.hasSize
-import static org.hamcrest.Matchers.is
+import static org.hamcrest.Matchers.*
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 
@@ -13,7 +12,11 @@ class ChallengeActivationSpec extends IntegrationSpec {
     private static final String CALCULATOR_CHALLENGE_ID = 'calculator-challenge'
     private static final String TWITTER_CHALLENGE_ID = 'twitter-challenge'
 
+    @Autowired ChallengeFacade challengeFacade
+
     def 'should return empty result when no challenge is activated'() {
+        given:
+            challengeFacade.deactivateAll()
         when: 'active challenges are fetched before activating any'
             ResultActions response = mockMvcClient.get('/challenges')
         then: 'result is empty'
@@ -22,6 +25,8 @@ class ChallengeActivationSpec extends IntegrationSpec {
     }
 
     def 'should activate the calculator challenge'() {
+        given:
+            challengeFacade.deactivateAll()
         when: 'challenge is successfully activated'
             mockMvcClient.put("/challenges/${CALCULATOR_CHALLENGE_ID}/activate")
                     .andExpect(status().is2xxSuccessful())

@@ -65,4 +65,8 @@ public class ChallengeFacade {
     public Mono<HackatonResult> getHackatonResults() {
         return Mono.empty();
     }
+
+    public void deactivateAll() {
+        challengeRepository.deactivateAll();
+    }
 }

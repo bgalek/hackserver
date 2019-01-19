@@ -52,7 +52,12 @@ class InMemoryChallengeStateRepository implements ChallengeStateRepository {
             .sort(comparing({ ChallengeState c -> c.activatedAt }))
     }
 
-    private Flux<ChallengeState> findAll() {
+    Flux<ChallengeState> findAll() {
         return Flux.fromIterable(store.values())
+    }
+
+    @Override
+    Mono<Void> deleteAll() {
+        store.clear()
     }
 }

@@ -2,6 +2,7 @@ package pl.allegro.tech.leaders.hackathon.challenge;
 
 import org.springframework.data.mongodb.repository.Query;
 import org.springframework.data.repository.Repository;
+import org.springframework.data.repository.reactive.ReactiveCrudRepository;
 import pl.allegro.tech.leaders.hackathon.challenge.Challenge.ChallengeState;
 import pl.allegro.tech.leaders.hackathon.challenge.api.ChallengeNotFoundException;
 import reactor.core.publisher.Flux;
@@ -35,6 +36,10 @@ class ChallengeRepository {
         return challengeStateRepository.findActivated()
                 .map(challengeCreator::restoreChallenge);
     }
+
+    void deactivateAll() {
+        challengeStateRepository.deleteAll().block();
+    }
 }
 
 interface ChallengeStateRepository extends Repository<ChallengeState, String> {
@@ -42,4 +47,5 @@ interface ChallengeStateRepository extends Repository<ChallengeState, String> {
     Mono<ChallengeState> findById(String id);
     @Query(value ="{ 'active' : true }", sort = "{ activatedAt : -1 }")
     Flux<ChallengeState> findActivated();
+    Mono<Void> deleteAll();
 }
