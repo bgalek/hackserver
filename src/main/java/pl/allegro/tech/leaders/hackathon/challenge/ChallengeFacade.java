@@ -1,6 +1,11 @@
 package pl.allegro.tech.leaders.hackathon.challenge;
 
-import pl.allegro.tech.leaders.hackathon.challenge.api.*;
+import pl.allegro.tech.leaders.hackathon.challenge.api.ChallengeActivationResult;
+import pl.allegro.tech.leaders.hackathon.challenge.api.ChallengeDefinition;
+import pl.allegro.tech.leaders.hackathon.challenge.api.ChallengeDetails;
+import pl.allegro.tech.leaders.hackathon.challenge.api.ChallengeNotFoundException;
+import pl.allegro.tech.leaders.hackathon.challenge.api.ChallengeResult;
+import pl.allegro.tech.leaders.hackathon.challenge.api.HackatonResult;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 

@@ -1,6 +1,8 @@
 package pl.allegro.tech.leaders.hackathon.base
 
 import groovy.transform.CompileStatic
+import org.junit.After
+import org.junit.Before
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.test.context.ContextConfiguration
@@ -8,6 +10,7 @@ import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.setup.ConfigurableMockMvcBuilder
 import org.springframework.web.context.WebApplicationContext
 import pl.allegro.tech.leaders.hackathon.HackathonServer
+import pl.allegro.tech.leaders.hackathon.challenge.infrastucture.InitialChallengeDefinitionRegistrar
 import spock.lang.Shared
 import spock.lang.Specification
 
@@ -27,5 +30,16 @@ abstract class IntegrationSpec extends Specification implements DatabaseCleaner 
         ConfigurableMockMvcBuilder mockMvcBuilder = webAppContextSetup(webApplicationContext)
         MockMvc mockMvc = mockMvcBuilder.build()
         mockMvcClient = new MockMvcHttpClient(mockMvc)
+    }
+
+    @Before
+    void registerChallengeDefinitions() {
+        webApplicationContext.getBean(InitialChallengeDefinitionRegistrar.class)
+            .registerChallengeDefinitions()
+    }
+
+    @After
+    void cleanUpDb() {
+        dropAllCollections()
     }
 }
