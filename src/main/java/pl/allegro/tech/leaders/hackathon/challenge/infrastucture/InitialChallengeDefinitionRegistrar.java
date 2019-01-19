@@ -12,7 +12,7 @@ import pl.allegro.tech.leaders.hackathon.challenge.ChallengeDefinition;
 import java.util.List;
 
 @Component
-class InitialChallengeDefinitionRegistrar {
+public class InitialChallengeDefinitionRegistrar {
     private static final Logger logger = LoggerFactory.getLogger(InitialChallengeDefinitionRegistrar.class);
 
     @Autowired
@@ -22,7 +22,7 @@ class InitialChallengeDefinitionRegistrar {
     private List<ChallengeDefinition> challengeDefinitions;
 
     @EventListener(ContextRefreshedEvent.class)
-    private void registerChallengeDefinitions() {
+    public void registerChallengeDefinitions() {
         logger.info("Registering challenges");
         challengeFacade
                 .registerChallengeDefinitions(challengeDefinitions)
