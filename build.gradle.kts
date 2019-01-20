@@ -95,6 +95,12 @@ task<NpmTask>("webpack") {
     setArgs(listOf("run", "webpack"))
 }
 
+node {
+    version = "11.6.0"
+    npmVersion = "6.5.0"
+    download = true
+}
+
 tasks {
 
     build {
