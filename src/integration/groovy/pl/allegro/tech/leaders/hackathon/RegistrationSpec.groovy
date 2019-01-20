@@ -1,18 +1,13 @@
 package pl.allegro.tech.leaders.hackathon
 
-import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.http.MediaType
 import org.springframework.test.web.reactive.server.WebTestClient
 import pl.allegro.tech.leaders.hackathon.base.IntegrationSpec
 import reactor.core.publisher.Mono
-import spock.lang.Ignore
 
 import static java.util.UUID.randomUUID
 
-@Ignore // won't work until tomcat is removed
 class RegistrationSpec extends IntegrationSpec {
-
-    @Autowired
-    WebTestClient webClient
 
     def 'empty team registry should serve no teams'() {
         expect:
@@ -32,6 +27,7 @@ class RegistrationSpec extends IntegrationSpec {
             WebTestClient.ResponseSpec registerResponse = webClient
                 .post()
                 .uri('/registration')
+                .contentType(MediaType.APPLICATION_JSON_UTF8)
                 .body(Mono.just(registerTeamBody), String)
                 .exchange()
         then:
