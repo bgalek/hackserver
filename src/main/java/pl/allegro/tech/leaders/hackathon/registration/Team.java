@@ -1,35 +1,29 @@
 package pl.allegro.tech.leaders.hackathon.registration;
 
-import org.springframework.data.annotation.Id;
+import java.net.InetSocketAddress;
 
-public class Team {
-    @Id
+class Team {
     private final String name;
-    private final String remoteAddr;
+    private final InetSocketAddress remoteAddress;
 
-    public String getName() {
+    Team(String name, InetSocketAddress remoteAddress) {
+        this.name = name;
+        this.remoteAddress = remoteAddress;
+    }
+
+    String getName() {
         return name;
     }
 
-    public String getRemoteAddr() {
-        return remoteAddr;
-    }
-
-    public String getHttpRemoteAddr() {
-        //TODO we don't want to hardcode the port?
-        return "http://" + remoteAddr + ":8080";
-    }
-
-    Team(String name, String remoteAddr) {
-        this.name = name;
-        this.remoteAddr = remoteAddr;
+    InetSocketAddress getRemoteAddress() {
+        return remoteAddress;
     }
 
     @Override
     public String toString() {
         return "Team{" +
                 "name='" + name + '\'' +
-                ", remoteAddr='" + remoteAddr + '\'' +
+                ", remoteAddr='" + remoteAddress + '\'' +
                 '}';
     }
 }

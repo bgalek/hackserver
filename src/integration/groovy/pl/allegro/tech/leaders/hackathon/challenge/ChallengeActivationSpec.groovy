@@ -1,51 +1,49 @@
 package pl.allegro.tech.leaders.hackathon.challenge
 
-import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.test.web.servlet.ResultActions
+import org.springframework.test.web.reactive.server.WebTestClient
 import pl.allegro.tech.leaders.hackathon.base.IntegrationSpec
-
-import static org.hamcrest.Matchers.*
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 
 class ChallengeActivationSpec extends IntegrationSpec {
     private static final String CALCULATOR_CHALLENGE_ID = 'calculator-challenge'
     private static final String TWITTER_CHALLENGE_ID = 'twitter-challenge'
 
-    @Autowired ChallengeFacade challengeFacade
-
     def 'should return empty result when no challenge is activated'() {
         when: 'active challenges are fetched before activating any'
-            ResultActions response = mockMvcClient.get('/challenges')
+            WebTestClient.ResponseSpec response = webClient.get().uri('/challenges').exchange()
         then: 'result is empty'
             response
-                    .andExpect(jsonPath('$', is(empty())))
+                    .expectBody()
+                    .jsonPath('$').isEmpty()
     }
 
     def 'should activate the calculator challenge'() {
         when: 'challenge is successfully activated'
-            mockMvcClient.put("/challenges/${CALCULATOR_CHALLENGE_ID}/activate")
-                    .andExpect(status().is2xxSuccessful())
+            webClient.put().uri("/challenges/${CALCULATOR_CHALLENGE_ID}/activate").exchange()
+                    .expectStatus()
+                    .is2xxSuccessful()
         then: 'active challenges contain activated challenge'
-            mockMvcClient.get('/challenges')
-                    .andExpect(jsonPath('$', hasSize(1)))
-                    .andExpect(jsonPath('$[0].id', is(CALCULATOR_CHALLENGE_ID)))
-
+            webClient.get().uri('/challenges').exchange()
+                    .expectBody()
+                    .jsonPath('$.length()').isEqualTo(1)
+                    .jsonPath('$[0].id').isEqualTo(CALCULATOR_CHALLENGE_ID)
         when: 'second challenge is successfully activated'
-            mockMvcClient.put("/challenges/${TWITTER_CHALLENGE_ID}/activate")
-                    .andExpect(status().is2xxSuccessful())
+            webClient.put().uri("/challenges/${TWITTER_CHALLENGE_ID}/activate").exchange()
+                    .expectStatus()
+                    .is2xxSuccessful()
         then: 'result contains both activated challenges sorted by activation time'
-            mockMvcClient.get('/challenges')
-                    .andExpect(jsonPath('$', hasSize(2)))
-                    .andExpect(jsonPath('$[0].id', is(TWITTER_CHALLENGE_ID)))
-                    .andExpect(jsonPath('$[1].id', is(CALCULATOR_CHALLENGE_ID)))
+            webClient.get().uri('/challenges').exchange()
+                    .expectBody()
+                    .jsonPath('$.length()').isEqualTo(2)
+                    .jsonPath('$[0].id').isEqualTo(TWITTER_CHALLENGE_ID)
+                    .jsonPath('$[1].id').isEqualTo(CALCULATOR_CHALLENGE_ID)
     }
 
     def 'should return 404 when activating non existing challenge'() {
         when: 'activating unknown challenge'
-            ResultActions response = mockMvcClient.put('/challenges/unknown/activate')
+            WebTestClient.ResponseSpec response = webClient.put().uri('/challenges/unknown/activate').exchange()
         then: 'response status code is 404'
             response
-                    .andExpect(status().isNotFound())
+                    .expectStatus()
+                    .isNotFound()
     }
 }

@@ -23,16 +23,13 @@ class RegistrationWebSocketConfiguration {
         return new SimpleUrlHandlerMapping() {
             {
                 setUrlMap(Collections.singletonMap("/ws/registrations", wsh));
-                setOrder(10);
             }
         };
     }
 
     @Bean
     WebSocketHandler webSocketHandler(ObjectMapper objectMapper, Consumer<FluxSink<TeamRegisteredEvent>> registrationEventPublisher) {
-
         Flux<TeamRegisteredEvent> publish = Flux.create(registrationEventPublisher).share();
-
         return session -> {
             Flux<WebSocketMessage> messageFlux = publish
                     .map(evt -> {
@@ -43,7 +40,6 @@ class RegistrationWebSocketConfiguration {
                         }
                     })
                     .map(session::textMessage);
-
             return session.send(messageFlux);
         };
     }
