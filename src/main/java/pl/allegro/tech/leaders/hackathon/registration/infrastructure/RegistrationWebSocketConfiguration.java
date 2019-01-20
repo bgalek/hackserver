@@ -23,6 +23,7 @@ class RegistrationWebSocketConfiguration {
         return new SimpleUrlHandlerMapping() {
             {
                 setUrlMap(Collections.singletonMap("/ws/registrations", wsh));
+                setOrder(10);
             }
         };
     }
