@@ -1,13 +1,13 @@
 package pl.allegro.tech.leaders.hackathon.runner
 
 import com.github.tomakehurst.wiremock.junit.WireMockRule
-import groovy.json.JsonSlurper
 import org.junit.ClassRule
+import org.springframework.http.MediaType
 import pl.allegro.tech.leaders.hackathon.base.IntegrationSpec
+import reactor.core.publisher.Mono
 import spock.lang.Shared
 
 import static com.github.tomakehurst.wiremock.client.WireMock.*
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 
 class TaskRunnerSpec extends IntegrationSpec {
     def CHALLENGE_ID = 'calculator-challenge'
@@ -18,18 +18,15 @@ class TaskRunnerSpec extends IntegrationSpec {
     @Shared
     public WireMockRule wireMock = new WireMockRule(8080)
 
-    @Shared
-    def jsonSlurper = new JsonSlurper()
-
     def "should return 404 when running an example task for an unregistered team"(){
       given:
       activateChallenge(CHALLENGE_ID)
 
       when:
-      def response = mockMvcClient.get("/run/example/$CHALLENGE_ID?team-id=$TEAM_ID")
+      def response = webClient.get().uri("/run/example/$CHALLENGE_ID?team-id=$TEAM_ID").exchange()
 
       then:
-      response.andExpect(status().isNotFound())
+      response.expectStatus().isNotFound()
     }
 
     def "should return 404 when running an example task on inactive challenge"(){
@@ -37,10 +34,10 @@ class TaskRunnerSpec extends IntegrationSpec {
         registerTeam(TEAM_ID)
 
         when:
-        def response = mockMvcClient.get("/run/example/$CHALLENGE_ID?team-id=$TEAM_ID")
+        def response = webClient.get().uri("/run/example/$CHALLENGE_ID?team-id=$TEAM_ID").exchange()
 
         then:
-        response.andExpect(status().isNotFound())
+        response.expectStatus().isNotFound()
     }
 
     def "should give max score when a solution of an example task is right"(){
@@ -50,27 +47,28 @@ class TaskRunnerSpec extends IntegrationSpec {
         stubTeamResponse(CHALLENGE_ENDPOINT, "4")
 
         when:
-        def exampleRunResult = mockMvcClient.get("/run/example/$CHALLENGE_ID?team-id=$TEAM_ID")
-                .andExpect(status().is2xxSuccessful())
-                .andReturn()
-
-        def resultAsMap = jsonSlurper.parseText(exampleRunResult.response.contentAsString)
-
-        println "resultAsMap " + resultAsMap
+        def exchange = webClient.get()
+                .uri("/run/example/$CHALLENGE_ID?team-id=$TEAM_ID")
+                .exchange()
 
         then:
-        resultAsMap.score == 1
+        exchange.expectStatus().is2xxSuccessful()
+        exchange.expectBody().jsonPath('.score').isEqualTo(1)
     }
 
 
     private void activateChallenge(String challengeId) {
-        mockMvcClient.put("/challenges/$challengeId/activate")
-                .andExpect(status().is2xxSuccessful())
+        webClient.put().uri("/challenges/$challengeId/activate").exchange()
+                .expectStatus().is2xxSuccessful()
     }
 
     private void registerTeam(String teamId) {
-        mockMvcClient.post('/registration', """{ "name": "$teamId"}""")
-                .andExpect(status().is2xxSuccessful())
+        webClient.post()
+                .uri('/registration')
+                .contentType(MediaType.APPLICATION_JSON_UTF8)
+                .body(Mono.just("""{ "name": "$teamId"}""".toString()), String)
+                .exchange()
+                .expectStatus().is2xxSuccessful()
     }
 
     void stubTeamResponse(String endpoint, String response) {

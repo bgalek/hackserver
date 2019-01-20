@@ -8,20 +8,20 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import pl.allegro.tech.leaders.hackathon.challenge.ChallengeDefinition;
 import pl.allegro.tech.leaders.hackathon.challenge.ChallengeFacade;
-import pl.allegro.tech.leaders.hackathon.registration.RegistrationService;
+import pl.allegro.tech.leaders.hackathon.registration.RegistrationFacade;
 import pl.allegro.tech.leaders.hackathon.registration.api.RegisteredTeam;
 import reactor.core.publisher.Mono;
 
 @RestController
 @RequestMapping("/run")
 public class TaskRunnerController {
-    private final RegistrationService registrationService;
+    private final RegistrationFacade registrationFacade;
     private final ChallengeFacade challengeFacade;
     private final TaskRunner taskRunner;
 
     @Autowired
-    public TaskRunnerController(RegistrationService registrationService, ChallengeFacade challengeFacade, TaskRunner taskRunner) {
-        this.registrationService = registrationService;
+    public TaskRunnerController(RegistrationFacade registrationFacade, ChallengeFacade challengeFacade, TaskRunner taskRunner) {
+        this.registrationFacade = registrationFacade;
         this.challengeFacade = challengeFacade;
         this.taskRunner = taskRunner;
     }
@@ -30,7 +30,7 @@ public class TaskRunnerController {
     Mono<TaskResult> runExampleTask(@PathVariable("id") String challengeId,
                                  @RequestParam("team-id") String teamId) {
 
-        Mono<RegisteredTeam> registeredTeam = registrationService.getTeamByName(teamId);
+        Mono<RegisteredTeam> registeredTeam = registrationFacade.getTeamByName(teamId);
         Mono<ChallengeDefinition> taskDef = challengeFacade.getActiveChallengeDefinition(challengeId);
 
         return Mono.zip(taskDef, registeredTeam)
