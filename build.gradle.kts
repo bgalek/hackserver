@@ -59,7 +59,6 @@ dependencies {
 
     integrationImplementation("org.spockframework:spock-spring:1.2-groovy-2.5")
     integrationImplementation("org.springframework.boot:spring-boot-starter-test")
-    integrationImplementation("org.springframework.boot:spring-boot-starter-tomcat")
 
     integrationRuntime("de.flapdoodle.embed:de.flapdoodle.embed.mongo:2.2.0")
 }
