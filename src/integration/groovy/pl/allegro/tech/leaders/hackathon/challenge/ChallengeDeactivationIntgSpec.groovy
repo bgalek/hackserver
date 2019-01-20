@@ -1,14 +1,7 @@
 package pl.allegro.tech.leaders.hackathon.challenge
 
-import org.springframework.test.web.servlet.ResultActions
-import org.springframework.test.web.servlet.result.MockMvcResultMatchers
+import org.springframework.test.web.reactive.server.WebTestClient
 import pl.allegro.tech.leaders.hackathon.base.IntegrationSpec
-
-import static org.hamcrest.Matchers.empty
-import static org.hamcrest.Matchers.hasSize
-import static org.hamcrest.Matchers.is
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 
 class ChallengeDeactivationIntgSpec extends IntegrationSpec {
     private static final String CALCULATOR_CHALLENGE_ID = 'calculator-challenge'
@@ -16,32 +9,33 @@ class ChallengeDeactivationIntgSpec extends IntegrationSpec {
 
     def 'should deactivate the calculator challenge'() {
         given: 'calculator challenge is activated'
-            mockMvcClient.put("/challenges/${CALCULATOR_CHALLENGE_ID}/activate")
-                    .andExpect(status().is2xxSuccessful())
+            webClient.put().uri("/challenges/${CALCULATOR_CHALLENGE_ID}/activate").exchange()
+                    .expectStatus().is2xxSuccessful()
         and: 'twitter challenge is activated'
-            mockMvcClient.put("/challenges/${TWITTER_CHALLENGE_ID}/activate")
-                    .andExpect(status().is2xxSuccessful())
+            webClient.put().uri("/challenges/${TWITTER_CHALLENGE_ID}/activate").exchange()
+                    .expectStatus().is2xxSuccessful()
         when: 'calculator challenge is deactivated'
-            mockMvcClient.put("/challenges/${CALCULATOR_CHALLENGE_ID}/deactivate")
-                    .andExpect(status().is2xxSuccessful())
+            webClient.put().uri("/challenges/${CALCULATOR_CHALLENGE_ID}/deactivate").exchange()
+                    .expectStatus().is2xxSuccessful()
         then: 'activated challenges contain only the twitter challenge'
-            mockMvcClient.get('/challenges')
-                    .andExpect(jsonPath('$', hasSize(1)))
-                    .andExpect(MockMvcResultMatchers.jsonPath('$[0].id', is(TWITTER_CHALLENGE_ID)))
-
+            webClient.get().uri('/challenges').exchange()
+                    .expectBody()
+                    .jsonPath('$.length()').isEqualTo(1)
+                    .jsonPath('$[0].id').isEqualTo(TWITTER_CHALLENGE_ID)
         when: 'twitter challenge is successfully deactivated'
-            mockMvcClient.put("/challenges/${TWITTER_CHALLENGE_ID}/deactivate")
-                    .andExpect(status().is2xxSuccessful())
+            webClient.put().uri("/challenges/${TWITTER_CHALLENGE_ID}/deactivate").exchange()
+                    .expectStatus().is2xxSuccessful()
         then: 'activated challenges are empty'
-            mockMvcClient.get('/challenges')
-                    .andExpect(jsonPath('$', hasSize(0)))
+            webClient.get().uri('/challenges').exchange()
+                    .expectBody()
+                    .jsonPath('$.length()').isEqualTo(0)
     }
 
     def 'should return 404 when deactivating non existing challenge'() {
         when: 'deactivating an unknown challenge'
-            ResultActions response = mockMvcClient.put('/challenges/unknown/deactivate')
+        WebTestClient.ResponseSpec response = webClient.put().uri('/challenges/unknown/deactivate').exchange()
         then: 'response status code is 404'
             response
-                    .andExpect(status().isNotFound())
+                    .expectStatus().isNotFound()
     }
 }
