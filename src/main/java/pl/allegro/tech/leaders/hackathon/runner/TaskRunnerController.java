@@ -13,7 +13,6 @@ import pl.allegro.tech.leaders.hackathon.registration.api.RegisteredTeam;
 import reactor.core.publisher.Mono;
 
 @RestController
-@RequestMapping("/run")
 public class TaskRunnerController {
     private final RegistrationFacade registrationFacade;
     private final ChallengeFacade challengeFacade;
@@ -26,7 +25,7 @@ public class TaskRunnerController {
         this.taskRunner = taskRunner;
     }
 
-    @GetMapping("/example/{id}")
+    @GetMapping("/challenges/{id}/run-example")
     Mono<TaskResult> runExampleTask(@PathVariable("id") String challengeId,
                                  @RequestParam("team-id") String teamId) {
 

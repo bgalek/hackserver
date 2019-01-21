@@ -51,6 +51,7 @@ dependencies {
     implementation("org.zalando:problem-spring-web:0.22.0")
     implementation("com.github.slugify:slugify:2.3")
     implementation("io.projectreactor:reactor-core:3.2.5.RELEASE")
+    implementation("io.vavr:vavr:0.9.3")
 
     runtimeOnly("org.springframework.boot:spring-boot-devtools")
 

@@ -1,31 +1,27 @@
 package pl.allegro.tech.leaders.hackathon.runner;
 
-public class TaskResult {
-    private final String responseBody;
-    private final Integer httpStatus;
-    private final long latencyInMillis;
-    private final int score;
+import org.springframework.http.ResponseEntity;
 
-    public TaskResult(String responseBody, Integer httpStatus, long latencyInMillis, int score) {
-        this.responseBody = responseBody;
-        this.httpStatus = httpStatus;
-        this.latencyInMillis = latencyInMillis;
+public class TaskResult {
+    private final int score;
+    private final String responseBody;
+    private final int responseHttpStatus;
+
+    TaskResult(ResponseEntity<String> response, int score) {
         this.score = score;
+        this.responseBody = response.getBody();
+        this.responseHttpStatus = response.getStatusCode().value();
+    }
+
+    public int getScore() {
+        return score;
     }
 
     public String getResponseBody() {
         return responseBody;
     }
 
-    public Integer getHttpStatus() {
-        return httpStatus;
-    }
-
-    public long getLatencyInMillis() {
-        return latencyInMillis;
-    }
-
-    public int getScore() {
-        return score;
+    public int getResponseHttpStatus() {
+        return responseHttpStatus;
     }
 }

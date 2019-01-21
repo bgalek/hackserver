@@ -1,8 +1,10 @@
 package pl.allegro.tech.leaders.hackathon.runner;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import io.vavr.control.Either;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 import pl.allegro.tech.leaders.hackathon.challenge.ChallengeDefinition;
@@ -21,28 +23,45 @@ public class TaskRunner {
     private final WebClient webClient = WebClient.create();
     private final ObjectMapper objectMapper= new ObjectMapper();
 
-    public <T> Mono<TaskResult> run(ChallengeDefinition<T> challenge, ChallengeTaskDefinition<T> task, RegisteredTeam team) {
+    public <T> Mono<TaskResult> run(ChallengeDefinition<T> challenge, ChallengeTaskDefinition<T> task,
+                                    RegisteredTeam team) {
 
         String teamEndpoint = team.getUri() + challenge.getChallengeEndpoint();
         logger.info("running example task of '{}' for team '{}', remote address: {}", challenge.getName(), team.getName(), teamEndpoint);
 
-        Mono<String> responseBody =  webClient.get()
+        Mono<ResponseEntity<String>> responseEntity =  webClient.get()
                 .uri(uri(teamEndpoint))
-                .retrieve()
-                .bodyToMono(String.class);
+                .exchange()
+                .flatMap(response -> response.toEntity(String.class));
 
-        return responseBody
-                .map(body -> parse(body, challenge.solutionType()))
-                .map(solution -> task.scoreSolution(solution))
-                .map(score -> new TaskResult("", 200, 1, score)); //TODO status & latency
+        return responseEntity.map(it -> score(it, challenge, task, team));
     }
 
-    private <T> T parse(String body, Class<T> solutionType) {
+    private <T> TaskResult score(ResponseEntity<String> response, ChallengeDefinition<T> challenge,
+                                 ChallengeTaskDefinition<T> task, RegisteredTeam team) {
+        if (!response.getStatusCode().is2xxSuccessful()) {
+            logger.info("got HTTP status {} from team '{}'", response.getStatusCode().value(), team.getName());
+            return new FailedResult(response, "expected HTTP status is 2xx, got " + response.getStatusCode().value());
+        }
+
+        Either<String, T> solution = parse(response.getBody(), challenge.solutionType(), team);
+
+        if(!solution.isRight()) {
+            return new FailedResult(response, solution.left().get());
+        }
+
+        return new TaskResult(response, task.scoreSolution(solution.right().get()));
+    }
+
+    /**
+     * @return parsed solution or errorMessage
+     */
+    private <T> Either<String, T> parse(String body, Class<T> solutionType, RegisteredTeam team) {
         try {
-            return objectMapper.readValue(body, solutionType);
+            return Either.right(objectMapper.readValue(body, solutionType));
         } catch (IOException e) {
-            //TODO add exception handling
-            throw new RuntimeException(e);
+            logger.info("can't parse response from a team {}", team.getName(), e.getMessage());
+            return Either.left(e.getClass().getSimpleName() + ": " + e.getMessage());
         }
     }
 
