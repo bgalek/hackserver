@@ -22,12 +22,26 @@ abstract class ChallengeSpec extends Specification {
         extract(facade.registerChallengeDefinitions(definitions.toList()))
     }
 
+    protected Challenge getActiveChallenge(String id) {
+        return extract(facade.getActiveChallenge(id))
+    }
+
     protected List<ChallengeDetails> getActiveChallenges() {
         return extract(facade.getActiveChallenges())
     }
 
-    protected ChallengeActivationResult activeChallenge(String id) {
+    protected ChallengeActivationResult deactivateChallenge(String id) {
+        return extract(facade.deactivateChallenge(id))
+    }
+
+    protected ChallengeActivationResult activateChallenge(String id) {
         return extract(facade.activateChallenge(id))
+    }
+
+    protected List<ChallengeActivationResult> activeChallenges(String... id) {
+        Flux<ChallengeActivationResult> results = Flux.fromIterable(id.toList())
+            .flatMap({ facade.activateChallenge(it) })
+        return extract(results)
     }
 }
 
@@ -46,18 +60,13 @@ class InMemoryChallengeStateRepository implements ChallengeStateRepository {
     }
 
     @Override
-    Flux<ChallengeState> findActivated() {
+    Flux<ChallengeState> findActive() {
         return this.findAll()
             .filter { it.active }
             .sort(comparing({ ChallengeState c -> c.activatedAt }))
     }
 
-    Flux<ChallengeState> findAll() {
+    private Flux<ChallengeState> findAll() {
         return Flux.fromIterable(store.values())
-    }
-
-    @Override
-    Mono<Void> deleteAll() {
-        store.clear()
     }
 }

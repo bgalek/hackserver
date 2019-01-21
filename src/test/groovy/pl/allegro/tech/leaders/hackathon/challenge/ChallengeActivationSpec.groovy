@@ -1,71 +1,86 @@
 package pl.allegro.tech.leaders.hackathon.challenge
 
-
 import pl.allegro.tech.leaders.hackathon.challenge.api.ChallengeDetails
 import pl.allegro.tech.leaders.hackathon.challenge.api.ChallengeNotFoundException
 
-import static pl.allegro.tech.leaders.hackathon.challenge.base.ChallengeDetailsAssertions.expectChallengeDetails
 import static pl.allegro.tech.leaders.hackathon.challenge.base.SampleChallenges.COUNT_CHALLENGE
 import static pl.allegro.tech.leaders.hackathon.challenge.base.SampleChallenges.SUM_CHALLENGE
 
 class ChallengeActivationSpec extends ChallengeSpec {
-    def 'should active challenges'() {
+    def 'should activate challenges'() {
         given: 'there are two registered challenges'
             registerChallengeDefinitions(COUNT_CHALLENGE, SUM_CHALLENGE)
-
         when: 'first challenge is activated'
-            activeChallenge(COUNT_CHALLENGE.id)
-        and: 'active challenges are fetched'
+            activateChallenge(COUNT_CHALLENGE.id)
+        and: 'activated challenges are fetched'
             List<ChallengeDetails> activeChallenges = getActiveChallenges()
         then: 'fetch result contains only the activated challenge'
             activeChallenges.size() == 1
-            expectActivatedChallenge(activeChallenges[0], COUNT_CHALLENGE)
+            ChallengeDetails challengeDetails = activeChallenges[0]
+            challengeDetails.id == COUNT_CHALLENGE.id
+        and: 'challenge from the result is well described'
+            challengeDetails.name == COUNT_CHALLENGE.name
+            challengeDetails.description == COUNT_CHALLENGE.description
+            challengeDetails.challengeEndpoint == COUNT_CHALLENGE.challengeEndpoint
+            challengeDetails.challengeParams == COUNT_CHALLENGE.challengeParams
+            challengeDetails.challengeResponse == COUNT_CHALLENGE.challengeResponse
+            challengeDetails.activatedAt == clock.instant()
 
         when: 'second challenge is activated'
-            activeChallenge(SUM_CHALLENGE.id)
-        and: 'active challenges are fetched'
+            activateChallenge(SUM_CHALLENGE.id)
+        and: 'activated challenges are fetched'
             activeChallenges = getActiveChallenges()
         then: 'fetch result contains both activated challenges'
             activeChallenges.size() == 2
-            expectActivatedChallenge(activeChallenges[0], COUNT_CHALLENGE)
-            expectActivatedChallenge(activeChallenges[1], SUM_CHALLENGE)
+            activeChallenges[0].id == COUNT_CHALLENGE.id
+            activeChallenges[1].id == SUM_CHALLENGE.id
     }
 
-    def 'should list no active challenge when no challenge is registered'() {
-        when: 'active challenges are fetched when none is registered'
-            List<ChallengeDetails> result = getActiveChallenges()
-        then: 'the result is empty'
-            result.isEmpty()
-    }
-
-    def 'should list no active challenge before activation'() {
+    def 'should serve activated challenge by id'() {
         given: 'there are two registered challenges'
             registerChallengeDefinitions(COUNT_CHALLENGE, SUM_CHALLENGE)
-        when: 'active challenges are fetched before activation'
-            List<ChallengeDetails> result = getActiveChallenges()
+
+        when: 'first challenge is fetched by id before activation'
+            getActiveChallenge(COUNT_CHALLENGE.id)
+        then:
+            thrown(ChallengeNotFoundException)
+
+        when: 'first challenge is activated'
+            activateChallenge(COUNT_CHALLENGE.id)
+        then: 'first challenge can be fetched by id'
+            getActiveChallenge(COUNT_CHALLENGE.id).id == COUNT_CHALLENGE.id
+    }
+
+    def 'should serve no challenges when no challenge is registered'() {
+        when: 'challenges are fetched'
+            List<ChallengeDetails> challenges = getActiveChallenges()
         then: 'the result is empty'
-            result.isEmpty()
+            challenges.isEmpty()
+        when: 'challenge is fetched by id'
+            getActiveChallenge(COUNT_CHALLENGE.id)
+        then:
+            thrown(ChallengeNotFoundException)
     }
 
     def 'should throw error when activating non existing challenge'() {
         when: 'non existing challenge is activated'
-            activeChallenge('non-existing')
+            activateChallenge('non-existing')
         then: 'an error is thrown'
             thrown(ChallengeNotFoundException)
     }
 
-    def 'should not throw error after second activation of the same challenge'() {
+    def 'should accept second activation of the same challenge'() {
         given: 'there are two registered challenges'
             registerChallengeDefinitions(COUNT_CHALLENGE, SUM_CHALLENGE)
         and: 'one is activated'
-            activeChallenge(SUM_CHALLENGE.id)
+            activateChallenge(SUM_CHALLENGE.id)
         when: 'the same challenge is activated for the second time'
-            activeChallenge(SUM_CHALLENGE.id)
+            activateChallenge(SUM_CHALLENGE.id)
         then: 'no exception is thrown'
             noExceptionThrown()
-        and: 'active challenges are fetched'
+        and: 'activated challenges are fetched'
             ChallengeDetails challengeDetails = getActiveChallenges()[0]
-        and: 'challenge is still active'
+        and: 'challenge is still activated'
             challengeDetails.id == SUM_CHALLENGE.id
             challengeDetails.active
             challengeDetails.activatedAt != null
@@ -75,19 +90,13 @@ class ChallengeActivationSpec extends ChallengeSpec {
         given: 'there is a registered challenge'
             registerChallengeDefinitions(COUNT_CHALLENGE)
         and: 'challenge is activated'
-            activeChallenge(COUNT_CHALLENGE.id)
+            activateChallenge(COUNT_CHALLENGE.id)
         when: 'the same challenge is registered for the second time'
             registerChallengeDefinitions(COUNT_CHALLENGE)
-        and: 'active challenges are fetched'
+        and: 'activated challenges are fetched'
             List<ChallengeDetails> activeChallenges = getActiveChallenges()
-        then: 'the challenge is still active'
+        then: 'the challenge is still activated'
             activeChallenges.size() == 1
-            expectActivatedChallenge(activeChallenges[0], COUNT_CHALLENGE)
-    }
-
-    private void expectActivatedChallenge(ChallengeDetails challengeDetails, ChallengeDefinition definition) {
-        expectChallengeDetails(challengeDetails)
-                .toBeDerivedFrom(definition)
-                .toBeActivatedAt(clock.instant())
+            activeChallenges[0].id == COUNT_CHALLENGE.id
     }
 }

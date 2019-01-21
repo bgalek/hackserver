@@ -37,6 +37,11 @@ class Challenge {
         this.activatedAt = clock.instant();
     }
 
+    void deactivate() {
+        this.active = false;
+        this.activatedAt = null;
+    }
+
     boolean isActive() {
         return active;
     }
