@@ -1,3 +1,5 @@
+import com.moowork.gradle.node.npm.NpmTask
+
 buildscript {
     repositories {
         gradlePluginPortal()
@@ -14,6 +16,7 @@ plugins {
     java
     groovy
     application
+    id("com.moowork.node") version "1.2.0"
     id("com.gradle.build-scan") version "2.1"
 }
 
@@ -88,7 +91,23 @@ task<Test>("integrationTest") {
     mustRunAfter(tasks["test"])
 }
 
+task<NpmTask>("webpack") {
+    dependsOn("npmInstall")
+    setArgs(listOf("run", "webpack"))
+}
+
+node {
+    version = "11.6.0"
+    npmVersion = "6.5.0"
+    download = true
+}
+
 tasks {
+
+    build {
+        dependsOn("webpack")
+    }
+
     check {
         dependsOn("integrationTest")
     }
