@@ -40,8 +40,9 @@ public class TaskRunner {
     private <T> TaskResult score(ResponseEntity<String> response, ChallengeDefinition<T> challenge,
                                  ChallengeTaskDefinition<T> task, RegisteredTeam team) {
         if (!response.getStatusCode().is2xxSuccessful()) {
-            logger.info("got HTTP status {} from team '{}'", response.getStatusCode().value(), team.getName());
-            return new FailedResult(response, "expected HTTP status is 2xx, got " + response.getStatusCode().value());
+            String errorMessage = "got HTTP status "+response.getStatusCode().value()+" from team '"+team.getName()+"', 2xx expected";
+            logger.info(errorMessage);
+            return new FailedResult(response, errorMessage);
         }
 
         Either<String, T> solution = parse(response.getBody(), challenge.solutionType(), team);
