@@ -55,11 +55,12 @@ class RegistrationSpec extends IntegrationSpec {
             ReactorNettyWebSocketClient socketClient = new ReactorNettyWebSocketClient()
             WebSocketHandler sessionHandler = new LoggingMessagesSessionHandler()
         when: 'socket client connects'
-            socketClient.execute(URI.create("ws://localhost:$port/ws/registrations"), sessionHandler).subscribe()
+            socketClient.execute(URI.create("ws://localhost:$port/ws/events"), sessionHandler).subscribe()
         then: 'nothing really happens'
             sessionHandler.messages.size() == 0
         when: 'when a new team is registered (10 times)'
             10.times { registerTeam('some-name-' + it) }
+            sleep(100)
         then: 'client should receive 10 messages'
             sessionHandler.messages.size() == 10
             sessionHandler.messages.eachWithIndex { it, index ->

@@ -1,0 +1,1 @@
+export const toggleDrawer = { type: 'DRAWER_TOGGLE' };
