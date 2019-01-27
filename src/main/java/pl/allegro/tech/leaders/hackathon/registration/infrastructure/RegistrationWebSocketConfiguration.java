@@ -22,7 +22,7 @@ class RegistrationWebSocketConfiguration {
     HandlerMapping handlerMapping(WebSocketHandler wsh) {
         return new SimpleUrlHandlerMapping() {
             {
-                setUrlMap(Collections.singletonMap("/ws/registrations", wsh));
+                setUrlMap(Collections.singletonMap("/ws/events", wsh));
                 setOrder(10);
             }
         };
