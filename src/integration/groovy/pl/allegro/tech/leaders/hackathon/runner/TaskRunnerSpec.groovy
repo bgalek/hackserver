@@ -95,6 +95,23 @@ class TaskRunnerSpec extends IntegrationSpec {
                 .jsonPath('.errorMessage').isNotEmpty().returnResult()
     }
 
+    def "should give 0 score when a client's connection got timeouted"() {
+        given:
+        activateChallenge(CHALLENGE_ID)
+        registerTeam(TEAM_ID)
+        stubTeamResponse(CHALLENGE_ENDPOINT, "4", 200, 150)
+
+        when:
+        def response = runExampleTask(CHALLENGE_ID, TEAM_ID)
+
+        then:
+        response.expectStatus().is2xxSuccessful()
+        println response.expectBody()
+                .jsonPath('.score').isEqualTo(0)
+                .jsonPath('.responseHttpStatus').isEqualTo(503)
+                .jsonPath('.errorMessage').isNotEmpty().returnResult()
+    }
+
     def "should give 0 score when a client's response can't be parsed to a required type"(){
         given:
         activateChallenge(CHALLENGE_ID)
@@ -131,10 +148,11 @@ class TaskRunnerSpec extends IntegrationSpec {
                 .expectStatus().is2xxSuccessful()
     }
 
-    void stubTeamResponse(String endpoint, String response, int status = 200) {
+    void stubTeamResponse(String endpoint, String response, int status = 200, int latency = 0) {
         stubFor(get(urlEqualTo(endpoint))
                 .willReturn(aResponse()
                 .withStatus(status)
+                .withFixedDelay(latency)
                 .withBody(response)))
     }
 }
