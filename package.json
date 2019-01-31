@@ -14,8 +14,8 @@
     "history": "latest"
   },
   "scripts": {
-    "webpack": "webpack",
-    "watch": "webpack --watch -d"
+    "webpack": "webpack --mode=production --env.production",
+    "watch": "webpack --watch -d --hot"
   },
   "devDependencies": {
     "@babel/core": "^7.1.6",

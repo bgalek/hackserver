@@ -95,6 +95,11 @@ task<NpmTask>("webpack") {
     setArgs(listOf("run", "webpack"))
 }
 
+
+task<NpmTask>("watch") {
+    setArgs(listOf("run", "watch"))
+}
+
 node {
     version = "11.6.0"
     npmVersion = "6.5.0"
