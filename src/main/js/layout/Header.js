@@ -6,7 +6,7 @@ import Toolbar from "@material-ui/core/Toolbar";
 import Typography from "@material-ui/core/Typography";
 import MenuIcon from "@material-ui/icons/Menu";
 import MainDrawer from "./MainDrawer";
-import { toggleDrawer } from "../actions";
+import { DRAWER_OPEN } from "../actions";
 import { connect } from "react-redux";
 import IconButton from "@material-ui/core/IconButton";
 
@@ -15,11 +15,11 @@ const styles = theme => ({
     menuButton: { marginRight: 20, [theme.breakpoints.up('sm')]: { display: 'none' } },
 });
 
-const Header = ({ classes, toggleDrawer }) => {
+function Header({ classes, openDrawer }) {
     return [
         <AppBar key="appbar" position="fixed" className={classes.appBar} elevation={2}>
             <Toolbar>
-                <IconButton color="inherit" onClick={toggleDrawer} className={classes.menuButton}>
+                <IconButton color="inherit" onClick={openDrawer} className={classes.menuButton}>
                     <MenuIcon/>
                 </IconButton>
                 <Typography variant="h6" color="inherit" noWrap>
@@ -29,7 +29,7 @@ const Header = ({ classes, toggleDrawer }) => {
         </AppBar>,
         <MainDrawer key="drawer"/>
     ];
-};
+}
 
 Header.propTypes = {
     classes: PropTypes.object.isRequired,
@@ -38,7 +38,7 @@ Header.propTypes = {
 const mapStateToProps = () => ({});
 
 const mapDispatchToProps = (dispatch) => ({
-    toggleDrawer: () => dispatch(toggleDrawer)
+    openDrawer: () => dispatch(DRAWER_OPEN)
 });
 
 const connectedHeader = connect(mapStateToProps, mapDispatchToProps)(Header);

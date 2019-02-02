@@ -8,41 +8,29 @@ import ListItemAvatar from "@material-ui/core/ListItemAvatar";
 import Avatar from "@material-ui/core/Avatar";
 import FolderIcon from '@material-ui/icons/Folder';
 import ListItemText from "@material-ui/core/ListItemText";
+import { connect } from "react-redux";
+import { TEAMS_FETCH } from "../actions";
+import Loader from "../layout/Loader";
+import { push } from "connected-react-router";
 
 const styles = theme => ({});
 
 class Teams extends Component {
 
-    constructor(props) {
-        super(props);
-        this.state = {
-            teams: [],
-            isLoading: false
-        };
-    }
-
     async componentDidMount() {
-        this.setState({ isLoading: true });
-        const response = await fetch('/registration');
-        const data = await response.json();
-        this.setState({ teams: data, isLoading: false });
-        const socket = new WebSocket('ws://localhost:8080/ws/events');
-        socket.addEventListener('message', async (event) => {
-            const team = JSON.parse(event.data);
-            this.state.teams.push(team);
-            this.setState({ teams: this.state.teams });
-        });
+        this.props.fetchTeams();
     }
 
     render() {
-        const { teams } = this.state;
+        const { teams, isLoading, navigateTo } = this.props;
+        if (isLoading) return <Loader/>;
         return [
             <Typography key="title" variant="h4" gutterBottom>
                 Teams
             </Typography>,
             <List key="teams-list">
                 {teams.map((team, index) =>
-                    <ListItem key={team.name + index}>
+                    <ListItem button key={team.name + index} onClick={() => navigateTo(`/team/${team.name}`)}>
                         <ListItemAvatar>
                             <Avatar>
                                 <FolderIcon/>
@@ -62,4 +50,15 @@ Teams.propTypes = {
     classes: PropTypes.object.isRequired,
 };
 
-export default withStyles(styles)(Teams);
+const mapStateToProps = (state) => ({
+    teams: state.teams.data,
+    isLoading: state.teams.isLoading
+});
+
+const mapDispatchToProps = (dispatch) => ({
+    fetchTeams: () => dispatch(TEAMS_FETCH),
+    navigateTo: (route) => dispatch(push(route))
+});
+
+const connectedTeams = connect(mapStateToProps, mapDispatchToProps)(Teams);
+export default withStyles(styles)(connectedTeams);

@@ -7,13 +7,11 @@ import List from "@material-ui/core/List";
 import ListItem from "@material-ui/core/ListItem";
 import ListItemIcon from "@material-ui/core/ListItemIcon";
 import ListItemText from "@material-ui/core/ListItemText";
-import PeopleIcon from '@material-ui/icons/People';
-import CodeIcon from '@material-ui/icons/Code';
-import FlightTakeoffIcon from '@material-ui/icons/FlightTakeoff';
 import Hidden from "@material-ui/core/Hidden";
 import { connect } from "react-redux";
 import { push } from 'connected-react-router'
-import { toggleDrawer } from "../actions";
+import { DRAWER_CLOSE, DRAWER_OPEN } from "../actions";
+import routes, { ADDITIONAL_MENU, MAIN_MENU } from "../routes";
 
 const drawerWidth = 240;
 
@@ -24,39 +22,25 @@ const styles = theme => ({
     toolbar: theme.mixins.toolbar,
 });
 
-const MainDrawer = ({ classes, open, toggleDrawer, navigateTo }) => {
+function MainDrawer({ classes, open, closeDrawer, openDrawer, navigateTo }) {
+    const mainMenu = routes.filter(route => route.menu === MAIN_MENU)
+        .map(route => renderRoute(route));
+
+    const additionalMenu = routes.filter(route => route.menu === ADDITIONAL_MENU)
+        .map(route => renderRoute(route));
+
     const drawer = [
         <Hidden key="desktop-drawer" xsDown implementation="css">
             <div className={classes.toolbar}/>
         </Hidden>,
-        <List key="main-menu">
-            <ListItem button onClick={() => navigateTo('/')}>
-                <ListItemIcon>
-                    <PeopleIcon/>
-                </ListItemIcon>
-                <ListItemText primary="Teams"/>
-            </ListItem>
-            <ListItem button onClick={() => navigateTo('/challenges')}>
-                <ListItemIcon>
-                    <FlightTakeoffIcon/>
-                </ListItemIcon>
-                <ListItemText primary="Challenges"/>
-            </ListItem>
-        </List>,
+        <List key="main-menu">{mainMenu}</List>,
         <Divider key="divider"/>,
-        <List key="additional-menu">
-            <ListItem button onClick={() => navigateTo('/about')}>
-                <ListItemIcon>
-                    <CodeIcon/>
-                </ListItemIcon>
-                <ListItemText primary="About"/>
-            </ListItem>
-        </List>,
+        <List key="additional-menu">{additionalMenu}</List>,
     ];
 
     return [
         <Hidden key="mobile-drawer" smUp implementation="css">
-            <Drawer variant="temporary" open={open} onClose={toggleDrawer} classes={{ paper: classes.drawerPaper }}>
+            <Drawer variant="temporary" open={open} onClose={closeDrawer} classes={{ paper: classes.drawerPaper }}>
                 {drawer}
             </Drawer>
         </Hidden>,
@@ -65,8 +49,15 @@ const MainDrawer = ({ classes, open, toggleDrawer, navigateTo }) => {
                 {drawer}
             </Drawer>
         </Hidden>
-    ]
-};
+    ];
+
+    function renderRoute(route) {
+        return <ListItem key={route.path} button onClick={() => navigateTo(route.path)}>
+            <ListItemIcon>{route.icon}</ListItemIcon>
+            <ListItemText primary={route.label}/>
+        </ListItem>;
+    }
+}
 
 MainDrawer.propTypes = {
     classes: PropTypes.object.isRequired,
@@ -77,8 +68,12 @@ const mapStateToProps = (state) => ({
 });
 
 const mapDispatchToProps = (dispatch) => ({
-    toggleDrawer: () => dispatch(toggleDrawer),
-    navigateTo: (route) => dispatch(push(route))
+    closeDrawer: () => dispatch(DRAWER_CLOSE),
+    openDrawer: () => dispatch(DRAWER_OPEN),
+    navigateTo: (route) => {
+        dispatch(push(route));
+        dispatch(DRAWER_CLOSE);
+    }
 });
 
 const connectedMainDrawer = connect(mapStateToProps, mapDispatchToProps)(MainDrawer);

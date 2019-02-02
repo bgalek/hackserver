@@ -9,7 +9,7 @@ const styles = theme => ({
     content: { flexGrow: 1, padding: theme.spacing.unit * 3, height: '100vh', overflow: 'auto' }
 });
 
-const Layout = ({ classes, children }) => {
+function Layout({ classes, children }) {
     return [
         <CssBaseline key="cssBaseLine"/>,
         <Header key="header"/>,
@@ -18,7 +18,7 @@ const Layout = ({ classes, children }) => {
             {children}
         </main>
     ]
-};
+}
 
 Layout.propTypes = {
     classes: PropTypes.object.isRequired,

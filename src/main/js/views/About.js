@@ -5,7 +5,7 @@ import Typography from '@material-ui/core/Typography';
 
 const styles = theme => ({});
 
-const About = ({ classes }) => {
+function About({ classes }) {
     return [
         <Typography key="title" variant="h4" gutterBottom>
             About
@@ -14,7 +14,7 @@ const About = ({ classes }) => {
             Something about the initiative.
         </Typography>
     ];
-};
+}
 
 About.defaultProps = { teams: [] };
 
