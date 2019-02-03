@@ -97,6 +97,10 @@ task<NpmTask>("webpack") {
     setArgs(listOf("run", "webpack"))
 }
 
+task<NpmTask>("watch") {
+    setArgs(listOf("run", "watch"))
+}
+
 node {
     version = "11.6.0"
     npmVersion = "6.5.0"
@@ -105,7 +109,7 @@ node {
 
 tasks {
 
-    build {
+    processResources {
         dependsOn("webpack")
     }
 
@@ -120,3 +124,9 @@ tasks {
         }
     }
 }
+
+val distTar = tasks.getByName("distTar")
+distTar.enabled = false
+
+val bootDistTar = tasks.getByName("bootDistTar")
+bootDistTar.enabled = false

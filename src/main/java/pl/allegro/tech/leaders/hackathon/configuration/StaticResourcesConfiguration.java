@@ -5,6 +5,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
+import org.springframework.web.reactive.function.server.RequestPredicate;
 import org.springframework.web.reactive.function.server.RouterFunction;
 import org.springframework.web.reactive.function.server.RouterFunctions;
 import org.springframework.web.reactive.function.server.ServerResponse;
@@ -26,10 +27,14 @@ class StaticResourcesConfiguration {
     @Bean
     RouterFunction<ServerResponse> routerFunction() {
         return RouterFunctions.resources("/**", location)
-                .andRoute(GET("/"), request -> ServerResponse
+                .andRoute(GET("/**").and(acceptsHtml()), request -> ServerResponse
                         .ok()
                         .contentType(TEXT_HTML)
                         .syncBody(indexHtml)
                 );
+    }
+
+    private RequestPredicate acceptsHtml() {
+        return request -> request.headers().accept().contains(TEXT_HTML);
     }
 }

@@ -1,14 +1,18 @@
 const path = require('path');
+const CleanWebpackPlugin = require('clean-webpack-plugin');
 
-module.exports = {
+module.exports = env => ({
     entry: './src/main/js/app.js',
     devtool: 'sourcemaps',
     cache: true,
     mode: 'development',
     output: {
-        path: __dirname,
-        filename: './src/main/resources/static/bundle.js'
+        path: __dirname + (env && env.production ? '/src/main/' : '/out/production/') + 'resources/static/',
+        filename: 'bundle.js',
     },
+    plugins: [
+        new CleanWebpackPlugin(['*.hot-update.js*']),
+    ],
     module: {
         rules: [
             {
@@ -24,4 +28,4 @@ module.exports = {
             }
         ]
     }
-};
+});
