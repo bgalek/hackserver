@@ -20,7 +20,7 @@ class ErrorHandlingConfiguration {
 
     @Bean
     public ProblemModule problemModule() {
-        return new ProblemModule();
+        return new ProblemModule().withStackTraces(false);
     }
 
     @Bean
