@@ -52,6 +52,7 @@ dependencies {
     implementation("com.github.slugify:slugify:2.3")
     implementation("io.projectreactor:reactor-core:3.2.5.RELEASE")
     implementation("io.vavr:vavr:0.9.3")
+    implementation("org.springframework.boot:spring-boot-starter-jetty")
 
     runtimeOnly("org.springframework.boot:spring-boot-devtools")
 
@@ -61,7 +62,7 @@ dependencies {
     testImplementation("org.spockframework:spock-core:1.2-groovy-2.5")
     testImplementation("io.projectreactor:reactor-test:3.2.5.RELEASE")
 
-    integrationImplementation("com.github.tomakehurst:wiremock:2.20.0")
+    integrationImplementation("com.github.tomakehurst:wiremock:2.21.0")
     integrationImplementation("org.spockframework:spock-spring:1.2-groovy-2.5")
     integrationImplementation("org.springframework.boot:spring-boot-starter-test")
 

@@ -17,15 +17,5 @@ export default function configureStore(history) {
             )),
     );
     sagas.forEach((saga) => sagaMiddleware.run(saga));
-    dispatchWebSocketEvents(store);
     return store
-}
-
-function dispatchWebSocketEvents(store) {
-    const location = ((window.location.protocol === "https:") ? "wss://" : "ws://") + window.location.host;
-    const socket = new WebSocket(location + "/ws/events");
-    socket.addEventListener('message', async (event) => {
-        const action = JSON.parse(event.data);
-        if (action.type) store.dispatch(action);
-    });
 }
