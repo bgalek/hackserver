@@ -1,7 +1,7 @@
 package pl.allegro.tech.leaders.hackathon.challenge.base
 
 import groovy.transform.CompileStatic
-import pl.allegro.tech.leaders.hackathon.challenge.api.ChallengeDefinition
+import pl.allegro.tech.leaders.hackathon.challenge.ChallengeDefinition
 
 @CompileStatic
 class SampleChallenges {

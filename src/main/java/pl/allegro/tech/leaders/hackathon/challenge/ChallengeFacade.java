@@ -1,7 +1,6 @@
 package pl.allegro.tech.leaders.hackathon.challenge;
 
 import pl.allegro.tech.leaders.hackathon.challenge.api.ChallengeActivationResult;
-import pl.allegro.tech.leaders.hackathon.challenge.api.ChallengeDefinition;
 import pl.allegro.tech.leaders.hackathon.challenge.api.ChallengeDetails;
 import pl.allegro.tech.leaders.hackathon.challenge.api.ChallengeNotFoundException;
 import pl.allegro.tech.leaders.hackathon.challenge.api.ChallengeResult;
@@ -45,12 +44,19 @@ public class ChallengeFacade {
                 .map(Challenge::toChallengeDetailsDto);
     }
 
-    public Mono<ChallengeDetails> getActiveChallenge(String challengeId) {
+    Mono<Challenge> getActiveChallenge(String challengeId) {
         Objects.requireNonNull(challengeId);
         return challengeRepository.findById(challengeId)
                 .filter(Challenge::isActive)
-                .switchIfEmpty(Mono.error(new ChallengeNotFoundException(challengeId)))
-                .map(Challenge::toChallengeDetailsDto);
+                .switchIfEmpty(Mono.error(new ChallengeNotFoundException(challengeId)));
+    }
+
+    public Mono<ChallengeDetails> getActiveChallengeDetails(String challengeId) {
+        return getActiveChallenge(challengeId).map(it -> it.toChallengeDetailsDto());
+    }
+
+    public Mono<ChallengeDefinition> getActiveChallengeDefinition(String challengeId) {
+        return getActiveChallenge(challengeId).map(it -> it.getDefinition());
     }
 
     public Flux<ChallengeResult> executeChallenge(String challengeId) {

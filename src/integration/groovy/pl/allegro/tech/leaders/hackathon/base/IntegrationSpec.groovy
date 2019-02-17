@@ -10,7 +10,8 @@ import pl.allegro.tech.leaders.hackathon.challenge.infrastucture.InitialChalleng
 import spock.lang.Specification
 
 @CompileStatic
-@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT,
+                properties = "client.timeout=100")
 abstract class IntegrationSpec extends Specification implements DatabaseCleaner {
 
     @Autowired InitialChallengeDefinitionRegistrar initialChallengeDefinitionRegistrar

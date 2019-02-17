@@ -1,29 +1,19 @@
 package pl.allegro.tech.leaders.hackathon.challenge.samples;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.databind.JsonMappingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.module.jsonSchema.JsonSchema;
-import com.fasterxml.jackson.module.jsonSchema.JsonSchemaGenerator;
 import org.springframework.stereotype.Component;
-import pl.allegro.tech.leaders.hackathon.challenge.api.ChallengeDefinition;
-import pl.allegro.tech.leaders.hackathon.challenge.api.ChallengeTask;
+import pl.allegro.tech.leaders.hackathon.challenge.ChallengeDefinition;
+import pl.allegro.tech.leaders.hackathon.challenge.ChallengeTaskDefinition;
 
 import java.util.List;
 import java.util.Map;
 
 @Component
-class CalcChallengeDefinition implements ChallengeDefinition {
-    private final ObjectMapper objectMapper;
-    private final List<ChallengeTask> tasks = List.of(
-            ChallengeTask.withFixedResult("Should calculate a sum 2+2=4", Map.of("equation", "2+2"), "4"),
-            ChallengeTask.withFixedResult("Should calculate a sum and multiplication 2+2*2=6", Map.of("equation", "2+2*2"), "6"),
-            ChallengeTask.withFixedResult("Should respect parenthesis in equation (2+2)*2 = 8", Map.of("equation", "(2+2)*2"), "8")
+class CalcChallengeDefinition implements ChallengeDefinition<String> {
+    private final List<ChallengeTaskDefinition<String>> tasks = List.of(
+            ChallengeTaskDefinition.withFixedResult("Should calculate a sum 2+2=4", Map.of("equation", "2+2"), "4", 1),
+            ChallengeTaskDefinition.withFixedResult("Should calculate a sum and multiplication 2+2*2=6", Map.of("equation", "2+2*2"), "6", 1),
+            ChallengeTaskDefinition.withFixedResult("Should respect parenthesis in equation (2+2)*2 = 8", Map.of("equation", "(2+2)*2"), "8", 1)
     );
-
-    CalcChallengeDefinition(ObjectMapper objectMapper) {
-        this.objectMapper = objectMapper;
-    }
 
     @Override
     public String getName() {
@@ -32,12 +22,17 @@ class CalcChallengeDefinition implements ChallengeDefinition {
 
     @Override
     public String getDescription() {
-        return "Your task is to make calculator api!";
+        return "Your task is to write a simple calculator!";
     }
 
     @Override
     public String getChallengeEndpoint() {
         return "/calc";
+    }
+
+    @Override
+    public Class<String> solutionType() {
+        return String.class;
     }
 
     @Override
@@ -48,31 +43,7 @@ class CalcChallengeDefinition implements ChallengeDefinition {
     }
 
     @Override
-    public JsonSchema getChallengeResponse() {
-        JsonSchemaGenerator schemaGen = new JsonSchemaGenerator(objectMapper);
-        try {
-            return schemaGen.generateSchema(ChallengeResponse.class);
-        } catch (JsonMappingException e) {
-            throw new RuntimeException("Could not create schema", e);
-        }
-    }
-
-    public List<ChallengeTask> getTasks() {
+    public List<ChallengeTaskDefinition<String>> getTasks() {
         return this.tasks;
-    }
-
-    @Override
-    public List<String> getExamples() {
-        return List.of("1+1", "2+2*2", "(3+3)/3)");
-    }
-
-    private class ChallengeResponse {
-
-        @JsonProperty(required = true)
-        private String result;
-
-        String getResult() {
-            return result;
-        }
     }
 }

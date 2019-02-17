@@ -18,4 +18,12 @@ class Team {
     InetSocketAddress getRemoteAddress() {
         return remoteAddress;
     }
+
+    @Override
+    public String toString() {
+        return "Team{" +
+                "name='" + name + '\'' +
+                ", remoteAddr='" + remoteAddress + '\'' +
+                '}';
+    }
 }

@@ -7,7 +7,7 @@ import org.springframework.context.event.ContextRefreshedEvent;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
 import pl.allegro.tech.leaders.hackathon.challenge.ChallengeFacade;
-import pl.allegro.tech.leaders.hackathon.challenge.api.ChallengeDefinition;
+import pl.allegro.tech.leaders.hackathon.challenge.ChallengeDefinition;
 
 import java.util.List;
 

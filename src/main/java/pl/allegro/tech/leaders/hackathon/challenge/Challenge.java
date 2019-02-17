@@ -2,7 +2,6 @@ package pl.allegro.tech.leaders.hackathon.challenge;
 
 import org.springframework.data.annotation.TypeAlias;
 import org.springframework.data.mongodb.core.mapping.Document;
-import pl.allegro.tech.leaders.hackathon.challenge.api.ChallengeDefinition;
 import pl.allegro.tech.leaders.hackathon.challenge.api.ChallengeDetails;
 
 import java.time.Clock;
@@ -51,6 +50,10 @@ class Challenge {
         return new ChallengeState(id, active, activatedAt);
     }
 
+    ChallengeDefinition getDefinition() {
+        return definition;
+    }
+
     ChallengeDetails toChallengeDetailsDto() {
         return new ChallengeDetails(
                 this.id,
@@ -60,8 +63,7 @@ class Challenge {
                 this.definition.getDescription(),
                 this.definition.getChallengeEndpoint(),
                 this.definition.getChallengeParams(),
-                this.definition.getChallengeResponse(),
-                this.definition.getExamples()
+                this.definition.getChallengeResponse()
         );
     }
 

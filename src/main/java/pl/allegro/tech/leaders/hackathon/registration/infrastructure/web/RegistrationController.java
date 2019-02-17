@@ -3,7 +3,6 @@ package pl.allegro.tech.leaders.hackathon.registration.infrastructure.web;
 import org.reactivestreams.Publisher;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.http.server.reactive.ServerHttpRequest;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -12,6 +11,7 @@ import org.springframework.web.bind.annotation.RestController;
 import pl.allegro.tech.leaders.hackathon.registration.RegistrationFacade;
 import pl.allegro.tech.leaders.hackathon.registration.api.TeamRegistration;
 
+import javax.servlet.http.HttpServletRequest;
 import java.net.InetSocketAddress;
 import java.net.URI;
 
@@ -32,10 +32,9 @@ class RegistrationController {
     }
 
     @PostMapping
-    Publisher<ResponseEntity<RegisteredTeamResponse>> registerTeam(@RequestBody RegisterTeamRequest registerTeamRequest,
-                                                                   ServerHttpRequest serverHttpRequest) {
+    Publisher<ResponseEntity<RegisteredTeamResponse>> registerTeam(HttpServletRequest request, @RequestBody RegisterTeamRequest registerTeamRequest) {
         String name = registerTeamRequest.getName();
-        InetSocketAddress remoteAddress = serverHttpRequest.getRemoteAddress();
+        InetSocketAddress remoteAddress = new InetSocketAddress(request.getRemoteAddr(), request.getRemotePort());
         TeamRegistration teamRegistration = new TeamRegistration(name, remoteAddress);
         return registrationFacade.register(teamRegistration)
                 .map(registeredTeam -> ResponseEntity.created(URI.create(String.format("/teams/%s", registeredTeam.getId())))

@@ -10,7 +10,6 @@ class ChallengeActivationSpec extends ChallengeSpec {
     def 'should activate challenges'() {
         given: 'there are two registered challenges'
             registerChallengeDefinitions(COUNT_CHALLENGE, SUM_CHALLENGE)
-
         when: 'first challenge is activated'
             activateChallenge(COUNT_CHALLENGE.id)
         and: 'activated challenges are fetched'
@@ -25,7 +24,6 @@ class ChallengeActivationSpec extends ChallengeSpec {
             challengeDetails.challengeEndpoint == COUNT_CHALLENGE.challengeEndpoint
             challengeDetails.challengeParams == COUNT_CHALLENGE.challengeParams
             challengeDetails.challengeResponse == COUNT_CHALLENGE.challengeResponse
-            challengeDetails.examples == COUNT_CHALLENGE.examples
             challengeDetails.activatedAt == clock.instant()
 
         when: 'second challenge is activated'

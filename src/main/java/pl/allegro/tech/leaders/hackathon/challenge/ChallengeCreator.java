@@ -1,7 +1,6 @@
 package pl.allegro.tech.leaders.hackathon.challenge;
 
 import pl.allegro.tech.leaders.hackathon.challenge.Challenge.ChallengeState;
-import pl.allegro.tech.leaders.hackathon.challenge.api.ChallengeDefinition;
 
 import java.util.HashMap;
 import java.util.Map;

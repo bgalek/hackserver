@@ -1,27 +1,22 @@
 package pl.allegro.tech.leaders.hackathon.registration;
 
-import org.springframework.context.ApplicationEventPublisher;
 import pl.allegro.tech.leaders.hackathon.registration.api.RegisteredTeam;
 import pl.allegro.tech.leaders.hackathon.registration.api.TeamRegistration;
-import pl.allegro.tech.leaders.hackathon.registration.events.TeamRegisteredEvent;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 public class RegistrationFacade {
 
-    private final ApplicationEventPublisher publisher;
     private final TeamRepository teamRepository;
 
-    RegistrationFacade(ApplicationEventPublisher publisher, TeamRepository teamRepository) {
-        this.publisher = publisher;
+    RegistrationFacade(TeamRepository teamRepository) {
         this.teamRepository = teamRepository;
     }
 
     public Mono<RegisteredTeam> register(TeamRegistration teamRegistration) {
         Team team = new Team(teamRegistration.getName(), teamRegistration.getRemoteAddress());
         return teamRepository.save(team)
-                .map(this::toRegisteredTeam)
-                .doOnSuccess(registeredTeam -> publisher.publishEvent(new TeamRegisteredEvent(registeredTeam)));
+                .map(this::toRegisteredTeam);
     }
 
     public Flux<RegisteredTeam> getAll() {
@@ -31,7 +26,8 @@ public class RegistrationFacade {
 
     public Mono<RegisteredTeam> getTeamByName(String name) {
         return teamRepository.findByName(name)
-                .map(this::toRegisteredTeam);
+                .map(this::toRegisteredTeam)
+                .switchIfEmpty(Mono.error(new TeamNotFoundException(name)));
     }
 
     private RegisteredTeam toRegisteredTeam(Team team) {
