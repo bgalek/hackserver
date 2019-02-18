@@ -58,12 +58,11 @@ dependencies {
 
     annotationProcessor("org.springframework.boot:spring-boot-configuration-processor")
 
-    testImplementation("org.codehaus.groovy:groovy-all:2.5.5")
-    testImplementation("org.spockframework:spock-core:1.2-groovy-2.5")
+    testImplementation("org.spockframework:spock-core:1.3-RC1-groovy-2.5")
     testImplementation("io.projectreactor:reactor-test:3.2.5.RELEASE")
 
     integrationImplementation("com.github.tomakehurst:wiremock:2.21.0")
-    integrationImplementation("org.spockframework:spock-spring:1.2-groovy-2.5")
+    integrationImplementation("org.spockframework:spock-spring:1.3-RC1-groovy-2.5")
     integrationImplementation("org.springframework.boot:spring-boot-starter-test")
 
     integrationRuntime("de.flapdoodle.embed:de.flapdoodle.embed.mongo:2.2.0")

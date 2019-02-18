@@ -6,6 +6,6 @@ import static org.springframework.http.HttpStatus.NOT_FOUND;
 
 class TeamNotFoundException extends ResponseStatusException {
     TeamNotFoundException(String teamId) {
-        super(NOT_FOUND, "Team '"+teamId+"' not found.");
+        super(NOT_FOUND, String.format("Team '%s' not found.", teamId));
     }
 }

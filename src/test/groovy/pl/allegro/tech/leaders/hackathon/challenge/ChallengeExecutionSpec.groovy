@@ -65,7 +65,7 @@ class ChallengeExecutionSpec extends ChallengeSpec {
 
     private RegisteredTeam registerTeam() {
         // TOOD: register a team with sample data
-        return new RegisteredTeam()
+        return new RegisteredTeam("name", "address")
     }
 
     private ChallengeResult invalidChallengeResult(String teamId, String challangeId = SAMPLE_CHALLENGE.id) {

@@ -2,12 +2,11 @@ package pl.allegro.tech.leaders.hackathon.challenge.infrastucture;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.event.ContextRefreshedEvent;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
-import pl.allegro.tech.leaders.hackathon.challenge.ChallengeFacade;
 import pl.allegro.tech.leaders.hackathon.challenge.ChallengeDefinition;
+import pl.allegro.tech.leaders.hackathon.challenge.ChallengeFacade;
 
 import java.util.List;
 
@@ -15,11 +14,13 @@ import java.util.List;
 public class InitialChallengeDefinitionRegistrar {
     private static final Logger logger = LoggerFactory.getLogger(InitialChallengeDefinitionRegistrar.class);
 
-    @Autowired
-    private ChallengeFacade challengeFacade;
+    private final ChallengeFacade challengeFacade;
+    private final List<ChallengeDefinition> challengeDefinitions;
 
-    @Autowired
-    private List<ChallengeDefinition> challengeDefinitions;
+    InitialChallengeDefinitionRegistrar(ChallengeFacade challengeFacade, List<ChallengeDefinition> challengeDefinitions) {
+        this.challengeFacade = challengeFacade;
+        this.challengeDefinitions = challengeDefinitions;
+    }
 
     @EventListener(ContextRefreshedEvent.class)
     public void registerChallengeDefinitions() {
