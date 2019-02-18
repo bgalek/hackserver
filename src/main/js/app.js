@@ -6,10 +6,10 @@ import { Route, Switch } from "react-router-dom";
 import { Provider } from "react-redux";
 import { createMuiTheme, MuiThemeProvider } from '@material-ui/core/styles';
 import configureStore from "./store";
-import { createBrowserHistory } from "history";
+import { createHashHistory } from "history";
 import routes from './routes'
 
-const history = createBrowserHistory();
+const history = createHashHistory();
 const store = configureStore(history);
 const theme = createMuiTheme({
     palette: { primary: { main: '#FF3D00' }, secondary: { main: '#37474F' } },

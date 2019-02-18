@@ -15,7 +15,8 @@ class TeamDetail extends Component {
             <Typography key="title" variant="h4" gutterBottom>
                 Team
             </Typography>,
-            <p key="json">{JSON.stringify(team)}</p>
+            <p key="json">{JSON.stringify(team)}</p>,
+            <img alt={team.name} src={team.avatar} />
         ];
     }
 }

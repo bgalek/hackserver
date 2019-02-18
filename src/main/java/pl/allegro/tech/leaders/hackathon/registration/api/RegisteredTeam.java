@@ -1,14 +1,16 @@
 package pl.allegro.tech.leaders.hackathon.registration.api;
 
-import java.net.URI;
+import java.net.InetAddress;
 
 public class RegisteredTeam {
-    // TODO: setup team uri
-    private final URI uri = URI.create("http://localhost:8080");
     private final String name;
+    private final InetAddress remoteAddress;
+    private final String secret;
 
-    public RegisteredTeam(String name) {
+    public RegisteredTeam(String name, InetAddress remoteAddress, String secret) {
         this.name = name;
+        this.remoteAddress = remoteAddress;
+        this.secret = secret;
     }
 
     public String getName() {
@@ -19,7 +21,11 @@ public class RegisteredTeam {
         return name;
     }
 
-    public URI getUri() {
-        return uri;
+    public InetAddress getRemoteAddress() {
+        return remoteAddress;
+    }
+
+    public String getSecret() {
+        return secret;
     }
 }

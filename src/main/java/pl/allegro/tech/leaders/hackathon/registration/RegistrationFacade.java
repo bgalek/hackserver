@@ -25,12 +25,20 @@ public class RegistrationFacade {
     }
 
     public Mono<RegisteredTeam> getTeamByName(String name) {
+        return teamRepository.findByName(name).map(this::toRegisteredTeam);
+    }
+
+    public Mono<Void> unregister(String name, String secret) {
         return teamRepository.findByName(name)
-                .map(this::toRegisteredTeam)
-                .switchIfEmpty(Mono.error(new TeamNotFoundException(name)));
+                .switchIfEmpty(Mono.error(new TeamNotFoundException(name)))
+                .flatMap(team -> teamRepository.delete(team.getName(), secret));
     }
 
     private RegisteredTeam toRegisteredTeam(Team team) {
-        return new RegisteredTeam(team.getName());
+        return new RegisteredTeam(
+                team.getName(),
+                team.getRemoteAddress(),
+                team.getSecret()
+        );
     }
 }

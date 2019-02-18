@@ -43,7 +43,7 @@ public class TaskRunner {
     public <T> Mono<TaskResult> run(ChallengeDefinition<T> challenge, ChallengeTaskDefinition<T> task,
                                     RegisteredTeam team) {
 
-        String teamEndpoint = team.getUri() + challenge.getChallengeEndpoint();
+        String teamEndpoint = team.getRemoteAddress() + challenge.getChallengeEndpoint();
         logger.info("running example task of '{}' for team '{}', remote address: {}", challenge.getName(), team.getName(), teamEndpoint);
 
         Mono<ResponseEntity<String>> responseEntity = webClient.get()

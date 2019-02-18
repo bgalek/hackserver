@@ -5,7 +5,8 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.core.convert.converter.Converter;
 import org.springframework.data.mongodb.core.convert.MongoCustomConversions;
 
-import java.net.InetSocketAddress;
+import java.net.InetAddress;
+import java.net.UnknownHostException;
 import java.util.List;
 
 @Configuration
@@ -16,21 +17,25 @@ class ConvertersConfiguration {
         return new MongoCustomConversions(List.of(inetSocketAddressWriterConverter(), inetSocketAddressReaderConverter()));
     }
 
-    private Converter<InetSocketAddress, String> inetSocketAddressWriterConverter() {
-        return new Converter<InetSocketAddress, String>() {
+    private Converter<InetAddress, String> inetSocketAddressWriterConverter() {
+        return new Converter<InetAddress, String>() {
             @Override
-            public String convert(InetSocketAddress source) {
-                return source.toString();
+            public String convert(InetAddress source) {
+                return source.getHostAddress();
             }
         };
     }
 
-    private Converter<String, InetSocketAddress> inetSocketAddressReaderConverter() {
-        return new Converter<String, InetSocketAddress>() {
+    private Converter<String, InetAddress> inetSocketAddressReaderConverter() {
+        return new Converter<String, InetAddress>() {
             @Override
-            public InetSocketAddress convert(String source) {
-                var split = source.split(":");
-                return new InetSocketAddress(split[0], Integer.parseInt(split[1]));
+            public InetAddress convert(String source) {
+                try {
+                    return InetAddress.getByName(source);
+                } catch (UnknownHostException e) {
+                    e.printStackTrace();
+                    return null;
+                }
             }
         };
     }

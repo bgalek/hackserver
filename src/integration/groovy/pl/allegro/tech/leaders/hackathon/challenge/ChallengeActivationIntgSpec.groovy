@@ -3,12 +3,6 @@ package pl.allegro.tech.leaders.hackathon.challenge
 import org.springframework.test.web.reactive.server.WebTestClient
 import pl.allegro.tech.leaders.hackathon.base.IntegrationSpec
 
-import static org.hamcrest.Matchers.empty
-import static org.hamcrest.Matchers.hasSize
-import static org.hamcrest.Matchers.is
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
-
 class ChallengeActivationIntgSpec extends IntegrationSpec {
     private static final String CALCULATOR_CHALLENGE_ID = 'calculator-challenge'
     private static final String TWITTER_CHALLENGE_ID = 'twitter-challenge'
