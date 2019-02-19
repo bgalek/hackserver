@@ -23,10 +23,8 @@ class RegistrationFacadeSpec extends Specification {
         then: 'team is persisted'
             List<Team> persistedTeams = teamRepository.findAll().collectList().block()
             persistedTeams.size() == 1
-            persistedTeams.stream().findFirst().get().with {
-                getName() == teamRegistration.name
-                getRemoteAddress() == teamRegistration.getRemoteAddress()
-            }
+            persistedTeams.first().getName() == teamRegistration.name
+            persistedTeams.first().getRemoteAddress() == teamRegistration.getRemoteAddress()
     }
 
     def "should be able to update team using secret"() {

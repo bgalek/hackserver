@@ -49,7 +49,7 @@ class RegistrationSpec extends IntegrationSpec {
         given:
             String teamName = randomUUID().toString()
             WebTestClient.ResponseSpec registerResponse = registerTeam(teamName)
-            String secret = new String(registerResponse.expectBody().returnResult().getResponseBodyContent(), StandardCharsets.UTF_8)
+            String secret = bodyAsString(registerResponse)
         when:
             WebTestClient.ResponseSpec updateResponse = updateTeam(teamName, secret)
         then:
@@ -80,6 +80,10 @@ class RegistrationSpec extends IntegrationSpec {
     }
 
     @LocalServerPort int port
+
+    private static String bodyAsString(WebTestClient.ResponseSpec responseSpec) {
+        new String(responseSpec.expectBody().returnResult().getResponseBodyContent(), StandardCharsets.UTF_8)
+    }
 
     private WebTestClient.ResponseSpec registerTeam(String teamName) {
         webClient
