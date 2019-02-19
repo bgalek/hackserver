@@ -11,7 +11,7 @@ import spock.lang.Specification
 
 @CompileStatic
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT,
-                properties = "client.timeout=100")
+                properties = "client.timeout=300")
 abstract class IntegrationSpec extends Specification implements DatabaseCleaner {
 
     @Autowired InitialChallengeDefinitionRegistrar initialChallengeDefinitionRegistrar

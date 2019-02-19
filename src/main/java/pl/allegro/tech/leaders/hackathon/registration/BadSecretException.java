@@ -6,6 +6,6 @@ import static org.springframework.http.HttpStatus.FORBIDDEN;
 
 class BadSecretException extends ResponseStatusException {
     BadSecretException(String teamName) {
-        super(FORBIDDEN, String.format("Bad secret provided for '%s' team", teamName));
+        super(FORBIDDEN, String.format("Bad secret sent for '%s' team", teamName));
     }
 }

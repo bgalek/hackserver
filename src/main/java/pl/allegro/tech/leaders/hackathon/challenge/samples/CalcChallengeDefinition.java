@@ -10,9 +10,9 @@ import java.util.Map;
 @Component
 class CalcChallengeDefinition implements ChallengeDefinition<String> {
     private final List<ChallengeTaskDefinition<String>> tasks = List.of(
-            ChallengeTaskDefinition.withFixedResult("Should calculate a sum 2+2=4", Map.of("equation", "2+2"), "4", 1),
-            ChallengeTaskDefinition.withFixedResult("Should calculate a sum and multiplication 2+2*2=6", Map.of("equation", "2+2*2"), "6", 1),
-            ChallengeTaskDefinition.withFixedResult("Should respect parenthesis in equation (2+2)*2 = 8", Map.of("equation", "(2+2)*2"), "8", 1)
+            ChallengeTaskDefinition.withFixedResult("Should calculate a sum 2+2=4", Map.of("equation", "2+2"), "4", 4),
+            ChallengeTaskDefinition.withFixedResult("Should calculate a sum and multiplication 2+2*2=6", Map.of("equation", "2+2*2"), "6", 5),
+            ChallengeTaskDefinition.withFixedResult("Should respect parenthesis in equation (2+2)*2 = 8", Map.of("equation", "(2+2)*2"), "8", 5)
     );
 
     @Override
