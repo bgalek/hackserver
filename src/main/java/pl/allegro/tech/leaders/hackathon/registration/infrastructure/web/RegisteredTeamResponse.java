@@ -19,6 +19,6 @@ class RegisteredTeamResponse {
     }
 
     public String getAvatar() {
-        return String.format("https://api.adorable.io/avatars/285/%s", address);
+        return String.format("https://api.adorable.io/avatars/285/%s%%40%s", name, address);
     }
 }

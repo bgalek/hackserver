@@ -1,6 +1,7 @@
 package pl.allegro.tech.leaders.hackathon.registration;
 
 import org.springframework.data.repository.Repository;
+import pl.allegro.tech.leaders.hackathon.registration.api.TeamSecret;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
@@ -16,19 +17,16 @@ class TeamRepository {
         return persistenceTeamRepository.save(team);
     }
 
-    Mono<Void> delete(String name, String secret) {
-        return persistenceTeamRepository.findByNameAndSecret(name, secret)
-                .switchIfEmpty(Mono.error(new BadSecretException(name)))
-                .flatMap(persistenceTeamRepository::delete);
-    }
-
     Flux<Team> findAll() {
         return persistenceTeamRepository.findAll();
     }
 
-    Mono<Team> findByName(String name) {
-        return persistenceTeamRepository.findByName(name)
-                .switchIfEmpty(Mono.error(new TeamNotFoundException(name)));
+    Mono<Team> find(String name) {
+        return persistenceTeamRepository.findByName(name);
+    }
+
+    Mono<Team> find(String name, TeamSecret teamSecret) {
+        return persistenceTeamRepository.findByNameAndSecret(name, teamSecret.getSecret());
     }
 }
 
@@ -38,8 +36,6 @@ interface PersistenceTeamRepository extends Repository<Team, String> {
     Mono<Team> findByName(String name);
 
     Mono<Team> findByNameAndSecret(String name, String secret);
-
-    Mono<Void> delete(Team team);
 
     Flux<Team> findAll();
 }

@@ -21,8 +21,6 @@ import reactor.core.publisher.Mono;
 import reactor.netty.http.client.HttpClient;
 
 import java.io.IOException;
-import java.net.URI;
-import java.net.URISyntaxException;
 import java.util.concurrent.TimeUnit;
 
 @Service
@@ -42,13 +40,13 @@ public class TaskRunner {
     public <T> Mono<TaskResult> run(ChallengeDefinition<T> challenge, ChallengeTaskDefinition<T> task,
                                     RegisteredTeam team) {
 
-        String teamEndpoint = team.getRemoteAddress() + challenge.getChallengeEndpoint();
+        String teamEndpoint = "http://" + team.getRemoteAddress().getHostAddress() + ":8080" + challenge.getChallengeEndpoint();
         logger.info("running example task of '{}' for team '{}', remote address: {}", challenge.getName(), team.getName(), teamEndpoint);
 
         final long start = System.currentTimeMillis();
 
         Mono<ResponseEntity<String>> responseEntity = webClient.get()
-                .uri(uri(teamEndpoint))
+                .uri(teamEndpoint)
                 .exchange()
                 .flatMap(response -> response.toEntity(String.class))
                 .onErrorResume(e -> {
@@ -104,14 +102,6 @@ public class TaskRunner {
         } catch (IOException e) {
             logger.info("can't parse response from a team {}", team.getName(), e.getMessage());
             return Either.left(e.getClass().getSimpleName() + ": " + e.getMessage());
-        }
-    }
-
-    private URI uri(String uri) {
-        try {
-            return new URI(uri);
-        } catch (URISyntaxException e) {
-            throw new RuntimeException(e);
         }
     }
 
