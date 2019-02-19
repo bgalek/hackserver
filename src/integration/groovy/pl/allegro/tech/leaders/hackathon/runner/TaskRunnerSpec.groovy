@@ -1,6 +1,7 @@
 package pl.allegro.tech.leaders.hackathon.runner
 
 import com.github.tomakehurst.wiremock.junit.WireMockRule
+import groovy.json.JsonSlurper
 import org.junit.ClassRule
 import org.springframework.http.MediaType
 import org.springframework.test.web.reactive.server.WebTestClient
@@ -52,11 +53,14 @@ class TaskRunnerSpec extends IntegrationSpec {
 
         then:
         response.expectStatus().is2xxSuccessful()
-        response.expectBody()
-                .jsonPath('.score').isEqualTo(1)
-                .jsonPath('.responseHttpStatus').isEqualTo(200)
-                .jsonPath('.responseBody').isEqualTo("4")
-                .jsonPath('.errorMessage').isEmpty()
+        def result = new JsonSlurper().parse(response.expectBody().returnResult().getResponseBody())
+
+        println result
+
+        result.score == 4
+        result.responseHttpStatus == 200
+        result.responseBody == "4"
+        !result.errorMessage
     }
 
     def "should give 0 score when a solution of an example task is wrong"(){
@@ -70,11 +74,14 @@ class TaskRunnerSpec extends IntegrationSpec {
 
         then:
         response.expectStatus().is2xxSuccessful()
-        response.expectBody()
-                .jsonPath('.score').isEqualTo(0)
-                .jsonPath('.responseHttpStatus').isEqualTo(200)
-                .jsonPath('.responseBody').isEqualTo("22")
-                .jsonPath('.errorMessage').isEmpty()
+        def result = new JsonSlurper().parse(response.expectBody().returnResult().getResponseBody())
+
+        println result
+
+        result.score == 0
+        result.responseHttpStatus == 200
+        result.responseBody == "22"
+        !result.errorMessage
     }
 
     def "should give 0 score when a client's response isn't 2xx"() {
@@ -88,28 +95,57 @@ class TaskRunnerSpec extends IntegrationSpec {
 
         then:
         response.expectStatus().is2xxSuccessful()
-        println response.expectBody()
-                .jsonPath('.score').isEqualTo(0)
-                .jsonPath('.responseHttpStatus').isEqualTo(503)
-                .jsonPath('.responseBody').isEqualTo("4")
-                .jsonPath('.errorMessage').isNotEmpty().returnResult()
+        def result = new JsonSlurper().parse(response.expectBody().returnResult().getResponseBody())
+
+        println result
+
+        result.score == 0
+        result.responseHttpStatus == 503
+        result.responseBody == "4"
+        result.errorMessage
     }
 
     def "should give 0 score when a client's connection got timeouted"() {
         given:
         activateChallenge(CHALLENGE_ID)
         registerTeam(TEAM_ID)
-        stubTeamResponse(CHALLENGE_ENDPOINT, "4", 200, 150)
+        stubTeamResponse(CHALLENGE_ENDPOINT, "4", 200, 400)
 
         when:
         def response = runExampleTask(CHALLENGE_ID, TEAM_ID)
 
         then:
         response.expectStatus().is2xxSuccessful()
-        println response.expectBody()
-                .jsonPath('.score').isEqualTo(0)
-                .jsonPath('.responseHttpStatus').isEqualTo(503)
-                .jsonPath('.errorMessage').isNotEmpty().returnResult()
+        def result = new JsonSlurper().parse(response.expectBody().returnResult().getResponseBody())
+
+        println result
+
+        result.score == 0
+        result.responseHttpStatus == 503
+        result.latencyMillis >= 300
+        result.errorMessage
+    }
+
+    def "should remove one point for each 200 millis of latency"() {
+        given:
+        activateChallenge(CHALLENGE_ID)
+        registerTeam(TEAM_ID)
+        stubTeamResponse(CHALLENGE_ENDPOINT, "4", 200, 210)
+
+        when:
+        def response = runExampleTask(CHALLENGE_ID, TEAM_ID)
+
+        then:
+        response.expectStatus().is2xxSuccessful()
+        def result = new JsonSlurper().parse(response.expectBody().returnResult().getResponseBody())
+
+        println result
+
+        result.score == 3
+        result.responseHttpStatus == 200
+        result.responseBody == "4"
+        result.latencyMillis >= 200
+        !result.errorMessage
     }
 
     def "should give 0 score when a client's response can't be parsed to a required type"(){
@@ -123,11 +159,14 @@ class TaskRunnerSpec extends IntegrationSpec {
 
         then:
         response.expectStatus().is2xxSuccessful()
-        response.expectBody()
-                .jsonPath('.score').isEqualTo(0)
-                .jsonPath('.responseHttpStatus').isEqualTo(200)
-                .jsonPath('.responseBody').isEqualTo("[4]")
-                .jsonPath('.errorMessage').isNotEmpty()
+        def result = new JsonSlurper().parse(response.expectBody().returnResult().getResponseBody())
+
+        println result
+
+        result.score == 0
+        result.responseHttpStatus == 200
+        result.responseBody == "[4]"
+        result.errorMessage
     }
 
     private WebTestClient.ResponseSpec runExampleTask(CHALLENGE_ID, TEAM_ID) {

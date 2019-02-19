@@ -6,11 +6,13 @@ public class TaskResult {
     private final int score;
     private final String responseBody;
     private final int responseHttpStatus;
+    private final long latencyMillis;
 
-    TaskResult(ResponseEntity<String> response, int score) {
+    TaskResult(ResponseEntity<String> response, int score, long latencyMillis) {
         this.score = score;
         this.responseBody = response.getBody();
         this.responseHttpStatus = response.getStatusCode().value();
+        this.latencyMillis = latencyMillis;
     }
 
     public int getScore() {
@@ -23,5 +25,9 @@ public class TaskResult {
 
     public int getResponseHttpStatus() {
         return responseHttpStatus;
+    }
+
+    public long getLatencyMillis() {
+        return latencyMillis;
     }
 }
