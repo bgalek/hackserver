@@ -17,15 +17,19 @@ class Team {
     private final InetAddress remoteAddress;
     private final String secret;
 
-    Team(String name, InetAddress remoteAddress) {
-        this(name, remoteAddress, UUID.randomUUID().toString());
-    }
-
     @PersistenceConstructor
     private Team(String name, InetAddress remoteAddress, String secret) {
         this.name = name;
         this.remoteAddress = remoteAddress;
         this.secret = secret;
+    }
+
+    Team(String name, InetAddress remoteAddress) {
+        this(name, remoteAddress, UUID.randomUUID().toString());
+    }
+
+    Team(Team team, InetAddress remoteAddress) {
+        this(team.getName(), remoteAddress, team.getSecret());
     }
 
     String getName() {
