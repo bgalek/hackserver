@@ -10,18 +10,43 @@ import ListItemText from "@material-ui/core/ListItemText";
 import { connect } from "react-redux";
 import { TEAMS_FETCH } from "../actions";
 import Loader from "../layout/Loader";
-import { push } from "connected-react-router";
+import Dialog from "@material-ui/core/Dialog";
+import Slide from "@material-ui/core/Slide";
+import TeamDetail from "./TeamDetail";
 
-const styles = theme => ({});
+const styles = theme => ({
+    dialog: {
+        backgroundColor: '#fafafa',
+    }
+});
 
 class Teams extends Component {
+
+    constructor(props) {
+        super(props);
+        this.state = {
+            open: false
+        };
+    }
+
+    static Transition(props) {
+        return <Slide direction="up" {...props} />;
+    }
 
     async componentDidMount() {
         this.props.fetchTeams();
     }
 
+    handleClose() {
+        this.setState({ open: false });
+    };
+
+    handleOpen(team) {
+        this.setState({ open: true, selected: team });
+    };
+
     render() {
-        const { teams, isLoading, navigateTo } = this.props;
+        const { classes, teams, isLoading } = this.props;
         if (isLoading) return <Loader/>;
         return [
             <Typography key="title" variant="h4" gutterBottom>
@@ -29,14 +54,18 @@ class Teams extends Component {
             </Typography>,
             <List key="teams-list">
                 {teams.map((team, index) =>
-                    <ListItem button key={team.name + index} onClick={() => navigateTo(`/team/${team.name}`)}>
+                    <ListItem button key={team.name + index} onClick={() => this.handleOpen(team)}>
                         <ListItemAvatar>
                             <Avatar alt={team.name} src={team.avatar}/>
                         </ListItemAvatar>
                         <ListItemText primary={team.name} secondary={team.address}/>
                     </ListItem>
                 )}
-            </List>
+            </List>,
+            <Dialog key="team-details-modal" fullScreen open={this.state.open} onClose={() => this.handleClose()}
+                    TransitionComponent={Teams.Transition} className={classes.dialog}>
+                <TeamDetail onClose={() => this.handleClose()} team={this.state.selected}/>
+            </Dialog>
         ];
     }
 }
@@ -53,8 +82,7 @@ const mapStateToProps = (state) => ({
 });
 
 const mapDispatchToProps = (dispatch) => ({
-    fetchTeams: () => dispatch(TEAMS_FETCH),
-    navigateTo: (route) => dispatch(push(route))
+    fetchTeams: () => dispatch(TEAMS_FETCH)
 });
 
 const connectedTeams = connect(mapStateToProps, mapDispatchToProps)(Teams);
