@@ -6,7 +6,6 @@ import List from "@material-ui/core/List";
 import ListItem from "@material-ui/core/ListItem";
 import ListItemAvatar from "@material-ui/core/ListItemAvatar";
 import Avatar from "@material-ui/core/Avatar";
-import FolderIcon from '@material-ui/icons/Folder';
 import ListItemText from "@material-ui/core/ListItemText";
 import { connect } from "react-redux";
 import { TEAMS_FETCH } from "../actions";
@@ -32,11 +31,9 @@ class Teams extends Component {
                 {teams.map((team, index) =>
                     <ListItem button key={team.name + index} onClick={() => navigateTo(`/team/${team.name}`)}>
                         <ListItemAvatar>
-                            <Avatar>
-                                <FolderIcon/>
-                            </Avatar>
+                            <Avatar alt={team.name} src={team.avatar}/>
                         </ListItemAvatar>
-                        <ListItemText primary={team.name}/>
+                        <ListItemText primary={team.name} secondary={team.address}/>
                     </ListItem>
                 )}
             </List>

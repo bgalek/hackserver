@@ -4,19 +4,36 @@ import PropTypes from "prop-types";
 import Typography from '@material-ui/core/Typography';
 import { connect } from "react-redux";
 import Loader from "../layout/Loader";
+import Avatar from "@material-ui/core/Avatar";
+import Grid from "@material-ui/core/Grid";
+import { TEAMS_FETCH } from "../actions";
 
-const styles = theme => ({});
+const styles = theme => ({
+    avatar: {
+        margin: 10,
+        width: 128,
+        height: 128,
+    },
+});
 
 class TeamDetail extends Component {
+
+    async componentDidMount() {
+        if (!this.props.team) {
+            this.props.fetchTeams();
+        }
+    }
+
     render() {
-        const { team, isLoading } = this.props;
+        const { classes, team, isLoading } = this.props;
         if (isLoading) return <Loader/>;
         return [
             <Typography key="title" variant="h4" gutterBottom>
-                Team
+                Teams: <strong>{team.name}</strong>
             </Typography>,
-            <p key="json">{JSON.stringify(team)}</p>,
-            <img alt={team.name} src={team.avatar} />
+            <Grid key="details" container alignItems="center">
+                <Avatar alt={team.name} src={team.avatar} className={classes.avatar}/>
+            </Grid>
         ];
     }
 }
@@ -32,7 +49,9 @@ const mapStateToProps = (state, props) => {
     });
 };
 
-const mapDispatchToProps = (dispatch) => ({});
+const mapDispatchToProps = (dispatch) => ({
+    fetchTeams: () => dispatch(TEAMS_FETCH)
+});
 
 const connectedTeamDetail = connect(mapStateToProps, mapDispatchToProps)(TeamDetail);
 export default withStyles(styles)(connectedTeamDetail);
