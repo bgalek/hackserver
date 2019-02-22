@@ -1,6 +1,5 @@
 package pl.allegro.tech.leaders.hackathon.challenge.samples
 
-import pl.allegro.tech.leaders.hackathon.challenge.api.ChallengeTaskResult
 import spock.lang.Specification
 
 import javax.script.ScriptEngine

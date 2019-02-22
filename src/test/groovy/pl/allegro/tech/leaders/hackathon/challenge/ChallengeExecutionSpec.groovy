@@ -1,85 +1,141 @@
 package pl.allegro.tech.leaders.hackathon.challenge
 
-import pl.allegro.tech.leaders.hackathon.challenge.api.ChallengeResult
-import pl.allegro.tech.leaders.hackathon.challenge.base.SpecSimulatedException
-import pl.allegro.tech.leaders.hackathon.registration.api.RegisteredTeam
+import org.junit.Before
+import pl.allegro.tech.leaders.hackathon.challenge.api.ChallengeNotFoundException
+import pl.allegro.tech.leaders.hackathon.challenge.api.TaskResult
+import pl.allegro.tech.leaders.hackathon.registration.api.TeamNotFoundException
+import reactor.core.publisher.Flux
 import reactor.core.publisher.Mono
-import spock.lang.Ignore
 
+import static pl.allegro.tech.leaders.hackathon.challenge.base.ChallengeResultAssertions.expectChallengeResult
+import static pl.allegro.tech.leaders.hackathon.challenge.base.CountChallengeDefinition.COUNT_FIRST_TASK
+import static pl.allegro.tech.leaders.hackathon.challenge.base.CountChallengeDefinition.COUNT_SECOND_TASK
 import static pl.allegro.tech.leaders.hackathon.challenge.base.ReactorValueExtractor.extract
-import static pl.allegro.tech.leaders.hackathon.challenge.base.SampleChallenges.SAMPLE_CHALLENGE
+import static pl.allegro.tech.leaders.hackathon.challenge.base.SampleChallenges.COUNT_CHALLENGE
+import static pl.allegro.tech.leaders.hackathon.challenge.base.SampleChallenges.SAMPLE_CHALLENGES
+import static pl.allegro.tech.leaders.hackathon.challenge.base.SampleRegisteredTeam.TEAM_A
+import static pl.allegro.tech.leaders.hackathon.challenge.base.SampleRegisteredTeam.TEAM_B
+import static pl.allegro.tech.leaders.hackathon.challenge.base.SampleRegisteredTeam.TEAM_C
 
 class ChallengeExecutionSpec extends ChallengeSpec {
-    @Ignore
-    def 'should execute a challenge on all teams'() {
-        given: 'there is a team service returning a valid solution'
-            RegisteredTeam firstTeam = registerTeam()
-            solutionClient.recordResponse(firstTeam.uri, validResult()) // TODO: should use task uri instead of team uri
-        and: 'there is a second team service returning an invalid solution'
-            RegisteredTeam secondTeam = registerTeam()
-            solutionClient.recordResponse(secondTeam.uri, invalidResult())
-        when: 'challenge is executed'
-            executeChallenge()
-        then: 'challenge result contains information on both teams'
-            List<ChallengeResult> results = extract(facade.getChallengeResult(SAMPLE_CHALLENGE.id))
-            results == [
-                    invalidChallengeResult(firstTeam.id),
-                    invalidChallengeResult(secondTeam.id)
-            ]
+
+    @Before
+    void registerSampleChallenges() {
+        extract(facade.registerChallengeDefinitions(SAMPLE_CHALLENGES))
     }
 
-    @Ignore
-    def 'should calculate a challenge result from resolved tasks'() {
-        given: 'there is a registered team service'
-            RegisteredTeam team = registerTeam()
-        and: 'team provides one 1 valid solution out of 3 tasks'
-            solutionClient
-                    .recordResponse(team.uri, validResult())
-                    .recordResponse(team.uri, invalidResult())
-                    .recordResponse(team.uri, invalidResult())
-        when: 'challenge is executed'
-            List<ChallengeResult> results = executeChallenge()
-        then: 'team received 1/3 of the challenge points'
-            results == [
-                    new ChallengeResult() // TODO: check if the result contains half of the challenge points and proper details
-            ]
+    @Before
+    void stubRegistrationFacade() {
+        registrationFacade.all >> Flux.fromIterable([TEAM_A, TEAM_B])
+        registrationFacade.getTeamById({ it == TEAM_A.id }) >> Mono.just(TEAM_A)
+        registrationFacade.getTeamById({ it == TEAM_B.id }) >> Mono.just(TEAM_B)
+        registrationFacade.getTeamById({ it == TEAM_C.id }) >> Mono.error(new TeamNotFoundException(TEAM_C.id))
     }
 
-    @Ignore
-    def 'should assign 0 points when communication to a team service fails'() {
-        given: 'there is a team registered'
-            RegisteredTeam team = registerTeam()
-        and: 'there is no connection to the team service'
-            solutionClient.recordResponse(team.uri, SpecSimulatedException.asMono())
-        when: 'a challenge is executed'
-            List<ChallengeResult> results = executeChallenge()
-        then: 'team receives no points'
-            results == [
-                    new ChallengeResult() // TODO: check if the result contains 0 points and a proper message
-            ]
+    def 'should throw error on executing a not activated challenge'() {
+        when: 'not activated challenge is executed'
+            runChallenge(COUNT_CHALLENGE.id)
+        then: 'error is thrown'
+            thrown(ChallengeNotFoundException)
     }
 
-    private List<ChallengeResult> executeChallenge() {
-        return extract(facade.executeChallenge(SAMPLE_CHALLENGE.id))
+    def 'should throw error on executing an activated challenge on for a not registered team'() {
+        given: 'a challenge is activated'
+            activateChallenge(COUNT_CHALLENGE.id)
+        when: 'not activated challenge is executed on non registered team'
+            runChallenge(COUNT_CHALLENGE.id, TEAM_C.id)
+        then: 'error is thrown'
+            thrown(TeamNotFoundException)
     }
 
-    private RegisteredTeam registerTeam() {
-        // TOOD: register a team with sample data
-        return new RegisteredTeam("name", "address")
+    def 'should execute a challenge on all registered teams'() {
+        given: 'a challenge is activated'
+            activateChallenge(COUNT_CHALLENGE.id)
+        and: 'team A solves all tasks'
+            teamClient.recordCorrectResponses(TEAM_A, COUNT_CHALLENGE)
+        and: 'team B solves only one of two task'
+            teamClient.recordIncorrectResponse(TEAM_B, COUNT_CHALLENGE, COUNT_FIRST_TASK)
+            teamClient.recordCorrectResponse(TEAM_B, COUNT_CHALLENGE, COUNT_SECOND_TASK)
+        when: 'the challenge is executed'
+            runChallenge(COUNT_CHALLENGE.id)
+        and: 'results are fetched'
+            List<TaskResult> results = fetchResults(COUNT_CHALLENGE.id)
+        then: 'the first team has max score for both tasks'
+            expectChallengeResult(results, TEAM_A.id, COUNT_CHALLENGE.id)
+                    .hasSize(2)
+                    .hasMaxScoreForTask(COUNT_FIRST_TASK)
+                    .hasMaxScoreForTask(COUNT_SECOND_TASK)
+        and: 'the second team has 0 score for the first task and max score for the second one'
+            expectChallengeResult(results, TEAM_B.id, COUNT_CHALLENGE.id)
+                    .hasSize(2)
+                    .hasZeroScoreForTask(COUNT_FIRST_TASK)
+                    .hasMaxScoreForTask(COUNT_SECOND_TASK)
+        and: 'every team was requested exactly 2 times - once per task'
+            teamClient.requestCount(TEAM_A) == 2
+            teamClient.requestCount(TEAM_B) == 2
     }
 
-    private ChallengeResult invalidChallengeResult(String teamId, String challangeId = SAMPLE_CHALLENGE.id) {
-        // TOOD: create an invalid challenge result
-        return new ChallengeResult()
+    def 'should continue challenge execution when one team does not respond'() {
+        given: 'a challenge is activated'
+            activateChallenge(COUNT_CHALLENGE.id)
+        and: 'only team B responds to the challenge requests'
+            teamClient.recordCorrectResponses(TEAM_B, COUNT_CHALLENGE)
+        when: 'the challenge is executed'
+            runChallenge(COUNT_CHALLENGE.id)
+        and: 'results are fetched'
+            List<TaskResult> results = fetchResults(COUNT_CHALLENGE.id)
+        then: 'the first team 0 score for both tasks'
+            expectChallengeResult(results, TEAM_A.id, COUNT_CHALLENGE.id)
+                    .hasSize(2)
+                    .hasZeroScoreForTask(COUNT_FIRST_TASK)
+                    .hasZeroScoreForTask(COUNT_SECOND_TASK)
+        and: 'the second team has 0 score for the first task and max score for the second one'
+            expectChallengeResult(results, TEAM_B.id, COUNT_CHALLENGE.id)
+                    .hasSize(2)
     }
 
-    private Mono<String> invalidResult() {
-        // TOOD: create an invalid result
-        return Mono.just("Invalid result")
+    def 'should override previous results when challenge is rerun for a team for the second time'() {
+        given: 'a challenge is activated'
+            activateChallenge(COUNT_CHALLENGE.id)
+        and: 'team A solves no task'
+            teamClient.recordIncorrectResponses(TEAM_A, COUNT_CHALLENGE)
+        and: 'team B solves all tasks'
+            teamClient.recordCorrectResponses(TEAM_B, COUNT_CHALLENGE)
+
+        when: 'the challenge is executed'
+            runChallenge(COUNT_CHALLENGE.id)
+        and: 'results are fetched'
+            List<TaskResult> results = fetchResults(COUNT_CHALLENGE.id)
+        then: 'team A has zero scores'
+            expectChallengeResult(results, TEAM_A.id, COUNT_CHALLENGE.id)
+                    .hasZeroScores(COUNT_CHALLENGE)
+        and: 'team B has max scores'
+            expectChallengeResult(results, TEAM_B.id, COUNT_CHALLENGE.id)
+                    .hasMaxScores(COUNT_CHALLENGE)
+
+        when: 'the team A fixes their solution and challenge is executed for the second time'
+            teamClient.recordCorrectResponses(TEAM_A, COUNT_CHALLENGE)
+            teamClient.recordIncorrectResponses(TEAM_B, COUNT_CHALLENGE)
+            runChallenge(COUNT_CHALLENGE.id, TEAM_A.id)
+        and: 'new results are fetched'
+            results = fetchResults(COUNT_CHALLENGE.id)
+        then: 'team A has updated max scores'
+            expectChallengeResult(results, TEAM_A.id, COUNT_CHALLENGE.id)
+                    .hasMaxScores(COUNT_CHALLENGE)
+        and: 'team B scores did not change'
+            expectChallengeResult(results, TEAM_B.id, COUNT_CHALLENGE.id)
+                    .hasMaxScores(COUNT_CHALLENGE)
     }
 
-    private Mono<String> validResult() {
-        // TOOD: create a valid result
-        return Mono.just("Valid result")
+    private List<TaskResult> runChallenge(String challengeId) {
+        return extract(facade.runChallenge(challengeId))
+    }
+
+    private List<TaskResult> runChallenge(String challengeId, String teamId) {
+        return extract(facade.runChallenge(challengeId, teamId))
+    }
+
+    private List<TaskResult> fetchResults(String challengeId) {
+        return extract(facade.getResultsForChallenge(challengeId))
     }
 }

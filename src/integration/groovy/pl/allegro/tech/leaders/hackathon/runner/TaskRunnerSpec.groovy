@@ -6,14 +6,15 @@ import org.junit.ClassRule
 import org.springframework.http.MediaType
 import org.springframework.test.web.reactive.server.WebTestClient
 import pl.allegro.tech.leaders.hackathon.base.IntegrationSpec
+import pl.allegro.tech.leaders.hackathon.challenge.samples.CalcChallengeDefinition
 import reactor.core.publisher.Mono
 import spock.lang.Shared
 
 import static com.github.tomakehurst.wiremock.client.WireMock.*
 
 class TaskRunnerSpec extends IntegrationSpec {
-    def CHALLENGE_ID = 'calculator-challenge'
-    def CHALLENGE_ENDPOINT = '/calc'
+    def CHALLENGE_ID = CalcChallengeDefinition.ID
+    def CHALLENGE_ENDPOINT = '/calc?equation=2+2'
     def TEAM_ID = 'team-a'
 
     @ClassRule

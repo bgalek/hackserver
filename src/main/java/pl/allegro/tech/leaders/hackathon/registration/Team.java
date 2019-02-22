@@ -32,6 +32,10 @@ class Team {
         this(team.getName(), remoteAddress, team.getSecret());
     }
 
+    public String getId() {
+        return id;
+    }
+
     String getName() {
         return name;
     }

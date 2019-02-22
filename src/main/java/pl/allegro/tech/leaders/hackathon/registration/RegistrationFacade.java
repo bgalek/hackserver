@@ -1,6 +1,7 @@
 package pl.allegro.tech.leaders.hackathon.registration;
 
 import pl.allegro.tech.leaders.hackathon.registration.api.RegisteredTeam;
+import pl.allegro.tech.leaders.hackathon.registration.api.TeamNotFoundException;
 import pl.allegro.tech.leaders.hackathon.registration.api.TeamRegistration;
 import pl.allegro.tech.leaders.hackathon.registration.api.TeamUpdate;
 import reactor.core.publisher.Flux;
@@ -22,6 +23,12 @@ public class RegistrationFacade {
 
     public Flux<RegisteredTeam> getAll() {
         return teamRepository.findAll()
+                .map(this::toRegisteredTeam);
+    }
+
+    public Mono<RegisteredTeam> getTeamById(String id) {
+        return teamRepository.findById(id)
+                .switchIfEmpty(Mono.error(new TeamNotFoundException(id)))
                 .map(this::toRegisteredTeam);
     }
 

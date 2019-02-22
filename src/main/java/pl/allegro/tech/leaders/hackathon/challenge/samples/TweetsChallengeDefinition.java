@@ -2,14 +2,20 @@ package pl.allegro.tech.leaders.hackathon.challenge.samples;
 
 import org.springframework.stereotype.Component;
 import pl.allegro.tech.leaders.hackathon.challenge.ChallengeDefinition;
-import pl.allegro.tech.leaders.hackathon.challenge.ChallengeTaskDefinition;
+import pl.allegro.tech.leaders.hackathon.challenge.TaskDefinition;
 
 import java.util.List;
 
 import static java.util.Collections.emptyList;
 
 @Component
-class TweetsChallengeDefinition implements ChallengeDefinition<String> {
+public class TweetsChallengeDefinition implements ChallengeDefinition {
+    public static final String ID = "tweets";
+
+    @Override
+    public String getId() {
+        return ID;
+    }
 
     @Override
     public String getName() {
@@ -37,7 +43,7 @@ class TweetsChallengeDefinition implements ChallengeDefinition<String> {
     }
 
     @Override
-    public List<ChallengeTaskDefinition<String>> getTasks() {
+    public List<TaskDefinition> getTasks() {
         return emptyList();
     }
 }

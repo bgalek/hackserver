@@ -21,6 +21,10 @@ class TeamRepository {
         return persistenceTeamRepository.findAll();
     }
 
+    Mono<Team> findById(String id) {
+        return persistenceTeamRepository.findById(id);
+    }
+
     Mono<Team> find(String name) {
         return persistenceTeamRepository.findByName(name);
     }
@@ -32,6 +36,8 @@ class TeamRepository {
 
 interface PersistenceTeamRepository extends Repository<Team, String> {
     Mono<Team> save(Team team);
+
+    Mono<Team> findById(String id);
 
     Mono<Team> findByName(String name);
 

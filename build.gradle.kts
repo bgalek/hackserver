@@ -18,6 +18,7 @@ plugins {
     application
     id("com.moowork.node") version "1.2.0"
     id("com.gradle.build-scan") version "2.1"
+    id("com.coditory.integration-test") version "1.0.5"
 }
 
 application {
@@ -33,14 +34,6 @@ version = "0.0.1-SNAPSHOT"
 
 repositories {
     mavenCentral()
-}
-
-val integrationImplementation: Configuration by configurations.creating {
-    extendsFrom(configurations.testImplementation.get())
-}
-
-val integrationRuntime: Configuration by configurations.creating {
-    extendsFrom(configurations.testRuntime.get())
 }
 
 dependencies {
@@ -60,6 +53,7 @@ dependencies {
 
     testImplementation("org.spockframework:spock-core:1.3-RC1-groovy-2.5")
     testImplementation("io.projectreactor:reactor-test:3.2.5.RELEASE")
+    testImplementation("cglib:cglib-nodep:3.2.10")
 
     integrationImplementation("com.github.tomakehurst:wiremock:2.21.0")
     integrationImplementation("org.spockframework:spock-spring:1.3-RC1-groovy-2.5")
@@ -71,25 +65,6 @@ dependencies {
 buildScan {
     termsOfServiceUrl = "https://gradle.com/terms-of-service"
     termsOfServiceAgree = "yes"
-}
-
-sourceSets {
-    create("integration") {
-        withConvention(GroovySourceSet::class) {
-            groovy.srcDir("src/integration/groovy")
-            resources.srcDir("src/integration/resources")
-            compileClasspath += sourceSets["main"].compileClasspath + sourceSets["test"].compileClasspath
-            runtimeClasspath += sourceSets["main"].runtimeClasspath + sourceSets["test"].runtimeClasspath
-        }
-    }
-}
-
-task<Test>("integrationTest") {
-    description = "Runs the integration tests"
-    group = LifecycleBasePlugin.VERIFICATION_GROUP
-    testClassesDirs = sourceSets["integration"].output.classesDirs
-    classpath = sourceSets["integration"].runtimeClasspath
-    mustRunAfter(tasks["test"])
 }
 
 task<NpmTask>("webpack") {
@@ -110,11 +85,8 @@ node {
 tasks {
 
     processResources {
+        // TODO: After adding this task dependency running unit tests in IDE slowed down drastically. You could specify task caching.
         dependsOn("webpack")
-    }
-
-    check {
-        dependsOn("integrationTest")
     }
 
     withType<Test> {

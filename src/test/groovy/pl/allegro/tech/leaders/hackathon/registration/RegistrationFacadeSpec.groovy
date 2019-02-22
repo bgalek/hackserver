@@ -1,6 +1,7 @@
 package pl.allegro.tech.leaders.hackathon.registration
 
 import pl.allegro.tech.leaders.hackathon.registration.api.RegisteredTeam
+import pl.allegro.tech.leaders.hackathon.registration.api.TeamNotFoundException
 import pl.allegro.tech.leaders.hackathon.registration.api.TeamRegistration
 import pl.allegro.tech.leaders.hackathon.registration.api.TeamSecret
 import pl.allegro.tech.leaders.hackathon.registration.api.TeamUpdate
@@ -71,13 +72,21 @@ class RegistrationFacadeSpec extends Specification {
         }
 
         @Override
+        Mono<Team> findById(String id) {
+            Team team = store.values().find { it.id == id }
+            return team != null ? Mono.just(team) : Mono.<Team> empty()
+        }
+
+        @Override
         Mono<Team> findByName(String name) {
             return Mono.just(store.get(name))
         }
 
         @Override
         Mono<Team> findByNameAndSecret(String name, String secret) {
-            return Optional.ofNullable(store.values().find({ it.name == name && it.secret == secret }))
+            return Optional.ofNullable(store.values().find({
+                it.name == name && it.secret == secret
+            }))
                     .map({ Mono.just(it) })
                     .orElse(Mono.empty())
         }

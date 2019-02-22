@@ -23,6 +23,6 @@ class ChallengeRegistrationSpec extends ChallengeSpec {
         then:
             noExceptionThrown()
     }
-}
 
-class SecondCountChallengeDefinition extends CountChallengeDefinition {}
+    static class SecondCountChallengeDefinition extends CountChallengeDefinition {}
+}
