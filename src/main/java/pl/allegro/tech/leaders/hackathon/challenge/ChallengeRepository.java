@@ -1,6 +1,5 @@
 package pl.allegro.tech.leaders.hackathon.challenge;
 
-import org.springframework.data.mongodb.repository.Query;
 import org.springframework.data.repository.Repository;
 import pl.allegro.tech.leaders.hackathon.challenge.Challenge.ChallengeState;
 import pl.allegro.tech.leaders.hackathon.challenge.api.ChallengeNotFoundException;
@@ -32,8 +31,8 @@ class ChallengeRepository {
                 .switchIfEmpty(Mono.error(new ChallengeNotFoundException(id)));
     }
 
-    Flux<Challenge> findActive() {
-        return challengeStateRepository.findActive()
+    Flux<Challenge> findAll() {
+        return challengeStateRepository.findAll()
                 .map(challengeCreator::restoreChallenge);
     }
 }
@@ -43,6 +42,5 @@ interface ChallengeStateRepository extends Repository<ChallengeState, String> {
 
     Mono<ChallengeState> findById(String id);
 
-    @Query(value = "{ 'active' : true }", sort = "{ activatedAt : -1 }")
-    Flux<ChallengeState> findActive();
+    Flux<ChallengeState> findAll();
 }

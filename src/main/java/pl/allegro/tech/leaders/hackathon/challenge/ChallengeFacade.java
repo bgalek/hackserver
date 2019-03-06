@@ -2,9 +2,7 @@ package pl.allegro.tech.leaders.hackathon.challenge;
 
 import pl.allegro.tech.leaders.hackathon.challenge.api.ChallengeActivationResult;
 import pl.allegro.tech.leaders.hackathon.challenge.api.ChallengeDetails;
-import pl.allegro.tech.leaders.hackathon.challenge.api.ChallengeNotFoundException;
-import pl.allegro.tech.leaders.hackathon.challenge.api.ChallengeResult;
-import pl.allegro.tech.leaders.hackathon.challenge.api.HackatonResult;
+import pl.allegro.tech.leaders.hackathon.challenge.api.TaskResult;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
@@ -13,19 +11,29 @@ import java.util.Objects;
 
 public class ChallengeFacade {
     private final ChallengeActivator challengeActivator;
-    private final ChallengeRepository challengeRepository;
     private final ChallengeRegistrar challengeRegistrar;
+    private final ChallengeProvider challengeProvider;
+    private final ChallengeRunner challengeRunner;
+    private final ChallengeExampleRunner challengeExampleRunner;
+    private final ChallengeResultRepository challengeResultRepository;
 
     ChallengeFacade(
             ChallengeActivator challengeActivator,
-            ChallengeRepository challengeRepository,
-            ChallengeRegistrar challengeRegistrar) {
+            ChallengeRegistrar challengeRegistrar,
+            ChallengeProvider challengeProvider,
+            ChallengeRunner challengeRunner,
+            ChallengeExampleRunner challengeExampleRunner,
+            ChallengeResultRepository challengeResultRepository) {
         this.challengeActivator = challengeActivator;
-        this.challengeRepository = challengeRepository;
         this.challengeRegistrar = challengeRegistrar;
+        this.challengeProvider = challengeProvider;
+        this.challengeRunner = challengeRunner;
+        this.challengeExampleRunner = challengeExampleRunner;
+        this.challengeResultRepository = challengeResultRepository;
     }
 
-    public Flux<ChallengeDetails> registerChallengeDefinitions(List<ChallengeDefinition> challengeDefinitions) {
+    public Flux<ChallengeDetails> registerChallengeDefinitions(
+            List<ChallengeDefinition> challengeDefinitions) {
         return challengeRegistrar.registerChallengeDefinitions(challengeDefinitions);
     }
 
@@ -40,38 +48,35 @@ public class ChallengeFacade {
     }
 
     public Flux<ChallengeDetails> getActiveChallenges() {
-        return challengeRepository.findActive()
+        return challengeProvider.getActiveChallenges()
                 .map(Challenge::toChallengeDetailsDto);
     }
 
     Mono<Challenge> getActiveChallenge(String challengeId) {
-        Objects.requireNonNull(challengeId);
-        return challengeRepository.findById(challengeId)
-                .filter(Challenge::isActive)
-                .switchIfEmpty(Mono.error(new ChallengeNotFoundException(challengeId)));
+        return challengeProvider.getActiveChallenge(challengeId);
     }
 
     public Mono<ChallengeDetails> getActiveChallengeDetails(String challengeId) {
-        return getActiveChallenge(challengeId).map(it -> it.toChallengeDetailsDto());
+        return getActiveChallenge(challengeId).map(Challenge::toChallengeDetailsDto);
     }
 
-    public Mono<ChallengeDefinition> getActiveChallengeDefinition(String challengeId) {
-        return getActiveChallenge(challengeId).map(it -> it.getDefinition());
+    public Mono<TaskResult> runExampleTask(String challengeId, String teamId) {
+        return challengeExampleRunner.runChallengeExample(challengeId, teamId)
+                .map(ChallengeResult::toTaskResult);
     }
 
-    public Flux<ChallengeResult> executeChallenge(String challengeId) {
-        return Flux.empty();
+    public Flux<TaskResult> runChallenge(String challengeId) {
+        return challengeRunner.runChallenge(challengeId)
+                .map(ChallengeResult::toTaskResult);
     }
 
-    public Mono<ChallengeResult> getChallengeResult(String challengeId, String teamId) {
-        return Mono.empty();
+    public Flux<TaskResult> runChallenge(String challengeId, String teamId) {
+        return challengeRunner.runChallenge(challengeId, teamId)
+                .map(ChallengeResult::toTaskResult);
     }
 
-    public Flux<ChallengeResult> getChallengeResult(String challengeId) {
-        return Flux.empty();
-    }
-
-    public Mono<HackatonResult> getHackatonResults() {
-        return Mono.empty();
+    public Flux<TaskResult> getResultsForChallenge(String challengeId) {
+        return challengeResultRepository.findByChallengeId(challengeId)
+                .map(ChallengeResult::toTaskResult);
     }
 }

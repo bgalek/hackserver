@@ -2,10 +2,12 @@ package pl.allegro.tech.leaders.hackathon.challenge
 
 import org.springframework.test.web.reactive.server.WebTestClient
 import pl.allegro.tech.leaders.hackathon.base.IntegrationSpec
+import pl.allegro.tech.leaders.hackathon.challenge.samples.CalcChallengeDefinition
+import pl.allegro.tech.leaders.hackathon.challenge.samples.TweetsChallengeDefinition
 
 class ChallengeActivationIntgSpec extends IntegrationSpec {
-    private static final String CALCULATOR_CHALLENGE_ID = 'calculator-challenge'
-    private static final String TWITTER_CHALLENGE_ID = 'twitter-challenge'
+    private static final String CALCULATOR_CHALLENGE_ID = CalcChallengeDefinition.ID
+    private static final String TWITTER_CHALLENGE_ID = TweetsChallengeDefinition.ID
 
     def 'should return empty result when no challenge is activated'() {
         when: 'active challenges are fetched before activating any'

@@ -10,7 +10,7 @@ import static com.fasterxml.jackson.databind.DeserializationFeature.FAIL_ON_UNKN
 import static com.fasterxml.jackson.databind.DeserializationFeature.READ_ENUMS_USING_TO_STRING;
 import static com.fasterxml.jackson.databind.SerializationFeature.WRITE_DATES_AS_TIMESTAMPS;
 
-class ObjectMapperProvider {
+public class ObjectMapperProvider {
     private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper()
             .registerModule(new JavaTimeModule())
             .registerModule(new Jdk8Module())
@@ -20,7 +20,7 @@ class ObjectMapperProvider {
             .disable(FAIL_ON_UNKNOWN_PROPERTIES)
             .disable(WRITE_DATES_AS_TIMESTAMPS);
 
-    static ObjectMapper objectMapper() {
+    public static ObjectMapper objectMapper() {
         return OBJECT_MAPPER;
     }
 }

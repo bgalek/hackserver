@@ -5,7 +5,8 @@ import pl.allegro.tech.leaders.hackathon.challenge.ChallengeDefinition
 
 @CompileStatic
 class SampleChallenges {
-    public static final ChallengeDefinition SUM_CHALLENGE = new SumChallengeDefinition()
-    public static final ChallengeDefinition COUNT_CHALLENGE = new CountChallengeDefinition()
-    public static final ChallengeDefinition SAMPLE_CHALLENGE = SUM_CHALLENGE
+    public static final SumChallengeDefinition SUM_CHALLENGE = new SumChallengeDefinition()
+    public static final CountChallengeDefinition COUNT_CHALLENGE = new CountChallengeDefinition()
+    public static final CountChallengeDefinition SAMPLE_CHALLENGE = COUNT_CHALLENGE
+    public static final List<ChallengeDefinition> SAMPLE_CHALLENGES = [SUM_CHALLENGE, COUNT_CHALLENGE] as List<ChallengeDefinition>
 }

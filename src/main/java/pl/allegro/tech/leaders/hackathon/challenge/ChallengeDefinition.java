@@ -9,7 +9,7 @@ import com.github.slugify.Slugify;
 import java.util.List;
 import java.util.Objects;
 
-public interface ChallengeDefinition<T> {
+public interface ChallengeDefinition {
 
     Slugify slugify = new Slugify();
 
@@ -32,13 +32,13 @@ public interface ChallengeDefinition<T> {
         }
     }
 
-    Class<T> solutionType();
+    Class<?> solutionType();
 
-    default ChallengeTaskDefinition<T> getExample() {
+    default TaskDefinition getExample() {
         return getTasks().get(0);
     }
 
-    List<ChallengeTaskDefinition<T>> getTasks();
+    List<TaskDefinition> getTasks();
 
     default String getId() {
         return slugify.slugify(getName());

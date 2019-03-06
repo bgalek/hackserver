@@ -1,13 +1,17 @@
 package pl.allegro.tech.leaders.hackathon.challenge.base
 
-
 import groovy.transform.CompileStatic
 import pl.allegro.tech.leaders.hackathon.challenge.ChallengeDefinition
-import pl.allegro.tech.leaders.hackathon.challenge.ChallengeTaskDefinition
+import pl.allegro.tech.leaders.hackathon.challenge.TaskDefinition
+
+import static pl.allegro.tech.leaders.hackathon.challenge.TaskDefinition.TaskWithFixedResult
+import static pl.allegro.tech.leaders.hackathon.challenge.TaskDefinition.withFixedResult
 
 @CompileStatic
-class CountChallengeDefinition implements ChallengeDefinition<String> {
+class CountChallengeDefinition implements ChallengeDefinition {
     public static final ID = "count"
+    public static TaskWithFixedResult COUNT_FIRST_TASK = withFixedResult("Should find two occurrences", [text: "abba", token: "b"], new SampleResponse("2"), 1)
+    public static TaskWithFixedResult COUNT_SECOND_TASK = withFixedResult("Should find one occurrence", [text: "alphabet", token: "b"], new SampleResponse("1"), 1)
 
     @Override
     String getId() {
@@ -38,15 +42,12 @@ class CountChallengeDefinition implements ChallengeDefinition<String> {
     }
 
     @Override
-    List<ChallengeTaskDefinition<String>> getTasks() {
-        [
-                ChallengeTaskDefinition.withFixedResult("Should find two occurrences", [text: "abba", token: "b"], "2", 1),
-                ChallengeTaskDefinition.withFixedResult("Should find one occurrence", [text: "alphabet", token: "b"], "1", 1)
-        ]
+    List<TaskDefinition> getTasks() {
+        return [COUNT_FIRST_TASK, COUNT_SECOND_TASK] as List<TaskDefinition>
     }
 
     @Override
-    Class<String> solutionType() {
-        String
+    Class<?> solutionType() {
+        SampleResponse
     }
 }

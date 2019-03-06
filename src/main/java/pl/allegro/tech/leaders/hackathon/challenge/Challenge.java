@@ -9,13 +9,13 @@ import java.time.Instant;
 
 class Challenge {
     private final String id;
+    private final ChallengeDefinition definition;
     private boolean active;
     private Instant activatedAt;
-    private final ChallengeDefinition definition;
 
     Challenge(ChallengeState state, ChallengeDefinition definition) {
         if (state.id == null || !state.id.equals(definition.getId())) {
-            throw new IllegalArgumentException("Challenge id and definition id be the same");
+            throw new IllegalArgumentException("Challenge id and definition id must be the same");
         }
         this.id = state.id;
         this.active = state.active;
@@ -40,6 +40,10 @@ class Challenge {
     void deactivate() {
         this.active = false;
         this.activatedAt = null;
+    }
+
+    Instant getActivatedAt() {
+        return activatedAt;
     }
 
     boolean isActive() {
