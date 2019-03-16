@@ -6,7 +6,7 @@ import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 class ChallengeRunner {
-    private static final int TASK_CONCURRENCY_PER_TEAM = 1; // 1 means that tasks are executed one after the other
+    private static final int FLAT_MAP_ONE_AFTER_ANOTHER = 1;
     private final ChallengeProvider challengeProvider;
     private final RegistrationFacade registrationFacade;
     private final TaskRunner taskRunner;
@@ -44,7 +44,7 @@ class ChallengeRunner {
 
     private Flux<ChallengeResult> runChallenge(ChallengeDefinition challenge, RegisteredTeam team) {
         return Flux.fromIterable(challenge.getTasks())
-                .flatMap(task -> taskRunner.run(challenge, task, team), TASK_CONCURRENCY_PER_TEAM)
+                .flatMap(task -> taskRunner.run(challenge, task, team), FLAT_MAP_ONE_AFTER_ANOTHER)
                 .flatMap(this::saveResult);
     }
 

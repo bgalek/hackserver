@@ -9,7 +9,8 @@ import pl.allegro.tech.leaders.hackathon.utils.ReactorLoggingSubscriber;
 import reactor.core.publisher.Mono;
 
 /*
- * JMX operations must return serializable result for JConsole
+ * JMX operations must return serializable result for JConsole.
+ * Spring Framework requires ManagedResource to be public.
  */
 @Service
 @ManagedResource
