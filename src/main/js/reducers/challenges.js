@@ -1,4 +1,4 @@
-import { CHALLENGES_FETCH_SUCCEEDED } from "../actions";
+import { CHALLENGES_FETCH_SUCCEEDED_TYPE } from "../actions";
 
 const defaultState = {
     data: [],
@@ -7,7 +7,7 @@ const defaultState = {
 
 export default (state = defaultState, action) => {
     switch (action.type) {
-        case CHALLENGES_FETCH_SUCCEEDED.type:
+        case CHALLENGES_FETCH_SUCCEEDED_TYPE:
             return { data: action.payload, isLoading: false };
         default:
             return state;

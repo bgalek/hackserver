@@ -1,12 +1,12 @@
 package pl.allegro.tech.leaders.hackathon.registration.api;
 
-import java.net.InetAddress;
+import java.net.InetSocketAddress;
 
 public class TeamRegistration {
     private final String name;
-    private final InetAddress remoteAddress;
+    private final InetSocketAddress remoteAddress;
 
-    public TeamRegistration(String name, InetAddress remoteAddress) {
+    public TeamRegistration(String name, InetSocketAddress remoteAddress) {
         this.name = name;
         this.remoteAddress = remoteAddress;
     }
@@ -15,7 +15,7 @@ public class TeamRegistration {
         return name;
     }
 
-    public InetAddress getRemoteAddress() {
+    public InetSocketAddress getRemoteAddress() {
         return remoteAddress;
     }
 }

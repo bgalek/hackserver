@@ -179,11 +179,11 @@ class TaskRunnerSpec extends IntegrationSpec {
                 .expectStatus().is2xxSuccessful()
     }
 
-    private void registerTeam(String teamId) {
+    private void registerTeam(String teamId, int port = 8080) {
         webClient.post()
                 .uri('/registration')
                 .contentType(MediaType.APPLICATION_JSON_UTF8)
-                .body(Mono.just("""{ "name": "$teamId"}""".toString()), String)
+                .body(Mono.just("""{ "name": "$teamId", "port": ${port}}""".toString()), String)
                 .exchange()
                 .expectStatus().is2xxSuccessful()
     }

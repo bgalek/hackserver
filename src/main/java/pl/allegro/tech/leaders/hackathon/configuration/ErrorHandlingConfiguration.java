@@ -6,6 +6,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.server.ResponseStatusException;
@@ -37,6 +38,16 @@ class ErrorHandlingConfiguration {
         return ResponseEntity.status(HttpStatus.CONFLICT)
                 .body(Problem.builder()
                         .withStatus(Status.valueOf(HttpStatus.CONFLICT.name()))
+                        .withDetail(responseStatusException.getMessage())
+                        .build()
+                );
+    }
+
+    @ExceptionHandler(HttpMessageNotReadableException.class)
+    public ResponseEntity<Problem> responseStatusException(HttpMessageNotReadableException responseStatusException) {
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                .body(Problem.builder()
+                        .withStatus(Status.valueOf(HttpStatus.BAD_REQUEST.name()))
                         .withDetail(responseStatusException.getMessage())
                         .build()
                 );

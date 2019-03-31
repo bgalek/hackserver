@@ -19,7 +19,7 @@ class RegistrationFacadeSpec extends Specification {
     def "should be able to register team"() {
         given: 'team information'
             String teamName = 'teamName'
-            InetAddress remoteAddress = InetAddress.getLocalHost()
+            InetSocketAddress remoteAddress = new InetSocketAddress(InetAddress.getLocalHost(), 8080)
         when: 'team is registered'
             registerTeam(teamName, remoteAddress)
         then: 'team is persisted'
@@ -33,7 +33,7 @@ class RegistrationFacadeSpec extends Specification {
         when: 'team is registered'
             RegisteredTeam registeredTeam = registerTeam('teamName')
         and: 'team update is created with new IP'
-            TeamUpdate teamUpdate = new TeamUpdate(registeredTeam.name, InetAddress.getByName("192.168.1.1"),
+            TeamUpdate teamUpdate = new TeamUpdate(registeredTeam.name, new InetSocketAddress("192.168.1.1", 8080),
                     new ValidTeamSecret(registeredTeam.secret))
         and: 'team is updated'
             registrationFacade.update(teamUpdate).block()
@@ -48,7 +48,7 @@ class RegistrationFacadeSpec extends Specification {
         when: 'team is registered'
             RegisteredTeam registeredTeam = registerTeam('teamName')
         and: 'team update is created with new IP'
-            TeamUpdate teamUpdate = new TeamUpdate(registeredTeam.name, InetAddress.getByName("192.168.1.1"), secret)
+            TeamUpdate teamUpdate = new TeamUpdate(registeredTeam.name, new InetSocketAddress("192.168.1.1", 8080), secret)
         and: 'team is updated'
             registrationFacade.update(teamUpdate).block()
         then:
@@ -57,8 +57,8 @@ class RegistrationFacadeSpec extends Specification {
             secret << [new ValidTeamSecret('NOT MY SECRET'), TeamSecret.empty()]
     }
 
-    private RegisteredTeam registerTeam(String teamName, InetAddress inetAddress = InetAddress.getLocalHost()) {
-        TeamRegistration teamRegistration = new TeamRegistration(teamName, inetAddress)
+    private RegisteredTeam registerTeam(String teamName, InetSocketAddress inetSocketAddress = new InetSocketAddress(InetAddress.getLocalHost(), 8080)) {
+        TeamRegistration teamRegistration = new TeamRegistration(teamName, inetSocketAddress)
         registrationFacade.register(teamRegistration).block()
     }
 

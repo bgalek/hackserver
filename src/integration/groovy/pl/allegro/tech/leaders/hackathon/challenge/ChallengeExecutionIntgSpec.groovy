@@ -8,7 +8,6 @@ import pl.allegro.tech.leaders.hackathon.challenge.api.TaskResult
 import pl.allegro.tech.leaders.hackathon.challenge.samples.CalcChallengeDefinition
 import pl.allegro.tech.leaders.hackathon.registration.RegistrationFacade
 import pl.allegro.tech.leaders.hackathon.registration.api.TeamRegistration
-import pl.allegro.tech.leaders.hackathon.utils.InetUtils
 import spock.lang.Shared
 
 import static com.github.tomakehurst.wiremock.client.WireMock.aResponse
@@ -31,7 +30,7 @@ class ChallengeExecutionIntgSpec extends IntegrationSpec {
     def 'should execute challenge through facade and store the results'() {
         given: 'a team is registered'
             // TODO: without the option to specify a port it's impossible to test multiple teams
-            registrationFacade.register(new TeamRegistration(TEAM_ID, InetUtils.fromString("127.0.0.1"))).block()
+            registrationFacade.register(new TeamRegistration(TEAM_ID, new InetSocketAddress('127.0.0.1', 8080))).block()
         and: 'a challenge is activated'
             challengeFacade.activateChallenge(CalcChallengeDefinition.ID).block()
         and: 'team responds with on correct and 2 incorrect results'

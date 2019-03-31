@@ -5,7 +5,7 @@ import org.springframework.data.annotation.PersistenceConstructor;
 import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 
-import java.net.InetAddress;
+import java.net.InetSocketAddress;
 import java.util.UUID;
 
 @Document
@@ -14,21 +14,21 @@ class Team {
     private String id;
     @Indexed(name = "name", unique = true)
     private final String name;
-    private final InetAddress remoteAddress;
+    private final InetSocketAddress remoteAddress;
     private final String secret;
 
     @PersistenceConstructor
-    private Team(String name, InetAddress remoteAddress, String secret) {
+    private Team(String name, InetSocketAddress remoteAddress, String secret) {
         this.name = name;
         this.remoteAddress = remoteAddress;
         this.secret = secret;
     }
 
-    Team(String name, InetAddress remoteAddress) {
+    Team(String name, InetSocketAddress remoteAddress) {
         this(name, remoteAddress, UUID.randomUUID().toString());
     }
 
-    Team(Team team, InetAddress remoteAddress) {
+    Team(Team team, InetSocketAddress remoteAddress) {
         this(team.getName(), remoteAddress, team.getSecret());
     }
 
@@ -40,7 +40,7 @@ class Team {
         return name;
     }
 
-    InetAddress getRemoteAddress() {
+    InetSocketAddress getRemoteAddress() {
         return remoteAddress;
     }
 

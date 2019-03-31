@@ -3,6 +3,7 @@ import CssBaseline from '@material-ui/core/CssBaseline';
 import { withStyles } from "@material-ui/core";
 import PropTypes from "prop-types";
 import Header from "./Header";
+import Notifications from "./Notifications";
 
 const styles = theme => ({
     appBarSpacer: theme.mixins.toolbar,
@@ -16,7 +17,8 @@ function Layout({ classes, children }) {
         <main key="layout" className={classes.content}>
             <div className={classes.appBarSpacer}/>
             {children}
-        </main>
+        </main>,
+        <Notifications key="notifications"/>
     ]
 }
 

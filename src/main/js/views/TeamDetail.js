@@ -12,6 +12,10 @@ import TableHead from "@material-ui/core/TableHead";
 import TableRow from "@material-ui/core/TableRow";
 import TableCell from "@material-ui/core/TableCell";
 import TableBody from "@material-ui/core/TableBody";
+import TestTeamButton from "../components/TestTeamButton";
+import { connect } from "react-redux";
+import { bindActionCreators } from "redux";
+import { SHOW_NOTIFICATION } from "../actions";
 
 const styles = theme => ({
     appBar: {
@@ -34,6 +38,9 @@ const styles = theme => ({
         width: 128,
         height: 128,
     },
+    challengeName: {
+        flex: '1 0 auto',
+    }
 });
 
 export function TeamDetail({ team, classes, onClose }) {
@@ -43,9 +50,10 @@ export function TeamDetail({ team, classes, onClose }) {
                 <IconButton color="inherit" onClick={() => onClose()} aria-label="Close">
                     <CloseIcon/>
                 </IconButton>
-                <Typography variant="h6" color="inherit">
+                <Typography variant="h6" color="inherit" className={classes.challengeName}>
                     {team.name}
                 </Typography>
+                <TestTeamButton team={team.name}/>
             </Toolbar>
         </AppBar>,
         <Grid key="modal-content" container justify="center" alignItems="center">
@@ -55,11 +63,13 @@ export function TeamDetail({ team, classes, onClose }) {
                     <TableHead>
                         <TableRow>
                             <TableCell>IP</TableCell>
+                            <TableCell>PORT</TableCell>
                         </TableRow>
                     </TableHead>
                     <TableBody>
                         <TableRow>
                             <TableCell>{team.address}</TableCell>
+                            <TableCell>{team.port}</TableCell>
                         </TableRow>
                     </TableBody>
                 </Table>
@@ -102,4 +112,5 @@ export function TeamDetail({ team, classes, onClose }) {
     ];
 }
 
-export default withStyles(styles)(TeamDetail);
+const mapDispatchToProps = dispatch => bindActionCreators({ showSnackbar: SHOW_NOTIFICATION }, dispatch);
+export default connect(null, mapDispatchToProps)(withStyles(styles)(TeamDetail));

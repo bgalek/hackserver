@@ -13,6 +13,7 @@ import pl.allegro.tech.leaders.hackathon.registration.api.RegisteredTeam;
 import reactor.core.publisher.Mono;
 
 import java.io.IOException;
+import java.net.ConnectException;
 import java.net.URI;
 import java.time.Clock;
 import java.util.Map.Entry;
@@ -36,7 +37,7 @@ class TaskRunner {
 
     Mono<ChallengeResult> run(ChallengeDefinition challenge, TaskDefinition task, RegisteredTeam team) {
 
-        String teamEndpoint = "http://" + team.getRemoteAddress().getHostAddress() + ":8080" + challenge.getChallengeEndpoint();
+        String teamEndpoint = String.format("http://%s:%d%s", team.getRemoteAddress().getAddress().getHostAddress(), team.getRemoteAddress().getPort(), challenge.getChallengeEndpoint());
         String taskParams = buildQueryParams(task);
         logger.info("running task of '{}' for team '{}', remote address: {}", challenge.getName(), team.getName(), teamEndpoint);
 
@@ -45,7 +46,7 @@ class TaskRunner {
         Mono<ResponseEntity<String>> responseEntity = teamClient
                 .execute(URI.create(teamEndpoint + taskParams))
                 .onErrorResume(e -> {
-                    if (e instanceof TimeoutException) {
+                    if (e instanceof TimeoutException || e instanceof ConnectException) {
                         return Mono.just(new ResponseEntity<>(HttpStatus.SERVICE_UNAVAILABLE));
                     } else {
                         // TODO: why not returning a result with 0 points and an error message?
@@ -66,7 +67,7 @@ class TaskRunner {
     private ChallengeResult score(
             ResponseEntity<String> response, ChallengeDefinition challenge,
             TaskDefinition task, RegisteredTeam team, long start) {
-        // TODO: Add a policy to disable latency panelty for integration tests. Otherwise integration tests will flap.
+        // TODO: Add a policy to disable latency penalty for integration tests. Otherwise integration tests will flap.
         long latency = clock.millis() - start;
         ChallengeResultBuilder resultBuilder = ChallengeResult.builder(team.getId(), challenge.getId(), task.getName())
                 .executedAt(clock.instant())

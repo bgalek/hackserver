@@ -5,7 +5,6 @@ import PeopleIcon from '@material-ui/icons/People';
 import Teams from "../views/Teams";
 import Challenges from "../views/Challenges";
 import About from "../views/About";
-import TeamDetail from "../views/TeamDetail";
 
 export const ADDITIONAL_MENU = 'ADDITIONAL';
 export const MAIN_MENU = 'MAIN';
@@ -17,13 +16,6 @@ const TEAMS = {
     view: Teams,
     home: true,
     menu: MAIN_MENU
-};
-
-const TEAM_DETAILS = {
-    path: '/team/:id',
-    label: 'Team Details',
-    icon: <PeopleIcon/>,
-    view: TeamDetail
 };
 
 const CHALLENGES = {
@@ -44,7 +36,6 @@ const ABOUT = {
 
 const routes = [
     TEAMS,
-    TEAM_DETAILS,
     CHALLENGES,
     ABOUT
 ];
