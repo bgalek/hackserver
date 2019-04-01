@@ -178,4 +178,11 @@ class InMemoryChallengeResultRepository implements ChallengeResultRepository {
                 .findAll { it.id.challengeId == challengeId }
         return Flux.fromIterable(filtered)
     }
+
+    @Override
+    Flux<ChallengeResult> findByTeamId(String teamId) {
+        List<ChallengeResult> filtered = store.values()
+                .findAll { it.id.teamId == teamId }
+        return Flux.fromIterable(filtered)
+    }
 }

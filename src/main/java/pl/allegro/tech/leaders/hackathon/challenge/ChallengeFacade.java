@@ -79,4 +79,9 @@ public class ChallengeFacade {
         return challengeResultRepository.findByChallengeId(challengeId)
                 .map(ChallengeResult::toTaskResult);
     }
+
+    public Flux<TaskResult> getResultsForTeam(String teamId) {
+        return challengeResultRepository.findByTeamId(teamId)
+                .map(ChallengeResult::toTaskResult);
+    }
 }

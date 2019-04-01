@@ -48,4 +48,9 @@ class ChallengeController {
             @RequestParam("team-id") String teamId) {
         return challengeFacade.runExampleTask(challengeId, teamId);
     }
+
+    @GetMapping("/results")
+    Flux<TaskResult> results(@RequestParam("team-id") String teamId) {
+        return challengeFacade.getResultsForTeam(teamId);
+    }
 }

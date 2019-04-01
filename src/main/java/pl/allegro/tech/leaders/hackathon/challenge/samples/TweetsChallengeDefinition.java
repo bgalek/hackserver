@@ -5,8 +5,7 @@ import pl.allegro.tech.leaders.hackathon.challenge.ChallengeDefinition;
 import pl.allegro.tech.leaders.hackathon.challenge.TaskDefinition;
 
 import java.util.List;
-
-import static java.util.Collections.emptyList;
+import java.util.Map;
 
 @Component
 public class TweetsChallengeDefinition implements ChallengeDefinition {
@@ -43,7 +42,12 @@ public class TweetsChallengeDefinition implements ChallengeDefinition {
     }
 
     @Override
+    public TaskDefinition getExample() {
+        return TaskDefinition.withFixedResult("tweets", Map.of("user", "allegro.tech"), "4", 4);
+    }
+
+    @Override
     public List<TaskDefinition> getTasks() {
-        return emptyList();
+        return List.of(getExample());
     }
 }

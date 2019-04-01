@@ -13,11 +13,11 @@ import reactor.core.publisher.Mono;
  */
 @Service
 @ManagedResource
-public class ChallangeJmxResource {
+public class ChallengeJmxResource {
     private final ChallengeFacade challengeFacade;
     private final ObjectMapper objectMapper;
 
-    public ChallangeJmxResource(ChallengeFacade challengeFacade, ObjectMapper objectMapper) {
+    public ChallengeJmxResource(ChallengeFacade challengeFacade, ObjectMapper objectMapper) {
         this.challengeFacade = challengeFacade;
         this.objectMapper = objectMapper;
     }

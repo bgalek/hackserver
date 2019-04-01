@@ -2,6 +2,7 @@ package pl.allegro.tech.leaders.hackathon.challenge.base
 
 import groovy.transform.CompileStatic
 import pl.allegro.tech.leaders.hackathon.challenge.ChallengeDefinition
+import pl.allegro.tech.leaders.hackathon.challenge.TaskDefinition
 
 import static pl.allegro.tech.leaders.hackathon.challenge.TaskDefinition.TaskWithFixedResult
 import static pl.allegro.tech.leaders.hackathon.challenge.TaskDefinition.withFixedResult
@@ -46,5 +47,10 @@ class SumChallengeDefinition implements ChallengeDefinition {
     @Override
     Class<?> solutionType() {
         SampleResponse
+    }
+
+    @Override
+    TaskDefinition getExample() {
+        return FIRST_TASK
     }
 }
