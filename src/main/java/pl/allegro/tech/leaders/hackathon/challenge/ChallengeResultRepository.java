@@ -11,4 +11,7 @@ interface ChallengeResultRepository extends Repository<ChallengeResult, Challeng
 
     @Query("{ '_id.challengeId' : ?0 }")
     Flux<ChallengeResult> findByChallengeId(String challengeId);
+
+    @Query("{ '_id.teamId' : ?0 }")
+    Flux<ChallengeResult> findByTeamId(String teamId);
 }

@@ -16,6 +16,7 @@ import TestTeamButton from "../components/TestTeamButton";
 import { connect } from "react-redux";
 import { bindActionCreators } from "redux";
 import { SHOW_NOTIFICATION } from "../actions";
+import ChallengeResults from "../components/ChallengeResults";
 
 const styles = theme => ({
     appBar: {
@@ -74,40 +75,7 @@ export function TeamDetail({ team, classes, onClose }) {
                     </TableBody>
                 </Table>
             </Grid>
-            <Table className={classes.tableLog}>
-                <TableHead>
-                    <TableRow>
-                        <TableCell>some header</TableCell>
-                        <TableCell align="right">some header</TableCell>
-                        <TableCell align="right">some header</TableCell>
-                        <TableCell align="right">some header</TableCell>
-                        <TableCell align="right">some header</TableCell>
-                    </TableRow>
-                </TableHead>
-                <TableBody>
-                    <TableRow>
-                        <TableCell component="th" scope="row">some data</TableCell>
-                        <TableCell align="right">some data</TableCell>
-                        <TableCell align="right">some data</TableCell>
-                        <TableCell align="right">some data</TableCell>
-                        <TableCell align="right">some data</TableCell>
-                    </TableRow>
-                    <TableRow>
-                        <TableCell component="th" scope="row">some data</TableCell>
-                        <TableCell align="right">some data</TableCell>
-                        <TableCell align="right">some data</TableCell>
-                        <TableCell align="right">some data</TableCell>
-                        <TableCell align="right">some data</TableCell>
-                    </TableRow>
-                    <TableRow>
-                        <TableCell component="th" scope="row">some data</TableCell>
-                        <TableCell align="right">some data</TableCell>
-                        <TableCell align="right">some data</TableCell>
-                        <TableCell align="right">some data</TableCell>
-                        <TableCell align="right">some data</TableCell>
-                    </TableRow>
-                </TableBody>
-            </Table>
+            <ChallengeResults team={team.name}/>
         </Grid>
     ];
 }

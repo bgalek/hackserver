@@ -9,7 +9,7 @@ import Avatar from "@material-ui/core/Avatar";
 import ListItemText from "@material-ui/core/ListItemText";
 import { connect } from "react-redux";
 import { TEAMS_FETCH } from "../actions";
-import Loader from "../layout/Loader";
+import Loader from "../components/Loader";
 import Dialog from "@material-ui/core/Dialog";
 import Slide from "@material-ui/core/Slide";
 import TeamDetail from "./TeamDetail";
@@ -35,6 +35,13 @@ class Teams extends Component {
 
     async componentDidMount() {
         this.props.fetchTeams();
+        this.interval = setInterval(() => {
+            this.props.fetchTeams()
+        }, 3000);
+    }
+    
+    componentWillUnmount() {
+        clearInterval(this.interval);
     }
 
     handleClose() {

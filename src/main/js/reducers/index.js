@@ -4,6 +4,7 @@ import drawerReducer from "./drawer";
 import teamsReducer from "./teams";
 import challengesReducer from "./challenges";
 import notificationsReducer from "./notifications";
+import resultsReducer from "./results";
 
 export default (history) => combineReducers({
     router: connectRouter(history),
@@ -11,4 +12,5 @@ export default (history) => combineReducers({
     teams: teamsReducer,
     challenges: challengesReducer,
     notifications: notificationsReducer,
+    results: resultsReducer
 })

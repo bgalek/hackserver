@@ -4,6 +4,9 @@ import {
     CHALLENGES_FETCH_FAILED_TYPE,
     CHALLENGES_FETCH_SUCCEEDED_TYPE,
     CHALLENGES_FETCH_TYPE,
+    CHALLENGES_RESULTS_FETCH_FAILED_TYPE,
+    CHALLENGES_RESULTS_FETCH_SUCCEEDED_TYPE,
+    CHALLENGES_RESULTS_FETCH_TYPE,
     SHOW_NOTIFICATION,
     TEAM_SEND_EXAMPLE_FAILED_TYPE,
     TEAM_SEND_EXAMPLE_SUCCEEDED_TYPE,
@@ -18,6 +21,7 @@ const sagas = [
         yield takeEvery(TEAMS_FETCH_TYPE, teamsFetchSaga);
         yield takeEvery(CHALLENGES_FETCH_TYPE, challengesFetchSaga);
         yield takeEvery(TEAM_SEND_EXAMPLE_TYPE, teamSendExampleSaga);
+        yield takeEvery(CHALLENGES_RESULTS_FETCH_TYPE, challengesLogFetchSaga);
     }
 ];
 
@@ -39,17 +43,26 @@ function* challengesFetchSaga() {
     }
 }
 
-function* teamSendExampleSaga({ action }) {
+function* challengesLogFetchSaga({ team }) {
     try {
-        yield put(SHOW_NOTIFICATION(`Testing team '${action.team}' with challenge '${action.challenge}'!`, 'info'));
-        const payload = yield call(api, `/challenges/${action.challenge}/run-example?team-id=${action.team}`);
+        const results = yield call(api, `/challenges/results?team-id=${team}`);
+        yield put({ type: CHALLENGES_RESULTS_FETCH_SUCCEEDED_TYPE, payload: results });
+    } catch (e) {
+        yield put({ type: CHALLENGES_RESULTS_FETCH_FAILED_TYPE, message: e.message });
+    }
+}
+
+function* teamSendExampleSaga({ team, challenge }) {
+    try {
+        yield put(SHOW_NOTIFICATION(`Testing team '${team}' with challenge '${challenge}'!`, 'info'));
+        const payload = yield call(api, `/challenges/${challenge}/run-example?team-id=${team}`);
         if (payload.errorMessage) {
             yield put({ type: TEAM_SEND_EXAMPLE_FAILED_TYPE, message: payload.errorMessage });
-            yield put(SHOW_NOTIFICATION(`Test failed!`, 'warning'));
+            yield put(SHOW_NOTIFICATION(`Test failed!`, 'warning', payload));
             yield put(SHOW_NOTIFICATION(payload.errorMessage, 'error'));
         } else {
             yield put({ type: TEAM_SEND_EXAMPLE_SUCCEEDED_TYPE, payload });
-            yield put(SHOW_NOTIFICATION(`Test successful! Score: ${payload.score}`, 'success'));
+            yield put(SHOW_NOTIFICATION(`Test successful! Score: ${payload.score}`, 'success', payload));
         }
     } catch (e) {
         yield put({ type: TEAM_SEND_EXAMPLE_FAILED_TYPE, message: e.message });

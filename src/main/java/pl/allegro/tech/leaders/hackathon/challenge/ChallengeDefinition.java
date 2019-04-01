@@ -21,7 +21,6 @@ public interface ChallengeDefinition {
 
     List<QueryParam> getChallengeParams();
 
-
     //TODO move away from here closer to the UI
     default JsonSchema getChallengeResponse() {
         JsonSchemaGenerator schemaGen = new JsonSchemaGenerator(new ObjectMapper());
@@ -34,9 +33,7 @@ public interface ChallengeDefinition {
 
     Class<?> solutionType();
 
-    default TaskDefinition getExample() {
-        return getTasks().get(0);
-    }
+    TaskDefinition getExample();
 
     List<TaskDefinition> getTasks();
 

@@ -52,6 +52,11 @@ public class CalcChallengeDefinition implements ChallengeDefinition {
     }
 
     @Override
+    public TaskDefinition getExample() {
+        return TaskDefinition.withFixedResult("Should calculate a sum 2+2=4", Map.of("equation", "2+2"), "4", 4);
+    }
+
+    @Override
     public List<TaskDefinition> getTasks() {
         return new ArrayList<>(TASKS);
     }

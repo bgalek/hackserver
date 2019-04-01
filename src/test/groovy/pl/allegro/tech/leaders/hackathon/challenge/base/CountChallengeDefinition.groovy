@@ -50,4 +50,9 @@ class CountChallengeDefinition implements ChallengeDefinition {
     Class<?> solutionType() {
         SampleResponse
     }
+
+    @Override
+    TaskDefinition getExample() {
+        return COUNT_FIRST_TASK
+    }
 }

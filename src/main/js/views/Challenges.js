@@ -1,9 +1,9 @@
-import React, {Component} from 'react';
-import {withStyles} from "@material-ui/core";
+import React, { Component } from 'react';
+import { withStyles } from "@material-ui/core";
 import PropTypes from "prop-types";
 import Typography from '@material-ui/core/Typography';
-import {CHALLENGES_FETCH} from "../actions";
-import {connect} from "react-redux";
+import { CHALLENGES_FETCH } from "../actions";
+import { connect } from "react-redux";
 import Loader from "./Teams";
 import List from "@material-ui/core/List";
 import ListItem from "@material-ui/core/ListItem";
@@ -36,18 +36,25 @@ class Challenges extends Component {
 
     async componentDidMount() {
         this.props.fetchChallenges();
+        this.interval = setInterval(() => {
+            this.props.fetchChallenges()
+        }, 3000);
+    }
+
+    componentWillUnmount() {
+        clearInterval(this.interval);
     }
 
     handleClose() {
-        this.setState({open: false});
+        this.setState({ open: false });
     };
 
     handleOpen(challenge) {
-        this.setState({open: true, selected: challenge});
+        this.setState({ open: true, selected: challenge });
     };
 
     render() {
-        const {classes, challenges, isLoading} = this.props;
+        const { classes, challenges, isLoading } = this.props;
         if (isLoading) return <Loader/>;
         return [
             <Typography key="title" variant="h4" gutterBottom>
@@ -73,7 +80,7 @@ class Challenges extends Component {
     }
 }
 
-Challenges.defaultProps = {teams: []};
+Challenges.defaultProps = { teams: [] };
 
 Challenges.propTypes = {
     classes: PropTypes.object.isRequired,

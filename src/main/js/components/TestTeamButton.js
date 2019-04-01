@@ -31,11 +31,19 @@ class TestTeamButton extends Component {
         this.props.fetchChallenges();
     }
 
+    componentWillReceiveProps(nextProps, nextContext) {
+        this.setState({ challenge: nextProps.challenges[0].id });
+    }
+
     handleClickOpen = () => {
         this.setState({ open: true });
     };
 
     handleClose = () => {
+        this.setState({ open: false });
+    };
+
+    handleExecute = () => {
         this.setState({ open: false });
         this.props.sendExample(this.props.team, this.state.challenge);
     };
@@ -47,11 +55,11 @@ class TestTeamButton extends Component {
     render() {
         const { isLoading, challenges, classes } = this.props;
 
-        if (isLoading) return <Button key="action" disabled className={classes.actionButton} variant="contained"
-                                      color="secondary">
-            <ComputerIcon className={classes.actionButtonIcon}/>
-            Test me
-        </Button>;
+        if (isLoading) {
+            return <Button key="action" disabled className={classes.actionButton} variant="contained" color="secondary">
+                <ComputerIcon className={classes.actionButtonIcon}/>Test me
+            </Button>;
+        }
         return [
             <Button key="action" onClick={this.handleClickOpen}
                     className={classes.actionButton} variant="contained" color="secondary">
@@ -74,7 +82,7 @@ class TestTeamButton extends Component {
                     <Button onClick={this.handleClose} color="primary">
                         Cancel
                     </Button>
-                    <Button variant="contained" onClick={this.handleClose} color="primary">
+                    <Button variant="contained" onClick={this.handleExecute} color="primary">
                         Start
                     </Button>
                 </DialogActions>
@@ -86,7 +94,6 @@ const mapStateToProps = (state) => ({
     challenges: state.challenges.data,
     isLoading: state.challenges.isLoading
 });
-
 
 const mapDispatchToProps = (dispatch) => ({
     fetchChallenges: () => dispatch(CHALLENGES_FETCH),
