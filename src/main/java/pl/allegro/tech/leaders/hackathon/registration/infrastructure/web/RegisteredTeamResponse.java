@@ -4,10 +4,12 @@ class RegisteredTeamResponse {
 
     private final String name;
     private final String address;
+    private final int port;
 
-    RegisteredTeamResponse(String name, String address) {
+    RegisteredTeamResponse(String name, String address, int port) {
         this.name = name;
         this.address = address;
+        this.port = port;
     }
 
     public String getName() {
@@ -16,6 +18,10 @@ class RegisteredTeamResponse {
 
     public String getAddress() {
         return address;
+    }
+
+    public int getPort() {
+        return port;
     }
 
     public String getAvatar() {

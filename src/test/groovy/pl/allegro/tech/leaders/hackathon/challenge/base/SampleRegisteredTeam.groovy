@@ -14,7 +14,7 @@ class SampleRegisteredTeam {
     static RegisteredTeam sampleRegisteredTeam(String name) {
         int uniqueNumber = counter.incrementAndGet()
         String secret = "secret-${name}"
-        InetAddress address = InetUtils.fromString("127.0.1." + uniqueNumber)
+        InetSocketAddress address = new InetSocketAddress(InetUtils.fromString("127.0.1." + uniqueNumber), 8080)
         return new RegisteredTeam(name, address, secret)
     }
 }

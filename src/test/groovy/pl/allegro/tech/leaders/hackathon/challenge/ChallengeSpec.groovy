@@ -134,12 +134,12 @@ class InMemoryTeamClient implements TeamClient {
         return buildUri(team, challenge) + "?" + queryParams
     }
 
-    private String buildUri(RegisteredTeam team, ChallengeDefinition challengeDefinition) {
+    private static String buildUri(RegisteredTeam team, ChallengeDefinition challengeDefinition) {
         return buildUri(team) + challengeDefinition.challengeEndpoint
     }
 
-    private String buildUri(RegisteredTeam team) {
-        return "http://" + team.remoteAddress.getHostAddress() + ":8080"
+    private static String buildUri(RegisteredTeam team) {
+        return "http://${team.remoteAddress.getAddress().getHostAddress()}:${team.remoteAddress.getPort()}"
     }
 }
 

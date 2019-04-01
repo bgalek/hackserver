@@ -8,6 +8,7 @@ import { createMuiTheme, MuiThemeProvider } from '@material-ui/core/styles';
 import configureStore from "./store";
 import { createHashHistory } from "history";
 import routes from './routes'
+import { SnackbarProvider } from "notistack";
 
 const history = createHashHistory();
 const store = configureStore(history);
@@ -20,12 +21,14 @@ const App = () => {
     return <MuiThemeProvider theme={theme}>
         <Provider store={store}>
             <ConnectedRouter history={history}>
-                <Layout>
-                    <Switch>
-                        <Route exact path="/" component={routes.find(route => route.home).view}/>
-                        {routes.map(route => renderRoute(route))}
-                    </Switch>
-                </Layout>
+                <SnackbarProvider>
+                    <Layout>
+                        <Switch>
+                            <Route exact path="/" component={routes.find(route => route.home).view}/>
+                            {routes.map(route => renderRoute(route))}
+                        </Switch>
+                    </Layout>
+                </SnackbarProvider>
             </ConnectedRouter>
         </Provider>
     </MuiThemeProvider>

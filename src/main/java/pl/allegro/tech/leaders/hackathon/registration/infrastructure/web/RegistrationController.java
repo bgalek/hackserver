@@ -20,6 +20,8 @@ import pl.allegro.tech.leaders.hackathon.registration.api.TeamUpdate;
 import pl.allegro.tech.leaders.hackathon.utils.InetUtils;
 
 import javax.servlet.http.HttpServletRequest;
+import java.net.InetAddress;
+import java.net.InetSocketAddress;
 import java.net.URI;
 
 import static reactor.core.publisher.Mono.just;
@@ -39,14 +41,17 @@ class RegistrationController {
         return registrationFacade.getAll()
                 .map(registeredTeam -> new RegisteredTeamResponse(
                         registeredTeam.getName(),
-                        registeredTeam.getRemoteAddress().getCanonicalHostName()
+                        registeredTeam.getRemoteAddress().getAddress().getCanonicalHostName(),
+                        registeredTeam.getRemoteAddress().getPort()
                 ));
     }
 
     @PostMapping
     Publisher<ResponseEntity<String>> registerTeam(HttpServletRequest request, @RequestBody RegisterTeamRequest registerTeamRequest) {
         String name = registerTeamRequest.getName();
-        TeamRegistration teamRegistration = new TeamRegistration(name, InetUtils.fromString(request.getRemoteAddr()));
+        int port = registerTeamRequest.getPort();
+        InetAddress remoteAddress = InetUtils.fromString(request.getRemoteAddr());
+        TeamRegistration teamRegistration = new TeamRegistration(name, new InetSocketAddress(remoteAddress, port));
         return registrationFacade.register(teamRegistration)
                 .map(registeredTeam -> ResponseEntity.created(URI.create(String.format("/teams/%s", registeredTeam.getId())))
                         .contentType(MediaType.APPLICATION_JSON_UTF8)
@@ -56,10 +61,13 @@ class RegistrationController {
     @PatchMapping("/{teamName}")
     Publisher<ResponseEntity> updateTeam(HttpServletRequest request,
                                          @PathVariable String teamName,
+                                         @RequestBody UpdateTeamRequest updateTeamRequest,
                                          @RequestHeader(value = HttpHeaders.AUTHORIZATION, required = false) String authorization) {
         TeamSecret secret = TeamSecret.fromAuthorizationHeader(authorization);
         if (!secret.isValid()) return just(ResponseEntity.status(HttpStatus.UNAUTHORIZED).build());
-        TeamUpdate teamUpdate = new TeamUpdate(teamName, InetUtils.fromString(request.getRemoteAddr()), secret);
+        int port = updateTeamRequest.getPort();
+        InetAddress remoteAddress = InetUtils.fromString(request.getRemoteAddr());
+        TeamUpdate teamUpdate = new TeamUpdate(teamName, new InetSocketAddress(remoteAddress, port), secret);
         return registrationFacade.update(teamUpdate).then(just(ResponseEntity.accepted().build()));
     }
 
