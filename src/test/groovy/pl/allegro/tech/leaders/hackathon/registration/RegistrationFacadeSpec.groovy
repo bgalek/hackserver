@@ -1,22 +1,12 @@
 package pl.allegro.tech.leaders.hackathon.registration
 
-import pl.allegro.tech.leaders.hackathon.registration.api.RegisteredTeam
-import pl.allegro.tech.leaders.hackathon.registration.api.TeamNotFoundException
-import pl.allegro.tech.leaders.hackathon.registration.api.TeamRegistration
-import pl.allegro.tech.leaders.hackathon.registration.api.TeamSecret
-import pl.allegro.tech.leaders.hackathon.registration.api.TeamUpdate
-import reactor.core.publisher.Flux
-import reactor.core.publisher.Mono
-import spock.lang.Specification
+import pl.allegro.tech.leaders.hackathon.registration.api.*
 
 import static pl.allegro.tech.leaders.hackathon.registration.api.TeamSecret.ValidTeamSecret
 
-class RegistrationFacadeSpec extends Specification {
+class RegistrationFacadeSpec extends RegistrationSpec {
 
-    TeamRepository teamRepository = new TeamRepository(new InMemoryTeamRepository())
-    RegistrationFacade registrationFacade = new RegistrationFacade(teamRepository)
-
-    def "should be able to register team"() {
+    def 'should be able to register team'() {
         given: 'team information'
             String teamName = 'teamName'
             InetSocketAddress remoteAddress = new InetSocketAddress(InetAddress.getLocalHost(), 8080)
@@ -29,11 +19,11 @@ class RegistrationFacadeSpec extends Specification {
             persistedTeams.first().getRemoteAddress() == remoteAddress
     }
 
-    def "should be able to update team using secret"() {
+    def 'should be able to update team using secret'() {
         when: 'team is registered'
             RegisteredTeam registeredTeam = registerTeam('teamName')
         and: 'team update is created with new IP'
-            TeamUpdate teamUpdate = new TeamUpdate(registeredTeam.name, new InetSocketAddress("192.168.1.1", 8080),
+            TeamUpdate teamUpdate = new TeamUpdate(registeredTeam.name, new InetSocketAddress('192.168.1.1', 8080),
                     new ValidTeamSecret(registeredTeam.secret))
         and: 'team is updated'
             registrationFacade.update(teamUpdate).block()
@@ -44,11 +34,11 @@ class RegistrationFacadeSpec extends Specification {
             persistedTeams.first().getRemoteAddress() == teamUpdate.remoteAddress
     }
 
-    def "should not be able to update team without secret"() {
+    def 'should not be able to update team without secret'() {
         when: 'team is registered'
             RegisteredTeam registeredTeam = registerTeam('teamName')
         and: 'team update is created with new IP'
-            TeamUpdate teamUpdate = new TeamUpdate(registeredTeam.name, new InetSocketAddress("192.168.1.1", 8080), secret)
+            TeamUpdate teamUpdate = new TeamUpdate(registeredTeam.name, new InetSocketAddress('192.168.1.1', 8080), secret as TeamSecret)
         and: 'team is updated'
             registrationFacade.update(teamUpdate).block()
         then:
@@ -57,43 +47,17 @@ class RegistrationFacadeSpec extends Specification {
             secret << [new ValidTeamSecret('NOT MY SECRET'), TeamSecret.empty()]
     }
 
+    def 'should include health status of a team'() {
+        given: 'team is registered'
+            RegisteredTeam registeredTeam = registerTeam('teamName')
+        when:
+            RegisteredTeam team = registrationFacade.getTeamByName(registeredTeam.name).block()
+        then:
+            team.health == HealthCheckMonitor.INITIAL_HEALTH_STATUS
+    }
+
     private RegisteredTeam registerTeam(String teamName, InetSocketAddress inetSocketAddress = new InetSocketAddress(InetAddress.getLocalHost(), 8080)) {
         TeamRegistration teamRegistration = new TeamRegistration(teamName, inetSocketAddress)
         registrationFacade.register(teamRegistration).block()
-    }
-
-    class InMemoryTeamRepository implements PersistenceTeamRepository {
-        private final Map<String, Team> store = new HashMap<>()
-
-        @Override
-        Mono<Team> save(Team team) {
-            store.put(team.getName(), team)
-            return Mono.just(team)
-        }
-
-        @Override
-        Mono<Team> findById(String id) {
-            Team team = store.values().find { it.id == id }
-            return team != null ? Mono.just(team) : Mono.<Team> empty()
-        }
-
-        @Override
-        Mono<Team> findByName(String name) {
-            return Mono.just(store.get(name))
-        }
-
-        @Override
-        Mono<Team> findByNameAndSecret(String name, String secret) {
-            return Optional.ofNullable(store.values().find({
-                it.name == name && it.secret == secret
-            }))
-                    .map({ Mono.just(it) })
-                    .orElse(Mono.empty())
-        }
-
-        @Override
-        Flux<Team> findAll() {
-            return Flux.fromIterable(store.values())
-        }
     }
 }

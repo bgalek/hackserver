@@ -18,18 +18,19 @@ class Team {
     private final String secret;
 
     @PersistenceConstructor
-    private Team(String name, InetSocketAddress remoteAddress, String secret) {
+    private Team(String id, String name, InetSocketAddress remoteAddress, String secret) {
+        this.id = id;
         this.name = name;
         this.remoteAddress = remoteAddress;
         this.secret = secret;
     }
 
     Team(String name, InetSocketAddress remoteAddress) {
-        this(name, remoteAddress, UUID.randomUUID().toString());
+        this(null, name, remoteAddress, UUID.randomUUID().toString());
     }
 
     Team(Team team, InetSocketAddress remoteAddress) {
-        this(team.getName(), remoteAddress, team.getSecret());
+        this(team.getId(), team.getName(), remoteAddress, team.getSecret());
     }
 
     public String getId() {

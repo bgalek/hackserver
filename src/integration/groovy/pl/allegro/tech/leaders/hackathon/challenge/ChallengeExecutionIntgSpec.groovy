@@ -1,19 +1,17 @@
 package pl.allegro.tech.leaders.hackathon.challenge
 
-import com.github.tomakehurst.wiremock.junit.WireMockRule
-import org.junit.ClassRule
+import okhttp3.mockwebserver.MockResponse
+import okhttp3.mockwebserver.MockWebServer
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.http.HttpHeaders
+import org.springframework.http.MediaType
 import pl.allegro.tech.leaders.hackathon.base.IntegrationSpec
 import pl.allegro.tech.leaders.hackathon.challenge.api.TaskResult
 import pl.allegro.tech.leaders.hackathon.challenge.samples.CalcChallengeDefinition
 import pl.allegro.tech.leaders.hackathon.registration.RegistrationFacade
 import pl.allegro.tech.leaders.hackathon.registration.api.TeamRegistration
-import spock.lang.Shared
 
-import static com.github.tomakehurst.wiremock.client.WireMock.aResponse
-import static com.github.tomakehurst.wiremock.client.WireMock.get
-import static com.github.tomakehurst.wiremock.client.WireMock.stubFor
-import static com.github.tomakehurst.wiremock.client.WireMock.urlEqualTo
+import static org.springframework.util.SocketUtils.findAvailableTcpPort
 import static pl.allegro.tech.leaders.hackathon.challenge.base.ChallengeResultAssertions.expectChallengeResult
 import static pl.allegro.tech.leaders.hackathon.challenge.base.ReactorValueExtractor.extract
 
@@ -23,14 +21,14 @@ class ChallengeExecutionIntgSpec extends IntegrationSpec {
     ChallengeFacade challengeFacade
     @Autowired
     RegistrationFacade registrationFacade
-    @ClassRule
-    @Shared
-    public WireMockRule wireMock = new WireMockRule(8080)
+    MockWebServer mockWebServer = new MockWebServer()
 
     def 'should execute challenge through facade and store the results'() {
         given: 'a team is registered'
-            // TODO: without the option to specify a port it's impossible to test multiple teams
-            registrationFacade.register(new TeamRegistration(TEAM_ID, new InetSocketAddress('127.0.0.1', 8080))).block()
+            TeamRegistration registration = new TeamRegistration(TEAM_ID,
+                    new InetSocketAddress('127.0.0.1', findAvailableTcpPort()))
+            registrationFacade.register(registration).block()
+            mockWebServer.start(InetAddress.getByName('127.0.0.1'), registration.remoteAddress.port)
         and: 'a challenge is activated'
             challengeFacade.activateChallenge(CalcChallengeDefinition.ID).block()
         and: 'team responds with on correct and 2 incorrect results'
@@ -51,9 +49,14 @@ class ChallengeExecutionIntgSpec extends IntegrationSpec {
     }
 
     void stubTeamResponse(String url, String response) {
-        stubFor(get(urlEqualTo(url))
-                .willReturn(aResponse()
-                .withStatus(200)
-                .withBody(response)))
+        mockWebServer.url(url)
+        mockWebServer.enqueue(new MockResponse()
+                .setResponseCode(200)
+                .setHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
+                .setBody(response))
+    }
+
+    void cleanup() {
+        mockWebServer.shutdown()
     }
 }
