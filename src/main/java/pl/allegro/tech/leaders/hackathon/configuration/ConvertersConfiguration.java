@@ -20,8 +20,8 @@ class ConvertersConfiguration {
     private Converter<InetSocketAddress, String> inetSocketAddressWriterConverter() {
         return new Converter<InetSocketAddress, String>() {
             @Override
-            public String convert(InetSocketAddress source) {
-                return String.format("%s:%d", source.getAddress().getCanonicalHostName(), source.getPort());
+            public String convert(InetSocketAddress inetSocketAddress) {
+                return String.format("%s:%d", inetSocketAddress.getAddress().getHostAddress(), inetSocketAddress.getPort());
             }
         };
     }
@@ -29,11 +29,11 @@ class ConvertersConfiguration {
     private Converter<String, InetSocketAddress> inetSocketAddressReaderConverter() {
         return new Converter<String, InetSocketAddress>() {
             @Override
-            public InetSocketAddress convert(String source) {
+            public InetSocketAddress convert(String hostAndPort) {
                 try {
-                    String[] parts = source.split(":");
-                    InetAddress host = InetAddress.getByName(parts[0]);
-                    int port = Integer.parseInt(parts[1]);
+                    int portPartPosition = hostAndPort.lastIndexOf(":");
+                    InetAddress host = InetAddress.getByName(hostAndPort.substring(0, portPartPosition));
+                    int port = Integer.parseInt(hostAndPort.substring(portPartPosition + 1));
                     return new InetSocketAddress(host, port);
                 } catch (Exception e) {
                     e.printStackTrace();

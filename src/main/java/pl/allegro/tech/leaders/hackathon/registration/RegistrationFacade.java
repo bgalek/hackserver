@@ -10,9 +10,11 @@ import reactor.core.publisher.Mono;
 public class RegistrationFacade {
 
     private final TeamRepository teamRepository;
+    private final HealthCheckMonitor healthCheckMonitor;
 
-    RegistrationFacade(TeamRepository teamRepository) {
+    RegistrationFacade(TeamRepository teamRepository, HealthCheckMonitor healthCheckMonitor) {
         this.teamRepository = teamRepository;
+        this.healthCheckMonitor = healthCheckMonitor;
     }
 
     public Mono<RegisteredTeam> register(TeamRegistration teamRegistration) {
@@ -49,7 +51,8 @@ public class RegistrationFacade {
         return new RegisteredTeam(
                 team.getName(),
                 team.getRemoteAddress(),
-                team.getSecret()
+                team.getSecret(),
+                healthCheckMonitor.getTeamStatus(team)
         );
     }
 }

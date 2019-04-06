@@ -5,11 +5,13 @@ class RegisteredTeamResponse {
     private final String name;
     private final String address;
     private final int port;
+    private final boolean health;
 
-    RegisteredTeamResponse(String name, String address, int port) {
+    RegisteredTeamResponse(String name, String address, int port, boolean health) {
         this.name = name;
         this.address = address;
         this.port = port;
+        this.health = health;
     }
 
     public String getName() {
@@ -26,5 +28,9 @@ class RegisteredTeamResponse {
 
     public String getAvatar() {
         return String.format("https://api.adorable.io/avatars/285/%s%%40%s", name, address);
+    }
+
+    public boolean getHealth() {
+        return health;
     }
 }

@@ -11,7 +11,7 @@ import java.nio.charset.StandardCharsets
 
 import static java.util.UUID.randomUUID
 
-class RegistrationSpec extends IntegrationSpec {
+class RegistrationIntgSpec extends IntegrationSpec {
 
     def 'empty team registry should serve no teams'() {
         expect:

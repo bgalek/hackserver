@@ -6,11 +6,17 @@ public class RegisteredTeam {
     private final String name;
     private final InetSocketAddress remoteAddress;
     private final String secret;
+    private HealthStatus health;
 
     public RegisteredTeam(String name, InetSocketAddress remoteAddress, String secret) {
+        this(name, remoteAddress, secret, HealthStatus.UNKNOWN);
+    }
+
+    public RegisteredTeam(String name, InetSocketAddress remoteAddress, String secret, HealthStatus healthStatus) {
         this.name = name;
         this.remoteAddress = remoteAddress;
         this.secret = secret;
+        this.health = healthStatus;
     }
 
     public String getName() {
@@ -27,5 +33,13 @@ public class RegisteredTeam {
 
     public String getSecret() {
         return secret;
+    }
+
+    public void setHealth(HealthStatus health) {
+        this.health = health;
+    }
+
+    public HealthStatus getHealth() {
+        return health;
     }
 }

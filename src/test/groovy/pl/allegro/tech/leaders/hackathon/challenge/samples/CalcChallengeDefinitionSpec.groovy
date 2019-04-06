@@ -18,7 +18,7 @@ class CalcChallengeDefinitionSpec extends Specification {
             results.every { 1 }
     }
 
-    private String solve(String question) {
+    private static String solve(String question) {
         ScriptEngineManager manager = new ScriptEngineManager()
         ScriptEngine engine = manager.getEngineByName('js')
         try {
