@@ -16,10 +16,4 @@ class ReactorValueExtractor {
                 .collectList()
                 .block()
     }
-
-    static <T> boolean isEmpty(Mono<T> mono) {
-        return mono.blockOptional()
-                .map({ false })
-                .orElse(true)
-    }
 }

@@ -33,19 +33,30 @@ class ChallengeExecutionIntgSpec extends IntegrationSpec {
             challengeFacade.activateChallenge(CalcChallengeDefinition.ID).block()
         and: 'team responds with on correct and 2 incorrect results'
             stubTeamResponse("/calc?equation=2+2", "4") // correct
-            stubTeamResponse("/calc?equation=2+2*2", "4") // incorrect
+            stubTeamResponse("/calc?equation=2+2*2", "6") // correct
             stubTeamResponse("/calc?equation=(2+2)*2", "4") // incorrect
         when: 'challenge is executed'
             challengeFacade.runChallenge(CalcChallengeDefinition.ID).blockLast()
         and: 'results are fetched'
             List<TaskResult> results = extract(challengeFacade.getResultsForChallenge(CalcChallengeDefinition.ID))
-        then: 'team has 3 results and only one has non zero score'
+        then: 'team has 3 results where one has zero score'
             expectChallengeResult(results, TEAM_ID, CalcChallengeDefinition.ID)
                     .hasSize(3)
                     .hasNonZeroScoreForTask(CalcChallengeDefinition.TASKS[0])
-                    .hasZeroScoreForTask(CalcChallengeDefinition.TASKS[1])
+                    .hasNonZeroScoreForTask(CalcChallengeDefinition.TASKS[1])
                     .hasZeroScoreForTask(CalcChallengeDefinition.TASKS[2])
-
+        and: 'expect team challenge scores to be the sum of task results'
+            webClient.get().uri("/scores/$CalcChallengeDefinition.ID").exchange()
+                    .expectBody()
+                    .jsonPath('$.scores.length()').isEqualTo(1)
+                    .jsonPath('$.scores[0].teamId').isEqualTo(TEAM_ID)
+                    .jsonPath('$.scores[0].score').isEqualTo(results.sum { it.score })
+        and: 'expect team hackaton scores to be equal challenge scores'
+            webClient.get().uri("/scores").exchange()
+                    .expectBody()
+                    .jsonPath('$.scores.length()').isEqualTo(1)
+                    .jsonPath('$.scores[0].teamId').isEqualTo(TEAM_ID)
+                    .jsonPath('$.scores[0].score').isEqualTo(results.sum { it.score })
     }
 
     void stubTeamResponse(String url, String response) {

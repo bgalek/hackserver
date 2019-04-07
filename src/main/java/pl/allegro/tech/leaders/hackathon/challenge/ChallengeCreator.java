@@ -14,6 +14,9 @@ class ChallengeCreator {
         if (cachedDefinition != null && !cachedDefinition.equals(challengeDefinition)) {
             throw new IllegalArgumentException("Duplicated challenge definition id: " + challengeDefinition.getId());
         }
+        if (challengeDefinition.getId().contains("#")) {
+            throw new IllegalArgumentException("Challenge id may not contain '#' character: " + challengeDefinition.getId());
+        }
         definitions.put(challengeDefinition.getId(), challengeDefinition);
         return new Challenge(challengeDefinition);
     }
