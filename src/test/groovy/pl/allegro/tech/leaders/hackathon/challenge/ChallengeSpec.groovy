@@ -4,11 +4,13 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import org.springframework.http.ResponseEntity
 import pl.allegro.tech.leaders.hackathon.challenge.api.ChallengeActivationResult
 import pl.allegro.tech.leaders.hackathon.challenge.api.ChallengeDetails
+import pl.allegro.tech.leaders.hackathon.challenge.api.TaskResult
 import pl.allegro.tech.leaders.hackathon.challenge.api.TeamClient
 import pl.allegro.tech.leaders.hackathon.challenge.base.SampleResponse
 import pl.allegro.tech.leaders.hackathon.challenge.base.UpdatableFixedClock
 import pl.allegro.tech.leaders.hackathon.registration.RegistrationFacade
 import pl.allegro.tech.leaders.hackathon.registration.api.RegisteredTeam
+import pl.allegro.tech.leaders.hackathon.scores.api.ScoreRegistry
 import reactor.core.publisher.Flux
 import reactor.core.publisher.Mono
 import spock.lang.Specification
@@ -27,6 +29,9 @@ abstract class ChallengeSpec extends Specification {
     UpdatableFixedClock clock = defaultClock()
     ObjectMapper objectMapper = objectMapper()
     RegistrationFacade registrationFacade = Stub()
+    ScoreRegistry scoreRegistry = Stub() {
+        updateScores(_) >> { Flux<TaskResult> results -> results }
+    }
 
     ChallengeFacade facade = new ChallengeConfiguration()
             .challengeFacade(
@@ -35,7 +40,8 @@ abstract class ChallengeSpec extends Specification {
             teamClient,
             new InMemoryChallengeStateRepository(),
             new InMemoryChallengeResultRepository(),
-            registrationFacade)
+            registrationFacade,
+            scoreRegistry)
 
     protected void registerChallengeDefinitions(ChallengeDefinition... definitions) {
         extract(facade.registerChallengeDefinitions(definitions.toList()))

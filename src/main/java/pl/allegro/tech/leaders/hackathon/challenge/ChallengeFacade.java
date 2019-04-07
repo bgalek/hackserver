@@ -3,6 +3,7 @@ package pl.allegro.tech.leaders.hackathon.challenge;
 import pl.allegro.tech.leaders.hackathon.challenge.api.ChallengeActivationResult;
 import pl.allegro.tech.leaders.hackathon.challenge.api.ChallengeDetails;
 import pl.allegro.tech.leaders.hackathon.challenge.api.TaskResult;
+import pl.allegro.tech.leaders.hackathon.scores.api.ScoreRegistry;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
@@ -16,6 +17,7 @@ public class ChallengeFacade {
     private final ChallengeRunner challengeRunner;
     private final ChallengeExampleRunner challengeExampleRunner;
     private final ChallengeResultRepository challengeResultRepository;
+    private final ScoreRegistry scoreRegistry;
 
     ChallengeFacade(
             ChallengeActivator challengeActivator,
@@ -23,13 +25,15 @@ public class ChallengeFacade {
             ChallengeProvider challengeProvider,
             ChallengeRunner challengeRunner,
             ChallengeExampleRunner challengeExampleRunner,
-            ChallengeResultRepository challengeResultRepository) {
+            ChallengeResultRepository challengeResultRepository,
+            ScoreRegistry scoreRegistry) {
         this.challengeActivator = challengeActivator;
         this.challengeRegistrar = challengeRegistrar;
         this.challengeProvider = challengeProvider;
         this.challengeRunner = challengeRunner;
         this.challengeExampleRunner = challengeExampleRunner;
         this.challengeResultRepository = challengeResultRepository;
+        this.scoreRegistry = scoreRegistry;
     }
 
     public Flux<ChallengeDetails> registerChallengeDefinitions(
@@ -67,12 +71,14 @@ public class ChallengeFacade {
 
     public Flux<TaskResult> runChallenge(String challengeId) {
         return challengeRunner.runChallenge(challengeId)
-                .map(ChallengeResult::toTaskResult);
+                .map(ChallengeResult::toTaskResult)
+                .compose(scoreRegistry::updateScores);
     }
 
     public Flux<TaskResult> runChallenge(String challengeId, String teamId) {
         return challengeRunner.runChallenge(challengeId, teamId)
-                .map(ChallengeResult::toTaskResult);
+                .map(ChallengeResult::toTaskResult)
+                .compose(scoreRegistry::updateScores);
     }
 
     public Flux<TaskResult> getResultsForChallenge(String challengeId) {

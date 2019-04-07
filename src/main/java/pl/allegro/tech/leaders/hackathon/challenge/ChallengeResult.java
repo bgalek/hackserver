@@ -1,7 +1,9 @@
 package pl.allegro.tech.leaders.hackathon.challenge;
 
 import org.springframework.data.annotation.Id;
+import org.springframework.data.annotation.TypeAlias;
 import org.springframework.data.mongodb.core.index.Indexed;
+import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.http.ResponseEntity;
 import pl.allegro.tech.leaders.hackathon.challenge.api.TaskResult;
 
@@ -10,6 +12,8 @@ import java.util.Objects;
 
 import static java.util.Objects.requireNonNull;
 
+@Document("results")
+@TypeAlias("result")
 class ChallengeResult {
     @Id
     private final ChallengeResultId id;
