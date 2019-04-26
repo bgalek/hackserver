@@ -24,7 +24,7 @@ public class TeamScore {
         if (this == o) {
             return true;
         }
-        if (o == null || getClass() != o.getClass()) {
+        if (!(o instanceof TeamScore)) {
             return false;
         }
         TeamScore teamScore = (TeamScore) o;

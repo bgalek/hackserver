@@ -4,6 +4,7 @@ import org.springframework.stereotype.Component;
 import pl.allegro.tech.leaders.hackathon.challenge.ChallengeDefinition;
 import pl.allegro.tech.leaders.hackathon.challenge.TaskDefinition;
 import pl.allegro.tech.leaders.hackathon.challenge.TaskDefinition.TaskWithFixedResult;
+import pl.allegro.tech.leaders.hackathon.challenge.TaskScoring;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -14,9 +15,9 @@ public class CalcChallengeDefinition implements ChallengeDefinition {
     public static final String ID = "calc";
 
     public static final List<TaskWithFixedResult> TASKS = List.of(
-            TaskDefinition.withFixedResult("Should calculate a sum 2+2=4", Map.of("equation", "2+2"), "4", 4),
-            TaskDefinition.withFixedResult("Should calculate a sum and multiplication 2+2*2=6", Map.of("equation", "2+2*2"), "6", 5),
-            TaskDefinition.withFixedResult("Should respect parenthesis in equation (2+2)*2 = 8", Map.of("equation", "(2+2)*2"), "8", 5)
+            TaskDefinition.withFixedResult("Should calculate a sum 2+2=4", Map.of("equation", "2+2"), "4", new TaskScoring(4, 0)),
+            TaskDefinition.withFixedResult("Should calculate a sum and multiplication 2+2*2=6", Map.of("equation", "2+2*2"), "6", new TaskScoring(5, 0)),
+            TaskDefinition.withFixedResult("Should respect parenthesis in equation (2+2)*2 = 8", Map.of("equation", "(2+2)*2"), "8", new TaskScoring(5, 0))
     );
 
     @Override
@@ -53,7 +54,7 @@ public class CalcChallengeDefinition implements ChallengeDefinition {
 
     @Override
     public TaskDefinition getExample() {
-        return TaskDefinition.withFixedResult("Should calculate a sum 2+2=4", Map.of("equation", "2+2"), "4", 4);
+        return TaskDefinition.withFixedResult("Should calculate a sum 2+2=4", Map.of("equation", "2+2"), "4", new TaskScoring(4, 200));
     }
 
     @Override

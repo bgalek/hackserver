@@ -32,7 +32,7 @@ class ChallengeResultAssertions {
 
     ChallengeResultAssertions hasMaxScores(ChallengeDefinition challenge) {
         challenge.tasks.each {
-            assert findTaskResult(it.name).score == it.maxPoints
+            assert findTaskResult(it.name).score == it.taskScoring.maxPoints
         }
         return this
     }
@@ -40,7 +40,7 @@ class ChallengeResultAssertions {
     ChallengeResultAssertions hasMaxScoreForTask(TaskWithFixedResult taskDefinition) {
         TaskResult taskResult = findTaskResult(taskDefinition.name)
         assert taskResult != null
-        assert taskResult.score == taskDefinition.getMaxPoints()
+        assert taskResult.score == taskDefinition.taskScoring.maxPoints
         return this
     }
 

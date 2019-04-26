@@ -17,6 +17,7 @@ import { connect } from "react-redux";
 import { bindActionCreators } from "redux";
 import { SHOW_NOTIFICATION } from "../actions";
 import ChallengeResults from "../components/ChallengeResults";
+import TeamHealthIndicator from "../components/TeamHealthIndicator";
 
 const styles = theme => ({
     appBar: {
@@ -65,12 +66,16 @@ export function TeamDetail({ team, classes, onClose }) {
                         <TableRow>
                             <TableCell>IP</TableCell>
                             <TableCell>PORT</TableCell>
+                            <TableCell>STATUS</TableCell>
                         </TableRow>
                     </TableHead>
                     <TableBody>
                         <TableRow>
                             <TableCell>{team.address}</TableCell>
                             <TableCell>{team.port}</TableCell>
+                            <TableCell>
+                                <TeamHealthIndicator health={team.health}/>
+                            </TableCell>
                         </TableRow>
                     </TableBody>
                 </Table>

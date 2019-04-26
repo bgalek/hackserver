@@ -145,7 +145,7 @@ class Scores {
             if (this == o) {
                 return true;
             }
-            if (o == null || getClass() != o.getClass()) {
+            if (!(o instanceof ChallengeIdWithTeamId)) {
                 return false;
             }
             ChallengeIdWithTeamId that = (ChallengeIdWithTeamId) o;

@@ -15,7 +15,7 @@ class HealthCheckConfigurationProperties {
     private Duration rate = Duration.ofSeconds(1);
 
     @DurationUnit(ChronoUnit.MILLIS)
-    private Duration delay = Duration.ofMillis(1000);
+    private Duration delay = Duration.ofSeconds(1);
 
     public Duration getRate() {
         return rate;
