@@ -59,13 +59,14 @@ class Notifications extends Component {
     };
 
     render() {
-        return <Dialog fullWidth onClose={() => this.setState({ open: false })} open={this.state.open}>
+        const { open, details } = this.state;
+        return <Dialog fullWidth onClose={() => this.setState({ open: false })} open={open}>
             <DialogTitle id="alert-dialog-title">Notification Details</DialogTitle>
             <DialogContent>
-                <List dense>{Object.entries(this.state.details)
+                <List dense>{Object.entries(details)
                     .map((entry, i) =>
                         <ListItem key={`entry-${i}`}>
-                            {entry[1] ? <ListItemText primary={entry[0]} secondary={entry[1]}/> : null}
+                            <ListItemText primary={entry[0]} secondary={entry[1]}/>
                         </ListItem>
                     )}</List>
             </DialogContent>

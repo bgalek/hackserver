@@ -103,7 +103,7 @@ class ChallengeResult {
             if (this == o) {
                 return true;
             }
-            if (o == null || getClass() != o.getClass()) {
+            if (!(o instanceof ChallengeResultId)) {
                 return false;
             }
             ChallengeResultId that = (ChallengeResultId) o;
@@ -163,6 +163,7 @@ class ChallengeResult {
 
         ChallengeResult buildErrorResult(String errorMessage) {
             return this.withErrorMessage(errorMessage)
+                    .withScore(0)
                     .build();
         }
 

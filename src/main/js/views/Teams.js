@@ -14,11 +14,7 @@ import Dialog from "@material-ui/core/Dialog";
 import Slide from "@material-ui/core/Slide";
 import TeamDetail from "./TeamDetail";
 import ListItemSecondaryAction from "@material-ui/core/ListItemSecondaryAction";
-import Chip from "@material-ui/core/Chip";
-import DoneIcon from "@material-ui/icons/Done";
-import ErrorIcon from "@material-ui/icons/Error";
-import green from "@material-ui/core/colors/green";
-import red from "@material-ui/core/colors/red";
+import TeamHealthIndicator from "../components/TeamHealthIndicator";
 
 const styles = theme => ({
     dialog: {
@@ -76,7 +72,7 @@ class Teams extends Component {
                         </ListItemAvatar>
                         <ListItemText primary={team.name} secondary={team.address}/>
                         <ListItemSecondaryAction className={classes.healthChip}>
-                            {renderHealthChip(team.health)}
+                            <TeamHealthIndicator health={team.health}/>
                         </ListItemSecondaryAction>
                     </ListItem>
                 )}
@@ -87,13 +83,6 @@ class Teams extends Component {
             </Dialog>
         ];
     }
-}
-
-function renderHealthChip(health) {
-    const icon = health ? <DoneIcon/> : <ErrorIcon/>;
-    const color = health ? green.A100 : red.A100;
-    const status = health ? 'HEALTHY' : 'DEAD';
-    return <Chip style={{ backgroundColor: color }} label={status} icon={icon}/>;
 }
 
 Teams.defaultProps = { teams: [] };

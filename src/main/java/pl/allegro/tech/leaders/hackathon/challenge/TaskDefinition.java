@@ -3,26 +3,30 @@ package pl.allegro.tech.leaders.hackathon.challenge;
 import java.util.Map;
 
 public interface TaskDefinition {
-    int getMaxPoints();
+
     String getName();
+
     Map<String, String> getParams();
+
+    TaskScoring getTaskScoring();
+
     int scoreSolution(Object solution);
 
-    static TaskWithFixedResult withFixedResult(String name, Map<String, String> params, Object expectedResult, int maxPoints) {
-        return new TaskWithFixedResult(name, params, expectedResult, maxPoints);
+    static TaskWithFixedResult withFixedResult(String name, Map<String, String> params, Object expectedResult, TaskScoring taskScoring) {
+        return new TaskWithFixedResult(name, params, expectedResult, taskScoring);
     }
 
     class TaskWithFixedResult implements TaskDefinition {
         private final String name;
         private final Map<String, String> params;
-        private final int maxPoints;
         private final Object expectedSolution;
+        private final TaskScoring taskScoring;
 
-        TaskWithFixedResult(String name, Map<String, String> params, Object expectedSolution, int maxPoints) {
+        TaskWithFixedResult(String name, Map<String, String> params, Object expectedSolution, TaskScoring taskScoring) {
             this.name = name;
             this.params = params;
-            this.maxPoints = maxPoints;
             this.expectedSolution = expectedSolution;
+            this.taskScoring = taskScoring;
         }
 
         public Object getExpectedSolution() {
@@ -40,8 +44,8 @@ public interface TaskDefinition {
         }
 
         @Override
-        public int getMaxPoints() {
-            return maxPoints;
+        public TaskScoring getTaskScoring() {
+            return taskScoring;
         }
 
         @Override
@@ -50,7 +54,7 @@ public interface TaskDefinition {
                 return 0;
             }
             return expectedSolution.equals(solution)
-                    ? maxPoints
+                    ? taskScoring.getMaxPoints()
                     : 0;
         }
     }

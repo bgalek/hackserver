@@ -61,7 +61,9 @@ public interface ChallengeDefinition {
         @Override
         public boolean equals(Object o) {
             if (this == o) return true;
-            if (o == null || getClass() != o.getClass()) return false;
+            if (!(o instanceof QueryParam)) {
+                return false;
+            }
             QueryParam that = (QueryParam) o;
             return Objects.equals(name, that.name) &&
                     Objects.equals(desc, that.desc);

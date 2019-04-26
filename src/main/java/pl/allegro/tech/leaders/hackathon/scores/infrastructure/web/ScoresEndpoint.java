@@ -11,7 +11,7 @@ import reactor.core.publisher.Mono;
 
 @RestController
 @RequestMapping("/scores")
-public class ScoresEndpoint {
+class ScoresEndpoint {
     private final ScoresFacade scoresFacade;
 
     ScoresEndpoint(ScoresFacade scoresFacade) {

@@ -3,6 +3,7 @@ package pl.allegro.tech.leaders.hackathon.challenge.samples;
 import org.springframework.stereotype.Component;
 import pl.allegro.tech.leaders.hackathon.challenge.ChallengeDefinition;
 import pl.allegro.tech.leaders.hackathon.challenge.TaskDefinition;
+import pl.allegro.tech.leaders.hackathon.challenge.TaskScoring;
 
 import java.util.List;
 import java.util.Map;
@@ -43,7 +44,8 @@ public class TweetsChallengeDefinition implements ChallengeDefinition {
 
     @Override
     public TaskDefinition getExample() {
-        return TaskDefinition.withFixedResult("tweets", Map.of("user", "allegro.tech"), "4", 4);
+        return TaskDefinition.withFixedResult("tweets", Map.of("user", "allegro.tech"), "4",
+                new TaskScoring(4, 0));
     }
 
     @Override
