@@ -1,11 +1,7 @@
 import React from 'react';
-import { withStyles } from "@material-ui/core";
-import PropTypes from "prop-types";
 import Typography from '@material-ui/core/Typography';
 
-const styles = theme => ({});
-
-function About({ classes }) {
+function About() {
     return [
         <Typography key="title" variant="h4" gutterBottom>
             About
@@ -18,8 +14,6 @@ function About({ classes }) {
 
 About.defaultProps = { teams: [] };
 
-About.propTypes = {
-    classes: PropTypes.object.isRequired,
-};
+About.propTypes = {};
 
-export default withStyles(styles)(About);
+export default About;

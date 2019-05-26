@@ -3,6 +3,7 @@ package pl.allegro.tech.leaders.hackathon.configuration;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jdk8.Jdk8Module;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import com.fasterxml.jackson.module.paramnames.ParameterNamesModule;
 import org.zalando.problem.ProblemModule;
 
 import static com.fasterxml.jackson.databind.DeserializationFeature.FAIL_ON_IGNORED_PROPERTIES;
@@ -14,6 +15,7 @@ public class ObjectMapperProvider {
     private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper()
             .registerModule(new JavaTimeModule())
             .registerModule(new Jdk8Module())
+            .registerModule(new ParameterNamesModule())
             .registerModule(new ProblemModule().withStackTraces(false))
             .enable(READ_ENUMS_USING_TO_STRING)
             .disable(FAIL_ON_IGNORED_PROPERTIES)

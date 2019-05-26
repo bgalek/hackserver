@@ -1,9 +1,9 @@
 import Button from "@material-ui/core/Button";
-import React, { Component } from "react";
+import React, { useEffect, useState } from "react";
 import ComputerIcon from "@material-ui/icons/Computer";
 import { CHALLENGES_FETCH, TEAM_SEND_EXAMPLE } from "../actions";
 import { connect } from "react-redux";
-import { withStyles } from "@material-ui/core";
+import { makeStyles } from "@material-ui/core";
 import Dialog from "@material-ui/core/Dialog";
 import DialogTitle from "@material-ui/core/DialogTitle";
 import DialogContent from "@material-ui/core/DialogContent";
@@ -11,83 +11,80 @@ import DialogContentText from "@material-ui/core/DialogContentText";
 import DialogActions from "@material-ui/core/DialogActions";
 import Select from "@material-ui/core/Select";
 import MenuItem from "@material-ui/core/MenuItem";
+import { bindActionCreators } from "redux";
 
-const styles = theme => ({
-    actionButton: {
-        flex: '0 1 auto',
-    },
-    actionButtonIcon: {
-        marginRight: theme.spacing.unit,
-    }
-});
+const useStyles = makeStyles(theme => ({
+    actionButton: { flex: '0 1 auto' },
+    actionButtonIcon: { marginRight: theme.spacing(1) },
+    text: { marginBottom: theme.spacing(2) }
+}));
 
-class TestTeamButton extends Component {
-    state = {
-        open: false,
-        challenge: ''
-    };
+export function TestTeamButton({ isLoading, challenges, team, sendExample, fetchChallenges }) {
+    const classes = useStyles();
+    const [state, setState] = useState({ open: false, challenge: '' });
 
-    async componentDidMount() {
-        this.props.fetchChallenges();
-    }
+    useEffect(() => {
+        fetchChallenges();
+    }, [challenges.length]);
 
-    componentWillReceiveProps(nextProps, nextContext) {
-        this.setState({ challenge: nextProps.challenges[0].id });
+    if (isLoading || !team.health) {
+        return <Button key="action" disabled className={classes.actionButton} variant="contained" color="secondary">
+            <ComputerIcon className={classes.actionButtonIcon}/>Test me
+        </Button>;
     }
 
-    handleClickOpen = () => {
-        this.setState({ open: true });
+    const handleOpen = () => {
+        setState((prevState) => ({ ...prevState, open: true }));
     };
 
-    handleClose = () => {
-        this.setState({ open: false });
+    const handleClose = () => {
+        setState((prevState) => ({ ...prevState, open: false, challenge: '' }));
     };
 
-    handleExecute = () => {
-        this.setState({ open: false });
-        this.props.sendExample(this.props.team, this.state.challenge);
+    const handleChallengeChange = (event) => {
+        setState((prevState) => ({ ...prevState, challenge: event.target.value }));
     };
 
-    handleChange = event => {
-        this.setState({ [event.target.name]: event.target.value });
+    const handleSubmit = () => {
+        sendExample(team.name, state.challenge);
+        handleClose()
     };
 
-    render() {
-        const { isLoading, challenges, classes } = this.props;
-
-        if (isLoading) {
-            return <Button key="action" disabled className={classes.actionButton} variant="contained" color="secondary">
-                <ComputerIcon className={classes.actionButtonIcon}/>Test me
-            </Button>;
-        }
-        return [
-            <Button key="action" onClick={this.handleClickOpen}
-                    className={classes.actionButton} variant="contained" color="secondary">
-                <ComputerIcon className={classes.actionButtonIcon}/>
-                Test me
-            </Button>,
-            <Dialog key="dialog" open={this.state.open} onClose={this.handleClose} aria-labelledby="form-dialog-title">
-                <DialogTitle id="form-dialog-title">Select Challenge</DialogTitle>
-                <DialogContent>
-                    <DialogContentText>
-                        To check your team, please select challenge you want to be checked with.
-                    </DialogContentText>
-                    <br/>
-                    <Select name="challenge" displayEmpty value={this.state.challenge} onChange={this.handleChange}>
-                        {challenges.map(challenge => <MenuItem key={challenge.id}
-                                                               value={challenge.id}>{challenge.name}</MenuItem>)}
-                    </Select>
-                </DialogContent>
-                <DialogActions>
-                    <Button onClick={this.handleClose} color="primary">
-                        Cancel
-                    </Button>
-                    <Button variant="contained" onClick={this.handleExecute} color="primary">
-                        Start
-                    </Button>
-                </DialogActions>
-            </Dialog>];
+    function renderSelectOption(challenge) {
+        return <MenuItem key={challenge.id} value={challenge.id}>{challenge.name}</MenuItem>;
     }
+
+    function isFormValid() {
+        return !state.challenge;
+    }
+
+    return [
+        <Button key="action" onClick={handleOpen} className={classes.actionButton} variant="contained"
+                color="secondary">
+            <ComputerIcon className={classes.actionButtonIcon}/>
+            Test me
+        </Button>,
+        <Dialog key="dialog" open={state.open} onClose={handleClose}>
+            <DialogTitle>Select Challenge</DialogTitle>
+            <DialogContent>
+                <DialogContentText className={classes.text}>
+                    To check your team, please select challenge you want to be checked with.
+                </DialogContentText>
+                <Select name="challenge" displayEmpty value={state.challenge}
+                        className={classes.selectEmpty} onChange={handleChallengeChange} fullWidth>
+                    <MenuItem value="" disabled>Select Challenge</MenuItem>
+                    {challenges.map(challenge => renderSelectOption(challenge))}
+                </Select>
+            </DialogContent>
+            <DialogActions>
+                <Button onClick={handleClose} color="primary">
+                    Cancel
+                </Button>
+                <Button disabled={isFormValid()} variant="contained" onClick={handleSubmit} color="primary">
+                    Start
+                </Button>
+            </DialogActions>
+        </Dialog>];
 }
 
 const mapStateToProps = (state) => ({
@@ -95,9 +92,8 @@ const mapStateToProps = (state) => ({
     isLoading: state.challenges.isLoading
 });
 
-const mapDispatchToProps = (dispatch) => ({
-    fetchChallenges: () => dispatch(CHALLENGES_FETCH),
-    sendExample: (...props) => dispatch(TEAM_SEND_EXAMPLE(...props))
-});
-
-export default connect(mapStateToProps, mapDispatchToProps)(withStyles(styles)(TestTeamButton));
+const mapDispatchToProps = dispatch => bindActionCreators({
+    fetchChallenges: CHALLENGES_FETCH,
+    sendExample: TEAM_SEND_EXAMPLE
+}, dispatch);
+export default connect(mapStateToProps, mapDispatchToProps)(TestTeamButton);

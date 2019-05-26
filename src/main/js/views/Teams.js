@@ -1,6 +1,5 @@
-import React, { Component } from 'react';
-import { withStyles } from "@material-ui/core";
-import PropTypes from "prop-types";
+import React, { useEffect, useState } from 'react';
+import { makeStyles } from "@material-ui/core";
 import Typography from '@material-ui/core/Typography';
 import List from "@material-ui/core/List";
 import ListItem from "@material-ui/core/ListItem";
@@ -11,94 +10,56 @@ import { connect } from "react-redux";
 import { TEAMS_FETCH } from "../actions";
 import Loader from "../components/Loader";
 import Dialog from "@material-ui/core/Dialog";
-import Slide from "@material-ui/core/Slide";
 import TeamDetail from "./TeamDetail";
 import ListItemSecondaryAction from "@material-ui/core/ListItemSecondaryAction";
 import TeamHealthIndicator from "../components/TeamHealthIndicator";
+import { bindActionCreators } from "redux";
 
-const styles = theme => ({
+const useStyles = makeStyles(theme => ({
     dialog: {
         backgroundColor: '#fafafa',
     },
     healthChip: {
-        marginRight: theme.spacing.unit * 2
+        marginRight: theme.spacing(2)
     }
-});
+}));
 
-class Teams extends Component {
-
-    constructor(props) {
-        super(props);
-        this.state = {
-            open: false
-        };
-    }
-
-    static Transition(props) {
-        return <Slide direction="up" {...props} />;
-    }
-
-    async componentDidMount() {
-        this.props.fetchTeams();
-        this.interval = setInterval(() => {
-            this.props.fetchTeams()
-        }, 3000);
-    }
-
-    componentWillUnmount() {
-        clearInterval(this.interval);
-    }
-
-    handleClose() {
-        this.setState({ open: false });
-    };
-
-    handleOpen(team) {
-        this.setState({ open: true, selected: team });
-    };
-
-    render() {
-        const { classes, teams, isLoading } = this.props;
-        if (isLoading) return <Loader/>;
-        return [
-            <Typography key="title" variant="h4" gutterBottom>
-                Teams
-            </Typography>,
-            <List key="teams-list">
-                {teams.map((team, index) =>
-                    <ListItem button key={team.name + index} onClick={() => this.handleOpen(team)}>
-                        <ListItemAvatar>
-                            <Avatar alt={team.name} src={team.avatar}/>
-                        </ListItemAvatar>
-                        <ListItemText primary={team.name} secondary={team.address}/>
-                        <ListItemSecondaryAction className={classes.healthChip}>
-                            <TeamHealthIndicator health={team.health}/>
-                        </ListItemSecondaryAction>
-                    </ListItem>
-                )}
-            </List>,
-            <Dialog key="team-details-modal" fullScreen open={this.state.open} onClose={() => this.handleClose()}
-                    TransitionComponent={Teams.Transition} className={classes.dialog}>
-                <TeamDetail onClose={() => this.handleClose()} team={this.state.selected}/>
-            </Dialog>
-        ];
-    }
+function Teams({ fetchTeams, teams = [], isLoading }) {
+    const classes = useStyles();
+    const [modal, setModal] = useState({ open: false, selected: null });
+    useEffect(() => {
+        fetchTeams();
+    }, [teams.length]);
+    if (isLoading) return <Loader/>;
+    return [
+        <Typography key="title" variant="h4" gutterBottom>
+            Teams
+        </Typography>,
+        <List key="teams-list">
+            {teams.map((team, index) =>
+                <ListItem button key={team.name + index} onClick={() => setModal({ open: true, selected: team })}>
+                    <ListItemAvatar>
+                        <Avatar alt={team.name} src={team.avatar}/>
+                    </ListItemAvatar>
+                    <ListItemText primary={team.name} secondary={team.address}/>
+                    <ListItemSecondaryAction className={classes.healthChip}>
+                        <TeamHealthIndicator health={team.health}/>
+                    </ListItemSecondaryAction>
+                </ListItem>
+            )}
+        </List>,
+        <Dialog key="team-details-modal" fullScreen open={modal.open}
+                onClose={() => setModal({ open: false, selected: modal.selected })}
+                className={classes.dialog}>
+            <TeamDetail onClose={() => setModal({ open: false, selected: modal.selected })} team={modal.selected}/>
+        </Dialog>
+    ];
 }
-
-Teams.defaultProps = { teams: [] };
-
-Teams.propTypes = {
-    classes: PropTypes.object.isRequired,
-};
 
 const mapStateToProps = (state) => ({
     teams: state.teams.data,
     isLoading: state.teams.isLoading
 });
 
-const mapDispatchToProps = (dispatch) => ({
-    fetchTeams: () => dispatch(TEAMS_FETCH)
-});
-
-const connectedTeams = connect(mapStateToProps, mapDispatchToProps)(Teams);
-export default withStyles(styles)(connectedTeams);
+const mapDispatchToProps = dispatch => bindActionCreators({ fetchTeams: TEAMS_FETCH }, dispatch);
+export default connect(mapStateToProps, mapDispatchToProps)(Teams);

@@ -1,26 +1,19 @@
 import React from "react";
-import { withStyles } from "@material-ui/core";
-import PropTypes from "prop-types";
-import DoneIcon from "@material-ui/core/SvgIcon/SvgIcon";
+import DoneIcon from "@material-ui/icons/Done";
+import ErrorIcon from "@material-ui/icons/Error";
 import green from "@material-ui/core/colors/green";
 import red from "@material-ui/core/colors/red";
 import Chip from "@material-ui/core/Chip";
-import ErrorIcon from "@material-ui/icons/Error";
+import PropTypes from "prop-types";
 
-const styles = theme => ({});
-
-function TeamHealthIndicator({ health, classes }) {
+function TeamHealthIndicator({ health }) {
     const icon = health ? <DoneIcon/> : <ErrorIcon/>;
     const color = health ? green.A100 : red.A100;
     const status = health ? 'HEALTHY' : 'DEAD';
     return <Chip style={{ backgroundColor: color }} label={status} icon={icon}/>;
 }
 
-
 TeamHealthIndicator.defaultProps = { teams: [] };
+TeamHealthIndicator.propTypes = { health: PropTypes.bool.isRequired };
 
-TeamHealthIndicator.propTypes = {
-    classes: PropTypes.object.isRequired,
-};
-
-export default withStyles(styles)(TeamHealthIndicator);
+export default TeamHealthIndicator;

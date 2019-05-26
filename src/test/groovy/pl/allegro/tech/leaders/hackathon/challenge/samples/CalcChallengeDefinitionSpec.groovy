@@ -12,7 +12,7 @@ class CalcChallengeDefinitionSpec extends Specification {
             CalcChallengeDefinition challenge = new CalcChallengeDefinition()
         when:
             List results = challenge.getTasks().collect {
-                it.scoreSolution(solve(it.getParams().get("equation")))
+                it.scoreSolution(solve(it.getParameters().get("equation")))
             }
         then:
             results.every { 1 }

@@ -1,6 +1,4 @@
 import React from "react";
-import { withStyles } from "@material-ui/core";
-import PropTypes from "prop-types";
 import Drawer from "@material-ui/core/Drawer";
 import Divider from "@material-ui/core/Divider";
 import List from "@material-ui/core/List";
@@ -12,17 +10,19 @@ import { connect } from "react-redux";
 import { push } from 'connected-react-router'
 import { DRAWER_CLOSE, DRAWER_OPEN } from "../actions";
 import routes, { ADDITIONAL_MENU, MAIN_MENU } from "../routes";
+import { makeStyles } from "@material-ui/core";
 
 const drawerWidth = 240;
 
-const styles = theme => ({
+const useStyles = makeStyles(theme => ({
     drawer: { width: drawerWidth, flexShrink: 0 },
     drawerPaper: { width: drawerWidth },
-    content: { flexGrow: 1, padding: theme.spacing.unit * 3 },
+    content: { flexGrow: 1, padding: theme.spacing(3) },
     toolbar: theme.mixins.toolbar,
-});
+}));
 
-function MainDrawer({ classes, open, closeDrawer, openDrawer, navigateTo }) {
+function MainDrawer({ open, closeDrawer, navigateTo }) {
+    const classes = useStyles();
     const mainMenu = routes.filter(route => route.menu === MAIN_MENU)
         .map(route => renderRoute(route));
 
@@ -59,9 +59,7 @@ function MainDrawer({ classes, open, closeDrawer, openDrawer, navigateTo }) {
     }
 }
 
-MainDrawer.propTypes = {
-    classes: PropTypes.object.isRequired,
-};
+MainDrawer.propTypes = {};
 
 const mapStateToProps = (state) => ({
     open: state.drawer.open
@@ -76,5 +74,4 @@ const mapDispatchToProps = (dispatch) => ({
     }
 });
 
-const connectedMainDrawer = connect(mapStateToProps, mapDispatchToProps)(MainDrawer);
-export default withStyles(styles)(connectedMainDrawer);
+export default connect(mapStateToProps, mapDispatchToProps)(MainDrawer);

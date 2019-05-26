@@ -22,7 +22,7 @@ class ChallengeActivationSpec extends ChallengeSpec {
             challengeDetails.name == COUNT_CHALLENGE.name
             challengeDetails.description == COUNT_CHALLENGE.description
             challengeDetails.challengeEndpoint == COUNT_CHALLENGE.challengeEndpoint
-            challengeDetails.challengeParams == COUNT_CHALLENGE.challengeParams
+            challengeDetails.challengeParameters == COUNT_CHALLENGE.challengeParams
             challengeDetails.challengeResponse == COUNT_CHALLENGE.challengeResponse
             challengeDetails.activatedAt == clock.instant()
 

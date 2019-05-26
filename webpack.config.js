@@ -11,7 +11,7 @@ module.exports = env => ({
         filename: 'bundle.js',
     },
     plugins: [
-        new CleanWebpackPlugin(['*.hot-update.js*']),
+        new CleanWebpackPlugin({cleanOnceBeforeBuildPatterns: ['!*.html', '!*.css']}),
     ],
     module: {
         rules: [

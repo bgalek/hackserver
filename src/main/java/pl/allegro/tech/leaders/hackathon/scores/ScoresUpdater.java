@@ -19,14 +19,14 @@ class ScoresUpdater {
         Scores scores = new Scores(clock.instant());
         return taskResults
                 .doOnNext(scores::updateScores)
-                .concatWith(this.mergeWithPreviousScoresAndSave(scores));
+                .flatMap(it -> mergeWithPreviousScoresAndSave(scores, it));
     }
 
-    private Mono<TaskResult> mergeWithPreviousScoresAndSave(Scores scores) {
+    private Mono<TaskResult> mergeWithPreviousScoresAndSave(Scores scores, TaskResult taskResult) {
         return repository.findLast()
                 .doOnNext(scores::mergeWithPrevious)
                 .thenReturn(scores)
                 .flatMap(repository::save)
-                .then(Mono.empty());
+                .map(it -> taskResult);
     }
 }

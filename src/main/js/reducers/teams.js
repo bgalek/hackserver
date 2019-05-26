@@ -1,4 +1,4 @@
-import { TEAM_REGISTERED_TYPE, TEAMS_FETCH_SUCCEEDED_TYPE } from "../actions";
+import { TEAM_UPDATED_TYPE, TEAMS_FETCH_SUCCEEDED_TYPE } from "../actions";
 
 const defaultState = {
     data: [],
@@ -9,8 +9,12 @@ export default (state = defaultState, action) => {
     switch (action.type) {
         case TEAMS_FETCH_SUCCEEDED_TYPE:
             return { data: action.payload, isLoading: false };
-        case TEAM_REGISTERED_TYPE:
-            return { data: state.data.concat([action.payload]) };
+        case TEAM_UPDATED_TYPE:
+            return {
+                data: state.data.map(it => {
+                    return it.name === action.payload.name ? Object.assign(it, action.payload) : it;
+                })
+            };
         default:
             return state;
     }

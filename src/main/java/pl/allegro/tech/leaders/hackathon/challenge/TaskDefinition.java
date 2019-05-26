@@ -6,7 +6,7 @@ public interface TaskDefinition {
 
     String getName();
 
-    Map<String, String> getParams();
+    Map<String, String> getParameters();
 
     TaskScoring getTaskScoring();
 
@@ -18,13 +18,13 @@ public interface TaskDefinition {
 
     class TaskWithFixedResult implements TaskDefinition {
         private final String name;
-        private final Map<String, String> params;
+        private final Map<String, String> parameters;
         private final Object expectedSolution;
         private final TaskScoring taskScoring;
 
-        TaskWithFixedResult(String name, Map<String, String> params, Object expectedSolution, TaskScoring taskScoring) {
+        TaskWithFixedResult(String name, Map<String, String> parameters, Object expectedSolution, TaskScoring taskScoring) {
             this.name = name;
-            this.params = params;
+            this.parameters = parameters;
             this.expectedSolution = expectedSolution;
             this.taskScoring = taskScoring;
         }
@@ -39,8 +39,8 @@ public interface TaskDefinition {
         }
 
         @Override
-        public Map<String, String> getParams() {
-            return params;
+        public Map<String, String> getParameters() {
+            return parameters;
         }
 
         @Override

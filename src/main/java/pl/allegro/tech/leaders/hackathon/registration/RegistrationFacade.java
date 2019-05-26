@@ -12,15 +12,15 @@ public class RegistrationFacade {
     private final TeamRepository teamRepository;
     private final HealthCheckMonitor healthCheckMonitor;
 
-    RegistrationFacade(TeamRepository teamRepository, HealthCheckMonitor healthCheckMonitor) {
+    RegistrationFacade(TeamRepository teamRepository,
+                       HealthCheckMonitor healthCheckMonitor) {
         this.teamRepository = teamRepository;
         this.healthCheckMonitor = healthCheckMonitor;
     }
 
     public Mono<RegisteredTeam> register(TeamRegistration teamRegistration) {
         Team team = new Team(teamRegistration.getName(), teamRegistration.getRemoteAddress());
-        return teamRepository.save(team)
-                .map(this::toRegisteredTeam);
+        return teamRepository.save(team).map(this::toRegisteredTeam);
     }
 
     public Flux<RegisteredTeam> getAll() {

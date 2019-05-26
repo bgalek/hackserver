@@ -4,27 +4,40 @@ import AppBar from "@material-ui/core/AppBar";
 import Toolbar from "@material-ui/core/Toolbar";
 import IconButton from "@material-ui/core/IconButton";
 import CloseIcon from "@material-ui/icons/Close";
-import {withStyles} from "@material-ui/core";
-import {connect} from "react-redux";
-import {bindActionCreators} from "redux";
-import {SHOW_NOTIFICATION} from "../actions";
-import CardContent from "@material-ui/core/CardContent";
-import Card from "@material-ui/core/Card";
+import { connect } from "react-redux";
+import { bindActionCreators } from "redux";
+import { SHOW_NOTIFICATION } from "../actions";
+import Grid from "@material-ui/core/Grid";
+import distanceInWordsToNow from "date-fns/distance_in_words_to_now";
+import List from "@material-ui/core/List";
+import ListItem from "@material-ui/core/ListItem";
+import ListItemText from "@material-ui/core/ListItemText";
+import { makeStyles } from '@material-ui/core/styles';
+import StarBorder from '@material-ui/icons/StarBorder';
+import ListItemIcon from "@material-ui/core/ListItemIcon";
 
-const styles = theme => ({
+const useStyles = makeStyles(theme => ({
     appBar: {
         position: 'relative',
     },
-    card: {
-        margin: 10,
-        padding: 10
+    content: {
+        padding: theme.spacing(4)
     },
     challengeName: {
         flex: '1 0 auto',
-    }
-});
+        marginLeft: theme.spacing(2)
+    },
+    nested: {
+        paddingLeft: theme.spacing(4),
+    },
+}));
 
-export function ChallengeDetail({challenge, classes, onClose}) {
+export function ChallengeDetail({ challenge, onClose }) {
+    const classes = useStyles();
+    const url = new URL(challenge.challengeEndpoint, 'http://localhost:8080');
+    challenge.example.parameters.forEach(parameter => {
+        url.searchParams.append(Object.entries(parameter)[0][0], Object.entries(parameter)[0][1])
+    });
     return [
         <AppBar key="modal-title" className={classes.appBar}>
             <Toolbar>
@@ -34,19 +47,42 @@ export function ChallengeDetail({challenge, classes, onClose}) {
                 <Typography variant="h6" color="inherit" className={classes.challengeName}>
                     {challenge.name}
                 </Typography>
+                <Typography variant="body2" color="inherit">
+                    <strong>{distanceInWordsToNow(new Date(challenge.activatedAt), { addSuffix: true })}</strong>
+                </Typography>
             </Toolbar>
         </AppBar>,
-        <Card key="modal-content" className={classes.card}>
-            <CardContent>
-                <Typography variant="h5" gutterBottom>{challenge.description}</Typography>
-                <Typography>{challenge.activatedAt}</Typography>
-                <Typography>{challenge.challengeEndpoint}</Typography>
-                <Typography>{JSON.stringify(challenge.challengeParams)}</Typography>
-                <Typography>{JSON.stringify(challenge.challengeResponse)}</Typography>
-            </CardContent>
-        </Card>
+        <Grid key="modal-content" className={classes.content} direction="column" container>
+            <Typography variant="h6" gutterBottom>{challenge.description}</Typography>
+            <List className={classes.root}>
+                <ListItem>
+                    <ListItemText primary="Endpoint:" secondary={challenge.challengeEndpoint}/>
+                </ListItem>
+                <ListItem>
+                    <ListItemText primary="Parameters:"/>
+                </ListItem>
+                <List disablePadding>
+                    {challenge.challengeParameters
+                        .map(param => <ListItem key={param.name} className={classes.nested}>
+                            <ListItemIcon>
+                                <StarBorder/>
+                            </ListItemIcon>
+                            <ListItemText primary={param.name} secondary={param.desc}/>
+                        </ListItem>)}
+                </List>
+                <ListItem>
+                    <ListItemText primary="Response:" secondary={challenge.challengeResponse.type}/>
+                </ListItem>
+                <ListItem>
+                    <ListItemText primary="Example Request:" secondary={decodeURIComponent(url.toString())}/>
+                </ListItem>
+                <ListItem>
+                    <ListItemText primary="Example Response:" secondary={JSON.stringify(challenge.example.expectedSolution)}/>
+                </ListItem>
+            </List>
+        </Grid>
     ];
 }
 
-const mapDispatchToProps = dispatch => bindActionCreators({showSnackbar: SHOW_NOTIFICATION}, dispatch);
-export default connect(null, mapDispatchToProps)(withStyles(styles)(ChallengeDetail));
+const mapDispatchToProps = dispatch => bindActionCreators({ showSnackbar: SHOW_NOTIFICATION }, dispatch);
+export default connect(null, mapDispatchToProps)(ChallengeDetail);

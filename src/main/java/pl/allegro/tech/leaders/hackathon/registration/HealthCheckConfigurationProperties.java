@@ -12,7 +12,7 @@ import java.time.temporal.ChronoUnit;
 class HealthCheckConfigurationProperties {
 
     @DurationUnit(ChronoUnit.MILLIS)
-    private Duration rate = Duration.ofSeconds(1);
+    private Duration rate = Duration.ofSeconds(5);
 
     @DurationUnit(ChronoUnit.MILLIS)
     private Duration delay = Duration.ofSeconds(1);

@@ -1,21 +1,11 @@
 import com.moowork.gradle.node.npm.NpmTask
 
-buildscript {
-    repositories {
-        gradlePluginPortal()
-    }
-    dependencies {
-        classpath("org.springframework.boot:spring-boot-gradle-plugin:2.1.1.RELEASE")
-    }
-}
-
-apply(plugin = "org.springframework.boot")
-apply(plugin = "io.spring.dependency-management")
-
 plugins {
     java
     groovy
     application
+    id("org.springframework.boot") version "2.1.5.RELEASE"
+    id("io.spring.dependency-management") version "1.0.7.RELEASE"
     id("com.moowork.node") version "1.2.0"
     id("com.gradle.build-scan") version "2.1"
     id("com.coditory.integration-test") version "1.0.5"
@@ -49,8 +39,7 @@ dependencies {
     implementation("com.github.slugify:slugify:2.3")
     implementation("io.projectreactor:reactor-core:3.2.5.RELEASE")
     implementation("io.vavr:vavr:0.9.3")
-
-    runtimeOnly("org.springframework.boot:spring-boot-devtools")
+    implementation("io.micrometer:micrometer-registry-prometheus:1.1.4")
 
     annotationProcessor("org.springframework.boot:spring-boot-configuration-processor")
 
@@ -72,6 +61,11 @@ buildScan {
 }
 
 task<NpmTask>("webpack") {
+    inputs.file("package-lock.json").withPathSensitivity(PathSensitivity.RELATIVE)
+    inputs.file("webpack.config.js").withPathSensitivity(PathSensitivity.RELATIVE)
+    inputs.dir("src/main/js").withPathSensitivity(PathSensitivity.RELATIVE)
+    outputs.dir("$buildDir/resources/main/static")
+    outputs.cacheIf { true }
     dependsOn("npmInstall")
     setArgs(listOf("run", "webpack"))
 }
@@ -81,23 +75,14 @@ task<NpmTask>("watch") {
 }
 
 node {
-    version = "11.6.0"
-    npmVersion = "6.5.0"
+    version = "12.3.0"
+    npmVersion = "6.9.0"
     download = true
 }
 
 tasks {
-
     processResources {
-        // TODO: After adding this task dependency running unit tests in IDE slowed down drastically. You could specify task caching.
         dependsOn("webpack")
-    }
-
-    withType<Test> {
-        testLogging {
-            setExceptionFormat("full")
-            events("passed", "skipped", "failed")
-        }
     }
 }
 

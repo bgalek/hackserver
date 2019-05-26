@@ -6,7 +6,7 @@ import IconButton from "@material-ui/core/IconButton";
 import CloseIcon from "@material-ui/icons/Close";
 import Grid from "@material-ui/core/Grid";
 import Avatar from "@material-ui/core/Avatar";
-import { withStyles } from "@material-ui/core";
+import { makeStyles } from "@material-ui/core";
 import Table from "@material-ui/core/Table";
 import TableHead from "@material-ui/core/TableHead";
 import TableRow from "@material-ui/core/TableRow";
@@ -19,33 +19,34 @@ import { SHOW_NOTIFICATION } from "../actions";
 import ChallengeResults from "../components/ChallengeResults";
 import TeamHealthIndicator from "../components/TeamHealthIndicator";
 
-const styles = theme => ({
+const useStyles = makeStyles(theme => ({
     appBar: {
         position: 'relative',
     },
     tableInfo: {
-        margin: theme.spacing.unit * 2,
+        margin: theme.spacing(2),
         flex: 1
     },
     header: {
         backgroundColor: '#eee',
-        padding: theme.spacing.unit * 2
+        padding: theme.spacing(2)
     },
     card: {
-        margin: 10,
-        padding: 10
+        padding: theme.spacing(4),
     },
     avatar: {
-        margin: theme.spacing.unit * 2,
+        margin: theme.spacing(2),
         width: 128,
         height: 128,
     },
     challengeName: {
         flex: '1 0 auto',
+        marginLeft: theme.spacing(2)
     }
-});
+}));
 
-export function TeamDetail({ team, classes, onClose }) {
+export function TeamDetail({ team, onClose }) {
+    const classes = useStyles();
     return [
         <AppBar key="modal-title" className={classes.appBar}>
             <Toolbar>
@@ -55,7 +56,7 @@ export function TeamDetail({ team, classes, onClose }) {
                 <Typography variant="h6" color="inherit" className={classes.challengeName}>
                     {team.name}
                 </Typography>
-                <TestTeamButton team={team.name}/>
+                <TestTeamButton team={team}/>
             </Toolbar>
         </AppBar>,
         <Grid key="modal-content" container justify="center" alignItems="center">
@@ -86,4 +87,4 @@ export function TeamDetail({ team, classes, onClose }) {
 }
 
 const mapDispatchToProps = dispatch => bindActionCreators({ showSnackbar: SHOW_NOTIFICATION }, dispatch);
-export default connect(null, mapDispatchToProps)(withStyles(styles)(TeamDetail));
+export default connect(null, mapDispatchToProps)(TeamDetail);

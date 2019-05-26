@@ -1,7 +1,11 @@
 package pl.allegro.tech.leaders.hackathon.challenge
 
 import com.fasterxml.jackson.databind.ObjectMapper
+import org.springframework.context.ApplicationEvent
+import org.springframework.context.ApplicationEventPublisher
 import org.springframework.http.ResponseEntity
+import org.springframework.util.LinkedMultiValueMap
+import org.springframework.web.util.UriComponentsBuilder
 import pl.allegro.tech.leaders.hackathon.challenge.api.ChallengeActivationResult
 import pl.allegro.tech.leaders.hackathon.challenge.api.ChallengeDetails
 import pl.allegro.tech.leaders.hackathon.challenge.api.TaskResult
@@ -37,6 +41,7 @@ abstract class ChallengeSpec extends Specification {
             .challengeFacade(
             clock,
             objectMapper,
+            new InMemoryApplicationEventPublisher(),
             teamClient,
             new InMemoryChallengeStateRepository(),
             new InMemoryChallengeResultRepository(),
@@ -132,20 +137,25 @@ class InMemoryTeamClient implements TeamClient {
         recordResponse(uri, response)
     }
 
-    private String buildUri(RegisteredTeam team, ChallengeDefinition challenge, TaskWithFixedResult task) {
-        String queryParams = task.getParams()
-                .toSorted { it.key }
-                .collect { "${it.key}=${it.value}" }
-                .join("&")
-        return buildUri(team, challenge) + "?" + queryParams
-    }
-
-    private static String buildUri(RegisteredTeam team, ChallengeDefinition challengeDefinition) {
-        return buildUri(team) + challengeDefinition.challengeEndpoint
+    private static String buildUri(RegisteredTeam team, ChallengeDefinition challenge, TaskWithFixedResult task) {
+        return UriComponentsBuilder
+                .newInstance()
+                .scheme('http')
+                .host(team.remoteAddress.getAddress().getHostAddress())
+                .port(team.getRemoteAddress().getPort())
+                .path(challenge.challengeEndpoint)
+                .queryParams(new LinkedMultiValueMap<>(task.getParameters().collectEntries { key, value -> [key, [value]] }))
+                .build()
+                .toString()
     }
 
     private static String buildUri(RegisteredTeam team) {
-        return "http://${team.remoteAddress.getAddress().getHostAddress()}:${team.remoteAddress.getPort()}"
+        return UriComponentsBuilder
+                .newInstance()
+                .scheme('http')
+                .host(team.remoteAddress.getAddress().getHostAddress())
+                .port(team.getRemoteAddress().getPort()).build()
+                .toString()
     }
 }
 
@@ -166,6 +176,20 @@ class InMemoryChallengeStateRepository implements ChallengeStateRepository {
     @Override
     Flux<ChallengeState> findAll() {
         return Flux.fromIterable(store.values())
+    }
+}
+
+class InMemoryApplicationEventPublisher implements ApplicationEventPublisher {
+    List<Object> events = []
+
+    @Override
+    void publishEvent(ApplicationEvent event) {
+        events.add(event)
+    }
+
+    @Override
+    void publishEvent(Object event) {
+        events.add(event)
     }
 }
 
