@@ -1,20 +1,27 @@
 package pl.allegro.tech.leaders.hackathon.registration;
 
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.data.repository.Repository;
 import pl.allegro.tech.leaders.hackathon.registration.api.TeamSecret;
+import pl.allegro.tech.leaders.hackathon.registration.api.TeamUpdatedEvent;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 class TeamRepository {
 
     private final PersistenceTeamRepository persistenceTeamRepository;
+    private final ApplicationEventPublisher applicationEventPublisher;
 
-    TeamRepository(PersistenceTeamRepository persistenceTeamRepository) {
+    TeamRepository(PersistenceTeamRepository persistenceTeamRepository,
+                   ApplicationEventPublisher applicationEventPublisher) {
         this.persistenceTeamRepository = persistenceTeamRepository;
+        this.applicationEventPublisher = applicationEventPublisher;
     }
 
     Mono<Team> save(Team team) {
-        return persistenceTeamRepository.save(team);
+        return persistenceTeamRepository.save(team)
+                .doOnSuccess(it -> applicationEventPublisher
+                        .publishEvent(new TeamUpdatedEvent(it.getName(), it.getRemoteAddress())));
     }
 
     Flux<Team> findAll() {

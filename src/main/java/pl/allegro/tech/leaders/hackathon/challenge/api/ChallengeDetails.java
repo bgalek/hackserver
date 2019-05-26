@@ -2,9 +2,12 @@ package pl.allegro.tech.leaders.hackathon.challenge.api;
 
 import com.fasterxml.jackson.module.jsonSchema.JsonSchema;
 import pl.allegro.tech.leaders.hackathon.challenge.ChallengeDefinition;
+import pl.allegro.tech.leaders.hackathon.challenge.TaskDefinition.TaskWithFixedResult;
 
 import java.time.Instant;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 public class ChallengeDetails {
     private final String id;
@@ -13,8 +16,9 @@ public class ChallengeDetails {
     private final String name;
     private final String description;
     private final String challengeEndpoint;
-    private final List<ChallengeDefinition.QueryParam> challengeParams;
+    private final List<ChallengeDefinition.QueryParam> challengeParameters;
     private final JsonSchema challengeResponse;
+    private final Example example;
 
     public ChallengeDetails(
             String id,
@@ -23,16 +27,18 @@ public class ChallengeDetails {
             String name,
             String description,
             String challengeEndpoint,
-            List<ChallengeDefinition.QueryParam> challengeParams,
-            JsonSchema challengeResponse) {
+            List<ChallengeDefinition.QueryParam> challengeParameters,
+            JsonSchema challengeResponse,
+            TaskWithFixedResult exampleTaskDefinition) {
         this.id = id;
         this.active = active;
         this.activatedAt = activatedAt;
         this.name = name;
         this.description = description;
         this.challengeEndpoint = challengeEndpoint;
-        this.challengeParams = challengeParams;
+        this.challengeParameters = challengeParameters;
         this.challengeResponse = challengeResponse;
+        this.example = new Example(exampleTaskDefinition.getParameters(), exampleTaskDefinition.getExpectedSolution());
     }
 
     public boolean isActive() {
@@ -59,11 +65,34 @@ public class ChallengeDetails {
         return challengeEndpoint;
     }
 
-    public List<ChallengeDefinition.QueryParam> getChallengeParams() {
-        return challengeParams;
+    public List<ChallengeDefinition.QueryParam> getChallengeParameters() {
+        return challengeParameters;
     }
 
     public JsonSchema getChallengeResponse() {
         return challengeResponse;
+    }
+
+    public Example getExample() {
+        return example;
+    }
+
+    private static class Example {
+
+        private final Set<Map.Entry<String, String>> parameters;
+        private final Object expectedSolution;
+
+        Example(Map<String, String> parameters, Object expectedSolution) {
+            this.parameters = parameters.entrySet();
+            this.expectedSolution = expectedSolution;
+        }
+
+        public Set<Map.Entry<String, String>> getParameters() {
+            return parameters;
+        }
+
+        public Object getExpectedSolution() {
+            return expectedSolution;
+        }
     }
 }

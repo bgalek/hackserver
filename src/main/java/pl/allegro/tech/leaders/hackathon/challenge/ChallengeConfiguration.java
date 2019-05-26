@@ -1,6 +1,7 @@
 package pl.allegro.tech.leaders.hackathon.challenge;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import pl.allegro.tech.leaders.hackathon.challenge.api.TeamClient;
@@ -15,13 +16,14 @@ class ChallengeConfiguration {
     ChallengeFacade challengeFacade(
             Clock clock,
             ObjectMapper objectMapper,
+            ApplicationEventPublisher applicationEventPublisher,
             TeamClient teamClient,
             ChallengeStateRepository challengeStateRepository,
             ChallengeResultRepository challengeResultRepository,
             RegistrationFacade registrationFacade,
             ScoreRegistry scoreRegistry) {
         ChallengeCreator creator = new ChallengeCreator();
-        ChallengeRepository repository = new ChallengeRepository(challengeStateRepository, creator);
+        ChallengeRepository repository = new ChallengeRepository(applicationEventPublisher, challengeStateRepository, creator);
         ChallengeProvider provider = new ChallengeProvider(repository);
         ChallengeActivator activator = new ChallengeActivator(clock, repository);
         ChallengeRegistrar registrar = new ChallengeRegistrar(repository, creator);

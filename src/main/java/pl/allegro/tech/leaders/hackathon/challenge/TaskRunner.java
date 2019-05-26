@@ -43,7 +43,7 @@ class TaskRunner {
     }
 
     private String buildQueryParams(TaskDefinition task) {
-        return task.getParams().entrySet().stream()
+        return task.getParameters().entrySet().stream()
                 .sorted(comparing(Entry::getKey))
                 .map(entry -> entry.getKey() + "=" + entry.getValue())
                 .collect(joining("&", "?", ""));
@@ -89,7 +89,7 @@ class TaskRunner {
         try {
             return Either.right(objectMapper.readValue(body, solutionType));
         } catch (Exception e) {
-            logger.info("can't parse response from a team {}", team.getName(), e);
+            logger.info("can't parse response from a team {} - {}", team.getName(), e.getMessage());
             return Either.left(e.getClass().getSimpleName() + ": " + e.getMessage());
         }
     }

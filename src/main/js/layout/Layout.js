@@ -1,16 +1,16 @@
 import React from "react";
 import CssBaseline from '@material-ui/core/CssBaseline';
-import { withStyles } from "@material-ui/core";
-import PropTypes from "prop-types";
+import { makeStyles } from "@material-ui/core";
 import Header from "./Header";
 import Notifications from "./Notifications";
 
-const styles = theme => ({
+const useStyles = makeStyles(theme => ({
     appBarSpacer: theme.mixins.toolbar,
-    content: { flexGrow: 1, padding: theme.spacing.unit * 3, height: '100vh', overflow: 'auto' }
-});
+    content: { flexGrow: 1, padding: theme.spacing(3), height: '100vh', overflow: 'auto' }
+}));
 
-function Layout({ classes, children }) {
+function Layout({ children }) {
+    const classes = useStyles();
     return [
         <CssBaseline key="cssBaseLine"/>,
         <Header key="header"/>,
@@ -22,8 +22,6 @@ function Layout({ classes, children }) {
     ]
 }
 
-Layout.propTypes = {
-    classes: PropTypes.object.isRequired,
-};
+Layout.propTypes = {};
 
-export default withStyles(styles)(Layout);
+export default Layout;

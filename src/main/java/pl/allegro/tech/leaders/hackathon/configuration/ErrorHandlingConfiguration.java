@@ -20,12 +20,12 @@ class ErrorHandlingConfiguration {
     private static final Logger logger = LoggerFactory.getLogger(ErrorHandlingConfiguration.class);
 
     @Bean
-    public ConstraintViolationProblemModule constraintViolationProblemModule() {
+    ConstraintViolationProblemModule constraintViolationProblemModule() {
         return new ConstraintViolationProblemModule();
     }
 
     @ExceptionHandler(ResponseStatusException.class)
-    public ResponseEntity<Problem> responseStatusException(ResponseStatusException responseStatusException) {
+    ResponseEntity<Problem> responseStatusException(ResponseStatusException responseStatusException) {
         return ResponseEntity.status(responseStatusException.getStatus())
                 .body(Problem.builder()
                         .withStatus(Status.valueOf(responseStatusException.getStatus().name()))
@@ -33,8 +33,9 @@ class ErrorHandlingConfiguration {
                         .build()
                 );
     }
+
     @ExceptionHandler(DuplicateKeyException.class)
-    public ResponseEntity<Problem> responseStatusException(DuplicateKeyException responseStatusException) {
+    ResponseEntity<Problem> responseStatusException(DuplicateKeyException responseStatusException) {
         return ResponseEntity.status(HttpStatus.CONFLICT)
                 .body(Problem.builder()
                         .withStatus(Status.valueOf(HttpStatus.CONFLICT.name()))
@@ -44,7 +45,7 @@ class ErrorHandlingConfiguration {
     }
 
     @ExceptionHandler(HttpMessageNotReadableException.class)
-    public ResponseEntity<Problem> responseStatusException(HttpMessageNotReadableException responseStatusException) {
+    ResponseEntity<Problem> responseStatusException(HttpMessageNotReadableException responseStatusException) {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                 .body(Problem.builder()
                         .withStatus(Status.valueOf(HttpStatus.BAD_REQUEST.name()))
@@ -54,7 +55,7 @@ class ErrorHandlingConfiguration {
     }
 
     @ExceptionHandler(Exception.class)
-    public ResponseEntity<Problem> unhandledException(Exception exception) {
+    ResponseEntity<Problem> unhandledException(Exception exception) {
         logger.error("Unhandled exception ☠️☠️☠️", exception);
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                 .body(Problem.builder()

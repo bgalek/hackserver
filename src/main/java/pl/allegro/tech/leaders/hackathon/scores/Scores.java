@@ -62,14 +62,12 @@ class Scores {
 
     void updateScores(TaskResult result) {
         String key = toChallengeTeamKey(result.getChallengeId(), result.getTeamId());
-        challengeScorePerTeamId.merge(key, result.getScore(), (a, b) -> a + b);
+        challengeScorePerTeamId.merge(key, result.getScore(), Long::sum);
     }
 
     HackatonScores getHackatonScores() {
         Map<String, Long> scores = new HashMap<>();
-        getScoresWithParsedKey().entrySet()
-                .stream()
-                .forEach(entry -> scores.merge(entry.getKey().teamId, entry.getValue(), (a, b) -> a + b));
+        getScoresWithParsedKey().forEach((key, value) -> scores.merge(key.teamId, value, Long::sum));
         return new HackatonScores(createdAt, toSortedTeamScores(scores));
     }
 
@@ -78,7 +76,7 @@ class Scores {
         getScoresWithParsedKey().entrySet()
                 .stream()
                 .filter(entry -> entry.getKey().getChallengeId().equals(challengeId))
-                .forEach(entry -> scores.merge(entry.getKey().teamId, entry.getValue(), (a, b) -> a + b));
+                .forEach(entry -> scores.merge(entry.getKey().teamId, entry.getValue(), Long::sum));
         return new ChallengeScores(challengeId, createdAt, toSortedTeamScores(scores));
     }
 

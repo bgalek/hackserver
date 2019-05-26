@@ -18,7 +18,7 @@ class HealthCheckMonitorSpec extends RegistrationSpec {
         when: 'team is registered'
             registerTeam(team)
         and: 'health check monitor is created'
-            HealthCheckMonitor healthCheckMonitor = new HealthCheckMonitor(new HealthyTeamClient())
+            HealthCheckMonitor healthCheckMonitor = new HealthCheckMonitor(new HealthyTeamClient(), new InMemoryApplicationEventPublisher())
         then: 'health checking url is valid for given team'
             healthCheckMonitor.getHealthTarget(team) == URI.create("http://127.0.0.1:3000/$HEALTH_ENDPOINT")
     }
@@ -27,7 +27,7 @@ class HealthCheckMonitorSpec extends RegistrationSpec {
     def 'should be able to get registered team with it\'s health status (#health)'() {
         given: 'new team and configured health check monitor'
             Team team = createTeam('127.0.0.1', 3000)
-            HealthCheckMonitor healthCheckMonitor = new HealthCheckMonitor(client)
+            HealthCheckMonitor healthCheckMonitor = new HealthCheckMonitor(client, new InMemoryApplicationEventPublisher())
         when: 'team is registered'
             registerTeam(team)
         then: 'registration facade returns team initial health state'

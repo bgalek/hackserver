@@ -1,9 +1,11 @@
 package pl.allegro.tech.leaders.hackathon.registration;
 
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import pl.allegro.tech.leaders.hackathon.registration.api.HealthCheckClient;
 import pl.allegro.tech.leaders.hackathon.registration.api.HealthStatus;
+import pl.allegro.tech.leaders.hackathon.registration.api.TeamUpdatedEvent;
 import reactor.core.publisher.Mono;
 
 import java.net.InetSocketAddress;
@@ -18,13 +20,15 @@ import static pl.allegro.tech.leaders.hackathon.registration.api.HealthStatus.UN
 class HealthCheckMonitor {
 
     private final HealthCheckClient healthCheckClient;
+    private final ApplicationEventPublisher applicationEventPublisher;
     private final Map<String, HealthStatus> healthMap = new ConcurrentHashMap<>();
 
     private static final HealthStatus INITIAL_HEALTH_STATUS = UNKNOWN;
     private static final String HEALTH_ENDPOINT = "status/health";
 
-    HealthCheckMonitor(HealthCheckClient healthCheckClient) {
+    HealthCheckMonitor(HealthCheckClient healthCheckClient, ApplicationEventPublisher applicationEventPublisher) {
         this.healthCheckClient = healthCheckClient;
+        this.applicationEventPublisher = applicationEventPublisher;
     }
 
     HealthStatus getTeamStatus(Team team) {
@@ -38,7 +42,10 @@ class HealthCheckMonitor {
                 .map(ResponseEntity::getStatusCode)
                 .onErrorResume(throwable -> Mono.just(HttpStatus.SERVICE_UNAVAILABLE))
                 .map(httpStatus -> httpStatus.is2xxSuccessful() ? HEALTHY : DEAD)
-                .doOnNext(healthStatus -> healthMap.put(team.getId(), healthStatus));
+                .doOnNext(healthStatus -> {
+                    healthMap.put(team.getId(), healthStatus);
+                    applicationEventPublisher.publishEvent(new TeamUpdatedEvent(team.getName(), healthStatus));
+                });
     }
 
     private static URI getHealthTarget(Team registeredTeam) {

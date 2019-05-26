@@ -1,6 +1,4 @@
-import React, { Component } from 'react';
-import { withStyles } from "@material-ui/core";
-import PropTypes from "prop-types";
+import React, { useEffect, useState } from 'react';
 import Typography from '@material-ui/core/Typography';
 import { CHALLENGES_FETCH } from "../actions";
 import { connect } from "react-redux";
@@ -12,88 +10,54 @@ import Avatar from "@material-ui/core/Avatar";
 import ListItemText from "@material-ui/core/ListItemText";
 import AccessAlarmsIcon from '@material-ui/icons/AccessAlarms';
 import Dialog from "@material-ui/core/Dialog";
-import Slide from "@material-ui/core/Slide";
 import ChallengeDetail from "./ChallengeDetail";
+import { bindActionCreators } from "redux";
+import { makeStyles } from "@material-ui/core";
 
-const styles = theme => ({
+const useStyles = makeStyles(() => ({
     dialog: {
         backgroundColor: '#fafafa',
     }
-});
+}));
 
-class Challenges extends Component {
-
-    constructor(props) {
-        super(props);
-        this.state = {
-            open: false
-        };
-    }
-
-    static Transition(props) {
-        return <Slide direction="up" {...props} />;
-    }
-
-    async componentDidMount() {
-        this.props.fetchChallenges();
-        this.interval = setInterval(() => {
-            this.props.fetchChallenges()
-        }, 3000);
-    }
-
-    componentWillUnmount() {
-        clearInterval(this.interval);
-    }
-
-    handleClose() {
-        this.setState({ open: false });
-    };
-
-    handleOpen(challenge) {
-        this.setState({ open: true, selected: challenge });
-    };
-
-    render() {
-        const { classes, challenges, isLoading } = this.props;
-        if (isLoading) return <Loader/>;
-        return [
-            <Typography key="title" variant="h4" gutterBottom>
-                Challenges
-            </Typography>,
-            <List key="challenge-list">
-                {challenges.map((challenge, index) =>
-                    <ListItem button key={challenge.name + index} onClick={() => this.handleOpen(challenge)}>
-                        <ListItemAvatar>
-                            <Avatar>
-                                <AccessAlarmsIcon/>
-                            </Avatar>
-                        </ListItemAvatar>
-                        <ListItemText primary={challenge.name}/>
-                    </ListItem>
-                )}
-            </List>,
-            <Dialog key="challenge-details-modal" fullScreen open={this.state.open} onClose={() => this.handleClose()}
-                    TransitionComponent={Challenges.Transition} className={classes.dialog}>
-                <ChallengeDetail onClose={() => this.handleClose()} challenge={this.state.selected}/>
-            </Dialog>
-        ];
-    }
+function Challenges({ fetchChallenges, challenges, isLoading }) {
+    const classes = useStyles();
+    const [modal, setModal] = useState({ open: false, selected: null });
+    useEffect(() => {
+        fetchChallenges();
+    }, [challenges.length]);
+    if (isLoading) return <Loader/>;
+    return [
+        <Typography key="title" variant="h4" gutterBottom>
+            Challenges
+        </Typography>,
+        <List key="challenge-list">
+            {challenges.filter(it => it.active).map((challenge, index) =>
+                <ListItem button key={challenge.name + index} onClick={() => {
+                    setModal(({ open: true, selected: challenge }));
+                }}>
+                    <ListItemAvatar>
+                        <Avatar>
+                            <AccessAlarmsIcon/>
+                        </Avatar>
+                    </ListItemAvatar>
+                    <ListItemText primary={challenge.name}/>
+                </ListItem>
+            )}
+        </List>,
+        <Dialog key="challenge-details-modal" fullScreen open={modal.open}
+                onClose={() => setModal((prevState) => ({ ...prevState, open: false }))}
+                className={classes.dialog}>
+            <ChallengeDetail onClose={() => setModal((prevState) => ({ ...prevState, open: false }))}
+                             challenge={modal.selected}/>
+        </Dialog>
+    ];
 }
-
-Challenges.defaultProps = { teams: [] };
-
-Challenges.propTypes = {
-    classes: PropTypes.object.isRequired,
-};
 
 const mapStateToProps = (state) => ({
     challenges: state.challenges.data,
     isLoading: state.teams.isLoading
 });
 
-const mapDispatchToProps = (dispatch) => ({
-    fetchChallenges: () => dispatch(CHALLENGES_FETCH)
-});
-
-const connectedChallenges = connect(mapStateToProps, mapDispatchToProps)(Challenges);
-export default withStyles(styles)(connectedChallenges);
+const mapDispatchToProps = dispatch => bindActionCreators({ fetchChallenges: CHALLENGES_FETCH }, dispatch);
+export default connect(mapStateToProps, mapDispatchToProps)(Challenges);

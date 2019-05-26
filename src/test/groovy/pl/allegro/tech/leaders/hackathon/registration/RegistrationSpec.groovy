@@ -1,5 +1,7 @@
 package pl.allegro.tech.leaders.hackathon.registration
 
+import org.springframework.context.ApplicationEvent
+import org.springframework.context.ApplicationEventPublisher
 import org.springframework.http.ResponseEntity
 import pl.allegro.tech.leaders.hackathon.registration.api.HealthCheckClient
 import reactor.core.publisher.Flux
@@ -10,8 +12,8 @@ import static org.springframework.http.HttpStatus.OK
 
 class RegistrationSpec extends Specification {
 
-    TeamRepository teamRepository = new TeamRepository(new InMemoryTeamRepository())
-    RegistrationFacade registrationFacade = new RegistrationFacade(teamRepository, new HealthCheckMonitor(new DefaultHealthCheckClient()))
+    TeamRepository teamRepository = new TeamRepository(new InMemoryTeamRepository(), new InMemoryApplicationEventPublisher())
+    RegistrationFacade registrationFacade = new RegistrationFacade(teamRepository, new HealthCheckMonitor(new DefaultHealthCheckClient(), new InMemoryApplicationEventPublisher()))
 
     Team createTeam(String ip, int port) {
         new Team('team name', new InetSocketAddress(InetAddress.getByName(ip), port))
@@ -19,6 +21,20 @@ class RegistrationSpec extends Specification {
 
     Mono<Team> registerTeam(Team team) {
         teamRepository.save(team)
+    }
+
+    class InMemoryApplicationEventPublisher implements ApplicationEventPublisher {
+        List<Object> events = []
+
+        @Override
+        void publishEvent(ApplicationEvent event) {
+            events.add(event)
+        }
+
+        @Override
+        void publishEvent(Object event) {
+            events.add(event)
+        }
     }
 
     class InMemoryTeamRepository implements PersistenceTeamRepository {

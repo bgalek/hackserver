@@ -11,21 +11,24 @@ import DialogTitle from "@material-ui/core/DialogTitle";
 import List from "@material-ui/core/List";
 import ListItem from "@material-ui/core/ListItem";
 import ListItemText from "@material-ui/core/ListItemText";
+import PropTypes from "prop-types";
 
 class Notifications extends Component {
 
-    state = {
-        open: false,
-        details: {}
-    };
+    constructor(props, context) {
+        super(props, context);
+        this.displayed = [];
+        this.state = {
+            open: false,
+            details: {}
+        };
+    }
 
-    displayed = [];
-
-    storeDisplayed = (id) => {
+    storeDisplayed(id) {
         this.displayed = [...this.displayed, id];
-    };
+    }
 
-    shouldComponentUpdate(nextProps, nextState, nextContext) {
+    shouldComponentUpdate(nextProps, nextState) {
         if (nextState.open !== this.state.open) return true;
         const { notifications: newSnacks = [] } = nextProps;
         const { notifications: currentSnacks } = this.props;
@@ -54,9 +57,9 @@ class Notifications extends Component {
         });
     }
 
-    showModal = (details) => {
+    showModal(details) {
         this.setState({ details, open: true });
-    };
+    }
 
     render() {
         const { open, details } = this.state;
@@ -78,6 +81,13 @@ class Notifications extends Component {
         </Dialog>
     }
 }
+
+Notifications.propTypes = {
+    notifications: PropTypes.array.isRequired,
+    enqueueSnackbar: PropTypes.func.isRequired,
+    removeSnackbar: PropTypes.func.isRequired
+};
+
 
 const mapStateToProps = store => ({ notifications: store.notifications.notifications, });
 const mapDispatchToProps = dispatch => bindActionCreators({ removeSnackbar: HIDE_NOTIFICATION }, dispatch);

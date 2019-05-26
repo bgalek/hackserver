@@ -67,7 +67,8 @@ class Challenge {
                 this.definition.getDescription(),
                 this.definition.getChallengeEndpoint(),
                 this.definition.getChallengeParams(),
-                this.definition.getChallengeResponse()
+                this.definition.getChallengeResponse(),
+                (TaskDefinition.TaskWithFixedResult) this.definition.getExample()
         );
     }
 

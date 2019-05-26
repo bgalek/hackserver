@@ -7,13 +7,16 @@ import {
     CHALLENGES_RESULTS_FETCH_FAILED_TYPE,
     CHALLENGES_RESULTS_FETCH_SUCCEEDED_TYPE,
     CHALLENGES_RESULTS_FETCH_TYPE,
+    SCORES_FETCH_FAILED_TYPE,
+    SCORES_FETCH_SUCCEEDED_TYPE,
+    SCORES_FETCH_TYPE,
     SHOW_NOTIFICATION,
     TEAM_SEND_EXAMPLE_FAILED_TYPE,
     TEAM_SEND_EXAMPLE_SUCCEEDED_TYPE,
     TEAM_SEND_EXAMPLE_TYPE,
     TEAMS_FETCH_FAILED_TYPE,
     TEAMS_FETCH_SUCCEEDED_TYPE,
-    TEAMS_FETCH_TYPE
+    TEAMS_FETCH_TYPE,
 } from "../actions";
 
 const sagas = [
@@ -22,6 +25,7 @@ const sagas = [
         yield takeEvery(CHALLENGES_FETCH_TYPE, challengesFetchSaga);
         yield takeEvery(TEAM_SEND_EXAMPLE_TYPE, teamSendExampleSaga);
         yield takeEvery(CHALLENGES_RESULTS_FETCH_TYPE, challengesLogFetchSaga);
+        yield takeEvery(SCORES_FETCH_TYPE, scoresFetchSaga);
     }
 ];
 
@@ -49,6 +53,15 @@ function* challengesLogFetchSaga({ team }) {
         yield put({ type: CHALLENGES_RESULTS_FETCH_SUCCEEDED_TYPE, payload: results });
     } catch (e) {
         yield put({ type: CHALLENGES_RESULTS_FETCH_FAILED_TYPE, message: e.message });
+    }
+}
+
+function* scoresFetchSaga() {
+    try {
+        const scores = yield call(api, `/scores`);
+        yield put({ type: SCORES_FETCH_SUCCEEDED_TYPE, payload: scores });
+    } catch (e) {
+        yield put({ type: SCORES_FETCH_FAILED_TYPE, message: e.message });
     }
 }
 
