@@ -3,6 +3,7 @@ package pl.allegro.tech.leaders.hackathon.registration;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.util.UriComponentsBuilder;
 import pl.allegro.tech.leaders.hackathon.registration.api.HealthCheckClient;
 import pl.allegro.tech.leaders.hackathon.registration.api.HealthStatus;
 import pl.allegro.tech.leaders.hackathon.registration.api.TeamUpdatedEvent;
@@ -24,6 +25,7 @@ class HealthCheckMonitor {
     private final Map<String, HealthStatus> healthMap = new ConcurrentHashMap<>();
 
     private static final HealthStatus INITIAL_HEALTH_STATUS = UNKNOWN;
+    private static final String HEALTH_PROTOCOL = "http";
     private static final String HEALTH_ENDPOINT = "status/health";
 
     HealthCheckMonitor(HealthCheckClient healthCheckClient, ApplicationEventPublisher applicationEventPublisher) {
@@ -50,9 +52,13 @@ class HealthCheckMonitor {
 
     private static URI getHealthTarget(Team registeredTeam) {
         InetSocketAddress remoteAddress = registeredTeam.getRemoteAddress();
-        String address = remoteAddress.getAddress().getHostAddress();
-        int port = remoteAddress.getPort();
-        String target = String.format("http://%s:%d/%s", address, port, HEALTH_ENDPOINT);
-        return URI.create(target);
+        return UriComponentsBuilder
+                .newInstance()
+                .scheme(HEALTH_PROTOCOL)
+                .host(remoteAddress.getAddress().getHostAddress())
+                .port(remoteAddress.getPort())
+                .path(HEALTH_ENDPOINT)
+                .build()
+                .toUri();
     }
 }

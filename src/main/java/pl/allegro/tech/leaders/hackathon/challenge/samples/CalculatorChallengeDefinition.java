@@ -1,6 +1,7 @@
 package pl.allegro.tech.leaders.hackathon.challenge.samples;
 
 import org.springframework.stereotype.Component;
+import org.springframework.util.LinkedMultiValueMap;
 import pl.allegro.tech.leaders.hackathon.challenge.ChallengeDefinition;
 import pl.allegro.tech.leaders.hackathon.challenge.TaskDefinition;
 import pl.allegro.tech.leaders.hackathon.challenge.TaskDefinition.TaskWithFixedResult;
@@ -11,23 +12,17 @@ import java.util.List;
 import java.util.Map;
 
 @Component
-public class CalcChallengeDefinition implements ChallengeDefinition {
-    public static final String ID = "calc";
+class CalculatorChallengeDefinition implements ChallengeDefinition {
 
-    public static final List<TaskWithFixedResult> TASKS = List.of(
-            TaskDefinition.withFixedResult("Should calculate a sum 2+2=4", Map.of("equation", "2+2"), "4", new TaskScoring(4, 0)),
-            TaskDefinition.withFixedResult("Should calculate a sum and multiplication 2+2*2=6", Map.of("equation", "2+2*2"), "6", new TaskScoring(5, 0)),
-            TaskDefinition.withFixedResult("Should respect parenthesis in equation (2+2)*2 = 8", Map.of("equation", "(2+2)*2"), "8", new TaskScoring(5, 0))
+    private static final List<TaskWithFixedResult> TASKS = List.of(
+            TaskDefinition.withFixedResult("Should calculate a sum 2+2=4", new LinkedMultiValueMap<>(Map.of("equation", List.of("2+2"))), "4", new TaskScoring(4, 0)),
+            TaskDefinition.withFixedResult("Should calculate a sum and multiplication 2+2*2=6", new LinkedMultiValueMap<>(Map.of("equation", List.of("2+2*2"))), "6", new TaskScoring(5, 0)),
+            TaskDefinition.withFixedResult("Should respect parenthesis in equation (2+2)*2 = 8", new LinkedMultiValueMap<>(Map.of("equation", List.of("(2+2)*2"))), "8", new TaskScoring(5, 0))
     );
 
     @Override
-    public String getId() {
-        return ID;
-    }
-
-    @Override
     public String getName() {
-        return "Calculator Challenge";
+        return "Calculator";
     }
 
     @Override
@@ -54,7 +49,7 @@ public class CalcChallengeDefinition implements ChallengeDefinition {
 
     @Override
     public TaskDefinition getExample() {
-        return TaskDefinition.withFixedResult("Should calculate a sum 2+2=4", Map.of("query", "2+2"), "4", new TaskScoring(4, 200));
+        return TaskDefinition.withFixedResult("Should calculate a sum 2+2=4", new LinkedMultiValueMap<>(Map.of("query", List.of("2+2"))), "4", new TaskScoring(4, 200));
     }
 
     @Override

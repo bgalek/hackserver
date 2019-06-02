@@ -1,13 +1,12 @@
 package pl.allegro.tech.leaders.hackathon.challenge.api;
 
 import com.fasterxml.jackson.module.jsonSchema.JsonSchema;
+import org.springframework.util.MultiValueMap;
 import pl.allegro.tech.leaders.hackathon.challenge.ChallengeDefinition;
 import pl.allegro.tech.leaders.hackathon.challenge.TaskDefinition.TaskWithFixedResult;
 
 import java.time.Instant;
 import java.util.List;
-import java.util.Map;
-import java.util.Set;
 
 public class ChallengeDetails {
     private final String id;
@@ -18,6 +17,8 @@ public class ChallengeDetails {
     private final String challengeEndpoint;
     private final List<ChallengeDefinition.QueryParam> challengeParameters;
     private final JsonSchema challengeResponse;
+    private final int tasksCount;
+    private final int maxPoints;
     private final Example example;
 
     public ChallengeDetails(
@@ -29,6 +30,8 @@ public class ChallengeDetails {
             String challengeEndpoint,
             List<ChallengeDefinition.QueryParam> challengeParameters,
             JsonSchema challengeResponse,
+            int tasksCount,
+            int maxPoints,
             TaskWithFixedResult exampleTaskDefinition) {
         this.id = id;
         this.active = active;
@@ -38,6 +41,8 @@ public class ChallengeDetails {
         this.challengeEndpoint = challengeEndpoint;
         this.challengeParameters = challengeParameters;
         this.challengeResponse = challengeResponse;
+        this.tasksCount = tasksCount;
+        this.maxPoints = maxPoints;
         this.example = new Example(exampleTaskDefinition.getParameters(), exampleTaskDefinition.getExpectedSolution());
     }
 
@@ -77,17 +82,25 @@ public class ChallengeDetails {
         return example;
     }
 
+    public int getTasksCount() {
+        return tasksCount;
+    }
+
+    public int getMaxPoints() {
+        return maxPoints;
+    }
+
     private static class Example {
 
-        private final Set<Map.Entry<String, String>> parameters;
+        private final MultiValueMap<String, String> parameters;
         private final Object expectedSolution;
 
-        Example(Map<String, String> parameters, Object expectedSolution) {
-            this.parameters = parameters.entrySet();
+        Example(MultiValueMap<String, String> parameters, Object expectedSolution) {
+            this.parameters = parameters;
             this.expectedSolution = expectedSolution;
         }
 
-        public Set<Map.Entry<String, String>> getParameters() {
+        public MultiValueMap<String, String> getParameters() {
             return parameters;
         }
 

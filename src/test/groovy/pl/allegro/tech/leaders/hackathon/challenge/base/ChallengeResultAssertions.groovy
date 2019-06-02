@@ -51,7 +51,7 @@ class ChallengeResultAssertions {
         return this
     }
 
-    ChallengeResultAssertions hasZeroScoreForTask(TaskWithFixedResult task) {
+    ChallengeResultAssertions hasZeroScoreForTask(TaskDefinition task) {
         TaskResult taskResult = findTaskResult(task.name)
         assert taskResult != null
         assert taskResult.score == 0

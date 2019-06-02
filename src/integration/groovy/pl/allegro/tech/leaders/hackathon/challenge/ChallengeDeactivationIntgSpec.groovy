@@ -1,13 +1,26 @@
 package pl.allegro.tech.leaders.hackathon.challenge
 
+import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.test.web.reactive.server.WebTestClient
 import pl.allegro.tech.leaders.hackathon.base.IntegrationSpec
-import pl.allegro.tech.leaders.hackathon.challenge.samples.CalcChallengeDefinition
+import pl.allegro.tech.leaders.hackathon.challenge.samples.CalculatorChallengeDefinition
 import pl.allegro.tech.leaders.hackathon.challenge.samples.TweetsChallengeDefinition
 
 class ChallengeDeactivationIntgSpec extends IntegrationSpec {
-    private static final String CALCULATOR_CHALLENGE_ID = CalcChallengeDefinition.ID
-    private static final String TWITTER_CHALLENGE_ID = TweetsChallengeDefinition.ID
+
+    String CALCULATOR_CHALLENGE_ID
+    String TWITTER_CHALLENGE_ID
+
+    @Autowired
+    CalculatorChallengeDefinition calculatorChallengeDefinition
+
+    @Autowired
+    TweetsChallengeDefinition tweetsChallengeDefinition
+
+    void setup() {
+        CALCULATOR_CHALLENGE_ID = calculatorChallengeDefinition.id
+        TWITTER_CHALLENGE_ID = tweetsChallengeDefinition.id
+    }
 
     def 'should deactivate the calculator challenge'() {
         given: 'calculator challenge is activated'

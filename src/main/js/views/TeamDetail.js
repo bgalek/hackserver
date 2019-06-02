@@ -28,7 +28,7 @@ const useStyles = makeStyles(theme => ({
         flex: 1
     },
     header: {
-        backgroundColor: '#eee',
+        backgroundColor: theme.palette.grey["200"],
         padding: theme.spacing(2)
     },
     card: {
@@ -61,7 +61,7 @@ export function TeamDetail({ team, onClose }) {
         </AppBar>,
         <Grid key="modal-content" container justify="center" alignItems="center">
             <Grid container justify="center" alignItems="center" className={classes.header}>
-                <Avatar alt={team.name} src={team.avatar} className={classes.avatar}/>
+                <Avatar alt={team.name} src={team.avatar} className={classes.avatar} component="span"/>
                 <Table className={classes.tableInfo}>
                     <TableHead>
                         <TableRow>

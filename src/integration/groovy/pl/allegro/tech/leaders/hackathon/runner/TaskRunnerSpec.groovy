@@ -3,20 +3,34 @@ package pl.allegro.tech.leaders.hackathon.runner
 import groovy.json.JsonSlurper
 import okhttp3.mockwebserver.MockResponse
 import okhttp3.mockwebserver.MockWebServer
+import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.HttpHeaders
 import org.springframework.http.MediaType
 import org.springframework.test.web.reactive.server.WebTestClient
+import org.springframework.web.util.UriComponentsBuilder
 import pl.allegro.tech.leaders.hackathon.base.IntegrationSpec
-import pl.allegro.tech.leaders.hackathon.challenge.samples.CalcChallengeDefinition
+import pl.allegro.tech.leaders.hackathon.challenge.samples.CalculatorChallengeDefinition
 import reactor.core.publisher.Mono
 
 import java.util.concurrent.TimeUnit
 
 class TaskRunnerSpec extends IntegrationSpec {
-    String CHALLENGE_ID = CalcChallengeDefinition.ID
-    String CHALLENGE_ENDPOINT = '/calc?equation=2+2'
-    String TEAM_ID = 'team-a'
+    @Autowired
+    CalculatorChallengeDefinition calculatorChallengeDefinition
     MockWebServer mockWebServer = new MockWebServer()
+
+    String CHALLENGE_ID
+    String CHALLENGE_ENDPOINT
+    String TEAM_ID = 'team-a'
+
+    void setup() {
+        CHALLENGE_ID = calculatorChallengeDefinition.id
+        CHALLENGE_ENDPOINT = UriComponentsBuilder.newInstance()
+                .path(calculatorChallengeDefinition.challengeEndpoint)
+                .queryParams(calculatorChallengeDefinition.example.parameters)
+                .build()
+                .toString()
+    }
 
     def "should return 404 when running an example task for an unregistered team"() {
         given:
