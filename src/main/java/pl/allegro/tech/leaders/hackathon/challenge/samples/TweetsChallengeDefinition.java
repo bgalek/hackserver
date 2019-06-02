@@ -1,6 +1,7 @@
 package pl.allegro.tech.leaders.hackathon.challenge.samples;
 
 import org.springframework.stereotype.Component;
+import org.springframework.util.LinkedMultiValueMap;
 import pl.allegro.tech.leaders.hackathon.challenge.ChallengeDefinition;
 import pl.allegro.tech.leaders.hackathon.challenge.TaskDefinition;
 import pl.allegro.tech.leaders.hackathon.challenge.TaskScoring;
@@ -9,17 +10,11 @@ import java.util.List;
 import java.util.Map;
 
 @Component
-public class TweetsChallengeDefinition implements ChallengeDefinition {
-    public static final String ID = "tweets";
-
-    @Override
-    public String getId() {
-        return ID;
-    }
+class TweetsChallengeDefinition implements ChallengeDefinition {
 
     @Override
     public String getName() {
-        return "Twitter Challenge";
+        return "Twitter";
     }
 
     @Override
@@ -44,7 +39,7 @@ public class TweetsChallengeDefinition implements ChallengeDefinition {
 
     @Override
     public TaskDefinition getExample() {
-        return TaskDefinition.withFixedResult("tweets", Map.of("user", "allegro.tech"), "4",
+        return TaskDefinition.withFixedResult("tweets", new LinkedMultiValueMap<>(Map.of("user", List.of("allegro.tech"))), "4",
                 new TaskScoring(4, 0));
     }
 

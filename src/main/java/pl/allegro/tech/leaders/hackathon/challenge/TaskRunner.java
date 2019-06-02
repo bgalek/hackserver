@@ -6,6 +6,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.web.util.UriComponentsBuilder;
 import pl.allegro.tech.leaders.hackathon.challenge.ChallengeResult.ChallengeResultBuilder;
 import pl.allegro.tech.leaders.hackathon.challenge.api.TeamClient;
 import pl.allegro.tech.leaders.hackathon.registration.api.RegisteredTeam;
@@ -13,10 +15,6 @@ import reactor.core.publisher.Mono;
 
 import java.net.URI;
 import java.time.Clock;
-import java.util.Map.Entry;
-
-import static java.util.Comparator.comparing;
-import static java.util.stream.Collectors.joining;
 
 class TaskRunner {
     private static final Logger logger = LoggerFactory.getLogger(TaskRunner.class);
@@ -32,26 +30,25 @@ class TaskRunner {
     }
 
     Mono<ChallengeResult> run(ChallengeDefinition challenge, TaskDefinition task, RegisteredTeam team) {
-        String teamEndpoint = String.format("http://%s:%d%s", team.getRemoteAddress().getAddress().getHostAddress(), team.getRemoteAddress().getPort(), challenge.getChallengeEndpoint());
-        String taskParams = buildQueryParams(task);
+        final URI teamEndpoint = UriComponentsBuilder
+                .newInstance()
+                .scheme("http")
+                .host(team.getRemoteAddress().getAddress().getHostAddress())
+                .port(team.getRemoteAddress().getPort())
+                .path(challenge.getChallengeEndpoint())
+                .queryParams(new LinkedMultiValueMap<>(task.getParameters()))
+                .build()
+                .toUri();
         logger.info("running task of '{}' for team '{}', remote address: {}", challenge.getName(), team.getName(), teamEndpoint);
         final long start = clock.millis();
         return teamClient
-                .execute(URI.create(teamEndpoint + taskParams))
+                .execute(teamEndpoint)
                 .onErrorResume(e -> Mono.just(new ResponseEntity<>(HttpStatus.SERVICE_UNAVAILABLE)))
                 .map(it -> score(it, challenge, task, team, start));
     }
 
-    private String buildQueryParams(TaskDefinition task) {
-        return task.getParameters().entrySet().stream()
-                .sorted(comparing(Entry::getKey))
-                .map(entry -> entry.getKey() + "=" + entry.getValue())
-                .collect(joining("&", "?", ""));
-    }
-
-    private ChallengeResult score(
-            ResponseEntity<String> response, ChallengeDefinition challenge,
-            TaskDefinition task, RegisteredTeam team, long start) {
+    private ChallengeResult score(ResponseEntity<String> response, ChallengeDefinition challenge,
+                                  TaskDefinition task, RegisteredTeam team, long start) {
         long latency = clock.millis() - start;
         ChallengeResultBuilder resultBuilder = ChallengeResult.builder(team.getId(), challenge.getId(), task.getName())
                 .executedAt(clock.instant())

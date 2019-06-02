@@ -4,7 +4,6 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import org.springframework.context.ApplicationEvent
 import org.springframework.context.ApplicationEventPublisher
 import org.springframework.http.ResponseEntity
-import org.springframework.util.LinkedMultiValueMap
 import org.springframework.web.util.UriComponentsBuilder
 import pl.allegro.tech.leaders.hackathon.challenge.api.ChallengeActivationResult
 import pl.allegro.tech.leaders.hackathon.challenge.api.ChallengeDetails
@@ -144,7 +143,7 @@ class InMemoryTeamClient implements TeamClient {
                 .host(team.remoteAddress.getAddress().getHostAddress())
                 .port(team.getRemoteAddress().getPort())
                 .path(challenge.challengeEndpoint)
-                .queryParams(new LinkedMultiValueMap<>(task.getParameters().collectEntries { key, value -> [key, [value]] }))
+                .queryParams(task.getParameters())
                 .build()
                 .toString()
     }

@@ -68,6 +68,8 @@ class Challenge {
                 this.definition.getChallengeEndpoint(),
                 this.definition.getChallengeParams(),
                 this.definition.getChallengeResponse(),
+                this.definition.getTasks().size(),
+                this.definition.getMaxPoints(),
                 (TaskDefinition.TaskWithFixedResult) this.definition.getExample()
         );
     }

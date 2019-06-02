@@ -29,7 +29,7 @@ function Leaderboard({ scores, fetchScores }) {
             <Typography variant="h4" gutterBottom>
                 Leaderboard
             </Typography>
-            <Typography>
+            <Typography variant="subtitle1">
                 {distanceInWordsToNow(new Date(scores.updatedAt), { addSuffix: true })}
             </Typography>
         </div>,

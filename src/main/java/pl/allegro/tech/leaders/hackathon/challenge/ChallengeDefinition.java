@@ -41,6 +41,13 @@ public interface ChallengeDefinition {
         return slugify.slugify(getName());
     }
 
+    default int getMaxPoints() {
+        return this.getTasks()
+                .stream()
+                .mapToInt(task -> task.getTaskScoring().getMaxPoints())
+                .sum();
+    }
+
     class QueryParam {
         private final String name;
         private final String desc;

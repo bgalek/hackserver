@@ -15,10 +15,15 @@ import ListItemText from "@material-ui/core/ListItemText";
 import { makeStyles } from '@material-ui/core/styles';
 import StarBorder from '@material-ui/icons/StarBorder';
 import ListItemIcon from "@material-ui/core/ListItemIcon";
+import Paper from "@material-ui/core/Paper";
 
 const useStyles = makeStyles(theme => ({
     appBar: {
         position: 'relative',
+    },
+    description: {
+        maxWidth: '100%',
+        padding: theme.spacing(3, 2),
     },
     content: {
         padding: theme.spacing(4)
@@ -29,14 +34,16 @@ const useStyles = makeStyles(theme => ({
     },
     nested: {
         paddingLeft: theme.spacing(4),
-    },
+    }
 }));
 
 export function ChallengeDetail({ challenge, onClose }) {
     const classes = useStyles();
     const url = new URL(challenge.challengeEndpoint, 'http://localhost:8080');
-    challenge.example.parameters.forEach(parameter => {
-        url.searchParams.append(Object.entries(parameter)[0][0], Object.entries(parameter)[0][1])
+    Object.entries(challenge.example.parameters).forEach(parameter => {
+        parameter[1].forEach(parameterValue => {
+            url.searchParams.append(parameter[0], parameterValue)
+        });
     });
     return [
         <AppBar key="modal-title" className={classes.appBar}>
@@ -53,8 +60,13 @@ export function ChallengeDetail({ challenge, onClose }) {
             </Toolbar>
         </AppBar>,
         <Grid key="modal-content" className={classes.content} direction="column" container>
-            <Typography variant="h6" gutterBottom>{challenge.description}</Typography>
+            <Paper className={classes.description}>
+                <Typography variant="body1" gutterBottom>{challenge.description}</Typography>
+            </Paper>
             <List className={classes.root}>
+                <ListItem>
+                    <ListItemText primary="Max points:" secondary={challenge.maxPoints}/>
+                </ListItem>
                 <ListItem>
                     <ListItemText primary="Endpoint:" secondary={challenge.challengeEndpoint}/>
                 </ListItem>
@@ -74,10 +86,13 @@ export function ChallengeDetail({ challenge, onClose }) {
                     <ListItemText primary="Response:" secondary={challenge.challengeResponse.type}/>
                 </ListItem>
                 <ListItem>
-                    <ListItemText primary="Example Request:" secondary={decodeURIComponent(url.toString())}/>
+                    <ListItemText primary="Example Request:" secondary={decodeURIComponent(url.toString())}
+                                  secondaryTypographyProps={{ style: { wordBreak: "break-all" } }}
+                    />
                 </ListItem>
                 <ListItem>
-                    <ListItemText primary="Example Response:" secondary={JSON.stringify(challenge.example.expectedSolution)}/>
+                    <ListItemText primary="Example Response:"
+                                  secondary={JSON.stringify(challenge.example.expectedSolution)}/>
                 </ListItem>
             </List>
         </Grid>

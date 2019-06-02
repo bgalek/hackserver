@@ -13,7 +13,6 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 public class HackathonServer {
 
     public static void main(String[] args) {
-        System.getProperties().setProperty("java.net.preferIPv4Stack", "true");
         SpringApplication.run(HackathonServer.class, args);
     }
 }
