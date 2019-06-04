@@ -34,8 +34,8 @@ class ScoresRepository {
 
     Mono<Scores> findLast() {
         return this.findAll(Sort.by(DESC, "version"))
-                .switchIfEmpty(Mono.just(new Scores(Instant.now())))
-                .next();
+                .next()
+                .switchIfEmpty(Mono.just(new Scores(Instant.now())));
     }
 }
 
