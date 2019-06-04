@@ -1,11 +1,13 @@
 package pl.allegro.tech.leaders.hackathon.challenge.infrastucture.jmx;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.jmx.export.annotation.ManagedOperation;
 import org.springframework.jmx.export.annotation.ManagedResource;
 import org.springframework.stereotype.Service;
 import pl.allegro.tech.leaders.hackathon.challenge.ChallengeFacade;
-import pl.allegro.tech.leaders.hackathon.utils.ReactorLoggingSubscriber;
+import pl.allegro.tech.leaders.hackathon.challenge.api.TaskResult;
 import reactor.core.publisher.Mono;
 
 /*
@@ -16,6 +18,7 @@ import reactor.core.publisher.Mono;
 public class ChallengeJmxResource {
     private final ChallengeFacade challengeFacade;
     private final ObjectMapper objectMapper;
+    private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
     public ChallengeJmxResource(ChallengeFacade challengeFacade, ObjectMapper objectMapper) {
         this.challengeFacade = challengeFacade;
@@ -35,15 +38,21 @@ public class ChallengeJmxResource {
     @ManagedOperation
     public String runChallenge(String challengeId) {
         challengeFacade.runChallenge(challengeId)
-                .subscribe(new ReactorLoggingSubscriber<>("challenge", this.getClass()));
+                .doOnNext(this::logResult)
+                .blockLast();
         return "Challenge executed: " + challengeId;
     }
 
     @ManagedOperation
     public String runChallenge(String challengeId, String teamId) {
         challengeFacade.runChallenge(challengeId, teamId)
-                .subscribe(new ReactorLoggingSubscriber<>("challenge for team", this.getClass()));
+                .doOnNext(this::logResult)
+                .blockLast();
         return "Challenge executed: " + challengeId + " for team: " + teamId;
+    }
+
+    private void logResult(TaskResult result) {
+        logger.info("Got task result: {}", result);
     }
 
     private String toJson(Mono<?> mono) {
