@@ -44,6 +44,7 @@ class Notifications extends Component {
         const { notifications = [] } = this.props;
         notifications.forEach((notification) => {
             if (this.displayed.includes(notification.key)) return;
+            notification.options.autoHideDuration = 2000;
             if (notification.details) {
                 this.props.enqueueSnackbar(notification.message, {
                     ...notification.options,

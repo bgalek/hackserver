@@ -14,6 +14,6 @@ function TeamHealthIndicator({ health }) {
 }
 
 TeamHealthIndicator.defaultProps = { teams: [] };
-TeamHealthIndicator.propTypes = { health: PropTypes.bool.isRequired };
+TeamHealthIndicator.propTypes = { health: PropTypes.bool };
 
 export default TeamHealthIndicator;

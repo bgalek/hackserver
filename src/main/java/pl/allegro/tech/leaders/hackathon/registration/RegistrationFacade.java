@@ -3,6 +3,7 @@ package pl.allegro.tech.leaders.hackathon.registration;
 import pl.allegro.tech.leaders.hackathon.registration.api.RegisteredTeam;
 import pl.allegro.tech.leaders.hackathon.registration.api.TeamNotFoundException;
 import pl.allegro.tech.leaders.hackathon.registration.api.TeamRegistration;
+import pl.allegro.tech.leaders.hackathon.registration.api.TeamSecret;
 import pl.allegro.tech.leaders.hackathon.registration.api.TeamUpdate;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
@@ -36,6 +37,12 @@ public class RegistrationFacade {
 
     public Mono<RegisteredTeam> getTeamByName(String name) {
         return teamRepository.find(name)
+                .switchIfEmpty(Mono.error(new TeamNotFoundException(name)))
+                .map(this::toRegisteredTeam);
+    }
+
+    public Mono<RegisteredTeam> getTeamByNameAndSecret(String name, TeamSecret secret) {
+        return teamRepository.find(name, secret)
                 .switchIfEmpty(Mono.error(new TeamNotFoundException(name)))
                 .map(this::toRegisteredTeam);
     }

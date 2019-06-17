@@ -2,6 +2,7 @@ package pl.allegro.tech.leaders.hackathon.challenge;
 
 import pl.allegro.tech.leaders.hackathon.registration.RegistrationFacade;
 import pl.allegro.tech.leaders.hackathon.registration.api.RegisteredTeam;
+import pl.allegro.tech.leaders.hackathon.registration.api.TeamSecret;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
@@ -30,6 +31,16 @@ class ChallengeRunner {
     Flux<ChallengeResult> runChallenge(String challengeId, String teamId) {
         return getChallengeDefinition(challengeId)
                 .flatMapMany(challenge -> runChallenge(challenge, teamId));
+    }
+
+    Flux<ChallengeResult> runChallenge(String challengeId, String teamId, TeamSecret secret) {
+        return registrationFacade.getTeamByNameAndSecret(teamId, secret)
+                .flatMapMany(registeredTeam -> runChallenge(challengeId, registeredTeam));
+    }
+
+    private Flux<ChallengeResult> runChallenge(String challengeId, RegisteredTeam team) {
+        return getChallengeDefinition(challengeId)
+                .flatMapMany(it -> runChallenge(it, team));
     }
 
     private Flux<ChallengeResult> runChallenge(ChallengeDefinition challenge, String teamId) {

@@ -18,6 +18,7 @@ import { bindActionCreators } from "redux";
 import { SHOW_NOTIFICATION } from "../actions";
 import ChallengeResults from "../components/ChallengeResults";
 import TeamHealthIndicator from "../components/TeamHealthIndicator";
+import ExecuteChallengeButton from "../components/ExecuteChallengeButton";
 
 const useStyles = makeStyles(theme => ({
     appBar: {
@@ -45,7 +46,7 @@ const useStyles = makeStyles(theme => ({
     }
 }));
 
-export function TeamDetail({ team, onClose }) {
+export function TeamDetail({ team, challengesResults, onClose }) {
     const classes = useStyles();
     return [
         <AppBar key="modal-title" className={classes.appBar}>
@@ -57,6 +58,7 @@ export function TeamDetail({ team, onClose }) {
                     {team.name}
                 </Typography>
                 <TestTeamButton team={team}/>
+                <ExecuteChallengeButton team={team}/>
             </Toolbar>
         </AppBar>,
         <Grid key="modal-content" container justify="center" alignItems="center">
@@ -65,9 +67,10 @@ export function TeamDetail({ team, onClose }) {
                 <Table className={classes.tableInfo}>
                     <TableHead>
                         <TableRow>
-                            <TableCell>IP</TableCell>
-                            <TableCell>PORT</TableCell>
-                            <TableCell>STATUS</TableCell>
+                            <TableCell style={{ width: '1rem' }}>IP</TableCell>
+                            <TableCell style={{ width: '1rem' }}>PORT</TableCell>
+                            <TableCell style={{ width: '1rem' }}>STATUS</TableCell>
+                            <TableCell align="right">SCORE</TableCell>
                         </TableRow>
                     </TableHead>
                     <TableBody>
@@ -76,6 +79,9 @@ export function TeamDetail({ team, onClose }) {
                             <TableCell>{team.port}</TableCell>
                             <TableCell>
                                 <TeamHealthIndicator health={team.health}/>
+                            </TableCell>
+                            <TableCell align="right">
+                                <Typography variant="h4">{sumScore(challengesResults)}</Typography>
                             </TableCell>
                         </TableRow>
                     </TableBody>
@@ -86,5 +92,10 @@ export function TeamDetail({ team, onClose }) {
     ];
 }
 
+function sumScore(challengesResults) {
+    return challengesResults.map(it => it.score).reduce((a, b) => a + b, 0);
+}
+
+const mapStateToProps = state => ({ challengesResults: state.results.data });
 const mapDispatchToProps = dispatch => bindActionCreators({ showSnackbar: SHOW_NOTIFICATION }, dispatch);
-export default connect(null, mapDispatchToProps)(TeamDetail);
+export default connect(mapStateToProps, mapDispatchToProps)(TeamDetail);

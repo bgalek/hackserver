@@ -1,7 +1,7 @@
 import Button from "@material-ui/core/Button";
 import React, { useEffect, useState } from "react";
-import ComputerIcon from "@material-ui/icons/Computer";
-import { CHALLENGES_FETCH, TEAM_SEND_EXAMPLE } from "../actions";
+import OfflineBoltIcon from "@material-ui/icons/OfflineBolt";
+import { CHALLENGES_FETCH, TEAM_EXECUTE_CHALLENGE } from "../actions";
 import { connect } from "react-redux";
 import { makeStyles } from "@material-ui/core";
 import Dialog from "@material-ui/core/Dialog";
@@ -12,16 +12,18 @@ import DialogActions from "@material-ui/core/DialogActions";
 import Select from "@material-ui/core/Select";
 import MenuItem from "@material-ui/core/MenuItem";
 import { bindActionCreators } from "redux";
+import TextField from "@material-ui/core/TextField";
+import Typography from "@material-ui/core/Typography";
 
 const useStyles = makeStyles(theme => ({
-    actionButton: { flex: '0 1 auto' },
+    actionButton: { flex: '0 1 auto', marginLeft: theme.spacing(2) },
     actionButtonIcon: { marginRight: theme.spacing(2) },
     text: { marginBottom: theme.spacing(2) }
 }));
 
-export function TestTeamButton({ isLoading, challenges, team, sendExample, fetchChallenges }) {
+export function ExecuteChallengeButton({ isLoading, challenges, team, executeChallenge, fetchChallenges }) {
     const classes = useStyles();
-    const [state, setState] = useState({ open: false, challenge: '' });
+    const [state, setState] = useState({ open: false, challenge: '', secret: '' });
 
     useEffect(() => {
         fetchChallenges();
@@ -29,7 +31,7 @@ export function TestTeamButton({ isLoading, challenges, team, sendExample, fetch
 
     if (isLoading || !team.health) {
         return <Button key="action" disabled className={classes.actionButton} variant="outlined" color="secondary">
-            <ComputerIcon className={classes.actionButtonIcon}/>Test me
+            <OfflineBoltIcon className={classes.actionButtonIcon}/>Execute Challenge
         </Button>;
     }
 
@@ -46,8 +48,13 @@ export function TestTeamButton({ isLoading, challenges, team, sendExample, fetch
         setState((prevState) => ({ ...prevState, challenge }));
     };
 
+    const handleSecretChange = (event) => {
+        const secret = event.target.value;
+        setState((prevState) => ({ ...prevState, secret }));
+    };
+
     const handleSubmit = () => {
-        sendExample(team.name, state.challenge);
+        executeChallenge(team.name, state.challenge, state.secret);
         handleClose()
     };
 
@@ -56,26 +63,34 @@ export function TestTeamButton({ isLoading, challenges, team, sendExample, fetch
     }
 
     function isFormValid() {
-        return state.challenge;
+        return state.challenge && state.secret;
     }
 
     return [
-        <Button key="action" onClick={handleOpen} className={classes.actionButton} variant="text"
+        <Button key="action" onClick={handleOpen} className={classes.actionButton} variant="contained"
                 color="secondary">
-            <ComputerIcon className={classes.actionButtonIcon}/>
-            Test me
+            <OfflineBoltIcon className={classes.actionButtonIcon}/>
+            Execute Challenge
         </Button>,
         <Dialog key="dialog" open={state.open} onClose={handleClose}>
-            <DialogTitle>Test Challenge</DialogTitle>
+            <DialogTitle>Execute Challenge</DialogTitle>
             <DialogContent>
                 <DialogContentText className={classes.text}>
-                    To check your team, please select challenge you want to be checked with.
+                        Select challenge you want to be executed on Your team.
+                        <br />
+                        Use Team Secret from registration!
                 </DialogContentText>
                 <Select name="challenge" displayEmpty value={state.challenge}
                         className={classes.selectEmpty} onChange={handleChallengeChange} fullWidth>
                     <MenuItem value="" disabled>Select Challenge</MenuItem>
                     {challenges.map(challenge => renderSelectOption(challenge))}
                 </Select>
+                <TextField value={state.secret}
+                           placeholder="6cba47f8-6a0b-48ff-94bd-a3bbb32d6e5d"
+                           onChange={handleSecretChange}
+                           fullWidth
+                           margin="normal"
+                />
             </DialogContent>
             <DialogActions>
                 <Button onClick={handleClose} color="primary">
@@ -95,6 +110,6 @@ const mapStateToProps = (state) => ({
 
 const mapDispatchToProps = dispatch => bindActionCreators({
     fetchChallenges: CHALLENGES_FETCH,
-    sendExample: TEAM_SEND_EXAMPLE
+    executeChallenge: TEAM_EXECUTE_CHALLENGE
 }, dispatch);
-export default connect(mapStateToProps, mapDispatchToProps)(TestTeamButton);
+export default connect(mapStateToProps, mapDispatchToProps)(ExecuteChallengeButton);
