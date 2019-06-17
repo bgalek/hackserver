@@ -15,11 +15,11 @@ import java.util.Map;
 class HostnameChallengeDefinition implements ChallengeDefinition {
 
     private static final List<TaskWithFixedResult> TASKS = List.of(
-            TaskDefinition.withFixedResult("Should return simple hostname", new LinkedMultiValueMap<>(Map.of("url", List.of("https://allegro.pl"))), "allegro.pl", new TaskScoring(4, 200)),
-            TaskDefinition.withFixedResult("Should return simple hostname (but not simplest)", new LinkedMultiValueMap<>(Map.of("url", List.of("https://some_host.org"))), "some_host", new TaskScoring(4, 200)),
-            TaskDefinition.withFixedResult("Should return simple hostname with subdomain", new LinkedMultiValueMap<>(Map.of("url", List.of("https://archiwum.allegro.pl"))), "archiwum.allegro.pl", new TaskScoring(4, 200)),
-            TaskDefinition.withFixedResult("Should return simple hostname with more subdomains", new LinkedMultiValueMap<>(Map.of("url", List.of("https://nowe.archiwum.allegro.pl"))), "nowe.archiwum.allegro.pl", new TaskScoring(4, 200)),
-            TaskDefinition.withFixedResult("Should return simple hostname from url with another url in query", new LinkedMultiValueMap<>(Map.of("url", List.of("https://site.com/?url=https://other.com"))), "site.com", new TaskScoring(4, 200))
+            TaskDefinition.withFixedResult("Should return simple hostname", new LinkedMultiValueMap<>(Map.of("url", List.of("https://allegro.pl"))), "allegro.pl", new TaskScoring(5, 100)),
+            TaskDefinition.withFixedResult("Should return simple hostname (but not simplest)", new LinkedMultiValueMap<>(Map.of("url", List.of("https://some_host.org"))), "some_host", new TaskScoring(5, 100)),
+            TaskDefinition.withFixedResult("Should return simple hostname with subdomain", new LinkedMultiValueMap<>(Map.of("url", List.of("https://archiwum.allegro.pl"))), "archiwum.allegro.pl", new TaskScoring(5, 100)),
+            TaskDefinition.withFixedResult("Should return simple hostname with more subdomains", new LinkedMultiValueMap<>(Map.of("url", List.of("https://nowe.archiwum.allegro.pl"))), "nowe.archiwum.allegro.pl", new TaskScoring(5, 100)),
+            TaskDefinition.withFixedResult("Should return simple hostname from url with another url in query", new LinkedMultiValueMap<>(Map.of("url", List.of("https://site.com/?url=https://other.com"))), "site.com", new TaskScoring(5, 100))
     );
 
     @Override
@@ -51,7 +51,7 @@ class HostnameChallengeDefinition implements ChallengeDefinition {
 
     @Override
     public TaskDefinition getExample() {
-        return TaskDefinition.withFixedResult("Should return wp.pl from https://wp.pl", new LinkedMultiValueMap<>(Map.of("url", List.of("https://wp.pl"))), "wp.pl", new TaskScoring(4, 200));
+        return TaskDefinition.withFixedResult("Should return wp.pl from https://wp.pl", new LinkedMultiValueMap<>(Map.of("url", List.of("https://wp.pl"))), "wp.pl", new TaskScoring(4, 100));
     }
 
     @Override

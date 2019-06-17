@@ -12,6 +12,13 @@ import java.time.Clock;
 
 @Configuration
 class ChallengeConfiguration {
+
+    @Bean
+    ChallengeResultRepository challengeResultRepository(ApplicationEventPublisher applicationEventPublisher,
+                                                        PersistenceChallengeResultRepository persistenceChallengeResultRepository) {
+        return new ChallengeResultRepository(persistenceChallengeResultRepository, applicationEventPublisher);
+    }
+
     @Bean
     ChallengeFacade challengeFacade(
             Clock clock,

@@ -3,6 +3,7 @@ package pl.allegro.tech.leaders.hackathon.challenge;
 import pl.allegro.tech.leaders.hackathon.challenge.api.ChallengeActivationResult;
 import pl.allegro.tech.leaders.hackathon.challenge.api.ChallengeDetails;
 import pl.allegro.tech.leaders.hackathon.challenge.api.TaskResult;
+import pl.allegro.tech.leaders.hackathon.registration.api.TeamSecret;
 import pl.allegro.tech.leaders.hackathon.scores.api.ScoreRegistry;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
@@ -77,6 +78,12 @@ public class ChallengeFacade {
 
     public Flux<TaskResult> runChallenge(String challengeId, String teamId) {
         return challengeRunner.runChallenge(challengeId, teamId)
+                .map(ChallengeResult::toTaskResult)
+                .compose(scoreRegistry::updateScores);
+    }
+
+    public Flux<TaskResult> runChallenge(String challengeId, String teamId, TeamSecret secret) {
+        return challengeRunner.runChallenge(challengeId, teamId, secret)
                 .map(ChallengeResult::toTaskResult)
                 .compose(scoreRegistry::updateScores);
     }

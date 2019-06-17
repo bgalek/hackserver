@@ -24,7 +24,7 @@ class WordBlenderChallengeDefinition implements ChallengeDefinition {
                             "developer"
                     ))),
                     5,
-                    new TaskScoring(4, 200)
+                    new TaskScoring(5, 200)
             ),
             TaskDefinition.withFixedResult(
                     "Should be able to create 4 whole words",
@@ -56,7 +56,7 @@ class WordBlenderChallengeDefinition implements ChallengeDefinition {
                             "available"
                     ))),
                     4,
-                    new TaskScoring(4, 200)
+                    new TaskScoring(5, 200)
             ),
             TaskDefinition.withFixedResult(
                     "Should be able to create word with null byte",
@@ -65,7 +65,7 @@ class WordBlenderChallengeDefinition implements ChallengeDefinition {
                             "r"
                     ))),
                     1,
-                    new TaskScoring(4, 200)
+                    new TaskScoring(5, 200)
             ),
 
             TaskDefinition.withFixedResult(
@@ -84,7 +84,7 @@ class WordBlenderChallengeDefinition implements ChallengeDefinition {
                             "😀💻🔥"
                     ))),
                     1,
-                    new TaskScoring(4, 200)
+                    new TaskScoring(5, 200)
             ),
             TaskDefinition.withFixedResult(
                     "Should be able to work with emoji typed",
@@ -119,7 +119,7 @@ class WordBlenderChallengeDefinition implements ChallengeDefinition {
                             "💓🔒📐🍤🔈🍹. 🔷🔐🍝🍍👬 🌻🐘🎆🔒🌴 💬🎭🎃📼"
                     ))),
                     0,
-                    new TaskScoring(4, 200)
+                    new TaskScoring(5, 200)
             )
     );
 
@@ -167,7 +167,7 @@ class WordBlenderChallengeDefinition implements ChallengeDefinition {
                         "lullaby"
                 ))),
                 2,
-                new TaskScoring(4, 200)
+                new TaskScoring(5, 200)
         );
     }
 

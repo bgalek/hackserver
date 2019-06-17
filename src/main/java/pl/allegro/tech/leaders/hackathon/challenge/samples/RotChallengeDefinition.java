@@ -15,9 +15,9 @@ import java.util.Map;
 class RotChallengeDefinition implements ChallengeDefinition {
 
     private static final List<TaskWithFixedResult> TASKS = List.of(
-            TaskDefinition.withFixedResult("Should decode mnqnavr cvrejfmr mebovbar cbcenjavr", new LinkedMultiValueMap<>(Map.of("string", List.of("mnqnavr cvrejfmr mebovbar cbcenjavr"))), "zadanie pierwsze zrobione poprawnie", new TaskScoring(4, 0)),
-            TaskDefinition.withFixedResult("Should decode rfiuws norobws nozwqncbs", new LinkedMultiValueMap<>(Map.of("string", List.of("rfiuws norobws nozwqncbs"))), "drugie zadanie zaliczone", new TaskScoring(4, 0)),
-            TaskDefinition.withFixedResult("Should decode eifydhy tuxuhcy tlivcihy jijluqhcy", new LinkedMultiValueMap<>(Map.of("string", List.of("eifydhy tuxuhcy tlivcihy jijluqhcy"))), "kolejne zadanie zrobione poprawnie", new TaskScoring(4, 0))
+            TaskDefinition.withFixedResult("Should decode mnqnavr cvrejfmr mebovbar cbcenjavr", new LinkedMultiValueMap<>(Map.of("string", List.of("mnqnavr cvrejfmr mebovbar cbcenjavr"))), "zadanie pierwsze zrobione poprawnie", new TaskScoring(5, 0)),
+            TaskDefinition.withFixedResult("Should decode rfiuws norobws nozwqncbs", new LinkedMultiValueMap<>(Map.of("string", List.of("rfiuws norobws nozwqncbs"))), "drugie zadanie zaliczone", new TaskScoring(5, 0)),
+            TaskDefinition.withFixedResult("Should decode eifydhy tuxuhcy tlivcihy jijluqhcy", new LinkedMultiValueMap<>(Map.of("string", List.of("eifydhy tuxuhcy tlivcihy jijluqhcy"))), "kolejne zadanie zrobione poprawnie", new TaskScoring(5, 0))
     );
 
     @Override
