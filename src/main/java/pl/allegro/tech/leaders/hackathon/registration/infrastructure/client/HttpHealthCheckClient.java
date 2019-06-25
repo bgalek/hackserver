@@ -14,7 +14,7 @@ class HttpHealthCheckClient implements HealthCheckClient {
     @Override
     public Mono<ResponseEntity<Void>> execute(URI uri) {
         return webClient
-                .head()
+                .get()
                 .uri(uri)
                 .exchange()
                 .flatMap(response -> response.toEntity(Void.class));

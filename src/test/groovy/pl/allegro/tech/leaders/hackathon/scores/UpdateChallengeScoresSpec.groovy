@@ -105,7 +105,7 @@ class UpdateChallengeScoresSpec extends ScoresSpec {
     }
 
     private HackatonScores getHackatonScores() {
-        return facade.getHackatonScores().block()
+        return facade.getHackathonScores().block()
     }
 
     private ChallengeScores getChallengeScores(String challengeId) {

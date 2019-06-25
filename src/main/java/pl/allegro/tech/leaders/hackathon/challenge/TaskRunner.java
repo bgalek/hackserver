@@ -37,7 +37,7 @@ class TaskRunner {
                 .port(team.getRemoteAddress().getPort())
                 .path(challenge.getChallengeEndpoint())
                 .queryParams(new LinkedMultiValueMap<>(task.getParameters()))
-                .build()
+                .build(task.isParametersEncoded())
                 .toUri();
         logger.info("running task of '{}' for team '{}', remote address: {}", challenge.getName(), team.getName(), teamEndpoint);
         final long start = clock.millis();
@@ -59,6 +59,11 @@ class TaskRunner {
             String errorMessage = "got HTTP status " + response.getStatusCode().value() + " from team '" + team.getName() + "', 2xx expected";
             logger.info(errorMessage);
             return resultBuilder.buildErrorResult(errorMessage);
+        }
+
+        if (challenge.solutionType().getName().equals(String.class.getName())) {
+            int score = calculateLatencyPenalty(task, response.getBody(), latency);
+            return resultBuilder.buildSuccessResult(score);
         }
 
         Either<String, ?> solution = parse(response.getBody(), challenge.solutionType(), team);

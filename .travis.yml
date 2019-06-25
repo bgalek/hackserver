@@ -6,6 +6,7 @@ jdk:
 
 script:
   - ./gradlew build --scan -s
+  - sonar-scanner
 
 before_cache:
   - rm -f  $HOME/.gradle/caches/modules-2/modules-2.lock
@@ -15,3 +16,9 @@ cache:
   directories:
     - $HOME/.gradle/caches/
     - $HOME/.gradle/wrapper/
+
+addons:
+  sonarcloud:
+    organization: "bgalek-github"
+    token:
+      secure: "UAgu1HTKJT2iv3oixFyFcm2kKzNkawKDr32wFAPx66hNA5HjoQsYTVlO1LzshvkozkANz+GXezQzwblhQkYFeTutBiHFkfy7QuEyr/LerzgVmbtgCw3jLCxaRstWsJ3Tiu0khtLmEotfuDafgClV3uYkkKEaPoXBggb45fLgbZsv0LwnyjlBnc/edy5qJqAi9ygP4qCU9M97Yx2+l7KT8pH6WzcttATQD956aPEDYqzur0lPGZYYFFYq0WSmvoTXR1Oc2izi4rhex8ydmSKO67NHMpAND6V1FxO3tnz+BXUgf97yL8OK35Esivo78p8TtRZodBLQoWQy/L7miCng4R8s8ytfbUNFI5SC5LO0GbZSggvDda0AerM/NCdHniYABwJ9V/OMvs5luMldJ77RKhQ8I/t61bp1+gmYgHKYMse/kEG1fQtYxbpliJloNfUpQ+XfpI5qEX7UIoHWkIANuVBNVNW+WkyG/J5zY4Kji7KqkeRKqswR3uBtDoBaYGXAEdpGeFJRKY7xCYrdMj4kF6MSlvOTtCXlk5af737GTh8867hAQxSXAZJL80Lg3jvvWPT+72pCp4WyjiiyHkLkxH+OuF8f69O32x2KevGp/+8UatRVeuXv+ompaomJz9qub/O3BnISdkXxw9NS5jsiEGZEwZ1f08/EConADkW6ONU="

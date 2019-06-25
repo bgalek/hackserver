@@ -7,6 +7,8 @@ import pl.allegro.tech.leaders.hackathon.challenge.TaskDefinition;
 import pl.allegro.tech.leaders.hackathon.challenge.TaskDefinition.TaskWithFixedResult;
 import pl.allegro.tech.leaders.hackathon.challenge.TaskScoring;
 
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -71,55 +73,45 @@ class WordBlenderChallengeDefinition implements ChallengeDefinition {
             TaskDefinition.withFixedResult(
                     "Should be able to distinguish foreign alphabets",
                     new LinkedMultiValueMap<>(Map.of("word", List.of(
-                            "ⅾeveⅼореr",
-                            "deveⅼореr",
-                            "ⅾeveⅼореr",
-                            "ⅾeveⅼореr",
-                            "ⅾeveⅼореr",
-                            "ⅾevelореr",
-                            "ⅾeveⅼpреr",
-                            "ⅾeveⅼоpеr",
-                            "ⅾeveⅼорer",
-                            "ⅾeveⅼореr",
-                            "😀💻🔥"
-                    ))),
+                            URLEncoder.encode("ⅾeveⅼореr", StandardCharsets.UTF_8),
+                            URLEncoder.encode("deveⅼореr", StandardCharsets.UTF_8),
+                            URLEncoder.encode("ⅾeveⅼореr", StandardCharsets.UTF_8),
+                            URLEncoder.encode("ⅾeveⅼореr", StandardCharsets.UTF_8),
+                            URLEncoder.encode("ⅾeveⅼореr", StandardCharsets.UTF_8),
+                            URLEncoder.encode("ⅾevelореr", StandardCharsets.UTF_8),
+                            URLEncoder.encode("ⅾeveⅼpреr", StandardCharsets.UTF_8),
+                            URLEncoder.encode("ⅾeveⅼоpеr", StandardCharsets.UTF_8),
+                            URLEncoder.encode("ⅾeveⅼорer", StandardCharsets.UTF_8),
+                            URLEncoder.encode("ⅾeveⅼореr", StandardCharsets.UTF_8),
+                            URLEncoder.encode("ⅾeveⅼoреr", StandardCharsets.UTF_8),
+                            URLEncoder.encode("😀💻🔥", StandardCharsets.UTF_8))
+                    )),
                     1,
-                    new TaskScoring(5, 200)
+                    new TaskScoring(5, 200),
+                    true
             ),
             TaskDefinition.withFixedResult(
                     "Should be able to work with emoji typed",
                     new LinkedMultiValueMap<>(Map.of("word", List.of(
-                            "🎫📷💼🔤🌝 🏉📥👧📇🔌 👇👂🎨👫",
-                            "🕥🍞🏤 👫🐪🔡🐠💊💪.",
-                            "😀💻🔥🌓 🍆🌜🔣👦 👀🐌",
-                            "📭🐭🏆 📝🕂🔝🏇💄 🍁🎆🍵🐉👖🐲🕠 🕧🌌💥💷📕 📞🌊🐪📎",
-                            "🐧🌰 👦🍻💡📵🕂🎓 🍝👽🕞🌴🔻 👾🎁🎰👙🍴 🐣👽🏯🌱👑 🌹📪👕",
-                            "📖💅 🌗🐅🎓🐢🌑🌚🍈 📊📃💵🍻🌒 📆🕁🐴🔓🔛📺 📬",
-                            "💓🔒📐🍤🔈🍹. 🔷🔐🍝🍍👬 🌻🐘🎆🔒🌴 💬🎭🎃📼",
-                            "🎫📷💼🔤🌝 🏉📥👧📇🔌 👇👂🎨👫",
-                            "🕥🍞🏤 👫🐪🔡🐠💊💪.",
-                            "😀💻🔥🌓 🍆🌜🔣👦 👀🐌",
-                            "📭🐭🏆 📝🕂🔝🏇💄 🍁🎆🍵🐉👖🐲🕠 🕧🌌💥💷📕 📞🌊🐪📎",
-                            "🐧🌰 👦🍻💡📵🕂🎓 🍝👽🕞🌴🔻 👾🎁🎰👙🍴 🐣👽🏯🌱👑 🌹📪👕",
-                            "📖💅 🌗🐅🎓🐢🌑🌚🍈 📊📃💵🍻🌒 📆🕁🐴🔓🔛📺 📬",
-                            "💓🔒📐🍤🔈🍹. 🔷🔐🍝🍍👬 🌻🐘🎆🔒🌴 💬🎭🎃📼",
-                            "🎫📷💼🔤🌝 🏉📥👧📇🔌 👇👂🎨👫",
-                            "🕥🍞🏤 👫🐪🔡🐠💊💪.",
-                            "😀💻🔥🌓 🍆🌜🔣👦 👀🐌",
-                            "📭🐭🏆 📝🕂🔝🏇💄 🍁🎆🍵🐉👖🐲🕠 🕧🌌💥💷📕 📞🌊🐪📎",
-                            "🐧🌰 👦🍻💡📵🕂🎓 🍝👽🕞🌴🔻 👾🎁🎰👙🍴 🐣👽🏯🌱👑 🌹📪👕",
-                            "📖💅 🌗🐅🎓🐢🌑🌚🍈 📊📃💵🍻🌒 📆🕁🐴🔓🔛📺 📬",
-                            "💓🔒📐🍤🔈🍹. 🔷🔐🍝🍍👬 🌻🐘🎆🔒🌴 💬🎭🎃📼",
-                            "🎫📷💼🔤🌝 🏉📥👧📇🔌 👇👂🎨👫",
-                            "🕥🍞🏤 👫🐪🔡🐠💊💪.",
-                            "😀💻🔥🌓 🍆🌜🔣👦 👀🐌",
-                            "📭🐭🏆 📝🕂🔝🏇💄 🍁🎆🍵🐉👖🐲🕠 🕧🌌💥💷📕 📞🌊🐪📎",
-                            "🐧🌰 👦🍻💡📵🕂🎓 🍝👽🕞🌴🔻 👾🎁🎰👙🍴 🐣👽🏯🌱👑 🌹📪👕",
-                            "📖💅 🌗🐅🎓🐢🌑🌚🍈 📊📃💵🍻🌒 📆🕁🐴🔓🔛📺 📬",
-                            "💓🔒📐🍤🔈🍹. 🔷🔐🍝🍍👬 🌻🐘🎆🔒🌴 💬🎭🎃📼"
+                            URLEncoder.encode("🎫📷💼🔤🌝 🏉📥👧📇🔌 👇👂🎨👫",StandardCharsets.UTF_8),
+                            URLEncoder.encode("🕥🍞🏤 👫🐪🔡🐠💊💪.",StandardCharsets.UTF_8),
+                            URLEncoder.encode("😀💻🔥🌓 🍆🌜🔣👦 👀🐌",StandardCharsets.UTF_8),
+                            URLEncoder.encode("📭🐭🏆 📝🕂🔝🏇💄 🍁🎆🍵🐉👖🐲🕠 🕧🌌💥💷📕 📞🌊🐪📎",StandardCharsets.UTF_8),
+                            URLEncoder.encode("🐧🌰 👦🍻💡📵🕂🎓 🍝👽🕞🌴🔻 👾🎁🎰👙🍴 🐣👽🏯🌱👑 🌹📪👕",StandardCharsets.UTF_8),
+                            URLEncoder.encode("📖💅 🌗🐅🎓🐢🌑🌚🍈 📊📃💵🍻🌒 📆🕁🐴🔓🔛📺 📬",StandardCharsets.UTF_8),
+                            URLEncoder.encode("💓🔒📐🍤🔈🍹. 🔷🔐🍝🍍👬 🌻🐘🎆🔒🌴 💬🎭🎃📼",StandardCharsets.UTF_8),
+                            URLEncoder.encode("🎫📷💼🔤🌝 🏉📥👧📇🔌 👇👂🎨👫",StandardCharsets.UTF_8),
+                            URLEncoder.encode("🕥🍞🏤 👫🐪🔡🐠💊💪.",StandardCharsets.UTF_8),
+                            URLEncoder.encode("🕥🍞🏤 👫🐪🔡🐠💊💪.",StandardCharsets.UTF_8),
+                            URLEncoder.encode("😀💻🔥🌓 🍆🌜🔣👦 👀🐌",StandardCharsets.UTF_8),
+                            URLEncoder.encode("📭🐭🏆 📝🕂🔝🏇💄 🍁🎆🍵🐉👖🐲🕠 🕧🌌💥💷📕 📞🌊🐪📎",StandardCharsets.UTF_8),
+                            URLEncoder.encode("🐧🌰 👦🍻💡📵🕂🎓 🍝👽🕞🌴🔻 👾🎁🎰👙🍴 🐣👽🏯🌱👑 🌹📪👕",StandardCharsets.UTF_8),
+                            URLEncoder.encode("📖💅 🌗🐅🎓🐢🌑🌚🍈 📊📃💵🍻🌒 📆🕁🐴🔓🔛📺 📬",StandardCharsets.UTF_8),
+                            URLEncoder.encode("💓🔒📐🍤🔈🍹. 🔷🔐🍝🍍👬 🌻🐘🎆🔒🌴 💬🎭🎃📼",StandardCharsets.UTF_8)
                     ))),
                     0,
-                    new TaskScoring(5, 200)
+                    new TaskScoring(5, 200),
+                    true
             )
     );
 

@@ -38,7 +38,7 @@ function ChallengeResults({ team, fetchChallengesResults, isLoading, challengesR
             </TableRow>
         </TableHead>
         <TableBody>
-            {challengesResults.map((entry, i) => <TableRow key={`log-${i}`}>
+            {challengesResults.map(entry => <TableRow key={`log-${entry.score}-${entry.responseHttpStatus}-${entry.latencyMillis}`}>
                     <TableCell><Typography variant="caption">{entry.challengeId}</Typography></TableCell>
                     {matches ? <TableCell>{entry.taskName}</TableCell> : undefined}
                     <TableCell>{renderHttpStatus(entry.responseHttpStatus)}</TableCell>

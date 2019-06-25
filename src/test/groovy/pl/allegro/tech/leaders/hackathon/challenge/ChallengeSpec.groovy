@@ -31,6 +31,7 @@ abstract class ChallengeSpec extends Specification {
     InMemoryTeamClient teamClient = new InMemoryTeamClient()
     UpdatableFixedClock clock = defaultClock()
     ObjectMapper objectMapper = objectMapper()
+    InMemoryApplicationEventPublisher applicationEventPublisher = new InMemoryApplicationEventPublisher()
     RegistrationFacade registrationFacade = Stub()
     ScoreRegistry scoreRegistry = Stub() {
         updateScores(_) >> { Flux<TaskResult> results -> results }
@@ -38,14 +39,14 @@ abstract class ChallengeSpec extends Specification {
 
     ChallengeFacade facade = new ChallengeConfiguration()
             .challengeFacade(
-            clock,
-            objectMapper,
-            new InMemoryApplicationEventPublisher(),
-            teamClient,
-            new InMemoryChallengeStateRepository(),
-            new InMemoryChallengeResultRepository(),
-            registrationFacade,
-            scoreRegistry)
+                    clock,
+                    objectMapper,
+                    applicationEventPublisher,
+                    teamClient,
+                    new InMemoryChallengeStateRepository(),
+                    new ChallengeResultRepository(new InMemoryChallengeResultRepository(), applicationEventPublisher),
+                    registrationFacade,
+                    scoreRegistry)
 
     protected void registerChallengeDefinitions(ChallengeDefinition... definitions) {
         extract(facade.registerChallengeDefinitions(definitions.toList()))
@@ -192,7 +193,7 @@ class InMemoryApplicationEventPublisher implements ApplicationEventPublisher {
     }
 }
 
-class InMemoryChallengeResultRepository implements ChallengeResultRepository {
+class InMemoryChallengeResultRepository implements PersistenceChallengeResultRepository {
     private final Map<ChallengeResultId, ChallengeResult> store = new HashMap<>()
 
     @Override

@@ -153,32 +153,11 @@ class TaskRunnerSpec extends IntegrationSpec {
 
             println result
 
-            result.score == 3
+            result.score == 2
             result.responseHttpStatus == 200
             result.responseBody == "4"
             result.latencyMillis >= 200
             !result.errorMessage
-    }
-
-    def "should give 0 score when a client's response can't be parsed to a required type"() {
-        given:
-            activateChallenge(CHALLENGE_ID)
-            registerTeam(TEAM_ID)
-            stubTeamResponse(CHALLENGE_ENDPOINT, "[4]")
-
-        when:
-            def response = runExampleTask(CHALLENGE_ID, TEAM_ID)
-
-        then:
-            response.expectStatus().is2xxSuccessful()
-            def result = new JsonSlurper().parse(response.expectBody().returnResult().getResponseBody())
-
-            println result
-
-            result.score == 0
-            result.responseHttpStatus == 200
-            result.responseBody == "[4]"
-            result.errorMessage
     }
 
     private WebTestClient.ResponseSpec runExampleTask(CHALLENGE_ID, TEAM_ID) {

@@ -20,7 +20,7 @@ class ScoresEndpoint {
 
     @GetMapping
     Mono<HackatonScores> getHackatonScores() {
-        return scoresFacade.getHackatonScores();
+        return scoresFacade.getHackathonScores();
     }
 
     @GetMapping("/{challengeId}")

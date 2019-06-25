@@ -13,7 +13,6 @@ import Select from "@material-ui/core/Select";
 import MenuItem from "@material-ui/core/MenuItem";
 import { bindActionCreators } from "redux";
 import TextField from "@material-ui/core/TextField";
-import Typography from "@material-ui/core/Typography";
 
 const useStyles = makeStyles(theme => ({
     actionButton: { flex: '0 1 auto', marginLeft: theme.spacing(2) },

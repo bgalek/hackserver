@@ -15,12 +15,12 @@ import java.util.Map;
 class CalculatorChallengeDefinition implements ChallengeDefinition {
 
     private static final List<TaskWithFixedResult> TASKS = List.of(
-            TaskDefinition.withFixedResult("Should calculate simple sum", new LinkedMultiValueMap<>(Map.of("equation", List.of("2+2"))), "4", new TaskScoring(5, 100)),
-            TaskDefinition.withFixedResult("Should calculate with negative numbers", new LinkedMultiValueMap<>(Map.of("equation", List.of("-2+2"))), "0", new TaskScoring(5, 100)),
-            TaskDefinition.withFixedResult("Should calculate respecting sequence of actions order", new LinkedMultiValueMap<>(Map.of("equation", List.of("2+2*2"))), "6", new TaskScoring(5, 100)),
-            TaskDefinition.withFixedResult("Should calculate sum of big numbers", new LinkedMultiValueMap<>(Map.of("equation", List.of("423420034234+312435324423"))), "735855358657", new TaskScoring(5, 100)),
-            TaskDefinition.withFixedResult("Should calculate fractions", new LinkedMultiValueMap<>(Map.of("equation", List.of("0.1+0.1"))), "0.2", new TaskScoring(5, 0)),
-            TaskDefinition.withFixedResult("Should calculate numbers with leading (insignificant) zeros", new LinkedMultiValueMap<>(Map.of("equation", List.of("000001+000002"))), "3", new TaskScoring(5, 100))
+            TaskDefinition.withFixedResult("Should calculate simple sum", new LinkedMultiValueMap<>(Map.of("equation", List.of("2%2B2"))), "4", new TaskScoring(5, 100), true),
+            TaskDefinition.withFixedResult("Should calculate with negative numbers", new LinkedMultiValueMap<>(Map.of("equation", List.of("-2%2B2"))), "0", new TaskScoring(5, 100), true),
+            TaskDefinition.withFixedResult("Should calculate respecting sequence of actions order", new LinkedMultiValueMap<>(Map.of("equation", List.of("2%2B2*2"))), "6", new TaskScoring(5, 100), true),
+            TaskDefinition.withFixedResult("Should calculate sum of big numbers", new LinkedMultiValueMap<>(Map.of("equation", List.of("423420034234%2B312435324423"))), "735855358657", new TaskScoring(5, 100), true),
+            TaskDefinition.withFixedResult("Should calculate fractions", new LinkedMultiValueMap<>(Map.of("equation", List.of("0.1%2B0.1"))), "0.2", new TaskScoring(5, 0), true),
+            TaskDefinition.withFixedResult("Should calculate numbers with leading (insignificant) zeros", new LinkedMultiValueMap<>(Map.of("equation", List.of("000001%2B000002"))), "3", new TaskScoring(5, 100), true)
     );
 
     @Override
@@ -54,7 +54,7 @@ class CalculatorChallengeDefinition implements ChallengeDefinition {
 
     @Override
     public TaskDefinition getExample() {
-        return TaskDefinition.withFixedResult("Should calculate a sum 2+2=4", new LinkedMultiValueMap<>(Map.of("query", List.of("2+2"))), "4", new TaskScoring(4, 100));
+        return TaskDefinition.withFixedResult("Should calculate a sum 2+2=4", new LinkedMultiValueMap<>(Map.of("equation", List.of("2+2"))), "4", new TaskScoring(4, 100));
     }
 
     @Override

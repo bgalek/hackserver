@@ -7,6 +7,8 @@ import pl.allegro.tech.leaders.hackathon.challenge.TaskDefinition;
 import pl.allegro.tech.leaders.hackathon.challenge.TaskDefinition.TaskWithFixedResult;
 import pl.allegro.tech.leaders.hackathon.challenge.TaskScoring;
 
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -16,8 +18,8 @@ class ReverseStringChallengeDefinition implements ChallengeDefinition {
 
     private static final List<TaskWithFixedResult> TASKS = List.of(
             TaskDefinition.withFixedResult("Should return repoleved", new LinkedMultiValueMap<>(Map.of("string", List.of("developer"))), "repoleved", new TaskScoring(5, 100)),
-            TaskDefinition.withFixedResult("Should return palindorme", new LinkedMultiValueMap<>(Map.of("string", List.of("no lemon, no melon"))), "no lemon, no melon", new TaskScoring(5, 100)),
-            TaskDefinition.withFixedResult("Should look out for utf accents", new LinkedMultiValueMap<>(Map.of("string", List.of("Les Misérables"))), "selbarésiM seL", new TaskScoring(5, 100))
+            TaskDefinition.withFixedResult("Should return palindorme", new LinkedMultiValueMap<>(Map.of("string", List.of("no lemon, no melon"))), "nolem on ,nomel on", new TaskScoring(5, 100)),
+            TaskDefinition.withFixedResult("Should look out for utf accents", new LinkedMultiValueMap<>(Map.of("string", List.of(URLEncoder.encode("Les Misérables", StandardCharsets.UTF_8)))), "selbarésiM seL", new TaskScoring(5, 100), true)
     );
 
     @Override

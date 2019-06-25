@@ -8,11 +8,11 @@ import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 public class ScoresFacade implements ScoreRegistry {
-    private final ScoresRepository repository;
+    private final ScoresRepository scoresRepository;
     private final ScoresUpdater scoresUpdater;
 
-    ScoresFacade(ScoresRepository repository, ScoresUpdater scoresUpdater) {
-        this.repository = repository;
+    ScoresFacade(ScoresRepository scoresRepository, ScoresUpdater scoresUpdater) {
+        this.scoresRepository = scoresRepository;
         this.scoresUpdater = scoresUpdater;
     }
 
@@ -22,12 +22,12 @@ public class ScoresFacade implements ScoreRegistry {
     }
 
     public Mono<ChallengeScores> getChallengeScores(String challengeId) {
-        return repository.findLast()
+        return scoresRepository.findLast()
                 .map(scores -> scores.getChallengeScores(challengeId));
     }
 
-    public Mono<HackatonScores> getHackatonScores() {
-        return repository.findLast()
+    public Mono<HackatonScores> getHackathonScores() {
+        return scoresRepository.findLast()
                 .map(Scores::getHackatonScores);
     }
 }
