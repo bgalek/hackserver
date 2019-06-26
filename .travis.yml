@@ -5,8 +5,8 @@ jdk:
   - openjdk11
 
 script:
-  - ./gradlew build --scan -s
-  - sonar-scanner
+  - "./gradlew build --scan -s"
+  - "./gradlew sonarqube -Dsonar.login=$SONAR_TOKEN -Dsonar.projectKey=bgalek_hackserver -Dsonar.organization=bgalek-github -Dsonar.host.url=https://sonarcloud.io"
 
 before_cache:
   - rm -f  $HOME/.gradle/caches/modules-2/modules-2.lock
@@ -14,13 +14,5 @@ before_cache:
 
 cache:
   directories:
-    - $HOME/.gradle/caches/
-    - $HOME/.gradle/wrapper/
-    - $HOME/.sonar/cache/
-
-addons:
-  sonarcloud:
-    projectKey: bgalek_hackserver
-    organization: bgalek-github
-    token:
-      secure: anuLGB7WgqYiNcKbZE/U6kWVFIOt4qVEzVfSjUDl4WkfLMNhX8h0tqT2UgtjeNC1jCBdI+2jq6zWRHddk+dGdalWCvYPwIvj3qspRksTi8Bh8LZG6OQxY/tKfBINoEWo1ARwdEE0PAee85gYrowPC0Ru7f3baAWnGhiFiNulHCN52YgiwZoqkYl6qvFtOwvJm7LmJMtv53NWcj6laWA1/e0SJ7G0uUJ39IXZBPBwzmqqyaCZFmzfGkk1Q/g4A0rNjPFM3xVA7kYbQj7mm6uZW/qYKg6Sp2fcHSAar5Eg3O60N71VPo5JqBlCTeGekemKflOAi41ShckSHFxiM04OHQ/339ogOPF57CHlzMs/QkEKHQmj4HQbvO7KEE1OOILx0neOJjlh5+MczfJ2BviTwZkhQmzXvj0rTxKQnRxdjFQvGlHV7fxCvrLjRq0n3TzL/pJmQkQKILMunS/352S436Oeae/mkylGV3oQSlTHnPNOiEqW3UVE6w1mO8KXB2I42L97QTduyWg62aGSy49faG6hyiCPEbufWhj8P0Hep4WRPdjeg9uYIA7EvR+e8RAaPte55m1lFV2K8gL0Oy/hGdCoIiidsv1FFkCpH9tiIm/85gq1BMzPqYFBRGQGRajQUteVc2Sq890atDAd3dECAU3ya8hH+xvtOHaK2gyBVuc=
+    - "$HOME/.gradle/caches/"
+    - "$HOME/.gradle/wrapper/"
