@@ -4,6 +4,7 @@ plugins {
     java
     groovy
     application
+    jacoco
     id("org.springframework.boot") version "2.1.5.RELEASE"
     id("io.spring.dependency-management") version "1.0.7.RELEASE"
     id("com.moowork.node") version "1.2.0"
@@ -11,6 +12,7 @@ plugins {
     id("com.coditory.integration-test") version "1.0.5"
     id("net.ltgt.errorprone") version "0.8"
     id("com.adarshr.test-logger") version "1.6.0"
+    id("org.sonarqube") version "2.7"
 }
 
 application {
