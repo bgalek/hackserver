@@ -8,7 +8,7 @@ import { connect } from "react-redux";
 import { bindActionCreators } from "redux";
 import { SHOW_NOTIFICATION } from "../actions";
 import Grid from "@material-ui/core/Grid";
-import distanceInWordsToNow from "date-fns/distance_in_words_to_now";
+import { formatDistanceToNow } from 'date-fns'
 import List from "@material-ui/core/List";
 import ListItem from "@material-ui/core/ListItem";
 import ListItemText from "@material-ui/core/ListItemText";
@@ -55,7 +55,7 @@ export function ChallengeDetail({ challenge, onClose }) {
                     {challenge.name}
                 </Typography>
                 <Typography variant="body2" color="inherit">
-                    <strong>{distanceInWordsToNow(new Date(challenge.activatedAt), { addSuffix: true })}</strong>
+                    <strong>{formatDistanceToNow(new Date(challenge.activatedAt), { addSuffix: true })}</strong>
                 </Typography>
             </Toolbar>
         </AppBar>,

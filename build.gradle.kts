@@ -7,8 +7,7 @@ plugins {
     jacoco
     id("org.springframework.boot") version "2.1.5.RELEASE"
     id("io.spring.dependency-management") version "1.0.7.RELEASE"
-    id("com.moowork.node") version "1.2.0"
-    id("com.gradle.build-scan") version "2.1"
+    id("com.github.node-gradle.node") version "2.2.4"
     id("com.coditory.integration-test") version "1.0.5"
     id("net.ltgt.errorprone") version "0.8"
     id("com.adarshr.test-logger") version "1.6.0"
@@ -31,7 +30,7 @@ repositories {
 }
 
 dependencies {
-    errorprone("com.google.errorprone:error_prone_core:2.3.3")
+    errorprone("com.google.errorprone:error_prone_core:2.3.4")
 
     implementation("org.springframework.boot:spring-boot-starter-webflux")
     implementation("org.springframework.boot:spring-boot-starter-data-mongodb-reactive")
@@ -55,11 +54,6 @@ dependencies {
     integrationImplementation("org.springframework.boot:spring-boot-starter-test")
 
     integrationRuntime("de.flapdoodle.embed:de.flapdoodle.embed.mongo:2.2.0")
-}
-
-buildScan {
-    termsOfServiceUrl = "https://gradle.com/terms-of-service"
-    termsOfServiceAgree = "yes"
 }
 
 task<NpmTask>("webpack") {

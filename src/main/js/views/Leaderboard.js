@@ -4,7 +4,7 @@ import { connect } from "react-redux";
 import { SCORES_FETCH } from "../actions";
 import { bindActionCreators } from "redux";
 import { makeStyles } from "@material-ui/core";
-import distanceInWordsToNow from "date-fns/distance_in_words_to_now";
+import { formatDistanceToNow } from 'date-fns'
 import Table from "@material-ui/core/Table";
 import TableHead from "@material-ui/core/TableHead";
 import TableRow from "@material-ui/core/TableRow";
@@ -30,7 +30,7 @@ function Leaderboard({ scores, fetchScores }) {
                 Leaderboard
             </Typography>
             <Typography variant="subtitle1">
-                {distanceInWordsToNow(new Date(scores.updatedAt), { addSuffix: true })}
+                {formatDistanceToNow(new Date(scores.updatedAt), { addSuffix: true })}
             </Typography>
         </div>,
         <Table key="team-scores">
