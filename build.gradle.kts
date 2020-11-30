@@ -30,7 +30,7 @@ repositories {
 }
 
 dependencies {
-    errorprone("com.google.errorprone:error_prone_core:2.3.4")
+    errorprone("com.google.errorprone:error_prone_core:2.4.0")
 
     implementation("org.springframework.boot:spring-boot-starter-webflux")
     implementation("org.springframework.boot:spring-boot-starter-data-mongodb-reactive")
@@ -47,13 +47,13 @@ dependencies {
     testImplementation("org.spockframework:spock-core:1.3-groovy-2.5")
     testImplementation("io.projectreactor:reactor-test:3.4.0")
     testImplementation("cglib:cglib-nodep:3.3.0")
-    testImplementation("com.squareup.okhttp3:mockwebserver:4.9.0")
+    testImplementation("com.squareup.okhttp3:mockwebserver:3.14.0")
     testImplementation("org.objenesis:objenesis:3.1")
 
     integrationImplementation("org.spockframework:spock-spring:1.3-groovy-2.5")
     integrationImplementation("org.springframework.boot:spring-boot-starter-test")
 
-    integrationRuntime("de.flapdoodle.embed:de.flapdoodle.embed.mongo:2.2.0")
+    integrationRuntimeOnly("de.flapdoodle.embed:de.flapdoodle.embed.mongo:3.0.0")
 }
 
 task<NpmTask>("webpack") {
