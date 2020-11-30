@@ -70,7 +70,7 @@ export function ExecuteChallengeButton({ team, challenge, isLoading, challenges,
     };
 
     const handleSubmit = () => {
-        executeChallenge(team.name, state.challenge, state.secret);
+        executeChallenge(state.team, state.challenge, state.secret);
         handleClose()
     };
 
@@ -83,7 +83,7 @@ export function ExecuteChallengeButton({ team, challenge, isLoading, challenges,
     }
 
     function isFormValid() {
-        return state.challenge && state.secret;
+        return state.challenge && state.team && state.secret;
     }
 
     return [
@@ -111,6 +111,7 @@ export function ExecuteChallengeButton({ team, challenge, isLoading, challenges,
                     {challenges.map(challenge => renderChallengeSelectOption(challenge))}
                 </Select>
                 <TextField value={state.secret}
+                           type="password"
                            placeholder="6cba47f8-6a0b-48ff-94bd-a3bbb32d6e5d"
                            onChange={handleSecretChange}
                            fullWidth

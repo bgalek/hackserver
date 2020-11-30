@@ -19,7 +19,8 @@ class ReverseStringChallengeDefinition implements ChallengeDefinition {
     private static final List<TaskWithFixedResult> TASKS = List.of(
             TaskDefinition.withFixedResult("Should return repoleved", new LinkedMultiValueMap<>(Map.of("string", List.of("developer"))), "repoleved", new TaskScoring(5, 100)),
             TaskDefinition.withFixedResult("Should return palindorme", new LinkedMultiValueMap<>(Map.of("string", List.of("no lemon, no melon"))), "nolem on ,nomel on", new TaskScoring(5, 100)),
-            TaskDefinition.withFixedResult("Should look out for utf accents", new LinkedMultiValueMap<>(Map.of("string", List.of(URLEncoder.encode("Les Misérables", StandardCharsets.UTF_8)))), "selbarésiM seL", new TaskScoring(5, 100), true)
+            TaskDefinition.withFixedResult("Should look out for utf accents", new LinkedMultiValueMap<>(Map.of("string", List.of(URLEncoder.encode("Les Misérables", StandardCharsets.UTF_8)))), "selbarésiM seL", new TaskScoring(5, 100), true),
+            TaskDefinition.withFixedResult("Should look out for control characters", new LinkedMultiValueMap<>(Map.of("string", List.of(URLEncoder.encode("\uD83D\uDC4B\uD83C\uDFFF\uD83D\uDC76", StandardCharsets.UTF_8)))), "\uD83D\uDC76\uD83D\uDC4B\uD83C\uDFFF", new TaskScoring(5, 100), true)
     );
 
     @Override

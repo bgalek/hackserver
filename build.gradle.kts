@@ -41,6 +41,7 @@ dependencies {
     implementation("io.projectreactor:reactor-core:3.4.0")
     implementation("io.vavr:vavr:0.10.3")
     implementation("io.micrometer:micrometer-registry-prometheus:1.6.1")
+    implementation("com.github.maximan3000:caesar-cipher:1.0.0")
 
     annotationProcessor("org.springframework.boot:spring-boot-configuration-processor")
 

@@ -122,9 +122,9 @@ class WordBlenderChallengeDefinition implements ChallengeDefinition {
 
     @Override
     public String getDescription() {
-        return "You will receive a set of words, that will be placed into high power word blender. " +
+        return "You will receive a set of words, break them into separate letters in a blender. " +
                 "Your task is to count how many times word \"developer\" can be created simply by " +
-                "taking the letters form the blender one by one. Remaining letters will be used another time.";
+                "taking the letters form the blender one by one.";
     }
 
     @Override
