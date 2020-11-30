@@ -8,6 +8,7 @@ import pl.allegro.tech.leaders.hackathon.scores.api.ScoreRegistry;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
+import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
 
@@ -95,6 +96,7 @@ public class ChallengeFacade {
 
     public Flux<TaskResult> getResultsForTeam(String teamId) {
         return challengeResultRepository.findByTeamId(teamId)
+                .sort(Comparator.comparing(o -> o.getId().getChallengeId()))
                 .map(ChallengeResult::toTaskResult);
     }
 }

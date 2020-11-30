@@ -32,7 +32,7 @@ class ChallengeResultRepository {
     }
 
     Flux<ChallengeResult> findByTeamId(String teamId) {
-        return persistenceChallengeResultRepository.findByTeamId(teamId).sort(Comparator.comparing(o -> o.getId().getChallengeId()));
+        return persistenceChallengeResultRepository.findByTeamId(teamId);
     }
 }
 
