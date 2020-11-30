@@ -57,8 +57,8 @@ export function TeamDetail({ team, challengesResults, onClose }) {
                 <Typography variant="h6" color="inherit" className={classes.challengeName}>
                     {team.name}
                 </Typography>
-                <TestTeamButton team={team}/>
-                <ExecuteChallengeButton team={team}/>
+                <TestTeamButton team={team.name}/>
+                <ExecuteChallengeButton team={team.name}/>
             </Toolbar>
         </AppBar>,
         <Grid key="modal-content" container justify="center" alignItems="center">

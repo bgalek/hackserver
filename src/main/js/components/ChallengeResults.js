@@ -44,7 +44,7 @@ function ChallengeResults({ team, fetchChallengesResults, isLoading, challengesR
                     <TableCell>{renderHttpStatus(entry.responseHttpStatus)}</TableCell>
                     {matches ? <TableCell>{entry.latencyMillis} ms</TableCell> : undefined}
                     <TableCell>{entry.score}</TableCell>
-                    <TableCell>{entry.responseBody}</TableCell>
+                    <TableCell>{renderScore(entry.score, entry.responseBody)}</TableCell>
                 </TableRow>
             )}
         </TableBody>
@@ -59,6 +59,13 @@ function renderHttpStatus(httpStatus) {
     };
     const state = states[httpStatus] || states.error;
     return <Chip style={{ color: "white", backgroundColor: state.color }} label={httpStatus} icon={state.icon}/>;
+}
+
+function renderScore(score, value) {
+    if(score){
+        return <Chip style={{ color: "white", backgroundColor: green.A700 }} label={value} icon={<DoneIcon style={{ color: "white" }}/>}/>;
+    }
+    return <Chip style={{ color: "white", backgroundColor: red.A200 }} label={value || 'error'} icon={<ErrorIcon style={{ color: "white" }}/>}/>;
 }
 
 ChallengeResults.propTypes = {

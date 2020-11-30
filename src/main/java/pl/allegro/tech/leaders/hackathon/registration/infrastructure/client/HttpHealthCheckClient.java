@@ -6,17 +6,19 @@ import pl.allegro.tech.leaders.hackathon.registration.api.HealthCheckClient;
 import reactor.core.publisher.Mono;
 
 import java.net.URI;
+import java.time.Duration;
 
 class HttpHealthCheckClient implements HealthCheckClient {
 
-    private WebClient webClient = WebClient.builder().build();
+    private final WebClient webClient = WebClient.builder().build();
 
     @Override
     public Mono<ResponseEntity<Void>> execute(URI uri) {
         return webClient
                 .get()
                 .uri(uri)
-                .exchange()
+                .exchangeToMono(Mono::just)
+                .timeout(Duration.ofMillis(500))
                 .flatMap(response -> response.toEntity(Void.class));
     }
 }

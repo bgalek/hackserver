@@ -73,19 +73,19 @@ public class ChallengeFacade {
     public Flux<TaskResult> runChallenge(String challengeId) {
         return challengeRunner.runChallenge(challengeId)
                 .map(ChallengeResult::toTaskResult)
-                .compose(scoreRegistry::updateScores);
+                .transformDeferred(scoreRegistry::updateScores);
     }
 
     public Flux<TaskResult> runChallenge(String challengeId, String teamId) {
         return challengeRunner.runChallenge(challengeId, teamId)
                 .map(ChallengeResult::toTaskResult)
-                .compose(scoreRegistry::updateScores);
+                .transformDeferred(scoreRegistry::updateScores);
     }
 
     public Flux<TaskResult> runChallenge(String challengeId, String teamId, TeamSecret secret) {
         return challengeRunner.runChallenge(challengeId, teamId, secret)
                 .map(ChallengeResult::toTaskResult)
-                .compose(scoreRegistry::updateScores);
+                .transformDeferred(scoreRegistry::updateScores);
     }
 
     public Flux<TaskResult> getResultsForChallenge(String challengeId) {

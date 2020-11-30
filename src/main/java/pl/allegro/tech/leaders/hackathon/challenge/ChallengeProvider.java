@@ -4,6 +4,9 @@ import pl.allegro.tech.leaders.hackathon.challenge.api.ChallengeNotFoundExceptio
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
+import java.time.Instant;
+import java.util.Optional;
+
 import static java.util.Comparator.comparingLong;
 
 class ChallengeProvider {
@@ -16,7 +19,7 @@ class ChallengeProvider {
     Flux<Challenge> getActiveChallenges() {
         return challengeRepository.findAll()
                 .filter(Challenge::isActive)
-                .sort(comparingLong(c -> -1 * c.getActivatedAt().toEpochMilli()));
+                .sort(comparingLong(c -> -1 * Optional.ofNullable(c.getActivatedAt()).map(Instant::toEpochMilli).orElse(0L)));
     }
 
     Mono<Challenge> getActiveChallenge(String challengeId) {

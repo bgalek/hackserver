@@ -3,15 +3,15 @@ import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import { withSnackbar } from 'notistack';
 import { HIDE_NOTIFICATION } from '../actions';
-import Button from "@material-ui/core/Button";
-import { Dialog } from "@material-ui/core";
-import DialogContent from "@material-ui/core/DialogContent";
-import DialogActions from "@material-ui/core/DialogActions";
-import DialogTitle from "@material-ui/core/DialogTitle";
-import List from "@material-ui/core/List";
-import ListItem from "@material-ui/core/ListItem";
-import ListItemText from "@material-ui/core/ListItemText";
-import PropTypes from "prop-types";
+import Button from '@material-ui/core/Button';
+import { Dialog } from '@material-ui/core';
+import DialogContent from '@material-ui/core/DialogContent';
+import DialogActions from '@material-ui/core/DialogActions';
+import DialogTitle from '@material-ui/core/DialogTitle';
+import List from '@material-ui/core/List';
+import ListItem from '@material-ui/core/ListItem';
+import ListItemText from '@material-ui/core/ListItemText';
+import PropTypes from 'prop-types';
 
 class Notifications extends Component {
 
@@ -44,17 +44,15 @@ class Notifications extends Component {
         const { notifications = [] } = this.props;
         notifications.forEach((notification) => {
             if (this.displayed.includes(notification.key)) return;
-            notification.options.autoHideDuration = 2000;
             if (notification.details) {
                 this.props.enqueueSnackbar(notification.message, {
                     ...notification.options,
                     action: <Button onClick={() => this.showModal(notification.details)} size="small">Details</Button>
-                })
+                });
             } else {
                 this.props.enqueueSnackbar(notification.message, notification.options);
             }
             this.storeDisplayed(notification.key);
-            this.props.removeSnackbar(notification.key);
         });
     }
 
@@ -79,7 +77,7 @@ class Notifications extends Component {
                     Close
                 </Button>
             </DialogActions>
-        </Dialog>
+        </Dialog>;
     }
 }
 

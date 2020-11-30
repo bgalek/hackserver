@@ -1,5 +1,6 @@
 package pl.allegro.tech.leaders.hackathon.registration;
 
+import org.slf4j.Logger;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -24,6 +25,7 @@ class HealthCheckMonitor {
     private final ApplicationEventPublisher applicationEventPublisher;
     private final Map<String, HealthStatus> healthMap = new ConcurrentHashMap<>();
 
+    private static final Logger logger = org.slf4j.LoggerFactory.getLogger(HealthCheckMonitor.class);
     private static final HealthStatus INITIAL_HEALTH_STATUS = UNKNOWN;
     private static final String HEALTH_PROTOCOL = "http";
     private static final String HEALTH_ENDPOINT = "status/health";
@@ -42,7 +44,10 @@ class HealthCheckMonitor {
         return healthCheckClient
                 .execute(healthTarget)
                 .map(ResponseEntity::getStatusCode)
-                .onErrorResume(throwable -> Mono.just(HttpStatus.SERVICE_UNAVAILABLE))
+                .onErrorResume(throwable -> {
+                    logger.info("error during health check: {}", throwable.getMessage());
+                    return Mono.just(HttpStatus.SERVICE_UNAVAILABLE);
+                })
                 .map(httpStatus -> httpStatus.is2xxSuccessful() ? HEALTHY : DEAD)
                 .doOnNext(healthStatus -> {
                     healthMap.put(team.getId(), healthStatus);

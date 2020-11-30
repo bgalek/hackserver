@@ -16,6 +16,8 @@ import { makeStyles } from '@material-ui/core/styles';
 import StarBorder from '@material-ui/icons/StarBorder';
 import ListItemIcon from "@material-ui/core/ListItemIcon";
 import Paper from "@material-ui/core/Paper";
+import TestTeamButton from '../components/TestTeamButton';
+import ExecuteChallengeButton from '../components/ExecuteChallengeButton';
 
 const useStyles = makeStyles(theme => ({
     appBar: {
@@ -30,7 +32,9 @@ const useStyles = makeStyles(theme => ({
     },
     challengeName: {
         flex: '1 0 auto',
-        marginLeft: theme.spacing(2)
+        marginLeft: theme.spacing(2),
+        display: 'flex',
+        alignItems: 'baseline'
     },
     nested: {
         paddingLeft: theme.spacing(4),
@@ -52,11 +56,13 @@ export function ChallengeDetail({ challenge, onClose }) {
                     <CloseIcon/>
                 </IconButton>
                 <Typography variant="h6" color="inherit" className={classes.challengeName}>
-                    {challenge.name}
+                    {challenge.name}&nbsp;
+                    <Typography variant="caption" color="inherit">
+                        <strong>started {formatDistanceToNow(new Date(challenge.activatedAt), { addSuffix: true })}</strong>
+                    </Typography>
                 </Typography>
-                <Typography variant="body2" color="inherit">
-                    <strong>{formatDistanceToNow(new Date(challenge.activatedAt), { addSuffix: true })}</strong>
-                </Typography>
+                <TestTeamButton challenge={challenge.id} />
+                <ExecuteChallengeButton challenge={challenge.id}/>
             </Toolbar>
         </AppBar>,
         <Grid key="modal-content" className={classes.content} direction="column" container>

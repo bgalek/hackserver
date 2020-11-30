@@ -21,7 +21,7 @@ const App = () => {
     return <MuiThemeProvider theme={theme}>
         <Provider store={store}>
             <ConnectedRouter history={history}>
-                <SnackbarProvider>
+                <SnackbarProvider autoHideDuration={5000}>
                     <Layout>
                         <Switch>
                             <Route exact path="/" component={routes.find(route => route.home).view}/>
