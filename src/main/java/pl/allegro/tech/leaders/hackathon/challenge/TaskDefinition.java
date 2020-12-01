@@ -92,7 +92,7 @@ public interface TaskDefinition {
 
         private final String name;
         private final MultiValueMap<String, Supplier<String>> parameters;
-        private final Object expectedSolution;
+        private final Supplier<Object> expectedSolution;
         private final TaskScoring taskScoring;
         private final boolean encoded;
 
@@ -106,7 +106,7 @@ public interface TaskDefinition {
 
         @Override
         public Object getExpectedSolution() {
-            return expectedSolution;
+            return expectedSolution.get();
         }
 
         @Override
