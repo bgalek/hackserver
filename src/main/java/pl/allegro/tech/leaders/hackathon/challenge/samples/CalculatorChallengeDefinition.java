@@ -11,6 +11,7 @@ import pl.allegro.tech.leaders.hackathon.challenge.TaskDefinition.TaskWithDynami
 import pl.allegro.tech.leaders.hackathon.challenge.TaskScoring;
 
 import java.net.URLDecoder;
+import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
@@ -59,13 +60,16 @@ class CalculatorChallengeDefinition implements ChallengeDefinition {
         var x = new Random().nextInt(50);
         var y = random.nextInt(50);
         var z = random.nextInt(50);
-        List<String> operationList = List.of("%2B", "-", "%2A", "%2F");
+        List<String> operationList = List.of("+", "-", "*", "/");
         var operation1 = operationList.get(random.nextInt(4));
-        var operation12 = operationList.get(random.nextInt(4));
+        var operation2 = operationList.get(random.nextInt(4));
+        String task = String.format("%d %s %d %s %d", x, operation1, y, operation2, z);
+
         ExpressionParser parser = new SpelExpressionParser();
-        Expression exp = parser.parseExpression(String.format("%d %s %d %s %d", x, URLDecoder.decode(operation1, StandardCharsets.UTF_8), y, URLDecoder.decode(operation12, StandardCharsets.UTF_8), z));
+        Expression exp = parser.parseExpression(task);
+
         return TaskDefinition.withDynamicResult(name, new LinkedMultiValueMap<>(
-                        Map.of("equation", List.of(() -> String.format("%d %s %d %s %d", x, operation1, y, operation12, z)))),
+                        Map.of("equation", List.of(() -> URLEncoder.encode(task, StandardCharsets.UTF_8)))),
                 exp::getValue,
                 new TaskScoring(50, 1000),
                 true
