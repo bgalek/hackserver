@@ -10,6 +10,8 @@ import pl.allegro.tech.leaders.hackathon.challenge.TaskDefinition;
 import pl.allegro.tech.leaders.hackathon.challenge.TaskDefinition.TaskWithDynamicResult;
 import pl.allegro.tech.leaders.hackathon.challenge.TaskScoring;
 
+import java.net.URLDecoder;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -48,9 +50,8 @@ class CalculatorChallengeDefinition implements ChallengeDefinition {
                     new LinkedMultiValueMap<>(Map.of("equation", List.of("2%2B2*2"))),
                     "6",
                     new TaskScoring(30, 1000),
-                    true)
-            // not so dynamic
-//            getDynamicExample("Should also work for random cases")
+                    true),
+            getDynamicExample("Should also work for random cases")
     );
 
     private static TaskWithDynamicResult getDynamicExample(String name) {
@@ -62,7 +63,7 @@ class CalculatorChallengeDefinition implements ChallengeDefinition {
         var operation1 = operationList.get(random.nextInt(4));
         var operation12 = operationList.get(random.nextInt(4));
         ExpressionParser parser = new SpelExpressionParser();
-        Expression exp = parser.parseExpression(String.format("%d %s %d %s %d", x, operation1, y, operation12, z));
+        Expression exp = parser.parseExpression(String.format("%d %s %d %s %d", x, URLDecoder.decode(operation1, StandardCharsets.UTF_8), y, URLDecoder.decode(operation12, StandardCharsets.UTF_8), z));
         return TaskDefinition.withDynamicResult(name, new LinkedMultiValueMap<>(
                         Map.of("equation", List.of(() -> String.format("%d %s %d %s %d", x, operation1, y, operation12, z)))),
                 exp::getValue,
