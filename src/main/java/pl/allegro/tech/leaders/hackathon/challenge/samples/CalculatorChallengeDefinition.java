@@ -10,7 +10,6 @@ import pl.allegro.tech.leaders.hackathon.challenge.TaskDefinition;
 import pl.allegro.tech.leaders.hackathon.challenge.TaskDefinition.TaskWithDynamicResult;
 import pl.allegro.tech.leaders.hackathon.challenge.TaskScoring;
 
-import java.net.URLDecoder;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
@@ -57,20 +56,21 @@ class CalculatorChallengeDefinition implements ChallengeDefinition {
 
     private static TaskWithDynamicResult getDynamicExample(String name) {
         Random random = new Random();
-        var x = new Random().nextInt(50);
-        var y = random.nextInt(50);
-        var z = random.nextInt(50);
+        var x = random.nextInt(50) + random.nextDouble();
+        var y = random.nextInt(50) + random.nextDouble();
+        var z = random.nextInt(50) + random.nextDouble();
         List<String> operationList = List.of("+", "-", "*", "/");
         var operation1 = operationList.get(random.nextInt(4));
         var operation2 = operationList.get(random.nextInt(4));
-        String task = String.format("%d %s %d %s %d", x, operation1, y, operation2, z);
+
+        String task = String.format("%.2f %s %.2f %s %.2f", x, operation1, y, operation2, z);
 
         ExpressionParser parser = new SpelExpressionParser();
         Expression exp = parser.parseExpression(task);
 
         return TaskDefinition.withDynamicResult(name, new LinkedMultiValueMap<>(
                         Map.of("equation", List.of(() -> URLEncoder.encode(task, StandardCharsets.UTF_8)))),
-                exp::getValue,
+                () -> String.format("%.2f", exp.getValue(Double.class)),
                 new TaskScoring(50, 1000),
                 true
         );
@@ -84,8 +84,8 @@ class CalculatorChallengeDefinition implements ChallengeDefinition {
     @Override
     public String getDescription() {
         return "Your task is to write a simple calculator. " +
-                "We will send you some equations, be prepared! " +
-                "(don't mind any parentheses or strange mathematical symbols though)";
+               "We will send you some equations, be prepared! " +
+               "(don't mind any parentheses or strange mathematical symbols though)";
     }
 
     @Override
