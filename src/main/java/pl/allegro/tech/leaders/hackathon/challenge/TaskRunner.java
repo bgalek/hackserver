@@ -78,9 +78,11 @@ class TaskRunner {
 
     private int calculateLatencyPenalty(TaskDefinition task, Object o, long latency) {
         int score = task.scoreSolution(o);
-        if (task.getTaskScoring().getLatencyPenaltyFactor() > 0) {
-            score = score - (int) latency / task.getTaskScoring().getLatencyPenaltyFactor();
-        }
+
+//        No penalty in remote competition :)
+//        if (task.getTaskScoring().getLatencyPenaltyFactor() > 0) {
+//            score = score - (int) latency / task.getTaskScoring().getLatencyPenaltyFactor();
+//        }
         return Math.max(score, 0);
     }
 
