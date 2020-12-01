@@ -14,8 +14,6 @@ import java.util.Random;
 @Component
 class RotChallengeDefinition implements ChallengeDefinition {
 
-    private static final Random RANDOM = new Random();
-
     private static final List<TaskDefinition> TASKS = List.of(
             TaskDefinition.withFixedResult("Should decode mnqnavr cvrejfmr mebovbar cbcenjavr",
                     new LinkedMultiValueMap<>(Map.of("string", List.of("mnqnavr cvrejfmr mebovbar cbcenjavr"))),
@@ -30,8 +28,8 @@ class RotChallengeDefinition implements ChallengeDefinition {
                     "kolejne zadanie zrobione poprawnie",
                     new TaskScoring(20, 100)),
             TaskDefinition.withDynamicResult("Should decode a dynamic rotation", new LinkedMultiValueMap<>(
-                            Map.of("string", List.of(() -> rot("a teraz zadanie z losowa podstawa", RANDOM.nextInt(14) + 1)))),
-                    () -> "a teraz zadanie z losową podstawą",
+                            Map.of("string", List.of(() -> rot("a teraz zadanie z losowa podstawa", new Random().nextInt(14) + 1)))),
+                    () -> "a teraz zadanie z losowa podstawa",
                     new TaskScoring(30, 100)
             )
     );
