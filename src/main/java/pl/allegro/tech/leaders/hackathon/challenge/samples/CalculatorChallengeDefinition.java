@@ -48,8 +48,9 @@ class CalculatorChallengeDefinition implements ChallengeDefinition {
                     new LinkedMultiValueMap<>(Map.of("equation", List.of("2%2B2*2"))),
                     "6",
                     new TaskScoring(30, 100),
-                    true),
-            getDynamicExample("Should also work for random cases")
+                    true)
+            // not so dynamic
+//            getDynamicExample("Should also work for random cases")
     );
 
     private static TaskWithDynamicResult getDynamicExample(String name) {
