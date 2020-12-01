@@ -17,7 +17,7 @@ import java.util.Map;
 class WordBlenderChallengeDefinition implements ChallengeDefinition {
     private static final List<TaskWithFixedResult> TASKS = List.of(
             TaskDefinition.withFixedResult(
-                    "Should be able to create 5 whole words",
+                    "Should be able to create few whole words",
                     new LinkedMultiValueMap<>(Map.of("word", List.of(
                             "developer",
                             "reedlvoep",
@@ -26,15 +26,15 @@ class WordBlenderChallengeDefinition implements ChallengeDefinition {
                             "developer"
                     ))),
                     5,
-                    new TaskScoring(5, 200)
+                    new TaskScoring(10, 200)
             ),
             TaskDefinition.withFixedResult(
-                    "Should be able to create 4 whole words",
+                    "Should be able to handle more words",
                     new LinkedMultiValueMap<>(Map.of("word", List.of(
-                            "presentation",
+                            "restoration",
                             "slave",
                             "colorful",
-                            "hospitality",
+                            "fatality",
                             "knot",
                             "staircase",
                             "catalogue",
@@ -48,17 +48,17 @@ class WordBlenderChallengeDefinition implements ChallengeDefinition {
                             "frog",
                             "link",
                             "cassette",
-                            "provision",
+                            "vision",
                             "holiday",
                             "hard",
-                            "hypnothize",
+                            "hyqnothize",
                             "evaluate",
                             "royalty",
                             "deviation",
                             "available"
                     ))),
-                    4,
-                    new TaskScoring(5, 200)
+                    0,
+                    new TaskScoring(10, 200)
             ),
             TaskDefinition.withFixedResult(
                     "Should be able to create word with null byte",
@@ -67,7 +67,7 @@ class WordBlenderChallengeDefinition implements ChallengeDefinition {
                             "r"
                     ))),
                     1,
-                    new TaskScoring(5, 200)
+                    new TaskScoring(15, 200)
             ),
 
             TaskDefinition.withFixedResult(
@@ -87,7 +87,7 @@ class WordBlenderChallengeDefinition implements ChallengeDefinition {
                             URLEncoder.encode("😀💻🔥", StandardCharsets.UTF_8))
                     )),
                     1,
-                    new TaskScoring(5, 200),
+                    new TaskScoring(25, 200),
                     true
             ),
             TaskDefinition.withFixedResult(
@@ -110,7 +110,7 @@ class WordBlenderChallengeDefinition implements ChallengeDefinition {
                             URLEncoder.encode("💓🔒📐🍤🔈🍹. 🔷🔐🍝🍍👬 🌻🐘🎆🔒🌴 💬🎭🎃📼",StandardCharsets.UTF_8)
                     ))),
                     0,
-                    new TaskScoring(5, 200),
+                    new TaskScoring(20, 200),
                     true
             )
     );

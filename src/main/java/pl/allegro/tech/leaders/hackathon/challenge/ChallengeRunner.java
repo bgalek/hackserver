@@ -1,5 +1,7 @@
 package pl.allegro.tech.leaders.hackathon.challenge;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import pl.allegro.tech.leaders.hackathon.registration.RegistrationFacade;
 import pl.allegro.tech.leaders.hackathon.registration.api.RegisteredTeam;
 import pl.allegro.tech.leaders.hackathon.registration.api.TeamSecret;
@@ -12,6 +14,8 @@ class ChallengeRunner {
     private final RegistrationFacade registrationFacade;
     private final TaskRunner taskRunner;
     private final ChallengeResultRepository challengeResultRepository;
+
+    private static final Logger logger = LoggerFactory.getLogger(TaskRunner.class);
 
     ChallengeRunner(
             ChallengeProvider challengeProvider,
@@ -55,8 +59,16 @@ class ChallengeRunner {
 
     private Flux<ChallengeResult> runChallenge(ChallengeDefinition challenge, RegisteredTeam team) {
         return Flux.fromIterable(challenge.getTasks())
-                .flatMap(task -> taskRunner.run(challenge, task, team), FLAT_MAP_ONE_AFTER_ANOTHER)
-                .flatMap(this::saveResult);
+                .map(task -> taskRunner.run(challenge, task, team))
+                .map(Mono::block)
+                .flatMap(result -> {
+                    logger.info("Got result: {}, score: {}",
+                            result.toTaskResult().getResponseBody(),
+                            result.toTaskResult().getScore()
+                    );
+                    return saveResult(result);
+                }, FLAT_MAP_ONE_AFTER_ANOTHER)
+                .takeUntil(result -> result.toTaskResult().getScore() == 0);
     }
 
     private Mono<ChallengeResult> saveResult(ChallengeResult result) {
