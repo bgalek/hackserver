@@ -26,7 +26,7 @@ class WordBlenderChallengeDefinition implements ChallengeDefinition {
                             "developer"
                     ))),
                     5,
-                    new TaskScoring(10, 200)
+                    new TaskScoring(10, 1000)
             ),
             TaskDefinition.withFixedResult(
                     "Should be able to handle more words",
@@ -58,7 +58,7 @@ class WordBlenderChallengeDefinition implements ChallengeDefinition {
                             "available"
                     ))),
                     0,
-                    new TaskScoring(10, 200)
+                    new TaskScoring(10, 1000)
             ),
             TaskDefinition.withFixedResult(
                     "Should be able to create word with null byte",
@@ -67,7 +67,7 @@ class WordBlenderChallengeDefinition implements ChallengeDefinition {
                             "r"
                     ))),
                     1,
-                    new TaskScoring(15, 200)
+                    new TaskScoring(15, 1000)
             ),
 
             TaskDefinition.withFixedResult(
@@ -87,7 +87,7 @@ class WordBlenderChallengeDefinition implements ChallengeDefinition {
                             URLEncoder.encode("😀💻🔥", StandardCharsets.UTF_8))
                     )),
                     1,
-                    new TaskScoring(25, 200),
+                    new TaskScoring(25, 1000),
                     true
             ),
             TaskDefinition.withFixedResult(
@@ -110,7 +110,7 @@ class WordBlenderChallengeDefinition implements ChallengeDefinition {
                             URLEncoder.encode("💓🔒📐🍤🔈🍹. 🔷🔐🍝🍍👬 🌻🐘🎆🔒🌴 💬🎭🎃📼",StandardCharsets.UTF_8)
                     ))),
                     0,
-                    new TaskScoring(20, 200),
+                    new TaskScoring(20, 1000),
                     true
             )
     );

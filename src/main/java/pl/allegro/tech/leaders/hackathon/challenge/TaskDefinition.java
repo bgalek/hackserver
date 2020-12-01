@@ -32,6 +32,10 @@ public interface TaskDefinition {
         return new TaskWithDynamicResult(name, params, expectedResult, taskScoring, false);
     }
 
+    static TaskWithDynamicResult withDynamicResult(String name, MultiValueMap<String, Supplier<String>> params, Supplier<Object> expectedResult, TaskScoring taskScoring, boolean encoded) {
+        return new TaskWithDynamicResult(name, params, expectedResult, taskScoring, encoded);
+    }
+
     class TaskWithFixedResult implements TaskDefinition {
 
         private final String name;

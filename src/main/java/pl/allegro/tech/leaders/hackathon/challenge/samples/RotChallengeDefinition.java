@@ -18,19 +18,19 @@ class RotChallengeDefinition implements ChallengeDefinition {
             TaskDefinition.withFixedResult("Should decode mnqnavr cvrejfmr mebovbar cbcenjavr",
                     new LinkedMultiValueMap<>(Map.of("string", List.of("mnqnavr cvrejfmr mebovbar cbcenjavr"))),
                     "zadanie pierwsze zrobione poprawnie",
-                    new TaskScoring(20, 100)),
+                    new TaskScoring(20, 1000)),
             TaskDefinition.withFixedResult("Should decode rfiuws norobws nozwqncbs",
                     new LinkedMultiValueMap<>(Map.of("string", List.of("rfiuws norobws nozwqncbs"))),
                     "drugie zadanie zaliczone",
-                    new TaskScoring(20, 100)),
+                    new TaskScoring(20, 1000)),
             TaskDefinition.withFixedResult("Should decode eifydhy tuxuhcy tlivcihy jijluqhcy",
                     new LinkedMultiValueMap<>(Map.of("string", List.of("eifydhy tuxuhcy tlivcihy jijluqhcy"))),
                     "kolejne zadanie zrobione poprawnie",
-                    new TaskScoring(20, 100)),
+                    new TaskScoring(20, 1000)),
             TaskDefinition.withDynamicResult("Should decode a dynamic rotation", new LinkedMultiValueMap<>(
                             Map.of("string", List.of(() -> rot("a teraz zadanie z losowa podstawa", new Random().nextInt(14) + 1)))),
                     () -> "a teraz zadanie z losowa podstawa",
-                    new TaskScoring(30, 100)
+                    new TaskScoring(30, 1000)
             )
     );
 
