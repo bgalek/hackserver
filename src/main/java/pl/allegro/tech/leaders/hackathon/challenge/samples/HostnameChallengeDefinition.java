@@ -4,7 +4,6 @@ import org.springframework.stereotype.Component;
 import org.springframework.util.LinkedMultiValueMap;
 import pl.allegro.tech.leaders.hackathon.challenge.ChallengeDefinition;
 import pl.allegro.tech.leaders.hackathon.challenge.TaskDefinition;
-import pl.allegro.tech.leaders.hackathon.challenge.TaskDefinition.TaskWithFixedResult;
 import pl.allegro.tech.leaders.hackathon.challenge.TaskScoring;
 
 import java.util.ArrayList;
@@ -14,7 +13,7 @@ import java.util.Map;
 @Component
 class HostnameChallengeDefinition implements ChallengeDefinition {
 
-    private static final List<TaskWithFixedResult> TASKS = List.of(
+    private static final List<TaskDefinition> TASKS = List.of(
             TaskDefinition.withFixedResult("Should return simple hostname",
                     new LinkedMultiValueMap<>(Map.of("url", List.of("https://allegro.pl"))),
                     "allegro.pl",
@@ -29,7 +28,7 @@ class HostnameChallengeDefinition implements ChallengeDefinition {
                     new TaskScoring(5, 1000)),
             TaskDefinition.withFixedResult("Should return local file hostname",
                     new LinkedMultiValueMap<>(Map.of("url", List.of("file:///c:/WINDOWS/file.mp3"))),
-                    "",
+                    "localhost",
                     new TaskScoring(5, 1000)),
             TaskDefinition.withFixedResult("Should return simple basic-auth hostname",
                     new LinkedMultiValueMap<>(Map.of("url", List.of("http://username:password@example.com/"))),
@@ -82,7 +81,10 @@ class HostnameChallengeDefinition implements ChallengeDefinition {
 
     @Override
     public TaskDefinition getExample() {
-        return TaskDefinition.withFixedResult("Should return wp.pl from https://wp.pl", new LinkedMultiValueMap<>(Map.of("url", List.of("https://wp.pl"))), "wp.pl", new TaskScoring(4, 100));
+        return TaskDefinition.withFixedResult("Should return wp.pl from https://wp.pl",
+                new LinkedMultiValueMap<>(Map.of("url", List.of("https://wp.pl"))),
+                "wp.pl",
+                new TaskScoring(4, 100));
     }
 
     @Override
