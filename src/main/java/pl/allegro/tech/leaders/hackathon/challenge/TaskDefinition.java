@@ -92,21 +92,21 @@ public interface TaskDefinition {
 
         private final String name;
         private final MultiValueMap<String, Supplier<String>> parameters;
-        private final Supplier<Object> expectedSolution;
+        private final Object expectedSolution;
         private final TaskScoring taskScoring;
         private final boolean encoded;
 
         TaskWithDynamicResult(String name, MultiValueMap<String, Supplier<String>> parameters, Supplier<Object> expectedSolution, TaskScoring taskScoring, boolean encoded) {
             this.name = name;
             this.parameters = parameters;
-            this.expectedSolution = expectedSolution;
+            this.expectedSolution = expectedSolution.get();
             this.taskScoring = taskScoring;
             this.encoded = encoded;
         }
 
         @Override
         public Object getExpectedSolution() {
-            return expectedSolution.get();
+            return expectedSolution;
         }
 
         @Override
