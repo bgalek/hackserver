@@ -5,13 +5,13 @@ plugins {
     groovy
     application
     jacoco
-    id("org.springframework.boot") version "2.4.0"
-    id("io.spring.dependency-management") version "1.0.10.RELEASE"
-    id("com.github.node-gradle.node") version "2.2.4"
+    id("org.springframework.boot") version "2.5.0"
+    id("io.spring.dependency-management") version "1.0.11.RELEASE"
+    id("com.github.node-gradle.node") version "3.1.0"
     id("com.coditory.integration-test") version "1.0.5"
-    id("net.ltgt.errorprone") version "0.8"
-    id("com.adarshr.test-logger") version "1.6.0"
-    id("org.sonarqube") version "2.7"
+    id("net.ltgt.errorprone") version "2.0.1"
+    id("com.adarshr.test-logger") version "3.0.0"
+    id("org.sonarqube") version "3.2.0"
 }
 
 application {
@@ -30,7 +30,7 @@ repositories {
 }
 
 dependencies {
-    errorprone("com.google.errorprone:error_prone_core:2.4.0")
+    errorprone("com.google.errorprone:error_prone_core:2.7.1")
 
     implementation("org.springframework.boot:spring-boot-starter-webflux")
     implementation("org.springframework.boot:spring-boot-starter-data-mongodb-reactive")
@@ -71,7 +71,7 @@ task<NpmTask>("watch") {
 }
 
 node {
-    version = "12.3.0"
+    version = "16.1.0"
     npmVersion = "6.9.0"
     download = true
 }
