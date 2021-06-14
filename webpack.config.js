@@ -3,7 +3,7 @@ const { CleanWebpackPlugin } = require('clean-webpack-plugin');
 
 module.exports = env => ({
     entry: './src/main/js/app.js',
-    devtool: 'sourcemaps',
+    devtool: 'source-map',
     cache: true,
     mode: 'development',
     output: {

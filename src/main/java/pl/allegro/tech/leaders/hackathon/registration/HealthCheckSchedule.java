@@ -7,8 +7,8 @@ import java.util.concurrent.TimeUnit;
 
 class HealthCheckSchedule {
 
-    private TeamRepository teamRepository;
-    private HealthCheckMonitor healthCheckMonitor;
+    private final TeamRepository teamRepository;
+    private final HealthCheckMonitor healthCheckMonitor;
 
     HealthCheckSchedule(TaskScheduler taskScheduler,
                         TeamRepository teamRepository,
@@ -18,11 +18,11 @@ class HealthCheckSchedule {
         this.healthCheckMonitor = healthCheckMonitor;
         long rate = healthCheckConfigurationProperties.getRate().toMillis();
         long delay = healthCheckConfigurationProperties.getDelay().toMillis();
-        taskScheduler.schedule(this::checkHealth, getTrigger(rate, delay, TimeUnit.MILLISECONDS));
+        taskScheduler.schedule(this::checkHealth, getTrigger(rate, delay));
     }
 
-    private PeriodicTrigger getTrigger(long rate, long delay, TimeUnit timeUnit) {
-        PeriodicTrigger periodicTrigger = new PeriodicTrigger(rate, timeUnit);
+    private PeriodicTrigger getTrigger(long rate, long delay) {
+        PeriodicTrigger periodicTrigger = new PeriodicTrigger(rate, TimeUnit.MILLISECONDS);
         periodicTrigger.setInitialDelay(delay);
         return periodicTrigger;
     }

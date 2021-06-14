@@ -15,6 +15,7 @@ import reactor.core.publisher.Mono
 import java.util.concurrent.TimeUnit
 
 class TaskRunnerSpec extends IntegrationSpec {
+
     @Autowired
     CalculatorChallengeDefinition calculatorChallengeDefinition
     MockWebServer mockWebServer = new MockWebServer()
@@ -173,7 +174,7 @@ class TaskRunnerSpec extends IntegrationSpec {
         mockWebServer.start(InetAddress.getByName('127.0.0.1'), port)
         webClient.post()
                 .uri('/registration')
-                .contentType(MediaType.APPLICATION_JSON_UTF8)
+                .contentType(MediaType.APPLICATION_JSON)
                 .body(Mono.just("""{ "name": "$teamId", "port": ${port}}""".toString()), String)
                 .exchange()
                 .expectStatus().is2xxSuccessful()
