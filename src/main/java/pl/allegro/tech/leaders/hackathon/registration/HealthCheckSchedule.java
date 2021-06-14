@@ -10,6 +10,7 @@ class HealthCheckSchedule {
     private final TeamRepository teamRepository;
     private final HealthCheckMonitor healthCheckMonitor;
 
+    @SuppressWarnings("FutureReturnValueIgnored")
     HealthCheckSchedule(TaskScheduler taskScheduler,
                         TeamRepository teamRepository,
                         HealthCheckMonitor healthCheckMonitor,

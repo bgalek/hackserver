@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.server.ResponseStatusException;
 import org.zalando.problem.Problem;
 import org.zalando.problem.Status;
-import org.zalando.problem.validation.ConstraintViolationProblemModule;
+import org.zalando.problem.violations.ConstraintViolationProblemModule;
 
 @RestControllerAdvice
 class ErrorHandlingConfiguration {
