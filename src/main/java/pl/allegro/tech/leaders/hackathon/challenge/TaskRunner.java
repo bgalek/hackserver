@@ -83,6 +83,7 @@ class TaskRunner {
 //        if (task.getTaskScoring().getLatencyPenaltyFactor() > 0) {
 //            score = score - (int) latency / task.getTaskScoring().getLatencyPenaltyFactor();
 //        }
+        logger.debug("latency {}, ignored", latency);
         return Math.max(score, 0);
     }
 
