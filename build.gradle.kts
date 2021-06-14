@@ -40,7 +40,7 @@ dependencies {
     implementation("org.springframework.boot:spring-boot-starter-data-mongodb-reactive")
     implementation("org.springframework.retry:spring-retry")
     implementation("com.fasterxml.jackson.module:jackson-module-jsonSchema:2.12.3")
-    implementation("org.zalando:problem-spring-web:0.26.2")
+    implementation("org.zalando:problem-spring-web:0.22.0")
     implementation("com.github.slugify:slugify:2.4")
     implementation("io.projectreactor:reactor-core:3.4.6")
     implementation("io.vavr:vavr:0.10.3")

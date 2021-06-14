@@ -7,7 +7,7 @@
     "classnames": "^2.3.1",
     "connected-react-router": "^6.9.1",
     "date-fns": "^2.22.1",
-    "history": "5.0.0",
+    "history": "4.10.1",
     "notistack": "1.0.9",
     "prop-types": "^15.7.2",
     "react": "^17.0.2",
