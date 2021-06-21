@@ -7,15 +7,18 @@ import org.springframework.stereotype.Component;
 import org.springframework.util.LinkedMultiValueMap;
 import pl.allegro.tech.leaders.hackathon.challenge.ChallengeDefinition;
 import pl.allegro.tech.leaders.hackathon.challenge.TaskDefinition;
-import pl.allegro.tech.leaders.hackathon.challenge.TaskDefinition.TaskWithDynamicResult;
 import pl.allegro.tech.leaders.hackathon.challenge.TaskScoring;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
+
+import static java.lang.String.format;
 
 @Component
 class CalculatorChallengeDefinition implements ChallengeDefinition {
@@ -50,11 +53,10 @@ class CalculatorChallengeDefinition implements ChallengeDefinition {
                     new LinkedMultiValueMap<>(Map.of("equation", List.of("2%2B2*2"))),
                     "6",
                     new TaskScoring(30, 1000),
-                    true),
-            getDynamicExample("Should also work for random cases")
+                    true)
     );
 
-    private static TaskWithDynamicResult getDynamicExample(String name) {
+    private static TaskDefinition.TaskWithFixedResult getDynamicExample(String name) {
         Random random = new Random();
         var x = random.nextInt(50) + random.nextDouble();
         var y = random.nextInt(50) + random.nextDouble();
@@ -63,17 +65,23 @@ class CalculatorChallengeDefinition implements ChallengeDefinition {
         var operation1 = operationList.get(random.nextInt(4));
         var operation2 = operationList.get(random.nextInt(4));
 
-        String task = String.format("%.2f %s %.2f %s %.2f", x, operation1, y, operation2, z);
+        String task = format("%.2f %s %.2f %s %.2f", x, operation1, y, operation2, z);
 
         ExpressionParser parser = new SpelExpressionParser();
         Expression exp = parser.parseExpression(task);
 
-        return TaskDefinition.withDynamicResult(name, new LinkedMultiValueMap<>(
-                        Map.of("equation", List.of(() -> URLEncoder.encode(task, StandardCharsets.UTF_8)))),
-                () -> String.format("%.2f", exp.getValue(Double.class)),
-                new TaskScoring(50, 1000),
+        return TaskDefinition.withFixedResult(name, new LinkedMultiValueMap<>(
+                        Map.of("equation", List.of(URLEncoder.encode(task, StandardCharsets.UTF_8)))),
+                round(exp.getValue(Double.class), 2),
+                new TaskScoring(60, 1000),
                 true
         );
+    }
+
+    public static String round(double value, int places) {
+        BigDecimal bd = BigDecimal.valueOf(value);
+        bd = bd.setScale(places, RoundingMode.HALF_UP);
+        return bd.toPlainString();
     }
 
     @Override
@@ -84,8 +92,10 @@ class CalculatorChallengeDefinition implements ChallengeDefinition {
     @Override
     public String getDescription() {
         return "Your task is to write a simple calculator. " +
-               "We will send you some equations, be prepared! " +
-               "(don't mind any parentheses or strange mathematical symbols though)";
+                "We will send you some equations, be prepared! " +
+                "(don't mind any parentheses or strange mathematical symbols though)." +
+                "Response should contain *up to* 2 decimal places, with trailing zeros removed." +
+                "E.g 2 + 2 = 4 (not 4.0), 0.123 + 0.123 = 0.25";
     }
 
     @Override
@@ -101,17 +111,24 @@ class CalculatorChallengeDefinition implements ChallengeDefinition {
     @Override
     public List<QueryParam> getChallengeParams() {
         return List.of(
-                new QueryParam("query", "equation to calc")
+                new QueryParam("equation", "equation to calc")
         );
     }
 
     @Override
     public TaskDefinition getExample() {
-        return TaskDefinition.withFixedResult("Should calculate a sum 2+2=4", new LinkedMultiValueMap<>(Map.of("equation", List.of("2%2B2"))), "4", new TaskScoring(4, 100), true);
+        return TaskDefinition.withFixedResult("Should calculate a sum 2+2=4",
+                new LinkedMultiValueMap<>(Map.of("equation", List.of("2%2B2"))),
+                "4",
+                new TaskScoring(4, 100),
+                true
+        );
     }
 
     @Override
     public List<TaskDefinition> getTasks() {
-        return new ArrayList<>(TASKS);
+        var res = new ArrayList<>(TASKS);
+        res.add(getDynamicExample("Should also work for random cases"));
+        return res;
     }
 }
