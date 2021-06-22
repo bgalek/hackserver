@@ -3,6 +3,8 @@ package pl.allegro.tech.leaders.hackathon.challenge;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 
+import java.util.Map;
+import java.util.function.BiFunction;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
@@ -34,6 +36,57 @@ public interface TaskDefinition {
 
     static TaskWithDynamicResult withDynamicResult(String name, MultiValueMap<String, Supplier<String>> params, Supplier<Object> expectedResult, TaskScoring taskScoring, boolean encoded) {
         return new TaskWithDynamicResult(name, params, expectedResult, taskScoring, encoded);
+    }
+
+    static <T> TaskWithValidableResult<T> withValidateResult(String name, T testcase, BiFunction<T, String, Boolean> verification, boolean expected, TaskScoring taskScoring) {
+        return new TaskWithValidableResult<T>(name, testcase, verification, expected, taskScoring);
+    }
+
+    class TaskWithValidableResult<T> implements TaskDefinition {
+
+        private final String name;
+        private final T testcase;
+        private final BiFunction<T, String, Boolean> verification;
+        private final boolean expected;
+        private final TaskScoring taskScoring;
+
+        public TaskWithValidableResult(String name, T testcase, BiFunction<T, String, Boolean> verification, boolean expected, TaskScoring taskScoring) {
+            this.name = name;
+            this.testcase = testcase;
+            this.verification = verification;
+            this.expected = expected;
+            this.taskScoring = taskScoring;
+        }
+
+        @Override
+        public String getName() {
+            return name;
+        }
+
+        @Override
+        public MultiValueMap<String, String> getParameters() {
+            return new LinkedMultiValueMap<>(Map.of());
+        }
+
+        @Override
+        public Boolean getExpectedSolution() {
+            return expected;
+        }
+
+        @Override
+        public boolean isParametersEncoded() {
+            return false;
+        }
+
+        @Override
+        public TaskScoring getTaskScoring() {
+            return taskScoring;
+        }
+
+        @Override
+        public int scoreSolution(Object solution) {
+            return verification.apply(testcase, String.valueOf(solution)) == expected ? taskScoring.getMaxPoints() : 0;
+        }
     }
 
     class TaskWithFixedResult implements TaskDefinition {

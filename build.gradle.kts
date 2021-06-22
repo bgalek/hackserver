@@ -80,7 +80,7 @@ task<NpmTask>("watch") {
 }
 
 node {
-    version.set("16.2.0")
+    version.set("16.3.0")
     npmVersion.set("7.13.0")
     download.set(true)
 }

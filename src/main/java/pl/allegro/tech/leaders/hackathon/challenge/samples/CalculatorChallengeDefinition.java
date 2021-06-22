@@ -13,10 +13,11 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
+import java.security.SecureRandom;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.Random;
+import java.util.Objects;
 
 import static java.lang.String.format;
 
@@ -56,8 +57,8 @@ class CalculatorChallengeDefinition implements ChallengeDefinition {
                     true)
     );
 
-    private static TaskDefinition.TaskWithFixedResult getDynamicExample(String name) {
-        Random random = new Random();
+    private static TaskDefinition.TaskWithFixedResult getDynamicExample() {
+        SecureRandom random = new SecureRandom();
         var x = random.nextInt(50) + random.nextDouble();
         var y = random.nextInt(50) + random.nextDouble();
         var z = random.nextInt(50) + random.nextDouble();
@@ -70,9 +71,9 @@ class CalculatorChallengeDefinition implements ChallengeDefinition {
         ExpressionParser parser = new SpelExpressionParser();
         Expression exp = parser.parseExpression(task);
 
-        return TaskDefinition.withFixedResult(name, new LinkedMultiValueMap<>(
+        return TaskDefinition.withFixedResult("Should also work for random cases", new LinkedMultiValueMap<>(
                         Map.of("equation", List.of(URLEncoder.encode(task, StandardCharsets.UTF_8)))),
-                round(exp.getValue(Double.class), 2),
+                round(Objects.requireNonNull(exp.getValue(Double.class)), 2),
                 new TaskScoring(60, 1000),
                 true
         );
@@ -128,7 +129,7 @@ class CalculatorChallengeDefinition implements ChallengeDefinition {
     @Override
     public List<TaskDefinition> getTasks() {
         var res = new ArrayList<>(TASKS);
-        res.add(getDynamicExample("Should also work for random cases"));
+        res.add(getDynamicExample());
         return res;
     }
 }
