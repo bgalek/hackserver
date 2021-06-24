@@ -104,12 +104,16 @@ public class RegularExpressionChallengeDefinition implements ChallengeDefinition
 
     @Override
     public String getName() {
-        return "regexpes";
+        return "regular-madness";
     }
 
     @Override
     public String getDescription() {
-        return "lorem";
+        return """
+                    Is finding image urls (jpg) possible using regular expressions?
+                    Compute an regular expression that matches urls pointing to image resource.
+                    Return the same expression for every given test case.
+                """;
     }
 
     @Override
@@ -129,7 +133,10 @@ public class RegularExpressionChallengeDefinition implements ChallengeDefinition
 
     @Override
     public TaskDefinition getExample() {
-        return TaskDefinition.withFixedResult("name1", new LinkedMultiValueMap<>(Map.of()), false, new TaskScoring(5, 1000));
+        return TaskDefinition.withFixedResult("https://allegro.pl/obrazek.jpg",
+                new LinkedMultiValueMap<>(Map.of()),
+                false,
+                new TaskScoring(5, 1000));
     }
 
     @Override
