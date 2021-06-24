@@ -45,6 +45,7 @@ dependencies {
     implementation("io.projectreactor:reactor-core:3.4.6")
     implementation("io.vavr:vavr:0.10.3")
     implementation("io.micrometer:micrometer-registry-prometheus:1.7.0")
+    implementation("com.google.guava:guava:30.1.1-jre")
 
     testImplementation("org.codehaus.groovy:groovy-all:3.0.8")
     testImplementation(platform("org.spockframework:spock-bom:2.0-groovy-3.0"))
