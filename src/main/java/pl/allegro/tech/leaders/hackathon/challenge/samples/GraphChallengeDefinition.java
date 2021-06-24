@@ -77,8 +77,6 @@ public class GraphChallengeDefinition implements ChallengeDefinition {
                 .putEdge(summer, rick)
                 .build();
 
-        Graphs.hasCycle(graph);
-
         return List.of(
                 TaskDefinition.withFixedResult("has cycle?",
                         new LinkedMultiValueMap<>(
