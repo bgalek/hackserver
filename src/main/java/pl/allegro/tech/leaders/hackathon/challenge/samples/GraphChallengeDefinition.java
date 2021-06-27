@@ -81,19 +81,19 @@ public class GraphChallengeDefinition implements ChallengeDefinition {
                 TaskDefinition.withFixedResult("Should calculate longest cycle size",
                         parameter("graph", "A->B", "B->A,C", "C->A,B,C,D,E", "D->A,C,E", "E->C"),
                         4, // A->B->C->D->A
-                        new TaskScoring(30, 1000),
+                        new TaskScoring(25, 1000),
                         false
                 ),
                 TaskDefinition.withFixedResult("It's getting complicated",
                         parameter("graph", "A->B,C", "B->C,D", "C->B,D,E", "D->B,C", "E->C,D,F"),
                         4, // B->C->E->D->B
-                        new TaskScoring(50, 1000),
+                        new TaskScoring(30, 1000),
                         false
                 ),
                 TaskDefinition.withFixedResult("What do we have here?",
                         parameter("graph", "A->B,D", "B->D,F", "C->A,B,E,F", "D->F", "E->B,F"),
                         0, // B->C->E->D->B
-                        new TaskScoring(50, 1000),
+                        new TaskScoring(30, 1000),
                         false
                 )
         );

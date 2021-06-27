@@ -53,7 +53,7 @@ class CalculatorChallengeDefinition implements ChallengeDefinition {
             TaskDefinition.withFixedResult("Should calculate respecting sequence of actions order",
                     new LinkedMultiValueMap<>(Map.of("equation", List.of("2%2B2*2"))),
                     "6",
-                    new TaskScoring(30, 1000),
+                    new TaskScoring(25, 1000),
                     true)
     );
 
@@ -74,7 +74,7 @@ class CalculatorChallengeDefinition implements ChallengeDefinition {
         return TaskDefinition.withFixedResult("Should also work for random cases", new LinkedMultiValueMap<>(
                         Map.of("equation", List.of(URLEncoder.encode(task, StandardCharsets.UTF_8)))),
                 round(Objects.requireNonNull(exp.getValue(Double.class)), 2),
-                new TaskScoring(60, 1000),
+                new TaskScoring(30, 1000),
                 true
         );
     }
