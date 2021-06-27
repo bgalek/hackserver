@@ -6,6 +6,8 @@ import pl.allegro.tech.leaders.hackathon.challenge.ChallengeDefinition;
 import pl.allegro.tech.leaders.hackathon.challenge.TaskDefinition;
 import pl.allegro.tech.leaders.hackathon.challenge.TaskScoring;
 
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -17,40 +19,47 @@ class HostnameChallengeDefinition implements ChallengeDefinition {
             TaskDefinition.withFixedResult("Should return simple hostname",
                     new LinkedMultiValueMap<>(Map.of("url", List.of("https://allegro.pl"))),
                     "allegro.pl",
-                    new TaskScoring(5, 1000)),
+                    new TaskScoring(6, 1000)),
             TaskDefinition.withFixedResult("Should return simple hostname (but not simplest)",
                     new LinkedMultiValueMap<>(Map.of("url", List.of("https://some_host.org"))),
                     "some_host.org",
-                    new TaskScoring(5, 1000)),
+                    new TaskScoring(6, 1000)),
             TaskDefinition.withFixedResult("Should return unix file hostname",
                     new LinkedMultiValueMap<>(Map.of("url", List.of("file://localhost/etc/fstab"))),
                     "localhost",
-                    new TaskScoring(5, 1000)),
+                    new TaskScoring(6, 1000)),
             TaskDefinition.withFixedResult("Should return local file hostname",
                     new LinkedMultiValueMap<>(Map.of("url", List.of("file:///c:/WINDOWS/file.mp3"))),
                     "localhost",
-                    new TaskScoring(5, 1000)),
+                    new TaskScoring(6, 1000)),
             TaskDefinition.withFixedResult("Should return simple basic-auth hostname",
                     new LinkedMultiValueMap<>(Map.of("url", List.of("http://username:password@example.com/"))),
                     "example.com",
-                    new TaskScoring(5, 1000)),
+                    new TaskScoring(6, 1000)),
             TaskDefinition.withFixedResult("Should return simple ip based hostname",
                     new LinkedMultiValueMap<>(Map.of("url", List.of("ftp://192.168.0.1"))),
                     "192.168.0.1",
-                    new TaskScoring(5, 1000)),
+                    new TaskScoring(6, 1000)),
             TaskDefinition.withFixedResult("Should return simple hostname with subdomain",
                     new LinkedMultiValueMap<>(Map.of("url", List.of("http://archiwum.allegro.pl"))),
                     "archiwum.allegro.pl",
-                    new TaskScoring(5, 1000)),
+                    new TaskScoring(6, 1000)),
             TaskDefinition.withFixedResult("Should return simple hostname with more subdomains",
                     new LinkedMultiValueMap<>(Map.of("url", List.of("https://nowe.archiwum.allegro.pl"))),
                     "nowe.archiwum.allegro.pl",
-                    new TaskScoring(5, 1000)),
+                    new TaskScoring(6, 1000)),
             TaskDefinition.withFixedResult("Should return simple hostname from url with another url in query",
                     new LinkedMultiValueMap<>(Map.of("url", List.of("https://site.com/?url=https://other.com"))),
                     "site.com",
-                    new TaskScoring(5, 1000))
+                    new TaskScoring(6, 1000)),
+            TaskDefinition.withFixedResult("Emoji domain are a thing!",
+                    new LinkedMultiValueMap<>(Map.of("url", List.of(
+                            URLEncoder.encode("http://💩.la#yep-it-is-real", StandardCharsets.UTF_8)))),
+                    "💩.la",
+                    new TaskScoring(6, 1000),
+                    true)
     );
+
 
     @Override
     public String getName() {
