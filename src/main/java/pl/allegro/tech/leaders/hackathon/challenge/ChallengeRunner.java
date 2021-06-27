@@ -60,7 +60,7 @@ class ChallengeRunner {
     private Flux<ChallengeResult> runChallenge(ChallengeDefinition challenge, RegisteredTeam team) {
         return Flux.fromIterable(challenge.getTasks())
                 .map(task -> taskRunner.run(challenge, task, team))
-                .map(Mono::block)
+                .mapNotNull(Mono::block)
                 .flatMap(result -> {
                     logger.info("Got result: {}, score: {}",
                             result.toTaskResult().getResponseBody(),

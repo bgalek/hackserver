@@ -10,6 +10,8 @@
     <option name="SPRING_BOOT_MAIN_CLASS" value="pl.allegro.tech.leaders.hackathon.HackathonServer" />
     <option name="ALTERNATIVE_JRE_PATH" />
     <option name="SHORTEN_COMMAND_LINE" value="NONE" />
+    <option name="UPDATE_ACTION_UPDATE_POLICY" value="UpdateResources" />
+    <option name="FRAME_DEACTIVATION_UPDATE_POLICY" value="UpdateResources" />
     <method v="2">
       <option name="Make" enabled="true" />
     </method>

@@ -94,7 +94,6 @@ function* teamExecuteChallengeSaga({ team, challenge, secret }) {
             yield put({ type: TEAM_EXECUTE_CHALLENGE_FAILED_TYPE });
             yield put(SHOW_NOTIFICATION(`Execution failed!`, 'warning'));
             yield put(SHOW_NOTIFICATION(payload.errorMessage, 'error'));
-
         } else {
             yield put({ type: TEAM_EXECUTE_CHALLENGE_SUCCEEDED_TYPE, payload });
             yield put(SHOW_NOTIFICATION(`Challenge executed`, 'success'));
@@ -112,7 +111,7 @@ function post(path, secret) {
     return axios.post(path, null, { headers: { 'Authorization': `Bearer: ${secret}` } })
         .then(it => it.data)
         .catch(err => {
-            return { errorMessage : err.message }
+            return { errorMessage : err.response.data.detail || err.message }
         })
 }
 

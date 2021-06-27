@@ -26,6 +26,7 @@ const useStyles = makeStyles(theme => ({
     description: {
         maxWidth: '100%',
         padding: theme.spacing(3, 2),
+        whiteSpace: 'pre'
     },
     content: {
         padding: theme.spacing(4)
@@ -66,41 +67,45 @@ export function ChallengeDetail({ challenge, onClose }) {
             </Toolbar>
         </AppBar>,
         <Grid key="modal-content" className={classes.content} direction="column" container>
-            <Paper className={classes.description}>
-                <Typography variant="body1" gutterBottom>{challenge.description}</Typography>
-            </Paper>
-            <List className={classes.root}>
-                <ListItem>
-                    <ListItemText primary="Max points:" secondary={challenge.maxPoints}/>
-                </ListItem>
-                <ListItem>
-                    <ListItemText primary="Endpoint:" secondary={challenge.challengeEndpoint}/>
-                </ListItem>
-                <ListItem>
-                    <ListItemText primary="Parameters:"/>
-                </ListItem>
-                <List disablePadding>
-                    {challenge.challengeParameters
-                        .map(param => <ListItem key={param.name} className={classes.nested}>
-                            <ListItemIcon>
-                                <StarBorder/>
-                            </ListItemIcon>
-                            <ListItemText primary={param.name} secondary={param.desc}/>
-                        </ListItem>)}
-                </List>
-                <ListItem>
-                    <ListItemText primary="Response:" secondary={challenge.challengeResponse.type}/>
-                </ListItem>
-                <ListItem>
-                    <ListItemText primary="Example Request:" secondary={decodeURIComponent(url.toString())}
-                                  secondaryTypographyProps={{ style: { wordBreak: "break-all" } }}
-                    />
-                </ListItem>
-                <ListItem>
-                    <ListItemText primary="Example Response:"
-                                  secondary={JSON.stringify(challenge.example.expectedSolution)}/>
-                </ListItem>
-            </List>
+            <Grid xs={12}>
+                <Paper className={classes.description}>
+                    <Typography variant="body1" gutterBottom>{challenge.description}</Typography>
+                </Paper>
+            </Grid>
+            <Grid xs={12}>
+                <List className={classes.root}>
+                        <ListItem>
+                            <ListItemText primary="Max points:" secondary={challenge.maxPoints}/>
+                        </ListItem>
+                        <ListItem>
+                            <ListItemText primary="Endpoint:" secondary={challenge.challengeEndpoint}/>
+                        </ListItem>
+                        <ListItem>
+                            <ListItemText primary="Parameters:"/>
+                        </ListItem>
+                        <List disablePadding>
+                            {challenge.challengeParameters
+                                .map(param => <ListItem key={param.name} className={classes.nested}>
+                                    <ListItemIcon>
+                                        <StarBorder/>
+                                    </ListItemIcon>
+                                    <ListItemText primary={param.name} secondary={param.desc}/>
+                                </ListItem>)}
+                        </List>
+                        <ListItem>
+                            <ListItemText primary="Response:" secondary={challenge.challengeResponse.type}/>
+                        </ListItem>
+                        <ListItem>
+                            <ListItemText primary="Example Request:" secondary={decodeURIComponent(url.toString())}
+                                          secondaryTypographyProps={{ style: { wordBreak: "break-all" } }}
+                            />
+                        </ListItem>
+                        <ListItem>
+                            <ListItemText primary="Example Response:"
+                                          secondary={JSON.stringify(challenge.example.expectedSolution)}/>
+                        </ListItem>
+                    </List>
+            </Grid>
         </Grid>
     ];
 }
