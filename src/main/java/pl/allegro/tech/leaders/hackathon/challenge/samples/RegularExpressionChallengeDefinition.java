@@ -69,6 +69,11 @@ public class RegularExpressionChallengeDefinition implements ChallengeDefinition
                     RegularExpressionChallengeDefinition::validateRegex,
                     true,
                     new TaskScoring(5, 1000)),
+            TaskDefinition.withValidateResult("./allegro.jpg",
+                    "./allegro.jpg",
+                    RegularExpressionChallengeDefinition::validateRegex,
+                    true,
+                    new TaskScoring(5, 1000)),
             TaskDefinition.withValidateResult("ftp://bartosz:galek@localhost/test/allegro.jpg",
                     "ftp://bartosz:galek@localhost/test/allegro.jpg",
                     RegularExpressionChallengeDefinition::validateRegex,
@@ -104,14 +109,14 @@ public class RegularExpressionChallengeDefinition implements ChallengeDefinition
 
     @Override
     public String getName() {
-        return "regular-madness";
+        return "Regular Madness";
     }
 
     @Override
     public String getDescription() {
         return """
                     Is finding image urls (jpg) possible using regular expressions?
-                    Compute an regular expression that matches urls pointing to image resource.
+                    Prepare an regular expression that matches urls pointing to an image resource.
                     Return the same expression for every given test case.
                 """;
     }
@@ -135,7 +140,7 @@ public class RegularExpressionChallengeDefinition implements ChallengeDefinition
     public TaskDefinition getExample() {
         return TaskDefinition.withFixedResult("https://allegro.pl/obrazek.jpg",
                 new LinkedMultiValueMap<>(Map.of()),
-                false,
+                ".*\\.jpg",
                 new TaskScoring(5, 1000));
     }
 
