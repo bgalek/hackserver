@@ -6,6 +6,8 @@ import pl.allegro.tech.leaders.hackathon.challenge.api.ChallengeDetails;
 
 import java.time.Clock;
 import java.time.Instant;
+import java.util.Arrays;
+import java.util.stream.Collectors;
 
 class Challenge {
     private final String id;
@@ -64,7 +66,7 @@ class Challenge {
                 this.active,
                 this.activatedAt,
                 this.definition.getName(),
-                this.definition.getDescription(),
+                Arrays.stream(this.definition.getDescription().split("\n")).collect(Collectors.toList()),
                 this.definition.getChallengeEndpoint(),
                 this.definition.getChallengeParams(),
                 this.definition.getChallengeResponse(),

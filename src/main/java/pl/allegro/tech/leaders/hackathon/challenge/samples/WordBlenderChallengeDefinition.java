@@ -93,21 +93,21 @@ class WordBlenderChallengeDefinition implements ChallengeDefinition {
             TaskDefinition.withFixedResult(
                     "Should be able to work with emoji typed",
                     new LinkedMultiValueMap<>(Map.of("word", List.of(
-                            URLEncoder.encode("🎫📷💼🔤🌝 🏉📥👧📇🔌 👇👂🎨👫",StandardCharsets.UTF_8),
-                            URLEncoder.encode("🕥🍞🏤 👫🐪🔡🐠💊💪.",StandardCharsets.UTF_8),
-                            URLEncoder.encode("😀💻🔥🌓 🍆🌜🔣👦 👀🐌",StandardCharsets.UTF_8),
-                            URLEncoder.encode("📭🐭🏆 📝🕂🔝🏇💄 🍁🎆🍵🐉👖🐲🕠 🕧🌌💥💷📕 📞🌊🐪📎",StandardCharsets.UTF_8),
-                            URLEncoder.encode("🐧🌰 👦🍻💡📵🕂🎓 🍝👽🕞🌴🔻 👾🎁🎰👙🍴 🐣👽🏯🌱👑 🌹📪👕",StandardCharsets.UTF_8),
-                            URLEncoder.encode("📖💅 🌗🐅🎓🐢🌑🌚🍈 📊📃💵🍻🌒 📆🕁🐴🔓🔛📺 📬",StandardCharsets.UTF_8),
-                            URLEncoder.encode("💓🔒📐🍤🔈🍹. 🔷🔐🍝🍍👬 🌻🐘🎆🔒🌴 💬🎭🎃📼",StandardCharsets.UTF_8),
-                            URLEncoder.encode("🎫📷💼🔤🌝 🏉📥👧📇🔌 👇👂🎨👫",StandardCharsets.UTF_8),
-                            URLEncoder.encode("🕥🍞🏤 👫🐪🔡🐠💊💪.",StandardCharsets.UTF_8),
-                            URLEncoder.encode("🕥🍞🏤 👫🐪🔡🐠💊💪.",StandardCharsets.UTF_8),
-                            URLEncoder.encode("😀💻🔥🌓 🍆🌜🔣👦 👀🐌",StandardCharsets.UTF_8),
-                            URLEncoder.encode("📭🐭🏆 📝🕂🔝🏇💄 🍁🎆🍵🐉👖🐲🕠 🕧🌌💥💷📕 📞🌊🐪📎",StandardCharsets.UTF_8),
-                            URLEncoder.encode("🐧🌰 👦🍻💡📵🕂🎓 🍝👽🕞🌴🔻 👾🎁🎰👙🍴 🐣👽🏯🌱👑 🌹📪👕",StandardCharsets.UTF_8),
-                            URLEncoder.encode("📖💅 🌗🐅🎓🐢🌑🌚🍈 📊📃💵🍻🌒 📆🕁🐴🔓🔛📺 📬",StandardCharsets.UTF_8),
-                            URLEncoder.encode("💓🔒📐🍤🔈🍹. 🔷🔐🍝🍍👬 🌻🐘🎆🔒🌴 💬🎭🎃📼",StandardCharsets.UTF_8)
+                            URLEncoder.encode("🎫📷💼🔤🌝 🏉📥👧📇🔌 👇👂🎨👫", StandardCharsets.UTF_8),
+                            URLEncoder.encode("🕥🍞🏤 👫🐪🔡🐠💊💪.", StandardCharsets.UTF_8),
+                            URLEncoder.encode("😀💻🔥🌓 🍆🌜🔣👦 👀🐌", StandardCharsets.UTF_8),
+                            URLEncoder.encode("📭🐭🏆 📝🕂🔝🏇💄 🍁🎆🍵🐉👖🐲🕠 🕧🌌💥💷📕 📞🌊🐪📎", StandardCharsets.UTF_8),
+                            URLEncoder.encode("🐧🌰 👦🍻💡📵🕂🎓 🍝👽🕞🌴🔻 👾🎁🎰👙🍴 🐣👽🏯🌱👑 🌹📪👕", StandardCharsets.UTF_8),
+                            URLEncoder.encode("📖💅 🌗🐅🎓🐢🌑🌚🍈 📊📃💵🍻🌒 📆🕁🐴🔓🔛📺 📬", StandardCharsets.UTF_8),
+                            URLEncoder.encode("💓🔒📐🍤🔈🍹. 🔷🔐🍝🍍👬 🌻🐘🎆🔒🌴 💬🎭🎃📼", StandardCharsets.UTF_8),
+                            URLEncoder.encode("🎫📷💼🔤🌝 🏉📥👧📇🔌 👇👂🎨👫", StandardCharsets.UTF_8),
+                            URLEncoder.encode("🕥🍞🏤 👫🐪🔡🐠💊💪.", StandardCharsets.UTF_8),
+                            URLEncoder.encode("🕥🍞🏤 👫🐪🔡🐠💊💪.", StandardCharsets.UTF_8),
+                            URLEncoder.encode("😀💻🔥🌓 🍆🌜🔣👦 👀🐌", StandardCharsets.UTF_8),
+                            URLEncoder.encode("📭🐭🏆 📝🕂🔝🏇💄 🍁🎆🍵🐉👖🐲🕠 🕧🌌💥💷📕 📞🌊🐪📎", StandardCharsets.UTF_8),
+                            URLEncoder.encode("🐧🌰 👦🍻💡📵🕂🎓 🍝👽🕞🌴🔻 👾🎁🎰👙🍴 🐣👽🏯🌱👑 🌹📪👕", StandardCharsets.UTF_8),
+                            URLEncoder.encode("📖💅 🌗🐅🎓🐢🌑🌚🍈 📊📃💵🍻🌒 📆🕁🐴🔓🔛📺 📬", StandardCharsets.UTF_8),
+                            URLEncoder.encode("💓🔒📐🍤🔈🍹. 🔷🔐🍝🍍👬 🌻🐘🎆🔒🌴 💬🎭🎃📼", StandardCharsets.UTF_8)
                     ))),
                     0,
                     new TaskScoring(20, 1000),
@@ -122,9 +122,11 @@ class WordBlenderChallengeDefinition implements ChallengeDefinition {
 
     @Override
     public String getDescription() {
-        return "You will receive a set of words, break them into separate letters in a blender. " +
-                "Your task is to count how many times word \"developer\" can be created simply by " +
-                "taking the letters form the blender one by one.";
+        return """
+                    You will receive a set of words, break them into separate letters in a blender.
+                    Your task is to count how many times word "developer" can be created simply by
+                    taking the letters form the blender one by one.
+                """;
     }
 
     @Override

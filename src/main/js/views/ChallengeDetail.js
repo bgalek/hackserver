@@ -25,8 +25,7 @@ const useStyles = makeStyles(theme => ({
     },
     description: {
         maxWidth: '100%',
-        padding: theme.spacing(3, 2),
-        whiteSpace: 'pre'
+        padding: theme.spacing(3, 2)
     },
     content: {
         padding: theme.spacing(4)
@@ -69,7 +68,7 @@ export function ChallengeDetail({ challenge, onClose }) {
         <Grid key="modal-content" className={classes.content} direction="column" container>
             <Grid xs={12}>
                 <Paper className={classes.description}>
-                    <Typography variant="body1" gutterBottom>{challenge.description}</Typography>
+                    {challenge.description.map((it, i) => <Typography key={`${challenge.name}-${i}`} variant="body1" gutterBottom>{it}</Typography>)}
                 </Paper>
             </Grid>
             <Grid xs={12}>

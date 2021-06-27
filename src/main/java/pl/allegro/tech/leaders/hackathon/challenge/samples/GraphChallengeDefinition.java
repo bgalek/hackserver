@@ -21,13 +21,15 @@ public class GraphChallengeDefinition implements ChallengeDefinition {
 
     @Override
     public String getDescription() {
-        return "Let's draw some graphs! \n" +
-                "Your task is to find the size of the longest cycle in the graph. " +
-                "'A->B,C' means that you can travel from A to B and C (there are directed edges from " +
-                "node A to node B, and from node A to node C). \n" +
-                "Example. \n" +
-                "Given graph 'A->B;B->A' longest available cycle goes from A to B and back to A. " +
-                "It's size equals `2` (you can walk through 2 uniq nodes before visiting one you have seen before)";
+        return """
+                    Let's draw some graphs!
+                    Your task is to find the size of the longest cycle in the graph.
+                    'A->B,C' means that you can travel from A to B and C (there are directed edges from
+                    node A to node B, and from node A to node C).
+                    Example:
+                    Given graph 'A->B;B->A' longest available cycle goes from A to B and back to A. " +
+                    It's size equals `2` (you can walk through 2 uniq nodes before visiting one you have seen before)
+                """;
     }
 
     @Override

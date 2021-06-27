@@ -13,7 +13,7 @@ public class ChallengeDetails {
     private final boolean active;
     private final Instant activatedAt;
     private final String name;
-    private final String description;
+    private final List<String> description;
     private final String challengeEndpoint;
     private final List<ChallengeDefinition.QueryParam> challengeParameters;
     private final JsonSchema challengeResponse;
@@ -26,7 +26,7 @@ public class ChallengeDetails {
             boolean active,
             Instant activatedAt,
             String name,
-            String description,
+            List<String> description,
             String challengeEndpoint,
             List<ChallengeDefinition.QueryParam> challengeParameters,
             JsonSchema challengeResponse,
@@ -62,7 +62,7 @@ public class ChallengeDetails {
         return name;
     }
 
-    public String getDescription() {
+    public List<String> getDescription() {
         return description;
     }
 
