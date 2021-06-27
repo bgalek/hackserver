@@ -67,9 +67,7 @@ class RotChallengeDefinition implements ChallengeDefinition {
     }
 
     @Override
-    public List<TaskDefinition> getTasks() {
-        return new ArrayList<>(TASKS);
-    }
+    public List<TaskDefinition> getTasks() { return TASKS; }
 
     static String rot(String input, int rotation) {
         StringBuilder encrypted = new StringBuilder(input);
