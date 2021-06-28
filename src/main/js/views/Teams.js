@@ -31,6 +31,7 @@ function Teams({ fetchTeams, teams = [], isLoading }) {
         fetchTeams();
     }, [teams.length]);
     if (isLoading) return <Loader/>;
+    console.log(teams);
     return [
         <Typography key="title" variant="h4" gutterBottom>
             Teams
@@ -41,7 +42,7 @@ function Teams({ fetchTeams, teams = [], isLoading }) {
                     <ListItemAvatar>
                         <Avatar alt={team.name} src={team.avatar}/>
                     </ListItemAvatar>
-                    <ListItemText primary={team.name} secondary={team.address}/>
+                    <ListItemText primary={team.name} secondary={team.address + ":" + team.port}/>
                     <ListItemSecondaryAction className={classes.healthChip}>
                         <TeamHealthIndicator health={team.health}/>
                     </ListItemSecondaryAction>
