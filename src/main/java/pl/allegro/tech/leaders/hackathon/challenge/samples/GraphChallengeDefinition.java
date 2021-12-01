@@ -27,8 +27,8 @@ public class GraphChallengeDefinition implements ChallengeDefinition {
                     'A->B,C' means that you can travel from A to B and C (there are directed edges from
                     node A to node B, and from node A to node C).
                     Example:
-                    Given graph 'A->B;B->A' longest available cycle goes from A to B and back to A. " +
-                    It's size equals `2` (you can walk through 2 uniq nodes before visiting one you have seen before)
+                    Given graph 'A->B;B->A', the longest available cycle goes from A to B and back to A. " +
+                    Its size equals `2` (you can walk through 2 unique nodes before visiting one you have seen before)
                 """;
     }
 

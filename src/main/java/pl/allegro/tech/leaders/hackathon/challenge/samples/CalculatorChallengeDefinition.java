@@ -97,7 +97,7 @@ class CalculatorChallengeDefinition implements ChallengeDefinition {
                     We will send you some equations, be prepared!
                     (don't mind any parentheses or strange mathematical symbols though).
                     Response should contain *up to* 2 decimal places, with trailing zeros removed.
-                    E.g 2 + 2 = 4 (not 4.0), 0.123 + 0.123 = 0.25
+                    E.g. 2 + 2 = 4 (not 4.0), 0.123 + 0.123 = 0.25
                 """;
     }
 

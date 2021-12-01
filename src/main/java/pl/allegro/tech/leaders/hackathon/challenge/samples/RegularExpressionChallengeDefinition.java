@@ -116,7 +116,7 @@ public class RegularExpressionChallengeDefinition implements ChallengeDefinition
     public String getDescription() {
         return """
                     Is finding image urls (jpg) possible using regular expressions?
-                    Prepare an regular expression that matches urls pointing to an image resource.
+                    Prepare a regular expression that matches urls pointing to an image resource.
                     Return the same expression for every given test case.
                 """;
     }
