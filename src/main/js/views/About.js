@@ -22,11 +22,11 @@ function About() {
         <Typography key="registration" variant="body1" gutterBottom>
             To register yourself you need to send <strong>POST</strong>, with <strong>application/json</strong>
             <pre>{`{"name":"Bartosz", "port":"8080"}`}</pre>
-            to <a href="/registration">/registration</a> endpoint.
+            to the <a href="/registration">/registration</a> endpoint.
         </Typography>,
         <Typography key="registration-secret" variant="body1">
             Upon registration you will receive your <span style={{ color: 'red' }}>secret key</span> - don&apos;t
-            loose it!
+            lose it!
         </Typography>,
         <Typography key="title-tasks" variant="h5" gutterBottom className={styles.header}>
             Tasks
@@ -35,7 +35,7 @@ function About() {
             Your task is to write a webserver, which will be queried for some answers. Try to be creative, you can:
             <ul>
                 <li style={{ margin: 10 }}>Try to max out points using your favourite tools - it won&apos;t be easy ;)</li>
-                <li style={{ margin: 10 }}>Or use new programming language/framework</li>
+                <li style={{ margin: 10 }}>Or use a new programming language/framework</li>
                 <ul style={{ margin: 10 }}>
                     <li>Micronaut - <a href="https://micronaut.io">https://micronaut.io</a></li>
                     <li>Blade - <a href="https://lets-blade.com">https://lets-blade.com</a></li>

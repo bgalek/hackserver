@@ -41,7 +41,7 @@ class RotChallengeDefinition implements ChallengeDefinition {
 
     @Override
     public String getDescription() {
-        return "Your task is to decrypt text encoded with rotation cipher";
+        return "Your task is to decrypt text encoded with a rotation cipher";
     }
 
     @Override

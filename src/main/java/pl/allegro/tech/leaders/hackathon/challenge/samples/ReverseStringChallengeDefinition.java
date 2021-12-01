@@ -21,7 +21,7 @@ class ReverseStringChallengeDefinition implements ChallengeDefinition {
                     new LinkedMultiValueMap<>(Map.of("string", List.of("developer"))),
                     "repoleved",
                     new TaskScoring(5, 1000)),
-            TaskDefinition.withFixedResult("Should return palindorme",
+            TaskDefinition.withFixedResult("Should return a palindrome",
                     new LinkedMultiValueMap<>(Map.of("string", List.of("no lemon, no melon"))),
                     "nolem on ,nomel on",
                     new TaskScoring(5, 1000)),

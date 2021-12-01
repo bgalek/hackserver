@@ -52,7 +52,7 @@ class HostnameChallengeDefinition implements ChallengeDefinition {
                     new LinkedMultiValueMap<>(Map.of("url", List.of("https://site.com/?url=https://other.com"))),
                     "site.com",
                     new TaskScoring(6, 1000)),
-            TaskDefinition.withFixedResult("Emoji domain are a thing!",
+            TaskDefinition.withFixedResult("Emoji domains are a thing!",
                     new LinkedMultiValueMap<>(Map.of("url", List.of(
                             URLEncoder.encode("http://💩.la#yep-it-is-real", StandardCharsets.UTF_8)))),
                     "💩.la",

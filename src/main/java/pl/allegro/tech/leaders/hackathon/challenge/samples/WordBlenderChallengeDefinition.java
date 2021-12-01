@@ -17,7 +17,7 @@ import java.util.Map;
 class WordBlenderChallengeDefinition implements ChallengeDefinition {
     private static final List<TaskWithFixedResult> TASKS = List.of(
             TaskDefinition.withFixedResult(
-                    "Should be able to create few whole words",
+                    "Should be able to create a few whole words",
                     new LinkedMultiValueMap<>(Map.of("word", List.of(
                             "developer",
                             "reedlvoep",
@@ -124,8 +124,8 @@ class WordBlenderChallengeDefinition implements ChallengeDefinition {
     public String getDescription() {
         return """
                     You will receive a set of words, break them into separate letters in a blender.
-                    Your task is to count how many times word "developer" can be created simply by
-                    taking the letters form the blender one by one.
+                    Your task is to count how many times the word "developer" can be created simply by
+                    taking the letters from the blender one by one.
                 """;
     }
 
