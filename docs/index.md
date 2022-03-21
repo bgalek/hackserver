@@ -1,37 +1,19 @@
-## Welcome to GitHub Pages
+## Hackserver
 
-You can use the [editor on GitHub](https://github.com/bgalek/hackserver/edit/master/docs/index.md) to maintain and preview the content for your website in Markdown files.
+It's a workshop platform full of programming challenges! Rated 5.0/5.0 on each iteration!
 
-Whenever you commit to this repository, GitHub Pages will run [Jekyll](https://jekyllrb.com/) to rebuild the pages in your site, from the content in your Markdown files.
+Worshop development loop is simple:
+- read the challenge details
+- develop a solution, serve it as http api
+- run test suite pointing at your server
+- share your solution, get points
+- repeat
 
-### Markdown
+Challenges
+We make simple stuff difficult! From string manipulation or image format direction through graph theory!
 
-Markdown is a lightweight and easy-to-use syntax for styling your writing. It includes conventions for
+There's a challenge for every level of programming skills. Solution language is up to you!
 
-```markdown
-Syntax highlighted code block
+Points don't matter - but a little bit of rivalry is always fun!
 
-# Header 1
-## Header 2
-### Header 3
-
-- Bulleted
-- List
-
-1. Numbered
-2. List
-
-**Bold** and _Italic_ and `Code` text
-
-[Link](url) and ![Image](src)
-```
-
-For more details see [Basic writing and formatting syntax](https://docs.github.com/en/github/writing-on-github/getting-started-with-writing-and-formatting-on-github/basic-writing-and-formatting-syntax).
-
-### Jekyll Themes
-
-Your Pages site will use the layout and styles from the Jekyll theme you have selected in your [repository settings](https://github.com/bgalek/hackserver/settings/pages). The name of this theme is saved in the Jekyll `_config.yml` configuration file.
-
-### Support or Contact
-
-Having trouble with Pages? Check out our [documentation](https://docs.github.com/categories/github-pages-basics/) or [contact support](https://support.github.com/contact) and we’ll help you sort it out.
+In the end - we want to show you quirks in common protocols/apis, discuss what was more cumbersome in which language and discuss technology solutions.
