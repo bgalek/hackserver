@@ -1,11 +1,10 @@
 import com.github.gradle.node.npm.task.NpmTask
-
 plugins {
     java
     groovy
     application
     jacoco
-    id("org.springframework.boot") version "2.5.0"
+    id("org.springframework.boot") version "2.6.1"
     id("io.spring.dependency-management") version "1.0.11.RELEASE"
     id("com.github.node-gradle.node") version "3.1.0"
     id("com.coditory.integration-test") version "1.2.1"
