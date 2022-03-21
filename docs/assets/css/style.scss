@@ -1,0 +1,8 @@
+---
+---
+
+@import "{{ site.theme }}";
+.page-header > .project-tagline,
+.page-header > .btn {
+  display: none;
+}
