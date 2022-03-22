@@ -3,6 +3,7 @@
 
 @import "{{ site.theme }}";
 .page-header > .project-tagline,
-.page-header > .btn {
+.page-header > .btn,
+footer {
   display: none;
 }
