@@ -4,6 +4,7 @@ import org.springframework.data.annotation.TypeAlias;
 import org.springframework.data.mongodb.core.mapping.Document;
 import pl.allegro.tech.leaders.hackathon.challenge.api.ChallengeDetails;
 
+import javax.annotation.Nullable;
 import java.time.Clock;
 import java.time.Instant;
 import java.util.Arrays;
@@ -44,6 +45,7 @@ class Challenge {
         this.activatedAt = null;
     }
 
+    @Nullable
     Instant getActivatedAt() {
         return activatedAt;
     }

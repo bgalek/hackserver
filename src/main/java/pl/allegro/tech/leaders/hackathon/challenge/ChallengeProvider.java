@@ -5,9 +5,7 @@ import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 import java.time.Instant;
-import java.util.Optional;
-
-import static java.util.Comparator.comparingLong;
+import java.util.Comparator;
 
 class ChallengeProvider {
     private final ChallengeRepository challengeRepository;
@@ -19,7 +17,7 @@ class ChallengeProvider {
     Flux<Challenge> getActiveChallenges() {
         return challengeRepository.findAll()
                 .filter(Challenge::isActive)
-                .sort(comparingLong(c -> -1 * Optional.ofNullable(c.getActivatedAt()).map(Instant::toEpochMilli).orElse(0L)));
+                .sort(Comparator.comparing(c -> c.getActivatedAt() != null ? c.getActivatedAt() : Instant.MIN));
     }
 
     Mono<Challenge> getActiveChallenge(String challengeId) {
