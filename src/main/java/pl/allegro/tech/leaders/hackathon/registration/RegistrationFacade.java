@@ -26,7 +26,9 @@ public class RegistrationFacade {
     }
 
     private String parseTeamName(String name) {
-        return name.replace(' ', '-');
+        return name.trim()
+                .replaceAll("[^\\p{L}\\p{N}]", "-")
+                .replaceAll("-+", "-");
     }
 
     public Flux<RegisteredTeam> getAll() {
