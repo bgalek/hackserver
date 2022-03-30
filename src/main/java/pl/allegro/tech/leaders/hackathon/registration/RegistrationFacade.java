@@ -20,8 +20,13 @@ public class RegistrationFacade {
     }
 
     public Mono<RegisteredTeam> register(TeamRegistration teamRegistration) {
-        Team team = new Team(teamRegistration.getName(), teamRegistration.getRemoteAddress());
+        var teamName = parseTeamName(teamRegistration.getName());
+        Team team = new Team(teamName, teamRegistration.getRemoteAddress());
         return teamRepository.save(team).map(this::toRegisteredTeam);
+    }
+
+    private String parseTeamName(String name) {
+        return name.replace(' ', '-');
     }
 
     public Flux<RegisteredTeam> getAll() {

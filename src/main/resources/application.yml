@@ -7,6 +7,9 @@ spring:
   data:
     mongodb:
       uri: mongodb://localhost/hackserver
+      # https://docs.spring.io/spring-data/mongodb/docs/current-SNAPSHOT/reference/html/#mapping.index-creation
+      # Index creation must be explicitly enabled since version 3.0
+      auto-index-creation: true
 
 client:
   timeout: 1000
