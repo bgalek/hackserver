@@ -25,16 +25,16 @@ class ChallengeActivationSpec extends ChallengeSpec {
 //             challengeDetails.challengeParameters == COUNT_CHALLENGE.challengeParams
 //             challengeDetails.challengeResponse == COUNT_CHALLENGE.challengeResponse
 //             challengeDetails.activatedAt == clock.instant()
-
-        when: 'second challenge is activated'
-            activateChallenge(SUM_CHALLENGE.id)
-        and: 'activated challenges are fetched'
-            activeChallenges = getActiveChallenges()
-        then: 'fetch result contains both activated challenges'
-            activeChallenges.size() == 2
-            activeChallenges[0].id == COUNT_CHALLENGE.id
-            activeChallenges[1].id == SUM_CHALLENGE.id
-    }
+// 
+//         when: 'second challenge is activated'
+//             activateChallenge(SUM_CHALLENGE.id)
+//         and: 'activated challenges are fetched'
+//             activeChallenges = getActiveChallenges()
+//         then: 'fetch result contains both activated challenges'
+//             activeChallenges.size() == 2
+//             activeChallenges[0].id == COUNT_CHALLENGE.id
+//             activeChallenges[1].id == SUM_CHALLENGE.id
+//     }
 
     def 'should serve activated challenge by id'() {
         given: 'there are two registered challenges'
