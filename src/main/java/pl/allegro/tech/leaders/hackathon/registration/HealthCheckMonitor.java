@@ -27,7 +27,7 @@ class HealthCheckMonitor {
 
     private static final Logger logger = org.slf4j.LoggerFactory.getLogger(HealthCheckMonitor.class);
     private static final HealthStatus INITIAL_HEALTH_STATUS = UNKNOWN;
-    private static final String HEALTH_PROTOCOL = "http";
+    private static final String HEALTH_PROTOCOL = "https";
     private static final String HEALTH_ENDPOINT = "status/health";
 
     HealthCheckMonitor(HealthCheckClient healthCheckClient, ApplicationEventPublisher applicationEventPublisher) {
@@ -56,12 +56,11 @@ class HealthCheckMonitor {
     }
 
     private static URI getHealthTarget(Team registeredTeam) {
-        InetSocketAddress remoteAddress = registeredTeam.getRemoteAddress();
         return UriComponentsBuilder
                 .newInstance()
                 .scheme(HEALTH_PROTOCOL)
-                .host(remoteAddress.getAddress().getHostAddress())
-                .port(remoteAddress.getPort())
+                .host(registeredTeam.getRemoteAddress())
+                .port(443)
                 .path(HEALTH_ENDPOINT)
                 .build()
                 .toUri();

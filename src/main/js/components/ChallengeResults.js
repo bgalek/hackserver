@@ -63,9 +63,9 @@ function renderHttpStatus(httpStatus) {
 
 function renderScore(score, value) {
     if(score){
-        return <Chip style={{ color: "white", backgroundColor: green.A700 }} label={value} icon={<DoneIcon style={{ color: "white" }}/>}/>;
+        return <Chip style={{ color: "white", backgroundColor: green.A700, maxWidth: "150px" }} label={value} icon={<DoneIcon style={{ color: "white" }}/>}/>;
     }
-    return <Chip style={{ color: "white", backgroundColor: red.A200 }} label={value || 'error'} icon={<ErrorIcon style={{ color: "white" }}/>}/>;
+    return <Chip style={{ color: "white", backgroundColor: red.A200, maxWidth: "150px" }} label={value || 'error'} icon={<ErrorIcon style={{ color: "white" }}/>}/>;
 }
 
 ChallengeResults.propTypes = {

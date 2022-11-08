@@ -14,22 +14,22 @@ class Team {
     private String id;
     @Indexed(name = "name", unique = true)
     private final String name;
-    private final InetSocketAddress remoteAddress;
+    private final String remoteAddress;
     private final String secret;
 
     @PersistenceConstructor
-    private Team(String id, String name, InetSocketAddress remoteAddress, String secret) {
+    private Team(String id, String name, String remoteAddress, String secret) {
         this.id = id;
         this.name = name;
         this.remoteAddress = remoteAddress;
         this.secret = secret;
     }
 
-    Team(String name, InetSocketAddress remoteAddress) {
+    Team(String name, String remoteAddress) {
         this(null, name, remoteAddress, UUID.randomUUID().toString());
     }
 
-    Team(Team team, InetSocketAddress remoteAddress) {
+    Team(Team team, String remoteAddress) {
         this(team.getId(), team.getName(), remoteAddress, team.getSecret());
     }
 
@@ -41,7 +41,7 @@ class Team {
         return name;
     }
 
-    InetSocketAddress getRemoteAddress() {
+    String getRemoteAddress() {
         return remoteAddress;
     }
 

@@ -4,9 +4,9 @@ import java.net.InetSocketAddress;
 
 public class TeamRegistration {
     private final String name;
-    private final InetSocketAddress remoteAddress;
+    private final String remoteAddress;
 
-    public TeamRegistration(String name, InetSocketAddress remoteAddress) {
+    public TeamRegistration(String name, String remoteAddress) {
         this.name = name;
         this.remoteAddress = remoteAddress;
     }
@@ -15,7 +15,7 @@ public class TeamRegistration {
         return name;
     }
 
-    public InetSocketAddress getRemoteAddress() {
+    public String getRemoteAddress() {
         return remoteAddress;
     }
 }

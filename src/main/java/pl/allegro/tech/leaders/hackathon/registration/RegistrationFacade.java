@@ -57,7 +57,7 @@ public class RegistrationFacade {
     public Mono<Team> update(TeamUpdate teamUpdate) {
         return teamRepository.find(teamUpdate.getName(), teamUpdate.getSecret())
                 .switchIfEmpty(Mono.error(new TeamNotFoundException(teamUpdate.getName())))
-                .map(team -> new Team(team, teamUpdate.getRemoteAddress()))
+                .map(team -> new Team(team, null))
                 .doOnSuccess(teamRepository::save);
     }
 

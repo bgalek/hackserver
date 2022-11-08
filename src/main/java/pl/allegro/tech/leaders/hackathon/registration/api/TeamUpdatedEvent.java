@@ -8,8 +8,8 @@ public class TeamUpdatedEvent extends DomainEvent {
 
     private static final String EVENT_TYPE = "TEAM_UPDATED";
 
-    public TeamUpdatedEvent(String name, InetSocketAddress remoteAddress) {
-        super(EVENT_TYPE, new AddressUpdatePayload(name, remoteAddress));
+    public TeamUpdatedEvent(String name, String remoteAddress) {
+        super(EVENT_TYPE, null);
     }
 
     public TeamUpdatedEvent(String name, HealthStatus healthStatus) {

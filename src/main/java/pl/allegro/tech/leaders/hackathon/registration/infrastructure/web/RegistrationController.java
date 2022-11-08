@@ -40,21 +40,19 @@ class RegistrationController {
         return registrationFacade.getAll()
                 .map(registeredTeam -> new RegisteredTeamResponse(
                         registeredTeam.getName(),
-                        registeredTeam.getRemoteAddress().getAddress().getHostAddress(),
-                        registeredTeam.getRemoteAddress().getPort(),
+                        registeredTeam.getRemoteAddress(),
+                        80,
                         registeredTeam.getHealth().isWorking())
                 );
     }
 
     @PostMapping
     Publisher<ResponseEntity<String>> registerTeam(ServerHttpRequest request, @RequestBody RegisterTeamRequest registerTeamRequest) {
-        String name = registerTeamRequest.getName();
-        int port = registerTeamRequest.getPort();
-        InetAddress remoteAddress = request.getRemoteAddress().getAddress();
-        TeamRegistration teamRegistration = new TeamRegistration(name, new InetSocketAddress(remoteAddress, port));
+        String name = registerTeamRequest.name();
+        TeamRegistration teamRegistration = new TeamRegistration(name, registerTeamRequest.hostname());
         return registrationFacade.register(teamRegistration)
                 .map(registeredTeam -> ResponseEntity.created(URI.create(String.format("/teams/%s", registeredTeam.getId())))
-                        .contentType(MediaType.APPLICATION_JSON_UTF8)
+                        .contentType(MediaType.APPLICATION_JSON)
                         .body(registeredTeam.getSecret()));
     }
 

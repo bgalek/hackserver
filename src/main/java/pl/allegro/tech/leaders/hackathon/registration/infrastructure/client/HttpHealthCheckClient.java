@@ -18,7 +18,7 @@ class HttpHealthCheckClient implements HealthCheckClient {
                 .get()
                 .uri(uri)
                 .exchangeToMono(Mono::just)
-                .timeout(Duration.ofMillis(500))
+                .timeout(Duration.ofMillis(2000))
                 .flatMap(response -> response.toEntity(Void.class));
     }
 }

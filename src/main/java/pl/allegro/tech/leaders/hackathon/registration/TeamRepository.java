@@ -2,6 +2,7 @@ package pl.allegro.tech.leaders.hackathon.registration;
 
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.data.repository.Repository;
+import pl.allegro.tech.leaders.hackathon.registration.api.HealthStatus;
 import pl.allegro.tech.leaders.hackathon.registration.api.TeamSecret;
 import pl.allegro.tech.leaders.hackathon.registration.api.TeamUpdatedEvent;
 import reactor.core.publisher.Flux;
@@ -21,7 +22,7 @@ class TeamRepository {
     Mono<Team> save(Team team) {
         return persistenceTeamRepository.save(team)
                 .doOnSuccess(it -> applicationEventPublisher
-                        .publishEvent(new TeamUpdatedEvent(it.getName(), it.getRemoteAddress())));
+                        .publishEvent(new TeamUpdatedEvent(it.getName(), HealthStatus.UNKNOWN)));
     }
 
     Flux<Team> findAll() {
