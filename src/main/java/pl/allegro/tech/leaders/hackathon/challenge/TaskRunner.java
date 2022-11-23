@@ -32,9 +32,9 @@ class TaskRunner {
     Mono<ChallengeResult> run(ChallengeDefinition challenge, TaskDefinition task, RegisteredTeam team) {
         final URI teamEndpoint = UriComponentsBuilder
                 .newInstance()
-                .scheme("https")
+                .scheme("http")
                 .host(team.getRemoteAddress())
-                .port(443)
+                .port(80)
                 .path(challenge.getChallengeEndpoint())
                 .queryParams(new LinkedMultiValueMap<>(task.getParameters()))
                 .build(task.isParametersEncoded())

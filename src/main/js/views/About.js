@@ -21,7 +21,7 @@ function About() {
         </Typography>,
         <Typography key="registration" variant="body1" gutterBottom>
             To register yourself you need to send <strong>POST</strong>, with <strong>application/json</strong>
-            <pre>{`{"name":"Bartosz", "port":"8080"}`}</pre>
+            <pre>{`{"name":"Bartosz", "hostname":"9f7a-178-235-146-135.ngrok.io"}`}</pre>
             to the <code>/registration</code> endpoint.
         </Typography>,
         <Typography key="registration-secret" variant="body1">
