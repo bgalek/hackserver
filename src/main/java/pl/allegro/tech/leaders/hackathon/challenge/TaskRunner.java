@@ -15,6 +15,7 @@ import reactor.core.publisher.Mono;
 
 import java.net.URI;
 import java.time.Clock;
+import java.util.Optional;
 
 class TaskRunner {
     private static final Logger logger = LoggerFactory.getLogger(TaskRunner.class);
@@ -62,7 +63,7 @@ class TaskRunner {
         }
 
         if (challenge.solutionType().getName().equals(String.class.getName())) {
-            int score = calculateLatencyPenalty(task, response.getBody(), latency);
+            int score = calculateLatencyPenalty(task, Optional.ofNullable(response.getBody()).map(String::trim).orElse(null), latency);
             return resultBuilder.buildSuccessResult(score);
         }
 

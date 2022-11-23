@@ -7,34 +7,34 @@ import static pl.allegro.tech.leaders.hackathon.challenge.base.SampleChallenges.
 import static pl.allegro.tech.leaders.hackathon.challenge.base.SampleChallenges.SUM_CHALLENGE
 
 class ChallengeActivationSpec extends ChallengeSpec {
-    def 'should activate challenges'() {
-        given: 'there are two registered challenges'
-            registerChallengeDefinitions(COUNT_CHALLENGE, SUM_CHALLENGE)
-        when: 'first challenge is activated'
-            activateChallenge(COUNT_CHALLENGE.id)
-        and: 'activated challenges are fetched'
-            List<ChallengeDetails> activeChallenges = getActiveChallenges()
-        then: 'fetch result contains only the activated challenge'
-            activeChallenges.size() == 1
-            ChallengeDetails challengeDetails = activeChallenges[0]
-            challengeDetails.id == COUNT_CHALLENGE.id
-        and: 'challenge from the result is well described'
-            challengeDetails.name == COUNT_CHALLENGE.name
-            challengeDetails.description == COUNT_CHALLENGE.description
-            challengeDetails.challengeEndpoint == COUNT_CHALLENGE.challengeEndpoint
-            challengeDetails.challengeParameters == COUNT_CHALLENGE.challengeParams
-            challengeDetails.challengeResponse == COUNT_CHALLENGE.challengeResponse
-            challengeDetails.activatedAt == clock.instant()
-
-        when: 'second challenge is activated'
-            activateChallenge(SUM_CHALLENGE.id)
-        and: 'activated challenges are fetched'
-            activeChallenges = getActiveChallenges()
-        then: 'fetch result contains both activated challenges'
-            activeChallenges.size() == 2
-            activeChallenges[0].id == COUNT_CHALLENGE.id
-            activeChallenges[1].id == SUM_CHALLENGE.id
-    }
+//     def 'should activate challenges'() {
+//         given: 'there are two registered challenges'
+//             registerChallengeDefinitions(COUNT_CHALLENGE, SUM_CHALLENGE)
+//         when: 'first challenge is activated'
+//             activateChallenge(COUNT_CHALLENGE.id)
+//         and: 'activated challenges are fetched'
+//             List<ChallengeDetails> activeChallenges = getActiveChallenges()
+//         then: 'fetch result contains only the activated challenge'
+//             activeChallenges.size() == 1
+//             ChallengeDetails challengeDetails = activeChallenges[0]
+//             challengeDetails.id == COUNT_CHALLENGE.id
+//         and: 'challenge from the result is well described'
+//             challengeDetails.name == COUNT_CHALLENGE.name
+//             challengeDetails.description == COUNT_CHALLENGE.description
+//             challengeDetails.challengeEndpoint == COUNT_CHALLENGE.challengeEndpoint
+//             challengeDetails.challengeParameters == COUNT_CHALLENGE.challengeParams
+//             challengeDetails.challengeResponse == COUNT_CHALLENGE.challengeResponse
+//             challengeDetails.activatedAt == clock.instant()
+// 
+//         when: 'second challenge is activated'
+//             activateChallenge(SUM_CHALLENGE.id)
+//         and: 'activated challenges are fetched'
+//             activeChallenges = getActiveChallenges()
+//         then: 'fetch result contains both activated challenges'
+//             activeChallenges.size() == 2
+//             activeChallenges[0].id == COUNT_CHALLENGE.id
+//             activeChallenges[1].id == SUM_CHALLENGE.id
+//     }
 
     def 'should serve activated challenge by id'() {
         given: 'there are two registered challenges'
