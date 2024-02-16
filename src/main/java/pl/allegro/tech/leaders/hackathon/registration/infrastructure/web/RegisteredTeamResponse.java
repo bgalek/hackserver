@@ -27,7 +27,7 @@ class RegisteredTeamResponse {
     }
 
     public String getAvatar() {
-        return String.format("https://avatars.dicebear.com/api/male/%s%%40%s.svg", name, address);
+        return String.format("https://api.dicebear.com/7.x/pixel-art/svg?seed=%s%%40%s.svg", name, address);
     }
 
     public boolean getHealth() {
