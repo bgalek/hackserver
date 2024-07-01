@@ -59,8 +59,12 @@ class MyFavouriteNumberChallengeDefinition implements ChallengeDefinition {
     public String getDescription() {
         return """
                     I like two numbers: %s (this is the year in first Futurama Episode) and %s (Linus Torvalds birth year).
-                    A number N is my truly favourite number only if N is equal to the sum of certain number of %1$s and sum of certain number of %2$s.
-                    Your task is to answer - is given number my truly favourite?
+                    A number 𝑵 is my truly favourite number if and only if 𝑵 is equal to the sum of some 𝑨 number of %1$s and some 𝑩 number of %2$s.
+                
+                    In other words, there exist integers 𝑨 and 𝑩 such that:
+                    𝑵 = 𝑨*%1$s + 𝑩*%2$s
+                
+                    Your task is to determine if the given number is truly my favorite.
                     Please return "true" or "false".
                 """.formatted(FIRST_LIKED_NUMBER, SECOND_LIKED_NUMBER);
     }
