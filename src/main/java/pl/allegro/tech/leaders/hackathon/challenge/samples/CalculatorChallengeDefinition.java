@@ -82,7 +82,7 @@ class CalculatorChallengeDefinition implements ChallengeDefinition {
     public static String round(double value, int places) {
         BigDecimal bd = BigDecimal.valueOf(value);
         bd = bd.setScale(places, RoundingMode.HALF_UP);
-        return bd.toPlainString();
+        return bd.stripTrailingZeros().toPlainString();
     }
 
     @Override
@@ -97,7 +97,10 @@ class CalculatorChallengeDefinition implements ChallengeDefinition {
                     We will send you some equations, be prepared!
                     (don't mind any parentheses or strange mathematical symbols though).
                     Response should contain *up to* 2 decimal places, with trailing zeros removed.
-                    E.g. 2 + 2 = 4 (not 4.0), 0.123 + 0.123 = 0.25
+                    Example
+                    2 + 2 = 4 (not 4.00)
+                    36.95 * 36.00 - 27.40 = 1302.8 (not 1302.80)
+                    0.123 + 0.123 = 0.25
                 """;
     }
 
